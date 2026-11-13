@@ -157,8 +157,12 @@ def main():
         p.requires_grad_(False)
     inj = Injector(r.model, args.layer)
 
-    vectors, train_log = {}, {}
+    name = f"e3_{args.model.split('/')[-1]}_L{args.layer}{args.tag}"
+    part = ROOT / "results" / f"{name}.partial.pt"
+    vectors, train_log = torch.load(part) if part.exists() else ({}, {})  # 中断からの再開
     for c in concepts:
+        if c in vectors:
+            continue
         t0 = time.time()
         v, losses = train_vector(r, inj, c, defs[c], args.steps, args.lr, args.objective, qa.get(c))
         vectors[c] = v
@@ -167,6 +171,7 @@ def main():
             f"[train] {c}: loss {losses[0]:.2f} -> {losses[-1]:.2f}  |v|={v.norm():.1f}  {time.time() - t0:.0f}s",
             flush=True,
         )
+        torch.save((vectors, train_log), part)
 
     conds = {"none": (False, False), "vec": (False, True), "near": (True, False), "near+vec": (True, True)}
     res = {}
@@ -187,7 +192,6 @@ def main():
                 "mean_margin": sum(x["margin"] for x in rs) / len(rs),
             }
 
-    name = f"e3_{args.model.split('/')[-1]}_L{args.layer}{args.tag}"
     out = ROOT / "results" / f"{name}.json"
     out.write_text(
         json.dumps(
