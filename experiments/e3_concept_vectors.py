@@ -69,14 +69,23 @@ def build_delta(tok, text: str, vectors: dict, d_model: int):
     return torch.tensor([ids]), delta
 
 
-def train_vector(r: Runner, inj: Injector, label: str, definition: str, steps: int, lr: float):
+def train_vector(r, inj, label, definition, steps, lr, objective="def", qa=None):
+    """objective: def = 定義文の暗唱 / qa = 適用例の二択 / defqa = 両方"""
     d_model = r.model.config.hidden_size
     v = torch.zeros(d_model, requires_grad=True)
     opt = torch.optim.Adam([v], lr=lr)
+    pairs = []  # (プロンプト, 続き)
+    if "def" in objective:
+        for t in TEMPLATES:
+            pairs.append((r.render(None, t.format(L=label)), definition + r.tok.eos_token))
+    if "qa" in objective:
+        for ex in qa:
+            for swap in (False, True):
+                body, correct_no = question_text(ex, swap)
+                pairs.append((r.render(None, body), str(correct_no)))
     batch = []
-    for t in TEMPLATES:
-        prompt = r.render(None, t.format(L=label))
-        full = prompt + definition + r.tok.eos_token
+    for prompt, cont in pairs:
+        full = prompt + cont
         n_prompt = len(r.tok(prompt, add_special_tokens=False).input_ids)
         ids, mask = label_mask(r.tok, full, label)
         ids = torch.tensor([ids])
@@ -129,6 +138,7 @@ def main():
     ap.add_argument("--steps", type=int, default=30)
     ap.add_argument("--lr", type=float, default=0.1)
     ap.add_argument("--limit", type=int, default=0, help="概念数の上限（試行用）")
+    ap.add_argument("--objective", choices=["def", "qa", "defqa"], default="def")
     ap.add_argument("--tag", default="")
     args = ap.parse_args()
 
@@ -140,6 +150,8 @@ def main():
         concepts = concepts[: args.limit]
         items = [it for it in items if all(d in concepts for d in it["defs"])]
 
+    qa = json.loads((ROOT / "data" / "train_qa_ja.json").read_text(encoding="utf-8"))["train"]
+
     r = Runner(args.model)
     for p in r.model.parameters():
         p.requires_grad_(False)
@@ -148,7 +160,7 @@ def main():
     vectors, train_log = {}, {}
     for c in concepts:
         t0 = time.time()
-        v, losses = train_vector(r, inj, c, defs[c], args.steps, args.lr)
+        v, losses = train_vector(r, inj, c, defs[c], args.steps, args.lr, args.objective, qa.get(c))
         vectors[c] = v
         train_log[c] = {"loss_first": losses[0], "loss_last": losses[-1], "norm": v.norm().item()}
         print(
