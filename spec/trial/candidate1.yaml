@@ -1,0 +1,64 @@
+# 概念の体系の構造を探すための試験の記録。正本（ontology.yaml）ではない。
+# 数値は tools/trial_candidate1.py による。品詞の判定だけは手作業。
+
+constraints:   # 求める構造が満たすべきこと（利用者の言葉から）
+  c1: 原始的なのは、持続と生起の最上位だけ。他はすべて、そこからの連鎖で書かれる
+  c2: 関係は BFO の下にある実体で、グラフで結ばれる
+  c3: 分類は関係を利用して記述される。軸は関係を抽象として見たもの、値はその具体
+  c4: 持続体は形を変えると生起体になり、その逆もある
+  c5: 修飾は第3の次元である
+  c6: 関係・分類・修飾は、次元を変える操作である。次元そのものではない
+  c7: 語は、修飾の連鎖でその振る舞いを定義している
+
+candidate:
+  id: candidate1
+  dimensions: {occurrent: 開いている端が2つ, modification: 開いている端が1つ, continuant: 開いている端が0}
+  operations:
+    relation: {from: continuant, to: occurrent, does: 物と物の間に結び付きを立てる}
+    modification: {from: occurrent, to: modification, does: 結び付きの一方の端を固定する}
+    classification: {from: modification, to: continuant, does: 限定する働きを物に当てて種類を切り出す}
+
+trial:
+  subject: ontology.yaml の実体 135個（最上位の2つを除く）
+  method: 各実体「上位 [軸=値]」を「上位 | 関係(_, 値)」に写し、候補の操作で足りるかを分類する
+  results:
+    writable_without_problem: 5
+    p1_modifier_applied_to_occurrent: 42    # 生起体を修飾して、生起体の下位を作っている
+    p2_filler_is_label_not_entity: 112      # 固定する端の中身が、実体でなく表示語だけの値
+    p3_filler_is_number: 3
+    p4_multiple_fillers_in_one_end: 4
+  fillers:                                   # 修飾の中身 217個の内訳
+    entity_continuant: 70
+    entity_occurrent: 13
+    number: 4
+    label_only: 130
+  label_only_by_part_of_speech:              # 表示語だけの値 130個を、品詞で分けたもの（手作業の判定）
+    modifier_like: {uses: 51, kinds: 40, examples: [固定されている, 見えない, 推移的, 何にも依存しない, 学習に使った]}
+    verb_like: {uses: 27, kinds: 26, examples: [届ける, 述べる, 問う, 公開する, 兄弟概念を区別する]}
+    noun_like: {uses: 52, kinds: 32, examples: [名前, 文, 一覧, トークン数, システム]}
+  axes_by_part_of_speech_of_values: {modifier_like: 23, verb_like: 6, noun_like: 6}
+
+findings:
+  f1:
+    about: p1
+    statement: 候補の「分類」は修飾を持続へしか写さないが、実体の 31% は生起体を修飾して生起体の下位を作っている
+    implies: 修飾は、持続にも生起にも当てられる。一巡の中の1つの停留所ではなく、持続と生起の両方に直交する
+    verdict_on_candidate: refuted_in_part
+  f2:
+    about: p2
+    statement: 表示語だけの値のうち最大の群は修飾語的（形容詞・分詞・副詞）で、40種類ある。軸の数では 35 中 23
+    implies: いまの語彙は最上位を持続と生起の2つしか持たないので、修飾語には置き場所がなく、ツリーの外の表示語として溜まっていた
+    supports: c5
+  f3:
+    about: p2
+    statement: 名詞的な値 32種類と動詞的な値 26種類は、本来は持続と生起のツリーにあるべき実体である
+    implies: 値と実体の二重持ちが 58種類ある
+  f4:
+    about: p4
+    statement: 1つの端に複数の中身を入れた実体が 4個ある
+    implies: 「組」や「併用」を書く手段が、候補にも現在の語彙にもない
+
+next_candidate_should:
+  - 修飾の次元に、それ自身の住人（修飾語）を持つ
+  - 修飾を、持続にも生起にも当てられるものとして扱う
+  - 値を、3つの次元のどれかの住人として持つ（表示語だけの値を無くす）
