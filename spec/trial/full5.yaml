@@ -1,0 +1,299 @@
+# 語彙の全体を書き直す試みの第3版。full4 に、役割を「定義に依存する実現可能体」とする書き方を加えたもの。正本ではない。tools/trial_full5.py で検査する。
+#
+# 基礎: 持続体どうしの状態の関係 5個（法則を持つ）と、体系そのものの行為 1個（について述べる）。
+# 動詞: 生起体のノードで、両端（from, to）を持つ。
+#       静的な動詞は holds（成り立っている状態の関係）、動的な動詞は before / after（起こる前後の状態の関係）で書く。
+#       new は、始点でも終点でもない第三のもの。new_kind はその種類。
+#       動詞の下位は、端の種類を狭めて書く（is: 動詞, from / to: 狭めた種類）。
+# 形:   form: [動詞, 位置]。位置は from / to / new。その位置に来るもの全体。
+# 修飾語: of: [動詞, 位置]。その位置を占めているという性質。質か実現可能体の下に置く。
+# 修飾: mod: [修飾語 | {of: [動詞, 位置], with: もう一方の端の中身, neg: 否定, quant: 数量化}]
+# 分類: 軸は関係を抽象として見たもの、値はその具体。
+#   at:  修飾の中で、軸の値を置く（{of: [動詞, 位置], with: 中身, at: {軸: 値}}）。個数や順番。
+#   val: 概念そのものが取る値（{軸: 値}）。文字列や真偽。
+#   cmp: 2つのものを同じ軸の上で比べる（{axis: 軸, a: 実体, b: 実体, rel: same | differ}）。
+#   axis: 質が、どの軸の値を取る大きさであるか。
+#   値は、固定値のほかに関数でもよい。真偽を返す範囲の判定式（{gt: 1}、{lt: 25}、{between: [9, 13]} など）は値の一種。
+#   quant は、論理の数量化（all, any）だけに使う。数は at で書く。
+# 役割: 実現可能体のうち、定義に依存するもの（担い手の質に依存するのが傾向性）。
+#       個々の役割は、どの定義に依存するか（根拠となる定義）を持つ。場面は、その定義が部分になっているもの。
+# issue: 書けたが無理がある、または落ちた内容がある場合に、その内容を書く。
+base:
+  exists: {ja: 在る, arity: 1}
+  depend: {ja: 依存する, arity: 2, laws: [始点があれば終点もある]}
+  part: {ja: 部分である, arity: 2, laws: [推移的, 反対称的]}
+  after: {ja: 後ろにある, arity: 2, laws: [推移的, 非対称的]}
+  involve: {ja: 生起体に持続体が関わる, arity: 2, laws: [始点があれば終点もある]}
+  refer: {ja: について述べる, arity: 2, system_act: true}
+
+axes:
+  count: {ja: 個数, from: any, values: number}   # どの関係についても「いくつと結ばれるか」を見られる
+  ratio: {ja: 割合, from: part, values: number}
+  order: {ja: 順番, from: after, values: number}
+  text: {ja: 文字列, from: refer, values: literal}
+  truth: {ja: 真偽, from: refer, values: [true, false]}
+
+nodes:
+  continuant: {ja: 持続体, gloss: 時間を通じて同一性を保って存在するもの}
+  occurrent: {ja: 生起体, gloss: 時間の中で起こり、展開するもの}
+
+  # ===== 動詞 =====
+  # ----- 静的 -----
+  v_depend: {ja: 依存する, is: occurrent, from: continuant, to: continuant, holds: ["depend(from, to)"]}
+  v_compose: {ja: 部分になる, is: occurrent, from: continuant, to: continuant, holds: ["part(from, to)"]}
+  v_stage: {ja: 時間的な部分になる, is: occurrent, from: occurrent, to: occurrent, holds: ["part(from, to)"]}
+  v_come_after: {ja: 後ろに置かれる, is: occurrent, from: continuant, to: continuant, holds: ["after(from, to)"]}
+  v_happen_after: {ja: 後に起こる, is: occurrent, from: occurrent, to: occurrent, holds: ["after(from, to)"]}
+  v_refer: {ja: 述べる, is: occurrent, from: continuant, to: any, holds: ["refer(from, to)"]}
+  v_agree: {ja: 一致する, is: occurrent, from: continuant, to: continuant, holds: ["refer(from, new)", "refer(to, new)"]}
+  v_answer: {ja: 答える, is: occurrent, from: continuant, to: continuant, holds: ["refer(from, to)", "after(from, to)"]}
+  v_measure: {ja: 測る, is: occurrent, from: continuant, to: any, holds: ["refer(from, to)", "depend(from, to)"]}
+  v_express: {ja: で書かれる, is: occurrent, from: continuant, to: continuant, holds: ["depend(from, to)", "part(new, from)", "part(new, to)"]}
+  v_involve: {ja: に関わらせる, is: occurrent, from: occurrent, to: continuant, holds: ["involve(from, to)"]}
+  v_perform: {ja: 行う, is: occurrent, from: continuant, to: occurrent, holds: ["involve(to, from)"]}
+  v_use: {ja: 使う, is: occurrent, from: any, to: continuant, holds: ["involve(new, to)", "depend(new, from)"]}
+  v_trigger: {ja: 引き起こす, is: occurrent, from: any, to: occurrent, holds: ["after(to, from)", "depend(to, from)"]}
+  # ----- 動的 -----
+  v_design: {ja: 設計する, is: occurrent, from: continuant, to: continuant, before: ["not exists(to)"], after: ["exists(to)"]}
+  v_compute: {ja: 計算する, is: occurrent, from: continuant, to: any, before: ["not exists(to)"], after: ["exists(to)"]}
+  v_speak: {ja: 発話する, is: occurrent, from: continuant, to: continuant, before: ["not exists(to)"], after: ["exists(to)", "depend(to, from)"]}
+  v_learn: {ja: 学習する, is: occurrent, from: continuant, to: continuant, new_kind: realizable_entity,
+            before: ["not exists(new)"], after: ["exists(new)", "depend(new, from)", "refer(new, to)"]}
+  v_read: {ja: 読む, is: occurrent, from: continuant, to: continuant, new_kind: quality,
+           before: ["not exists(new)"], after: ["exists(new)", "depend(new, from)", "refer(new, to)"]}
+  v_judge: {ja: 判定する, is: occurrent, from: continuant, to: continuant, new_kind: information_entity,
+            before: ["not exists(new)"], after: ["exists(new)", "depend(new, from)", "refer(new, to)"]}
+  v_teach: {ja: 教える, is: occurrent, from: continuant, to: continuant, new_kind: realizable_entity,
+            before: ["not exists(new)"], after: ["exists(new)", "depend(new, to)", "refer(new, from)"]}
+  v_freeze: {ja: 固定する, is: occurrent, from: continuant, to: continuant, new_kind: realizable_entity,
+             before: ["exists(new)", "depend(new, to)"], after: ["not exists(new)"]}
+  v_expose: {ja: 公開する, is: occurrent, from: continuant, to: continuant, new_kind: realizable_entity,
+             before: ["not exists(new)"], after: ["exists(new)", "depend(new, to)"]}
+  v_vary: {ja: 動かす, is: occurrent, from: continuant, to: continuant, new_kind: quality,
+           before: ["depend(new, to)"], after: ["not depend(new, to)"]}
+  v_deliver: {ja: 届ける, is: occurrent, from: continuant, to: continuant, before: ["not part(to, new)"], after: ["part(to, new)"]}
+  v_substitute: {ja: 置き換える, is: occurrent, from: continuant, to: continuant,
+                 before: ["part(to, new)", "not part(from, new)"], after: ["not part(to, new)", "part(from, new)"]}
+  # ----- 動詞の下位（端の種類を狭める） -----
+  v_speak_definition: {ja: 定義文を発話する, is: v_speak, to: definition_text}
+  v_speak_reason: {ja: 理由を発話する, is: v_speak, to: reason}
+  v_judge_case: {ja: 事例を判定する, is: v_judge, to: case}
+  v_judge_definition: {ja: 定義を判定する, is: v_judge, to: definition}
+  v_see: {ja: 見る, is: v_read, issue: 読む と区別する式がない。様態の違いを書けない}
+
+  # ===== BFO の区別 =====
+  dependent: {ja: 依存するもの, form: [v_depend, from]}
+  independent_continuant: {ja: 独立持続体, is: continuant, mod: [{of: [v_depend, from], neg: true}]}
+  specifically_dependent_continuant: {ja: 特定依存持続体, is: dependent, mod: [{of: [v_depend, from], at: {count: 1}}]}
+  generically_dependent_continuant: {ja: 汎用依存持続体, is: dependent, mod: [{of: [v_depend, from], quant: any}]}
+  realizable_entity: {ja: 実現可能体, is: specifically_dependent_continuant, mod: [{of: [v_involve, to]}]}
+  quality: {ja: 質, is: specifically_dependent_continuant, mod: [{of: [v_involve, to], neg: true}]}
+  disposition: {ja: 傾向性, is: realizable_entity, mod: [{of: [v_depend, from], with: quality}]}
+  role: {ja: 役割, is: realizable_entity, mod: [{of: [v_depend, from], with: definition}]}
+  magnitude: {ja: 大きさ, is: quality, mod: [{of: [v_come_after, from], with: quality}]}
+  process: {ja: 過程, is: occurrent, mod: [{of: [v_stage, to]}]}
+
+  # ===== 場面と、そこでの取り決め（役割の根拠になる定義） =====
+  experiment: {ja: 実験, is: process, mod: [{of: [v_stage, to], with: v_vary}, {of: [v_stage, to], with: v_measure}]}
+  experiment_protocol: {ja: 実験の取り決め, is: definition, mod: [{of: [v_refer, from], with: experiment}]}
+  depended_information: {ja: 他の記述が依存する記述, is: information_entity, mod: [{of: [v_depend, to], with: information_entity, quant: all}]}
+  rule_source_of_truth: {ja: 正本の取り決め, is: definition, mod: [{of: [v_compose, from], with: this_design}, {of: [v_refer, from], with: depended_information}]}
+  change_holder: {ja: 与えられた意味が依存するもの, is: continuant, mod: [{of: [v_depend, to], with: assigned_meaning}]}
+  rule_consolidation: {ja: 変更の固定先の取り決め, is: definition, mod: [{of: [v_compose, from], with: this_design}, {of: [v_refer, from], with: change_holder}]}
+
+  # ===== 修飾語 =====
+  frozen: {ja: 固定されている, is: quality, of: [v_freeze, to]}
+  learned: {ja: 学習で得られた, is: quality, of: [v_learn, new]}
+  visible: {ja: 見える, is: disposition, of: [v_see, to]}
+  hidden: {ja: 見えない, is: quality, of: [v_see, to], neg: true}
+  varied: {ja: 動かす条件である, is: role, of: [v_vary, to], mod: [{of: [v_depend, from], with: experiment_protocol}]}
+  measuring: {ja: 測る量である, is: role, of: [v_measure, from], mod: [{of: [v_depend, from], with: experiment_protocol}]}
+
+  # ===== 情報 =====
+  information_entity: {ja: 情報, is: generically_dependent_continuant, mod: [{of: [v_refer, from]}]}
+  language: {ja: 言語, is: information_entity, mod: [{of: [v_express, to]}]}
+  natural_language: {ja: 自然言語, is: language, mod: [{of: [v_design, to], neg: true}]}
+  programming_language: {ja: プログラミング言語, is: language, mod: [{of: [v_design, to]}]}
+  sentence: {ja: 文, is: information_entity, mod: [{of: [v_express, from], with: language}, {of: [v_compose, to], with: word}]}
+  passage: {ja: 文章, is: information_entity, mod: [{of: [v_compose, to], with: sentence}]}
+  word: {ja: 語, is: information_entity, mod: [{of: [v_express, from], with: natural_language}, {of: [v_compose, from], with: sentence}]}
+  prior_meaning: {ja: 元の意味, is: disposition, mod: [learned, {of: [v_depend, from], with: weights}]}
+  assigned_meaning: {ja: 与えられた意味, is: role, mod: [{of: [v_depend, from], with: redefinition}, {of: [v_depend, from], with: common_word}]}
+  common_word: {ja: 一般語, is: word, mod: [{of: [v_refer, to], with: prior_meaning}]}
+  new_word: {ja: 新しい語, is: word, mod: [{of: [v_refer, to], with: prior_meaning, neg: true}]}
+  replaced_word: {ja: 置き換えられた語, form: [v_substitute, to]}
+  hidden_word: {ja: 見えなくなった元の語, is: replaced_word, mod: [hidden]}
+  visible_word: {ja: 見えている元の語, is: replaced_word, mod: [visible]}
+  modifier: {ja: 修飾, is: word, mod: [{of: [v_refer, from], with: dependent}], issue: 概念式の中での位置（種差）であることを書けていない}
+  genus_concept: {ja: 上位概念, is: word, mod: [{of: [v_refer, from], with: dependent, neg: true}], issue: 概念式の中での位置（類）であることを書けていない}
+  seen_genus: {ja: 学習した上位概念, is: genus_concept, mod: [{of: [v_teach, from]}]}
+  unseen_genus: {ja: 学習していない上位概念, is: genus_concept, mod: [{of: [v_teach, from], neg: true}]}
+  code: {ja: コード, is: passage, mod: [{of: [v_express, from], with: programming_language}]}
+  symbol: {ja: シンボル, is: information_entity, mod: [{of: [v_express, from], with: programming_language}, {of: [v_compose, from], with: code}]}
+  definition: {ja: 定義, is: sentence, mod: [{of: [v_refer, from], with: concept}]}
+  redefinition: {ja: 再定義, is: definition, mod: [{of: [v_refer, from], with: common_word}, {of: [v_agree, from], with: prior_meaning, neg: true}]}
+  rule_redefinition: {ja: 規則型の再定義, is: redefinition, mod: [{of: [v_refer, from], with: magnitude}]}
+  remap_redefinition: {ja: 付け替え型の再定義, is: redefinition, mod: [{of: [v_refer, from], with: magnitude, neg: true}]}
+  relevant_definitions: {ja: 関係する定義だけ, is: definition, mod: [{of: [v_agree, from], with: question}]}
+  other_definitions: {ja: 他の定義, is: definition, mod: [{of: [v_agree, from], with: question, neg: true}]}
+  ordinary_definitions: {ja: 一般の意味どおりの定義, is: other_definitions, mod: [{of: [v_agree, from], with: prior_meaning}]}
+  other_redefinitions: {ja: 他の再定義, is: other_definitions, mod: [{of: [v_agree, from], with: prior_meaning, neg: true}]}
+  preceding_definitions_set: {ja: 前に並ぶ定義, is: other_definitions, mod: [{of: [v_come_after, to], with: relevant_definitions}]}
+  following_definitions_set: {ja: 後ろに並ぶ定義, is: other_definitions, mod: [{of: [v_come_after, from], with: relevant_definitions}]}
+  case: {ja: 事例, is: sentence, mod: [{of: [v_judge, to]}]}
+  verdict_by_definition: {ja: 定義による判定, is: verdict, mod: [{of: [v_agree, from], with: definition}]}
+  verdict_by_prior: {ja: 元の意味による判定, is: verdict, mod: [{of: [v_agree, from], with: prior_meaning}]}
+  conflict_case: {ja: 衝突する事例, is: case, cmp: [{axis: truth, a: verdict_by_definition, b: verdict_by_prior, rel: differ}]}
+  control_case: {ja: 衝突しない事例, is: case, cmp: [{axis: truth, a: verdict_by_definition, b: verdict_by_prior, rel: same}]}
+  question: {ja: 設問, is: sentence, mod: [{of: [v_refer, from], with: case}, {of: [v_answer, to]}]}
+  verdict: {ja: 判定, is: information_entity, mod: [{of: [v_judge_case, new]}]}
+  verdict_pair: {ja: 選択肢の順序を入れ替えた2回の判定, is: information_entity, mod: [{of: [v_compose, to], with: verdict, at: {count: 2}}]}
+  reason: {ja: 理由, is: sentence, mod: [{of: [v_refer, from], with: verdict}]}
+  application_example: {ja: 適用例, is: information_entity, mod: [{of: [v_compose, to], with: case}, {of: [v_compose, to], with: verdict}]}
+  test: {ja: テスト, is: application_example, mod: [{of: [v_use, to], with: verification}]}
+  definition_text: {ja: 定義文, is: passage, mod: [{of: [v_compose, to], with: definition}]}
+  examples_only: {ja: 適用例だけ, is: passage, mod: [{of: [v_compose, to], with: application_example}]}
+  def_and_examples: {ja: 定義文と適用例, is: passage, mod: [{of: [v_compose, to], with: definition}, {of: [v_compose, to], with: application_example}]}
+  filler_text: {ja: 無関係な文章, is: passage, mod: [{of: [v_agree, from], with: question, neg: true}]}
+  context: {ja: 文脈, is: passage, mod: [{of: [v_read, to], with: model}]}
+  glossary: {ja: 用語集, is: information_entity, mod: [{of: [v_compose, to], with: definition, at: {count: {gt: 1}}}]}
+  glossary_head: {ja: 用語集の先頭, is: definition, mod: [{of: [v_compose, from], with: glossary}, {of: [v_come_after, from], with: definition, neg: true}]}
+  place_system: {ja: システムプロンプト, is: passage, mod: [{of: [v_compose, from], with: context}, {of: [v_speak, to], with: model, neg: true}, {of: [v_come_after, from], with: passage, neg: true}],
+                 issue: 発話者がシステムであることを、文脈の最初にあってモデルの発話でない、としか書けていない}
+  place_adjacent: {ja: 設問の直前, is: passage, mod: [{of: [v_compose, from], with: context}, {of: [v_come_after, to], with: question, at: {order: 1}}]}
+  label_token_positions: {ja: 語のトークン位置, is: information_entity, mod: [{of: [v_compose, from], with: context}, {of: [v_compose, to], with: word}]}
+  position_after_word: {ja: 語の直後, is: information_entity, mod: [{of: [v_compose, from], with: question}, {of: [v_come_after, from], with: word, at: {order: 1}}]}
+  preceding_text: {ja: 定義の前にある文章, is: passage, mod: [{of: [v_come_after, to], with: definition}]}
+  following_text: {ja: 定義の後ろにある文章, is: passage, mod: [{of: [v_come_after, from], with: definition}]}
+  question_format: {ja: 設問形式, is: information_entity, mod: [{of: [v_compose, to], with: question}, {of: [v_compose, to], with: verdict}], issue: 形式（事例を除いた、設問と答えの枠）であることを書けていない}
+  option: {ja: 選択肢, is: information_entity, mod: [{of: [v_compose, from], with: question}, {of: [v_refer, from], with: verdict}]}
+  opt_yes: {ja: 選択肢「はい」, is: option, val: {text: はい}}
+  opt_no: {ja: 選択肢「いいえ」, is: option, val: {text: いいえ}}
+  opt_applies: {ja: 選択肢「当たる」, is: option, val: {text: 当たる}}
+  opt_not_applies: {ja: 選択肢「当たらない」, is: option, val: {text: 当たらない}}
+  opt_correct: {ja: 選択肢「正しい」, is: option, val: {text: 正しい}}
+  opt_wrong: {ja: 選択肢「誤り」, is: option, val: {text: 誤り}}
+  fmt_yesno: {ja: はい・いいえの二択, is: question_format, mod: [{of: [v_compose, to], with: opt_yes}, {of: [v_compose, to], with: opt_no}]}
+  fmt_fill: {ja: 空欄補充の二択, is: question_format, mod: [{of: [v_compose, to], with: opt_applies}, {of: [v_compose, to], with: opt_not_applies}]}
+  fmt_truth: {ja: 正誤判定の二択, is: question_format, mod: [{of: [v_compose, to], with: opt_correct}, {of: [v_compose, to], with: opt_wrong}]}
+  fmt_paraphrase_choice: {ja: 言い換えの二択, is: question_format, mod: [{of: [v_compose, to], with: definition, at: {count: 2}}]}
+  fmt_free: {ja: 自由生成, is: question_format, mod: [{of: [v_compose, to], with: option, neg: true}]}
+  item_group: {ja: 設問群, is: information_entity, mod: [{of: [v_compose, to], with: question, at: {count: {gt: 1}}}]}
+  g_confusable: {ja: 一般の類義語・同音語の設問, is: item_group, mod: [{of: [v_refer, from], with: common_word}, {of: [v_agree, from], with: prior_meaning}]}
+  g_redef_conflict: {ja: 再定義の衝突する設問, is: item_group, mod: [{of: [v_refer, from], with: conflict_case}]}
+  g_redef_control: {ja: 再定義の衝突しない設問, is: item_group, mod: [{of: [v_refer, from], with: control_case}]}
+  g_new_word: {ja: 新しい語の設問, is: item_group, mod: [{of: [v_refer, from], with: new_word}]}
+  g_sibling: {ja: 分化した兄弟概念の設問, is: g_new_word, mod: [{of: [v_refer, from], with: new_word, at: {count: 2}}], issue: 兄弟であること（同じ上位を持つこと）を書けていない}
+  g_replaced: {ja: 置換された用語の設問, is: g_new_word, mod: [{of: [v_refer, from], with: replaced_word}]}
+  unrelated_items: {ja: 無関係な設問, is: item_group, mod: [{of: [v_refer, from], with: redefinition, neg: true}]}
+  typed_graph: {ja: 型付きグラフ, is: information_entity, mod: [{of: [v_refer, from], with: concept, at: {count: {gt: 1}}}, {of: [v_refer, from], with: v_depend}], issue: 永続すること、型を持つことを書けていない}
+  this_design: {ja: 本設計, is: information_entity, mod: [{of: [v_design, to]}, {of: [v_refer, from], with: model}]}
+
+  taught_vector: {ja: 教示で得られたベクトル, is: realizable_entity, mod: [{of: [teaching, new]}]}
+  teaching_material: {ja: 教示の材料, form: [teaching, from]}
+
+  # ===== 人工物 =====
+  artifact: {ja: 人工物, is: generically_dependent_continuant, mod: [{of: [v_refer, from], neg: true}]}
+  weights: {ja: 重み, is: artifact, mod: [{of: [v_compose, from], with: model}, learned]}
+  frozen_weights: {ja: 固定された重み, is: weights, mod: [frozen]}
+  model: {ja: モデル, is: artifact, mod: [{of: [v_compute, from]}, {of: [v_compose, to], with: frozen_weights}]}
+  model_15b: {ja: Qwen2.5-1.5B-Instruct, is: model, mod: [{of: [v_compose, to], with: weights, at: {count: 1500000000}}, {of: [v_compose, to], with: layer, at: {count: 28}}]}
+  model_4b: {ja: Qwen3-4B, is: model, mod: [{of: [v_compose, to], with: weights, at: {count: 4000000000}}]}
+  open_weight_model: {ja: 重みが公開されたモデル, is: model, mod: [{of: [v_expose, from], with: weights}]}
+  api_only_model: {ja: APIでしか使えないモデル, is: model, mod: [{of: [v_expose, from], with: weights, neg: true}]}
+  layer: {ja: 層, is: artifact, mod: [{of: [v_compose, from], with: model}, {of: [v_compute, from]}]}
+  attention: {ja: 注意機構, is: artifact, mod: [{of: [v_compose, from], with: layer}, {of: [v_compute, from]}]}
+  term_server: {ja: 用語サーバー, is: artifact, mod: [{of: [v_judge_definition, from]}]}
+
+  # ===== 質 =====
+  factor: {ja: 要因, is: quality, mod: [varied]}
+  metric: {ja: 指標, is: quality, mod: [measuring]}
+  context_length: {ja: 文脈の長さ, is: factor, mod: [{of: [v_depend, from], with: context}], axis: count}
+  context_depth: {ja: 文脈の深さ, is: factor, mod: [{of: [v_depend, from], with: preceding_text}], axis: count}
+  distance_to_question: {ja: 設問からの距離, is: factor, mod: [{of: [v_depend, from], with: following_text}], axis: count}
+  preceding_definitions: {ja: 前に並ぶ定義の数, is: factor, mod: [{of: [v_depend, from], with: preceding_definitions_set}], axis: count}
+  following_definitions: {ja: 後ろに並ぶ定義の数, is: factor, mod: [{of: [v_depend, from], with: following_definitions_set}], axis: count}
+  prior_collision: {ja: 元の意味との衝突, is: factor, mod: [{of: [v_depend, from], with: redefinition}]}
+  format_variation: {ja: 設問形式の違い, is: factor, mod: [{of: [v_depend, from], with: question_format}]}
+  vector_count: {ja: 同時に入れる概念ベクトルの数, is: factor, mod: [{of: [v_measure, from], with: concept_vector}], axis: count}
+  layer_choice: {ja: 単一層の選び方, is: factor, mod: [{of: [v_measure, from], with: single_layer_vector}], axis: order}
+  chain_length: {ja: 連鎖の段数, is: factor, mod: [{of: [v_measure, from], with: v_stage}], axis: count}
+  accuracy: {ja: 正答率, is: metric, mod: [{of: [v_measure, from], with: verdict}], axis: ratio}
+  order_robust_accuracy: {ja: 選択肢の順序に頑健な正答率, is: metric, mod: [{of: [v_measure, from], with: verdict_pair}], axis: ratio}
+  recital_nll: {ja: 定義文の出しにくさ, is: metric, mod: [{of: [v_measure, from], with: v_speak_definition}]}
+  training_loss: {ja: 学習の損失, is: metric, mod: [{of: [v_measure, from], with: teaching}]}
+  redefinition_following: {ja: 再定義への追従, is: quality, mod: [{of: [v_measure, to]}, {of: [v_depend, from], with: conflict_case}]}
+  control_preservation: {ja: 衝突しない事例での判定の維持, is: quality, mod: [{of: [v_measure, to]}, {of: [v_depend, from], with: control_case}]}
+  redefinition_success: {ja: 再定義の成功, is: quality, mod: [{of: [v_measure, to]}, {of: [v_depend, from], with: redefinition}]}
+  cross_usage_consistency: {ja: 使い方をまたぐ一貫性, is: quality, mod: [{of: [v_measure, to]}, {of: [v_measure, from], with: usage, quant: all}]}
+  preceding_definition_effect: {ja: 前に並ぶ定義による追従の低下, is: quality, mod: [{of: [v_measure, to]}, {of: [v_depend, from], with: preceding_definitions_set}]}
+  # ----- 役割 -----
+  source_of_truth: {ja: 正本, is: role, mod: [{of: [v_depend, from], with: rule_source_of_truth}, {of: [v_depend, from], with: information_entity}]}
+  consolidation_target: {ja: 変更の固定先, is: role, mod: [{of: [v_depend, from], with: rule_consolidation}]}
+
+  # ===== 生起体 =====
+  inference: {ja: 推論, is: process, mod: [{of: [v_perform, to], with: model}]}
+  concept: {ja: 概念, is: inference, mod: [{of: [v_trigger, to], with: word}]}
+  shared_inference: {ja: 使い方が共有する推論, is: concept, mod: [{of: [v_stage, from], with: usage, quant: all}]}
+  scratchpad: {ja: 途中経過の書き出し, is: inference, mod: [{of: [v_stage, to], with: v_speak_reason}]}
+  single_pass: {ja: 一度の処理, is: inference, mod: [{of: [v_stage, to], with: v_speak_reason, neg: true}]}
+  usage: {ja: 使い方, is: process, mod: [{of: [v_perform, to], with: model}, {of: [v_involve, from], with: word}]}
+  usage_recite: {ja: 定義文の暗唱, is: usage, mod: [{of: [v_stage, to], with: v_speak_definition}]}
+  usage_apply: {ja: 適用, is: usage, mod: [{of: [v_stage, to], with: v_judge_case}]}
+  usage_define_paraphrase: {ja: 定義の言い換えの選択, is: usage, mod: [{of: [v_stage, to], with: v_judge_definition}]}
+  usage_explain: {ja: 説明, is: usage, mod: [{of: [v_stage, to], with: v_speak_reason}, {of: [v_stage, to], with: v_judge_case}]}
+  taught_usage: {ja: 教えた使い方, is: usage, mod: [{of: [v_refer, to], with: teaching_material}]}
+  untaught_usage: {ja: 教えていない使い方, is: usage, mod: [{of: [v_refer, to], with: teaching_material, neg: true}]}
+  verification: {ja: 検証, is: v_judge, to: application_example}
+  symbol_selection: {ja: シンボルの選定, is: v_judge, to: symbol}
+  channel: {ja: 接続手段, is: v_deliver, to: definition}
+  no_channel: {ja: 何もなし, is: process, mod: [{of: [v_stage, to], with: channel, neg: true}]}
+  text_injection: {ja: 文章での注入, is: channel, mod: [{of: [v_involve, from], with: context}]}
+  renaming: {ja: 改名, is: text_injection, mod: [{of: [v_stage, to], with: v_substitute}]}
+  opaque_renaming: {ja: 元の語が見えない改名, is: renaming, mod: [{of: [v_involve, from], with: hidden_word}]}
+  semi_renaming: {ja: 元の語が見える改名, is: renaming, mod: [{of: [v_involve, from], with: visible_word}]}
+  inline_expansion: {ja: 設問中での定義の展開, is: text_injection, mod: [{of: [v_involve, from], with: position_after_word}]}
+  concept_vector: {ja: 概念ベクトル, is: channel, mod: [{of: [v_involve, from], with: taught_vector}, {of: [v_involve, from], with: label_token_positions}]}
+  single_layer_vector: {ja: 単一層の概念ベクトル, is: concept_vector, mod: [{of: [v_involve, from], with: layer, at: {count: 1}}]}
+  multi_layer_vector: {ja: 複数層の概念ベクトル, is: concept_vector, mod: [{of: [v_involve, from], with: layer, at: {count: {gt: 1}}}]}
+  text_and_vector: {ja: 文章と概念ベクトルの併用, is: channel, mod: [{of: [v_involve, from], with: context}, {of: [v_involve, from], with: layer}]}
+  delta_weights: {ja: 差分重み, is: channel, mod: [{of: [v_involve, from], with: weights}]}
+  teaching: {ja: 教示, is: v_teach, to: layer}
+  teacher_recite: {ja: 定義文の暗唱を教師にする, is: teaching, from: definition_text}
+  teacher_examples: {ja: 適用例を教師にする, is: teaching, from: examples_only}
+  teacher_both: {ja: 定義文の暗唱と適用例の両方を教師にする, is: teaching, from: def_and_examples}
+
+out_of_scope:
+  - {what: 仮説と決定で使う関係, count: 17, example: 上げる、下げる、転移する、の原因である}
+  - {what: 測定条件を書くための数の軸, count: 9, example: 加える層の番号、前に並ぶ定義の個数}
+
+# ----- 試験の結果（tools/trial_full5.py の出力と、issue の手作業での分類） -----
+results:
+  nodes: 198
+  base_relations: 6
+  axes: 5
+  label_only_values: 0
+  with_issue: {count: 7, of: 196}
+  history: {full3_without_classification: 28, full4_with_classification: 14, full5_with_grounded_roles: 7}
+  roles:   # 役割と、その根拠となる定義
+    varied: experiment_protocol
+    measuring: experiment_protocol
+    assigned_meaning: redefinition
+    source_of_truth: rule_source_of_truth
+    consolidation_target: rule_consolidation
+  remaining_by_cause:
+    position_inside_concept_expression: {count: 2, examples: [修飾, 上位概念]}
+    manner: {count: 1, examples: [見る と 読む]}
+    shared_genus: {count: 1, examples: [兄弟概念]}
+    speaker: {count: 1, examples: [システムプロンプト]}
+    form_without_content: {count: 1, examples: [設問形式]}
+    persistence_and_type: {count: 1, examples: [型付きグラフ]}
+findings:
+  f1:
+    statement: 役割を「定義に依存する実現可能体」とすると、役割 5個がすべて同じ形で書けた。新しい基礎の関係は要らなかった
+    implies: 傾向性は担い手の質に依存し、役割は定義に依存する。「どの場面でのことか」は、その定義が何の部分であるか、で書ける
+  f2:
+    statement: 元の意味は傾向性、再定義によって与えられた意味は役割として、同じ対の両側に書けた
+    implies: 一般語の再定義とは、語に、定義に依存する役割を与えること。再定義への追従とは、傾向性ではなく役割に従って判定すること
+  f3:
+    statement: 動詞の産物 3個は、第三のものの位置（new）を修飾で使うことで書けた
