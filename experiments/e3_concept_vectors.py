@@ -86,27 +86,39 @@ def train_vector(r, inj, label, definition, steps, lr, objective="def", qa=None)
             for swap in (False, True):
                 body, correct_no = question_text(ex, swap)
                 pairs.append((r.render(None, body), str(correct_no)))
-    batch = []
+    # 全例を1つのバッチにまとめる（右側をパディング）
+    rows = []
     for prompt, cont in pairs:
         full = prompt + cont
         n_prompt = len(r.tok(prompt, add_special_tokens=False).input_ids)
         ids, mask = label_mask(r.tok, full, label)
-        ids = torch.tensor([ids])
-        labels = ids.clone()
-        labels[:, :n_prompt] = -100
-        m = torch.tensor(mask, dtype=torch.float32).view(1, -1, 1)
-        batch.append((ids, labels, m))
+        rows.append((ids, n_prompt, mask))
+    n, width = len(rows), max(len(ids) for ids, _, _ in rows)
+    pad = r.tok.pad_token_id if r.tok.pad_token_id is not None else r.tok.eos_token_id
+    ids_b = torch.full((n, width), pad)
+    att_b = torch.zeros((n, width), dtype=torch.long)
+    lab_b = torch.full((n, width), -100)
+    msk_b = torch.zeros((n, width, 1))
+    for i, (ids, n_prompt, mask) in enumerate(rows):
+        k = len(ids)
+        ids_b[i, :k] = torch.tensor(ids)
+        att_b[i, :k] = 1
+        lab_b[i, n_prompt:k] = torch.tensor(ids[n_prompt:])
+        msk_b[i, :k, 0] = torch.tensor(mask, dtype=torch.float32)
     losses = []
     for _ in range(steps):
         opt.zero_grad()
-        total = 0.0
-        for ids, labels, m in batch:
-            inj.delta = m * v.view(1, 1, -1)
-            loss = r.model(ids, labels=labels).loss / len(batch)
-            loss.backward()
-            total += loss.item()
+        inj.delta = msk_b * v.view(1, 1, -1)
+        logits = r.model(ids_b, attention_mask=att_b).logits
+        # 例ごとの平均損失を、例の間で平均する（長い定義文が短い設問を圧倒しないように）
+        per_tok = torch.nn.functional.cross_entropy(
+            logits[:, :-1].reshape(-1, logits.shape[-1]), lab_b[:, 1:].reshape(-1), reduction="none"
+        ).view(n, -1)
+        valid = (lab_b[:, 1:] != -100).float()
+        loss = ((per_tok * valid).sum(1) / valid.sum(1)).mean()
+        loss.backward()
         opt.step()
-        losses.append(total)
+        losses.append(loss.item())
     inj.delta = None
     return v.detach(), losses
 

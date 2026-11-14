@@ -68,6 +68,7 @@ def main():
     ap.add_argument("--model", required=True)
     ap.add_argument("--layer", type=int, required=True)
     ap.add_argument("--vectors", nargs="+", required=True, help="ベクトルのファイル。none は何も加えない")
+    ap.add_argument("--tag", default="")
     args = ap.parse_args()
     defs = json.loads((ROOT / "data" / "concepts_ja.json").read_text(encoding="utf-8"))["defs"]
     choice = json.loads((ROOT / "data" / "definition_choice_ja.json").read_text(encoding="utf-8"))["items"]
@@ -91,7 +92,7 @@ def main():
         m = sum(x["define_choice"]["margin"] for x in rows.values()) / n
         nll = sum(x["define_nll"] for x in rows.values()) / n
         print(f"{path}\n  define_choice acc={acc:.2f} both={both:.2f} m={m:+.2f}   define_nll={nll:.2f}", flush=True)
-    (ROOT / "results" / "e6_cross_use.json").write_text(
+    (ROOT / "results" / f"e6_cross_use{args.tag}.json").write_text(
         json.dumps(out, ensure_ascii=False, indent=1), encoding="utf-8"
     )
 
