@@ -1,0 +1,56 @@
+# 候補2の試験の記録。正本ではない。数値は tools/trial_candidate2.py による。
+# 語根の判定（modifier_roots.yaml）と値の品詞の判定は手作業。
+
+candidate:
+  id: candidate2
+  revises: candidate1
+  dimensions: [continuant, occurrent, modification]
+  claims:
+    k1: 原始的な最上位を持つのは持続と生起だけ。修飾の次元の住人は、すべて持続か生起の語根から作られる
+    k2: 修飾は、持続にも生起にも当てられる。当てた結果は、当てた相手と同じ次元にとどまる
+
+trial:
+  subject: ontology.yaml の実体 135個、関係 89個、分類の軸 62本
+  cross_dimension_uses:        # ある次元のものが、別の次元のものを作るのに使われた回数（使われる側 → 作られる側）
+    continuant: {to_continuant: 93, to_occurrent: 85, to_modification: 122}
+    occurrent: {to_continuant: 62, to_occurrent: 84, to_modification: 253}
+    modification: {to_continuant: 166, to_occurrent: 47, to_modification: 51}
+    number: {to_modification: 4}
+  largest_cross_dimension_flows:
+    - {flow: occurrent_to_modification, uses: 253, as: 関係が、修飾語の動詞の部分になる}
+    - {flow: modification_to_continuant, uses: 166, as: 修飾語を、持続の概念に当てる}
+    - {flow: continuant_to_modification, uses: 122, as: 持続の概念が、修飾語の中身（補語）になる}
+    - {flow: continuant_to_occurrent, uses: 85, as: 持続の概念が、関係の端になる}
+    - {flow: occurrent_to_continuant, uses: 62, as: 関係を名詞として見て、軸にする}
+    - {flow: modification_to_occurrent, uses: 47, as: 修飾語を、生起の概念に当てる}
+  modifier_like_values:        # 修飾語的な値 40種類の語根
+    from_occurrent_root: 34
+    from_continuant_root: 4
+    quantifier: 2
+    needs_nothing_else: 22
+    extra_ingredients: {not: 8, passive: 4, able: 4, quant: 4}
+
+findings:
+  f1:
+    about: k1
+    statement: 修飾語的な値 40種類のうち 38種類は、動詞か名詞の語根から作れる。残る2種類は数量詞
+    verdict: supported
+    note: 修飾の次元は実在するが、それ自身の原始概念を必要としない。制約 c1 と c5 は両立する
+  f2:
+    about: k2
+    statement: 修飾語は持続に 166回、生起に 47回当てられている
+    verdict: supported
+  f3:
+    statement: 3×3 の9マスすべてに使用例がある。対角以外で最も多いのは、生起→修飾、修飾→持続、持続→修飾、持続→生起の順
+    implies: 主な流れは「持続が関係の端になる → 関係が修飾語になる → 修飾語が概念に当たる」の一巡。候補1の一巡は主流としては正しく、分類の行き先が持続だけでない点が誤りだった
+  f4:
+    statement: 語根と補語のほかに必要なものは、否定 8、数量化 4、受け身 4、可能 4
+    implies: 否定と数量化は述語論理の結合子。受け身は、関係のどちらの端を開けるかの選択。可能だけが、まだ体系の中に置き場所がない
+  f5:
+    statement: 数が修飾語の中身になる例が 4回、数量詞が 2種類ある
+    implies: 数の置き場所が決まっていない
+
+open:
+  - 可能（〜できる）を、何として持つか
+  - 数と数量詞を、どの次元に置くか
+  - 関係・分類・修飾という3つの操作が、6方向の流れのどれに当たるか。f3 の一巡に対応する可能性があるが、未確定
