@@ -42,6 +42,9 @@ class Injector:
     def _hook(self, module, args, output):
         if self.delta is None:
             return None
+        h = output[0] if isinstance(output, tuple) else output
+        if h.shape[1] != self.delta.shape[1]:
+            return None  # 生成の2トークン目以降（キャッシュ利用時）は加えない
         if isinstance(output, tuple):
             return (output[0] + self.delta,) + tuple(output[1:])
         return output + self.delta
