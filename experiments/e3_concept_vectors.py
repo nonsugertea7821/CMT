@@ -106,19 +106,24 @@ def train_vector(r, inj, label, definition, steps, lr, objective="def", qa=None)
         lab_b[i, n_prompt:k] = torch.tensor(ids[n_prompt:])
         msk_b[i, :k, 0] = torch.tensor(mask, dtype=torch.float32)
     losses = []
+    chunk = 4  # 一度に流す例の数。浅い層ほど逆伝播が深くメモリを使うので、小分けにして勾配を足し合わせる
     for _ in range(steps):
         opt.zero_grad()
-        inj.delta = msk_b * v.view(1, 1, -1)
-        logits = r.model(ids_b, attention_mask=att_b).logits
-        # 例ごとの平均損失を、例の間で平均する（長い定義文が短い設問を圧倒しないように）
-        per_tok = torch.nn.functional.cross_entropy(
-            logits[:, :-1].reshape(-1, logits.shape[-1]), lab_b[:, 1:].reshape(-1), reduction="none"
-        ).view(n, -1)
-        valid = (lab_b[:, 1:] != -100).float()
-        loss = ((per_tok * valid).sum(1) / valid.sum(1)).mean()
-        loss.backward()
+        total = 0.0
+        for i in range(0, n, chunk):
+            sl = slice(i, i + chunk)
+            inj.delta = msk_b[sl] * v.view(1, 1, -1)
+            logits = r.model(ids_b[sl], attention_mask=att_b[sl]).logits
+            # 例ごとの平均損失を、例の間で平均する（長い定義文が短い設問を圧倒しないように）
+            per_tok = torch.nn.functional.cross_entropy(
+                logits[:, :-1].reshape(-1, logits.shape[-1]), lab_b[sl, 1:].reshape(-1), reduction="none"
+            ).view(logits.shape[0], -1)
+            valid = (lab_b[sl, 1:] != -100).float()
+            loss = ((per_tok * valid).sum(1) / valid.sum(1)).sum() / n
+            loss.backward()
+            total += loss.item()
         opt.step()
-        losses.append(loss.item())
+        losses.append(total)
     inj.delta = None
     return v.detach(), losses
 
