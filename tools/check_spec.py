@@ -20,7 +20,9 @@ claims.yaml
     すべて真でなければ検査は失敗する。
   hypotheses: {識別子: {s, p, o, scope, status, evidence, against, supersedes, note}}
     s と o はノード、p は動詞。s は p の始点、o は p の終点に来られるものでなければならない。
-    status と項目名は、ontology.yaml の records に書かれたものを使う。
+    項目名は、ontology.yaml の records に書かれたものを使う。
+    status は、根拠（evidence, against）から決まる。書かれた値と食い違うと、検査が失敗する。
+    limits は、根拠の弱さの理由。体系に書かれた種類から選ぶ。
   decisions: {識別子: {s, p, o, basis, status, supersedes, note}}
     p が is_a のときは、体系の上位・下位の関係そのもの。adopted なら、検査が構造から確かめる。
   backlog: [{id, tests, status}]
@@ -260,29 +262,43 @@ class Ontology:
             if len(ids) > 1:
                 err(f"動詞の式が同じ: {ids}")
 
+    def check_field(self, f, where, owner):
+        kinds = ("node", "position", "verb", "limits", "classifies", "values", "compares", "id")
+        if not any(k in f for k in kinds):
+            err(f"{where}: 何に当たるかが書かれていない")
+        extra = set(f) - set(kinds) - {"with", "neg", "number", "base", "derived", "subfields"}
+        if extra:
+            err(f"{where}: 知らない書き方 {extra}")
+        for k in ("node", "limits", "classifies", "with"):
+            if k in f and f[k] not in self.N:
+                err(f"{where}: {k} の {f[k]} が未定義")
+        if "position" in f and f["position"] not in ("from", "to"):
+            err(f"{where}: position は from か to")
+        if "verb" in f:
+            self.check_spot(f["verb"], where)
+        if "compares" in f and f.get("base") not in self.B:
+            err(f"{where}: 比べる関数のもとになる状態の関係 {f.get('base')} が未定義")
+        for val, nid in (f.get("values") or {}).items():
+            if nid not in self.N:
+                err(f"{where}: 値 {val} に当たるノード {nid} が未定義")
+            elif where.endswith(".status") and not self.is_a(nid, owner):
+                err(f"{where}: 値 {val} に当たる {nid} は、{owner} の下位でない")
+        if "derived" in f:
+            if set(f["derived"]) != set(f["values"]):
+                err(f"{where}: derived は、values のすべての値について書くこと")
+        for sid, sub in (f.get("subfields") or {}).items():
+            self.check_field(sub, f"{where}.{sid}", owner)
+
     def check_records(self):
         """記録の項目と値が、体系のノードに当たっていること。"""
         for rid, r in self.R.items():
             if r.get("is") not in self.N:
                 err(f"records.{rid}: is の {r.get('is')} が未定義")
                 continue
+            if "key" in r and r["key"] not in self.N:
+                err(f"records.{rid}: key の {r['key']} が未定義")
             for fid, f in r["fields"].items():
-                where = f"records.{rid}.{fid}"
-                if "node" in f and f["node"] not in self.N:
-                    err(f"{where}: ノード {f['node']} が未定義")
-                if "position" in f and f["position"] not in ("from", "to"):
-                    err(f"{where}: position は from か to")
-                if "verb" in f:
-                    self.check_spot(f["verb"], where)
-                    if "with" in f and f["with"] not in self.N:
-                        err(f"{where}: with の {f['with']} が未定義")
-                for val, nid in (f.get("values") or {}).items():
-                    if nid not in self.N:
-                        err(f"{where}: 値 {val} に当たるノード {nid} が未定義")
-                    elif fid == "status" and not self.is_a(nid, r["is"]):
-                        err(f"{where}: 値 {val} に当たる {nid} は、{r['is']} の下位でない")
-                if not any(k in f for k in ("node", "position", "verb", "values", "function", "id")):
-                    err(f"{where}: 何に当たるかが書かれていない")
+                self.check_field(f, f"records.{rid}.{fid}", r["is"])
 
     def fields(self, rid):
         return self.R[rid]["fields"]
@@ -335,6 +351,15 @@ def stat(rows, cond, name):
 
 
 def check_meaning(val, T, where):
+    sub = T.fields("measurements")["meaning"]["subfields"]
+    if isinstance(val, dict):
+        for k in val:
+            if k not in sub:
+                err(f"{where}: 項目 {k} は、体系の records.measurements.meaning に書かれていない")
+        for a in val.get("at", []):
+            for k in a:
+                if k not in sub["at"]["subfields"]:
+                    err(f"{where}: at の項目 {k} は、体系に書かれていない")
     if isinstance(val, str):
         if val not in T.N:
             err(f"{where}: ノード {val} が未定義")
@@ -357,6 +382,9 @@ def expand(M, T):
         for st in f["stats"]:
             if st not in T.values("measurements", "stats"):
                 err(f"measurements.{fid}: 統計量 {st} は、体系の records.measurements.stats に書かれていない")
+        for k in f.get("keyset", {}):
+            if k not in T.fields("measurements")["keyset"]["subfields"]:
+                err(f"measurements.{fid}: keyset の項目 {k} は、体系に書かれていない")
         axes = f["axes"]
         names = list(axes)
         keys = [list(axes[a]) if isinstance(axes[a], dict) else axes[a] for a in names]
@@ -391,8 +419,10 @@ def expand(M, T):
 
 
 # ---------------------------------------------------------------- 観察・仮説・決定
-def val_of(x, values, where):
+def val_of(x, values, where, number_ok=True):
     if isinstance(x, (int, float)):
+        if not number_ok:
+            err(f"{where}: 数は書けない")
         return float(x)
     if x not in values:
         err(f"{where}: 測定値 {x} が未定義")
@@ -411,10 +441,17 @@ def check_claims(C, values, T):
         for k in b:
             if k not in T.fields("backlog"):
                 err(f"backlog {b.get('id')}: 項目 {k} は、体系の records.backlog に書かれていない")
+    of = T.fields("observations")
+    gap = {}   # 観察ごとの、2つの値の差を問数に直したもの
     for oid, o in obs.items():
-        a, b = val_of(o["a"], values, oid), val_of(o["b"], values, oid)
+        if o["rel"] not in of["rel"]["compares"]:
+            err(f"{oid}: 比べ方 {o['rel']} は、体系の records.observations.rel に書かれていない")
+            continue
+        a, b = val_of(o["a"], values, oid, of["a"].get("number")), val_of(o["b"], values, oid, of["b"].get("number"))
         if a is None or b is None:
             continue
+        ns = [values[x][1] for x in (o["a"], o["b"]) if isinstance(x, str) and x in values]
+        gap[oid] = abs(a - b) * min(ns) if ns else None
         tol = o.get("tol", 0.005)
         holds = {"gt": a > b, "lt": a < b, "ge": a >= b - 1e-9, "le": a <= b + 1e-9,
                  "approx": abs(a - b) <= tol + 1e-9, "eq": abs(a - b) <= 0.005}[o["rel"]]
@@ -445,8 +482,21 @@ def check_claims(C, values, T):
 
     for hid, h in hyps.items():
         triple(h, hid)
-        if h["status"] not in T.values("hypotheses", "status"):
+        hf = T.fields("hypotheses")
+        if h["status"] not in hf["status"]["values"]:
             err(f"{hid}: status の {h['status']} は、体系の records.hypotheses.status に書かれていない")
+        else:   # 状態は、根拠の観察から決まる
+            have = sorted(k for k in ("evidence", "against") if h.get(k))
+            want = [st for st, need in hf["status"]["derived"].items() if sorted(need) == have]
+            if want != [h["status"]]:
+                err(f"{hid}: status は {h['status']} と書かれているが、根拠（{have or 'なし'}）からは {want[0]} になる")
+        for lim in h.get("limits", []):
+            if lim not in hf["limits"]["values"]:
+                err(f"{hid}: 留保 {lim} は、体系の records.hypotheses.limits に書かれていない")
+        if "one_item" in h.get("limits", []):
+            gs = [gap.get(r) for r in h.get("evidence", []) + h.get("against", [])]
+            if not any(g is not None and g <= 1.0 + 1e-6 for g in gs):
+                err(f"{hid}: 留保「差が1問以内」と書かれているが、根拠の観察に、差が1問以内のものがない")
         for t in h.get("scope", []):
             if t not in T.N:
                 err(f"{hid}: scope のノード {t} が未定義")
@@ -457,8 +507,6 @@ def check_claims(C, values, T):
         for r in h.get("supersedes", []):
             if r not in hyps:
                 err(f"{hid}: supersedes の仮説 {r} が未定義")
-        if h["status"] in ("supported", "partially_supported", "refuted", "inconclusive") and not (h.get("evidence") or h.get("against")):
-            err(f"{hid}: 根拠の観察がない")
     for did, d in decs.items():
         if d["status"] not in T.values("decisions", "status"):
             err(f"{did}: status の {d['status']} は、体系の records.decisions.status に書かれていない")

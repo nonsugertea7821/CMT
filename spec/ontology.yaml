@@ -290,20 +290,31 @@ nodes:
   v_withdraw: {ja: 取り下げる, is: occurrent, from: continuant, to: continuant, new_kind: role, before: ["depend(new, to)"], after: ["not depend(new, to)"]}
   supported: {ja: 支持されている, is: quality, of: [v_agree, to]}
   refuted: {ja: 反証されている, is: quality, of: [v_agree, to], neg: true}
-  measured: {ja: 測られている, is: quality, of: [v_measure, to]}
   unmeasured: {ja: 測られていない, is: quality, of: [v_measure, to], neg: true}
   adopted: {ja: 採用されている, is: quality, of: [v_adopt, to]}
   not_adopted: {ja: まだ採用されていない, is: quality, of: [v_adopt, to], neg: true}
   withdrawn: {ja: 取り下げられている, is: quality, of: [v_withdraw, to]}
+  identifier: {ja: 識別子, is: information_entity, mod: [{of: [v_express, from], with: controlled_language}, {of: [v_refer, from], with: concept_expression, at: {count: 1}}]}
+  result_row: {ja: 結果の行, is: information_entity, mod: [{of: [v_compose, from], with: result_file}, {of: [v_refer, from], with: question}]}
+  row_collection: {ja: 行の集まり, is: information_entity, mod: [{of: [v_compose, from], with: result_file}, {of: [v_compose, to], with: result_row, at: {count: {gt: 1}}}]}
+  condition_entry: {ja: 条件ごとの記録, is: information_entity, mod: [{of: [v_compose, from], with: result_row}, {of: [v_refer, from], with: verdict}]}
+  measurement_family: {ja: 測定値の族, is: information_entity, mod: [{of: [v_refer, from], with: measured_value, at: {count: {gt: 1}}}]}
+  tolerance: {ja: 許容幅, is: magnitude, mod: [{of: [v_depend, from], with: observation}]}
+  limitation: {ja: 留保, is: sentence, mod: [{of: [v_refer, from], with: hypothesis}, {of: [v_refer, from], with: observation}]}
+  lim_post_hoc: {ja: 結果を見たあとで分類した, is: limitation, mod: [{of: [v_come_after, from], with: observation}]}
+  lim_range: {ja: 測った範囲が限られる, is: limitation, mod: [{of: [v_refer, from], with: factor}]}
+  lim_one_item: {ja: 差が1問以内, is: limitation, mod: [{of: [v_refer, from], with: question, at: {count: 1}}]}
+  lim_unconverged: {ja: 学習が収束していない, is: limitation, mod: [{of: [v_refer, from], with: training_loss}]}
+  lim_single_case: {ja: 1例だけ, is: limitation, mod: [{of: [v_refer, from], with: observation, at: {count: 1}}]}
+  lim_unquantified: {ja: 数値化していない, is: limitation, mod: [{of: [v_refer, from], with: measured_value, neg: true}]}
   result_file: {ja: 結果ファイル, is: passage, mod: [{of: [v_compute, to]}, {of: [v_refer, from], with: experiment}]}
   measured_value: {ja: 測定値, is: magnitude, mod: [{of: [v_depend, from], with: result_file}]}
   logit_margin: {ja: ロジット差の平均, is: metric, mod: [{of: [v_measure, from], with: verdict}], axis: order}
   observation: {ja: 観察, is: sentence, mod: [{of: [v_refer, from], with: measured_value}], val: {truth: true}}
   hypothesis: {ja: 仮説, is: sentence, mod: [{of: [v_refer, from], with: occurrent}]}
   hyp_supported: {ja: 支持された仮説, is: hypothesis, mod: [supported]}
-  hyp_partially_supported: {ja: 部分的に支持された仮説, is: hypothesis, mod: [supported, refuted]}
+  hyp_mixed: {ja: 支持と反証の両方がある仮説, is: hypothesis, mod: [supported, refuted]}
   hyp_refuted: {ja: 反証された仮説, is: hypothesis, mod: [refuted]}
-  hyp_inconclusive: {ja: 測ったが決められない仮説, is: hypothesis, mod: [measured]}
   hyp_untested: {ja: 未検証の仮説, is: hypothesis, mod: [unmeasured]}
   decision: {ja: 決定, is: definition, mod: [{of: [v_compose, from], with: this_design}]}
   dec_adopted: {ja: 採用済みの決定, is: decision, mod: [adopted]}
@@ -317,35 +328,44 @@ nodes:
   item_queued: {ja: 未着手の項目, is: backlog_item, mod: [{of: [v_refer, from], with: performed_experiment, neg: true}]}
 
 # 体系が、自分の記録（claims.yaml と measurements.yaml）について述べる。
-# 記録の種類ごとに、それが何であるか（is）と、項目が何に当たるか（fields）を書く。
-#   node: その項目の中身は、このノードに当たるもの
+# 記録の種類ごとに、それが何であるか（is）、識別子の種類（key）、項目が何に当たるか（fields）を書く。
+#   node: その項目の中身は、このノードに当たるもの。number: true なら、数でもよい
 #   position: 仮説・決定が述べる動詞の、始点（from）か終点（to）
 #   verb: その記録が、この動詞のこの位置を占める。with は、もう一方の端に来るもの。neg は否定
+#   limits: その項目は、このノードに当たるものを限定する（修飾）
+#   classifies: その項目は、このノードに当たるものを分ける軸と値である（分類）
 #   values: 項目の値が、どのノードに当たるか
-#   function: 値は、真偽を返す関数
-#   id: 識別子
+#   compares: 項目の値は、2つの大きさを比べる関数。base は、もとになる状態の関係
+#   derived: その項目の値は、他の項目から決まる。検査が確かめる
+#   subfields: 入れ子の項目
 records:
   observations:
     is: observation
+    key: identifier
     fields:
-      rel: {function: true}
-      a: {node: measured_value}
-      b: {node: measured_value}
-      tol: {node: magnitude}
+      rel: {compares: [gt, lt, ge, le, approx, eq], base: after}
+      a: {node: measured_value, number: true}
+      b: {node: measured_value, number: true}
+      tol: {node: tolerance}
   hypotheses:
     is: hypothesis
+    key: identifier
     fields:
       s: {position: from}
       p: {node: occurrent}
       o: {position: to}
-      scope: {verb: [v_refer, from]}
-      status: {values: {supported: hyp_supported, partially_supported: hyp_partially_supported, refuted: hyp_refuted, inconclusive: hyp_inconclusive, untested: hyp_untested}}
+      scope: {limits: hypothesis}
+      status:
+        values: {supported: hyp_supported, refuted: hyp_refuted, mixed: hyp_mixed, untested: hyp_untested}
+        derived: {supported: [evidence], refuted: [against], mixed: [evidence, against], untested: []}
       evidence: {verb: [v_agree, to], with: observation}
       against: {verb: [v_agree, to], with: observation, neg: true}
+      limits: {values: {post_hoc: lim_post_hoc, range: lim_range, one_item: lim_one_item, unconverged: lim_unconverged, single_case: lim_single_case, unquantified: lim_unquantified}}
       supersedes: {verb: [v_substitute, from], with: hypothesis}
       note: {node: rendered_text}
   decisions:
     is: decision
+    key: identifier
     fields:
       s: {position: from}
       p: {node: occurrent}
@@ -357,17 +377,22 @@ records:
   backlog:
     is: backlog_item
     fields:
-      id: {id: true}
+      id: {node: identifier}
       tests: {verb: [v_refer, from], with: hypothesis}
       status: {values: {done: item_done, running: item_running, queued: item_queued}}
   measurements:
-    is: measured_value
+    is: measurement_family
+    key: identifier
     fields:
       file: {node: result_file}
-      at: {verb: [v_compose, from], with: result_file}
-      where: {verb: [v_compose, from], with: result_file}
-      keyset: {verb: [v_compose, from], with: result_file}
-      cond: {verb: [v_compose, from], with: result_file}
-      axes: {verb: [v_compose, from], with: result_file}
+      at: {node: row_collection}
+      where: {limits: result_row}
+      keyset: {limits: result_row, subfields: {axis: {node: identifier}, pattern: {node: identifier}}}
+      cond: {node: condition_entry}
+      axes: {classifies: measured_value}
       stats: {values: {acc: accuracy, both: order_robust_accuracy, margin: logit_margin, judged: accuracy, mean: magnitude}}
-      meaning: {verb: [v_refer, from]}
+      meaning:
+        verb: [v_refer, from]
+        subfields:
+          nodes: {node: continuant}
+          at: {classifies: measured_value, subfields: {axis: {node: identifier}, of: {node: continuant}, value: {node: magnitude, number: true}}}

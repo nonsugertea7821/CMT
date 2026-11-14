@@ -70,13 +70,13 @@ hypotheses:
     {s: prior_collision, p: v_lower, o: redefinition_following, scope: [model_4b, text_injection], status: supported,
      evidence: [o_e1_redef_below_new_adjacent, o_e1_glossary_redef_like_none, o_e1_glossary_sibling_full, o_e1_glossary_replaced_full, o_e5_opaque_above_adjacent_4b]}
   h_chain_length_lowers_following:
-    {s: chain_length, p: v_lower, o: redefinition_following, scope: [model_15b, text_injection, single_pass], status: partially_supported,
+    {s: chain_length, p: v_lower, o: redefinition_following, scope: [model_15b, text_injection, single_pass], status: supported, limits: [post_hoc],
      evidence: [o_type_text_rule_below_remap_15b, o_type_text_rule_like_remap_4b, o_e5_opaque_like_adjacent_15b],
      note: "規則型と付け替え型の分類は、結果の一部を見たあとで行った"}
   h_scratchpad_raises_rule_following:
     {s: scratchpad, p: v_raise, o: redefinition_following, scope: [model_15b, rule_redefinition, text_injection], status: untested}
   h_length_does_not_lower:
-    {s: context_length, p: v_not_lower, o: redefinition_following, scope: [model_4b, text_injection], status: supported,
+    {s: context_length, p: v_not_lower, o: redefinition_following, scope: [model_4b, text_injection], status: supported, limits: [range],
      evidence: [o_e1_filler_no_further_drop, o_e7_filler_after_no_drop, o_e7_head_of_55_no_drop],
      note: "試した文脈は最大約3500トークン"}
   h_distance_does_not_lower:
@@ -104,7 +104,7 @@ hypotheses:
     {s: semi_renaming, p: v_not_raise, o: redefinition_following, scope: [model_4b, text_injection], status: supported,
      evidence: [o_e5_semi_like_adjacent_4b]}
   h_opaque_renaming_lowers_control:
-    {s: opaque_renaming, p: v_lower, o: control_preservation, scope: [model_4b, text_injection], status: partially_supported,
+    {s: opaque_renaming, p: v_lower, o: control_preservation, scope: [model_4b, text_injection], status: supported, limits: [one_item],
      evidence: [o_e5_opaque_lowers_control_4b], note: "差は1問"}
   # --- 概念ベクトル ---
   h_vector_raises_following:
@@ -120,19 +120,19 @@ hypotheses:
     {s: format_variation, p: v_lower, o: control_preservation, scope: [model_15b, single_layer_vector], status: supported,
      evidence: [o_e3b_control_gain_lost_in_fill, o_e3b_control_back_to_none_in_fill]}
   h_vector_count_does_not_lower:
-    {s: vector_count, p: v_not_lower, o: redefinition_following, scope: [model_15b, single_layer_vector], status: supported,
+    {s: vector_count, p: v_not_lower, o: redefinition_following, scope: [model_15b, single_layer_vector], status: supported, limits: [range],
      evidence: [o_e3b_all_vectors_same_conflict, o_e3b_all_vectors_same_control], note: "24本まで"}
   h_unrelated_items_immune:
-    {s: unrelated_items, p: v_immune, o: single_layer_vector, scope: [model_15b], status: partially_supported,
+    {s: unrelated_items, p: v_immune, o: single_layer_vector, scope: [model_15b], status: mixed,
      evidence: [o_e3b_unrelated_accuracy_kept], against: [o_e3b_unrelated_margin_drops]}
   h_vector_raises_following_free:
     {s: single_layer_vector, p: v_raise, o: redefinition_following, scope: [model_15b, teacher_examples, fmt_free], status: supported,
      evidence: [o_e3c_vec_above_none_free, o_e3c_vec_ge_text_free]}
   h_layer14_lowers_control:
-    {s: layer_choice, p: v_lower, o: control_preservation, scope: [model_15b, single_layer_vector, teacher_both], status: partially_supported,
+    {s: layer_choice, p: v_lower, o: control_preservation, scope: [model_15b, single_layer_vector, teacher_both], status: supported, limits: [range],
      evidence: [o_e3_layer14_breaks_control, o_e3_layer14_same_conflict], note: "第8層と第14層の2点だけ"}
   h_rule_type_lowers_vector_following:
-    {s: rule_redefinition, p: v_lower, o: redefinition_following, scope: [model_15b, single_layer_vector], status: partially_supported,
+    {s: rule_redefinition, p: v_lower, o: redefinition_following, scope: [model_15b, single_layer_vector], status: mixed, limits: [post_hoc],
      evidence: [o_type_vec_rule_below_remap], against: [o_type_vec_rule_above_text_rule],
      note: "規則型でも文章より高い。分類は結果の一部を見たあとで行った"}
   # --- 使い方をまたぐ転移 ---
@@ -149,7 +149,7 @@ hypotheses:
     {s: usage_apply, p: v_not_transfer, o: usage_recite, scope: [model_15b, single_layer_vector], status: supported,
      evidence: [o_e6_examples_recital_harder]}
   h_apply_does_not_transfer_to_explain:
-    {s: usage_apply, p: v_not_transfer, o: usage_explain, scope: [model_15b, single_layer_vector], status: untested,
+    {s: usage_apply, p: v_not_transfer, o: usage_explain, scope: [model_15b, single_layer_vector], status: untested, limits: [unquantified],
      note: "生成された理由を目で読んだ観察のみ。数値化していない"}
   h_recite_coexists_with_apply:
     {s: usage_recite, p: v_coexist, o: usage_apply, scope: [model_15b, single_layer_vector, teacher_both], status: supported,
@@ -161,7 +161,7 @@ hypotheses:
     {s: single_layer_vector, p: v_not_raise, o: cross_usage_consistency, scope: [model_15b], status: supported,
      evidence: [o_e6_both_teachers_paraphrase_at_chance, o_e6_layer14_paraphrase_below_chance, o_e6_recite_paraphrase_at_chance, o_e6_examples_paraphrase_at_chance]}
   h_multi_layer_raises_consistency:
-    {s: multi_layer_vector, p: v_raise, o: cross_usage_consistency, scope: [model_15b], status: inconclusive,
+    {s: multi_layer_vector, p: v_raise, o: cross_usage_consistency, scope: [model_15b], status: mixed, limits: [unconverged],
      against: [o_e8_paraphrase_like_single_layer, o_e8_control_below_single_layer, o_e8_less_order_robust_than_single_layer],
      evidence: [o_e8_conflict_ge_single_layer],
      note: "学習が収束していない（o_e8_training_loss_above_single_layer）。24概念中16概念で損失が0.3を超えた。学習率を変えてやり直す必要がある"}
@@ -172,7 +172,7 @@ hypotheses:
     {s: model, p: v_speak, o: concept_expression, status: untested,
      note: "モデルに概念式を書かせ、検査が通るかで判定する"}
   h_modifier_transfers_to_unseen_genus:
-    {s: modifier, p: v_transfer, o: unseen_genus, scope: [model_15b, single_layer_vector], status: partially_supported,
+    {s: modifier, p: v_transfer, o: unseen_genus, scope: [model_15b, single_layer_vector], status: supported, limits: [unconverged, single_case],
      evidence: [o_e4_modifier_transfers_in_converged_pair, o_e4_pair1_training_failed],
      note: "3組のうち2組は学習が収束しなかった。収束した1組だけの結果"}
 
