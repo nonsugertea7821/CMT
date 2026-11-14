@@ -175,6 +175,8 @@ def check_ontology(O):
                     err(f"relations: {rid} の def の語 {tok} が未定義")
         elif not r.get("primitive"):
             err(f"relations: {rid} に def も primitive もない")
+        elif rid.count("_") > 1:
+            err(f"relations: 原子関係 {rid} の識別子にアンダースコアが2個以上ある（合成なので def で定義すること）")
     return E, R, A
 
 
