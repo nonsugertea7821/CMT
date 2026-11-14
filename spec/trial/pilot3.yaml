@@ -1,0 +1,85 @@
+# 候補2に沿った書き方の試し書き。正本ではない。tools/trial_pilot3.py で検査する。
+#
+# 書き方:
+#   ノードはすべて、持続体か生起体の下にある実体。説明文（gloss）を持つのは最上位の2つだけ。
+#   関係: 生起体のノードで、両端（from, to）を持つもの。動詞の語根に当たる。
+#   形:   form: [関係, 位置]。位置は from（-er: するもの）か to（-ee: されるもの）。その端に来るもの全体を指す。
+#   修飾語: of: [関係, 位置]。その位置を占めているという性質。質か実現可能体の下に置く。
+#   修飾: mod: [修飾語の識別子 | {of: [関係, 位置], with: 相手の端の中身, neg: 否定, quant: 数量化}]
+#         「その関係の、その位置を占めるもの」に限定する。with は、もう一方の端を固定する。
+nodes:
+  continuant: {ja: 持続体, gloss: 時間を通じて同一性を保って存在するもの}
+  occurrent: {ja: 生起体, gloss: 時間の中で起こり、展開するもの}
+
+  # ----- 関係（動詞の語根）。生起体で、両端を持つ -----
+  depend: {ja: 依存する, is: occurrent, from: continuant, to: continuant}
+  realize: {ja: 実現する, is: occurrent, from: occurrent, to: continuant}
+  compose: {ja: 部分になる, is: occurrent, from: continuant, to: continuant}
+  refer: {ja: 述べる, is: occurrent, from: continuant, to: any}
+  write: {ja: 書く, is: occurrent, from: continuant, to: continuant}
+  design: {ja: 設計する, is: occurrent, from: continuant, to: continuant}
+  learn: {ja: 学習する, is: occurrent, from: continuant, to: continuant}
+  agree: {ja: 一致する, is: occurrent, from: continuant, to: continuant}
+  compute: {ja: 計算する, is: occurrent, from: continuant, to: any}
+  freeze: {ja: 固定する, is: occurrent, from: continuant, to: continuant}
+  see: {ja: 見る, is: occurrent, from: continuant, to: continuant}
+  deliver: {ja: 届ける, is: occurrent, from: continuant, to: continuant}
+  judge: {ja: 判定する, is: occurrent, from: continuant, to: continuant}
+  answer: {ja: 答える, is: occurrent, from: continuant, to: continuant}
+  come_after: {ja: 後ろに置かれる, is: occurrent, from: continuant, to: continuant}
+  occur_in: {ja: で起こる, is: occurrent, from: occurrent, to: continuant}
+
+  # ----- BFO の区別。依存する・実現する という関係の位置で書く -----
+  dependent: {ja: 依存するもの, form: [depend, from]}
+  independent_continuant: {ja: 独立持続体, is: continuant, mod: [{of: [depend, from], neg: true}]}
+  specifically_dependent: {ja: 特定依存持続体, is: dependent, mod: [{of: [depend, from], quant: one}]}
+  generically_dependent: {ja: 汎用依存持続体, is: dependent, mod: [{of: [depend, from], quant: any}]}
+  realizable: {ja: 実現可能体, is: specifically_dependent, mod: [{of: [realize, to]}]}
+  quality: {ja: 質, is: specifically_dependent, mod: [{of: [realize, to], neg: true}]}
+
+  # ----- 修飾語。質か実現可能体の下に置く -----
+  frozen: {ja: 固定されている, is: quality, of: [freeze, to]}
+  learned: {ja: 学習で得られた, is: quality, of: [learn, to]}
+  visible: {ja: 見える, is: realizable, of: [see, to]}
+  hidden: {ja: 見えない, is: quality, of: [see, to], neg: true}
+
+  # ----- 情報と人工物 -----
+  information: {ja: 情報, is: generically_dependent, mod: [{of: [refer, from]}]}
+  artifact: {ja: 人工物, is: generically_dependent, mod: [{of: [refer, from], neg: true}]}
+  language: {ja: 言語, is: information, mod: [{of: [write, to]}]}
+  natural_language: {ja: 自然言語, is: language, mod: [{of: [design, to], neg: true}]}
+  programming_language: {ja: プログラミング言語, is: language, mod: [{of: [design, to]}]}
+  word: {ja: 語, is: information, mod: [{of: [write, from], with: natural_language}]}
+  model: {ja: モデル, is: artifact, mod: [{of: [compute, from]}]}
+  weights: {ja: 重み, is: artifact, mod: [{of: [compose, from], with: model}, learned]}
+  frozen_weights: {ja: 固定された重み, is: weights, mod: [frozen]}
+  layer: {ja: 層, is: artifact, mod: [{of: [compose, from], with: model}, {of: [compute, from]}]}
+  concept: {ja: 概念, is: occurrent, mod: [{of: [refer, to], with: word}]}
+  prior_meaning: {ja: 元の意味, is: realizable, mod: [learned, {of: [depend, from], with: weights}]}
+  common_word: {ja: 一般語, is: word, mod: [{of: [depend, to], with: prior_meaning}]}
+  new_word: {ja: 新しい語, is: word, mod: [{of: [depend, to], with: prior_meaning, neg: true}]}
+  definition: {ja: 定義, is: information, mod: [{of: [refer, from], with: concept}]}
+  redefinition: {ja: 再定義, is: definition, mod: [{of: [refer, from], with: common_word}, {of: [agree, from], with: prior_meaning, neg: true}]}
+  case: {ja: 事例, is: information, mod: [{of: [judge, to]}]}
+  verdict: {ja: 判定, is: information, mod: [{of: [answer, from], with: case}]}
+  application_example: {ja: 適用例, is: information, mod: [{of: [compose, to], with: case}, {of: [compose, to], with: verdict}]}
+  glossary: {ja: 用語集, is: information, mod: [{of: [compose, to], with: definition}]}
+  glossary_head: {ja: 用語集の先頭, is: definition, mod: [{of: [compose, from], with: glossary}, {of: [come_after, from], with: definition, neg: true}]}
+  context: {ja: 文脈, is: information, mod: [{of: [compute, to], with: model}]}
+
+  # ----- 接続手段。届ける の形と、その修飾 -----
+  deliverer: {ja: 届けるもの, form: [deliver, from]}
+  channel: {ja: 接続手段, is: deliverer, mod: [{of: [deliver, from], with: definition}]}
+  text_injection: {ja: 文章での注入, is: deliver, mod: [{of: [occur_in, from], with: context}]}
+  vector_injection: {ja: 概念ベクトル, is: deliver, mod: [{of: [occur_in, from], with: layer}]}
+  single_layer_vector: {ja: 単一層の概念ベクトル, is: deliver, mod: [{of: [occur_in, from], with: layer, quant: one}]}
+  multi_layer_vector: {ja: 複数層の概念ベクトル, is: deliver, mod: [{of: [occur_in, from], with: layer, quant: many}]}
+
+# 試し書きで書けなかったもの、無理があったもの
+unresolved:
+  - {what: 数, example: モデルのパラメータ数が15億である, why: 数を端の中身として置く場所がない}
+  - {what: 端が3つ以上ある関係, example: 届ける（誰が、何を、どこへ）, why: 関係の端は2つ。届け先は「で起こる」という別の関係に分けて書いた}
+  - {what: 結果や産物, example: 判定（判定することの結果）, why: 位置は from と to だけで、産物を指す位置がない。「事例に答えるもの」と書いて避けた}
+  - {what: 概念の定義, example: 概念＝語を使うときに走る推論, why: 「語が述べる生起体」としか書けず、推論であることが落ちた}
+  - {what: 関係の性質, example: 推移的である, why: 試し書きの範囲に含めていない}
+  - {what: 語の単位, example: 名前、文、文章, why: 試し書きの範囲に含めていない}
