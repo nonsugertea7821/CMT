@@ -53,6 +53,11 @@ def load(name):
 
 
 # ---------------------------------------------------------------- 概念の体系
+# 法則のうち、この検査が当てはめるもの / 実行の検査（run_spec.py）が当てはめるもの
+LAWS_HERE = {"truth_distinct", "inherit", "narrow", "acyclic"}
+LAWS_RUN = {"transitive", "antisymmetric", "asymmetric", "end_exists", "step", "frame", "halt"}
+
+
 class Ontology:
     def __init__(self, O):
         self.O = O
@@ -64,13 +69,37 @@ class Ontology:
         """文法の語が、体系のノードに当たっていること。体系の各節が、文法に書かれた語だけを使っていること。"""
         G = self.G
         for sect, words in G.items():
-            if sect == "logic":
-                continue
             if sect not in G["grammar"]:
                 err(f"grammar: 節 {sect} が、grammar.grammar に書かれていない")
             for w, nid in words.items():
                 if nid not in self.N:
                     err(f"grammar.{sect}.{w}: 当たるノード {nid} が未定義")
+        L = self.O["laws"]
+        for lid, l in L.items():
+            for k in l:
+                if k not in G["laws"]:
+                    err(f"laws.{lid}: 語 {k} が、grammar.laws に書かれていない")
+            if lid not in LAWS_HERE | LAWS_RUN:
+                err(f"laws.{lid}: 当てはめる検査がない")
+        for lid in (LAWS_HERE | LAWS_RUN) - set(L):
+            err(f"法則 {lid} を検査が当てはめているが、laws に書かれていない")
+        for bid, b in self.B.items():
+            for lid in b.get("laws", []):
+                if lid not in L:
+                    err(f"base.{bid}: 法則 {lid} が laws に書かれていない")
+        # 法則 truth_distinct
+        tv = self.AX["truth"]["values"]
+        if not (isinstance(tv, list) and len(tv) == 2 and tv[0] != tv[1]):
+            err("axes.truth: 値は2つで、互いに違うこと")
+        # 法則 acyclic
+        for nid in self.N:
+            x, seen = nid, set()
+            while x in self.N:
+                if x in seen:
+                    err(f"{nid}: 上位をたどると自分に戻る")
+                    break
+                seen.add(x)
+                x = self.N[x].get("extends")
         for k in self.O:
             if k not in G["system"]:
                 err(f"体系の節 {k} が、grammar.system に書かれていない")

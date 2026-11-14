@@ -23,11 +23,26 @@
 
 base:
   exists: {ja: 在る, arity: 1}
-  depend: {ja: 依存する, arity: 2, laws: [始点があれば終点もある]}
-  part: {ja: 部分である, arity: 2, laws: [推移的, 反対称的]}
-  after: {ja: 後ろにある, arity: 2, laws: [推移的, 非対称的]}
-  involve: {ja: 生起体に持続体が関わる, arity: 2, laws: [始点があれば終点もある]}
+  depend: {ja: 依存する, arity: 2, laws: [end_exists]}
+  part: {ja: 部分である, arity: 2, laws: [transitive, antisymmetric]}
+  after: {ja: 後ろにある, arity: 2, laws: [transitive, asymmetric]}
+  involve: {ja: 生起体に持続体が関わる, arity: 2, laws: [end_exists]}
   refer: {ja: について述べる, arity: 2, system_act: true}
+
+# 法則（公理）。体系が、証明なしに置くもの。ja は表示で、当てはめるのは実行器。
+# of は、法則が掛かる節。どの法則も、検査（check_spec.py）か実行の検査（run_spec.py）のどちらかが当てはめる。
+laws:
+  transitive: {ja: 推移的, of: base}
+  antisymmetric: {ja: 反対称的, of: base}
+  asymmetric: {ja: 非対称的, of: base}
+  end_exists: {ja: 始点が在れば終点も在る, of: base}
+  truth_distinct: {ja: 真偽の値は2つで互いに違う, of: axes}
+  inherit: {ja: 下位は上位の端を引き継ぐ, of: nodes}
+  narrow: {ja: 下位は上位を狭めることしかできない, of: nodes}
+  acyclic: {ja: 定義は自分自身を参照しない, of: nodes}
+  step: {ja: 前の状態が成り立つとき後の状態に置き換える, of: state}
+  frame: {ja: 動詞が触れなかった文は変わらない, of: state}
+  halt: {ja: 当てはまる動詞がなければ止まる, of: state}
 
 axes:
   count: {ja: 個数, from: any, values: number}   # どの関係についても「いくつと結ばれるか」を見られる
@@ -393,6 +408,23 @@ nodes:
   grammar_rule: {ja: 文法の規則, extends: sentence, mod: [{of: [v_refer, from], with: expression_part}]}
   grammar_description: {ja: 文法の記述, extends: information_entity, mod: [{of: [v_compose, from], with: system}, {of: [v_compose, to], with: grammar_rule, at: {count: {gt: 1}}}]}
 
+  # ===== 述語論理の語。「について述べる」の限定として書く。区別は法則 truth_distinct が与える =====
+  negation: {ja: 否定, extends: sentence, mod: [{of: [v_refer, from], with: sentence}], cmp: [{axis: truth, a: negation, b: sentence, rel: differ}]}
+  existential: {ja: 存在の数量化, extends: sentence, mod: [{of: [v_refer, from], with: participant, at: {count: {ge: 1}}}]}
+  universal: {ja: 全称の数量化, extends: negation, mod: [{of: [v_refer, from], with: existential}]}
+  range_value: {ja: 範囲の判定, extends: value, mod: [{of: [v_not_before, from]}, {of: [v_not_after, from]}]}
+  # ===== 個体の層と実行 =====
+  v_belong: {ja: 属する, extends: p, to: kind}
+  individual: {ja: 個体, form: [v_belong, from]}
+  fact: {ja: 個体についての文, extends: sentence, mod: [{of: [v_refer, from], with: individual}]}
+  state: {ja: 個体の状態, extends: information_entity, mod: [{of: [v_compose, to], with: fact}]}
+  rewrite_rule: {ja: 書き換えの規則, extends: definition, mod: [{of: [v_refer, from], with: after_part}]}
+  v_execute: {ja: 実行する, extends: occurrent, from: continuant, to: state, new_kind: state,
+              before: ["not exists(new)"], after: ["exists(new)", "after(new, to)"]}
+  executor: {ja: 実行器, extends: role, mod: [{of: [v_depend, from], with: rewrite_rule}, {of: [v_execute, from]}]}
+  halted_state: {ja: 止まった状態, extends: state, mod: [{of: [v_execute, to], neg: true}]}
+  run: {ja: 実行の記録, extends: information_entity, mod: [{of: [v_refer, from], with: v_execute}]}
+
 # 体系が、自分の記録（claims.yaml と measurements.yaml）について述べる。
 # 記録の種類ごとに、それが何であるか（is）、識別子の種類（key）、持てる項目（fields）を書く。
 # 項目名は、ノードの識別子そのもの。その項目の中身は、そのノードに当たるものである。
@@ -408,9 +440,8 @@ records:
 
 # 体系が、自分の書き方（文法）について述べる。
 # 体系制御言語の文法の語が、どのノードに当たるかを書く。検査は、ここに書かれた語だけを文法の語として受け付ける。
-# logic は、述語論理の語。体系の中では定義しない。
 grammar:
-  system: {base: state_relation, axes: axis, nodes: concept_expression, records: record_description, grammar: grammar_description}
+  system: {base: state_relation, axes: axis, nodes: concept_expression, records: record_description, grammar: grammar_description, laws: law}
   node: {ja: display_word, gloss: gloss_text, extends: genus_part, from: from_part, to: to_part, new_kind: third_part,
          holds: holds_part, before: before_part, after: after_part, form: form_part, of: position_part, neg: negation_part,
          mod: modification_part, val: val_part, cmp: comparison_part, axis: axis}
@@ -421,9 +452,12 @@ grammar:
   records: {is: kind, key: identifier, fields: field}
   grammar: {system: system, node: concept_expression, mod: modification_part, cmp: comparison_part, base: state_relation, axes: axis,
             records: record_description, grammar: grammar_rule, position: position_part, rel: comparison_result,
-            function: value, values: value, logic: law}
+            function: value, values: value, logic: law, laws: law, run: run}
   position: {from: s, to: o, new: third_participant}
   rel: {same: same, differ: differ}
   function: {gt: v_come_after, ge: v_not_before, lt: v_come_before, le: v_not_after}
   values: {number: magnitude, literal: word}
-  logic: [not, all, any, between]   # true と false は、真偽の軸（axes.truth）の値
+  logic: {not: negation, all: universal, any: existential, between: range_value}   # true と false は、真偽の軸の値
+  laws: {ja: display_word, of: system}
+  # 実行の記録（spec/runs/*.yaml）の書き方
+  run: {individuals: individual, facts: fact, steps: v_execute, expect: fact, halted: halted_state}

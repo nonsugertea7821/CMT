@@ -1,0 +1,170 @@
+"""実行の記録（spec/runs/*.yaml）を、体系の書き換え規則に照らして検査する。
+
+実行器は役割で、担い手は何でもよい（LLM、プログラム、機械）。この検査は、担い手が書いた実行の記録が
+体系に適合しているかを確かめる。当てはめる法則は、ontology.yaml の laws のうち次のもの:
+  transitive / antisymmetric / asymmetric / end_exists  状態が、基礎の関係の法則を満たす
+  step   動詞の before がすべて成り立つときだけ適用でき、after に置き換わる
+  frame  after に書かれていない文は変わらない
+  halt   halted: true と書かれた記録では、当てはまる動詞がもうない
+
+記録の書き方:
+  individuals: {個体: 種類}
+  facts: ["関係(個体, 個体)", ...]         最初の状態。書かれていない文は成り立っていない
+  steps: [[動詞, {from: 個体, to: 個体, new: 個体}], ...]
+  expect: ["関係(...)", "not 関係(...)"]   最後の状態で成り立つこと
+  halted: true | false
+"""
+import itertools
+import re
+import sys
+from pathlib import Path
+
+import yaml
+
+sys.path.insert(0, str(Path(__file__).parent))
+from check_spec import Ontology, load  # noqa: E402
+
+ROOT = Path(__file__).parent.parent / "spec"
+
+
+def parse(f):
+    m = re.fullmatch(r"(not )?(\w+)\((\w+)(?:, (\w+))?\)", f)
+    if not m:
+        raise ValueError(f"式 {f} が読めない")
+    return bool(m.group(1)), m.group(2), tuple(a for a in m.groups()[2:] if a)
+
+
+class Machine:
+    def __init__(self, T, run, name):
+        self.T, self.name, self.errors = T, name, []
+        self.ind = run["individuals"]
+        for i, k in self.ind.items():
+            if k not in T.N:
+                self.err(f"個体 {i} の種類 {k} が未定義")
+        self.facts = set()
+        for f in run.get("facts", []):
+            neg, rel, args = parse(f)
+            if neg:
+                self.err(f"最初の状態に否定 {f} は書かない（書かれていない文は成り立っていない）")
+            self.fact_ok(rel, args, f)
+            self.facts.add((rel, args))
+
+    def err(self, m):
+        self.errors.append(f"{self.name}: {m}")
+
+    def fact_ok(self, rel, args, f):
+        if rel not in self.T.B or len(args) != self.T.B[rel]["arity"] or any(a not in self.ind for a in args):
+            self.err(f"式 {f} が、基礎の関係か個体に合わない")
+
+    def holds(self, neg, rel, args):
+        return ((rel, args) in self.facts) != neg
+
+    def check_laws(self, where):
+        for rel, b in self.T.B.items():
+            pairs = {a for r, a in self.facts if r == rel}
+            laws = b.get("laws", [])
+            if "transitive" in laws:  # 推移的に閉じてから見る
+                changed = True
+                while changed:
+                    new = {(a, d) for a, b2 in pairs for c, d in pairs if b2 == c} - pairs
+                    pairs |= new
+                    changed = bool(new)
+            if "asymmetric" in laws:
+                for a, b2 in pairs:
+                    if (b2, a) in pairs:
+                        self.err(f"{where}: {rel}({a}, {b2}) が法則 asymmetric に反する")
+            if "antisymmetric" in laws:
+                for a, b2 in pairs:
+                    if a != b2 and (b2, a) in pairs:
+                        self.err(f"{where}: {rel}({a}, {b2}) が法則 antisymmetric に反する")
+            if "end_exists" in laws:
+                for a, b2 in pairs:
+                    if ("exists", (a,)) in self.facts and ("exists", (b2,)) not in self.facts:
+                        self.err(f"{where}: {rel}({a}, {b2}) が法則 end_exists に反する（{b2} が在らない）")
+
+    def bind(self, verb, b):
+        """束縛が、動詞の端の種類に合うか。合えば、before と after の式を個体で書いたものを返す。"""
+        T, n = self.T, None
+        x = verb
+        while x in T.N and not ("before" in T.N[x] or "holds" in T.N[x]):
+            x = T.N[x].get("extends")
+        n = T.N.get(x)
+        if n is None or "before" not in n:
+            return None, f"{verb} は動的な動詞でない"
+        for pos in ("from", "to"):
+            if pos not in b or b[pos] not in self.ind:
+                return None, f"{pos} の個体がない"
+            if not T.is_a(self.ind[b[pos]], T.end(verb, pos)):
+                return None, f"{pos} の {b[pos]}（{self.ind[b[pos]]}）は {T.end(verb, pos)} でない"
+        if "new" in b:
+            kind = n.get("new_kind", "any")
+            if b["new"] not in self.ind or not T.is_a(self.ind[b["new"]], kind):
+                return None, f"new の {b.get('new')} は {kind} でない"
+        out = {}
+        for key in ("before", "after"):
+            out[key] = []
+            for f in n.get(key, []):
+                neg, rel, args = parse(f)
+                if any(a not in b for a in args):
+                    return None, f"式 {f} の位置に個体が束縛されていない"
+                out[key].append((neg, rel, tuple(b[a] for a in args)))
+        return out, None
+
+    def step(self, verb, b, where):
+        r, why = self.bind(verb, b)
+        if r is None:
+            return self.err(f"{where}: {why}")
+        for neg, rel, args in r["before"]:  # 法則 step
+            if not self.holds(neg, rel, args):
+                return self.err(f"{where}: before の {'not ' if neg else ''}{rel}{args} が成り立っていない")
+        for neg, rel, args in r["after"]:  # 法則 frame: ここに出てこない文には触れない
+            (self.facts.discard if neg else self.facts.add)((rel, args))
+        self.check_laws(where)
+
+    def applicable(self):
+        """当てはまって、状態を変える動詞と束縛を列挙する。"""
+        T, found = self.T, []
+        for vid, n in T.N.items():
+            if "before" not in n:
+                continue
+            poss = ["from", "to"] + (["new"] if any("new" in f for f in n["before"] + n["after"]) else [])
+            for combo in itertools.permutations(self.ind, len(poss)):
+                b = dict(zip(poss, combo))
+                r, _ = self.bind(vid, b)
+                if r and all(self.holds(*x) for x in r["before"]) and not all(self.holds(*x) for x in r["after"]):
+                    found.append((vid, b))
+        return found
+
+
+def main():
+    T = Ontology(load("ontology.yaml"))
+    G = T.G["run"]
+    errors, n_steps, files = [], 0, sorted((ROOT / "runs").glob("*.yaml"))
+    for path in files:
+        run = yaml.safe_load(path.read_text(encoding="utf-8"))
+        for k in run:
+            if k not in G:
+                errors.append(f"{path.name}: 語 {k} が、grammar.run に書かれていない")
+        m = Machine(T, run, path.name)
+        m.check_laws("最初の状態")
+        for i, (verb, b) in enumerate(run.get("steps", [])):
+            m.step(verb, b, f"steps[{i}] {verb}")
+            n_steps += 1
+        for f in run.get("expect", []):
+            if not m.holds(*parse(f)):
+                m.err(f"expect の {f} が、最後の状態で成り立っていない")
+        if "halted" in run:  # 法則 halt
+            rest = m.applicable()
+            if run["halted"] != (not rest):
+                m.err(f"halted: {run['halted']} と書かれているが、当てはまる動詞は {len(rest)} 個（例: {rest[:1]}）")
+        errors += m.errors
+    if errors:
+        print(f"実行の検査に失敗: {len(errors)} 件")
+        for e in errors[:40]:
+            print(" -", e)
+        sys.exit(1)
+    print(f"実行の検査に成功: 実行の記録 {len(files)}、歩数 {n_steps}")
+
+
+if __name__ == "__main__":
+    main()
