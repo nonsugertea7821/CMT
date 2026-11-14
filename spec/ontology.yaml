@@ -286,20 +286,55 @@ nodes:
   v_rely: {ja: に頼る, is: occurrent, from: any, to: any, holds: ["depend(from, to)"]}
 
   # ===== 体系が、自分の記録について述べるための概念 =====
+  # 記録の項目名は、ここにあるノードの識別子そのもの。
+  # ----- 文の骨組み: 何が（s）、どう関係し（p）、何に（o） -----
+  p: {ja: 関係づける, is: occurrent, from: any, to: any, holds: ["exists(from)", "exists(to)"]}
+  s: {ja: 始点に来るもの, form: [p, from]}
+  o: {ja: 終点に来るもの, form: [p, to]}
+  # ----- 大きさを比べる動詞。「後ろにある」が、より大きい、に当たる -----
+  v_come_before: {ja: 前に置かれる, is: occurrent, from: continuant, to: continuant, holds: ["after(to, from)"]}
+  v_not_before: {ja: 前には置かれない, is: occurrent, from: continuant, to: continuant, holds: ["not after(to, from)"]}
+  v_not_after: {ja: 後ろには置かれない, is: occurrent, from: continuant, to: continuant, holds: ["not after(from, to)"]}
+  v_level: {ja: 同じ位置にある, is: occurrent, from: continuant, to: continuant, holds: ["not after(from, to)", "not after(to, from)"]}
+  v_near: {ja: ほぼ同じ位置にある, is: occurrent, from: continuant, to: continuant, new_kind: tolerance, holds: ["not after(from, to)", "not after(to, from)"]}
+  # ----- 採用と取り下げ -----
   v_adopt: {ja: 採用する, is: occurrent, from: continuant, to: continuant, new_kind: role, before: ["not depend(new, to)"], after: ["depend(new, to)"]}
   v_withdraw: {ja: 取り下げる, is: occurrent, from: continuant, to: continuant, new_kind: role, before: ["depend(new, to)"], after: ["not depend(new, to)"]}
-  supported: {ja: 支持されている, is: quality, of: [v_agree, to]}
-  refuted: {ja: 反証されている, is: quality, of: [v_agree, to], neg: true}
-  unmeasured: {ja: 測られていない, is: quality, of: [v_measure, to], neg: true}
   adopted: {ja: 採用されている, is: quality, of: [v_adopt, to]}
   not_adopted: {ja: まだ採用されていない, is: quality, of: [v_adopt, to], neg: true}
   withdrawn: {ja: 取り下げられている, is: quality, of: [v_withdraw, to]}
+  # ----- 識別子と結果ファイル -----
   identifier: {ja: 識別子, is: information_entity, mod: [{of: [v_express, from], with: controlled_language}, {of: [v_refer, from], with: concept_expression, at: {count: 1}}]}
+  pattern: {ja: 識別子の雛形, is: information_entity, mod: [{of: [v_refer, from], with: identifier, at: {count: {gt: 1}}}]}
+  result_file: {ja: 結果ファイル, is: passage, mod: [{of: [v_compute, to]}, {of: [v_refer, from], with: experiment}]}
   result_row: {ja: 結果の行, is: information_entity, mod: [{of: [v_compose, from], with: result_file}, {of: [v_refer, from], with: question}]}
   row_collection: {ja: 行の集まり, is: information_entity, mod: [{of: [v_compose, from], with: result_file}, {of: [v_compose, to], with: result_row, at: {count: {gt: 1}}}]}
+  row_filter: {ja: 行の限定, is: sentence, mod: [{of: [v_refer, from], with: result_row}]}
+  row_keys: {ja: 行の識別子による限定, is: row_filter, mod: [{of: [v_refer, from], with: identifier}]}
   condition_entry: {ja: 条件ごとの記録, is: information_entity, mod: [{of: [v_compose, from], with: result_row}, {of: [v_refer, from], with: verdict}]}
-  measurement_family: {ja: 測定値の族, is: information_entity, mod: [{of: [v_refer, from], with: measured_value, at: {count: {gt: 1}}}]}
+  # ----- 測定値 -----
+  measured_value: {ja: 測定値, is: magnitude, mod: [{of: [v_depend, from], with: result_file}]}
+  mean_value: {ja: 平均, is: magnitude, mod: [{of: [v_depend, from], with: measured_value, at: {count: {gt: 1}}}]}
   tolerance: {ja: 許容幅, is: magnitude, mod: [{of: [v_depend, from], with: observation}]}
+  logit_margin: {ja: ロジット差の平均, is: metric, mod: [{of: [v_measure, from], with: verdict}], axis: order}
+  judged_accuracy: {ja: 自由生成での正答率, is: metric, mod: [{of: [v_measure, from], with: verdict}, {of: [v_depend, from], with: fmt_free}], axis: ratio}
+  measurement_family: {ja: 測定値の族, is: information_entity, mod: [{of: [v_refer, from], with: measured_value, at: {count: {gt: 1}}}]}
+  axis: {ja: 軸, is: information_entity, mod: [{of: [v_refer, from], with: p}, {of: [v_compose, to], with: value}]}
+  value: {ja: 値, is: information_entity, mod: [{of: [v_compose, from], with: axis}]}
+  meaning: {ja: 測定値の意味づけ, is: sentence, mod: [{of: [v_refer, from], with: measured_value}, {of: [v_refer, from], with: identifier}]}
+  # ----- 観察・仮説・決定・残り項目 -----
+  observation: {ja: 観察, is: sentence, mod: [{of: [v_refer, from], with: measured_value}], val: {truth: true}}
+  hypothesis: {ja: 仮説, is: sentence, mod: [{of: [v_refer, from], with: occurrent}]}
+  evidence: {ja: 支持する観察, is: observation, mod: [{of: [v_agree, from], with: hypothesis}], cmp: [{axis: truth, a: observation, b: hypothesis, rel: same}]}
+  against: {ja: 反する観察, is: observation, mod: [{of: [v_agree, from], with: hypothesis}], cmp: [{axis: truth, a: observation, b: hypothesis, rel: differ}]}
+  hyp_supported: {ja: 支持された仮説, is: hypothesis, mod: [{of: [v_agree, to], with: evidence}, {of: [v_agree, to], with: against, neg: true}]}
+  hyp_refuted: {ja: 反証された仮説, is: hypothesis, mod: [{of: [v_agree, to], with: evidence, neg: true}, {of: [v_agree, to], with: against}]}
+  hyp_mixed: {ja: 支持と反証の両方がある仮説, is: hypothesis, mod: [{of: [v_agree, to], with: evidence}, {of: [v_agree, to], with: against}]}
+  hyp_untested: {ja: 未検証の仮説, is: hypothesis, mod: [{of: [v_agree, to], with: evidence, neg: true}, {of: [v_agree, to], with: against, neg: true}]}
+  status: {ja: 状態, is: quality, mod: [{of: [v_depend, from], with: sentence}]}
+  scope: {ja: 適用範囲, is: role, mod: [{of: [v_depend, from], with: experiment_protocol}, {of: [v_depend, from], with: hypothesis}]}
+  note: {ja: 注記, is: passage, mod: [{of: [v_express, from], with: natural_language}, {of: [v_refer, from], with: sentence}]}
+  supersedes: {ja: 置き換えられた文, is: sentence, mod: [withdrawn]}
   limitation: {ja: 留保, is: sentence, mod: [{of: [v_refer, from], with: hypothesis}, {of: [v_refer, from], with: observation}]}
   lim_post_hoc: {ja: 結果を見たあとで分類した, is: limitation, mod: [{of: [v_come_after, from], with: observation}]}
   lim_range: {ja: 測った範囲が限られる, is: limitation, mod: [{of: [v_refer, from], with: factor}]}
@@ -307,92 +342,28 @@ nodes:
   lim_unconverged: {ja: 学習が収束していない, is: limitation, mod: [{of: [v_refer, from], with: training_loss}]}
   lim_single_case: {ja: 1例だけ, is: limitation, mod: [{of: [v_refer, from], with: observation, at: {count: 1}}]}
   lim_unquantified: {ja: 数値化していない, is: limitation, mod: [{of: [v_refer, from], with: measured_value, neg: true}]}
-  result_file: {ja: 結果ファイル, is: passage, mod: [{of: [v_compute, to]}, {of: [v_refer, from], with: experiment}]}
-  measured_value: {ja: 測定値, is: magnitude, mod: [{of: [v_depend, from], with: result_file}]}
-  logit_margin: {ja: ロジット差の平均, is: metric, mod: [{of: [v_measure, from], with: verdict}], axis: order}
-  observation: {ja: 観察, is: sentence, mod: [{of: [v_refer, from], with: measured_value}], val: {truth: true}}
-  hypothesis: {ja: 仮説, is: sentence, mod: [{of: [v_refer, from], with: occurrent}]}
-  hyp_supported: {ja: 支持された仮説, is: hypothesis, mod: [supported]}
-  hyp_mixed: {ja: 支持と反証の両方がある仮説, is: hypothesis, mod: [supported, refuted]}
-  hyp_refuted: {ja: 反証された仮説, is: hypothesis, mod: [refuted]}
-  hyp_untested: {ja: 未検証の仮説, is: hypothesis, mod: [unmeasured]}
   decision: {ja: 決定, is: definition, mod: [{of: [v_compose, from], with: this_design}]}
   dec_adopted: {ja: 採用済みの決定, is: decision, mod: [adopted]}
   dec_tentative: {ja: 暫定の決定, is: decision, mod: [not_adopted]}
   dec_withdrawn: {ja: 取り下げた決定, is: decision, mod: [withdrawn]}
+  basis: {ja: 根拠となる仮説, is: hypothesis, mod: [{of: [v_depend, to], with: decision}]}
   performed_experiment: {ja: 行われた実験, is: experiment, mod: [{of: [v_perform, to]}]}
   measured_experiment: {ja: 結果ファイルが述べる実験, is: experiment, mod: [{of: [v_refer, to], with: result_file}]}
   backlog_item: {ja: 残り項目, is: sentence, mod: [{of: [v_refer, from], with: experiment}]}
+  tests: {ja: 確かめる仮説, is: hypothesis, mod: [{of: [v_refer, to], with: backlog_item}]}
   item_done: {ja: 済んだ項目, is: backlog_item, mod: [{of: [v_refer, from], with: measured_experiment}]}
   item_running: {ja: 実行中の項目, is: backlog_item, mod: [{of: [v_refer, from], with: performed_experiment}, {of: [v_refer, from], with: measured_experiment, neg: true}]}
   item_queued: {ja: 未着手の項目, is: backlog_item, mod: [{of: [v_refer, from], with: performed_experiment, neg: true}]}
 
 # 体系が、自分の記録（claims.yaml と measurements.yaml）について述べる。
-# 記録の種類ごとに、それが何であるか（is）、識別子の種類（key）、項目が何に当たるか（fields）を書く。
-#   node: その項目の中身は、このノードに当たるもの。number: true なら、数でもよい
-#   position: 仮説・決定が述べる動詞の、始点（from）か終点（to）
-#   verb: その記録が、この動詞のこの位置を占める。with は、もう一方の端に来るもの。neg は否定
-#   limits: その項目は、このノードに当たるものを限定する（修飾）
-#   classifies: その項目は、このノードに当たるものを分ける軸と値である（分類）
-#   values: 項目の値が、どのノードに当たるか
-#   compares: 項目の値は、2つの大きさを比べる関数。base は、もとになる状態の関係
-#   derived: その項目の値は、他の項目から決まる。検査が確かめる
-#   subfields: 入れ子の項目
+# 記録の種類ごとに、それが何であるか（is）、識別子の種類（key）、持てる項目（fields）を書く。
+# 項目名は、ノードの識別子そのもの。その項目の中身は、そのノードに当たるものである。
 records:
-  observations:
-    is: observation
-    key: identifier
-    fields:
-      rel: {compares: [gt, lt, ge, le, approx, eq], base: after}
-      a: {node: measured_value, number: true}
-      b: {node: measured_value, number: true}
-      tol: {node: tolerance}
-  hypotheses:
-    is: hypothesis
-    key: identifier
-    fields:
-      s: {position: from}
-      p: {node: occurrent}
-      o: {position: to}
-      scope: {limits: hypothesis}
-      status:
-        values: {supported: hyp_supported, refuted: hyp_refuted, mixed: hyp_mixed, untested: hyp_untested}
-        derived: {supported: [evidence], refuted: [against], mixed: [evidence, against], untested: []}
-      evidence: {verb: [v_agree, to], with: observation}
-      against: {verb: [v_agree, to], with: observation, neg: true}
-      limits: {values: {post_hoc: lim_post_hoc, range: lim_range, one_item: lim_one_item, unconverged: lim_unconverged, single_case: lim_single_case, unquantified: lim_unquantified}}
-      supersedes: {verb: [v_substitute, from], with: hypothesis}
-      note: {node: rendered_text}
-  decisions:
-    is: decision
-    key: identifier
-    fields:
-      s: {position: from}
-      p: {node: occurrent}
-      o: {position: to}
-      status: {values: {adopted: dec_adopted, tentative: dec_tentative, withdrawn: dec_withdrawn}}
-      basis: {verb: [v_depend, from], with: hypothesis}
-      supersedes: {verb: [v_substitute, from], with: decision}
-      note: {node: rendered_text}
-  backlog:
-    is: backlog_item
-    fields:
-      id: {node: identifier}
-      tests: {verb: [v_refer, from], with: hypothesis}
-      status: {values: {done: item_done, running: item_running, queued: item_queued}}
-  measurements:
-    is: measurement_family
-    key: identifier
-    fields:
-      file: {node: result_file}
-      at: {node: row_collection}
-      where: {limits: result_row}
-      keyset: {limits: result_row, subfields: {axis: {node: identifier}, pattern: {node: identifier}}}
-      cond: {node: condition_entry}
-      axes: {classifies: measured_value}
-      stats: {values: {acc: accuracy, both: order_robust_accuracy, margin: logit_margin, judged: accuracy, mean: magnitude}}
-      meaning:
-        verb: [v_refer, from]
-        subfields:
-          nodes: {node: continuant}
-          at: {classifies: measured_value, subfields: {axis: {node: identifier}, of: {node: continuant}, value: {node: magnitude, number: true}}}
+  observations: {is: observation, key: identifier, fields: [s, p, o, tolerance]}
+  hypotheses: {is: hypothesis, key: identifier, fields: [s, p, o, scope, status, evidence, against, limitation, supersedes, note]}
+  decisions: {is: decision, key: identifier, fields: [s, p, o, status, basis, supersedes, note]}
+  backlog: {is: backlog_item, fields: [identifier, tests, status]}
+  measurements: {is: measurement_family, key: identifier, fields: [result_file, row_collection, row_filter, row_keys, condition_entry, axis, metric, meaning]}
+  row_keys: {is: row_keys, fields: [axis, pattern]}
+  meaning: {is: meaning, fields: [identifier, value]}
+  value: {is: value, fields: [axis, s, o]}

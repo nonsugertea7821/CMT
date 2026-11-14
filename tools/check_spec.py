@@ -9,24 +9,16 @@ ontology.yaml  概念の体系。書き方はそのファイルの冒頭を見�
   records: 体系が、自分の記録（claims.yaml, measurements.yaml）について述べる部分。
         記録の項目名と、status や統計量の値は、ここに書かれたものしか使えない。
 
-measurements.yaml  測定値。値は experiments/results/ から計算する。手で書いた数値は持たない。
-  families: {族: {file, at, axes, where, keyset, cond, stats, meaning}}
-    axes の直積で展開する。識別子は「族.軸の値....統計量」。
-    stats: acc（margin>0 の割合）, both, margin（平均）, judged（judged==correct の割合）, mean（数値の平均）
-    meaning: 軸の値 → ノードの識別子、または {nodes: [ノード], at: [{axis, of, value}]}。
-
-claims.yaml
-  observations: {識別子: {rel, a, b, tol}}  rel は gt/lt/ge/le/approx/eq。a, b は測定値の識別子か数値。
-    すべて真でなければ検査は失敗する。
-  hypotheses: {識別子: {s, p, o, scope, status, evidence, against, supersedes, note}}
-    s と o はノード、p は動詞。s は p の始点、o は p の終点に来られるものでなければならない。
-    項目名は、ontology.yaml の records に書かれたものを使う。
-    status は、根拠（evidence, against）から決まる。書かれた値と食い違うと、検査が失敗する。
-    limits は、根拠の弱さの理由。体系に書かれた種類から選ぶ。
-    one_item（差が1問以内）は、根拠のうち大小を述べる観察（gt / lt）の差を問数に直して、検査が確かめる。
-  decisions: {識別子: {s, p, o, basis, status, supersedes, note}}
-    p が is_a のときは、体系の上位・下位の関係そのもの。adopted なら、検査が構造から確かめる。
-  backlog: [{id, tests, status}]
+measurements.yaml と claims.yaml  記録。
+  項目名は、ontology.yaml のノードの識別子そのもの。どの記録がどの項目を持てるかは、ontology.yaml の records にある。
+  status や留保や指標の値も、ノードの識別子。
+  測定値: 族ごとに、軸（axis）の直積で展開する。識別子は「族.軸の値....指標」。値は結果ファイルから計算する。
+  観察・仮説・決定: どれも「s が、p という関係で、o に」という文。
+    観察の s と o は測定値（o は数でもよい）、p は大きさを比べる動詞。真偽は、動詞の式（後ろにある、の成立と不成立）を
+    数に当てはめて決める。すべて真でなければ検査は失敗する。
+    仮説と決定の s と o はノード、p は動詞。s は p の始点、o は p の終点に来られるものでなければならない。
+    仮説の status は、根拠（evidence, against）の有無から決まる。決まり方は、状態のノードの式から読み取る。
+    決定の p が is_a のときは、体系の上位・下位の関係そのもの。採用済みなら、検査が構造から確かめる。
 
 使い方:
   python tools/check_spec.py              検査
@@ -263,49 +255,54 @@ class Ontology:
             if len(ids) > 1:
                 err(f"動詞の式が同じ: {ids}")
 
-    def check_field(self, f, where, owner):
-        kinds = ("node", "position", "verb", "limits", "classifies", "values", "compares", "id")
-        if not any(k in f for k in kinds):
-            err(f"{where}: 何に当たるかが書かれていない")
-        extra = set(f) - set(kinds) - {"with", "neg", "number", "base", "derived", "subfields"}
-        if extra:
-            err(f"{where}: 知らない書き方 {extra}")
-        for k in ("node", "limits", "classifies", "with"):
-            if k in f and f[k] not in self.N:
-                err(f"{where}: {k} の {f[k]} が未定義")
-        if "position" in f and f["position"] not in ("from", "to"):
-            err(f"{where}: position は from か to")
-        if "verb" in f:
-            self.check_spot(f["verb"], where)
-        if "compares" in f and f.get("base") not in self.B:
-            err(f"{where}: 比べる関数のもとになる状態の関係 {f.get('base')} が未定義")
-        for val, nid in (f.get("values") or {}).items():
-            if nid not in self.N:
-                err(f"{where}: 値 {val} に当たるノード {nid} が未定義")
-            elif where.endswith(".status") and not self.is_a(nid, owner):
-                err(f"{where}: 値 {val} に当たる {nid} は、{owner} の下位でない")
-        if "derived" in f:
-            if set(f["derived"]) != set(f["values"]):
-                err(f"{where}: derived は、values のすべての値について書くこと")
-        for sid, sub in (f.get("subfields") or {}).items():
-            self.check_field(sub, f"{where}.{sid}", owner)
-
     def check_records(self):
-        """記録の項目と値が、体系のノードに当たっていること。"""
+        """記録の項目名が、体系のノードであること。"""
         for rid, r in self.R.items():
-            if r.get("is") not in self.N:
-                err(f"records.{rid}: is の {r.get('is')} が未定義")
-                continue
-            if "key" in r and r["key"] not in self.N:
-                err(f"records.{rid}: key の {r['key']} が未定義")
-            for fid, f in r["fields"].items():
-                self.check_field(f, f"records.{rid}.{fid}", r["is"])
+            if set(r) - {"is", "key", "fields"}:
+                err(f"records.{rid}: 知らない項目 {set(r) - {'is', 'key', 'fields'}}")
+            for k in ("is", "key"):
+                if k in r and r[k] not in self.N:
+                    err(f"records.{rid}: {k} の {r[k]} が未定義")
+            for f in r["fields"]:
+                if f not in self.N:
+                    err(f"records.{rid}: 項目 {f} は、ノードとして定義されていない")
 
     def fields(self, rid):
         return self.R[rid]["fields"]
 
-    def values(self, rid, fid):
-        return set(self.R[rid]["fields"][fid]["values"])
+    def kinds_of(self, nid):
+        """nid の直接の下位にあるノード。status や留保の値として使えるもの。"""
+        return [k for k, n in self.N.items() if n.get("is") == nid]
+
+    def status_pattern(self, nid):
+        """状態のノードの式から、「支持する観察がある / 反する観察がある」の組を読み取る。"""
+        pat = {}
+        for m in self.N[nid].get("mod") or []:
+            if isinstance(m, dict) and m.get("of") == ["v_agree", "to"] and m.get("with") in ("evidence", "against"):
+                pat[m["with"]] = not m.get("neg")
+        return pat if set(pat) == {"evidence", "against"} else None
+
+    def compare(self, verb, a, b, tol):
+        """大きさを比べる動詞の式（後ろにある、の成立と不成立）を、2つの数に当てはめる。"""
+        hops = 0
+        while verb in self.N and "holds" not in self.N[verb] and hops < 50:
+            verb, hops = self.N[verb].get("is"), hops + 1
+        n = self.N.get(verb, {})
+        if not n.get("holds") or any(not re.fullmatch(r"(not )?after\((from|to), (from|to)\)", f) for f in n["holds"]):
+            return None
+        x = {"from": a, "to": b}
+        out = True
+        for f in n["holds"]:
+            m = re.fullmatch(r"(not )?after\((\w+), (\w+)\)", f)
+            later = x[m.group(2)] - x[m.group(3)] > tol
+            out = out and (not later if m.group(1) else later)
+        return out
+
+    def is_strict(self, verb):
+        hops = 0
+        while verb in self.N and "holds" not in self.N[verb] and hops < 50:
+            verb, hops = self.N[verb].get("is"), hops + 1
+        return any(f.startswith("after(") for f in self.N.get(verb, {}).get("holds", []))
 
     def expr(self, nid):
         """上位をたどって、式を並べる。"""
@@ -339,41 +336,38 @@ def stat(rows, cond, name):
     # 選択肢の順序ごとの値を並べた形（[順序1, 順序2]）は、平均と「両方とも正」に直す
     vals = [{"margin": sum(v) / len(v), "both": all(x > 0 for x in v)} if isinstance(v, list) else v for v in vals]
     n = len(vals)
-    if name == "acc":
+    if name == "accuracy":
         return sum(v["margin"] > 0 for v in vals) / n, n
-    if name == "both":
+    if name == "order_robust_accuracy":
         return sum(bool(v["both"]) for v in vals) / n, n
-    if name == "margin":
+    if name == "logit_margin":
         return sum(v["margin"] for v in vals) / n, n
-    if name == "judged":
+    if name == "judged_accuracy":
         rs = [r for _, r in rows if cond in r]
         return sum(r[cond]["judged"] == r["correct"] for r in rs) / n, n
-    if name == "mean":
+    if name == "mean_value":
         return sum(vals) / n, n
-    raise KeyError(f"統計量 {name} は未定義")
+    raise KeyError(f"指標 {name} の計算方法が、検査ツールにない")
 
 
 def check_meaning(val, T, where):
-    sub = T.fields("measurements")["meaning"]["subfields"]
-    if isinstance(val, dict):
-        for k in val:
-            if k not in sub:
-                err(f"{where}: 項目 {k} は、体系の records.measurements.meaning に書かれていない")
-        for a in val.get("at", []):
-            for k in a:
-                if k not in sub["at"]["subfields"]:
-                    err(f"{where}: at の項目 {k} は、体系に書かれていない")
     if isinstance(val, str):
         if val not in T.N:
             err(f"{where}: ノード {val} が未定義")
         return
-    for nid in val.get("nodes", []):
+    for k in val:
+        if k not in T.fields("meaning"):
+            err(f"{where}: 項目 {k} は、体系の records.meaning に書かれていない")
+    for nid in val.get("identifier", []):
         if nid not in T.N:
             err(f"{where}: ノード {nid} が未定義")
-    for a in val.get("at", []):
-        if a.get("of") not in T.N:
-            err(f"{where}: at の of {a.get('of')} が未定義")
-        T.check_value(a.get("axis"), a.get("value"), where)
+    for v in val.get("value", []):
+        for k in v:
+            if k not in T.fields("value"):
+                err(f"{where}: 値の項目 {k} は、体系の records.value に書かれていない")
+        if v.get("s") not in T.N:
+            err(f"{where}: 値の s {v.get('s')} が未定義")
+        T.check_value(v.get("axis"), v.get("o"), where)
 
 
 def expand(M, T):
@@ -382,13 +376,13 @@ def expand(M, T):
         for k in f:
             if k not in T.fields("measurements"):
                 err(f"measurements.{fid}: 項目 {k} は、体系の records.measurements に書かれていない")
-        for st in f["stats"]:
-            if st not in T.values("measurements", "stats"):
-                err(f"measurements.{fid}: 統計量 {st} は、体系の records.measurements.stats に書かれていない")
-        for k in f.get("keyset", {}):
-            if k not in T.fields("measurements")["keyset"]["subfields"]:
-                err(f"measurements.{fid}: keyset の項目 {k} は、体系に書かれていない")
-        axes = f["axes"]
+        for st in f["metric"]:
+            if st not in T.N or not (T.is_a(st, "metric") or T.is_a(st, "magnitude")):
+                err(f"measurements.{fid}: 指標 {st} は、体系の指標でも大きさでもない")
+        for k in f.get("row_keys", {}):
+            if k not in T.fields("row_keys"):
+                err(f"measurements.{fid}: row_keys の項目 {k} は、体系の records.row_keys に書かれていない")
+        axes = f["axis"]
         names = list(axes)
         keys = [list(axes[a]) if isinstance(axes[a], dict) else axes[a] for a in names]
         for a, mp in (f.get("meaning") or {}).items():
@@ -397,44 +391,32 @@ def expand(M, T):
         for combo in itertools.product(*keys):
             b = dict(zip(names, combo))
             sub = {a: (axes[a][b[a]] if isinstance(axes[a], dict) else b[a]) for a in names}
-            fmt = lambda s: s.format(**{k: v for k, v in sub.items() if not isinstance(v, list)}) if isinstance(s, str) else s
+            fmt = lambda x: x.format(**{k: v for k, v in sub.items() if not isinstance(v, list)}) if isinstance(x, str) else x
             try:
-                rows = rows_of(fmt(f["file"]), [fmt(x) for x in f.get("at", [])])
+                rows = rows_of(fmt(f["result_file"]), [fmt(x) for x in f.get("row_collection", [])])
             except (FileNotFoundError, KeyError) as e:
                 err(f"measurements.{fid}: {b} のファイルまたは位置が見つからない: {e}")
                 continue
-            for field, want in (f.get("where") or {}).items():
+            for field, want in (f.get("row_filter") or {}).items():
                 want = sub[want[1:-1]] if isinstance(want, str) and want[1:-1] in sub and isinstance(sub[want[1:-1]], list) else fmt(want)
                 ok = (lambda x, w=want: x in w) if isinstance(want, list) else (lambda x, w=want: x == w)
                 rows = [(k, r) for k, r in rows if ok(r.get(field))]
-            if "keyset" in f:
-                axis = f["keyset"]["axis"]
-                allowed = {fmt(f["keyset"]["pattern"]).replace("#", str(x)) for x in sub[axis]}
+            if "row_keys" in f:
+                axis = f["row_keys"]["axis"]
+                allowed = {fmt(f["row_keys"]["pattern"]).replace("#", str(x)) for x in sub[axis]}
                 rows = [(k, r) for k, r in rows if k in allowed]
-            for st in f["stats"]:
+            for st in f["metric"]:
                 mid = ".".join([fid] + [str(b[a]) for a in names] + [st])
                 try:
-                    values[mid] = stat(rows, fmt(f["cond"]), st)
+                    values[mid] = stat(rows, fmt(f["condition_entry"]), st)
                 except KeyError as e:
                     err(f"measurements: {mid}: {e}")
-                meanings[mid] = {a: (f.get("meaning") or {}).get(a, {}).get(b[a], b[a]) for a in names} | {"stat": st}
+                meanings[mid] = {a: (f.get("meaning") or {}).get(a, {}).get(b[a], b[a]) for a in names} | {"metric": st}
     return values, meanings
 
 
 # ---------------------------------------------------------------- 観察・仮説・決定
-def val_of(x, values, where, number_ok=True):
-    if isinstance(x, (int, float)):
-        if not number_ok:
-            err(f"{where}: 数は書けない")
-        return float(x)
-    if x not in values:
-        err(f"{where}: 測定値 {x} が未定義")
-        return None
-    return values[x][0]
-
-
 def check_claims(C, values, T):
-    obs = C["observations"]
     for sect in ("observations", "hypotheses", "decisions"):
         for cid, c in C[sect].items():
             for k in c:
@@ -443,24 +425,38 @@ def check_claims(C, values, T):
     for b in C["backlog"]:
         for k in b:
             if k not in T.fields("backlog"):
-                err(f"backlog {b.get('id')}: 項目 {k} は、体系の records.backlog に書かれていない")
-    of = T.fields("observations")
-    gap = {}   # 観察ごとの、2つの値の差を問数に直したもの
+                err(f"backlog {b.get('identifier')}: 項目 {k} は、体系の records.backlog に書かれていない")
+
+    # 観察: 測定値どうし（または測定値と数）を、大きさを比べる動詞で結んだ文。すべて真であること
+    obs = C["observations"]
+    gap = {}   # 大小を述べる観察について、2つの値の差を問数に直したもの
     for oid, o in obs.items():
-        if o["rel"] not in of["rel"]["compares"]:
-            err(f"{oid}: 比べ方 {o['rel']} は、体系の records.observations.rel に書かれていない")
+        vals = []
+        for side in ("s", "o"):
+            x = o[side]
+            if isinstance(x, (int, float)) and side == "o":
+                vals.append(float(x))
+            elif isinstance(x, str) and x in values:
+                vals.append(values[x][0])
+            else:
+                err(f"{oid}: {side} の {x} は、測定値でない")
+        if len(vals) < 2:
             continue
-        a, b = val_of(o["a"], values, oid, of["a"].get("number")), val_of(o["b"], values, oid, of["b"].get("number"))
-        if a is None or b is None:
+        if not T.is_verb(o["p"]):
+            err(f"{oid}: p の {o['p']} は動詞でない")
             continue
-        ns = [values[x][1] for x in (o["a"], o["b"]) if isinstance(x, str) and x in values]
-        # 大小を述べる観察（gt / lt）についてだけ、差を問数に直して控える。等しいと述べる観察は対象にしない
-        gap[oid] = abs(a - b) * min(ns) if ns and o["rel"] in ("gt", "lt") else None
-        tol = o.get("tol", 0.005)
-        holds = {"gt": a > b, "lt": a < b, "ge": a >= b - 1e-9, "le": a <= b + 1e-9,
-                 "approx": abs(a - b) <= tol + 1e-9, "eq": abs(a - b) <= 0.005}[o["rel"]]
-        if not holds:
-            err(f"observations: {oid} が成り立たない（{o['rel']}: a={a:.3f}, b={b:.3f}）")
+        near = T.end(o["p"], "new_kind") == "tolerance"
+        if near != ("tolerance" in o):
+            err(f"{oid}: 許容幅は、動詞 {o['p']} の第三のものが許容幅であるときにだけ、必ず書く")
+            continue
+        holds = T.compare(o["p"], vals[0], vals[1], o["tolerance"] + 1e-9 if near else 1e-6)
+        if holds is None:
+            err(f"{oid}: 動詞 {o['p']} は、大きさを比べる動詞（「後ろにある」だけで書かれた静的な動詞）でない")
+        elif not holds:
+            err(f"observations: {oid} が成り立たない（{T.N[o['p']]['ja']}: s={vals[0]:.3f}, o={vals[1]:.3f}）")
+        ns = [values[x][1] for x in (o["s"], o["o"]) if isinstance(x, str) and x in values]
+        gap[oid] = abs(vals[0] - vals[1]) * min(ns) if T.is_strict(o["p"]) else None
+
     hyps, decs = C["hypotheses"], C["decisions"]
 
     def triple(x, where, structural_ok=False):
@@ -473,36 +469,27 @@ def check_claims(C, values, T):
         if x["p"] == "is_a":
             if not structural_ok:
                 err(f"{where}: is_a を使えるのは決定だけ")
-            elif x.get("status") == "adopted" and not all(T.is_a(s, o) for s in ss for o in oo):
+            elif x.get("status") == "dec_adopted" and not all(T.is_a(a, b) for a in ss for b in oo):
                 err(f"{where}: 採用済みの決定だが、体系の上で {ss} は {oo} の下位になっていない")
             return
         if not T.is_verb(x["p"]):
             return err(f"{where}: {x['p']} は動詞でない")
-        for part, side, ts in (("s", "from", ss), ("o", "to", oo)):
+        for side, ts in (("from", ss), ("to", oo)):
             bound = T.end(x["p"], side)
             for t in ts:
                 if not T.overlaps(t, bound):
                     err(f"{where}: {t} は動詞 {x['p']} の {side}（{bound}）に来られない")
 
+    patterns = {k: T.status_pattern(k) for k in T.kinds_of("hypothesis")}
+    patterns = {k: v for k, v in patterns.items() if v}
     for hid, h in hyps.items():
         triple(h, hid)
-        hf = T.fields("hypotheses")
-        if h["status"] not in hf["status"]["values"]:
-            err(f"{hid}: status の {h['status']} は、体系の records.hypotheses.status に書かれていない")
-        else:   # 状態は、根拠の観察から決まる
-            have = sorted(k for k in ("evidence", "against") if h.get(k))
-            want = [st for st, need in hf["status"]["derived"].items() if sorted(need) == have]
-            if not want:
-                err(f"{hid}: 根拠（{have or 'なし'}）に当たる状態が、体系の records.hypotheses.status.derived に書かれていない")
-            elif want != [h["status"]]:
-                err(f"{hid}: status は {h['status']} と書かれているが、根拠（{have or 'なし'}）からは {want[0]} になる")
-        for lim in h.get("limits", []):
-            if lim not in hf["limits"]["values"]:
-                err(f"{hid}: 留保 {lim} は、体系の records.hypotheses.limits に書かれていない")
-        if "one_item" in h.get("limits", []):
-            gs = [gap.get(r) for r in h.get("evidence", []) + h.get("against", [])]
-            if not any(g is not None and g <= 1.0 + 1e-6 for g in gs):
-                err(f"{hid}: 留保「差が1問以内」と書かれているが、根拠のうち大小を述べる観察に、差が1問以内のものがない")
+        have = {"evidence": bool(h.get("evidence")), "against": bool(h.get("against"))}
+        want = [k for k, v in patterns.items() if v == have]
+        if h["status"] not in patterns:
+            err(f"{hid}: status の {h['status']} は、仮説の状態のノードでない")
+        elif want != [h["status"]]:
+            err(f"{hid}: status は {h['status']} と書かれているが、根拠の有無からは {want} になる")
         for t in h.get("scope", []):
             if t not in T.N:
                 err(f"{hid}: scope のノード {t} が未定義")
@@ -510,12 +497,19 @@ def check_claims(C, values, T):
             for r in h.get(k, []):
                 if r not in obs:
                     err(f"{hid}: {k} の観察 {r} が未定義")
+        for lim in h.get("limitation", []):
+            if lim not in T.kinds_of("limitation"):
+                err(f"{hid}: 留保 {lim} は、留保のノードでない")
+        if "lim_one_item" in h.get("limitation", []):
+            gs = [gap.get(r) for r in h.get("evidence", []) + h.get("against", [])]
+            if not any(g is not None and g <= 1.0 + 1e-6 for g in gs):
+                err(f"{hid}: 留保「差が1問以内」と書かれているが、根拠のうち大小を述べる観察に、差が1問以内のものがない")
         for r in h.get("supersedes", []):
             if r not in hyps:
                 err(f"{hid}: supersedes の仮説 {r} が未定義")
     for did, d in decs.items():
-        if d["status"] not in T.values("decisions", "status"):
-            err(f"{did}: status の {d['status']} は、体系の records.decisions.status に書かれていない")
+        if d["status"] not in T.kinds_of("decision"):
+            err(f"{did}: status の {d['status']} は、決定の状態のノードでない")
         triple(d, did, structural_ok=True)
         for r in d.get("basis", []):
             if r not in hyps:
@@ -524,11 +518,11 @@ def check_claims(C, values, T):
             if r not in decs:
                 err(f"{did}: supersedes の決定 {r} が未定義")
     for b in C["backlog"]:
-        if b["status"] not in T.values("backlog", "status"):
-            err(f"backlog {b['id']}: status の {b['status']} は、体系の records.backlog.status に書かれていない")
+        if b["status"] not in T.kinds_of("backlog_item"):
+            err(f"backlog {b['identifier']}: status の {b['status']} は、残り項目の状態のノードでない")
         for r in b.get("tests", []):
             if r not in hyps:
-                err(f"backlog {b['id']}: tests の仮説 {r} が未定義")
+                err(f"backlog {b['identifier']}: tests の仮説 {r} が未定義")
 
 
 def main():
@@ -553,8 +547,8 @@ def main():
             if args.show in C[sect]:
                 x = C[sect][args.show]
                 print(yaml.safe_dump({args.show: x}, allow_unicode=True, sort_keys=False))
-                for k in ("a", "b"):
-                    if isinstance(x.get(k), str):
+                for k in ("s", "o"):
+                    if isinstance(x.get(k), str) and x[k] in values:
                         v, n = values[x[k]]
                         print(f"{x[k]} = {v:.2f} (n={n})  {meanings[x[k]]}")
         if args.show in values:

@@ -1,447 +1,468 @@
-# 測定値。値は experiments/results/ から計算する。手で書いた数値は持たない。文法は tools/check_spec.py の冒頭を見よ。
-# meaning は、軸の値が何を表すか。ノードの識別子、または {nodes: [その条件に関わるノード], at: [{axis: 軸, of: 何の, value: 値}]}。
+# 測定値。値は experiments/results/ から計算する。手で書いた数値は持たない。
+# 項目名は、ontology.yaml のノードの識別子。どの項目を持てるかは、ontology.yaml の records にある。
+# 測定値の識別子は「族.軸の値....指標」。
 families:
   e1:
-    file: e1_{model}.json
-    at: [items]
-    axes:
+    result_file: e1_{model}.json
+    row_collection: [items]
+    axis:
       model: &id001 {15b: Qwen2.5-1.5B-Instruct, 4b: Qwen3-4B}
       group: [G1, G2c, G2k, G3, G4]
       cond: [none, near, glossary, far-500, far-2000]
-    where: {group: '{group}'}
-    cond: '{cond}'
-    stats: [acc, both]
+    row_filter: {group: '{group}'}
+    condition_entry: '{cond}'
+    metric: [accuracy, order_robust_accuracy]
     meaning:
       model: {15b: model_15b, 4b: model_4b}
       group: {G1: g_confusable, G2c: g_redef_conflict, G2k: g_redef_control, G3: g_sibling, G4: g_replaced}
       cond:
         none:
-          nodes: [no_channel]
+          identifier: [no_channel]
         near:
-          nodes: [text_injection, definition_text, place_adjacent]
+          identifier: [text_injection, definition_text, place_adjacent]
         glossary:
-          nodes: [text_injection, glossary, place_system]
+          identifier: [text_injection, glossary, place_system]
         far-500:
-          nodes: [text_injection, glossary, place_system]
-          at:
-          - {axis: count, of: following_text, value: 500}
+          identifier: [text_injection, glossary, place_system]
+          value:
+          - {axis: count, s: following_text, o: 500}
         far-2000:
-          nodes: [text_injection, glossary, place_system]
-          at:
-          - {axis: count, of: following_text, value: 2000}
+          identifier: [text_injection, glossary, place_system]
+          value:
+          - {axis: count, s: following_text, o: 2000}
   e1type:
-    file: e1_{model}.json
-    at: [items]
-    axes:
+    result_file: e1_{model}.json
+    row_collection: [items]
+    axis:
       model: *id001
       group: [G2c, G2k]
       type: &id002
         rule: ['02', '03', '06', 09, '10', '11', '13', '15', '16', '17', '21', '23']
         remap: ['01', '04', '05', '07', 08, '12', '14', '18', '19', '20', '22', '24']
       cond: [none, near]
-    keyset: {axis: type, pattern: '{group}-#'}
-    cond: '{cond}'
-    stats: [acc]
+    row_keys: {axis: type, pattern: '{group}-#'}
+    condition_entry: '{cond}'
+    metric: [accuracy]
     meaning:
       model: {15b: model_15b, 4b: model_4b}
       group: {G1: g_confusable, G2c: g_redef_conflict, G2k: g_redef_control, G3: g_sibling, G4: g_replaced}
       type: {rule: rule_redefinition, remap: remap_redefinition}
   e1b:
-    file: e1b_Qwen2.5-1.5B-Instruct.json
-    at: [items]
-    axes:
+    result_file: e1b_Qwen2.5-1.5B-Instruct.json
+    row_collection: [items]
+    axis:
       group: [G2c, G2k]
       cond: [examples, def+examples]
-    where: {group: '{group}'}
-    cond: '{cond}'
-    stats: [acc, both]
+    row_filter: {group: '{group}'}
+    condition_entry: '{cond}'
+    metric: [accuracy, order_robust_accuracy]
     meaning:
       group: {G1: g_confusable, G2c: g_redef_conflict, G2k: g_redef_control, G3: g_sibling, G4: g_replaced}
       cond:
         examples:
-          nodes: [text_injection, examples_only, place_adjacent]
+          identifier: [text_injection, examples_only, place_adjacent]
         def+examples:
-          nodes: [text_injection, def_and_examples, place_adjacent]
+          identifier: [text_injection, def_and_examples, place_adjacent]
   e3:
-    file: e3_Qwen2.5-1.5B-Instruct_{run}.json
-    at: [items]
-    axes:
+    result_file: e3_Qwen2.5-1.5B-Instruct_{run}.json
+    row_collection: [items]
+    axis:
       run: [L8_defonly, L8_qa, L8_defqa, L14_defqa]
       group: [G2c, G2k]
       cond: [none, vec, near, near+vec]
-    where: {group: '{group}'}
-    cond: '{cond}'
-    stats: [acc, both]
+    row_filter: {group: '{group}'}
+    condition_entry: '{cond}'
+    metric: [accuracy, order_robust_accuracy]
     meaning:
       run:
         L8_defonly:
-          nodes: [single_layer_vector, teacher_recite]
-          at:
-          - {axis: order, of: layer, value: 8}
+          identifier: [single_layer_vector, teacher_recite]
+          value:
+          - {axis: order, s: layer, o: 8}
         L8_qa:
-          nodes: [single_layer_vector, teacher_examples]
-          at:
-          - {axis: order, of: layer, value: 8}
+          identifier: [single_layer_vector, teacher_examples]
+          value:
+          - {axis: order, s: layer, o: 8}
         L8_defqa:
-          nodes: [single_layer_vector, teacher_both]
-          at:
-          - {axis: order, of: layer, value: 8}
+          identifier: [single_layer_vector, teacher_both]
+          value:
+          - {axis: order, s: layer, o: 8}
         L14_defqa:
-          nodes: [single_layer_vector, teacher_both]
-          at:
-          - {axis: order, of: layer, value: 14}
+          identifier: [single_layer_vector, teacher_both]
+          value:
+          - {axis: order, s: layer, o: 14}
       group: {G1: g_confusable, G2c: g_redef_conflict, G2k: g_redef_control, G3: g_sibling, G4: g_replaced}
       cond:
         none:
-          nodes: [no_channel]
+          identifier: [no_channel]
         vec:
-          nodes: [single_layer_vector]
+          identifier: [single_layer_vector]
         near:
-          nodes: [text_injection, definition_text, place_adjacent]
+          identifier: [text_injection, definition_text, place_adjacent]
         near+vec:
-          nodes: [text_and_vector, definition_text, place_adjacent]
+          identifier: [text_and_vector, definition_text, place_adjacent]
   e3type:
-    file: e3_Qwen2.5-1.5B-Instruct_{run}.json
-    at: [items]
-    axes:
+    result_file: e3_Qwen2.5-1.5B-Instruct_{run}.json
+    row_collection: [items]
+    axis:
       run: [L8_qa, L8_defqa]
       group: [G2c, G2k]
       type: *id002
       cond: [vec]
-    keyset: {axis: type, pattern: '{group}-#'}
-    cond: '{cond}'
-    stats: [acc]
+    row_keys: {axis: type, pattern: '{group}-#'}
+    condition_entry: '{cond}'
+    metric: [accuracy]
     meaning:
       run:
         L8_defonly:
-          nodes: [single_layer_vector, teacher_recite]
-          at:
-          - {axis: order, of: layer, value: 8}
+          identifier: [single_layer_vector, teacher_recite]
+          value:
+          - {axis: order, s: layer, o: 8}
         L8_qa:
-          nodes: [single_layer_vector, teacher_examples]
-          at:
-          - {axis: order, of: layer, value: 8}
+          identifier: [single_layer_vector, teacher_examples]
+          value:
+          - {axis: order, s: layer, o: 8}
         L8_defqa:
-          nodes: [single_layer_vector, teacher_both]
-          at:
-          - {axis: order, of: layer, value: 8}
+          identifier: [single_layer_vector, teacher_both]
+          value:
+          - {axis: order, s: layer, o: 8}
         L14_defqa:
-          nodes: [single_layer_vector, teacher_both]
-          at:
-          - {axis: order, of: layer, value: 14}
+          identifier: [single_layer_vector, teacher_both]
+          value:
+          - {axis: order, s: layer, o: 14}
       group: {G1: g_confusable, G2c: g_redef_conflict, G2k: g_redef_control, G3: g_sibling, G4: g_replaced}
       type: {rule: rule_redefinition, remap: remap_redefinition}
       cond:
         none:
-          nodes: [no_channel]
+          identifier: [no_channel]
         vec:
-          nodes: [single_layer_vector]
+          identifier: [single_layer_vector]
         near:
-          nodes: [text_injection, definition_text, place_adjacent]
+          identifier: [text_injection, definition_text, place_adjacent]
         near+vec:
-          nodes: [text_and_vector, definition_text, place_adjacent]
+          identifier: [text_and_vector, definition_text, place_adjacent]
   e3loss:
-    file: e3_Qwen2.5-1.5B-Instruct_{run}.json
-    at: [train]
-    axes:
+    result_file: e3_Qwen2.5-1.5B-Instruct_{run}.json
+    row_collection: [train]
+    axis:
       run: [L8_defonly, L8_qa, L8_defqa, L14_defqa]
-    cond: loss_last
-    stats: [mean]
+    condition_entry: loss_last
+    metric: [mean_value]
     meaning:
       run:
         L8_defonly:
-          nodes: [single_layer_vector, teacher_recite]
-          at:
-          - {axis: order, of: layer, value: 8}
+          identifier: [single_layer_vector, teacher_recite]
+          value:
+          - {axis: order, s: layer, o: 8}
         L8_qa:
-          nodes: [single_layer_vector, teacher_examples]
-          at:
-          - {axis: order, of: layer, value: 8}
+          identifier: [single_layer_vector, teacher_examples]
+          value:
+          - {axis: order, s: layer, o: 8}
         L8_defqa:
-          nodes: [single_layer_vector, teacher_both]
-          at:
-          - {axis: order, of: layer, value: 8}
+          identifier: [single_layer_vector, teacher_both]
+          value:
+          - {axis: order, s: layer, o: 8}
         L14_defqa:
-          nodes: [single_layer_vector, teacher_both]
-          at:
-          - {axis: order, of: layer, value: 14}
+          identifier: [single_layer_vector, teacher_both]
+          value:
+          - {axis: order, s: layer, o: 14}
   e3b:
-    file: e3b_transfer.json
-    axes:
+    result_file: e3b_transfer.json
+    axis:
       fmt: [orig, fill, truth]
       group: [G2c, G2k]
       cond: [none, text, vec, vec_all]
-    where: {fmt: '{fmt}', group: '{group}'}
-    cond: '{cond}'
-    stats: [acc, both]
+    row_filter: {fmt: '{fmt}', group: '{group}'}
+    condition_entry: '{cond}'
+    metric: [accuracy, order_robust_accuracy]
     meaning:
       fmt: {orig: fmt_yesno, fill: fmt_fill, truth: fmt_truth}
       group: {G1: g_confusable, G2c: g_redef_conflict, G2k: g_redef_control, G3: g_sibling, G4: g_replaced}
       cond:
         none:
-          nodes: [no_channel]
+          identifier: [no_channel]
         text:
-          nodes: [text_injection, def_and_examples, place_adjacent]
+          identifier: [text_injection, def_and_examples, place_adjacent]
         vec:
-          nodes: [single_layer_vector, teacher_examples]
-          at:
-          - {axis: order, of: layer, value: 8}
+          identifier: [single_layer_vector, teacher_examples]
+          value:
+          - {axis: order, s: layer, o: 8}
         vec_all:
-          nodes: [single_layer_vector, teacher_examples]
-          at:
-          - {axis: order, of: layer, value: 8}
-          - {axis: count, of: concept_vector, value: 24}
+          identifier: [single_layer_vector, teacher_examples]
+          value:
+          - {axis: order, s: layer, o: 8}
+          - {axis: count, s: concept_vector, o: 24}
   e3b_g1:
-    file: e3b_transfer.json
-    axes:
+    result_file: e3b_transfer.json
+    axis:
       cond: [none, vec_all]
-    where: {group: G1}
-    cond: '{cond}'
-    stats: [acc, margin]
+    row_filter: {group: G1}
+    condition_entry: '{cond}'
+    metric: [accuracy, logit_margin]
     meaning:
       cond:
         none:
-          nodes: [no_channel]
+          identifier: [no_channel]
         vec_all:
-          nodes: [single_layer_vector]
-          at:
-          - {axis: count, of: concept_vector, value: 24}
+          identifier: [single_layer_vector]
+          value:
+          - {axis: count, s: concept_vector, o: 24}
   e3c:
-    file: e3c_generation.json
-    axes:
+    result_file: e3c_generation.json
+    axis:
       group: [G2c, G2k]
       cond: [none, text, vec]
-    where: {group: '{group}'}
-    cond: '{cond}'
-    stats: [judged]
+    row_filter: {group: '{group}'}
+    condition_entry: '{cond}'
+    metric: [judged_accuracy]
     meaning:
       group: {G1: g_confusable, G2c: g_redef_conflict, G2k: g_redef_control, G3: g_sibling, G4: g_replaced}
       cond:
         none:
-          nodes: [no_channel, fmt_free]
+          identifier: [no_channel, fmt_free]
         text:
-          nodes: [text_injection, def_and_examples, fmt_free]
+          identifier: [text_injection, def_and_examples, fmt_free]
         vec:
-          nodes: [single_layer_vector, teacher_examples, fmt_free]
+          identifier: [single_layer_vector, teacher_examples, fmt_free]
   e4:
-    file: e4_modifier_composition.json
-    axes:
+    result_file: e4_modifier_composition.json
+    axis:
       pair: {p1: 甲種/乙種, p2: 青/赤, p3: 一類/二類}
       split: [train, test]
       cond: [none, text, vec]
-    where: {pair: '{pair}', split: '{split}'}
-    cond: '{cond}'
-    stats: [acc]
+    row_filter: {pair: '{pair}', split: '{split}'}
+    condition_entry: '{cond}'
+    metric: [accuracy]
     meaning:
       split: {train: seen_genus, test: unseen_genus}
       cond:
         none:
-          nodes: [no_channel]
+          identifier: [no_channel]
         text:
-          nodes: [text_injection, definition_text]
+          identifier: [text_injection, definition_text]
         vec:
-          nodes: [single_layer_vector, modifier]
+          identifier: [single_layer_vector, modifier]
   e5:
-    file: e5_{model}.json
-    axes:
+    result_file: e5_{model}.json
+    axis:
       model: *id001
       group: [G2c, G2k]
       cond: [near, rename_semi, rename_opaque, inline, near+inline]
-    where: {group: '{group}'}
-    cond: '{cond}'
-    stats: [acc]
+    row_filter: {group: '{group}'}
+    condition_entry: '{cond}'
+    metric: [accuracy]
     meaning:
       model: {15b: model_15b, 4b: model_4b}
       group: {G1: g_confusable, G2c: g_redef_conflict, G2k: g_redef_control, G3: g_sibling, G4: g_replaced}
       cond:
         near:
-          nodes: [text_injection, definition_text, place_adjacent]
+          identifier: [text_injection, definition_text, place_adjacent]
         rename_semi:
-          nodes: [text_injection, semi_renaming, place_adjacent]
+          identifier: [text_injection, semi_renaming, place_adjacent]
         rename_opaque:
-          nodes: [text_injection, opaque_renaming, place_adjacent]
+          identifier: [text_injection, opaque_renaming, place_adjacent]
         inline:
-          nodes: [text_injection, inline_expansion]
+          identifier: [text_injection, inline_expansion]
         near+inline:
-          nodes: [text_injection, definition_text, inline_expansion, place_adjacent]
+          identifier: [text_injection, definition_text, inline_expansion, place_adjacent]
   e6_L8:
-    file: e6_cross_use_L8.json
-    at: ['{vec}']
-    axes:
+    result_file: e6_cross_use_L8.json
+    row_collection: ['{vec}']
+    axis:
       vec: {none: none, defonly: results/e3_Qwen2.5-1.5B-Instruct_L8_defonly.pt, qa: results/e3_Qwen2.5-1.5B-Instruct_L8_qa.pt}
-    cond: define_choice
-    stats: [acc, margin]
+    condition_entry: define_choice
+    metric: [accuracy, logit_margin]
     meaning:
       vec:
         none:
-          nodes: [no_channel]
+          identifier: [no_channel]
         defonly:
-          nodes: [teacher_recite]
+          identifier: [teacher_recite]
         qa:
-          nodes: [teacher_examples]
+          identifier: [teacher_examples]
   e6_L8_nll:
-    file: e6_cross_use_L8.json
-    at: ['{vec}']
-    axes:
+    result_file: e6_cross_use_L8.json
+    row_collection: ['{vec}']
+    axis:
       vec: {none: none, defonly: results/e3_Qwen2.5-1.5B-Instruct_L8_defonly.pt, qa: results/e3_Qwen2.5-1.5B-Instruct_L8_qa.pt}
-    cond: define_nll
-    stats: [mean]
+    condition_entry: define_nll
+    metric: [mean_value]
   e6_defqa:
-    file: e6_cross_use_defqa_{layer}.json
-    at: ['results/e3_Qwen2.5-1.5B-Instruct_{layer}_defqa.pt']
-    axes:
+    result_file: e6_cross_use_defqa_{layer}.json
+    row_collection: ['results/e3_Qwen2.5-1.5B-Instruct_{layer}_defqa.pt']
+    axis:
       layer: [L8, L14]
-    cond: define_choice
-    stats: [acc, margin]
+    condition_entry: define_choice
+    metric: [accuracy, logit_margin]
     meaning:
       layer:
         L8:
-          nodes: [teacher_both]
-          at:
-          - {axis: order, of: layer, value: 8}
+          identifier: [teacher_both]
+          value:
+          - {axis: order, s: layer, o: 8}
         L14:
-          nodes: [teacher_both]
-          at:
-          - {axis: order, of: layer, value: 14}
+          identifier: [teacher_both]
+          value:
+          - {axis: order, s: layer, o: 14}
   e6_defqa_nll:
-    file: e6_cross_use_defqa_{layer}.json
-    at: ['results/e3_Qwen2.5-1.5B-Instruct_{layer}_defqa.pt']
-    axes:
+    result_file: e6_cross_use_defqa_{layer}.json
+    row_collection: ['results/e3_Qwen2.5-1.5B-Instruct_{layer}_defqa.pt']
+    axis:
       layer: [L8, L14]
-    cond: define_nll
-    stats: [mean]
+    condition_entry: define_nll
+    metric: [mean_value]
   e7:
-    file: e7_Qwen3-4B.json
-    axes:
+    result_file: e7_Qwen3-4B.json
+    axis:
       group:
         redef: [G2c]
         new: [G3, G4]
       cond: [sys1, sys1-far500, sys1-far2000, gl5, gl15, gl55-first, gl55-last]
-    where: {group: '{group}'}
-    cond: '{cond}'
-    stats: [acc]
+    row_filter: {group: '{group}'}
+    condition_entry: '{cond}'
+    metric: [accuracy]
     meaning:
       group: {redef: g_redef_conflict, new: g_new_word}
       cond:
         sys1:
-          nodes: [relevant_definitions, place_system]
+          identifier: [relevant_definitions, place_system]
         sys1-far500:
-          nodes: [relevant_definitions, place_system]
-          at:
-          - {axis: count, of: following_text, value: 500}
+          identifier: [relevant_definitions, place_system]
+          value:
+          - {axis: count, s: following_text, o: 500}
         sys1-far2000:
-          nodes: [relevant_definitions, place_system]
-          at:
-          - {axis: count, of: following_text, value: 2000}
+          identifier: [relevant_definitions, place_system]
+          value:
+          - {axis: count, s: following_text, o: 2000}
         gl5:
-          nodes: [glossary, other_definitions]
-          at:
+          identifier: [glossary, other_definitions]
+          value:
           - axis: count
-            of: preceding_definitions_set
-            value: {le: 4}
+            s: preceding_definitions_set
+            o: {le: 4}
         gl15:
-          nodes: [glossary, other_definitions]
-          at:
+          identifier: [glossary, other_definitions]
+          value:
           - axis: count
-            of: preceding_definitions_set
-            value: {le: 14}
+            s: preceding_definitions_set
+            o: {le: 14}
         gl55-first:
-          nodes: [glossary, glossary_head]
-          at:
-          - {axis: count, of: following_definitions_set, value: 54}
+          identifier: [glossary, glossary_head]
+          value:
+          - {axis: count, s: following_definitions_set, o: 54}
         gl55-last:
-          nodes: [glossary, other_definitions]
-          at:
-          - {axis: count, of: preceding_definitions_set, value: 54}
+          identifier: [glossary, other_definitions]
+          value:
+          - {axis: count, s: preceding_definitions_set, o: 54}
   e7b:
-    file: e7_Qwen3-4B.json
-    axes:
+    result_file: e7_Qwen3-4B.json
+    axis:
       cond: [fill500-def, fill2000-def, gl55-pos14, gl55-pos27, gl55-pos41, pre-ordinary19, pre-redef23]
-    where: {group: G2c}
-    cond: '{cond}'
-    stats: [acc]
+    row_filter: {group: G2c}
+    condition_entry: '{cond}'
+    metric: [accuracy]
     meaning:
       cond:
         fill500-def:
-          nodes: [filler_text]
-          at:
-          - {axis: count, of: preceding_text, value: 500}
+          identifier: [filler_text]
+          value:
+          - {axis: count, s: preceding_text, o: 500}
         fill2000-def:
-          nodes: [filler_text]
-          at:
-          - {axis: count, of: preceding_text, value: 2000}
+          identifier: [filler_text]
+          value:
+          - {axis: count, s: preceding_text, o: 2000}
         gl55-pos14:
-          nodes: [other_definitions]
-          at:
-          - {axis: count, of: preceding_definitions_set, value: 14}
+          identifier: [other_definitions]
+          value:
+          - {axis: count, s: preceding_definitions_set, o: 14}
         gl55-pos27:
-          nodes: [other_definitions]
-          at:
-          - {axis: count, of: preceding_definitions_set, value: 27}
+          identifier: [other_definitions]
+          value:
+          - {axis: count, s: preceding_definitions_set, o: 27}
         gl55-pos41:
-          nodes: [other_definitions]
-          at:
-          - {axis: count, of: preceding_definitions_set, value: 41}
+          identifier: [other_definitions]
+          value:
+          - {axis: count, s: preceding_definitions_set, o: 41}
         pre-ordinary19:
-          nodes: [ordinary_definitions]
-          at:
-          - {axis: count, of: preceding_definitions_set, value: 19}
+          identifier: [ordinary_definitions]
+          value:
+          - {axis: count, s: preceding_definitions_set, o: 19}
         pre-redef23:
-          nodes: [other_redefinitions]
-          at:
-          - {axis: count, of: preceding_definitions_set, value: 23}
+          identifier: [other_redefinitions]
+          value:
+          - {axis: count, s: preceding_definitions_set, o: 23}
   e8:
-    file: e8_L2-13_d0.001.json
-    at: [apply]
-    axes: {group: [G2c, G2k], cond: [none, vec]}
-    where: {group: '{group}'}
-    cond: '{cond}'
-    stats: [acc, both]
+    result_file: e8_L2-13_d0.001.json
+    row_collection: [apply]
+    axis:
+      group: [G2c, G2k]
+      cond: [none, vec]
+    row_filter: {group: '{group}'}
+    condition_entry: '{cond}'
+    metric: [accuracy, order_robust_accuracy]
     meaning:
       group: {G2c: g_redef_conflict, G2k: g_redef_control}
       cond:
-        none: {nodes: [no_channel]}
-        vec: {nodes: [multi_layer_vector, teacher_both], at: [{axis: order, of: layer, value: {between: [2, 13]}}]}
+        none:
+          identifier: [no_channel]
+        vec:
+          identifier: [multi_layer_vector, teacher_both]
+          value:
+          - axis: order
+            s: layer
+            o:
+              between: [2, 13]
   e8def:
-    file: e8_L2-13_d0.001.json
-    at: [define]
-    axes: {cond: [none, vec]}
-    cond: '{cond}'
-    stats: [acc, both, margin]
+    result_file: e8_L2-13_d0.001.json
+    row_collection: [define]
+    axis:
+      cond: [none, vec]
+    condition_entry: '{cond}'
+    metric: [accuracy, order_robust_accuracy, logit_margin]
     meaning:
       cond:
-        none: {nodes: [no_channel, usage_define_paraphrase]}
-        vec: {nodes: [multi_layer_vector, teacher_both, usage_define_paraphrase]}
+        none:
+          identifier: [no_channel, usage_define_paraphrase]
+        vec:
+          identifier: [multi_layer_vector, teacher_both, usage_define_paraphrase]
   e8nll:
-    file: e8_L2-13_d0.001.json
-    at: [define]
-    axes: {cond: [nll]}
-    cond: '{cond}'
-    stats: [mean]
+    result_file: e8_L2-13_d0.001.json
+    row_collection: [define]
+    axis:
+      cond: [nll]
+    condition_entry: '{cond}'
+    metric: [mean_value]
     meaning:
-      cond: {nll: {nodes: [multi_layer_vector, teacher_both, usage_recite]}}
+      cond:
+        nll:
+          identifier: [multi_layer_vector, teacher_both, usage_recite]
   e8loss:
-    file: e8_L2-13_d0.001.json
-    at: [train]
-    axes: {cond: [loss_last]}
-    cond: '{cond}'
-    stats: [mean]
+    result_file: e8_L2-13_d0.001.json
+    row_collection: [train]
+    axis:
+      cond: [loss_last]
+    condition_entry: '{cond}'
+    metric: [mean_value]
     meaning:
-      cond: {loss_last: {nodes: [multi_layer_vector, teaching]}}
+      cond:
+        loss_last:
+          identifier: [multi_layer_vector, teaching]
   e9:
-    file: e9_{model}.json
-    axes:
+    result_file: e9_{model}.json
+    axis:
       model: {15b: Qwen2.5-1.5B-Instruct}
       group: [G2c, G2k]
       type: {rule: 規則, remap: 付け替え}
       cond: [direct, cot]
-    where: {group: '{group}', type: '{type}'}
-    cond: '{cond}'
-    stats: [acc, both]
+    row_filter: {group: '{group}', type: '{type}'}
+    condition_entry: '{cond}'
+    metric: [accuracy, order_robust_accuracy]
     meaning:
       model: {15b: model_15b}
       group: {G2c: g_redef_conflict, G2k: g_redef_control}
       type: {rule: rule_redefinition, remap: remap_redefinition}
       cond:
-        direct: {nodes: [text_injection, definition_text, place_adjacent, single_pass]}
-        cot: {nodes: [text_injection, definition_text, place_adjacent, scratchpad]}
+        direct:
+          identifier: [text_injection, definition_text, place_adjacent, single_pass]
+        cot:
+          identifier: [text_injection, definition_text, place_adjacent, scratchpad]
