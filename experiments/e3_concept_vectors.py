@@ -157,8 +157,8 @@ def main():
         p.requires_grad_(False)
     inj = Injector(r.model, args.layer)
 
-    name = f"e3_{args.model.split('/')[-1]}_L{args.layer}{args.tag}"
-    part = ROOT / "results" / f"{name}.partial.pt"
+    run_name = f"e3_{args.model.split('/')[-1]}_L{args.layer}{args.tag}"
+    part = ROOT / "results" / f"{run_name}.partial.pt"
     vectors, train_log = torch.load(part) if part.exists() else ({}, {})  # 中断からの再開
     for c in concepts:
         if c in vectors:
@@ -192,7 +192,7 @@ def main():
                 "mean_margin": sum(x["margin"] for x in rs) / len(rs),
             }
 
-    out = ROOT / "results" / f"{name}.json"
+    out = ROOT / "results" / f"{run_name}.json"
     out.write_text(
         json.dumps(
             {"args": vars(args), "train": train_log, "items": res, "summary": summary},
@@ -201,7 +201,7 @@ def main():
         ),
         encoding="utf-8",
     )
-    torch.save(vectors, ROOT / "results" / f"{name}.pt")
+    torch.save(vectors, ROOT / "results" / f"{run_name}.pt")
 
     print(f"\nmodel={args.model} layer={args.layer} steps={args.steps} lr={args.lr}")
     for g, row in summary.items():
