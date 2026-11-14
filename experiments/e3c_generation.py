@@ -1,7 +1,7 @@
 """E3c: 概念ベクトルが、文章を生成させたときの答えにも効くかを測る。
 
-二択ではなく、選択肢を示さずに自由に答えさせる。出力の中で最初に現れる
-肯定・否定の表現で判定する。
+二択ではなく、選択肢を示さずに自由に答えさせる。出力の冒頭が「はい」か
+「いいえ」かで判定する。
 
 条件:
   none  何もなし
@@ -22,13 +22,14 @@ import torch
 from e1_context_injection import ROOT, Runner
 from e3_concept_vectors import Injector, build_delta
 
-YES = ["はい", "当たります", "該当します", "属します", "含まれます"]
-NO = ["いいえ", "当たりません", "該当しません", "属しません", "含まれません", "ではありません"]
-
-
 def judge(text):
-    pos = [(text.find(w), "はい") for w in YES if w in text] + [(text.find(w), "いいえ") for w in NO if w in text]
-    return min(pos)[1] if pos else "不明"
+    """出力の冒頭が「はい」か「いいえ」かで判定する。どちらでもなければ不明。"""
+    head = text.strip().lstrip("「『")
+    if head.startswith("はい"):
+        return "はい"
+    if head.startswith("いいえ"):
+        return "いいえ"
+    return "不明"
 
 
 @torch.no_grad()
@@ -60,7 +61,7 @@ def main():
     res = {}
     for it in [it for it in data["items"] if it["group"] in ("G2c", "G2k")]:
         c = it["defs"][0]
-        q = it["q"][:-2] + "ますか。" if it["q"].endswith("当たるか。") else it["q"][:-3] + "しますか。"
+        q = it["q"].replace("当たるか。", "当たりますか。").replace("属するか。", "属しますか。")
         ask = q + "「はい」か「いいえ」で答え、理由を一文で述べてください。"
         ex = "\n".join(f"問：{e['q']}\n答：{e['correct']}" for e in qa[c])
         prefix = f"次の定義に従うこと。\n{defs[c]}\n\n次の例に従うこと。\n{ex}\n\n"
