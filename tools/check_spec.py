@@ -95,7 +95,7 @@ class Ontology:
         while nid in self.N and hops < 50:
             if side in self.N[nid]:
                 return self.N[nid][side]
-            nid, hops = self.N[nid].get("is"), hops + 1
+            nid, hops = self.N[nid].get("extends"), hops + 1
         return None
 
     def is_verb(self, nid):
@@ -106,8 +106,8 @@ class Ontology:
 
     def parent(self, nid):
         n = self.N[nid]
-        if "is" in n:
-            return n["is"]
+        if "extends" in n:
+            return n["extends"]
         if "form" in n:
             return self.spot_type(*n["form"])
         return None
@@ -131,7 +131,7 @@ class Ontology:
             fs = [f for k in ("holds", "before", "after") for f in self.N[verb].get(k, [])]
             if fs:
                 return {re.search(r"(\w+)\(", f).group(1) for f in fs}
-            verb, hops = self.N[verb].get("is"), hops + 1
+            verb, hops = self.N[verb].get("extends"), hops + 1
         return set()
 
     def is_function(self, v):
@@ -210,16 +210,16 @@ class Ontology:
             if "form" in n:
                 self.check_spot(n["form"], nid)
                 continue
-            if n.get("is") not in N:
+            if n.get("extends") not in N:
                 err(f"{nid}: 上位がない、または未定義")
                 continue
             if self.is_verb(nid):
                 if not self.is_a(nid, "occurrent"):
                     err(f"{nid}: 動詞は生起体の下に置く")
-                if self.is_verb(n["is"]):
+                if self.is_verb(n["extends"]):
                     for side in ("from", "to"):
-                        if side in n and not self.is_a(n[side], self.end(n["is"], side)):
-                            err(f"{nid}: {side} の {n[side]} は、上位の {self.end(n['is'], side)} を狭めていない")
+                        if side in n and not self.is_a(n[side], self.end(n["extends"], side)):
+                            err(f"{nid}: {side} の {n[side]} は、上位の {self.end(n['extends'], side)} を狭めていない")
                     if not any(k in n for k in ("from", "to", "mod")):
                         err(f"{nid}: 上位の動詞と区別する式がない")
                 else:
@@ -252,8 +252,8 @@ class Ontology:
                 if not spot:
                     continue
                 verb, pos = spot
-                if not self.overlaps(self.spot_type(verb, pos), n["is"]) and not self.overlaps(n["is"], self.spot_type(verb, pos)):
-                    err(f"{where}: {n['is']} は {verb} の {pos}（{self.spot_type(verb, pos)}）に来られない")
+                if not self.overlaps(self.spot_type(verb, pos), n["extends"]) and not self.overlaps(n["extends"], self.spot_type(verb, pos)):
+                    err(f"{where}: {n['extends']} は {verb} の {pos}（{self.spot_type(verb, pos)}）に来られない")
                 if "with" in m:
                     other = {"from": "to", "to": "from"}.get(pos)
                     if other is None:
@@ -269,7 +269,7 @@ class Ontology:
                     if axis in AX and AX[axis]["from"] != "any" and AX[axis]["from"] not in self.base_of(verb):
                         err(f"{where}: 軸 {axis} は基礎の関係 {AX[axis]['from']} を抽象にしたものだが、{verb} はそれを使っていない")
             if not ("holds" in n or "before" in n):
-                key = yaml.safe_dump({k: n[k] for k in ("is", "from", "to", "of", "mod", "neg", "val", "cmp", "axis") if k in n}, sort_keys=True)
+                key = yaml.safe_dump({k: n[k] for k in ("extends", "from", "to", "of", "mod", "neg", "val", "cmp", "axis") if k in n}, sort_keys=True)
                 if key in forms:
                     err(f"{nid}: 式が {forms[key]} と同じ")
                 forms.setdefault(key, nid)
@@ -306,7 +306,7 @@ class Ontology:
 
     def kinds_of(self, nid):
         """nid の直接の下位にあるノード。status や留保の値として使えるもの。"""
-        return [k for k, n in self.N.items() if n.get("is") == nid]
+        return [k for k, n in self.N.items() if n.get("extends") == nid]
 
     def status_pattern(self, nid):
         """状態のノードの式から、「支持する観察がある / 反する観察がある」の組を読み取る。"""
@@ -320,7 +320,7 @@ class Ontology:
         """大きさを比べる動詞の式（後ろにある、の成立と不成立）を、2つの数に当てはめる。"""
         hops = 0
         while verb in self.N and "holds" not in self.N[verb] and hops < 50:
-            verb, hops = self.N[verb].get("is"), hops + 1
+            verb, hops = self.N[verb].get("extends"), hops + 1
         n = self.N.get(verb, {})
         if not n.get("holds") or any(not re.fullmatch(r"(not )?after\((from|to), (from|to)\)", f) for f in n["holds"]):
             return None
@@ -335,7 +335,7 @@ class Ontology:
     def is_strict(self, verb):
         hops = 0
         while verb in self.N and "holds" not in self.N[verb] and hops < 50:
-            verb, hops = self.N[verb].get("is"), hops + 1
+            verb, hops = self.N[verb].get("extends"), hops + 1
         return any(f.startswith("after(") for f in self.N.get(verb, {}).get("holds", []))
 
     def expr(self, nid):
