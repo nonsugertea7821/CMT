@@ -1,0 +1,69 @@
+# 動詞の語根を、表示語に頼らずに区別できるかの試験。正本ではない。tools/trial_verb_roots.py で集計する。
+#
+# 考え方: 生起体は、持続体どうしの「状態の関係」が変わること、または成り立っていること、として書く。
+#   状態の関係（基礎）: exists(x) 在る / depend(x, y) 依存する / part(x, y) 部分である /
+#                       refer(x, y) について述べる / after(x, y) 後ろにある / involve(o, c) 生起体に持続体が関わる
+#   静的な語根: holds に、成り立っている状態の関係を書く。
+#   動的な語根: before と after に、起こる前と後の状態の関係を書く。変わらないものは書かない。
+#   登場するもの: from（始点）、to（終点）、new（始点でも終点でもない第三のもの）。new_kind はその種類。
+# 状態の関係の割り当ては手作業の判定。
+base_relations:
+  exists: {ja: 在る, arity: 1}
+  depend: {ja: 依存する, arity: 2, laws: [始点があれば終点もある]}
+  part: {ja: 部分である, arity: 2, laws: [推移的, 反対称的]}
+  refer: {ja: について述べる, arity: 2, laws: []}
+  after: {ja: 後ろにある, arity: 2, laws: [推移的, 非対称的]}
+  involve: {ja: 生起体に持続体が関わる, arity: 2, laws: [始点があれば終点もある]}
+
+roots:
+  # ----- 静的（何も変わらない） -----
+  depend: {ja: 依存する, ends: [continuant, continuant], holds: ["depend(from, to)"]}
+  compose: {ja: 部分になる, ends: [continuant, continuant], holds: ["part(from, to)"]}
+  come_after: {ja: 後ろに置かれる, ends: [continuant, continuant], holds: ["after(from, to)"]}
+  refer: {ja: 述べる, ends: [continuant, any], holds: ["refer(from, to)"]}
+  agree: {ja: 一致する, ends: [continuant, continuant], holds: ["refer(from, new)", "refer(to, new)"]}
+  answer: {ja: 答える, ends: [continuant, continuant], holds: ["refer(from, to)", "after(from, to)"]}
+  write: {ja: 書く, ends: [continuant, continuant], holds: ["depend(from, to)", "part(new, from)", "part(new, to)"]}
+  occur_in: {ja: で起こる, ends: [occurrent, continuant], holds: ["involve(from, to)"], to_kind: independent}
+  realize: {ja: 実現する, ends: [occurrent, continuant], holds: ["involve(from, to)"], to_kind: realizable}
+  trigger: {ja: 引き起こす, ends: [any, occurrent], holds: ["after(to, from)", "depend(to, from)"]}
+  # ----- 動的: 在るようになる -----
+  design: {ja: 設計する, ends: [continuant, continuant], before: ["not exists(to)"], after: ["exists(to)"]}
+  compute: {ja: 計算する, ends: [continuant, any], before: ["not exists(to)"], after: ["exists(to)"]}
+  # ----- 動的: 始点に、終点についての何かが宿る -----
+  learn: {ja: 学習する, ends: [continuant, continuant], before: ["not exists(new)"], after: ["exists(new)", "depend(new, from)", "refer(new, to)"], new_kind: realizable}
+  see: {ja: 見る, ends: [continuant, continuant], before: ["not exists(new)"], after: ["exists(new)", "depend(new, from)", "refer(new, to)"], new_kind: quality}
+  read: {ja: 読む, ends: [continuant, continuant], before: ["not exists(new)"], after: ["exists(new)", "depend(new, from)", "refer(new, to)"], new_kind: quality}
+  judge: {ja: 判定する, ends: [continuant, continuant], before: ["not exists(new)"], after: ["exists(new)", "depend(new, from)", "refer(new, to)"], new_kind: information}
+  teach: {ja: 教える, ends: [continuant, continuant], before: ["not exists(new)"], after: ["exists(new)", "depend(new, to)", "refer(new, from)"], new_kind: realizable}
+  # ----- 動的: 終点の性質や所属が変わる -----
+  freeze: {ja: 固定する, ends: [continuant, continuant], before: ["exists(new)", "depend(new, to)"], after: ["not exists(new)"], new_kind: realizable}
+  expose: {ja: 公開する, ends: [continuant, continuant], before: ["not exists(new)"], after: ["exists(new)", "depend(new, to)"], new_kind: realizable}
+  deliver: {ja: 届ける, ends: [continuant, continuant], before: ["not part(to, new)"], after: ["part(to, new)"]}
+  substitute: {ja: 置き換える, ends: [continuant, continuant], before: ["part(to, new)", "not part(from, new)"], after: ["not part(to, new)", "part(from, new)"]}
+
+# ----- 試験の結果（tools/trial_verb_roots.py の出力を写したもの） -----
+results:
+  roots: {total: 21, static: 10, dynamic: 11, using_third_thing: 11}
+  base_relation_uses: {exists: 18, depend: 10, part: 9, refer: 9, after: 3, involve: 2}
+  distinct_signatures:
+    state_relations_only: 16
+    plus_end_types: 17
+    plus_kinds_of_to_and_third_thing: 20
+  remaining_clash: [[見る, 読む]]
+findings:
+  f1:
+    statement: 語根 21個のうち 16個は、状態の関係の成立と変化だけで互いに区別できる。両端と第三のものの種類を加えると 20個
+    implies: 動詞の語根は、表示語に頼らず、持続体どうしの状態の関係が変わることとして書ける
+  f2:
+    statement: 動的な語根 11個のすべてが、始点でも終点でもない第三のものを必要とした
+    implies: 「結果や産物」と「端が3つ以上ある関係」は、同じ1つの事情だった。生起体は、起こる前と後の状態の差で、差の中に第三のものが現れる
+  f3:
+    statement: 基礎に残ったのは、状態の関係 6個（在る、依存する、部分である、について述べる、後ろにある、生起体に持続体が関わる）
+    implies: 意味の底は、動詞の語根 21個から、状態の関係 6個に減った。うち4個は論理的な法則で区別できる。「について述べる」には法則がなく、表示語だけで立っている
+  f4:
+    statement: 見る と 読む は区別できない。設計する と 計算する は、終点が持続体か何でもよいかの違いだけで区別されている
+    implies: どのように行うか（様態）の違いは、この書き方では表せない
+caveats:
+  - 語根ごとの状態の関係の割り当ては手作業で、1通りに決まるものではない
+  - 語根は、この計画の語彙に出てくるものから選んだ 21個だけ
