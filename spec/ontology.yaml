@@ -1,5 +1,5 @@
 # 概念の体系。正本。tools/check_spec.py で検査する。
-# このファイルの書き方による記述が、制御自然言語である。
+# このファイルの書き方が制御体系言語で、このファイル全体が制御体系言語の体系である。概念式は、体系が持つものの一部。
 # 自然言語の文は、ここから変換して得る表示で、正本ではない。変換は LLM が行ってもシステムが行ってもよい。
 #
 # 基礎: 持続体どうしの状態の関係 5個（法則を持つ）と、体系そのものの行為 1個（について述べる）。
@@ -115,8 +115,9 @@ nodes:
   # ===== 情報 =====
   information_entity: {ja: 情報, is: generically_dependent_continuant, mod: [{of: [v_refer, from]}]}
   language: {ja: 言語, is: information_entity, mod: [{of: [v_express, to]}]}
-  controlled_language: {ja: 制御自然言語, is: language, mod: [{of: [v_design, to]}, {of: [v_express, to], with: definition}]}
-  concept_expression: {ja: 概念式, is: sentence, mod: [{of: [v_express, from], with: controlled_language}, {of: [v_refer, from], with: concept}]}
+  controlled_language: {ja: 制御体系言語, is: language, mod: [{of: [v_design, to]}, {of: [v_express, to], with: definition}]}
+  language_system: {ja: 制御体系言語の体系, is: information_entity, mod: [{of: [v_refer, from], with: controlled_language}, {of: [v_compose, to], with: concept_expression, at: {count: {gt: 1}}}]}
+  concept_expression: {ja: 概念式, is: definition, mod: [{of: [v_express, from], with: controlled_language}, {of: [v_compose, from], with: language_system}]}
   rendered_text: {ja: 自然言語に変換した文, is: passage, mod: [{of: [v_express, from], with: natural_language}, {of: [v_compute, to]}, {of: [v_agree, from], with: depended_information}]}
   natural_language: {ja: 自然言語, is: language, mod: [{of: [v_design, to], neg: true}]}
   programming_language: {ja: プログラミング言語, is: language, mod: [{of: [v_design, to]}]}
