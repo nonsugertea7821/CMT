@@ -6,7 +6,7 @@
 #       「について述べる」は体系自身がしている行為なので、体系の中では定義しない。限定（修飾）はできる。
 # ノード: すべて、持続体か生起体の下にある。説明文（gloss）を持つのは最上位の2つだけ。
 # 動詞: 生起体のノードで、両端（from, to）を持つ。関係に当たる。
-#       静的な動詞は holds（成り立っている状態の関係）、動的な動詞は before / after（起こる前後の状態の関係）で書く。
+#       静的な動詞は holds（成り立っている状態の関係）、動的な動詞は pre / post（起こる前後の状態の関係）で書く。
 #       new は、始点でも終点でもない第三のもの。new_kind はその種類。
 #       動詞の下位は、端の種類を狭めて書く（extends: 動詞, from / to: 狭めた種類）。
 # 形:   form: [動詞, 位置]。位置は from / to / new。その位置に来るもの全体。
@@ -30,26 +30,26 @@ base:
   refer: {ja: について述べる, arity: 2, system_act: true}
 
 # 法則（公理）。体系が、証明なしに置くもの。ja は表示で、当てはめるのは実行器。
-# of は、法則が掛かる節。どの法則も、検査（check_spec.py）か実行の検査（run_spec.py）のどちらかが当てはめる。
+# scope は、法則が掛かる節。どの法則も、検査（check_spec.py）か実行の検査（run_spec.py）のどちらかが当てはめる。
 laws:
-  transitive: {ja: 推移的, of: base}
-  antisymmetric: {ja: 反対称的, of: base}
-  asymmetric: {ja: 非対称的, of: base}
-  end_exists: {ja: 始点が在れば終点も在る, of: base}
-  truth_distinct: {ja: 真偽の値は2つで互いに違う, of: axes}
-  inherit: {ja: 下位は上位の端を引き継ぐ, of: nodes}
-  narrow: {ja: 下位は上位を狭めることしかできない, of: nodes}
-  acyclic: {ja: 定義は自分自身を参照しない, of: nodes}
-  step: {ja: 前の状態が成り立つとき後の状態に置き換える, of: state}
-  frame: {ja: 動詞が触れなかった文は変わらない, of: state}
-  halt: {ja: 当てはまる動詞がなければ止まる, of: state}
+  transitive: {ja: 推移的, scope: base}
+  antisymmetric: {ja: 反対称的, scope: base}
+  asymmetric: {ja: 非対称的, scope: base}
+  end_exists: {ja: 始点が在れば終点も在る, scope: base}
+  truth_distinct: {ja: 真偽の値は2つで互いに違う, scope: axes}
+  inherit: {ja: 下位は上位の端を引き継ぐ, scope: nodes}
+  narrow: {ja: 下位は上位を狭めることしかできない, scope: nodes}
+  acyclic: {ja: 定義は自分自身を参照しない, scope: nodes}
+  step: {ja: 前の状態が成り立つとき後の状態に置き換える, scope: run}
+  frame: {ja: 動詞が触れなかった文は変わらない, scope: run}
+  halt: {ja: 当てはまる動詞がなければ止まる, scope: run}
 
 axes:
-  count: {ja: 個数, from: any, values: number}   # どの関係についても「いくつと結ばれるか」を見られる
-  ratio: {ja: 割合, from: part, values: number}
-  order: {ja: 順番, from: after, values: number}
-  text: {ja: 文字列, from: refer, values: literal}
-  truth: {ja: 真偽, from: refer, values: [true, false]}
+  count: {ja: 個数, source: any, value: number}   # どの関係についても「いくつと結ばれるか」を見られる
+  ratio: {ja: 割合, source: part, value: number}
+  order: {ja: 順番, source: after, value: number}
+  text: {ja: 文字列, source: refer, value: literal}
+  truth: {ja: 真偽, source: refer, value: [true, false]}
 
 nodes:
   continuant: {ja: 持続体, gloss: 時間を通じて同一性を保って存在するもの}
@@ -72,26 +72,26 @@ nodes:
   v_use: {ja: 使う, extends: occurrent, from: any, to: continuant, holds: ["involve(new, to)", "depend(new, from)"]}
   v_trigger: {ja: 引き起こす, extends: occurrent, from: any, to: occurrent, holds: ["after(to, from)", "depend(to, from)"]}
   # ----- 動的 -----
-  v_design: {ja: 設計する, extends: occurrent, from: continuant, to: continuant, before: ["not exists(to)"], after: ["exists(to)"]}
-  v_compute: {ja: 計算する, extends: occurrent, from: continuant, to: any, before: ["not exists(to)"], after: ["exists(to)"]}
-  v_speak: {ja: 発話する, extends: occurrent, from: continuant, to: continuant, before: ["not exists(to)"], after: ["exists(to)", "depend(to, from)"]}
+  v_design: {ja: 設計する, extends: occurrent, from: continuant, to: continuant, pre: ["not exists(to)"], post: ["exists(to)"]}
+  v_compute: {ja: 計算する, extends: occurrent, from: continuant, to: any, pre: ["not exists(to)"], post: ["exists(to)"]}
+  v_speak: {ja: 発話する, extends: occurrent, from: continuant, to: continuant, pre: ["not exists(to)"], post: ["exists(to)", "depend(to, from)"]}
   v_learn: {ja: 学習する, extends: occurrent, from: continuant, to: continuant, new_kind: realizable_entity,
-            before: ["not exists(new)"], after: ["exists(new)", "depend(new, from)", "refer(new, to)"]}
+            pre: ["not exists(new)"], post: ["exists(new)", "depend(new, from)", "refer(new, to)"]}
   v_see: {ja: 見る, extends: occurrent, from: continuant, to: continuant, new_kind: quality,
-          before: ["not exists(new)"], after: ["exists(new)", "depend(new, from)", "refer(new, to)"]}
+          pre: ["not exists(new)"], post: ["exists(new)", "depend(new, from)", "refer(new, to)"]}
   v_judge: {ja: 判定する, extends: occurrent, from: continuant, to: continuant, new_kind: information_entity,
-            before: ["not exists(new)"], after: ["exists(new)", "depend(new, from)", "refer(new, to)"]}
+            pre: ["not exists(new)"], post: ["exists(new)", "depend(new, from)", "refer(new, to)"]}
   v_teach: {ja: 教える, extends: occurrent, from: continuant, to: continuant, new_kind: realizable_entity,
-            before: ["not exists(new)"], after: ["exists(new)", "depend(new, to)", "refer(new, from)"]}
+            pre: ["not exists(new)"], post: ["exists(new)", "depend(new, to)", "refer(new, from)"]}
   v_freeze: {ja: 固定する, extends: occurrent, from: continuant, to: continuant, new_kind: realizable_entity,
-             before: ["exists(new)", "depend(new, to)"], after: ["not exists(new)"]}
+             pre: ["exists(new)", "depend(new, to)"], post: ["not exists(new)"]}
   v_expose: {ja: 公開する, extends: occurrent, from: continuant, to: continuant, new_kind: realizable_entity,
-             before: ["not exists(new)"], after: ["exists(new)", "depend(new, to)"]}
+             pre: ["not exists(new)"], post: ["exists(new)", "depend(new, to)"]}
   v_vary: {ja: 動かす, extends: occurrent, from: continuant, to: continuant, new_kind: quality,
-           before: ["depend(new, to)"], after: ["not depend(new, to)"]}
-  v_deliver: {ja: 届ける, extends: occurrent, from: continuant, to: continuant, before: ["not part(to, new)"], after: ["part(to, new)"]}
+           pre: ["depend(new, to)"], post: ["not depend(new, to)"]}
+  v_deliver: {ja: 届ける, extends: occurrent, from: continuant, to: continuant, pre: ["not part(to, new)"], post: ["part(to, new)"]}
   v_substitute: {ja: 置き換える, extends: occurrent, from: continuant, to: continuant,
-                 before: ["part(to, new)", "not part(from, new)"], after: ["not part(to, new)", "part(from, new)"]}
+                 pre: ["part(to, new)", "not part(from, new)"], post: ["not part(to, new)", "part(from, new)"]}
   # ----- 動詞の下位（端の種類を狭める） -----
   v_speak_definition: {ja: 定義文を発話する, extends: v_speak, to: definition_text}
   v_speak_reason: {ja: 理由を発話する, extends: v_speak, to: reason}
@@ -313,8 +313,8 @@ nodes:
   v_level: {ja: 同じ位置にある, extends: occurrent, from: continuant, to: continuant, holds: ["not after(from, to)", "not after(to, from)"]}
   v_near: {ja: ほぼ同じ位置にある, extends: occurrent, from: continuant, to: continuant, new_kind: tolerance, holds: ["not after(from, to)", "not after(to, from)"]}
   # ----- 採用と取り下げ -----
-  v_adopt: {ja: 採用する, extends: occurrent, from: continuant, to: continuant, new_kind: role, before: ["not depend(new, to)"], after: ["depend(new, to)"]}
-  v_withdraw: {ja: 取り下げる, extends: occurrent, from: continuant, to: continuant, new_kind: role, before: ["depend(new, to)"], after: ["not depend(new, to)"]}
+  v_adopt: {ja: 採用する, extends: occurrent, from: continuant, to: continuant, new_kind: role, pre: ["not depend(new, to)"], post: ["depend(new, to)"]}
+  v_withdraw: {ja: 取り下げる, extends: occurrent, from: continuant, to: continuant, new_kind: role, pre: ["depend(new, to)"], post: ["not depend(new, to)"]}
   adopted: {ja: 採用されている, extends: quality, of: [v_adopt, to]}
   not_adopted: {ja: まだ採用されていない, extends: quality, of: [v_adopt, to], neg: true}
   withdrawn: {ja: 取り下げられている, extends: quality, of: [v_withdraw, to]}
@@ -372,58 +372,78 @@ nodes:
 
   # ===== 体系が、自分の書き方（文法）について述べるための概念 =====
   expression_part: {ja: 概念式の部分, extends: information_entity, mod: [{of: [v_compose, from], with: concept_expression}]}
-  display_word: {ja: 表示語, extends: word, mod: [{of: [v_agree, from], with: identifier}]}
-  gloss_text: {ja: 説明文, extends: passage, mod: [{of: [v_express, from], with: natural_language}, {of: [v_refer, from], with: concept}]}
+  ja: {ja: 表示語, extends: word, mod: [{of: [v_agree, from], with: identifier}]}
+  gloss: {ja: 説明文, extends: passage, mod: [{of: [v_express, from], with: natural_language}, {of: [v_refer, from], with: concept}]}
   kind: {ja: 種類, form: [v_compose, to]}
   participant: {ja: 関わるもの, form: [v_involve, to]}
   third_participant: {ja: 第三のもの, extends: participant, mod: [{of: [p, from], neg: true}, {of: [p, to], neg: true}]}
   state_relation: {ja: 状態の関係, extends: occurrent, mod: [{of: [v_stage, to], neg: true}]}
-  genus_part: {ja: 上位の指定, extends: expression_part, mod: [{of: [v_refer, from], with: kind}]}
-  position_part: {ja: 位置の指定, extends: expression_part, mod: [{of: [v_refer, from], with: p}]}
-  form_part: {ja: 形の指定, extends: position_part, mod: [{of: [v_compose, from], with: modification_part, neg: true}]}
-  modification_part: {ja: 修飾の指定, extends: expression_part, mod: [{of: [v_compose, to], with: position_part}]}
-  filler_part: {ja: もう一方の端の指定, extends: expression_part, mod: [{of: [v_refer, from], with: participant}]}
-  negation_part: {ja: 否定の指定, extends: expression_part, val: {truth: false}}
-  quantifier_part: {ja: 数量化の指定, extends: expression_part, mod: [{of: [v_refer, from], with: participant, at: {count: {gt: 1}}}]}
+  extends: {ja: 上位の指定, extends: expression_part, mod: [{of: [v_refer, from], with: kind}]}
+  position: {ja: 位置, extends: expression_part, mod: [{of: [v_refer, from], with: p}]}
+  form: {ja: 形の指定, extends: position, mod: [{of: [v_compose, from], with: mod, neg: true}]}
+  mod: {ja: 修飾の指定, extends: expression_part, mod: [{of: [v_compose, to], with: position}]}
+  with: {ja: もう一方の端の指定, extends: expression_part, mod: [{of: [v_refer, from], with: participant}]}
+  neg: {ja: 否定の指定, extends: expression_part, val: {truth: false}}
+  quant: {ja: 数量化の指定, extends: expression_part, mod: [{of: [v_refer, from], with: participant, at: {count: {gt: 1}}}]}
   value_part: {ja: 値の指定, extends: expression_part, mod: [{of: [v_refer, from], with: value}]}
-  at_part: {ja: 修飾の中の値の指定, extends: value_part, mod: [{of: [v_compose, from], with: modification_part}]}
-  val_part: {ja: 概念が取る値の指定, extends: value_part, mod: [{of: [v_compose, from], with: modification_part, neg: true}]}
-  comparison_part: {ja: 比較の指定, extends: expression_part, mod: [{of: [v_refer, from], with: value, at: {count: 2}}]}
-  cmp_a: {ja: 比べる一方, form: [v_level, from]}
-  cmp_b: {ja: 比べるもう一方, form: [v_level, to]}
+  at: {ja: 修飾の中の値の指定, extends: value_part, mod: [{of: [v_compose, from], with: mod}]}
+  val: {ja: 概念が取る値の指定, extends: value_part, mod: [{of: [v_compose, from], with: mod, neg: true}]}
+  cmp: {ja: 比較の指定, extends: expression_part, mod: [{of: [v_refer, from], with: value, at: {count: 2}}]}
+  a: {ja: 比べる一方, form: [v_level, from]}
+  b: {ja: 比べるもう一方, form: [v_level, to]}
   same: {ja: 同じである, extends: quality, of: [v_level, from]}
   differ: {ja: 違っている, extends: quality, of: [v_level, from], neg: true}
-  comparison_result: {ja: 比べた結果, extends: quality, mod: [{of: [v_depend, from], with: comparison_part}]}
-  from_part: {ja: 始点の種類の指定, extends: expression_part, mod: [{of: [v_refer, from], with: s}]}
-  to_part: {ja: 終点の種類の指定, extends: expression_part, mod: [{of: [v_refer, from], with: o}]}
-  third_part: {ja: 第三のものの種類の指定, extends: expression_part, mod: [{of: [v_refer, from], with: third_participant}]}
-  holds_part: {ja: 成り立つ状態の指定, extends: expression_part, mod: [{of: [v_refer, from], with: state_relation}]}
-  before_part: {ja: 前の状態の指定, extends: holds_part, mod: [{of: [v_come_before, from], with: after_part}]}
-  after_part: {ja: 後の状態の指定, extends: holds_part, mod: [{of: [v_come_after, from], with: before_part}]}
+  rel: {ja: 比べた結果, extends: quality, mod: [{of: [v_depend, from], with: cmp}]}
+  from: {ja: 始点の位置, extends: position, mod: [{of: [v_refer, from], with: s}]}
+  to: {ja: 終点の位置, extends: position, mod: [{of: [v_refer, from], with: o}]}
+  new_kind: {ja: 第三のものの種類の指定, extends: expression_part, mod: [{of: [v_refer, from], with: third_participant}]}
+  holds: {ja: 成り立つ状態の指定, extends: expression_part, mod: [{of: [v_refer, from], with: state_relation}]}
+  pre: {ja: 前の状態の指定, extends: holds, mod: [{of: [v_come_before, from], with: post}]}
+  post: {ja: 後の状態の指定, extends: holds, mod: [{of: [v_come_after, from], with: pre}]}
   arity: {ja: 端の数, extends: magnitude, mod: [{of: [v_measure, from], with: state_relation}]}
-  law: {ja: 法則, extends: sentence, mod: [{of: [v_refer, from], with: state_relation}], val: {truth: true}}
+  laws: {ja: 法則, extends: sentence, mod: [{of: [v_refer, from], with: state_relation}], val: {truth: true}}
   system_act: {ja: 体系そのものの行為, extends: v_refer, from: system}
-  field: {ja: 記録の項目, extends: identifier, mod: [{of: [v_compose, from], with: sentence}]}
-  record_description: {ja: 記録の種類の記述, extends: information_entity, mod: [{of: [v_compose, from], with: system}, {of: [v_refer, from], with: sentence}]}
+  fields: {ja: 記録の項目, extends: identifier, mod: [{of: [v_compose, from], with: sentence}]}
+  records: {ja: 記録の種類の記述, extends: information_entity, mod: [{of: [v_compose, from], with: system}, {of: [v_refer, from], with: sentence}]}
   grammar_rule: {ja: 文法の規則, extends: sentence, mod: [{of: [v_refer, from], with: expression_part}]}
-  grammar_description: {ja: 文法の記述, extends: information_entity, mod: [{of: [v_compose, from], with: system}, {of: [v_compose, to], with: grammar_rule, at: {count: {gt: 1}}}]}
+  grammar: {ja: 文法の記述, extends: information_entity, mod: [{of: [v_compose, from], with: system}, {of: [v_compose, to], with: grammar_rule, at: {count: {gt: 1}}}]}
 
   # ===== 述語論理の語。「について述べる」の限定として書く。区別は法則 truth_distinct が与える =====
-  negation: {ja: 否定, extends: sentence, mod: [{of: [v_refer, from], with: sentence}], cmp: [{axis: truth, a: negation, b: sentence, rel: differ}]}
-  existential: {ja: 存在の数量化, extends: sentence, mod: [{of: [v_refer, from], with: participant, at: {count: {ge: 1}}}]}
-  universal: {ja: 全称の数量化, extends: negation, mod: [{of: [v_refer, from], with: existential}]}
-  range_value: {ja: 範囲の判定, extends: value, mod: [{of: [v_not_before, from]}, {of: [v_not_after, from]}]}
+  not: {ja: 否定, extends: sentence, mod: [{of: [v_refer, from], with: sentence}], cmp: [{axis: truth, a: not, b: sentence, rel: differ}]}
+  any: {ja: 存在の数量化, extends: sentence, mod: [{of: [v_refer, from], with: participant, at: {count: {ge: 1}}}]}
+  all: {ja: 全称の数量化, extends: not, mod: [{of: [v_refer, from], with: any}]}
+  between: {ja: 範囲の判定, extends: value, mod: [{of: [v_not_before, from]}, {of: [v_not_after, from]}]}
   # ===== 個体の層と実行 =====
-  v_belong: {ja: 属する, extends: p, to: kind}
-  individual: {ja: 個体, form: [v_belong, from]}
-  fact: {ja: 個体についての文, extends: sentence, mod: [{of: [v_refer, from], with: individual}]}
-  state: {ja: 個体の状態, extends: information_entity, mod: [{of: [v_compose, to], with: fact}]}
-  rewrite_rule: {ja: 書き換えの規則, extends: definition, mod: [{of: [v_refer, from], with: after_part}]}
+  is: {ja: 属する, extends: p, to: kind}
+  individuals: {ja: 個体, form: [is, from]}
+  facts: {ja: 個体についての文, extends: sentence, mod: [{of: [v_refer, from], with: individuals}]}
+  state: {ja: 個体の状態, extends: information_entity, mod: [{of: [v_compose, to], with: facts}]}
+  rewrite_rule: {ja: 書き換えの規則, extends: definition, mod: [{of: [v_refer, from], with: post}]}
   v_execute: {ja: 実行する, extends: occurrent, from: continuant, to: state, new_kind: state,
-              before: ["not exists(new)"], after: ["exists(new)", "after(new, to)"]}
+              pre: ["not exists(new)"], post: ["exists(new)", "after(new, to)"]}
   executor: {ja: 実行器, extends: role, mod: [{of: [v_depend, from], with: rewrite_rule}, {of: [v_execute, from]}]}
-  halted_state: {ja: 止まった状態, extends: state, mod: [{of: [v_execute, to], neg: true}]}
+  halted: {ja: 止まった状態, extends: state, mod: [{of: [v_execute, to], neg: true}]}
   run: {ja: 実行の記録, extends: information_entity, mod: [{of: [v_refer, from], with: v_execute}]}
+
+  # ===== 文法の語のうち、上に無かったもの。文法の語は、すべてノードの識別子である =====
+  new: {ja: 第三の位置, extends: position, mod: [{of: [v_refer, from], with: third_participant}]}
+  of: {ja: 位置の指定, extends: expression_part, mod: [{of: [v_refer, from], with: position}]}
+  section: {ja: 体系の節, extends: information_entity, mod: [{of: [v_compose, from], with: system}]}
+  base: {ja: 基礎の節, extends: section, mod: [{of: [v_refer, from], with: state_relation}]}
+  axes: {ja: 軸の節, extends: section, mod: [{of: [v_refer, from], with: axis}]}
+  nodes: {ja: ノードの節, extends: section, mod: [{of: [v_refer, from], with: concept_expression}]}
+  source: {ja: もとになる関係の指定, extends: expression_part, mod: [{of: [v_refer, from], with: state_relation}, {of: [v_compose, from], with: axes}]}
+  key: {ja: 記録の識別子の指定, extends: expression_part, mod: [{of: [v_refer, from], with: identifier}, {of: [v_compose, from], with: records}]}
+  steps: {ja: 歩みの並び, extends: information_entity, mod: [{of: [v_refer, from], with: v_execute, at: {count: {ge: 1}}}]}
+  expect: {ja: 期待する文, extends: facts, val: {truth: true}}
+  function: {ja: 関数, extends: value, mod: [{of: [v_refer, from], with: value}]}
+  logic: {ja: 述語論理の語, extends: word, mod: [{of: [v_refer, from], with: sentence}]}
+  gt: {ja: より大きいという判定, extends: function, mod: [{of: [v_come_after, from]}]}
+  ge: {ja: 以上という判定, extends: function, mod: [{of: [v_not_before, from]}]}
+  lt: {ja: より小さいという判定, extends: function, mod: [{of: [v_come_before, from]}]}
+  le: {ja: 以下という判定, extends: function, mod: [{of: [v_not_after, from]}]}
+  number: {ja: 数の値, extends: value, mod: [{of: [v_refer, from], with: magnitude}]}
+  literal: {ja: 文字の値, extends: value, mod: [{of: [v_refer, from], with: word}]}
 
 # 体系が、自分の記録（claims.yaml と measurements.yaml）について述べる。
 # 記録の種類ごとに、それが何であるか（is）、識別子の種類（key）、持てる項目（fields）を書く。
@@ -439,25 +459,20 @@ records:
   value: {is: value, fields: [axis, s, o]}
 
 # 体系が、自分の書き方（文法）について述べる。
-# 体系制御言語の文法の語が、どのノードに当たるかを書く。検査は、ここに書かれた語だけを文法の語として受け付ける。
+# 文法の語は、すべてノードの識別子である。節ごとに、そこで使える語を並べる。検査は、ここに並んだ語だけを受け付ける。
 grammar:
-  system: {base: state_relation, axes: axis, nodes: concept_expression, records: record_description, grammar: grammar_description, laws: law}
-  node: {ja: display_word, gloss: gloss_text, extends: genus_part, from: from_part, to: to_part, new_kind: third_part,
-         holds: holds_part, before: before_part, after: after_part, form: form_part, of: position_part, neg: negation_part,
-         mod: modification_part, val: val_part, cmp: comparison_part, axis: axis}
-  mod: {of: position_part, with: filler_part, neg: negation_part, quant: quantifier_part, at: at_part}
-  cmp: {axis: axis, a: cmp_a, b: cmp_b, rel: comparison_result}
-  base: {ja: display_word, arity: arity, laws: law, system_act: system_act}
-  axes: {ja: display_word, from: state_relation, values: value}
-  records: {is: kind, key: identifier, fields: field}
-  grammar: {system: system, node: concept_expression, mod: modification_part, cmp: comparison_part, base: state_relation, axes: axis,
-            records: record_description, grammar: grammar_rule, position: position_part, rel: comparison_result,
-            function: value, values: value, logic: law, laws: law, run: run}
-  position: {from: s, to: o, new: third_participant}
-  rel: {same: same, differ: differ}
-  function: {gt: v_come_after, ge: v_not_before, lt: v_come_before, le: v_not_after}
-  values: {number: magnitude, literal: word}
-  logic: {not: negation, all: universal, any: existential, between: range_value}   # true と false は、真偽の軸の値
-  laws: {ja: display_word, of: system}
-  # 実行の記録（spec/runs/*.yaml）の書き方
-  run: {individuals: individual, facts: fact, steps: v_execute, expect: fact, halted: halted_state}
+  grammar: [system, nodes, mod, cmp, base, axes, records, laws, run, position, rel, function, value, logic, grammar]
+  system: [base, laws, axes, nodes, records, grammar]
+  nodes: [ja, gloss, extends, from, to, new_kind, holds, pre, post, form, of, neg, mod, val, cmp, axis]
+  mod: [of, with, neg, quant, at]
+  cmp: [axis, a, b, rel]
+  base: [ja, arity, laws, system_act]
+  axes: [ja, source, value]
+  records: [is, key, fields]
+  laws: [ja, scope]
+  run: [individuals, facts, steps, expect, halted]   # 実行の記録（spec/runs/*.yaml）
+  position: [from, to, new]
+  rel: [same, differ]
+  function: [gt, ge, lt, le]
+  value: [number, literal]
+  logic: [not, all, any, between]   # true と false は、真偽の軸の値

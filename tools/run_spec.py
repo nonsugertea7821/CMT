@@ -3,8 +3,8 @@
 実行器は役割で、担い手は何でもよい（LLM、プログラム、機械）。この検査は、担い手が書いた実行の記録が
 体系に適合しているかを確かめる。当てはめる法則は、ontology.yaml の laws のうち次のもの:
   transitive / antisymmetric / asymmetric / end_exists  状態が、基礎の関係の法則を満たす
-  step   動詞の before がすべて成り立つときだけ適用でき、after に置き換わる
-  frame  after に書かれていない文は変わらない
+  step   動詞の pre がすべて成り立つときだけ適用でき、post に置き換わる
+  frame  post に書かれていない文は変わらない
   halt   halted: true と書かれた記録では、当てはまる動詞がもうない
 
 記録の書き方:
@@ -86,10 +86,10 @@ class Machine:
         """束縛が、動詞の端の種類に合うか。合えば、before と after の式を個体で書いたものを返す。"""
         T, n = self.T, None
         x = verb
-        while x in T.N and not ("before" in T.N[x] or "holds" in T.N[x]):
+        while x in T.N and not ("pre" in T.N[x] or "holds" in T.N[x]):
             x = T.N[x].get("extends")
         n = T.N.get(x)
-        if n is None or "before" not in n:
+        if n is None or "pre" not in n:
             return None, f"{verb} は動的な動詞でない"
         for pos in ("from", "to"):
             if pos not in b or b[pos] not in self.ind:
@@ -101,7 +101,7 @@ class Machine:
             if b["new"] not in self.ind or not T.is_a(self.ind[b["new"]], kind):
                 return None, f"new の {b.get('new')} は {kind} でない"
         out = {}
-        for key in ("before", "after"):
+        for key in ("pre", "post"):
             out[key] = []
             for f in n.get(key, []):
                 neg, rel, args = parse(f)
@@ -114,10 +114,10 @@ class Machine:
         r, why = self.bind(verb, b)
         if r is None:
             return self.err(f"{where}: {why}")
-        for neg, rel, args in r["before"]:  # 法則 step
+        for neg, rel, args in r["pre"]:  # 法則 step
             if not self.holds(neg, rel, args):
-                return self.err(f"{where}: before の {'not ' if neg else ''}{rel}{args} が成り立っていない")
-        for neg, rel, args in r["after"]:  # 法則 frame: ここに出てこない文には触れない
+                return self.err(f"{where}: pre の {'not ' if neg else ''}{rel}{args} が成り立っていない")
+        for neg, rel, args in r["post"]:  # 法則 frame: ここに出てこない文には触れない
             (self.facts.discard if neg else self.facts.add)((rel, args))
         self.check_laws(where)
 
@@ -125,13 +125,13 @@ class Machine:
         """当てはまって、状態を変える動詞と束縛を列挙する。"""
         T, found = self.T, []
         for vid, n in T.N.items():
-            if "before" not in n:
+            if "pre" not in n:
                 continue
-            poss = ["from", "to"] + (["new"] if any("new" in f for f in n["before"] + n["after"]) else [])
+            poss = ["from", "to"] + (["new"] if any("new" in f for f in n["pre"] + n["post"]) else [])
             for combo in itertools.permutations(self.ind, len(poss)):
                 b = dict(zip(poss, combo))
                 r, _ = self.bind(vid, b)
-                if r and all(self.holds(*x) for x in r["before"]) and not all(self.holds(*x) for x in r["after"]):
+                if r and all(self.holds(*x) for x in r["pre"]) and not all(self.holds(*x) for x in r["post"]):
                     found.append((vid, b))
         return found
 
