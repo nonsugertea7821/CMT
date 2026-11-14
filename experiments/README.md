@@ -1,5 +1,7 @@
 # 実験
 
+> この文書は正本ではない。2026-11-14 時点の内容で凍結している。正本は `spec/`（`terms.yaml`、`measurements.yaml`、`claims.yaml`）で、`python tools/check_spec.py` で検査する。食い違う場合は `spec/` が正しい。
+
 ## 準備
 
 ```

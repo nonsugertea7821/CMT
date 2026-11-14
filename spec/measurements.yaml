@@ -1,0 +1,194 @@
+# 測定値。値は experiments/results/ から計算する。文法は tools/check_spec.py の冒頭を見よ。
+defaults:
+  models: &models {15b: Qwen2.5-1.5B-Instruct, 4b: Qwen3-4B}
+  m_model: &m_model {15b: model_15b, 4b: model_4b}
+  m_group: &m_group {G1: g_confusable, G2c: g_redef_conflict, G2k: g_redef_control, G3: g_sibling, G4: g_replaced}
+  types: &types
+    rule: ["02", "03", "06", "09", "10", "11", "13", "15", "16", "17", "21", "23"]
+    remap: ["01", "04", "05", "07", "08", "12", "14", "18", "19", "20", "22", "24"]
+  m_type: &m_type {rule: rule_redefinition, remap: remap_redefinition}
+  m_e3run: &m_e3run
+    L8_defonly: {channel: single_layer_vector, teacher: teacher_recite, layers: "=8"}
+    L8_qa: {channel: single_layer_vector, teacher: teacher_examples, layers: "=8"}
+    L8_defqa: {channel: single_layer_vector, teacher: teacher_both, layers: "=8"}
+    L14_defqa: {channel: single_layer_vector, teacher: teacher_both, layers: "=14"}
+  m_e3cond: &m_e3cond
+    none: {channel: no_channel}
+    vec: {channel: single_layer_vector}
+    near: {channel: text_injection, content: definition_text, placement: place_adjacent}
+    near+vec: {channel: text_and_vector, content: definition_text, placement: place_adjacent}
+
+families:
+  e1:
+    file: "e1_{model}.json"
+    at: [items]
+    axes: {model: *models, group: [G1, G2c, G2k, G3, G4], cond: [none, near, glossary, far-500, far-2000]}
+    where: {group: "{group}"}
+    cond: "{cond}"
+    stats: [acc, both]
+    meaning:
+      model: *m_model
+      group: *m_group
+      cond:
+        none: {channel: no_channel}
+        near: {channel: text_injection, content: definition_text, placement: place_adjacent}
+        glossary: {channel: text_injection, content: glossary, placement: place_system}
+        far-500: {channel: text_injection, content: glossary, placement: place_system, following_count: "=500_tokens_of_filler"}
+        far-2000: {channel: text_injection, content: glossary, placement: place_system, following_count: "=2000_tokens_of_filler"}
+  e1type:
+    file: "e1_{model}.json"
+    at: [items]
+    axes: {model: *models, group: [G2c, G2k], type: *types, cond: [none, near]}
+    keyset: {axis: type, pattern: "{group}-#"}
+    cond: "{cond}"
+    stats: [acc]
+    meaning: {model: *m_model, group: *m_group, type: *m_type}
+  e1b:
+    file: "e1b_Qwen2.5-1.5B-Instruct.json"
+    at: [items]
+    axes: {group: [G2c, G2k], cond: [examples, def+examples]}
+    where: {group: "{group}"}
+    cond: "{cond}"
+    stats: [acc, both]
+    meaning:
+      group: *m_group
+      cond:
+        examples: {channel: text_injection, content: examples_only, placement: place_adjacent}
+        def+examples: {channel: text_injection, content: def_and_examples, placement: place_adjacent}
+  e3:
+    file: "e3_Qwen2.5-1.5B-Instruct_{run}.json"
+    at: [items]
+    axes: {run: [L8_defonly, L8_qa, L8_defqa, L14_defqa], group: [G2c, G2k], cond: [none, vec, near, near+vec]}
+    where: {group: "{group}"}
+    cond: "{cond}"
+    stats: [acc, both]
+    meaning: {run: *m_e3run, group: *m_group, cond: *m_e3cond}
+  e3type:
+    file: "e3_Qwen2.5-1.5B-Instruct_{run}.json"
+    at: [items]
+    axes: {run: [L8_qa, L8_defqa], group: [G2c, G2k], type: *types, cond: [vec]}
+    keyset: {axis: type, pattern: "{group}-#"}
+    cond: "{cond}"
+    stats: [acc]
+    meaning: {run: *m_e3run, group: *m_group, type: *m_type, cond: *m_e3cond}
+  e3loss:
+    file: "e3_Qwen2.5-1.5B-Instruct_{run}.json"
+    at: [train]
+    axes: {run: [L8_defonly, L8_qa, L8_defqa, L14_defqa]}
+    cond: loss_last
+    stats: [mean]
+    meaning: {run: *m_e3run}
+  e3b:
+    file: "e3b_transfer.json"
+    axes: {fmt: [orig, fill, truth], group: [G2c, G2k], cond: [none, text, vec, vec_all]}
+    where: {fmt: "{fmt}", group: "{group}"}
+    cond: "{cond}"
+    stats: [acc, both]
+    meaning:
+      fmt: {orig: fmt_yesno, fill: fmt_fill, truth: fmt_truth}
+      group: *m_group
+      cond:
+        none: {channel: no_channel}
+        text: {channel: text_injection, content: def_and_examples, placement: place_adjacent}
+        vec: {channel: single_layer_vector, teacher: teacher_examples, layers: "=8"}
+        vec_all: {channel: single_layer_vector, teacher: teacher_examples, layers: "=8", preceding_count: "=24_vectors_installed"}
+  e3b_g1:
+    file: "e3b_transfer.json"
+    axes: {cond: [none, vec_all]}
+    where: {group: G1}
+    cond: "{cond}"
+    stats: [acc, margin]
+    meaning: {cond: {none: {channel: no_channel}, vec_all: {channel: single_layer_vector, preceding_count: "=24_vectors_installed"}}}
+  e3c:
+    file: "e3c_generation.json"
+    axes: {group: [G2c, G2k], cond: [none, text, vec]}
+    where: {group: "{group}"}
+    cond: "{cond}"
+    stats: [judged]
+    meaning:
+      group: *m_group
+      cond:
+        none: {channel: no_channel, answer_mode: fmt_free}
+        text: {channel: text_injection, content: def_and_examples, answer_mode: fmt_free}
+        vec: {channel: single_layer_vector, teacher: teacher_examples, answer_mode: fmt_free}
+  e4:
+    file: "e4_modifier_composition.json"
+    axes: {pair: {p1: "甲種/乙種", p2: "青/赤", p3: "一類/二類"}, split: [train, test], cond: [none, text, vec]}
+    where: {pair: "{pair}", split: "{split}"}
+    cond: "{cond}"
+    stats: [acc]
+    meaning:
+      split: {train: "=genus_used_in_training", test: unseen_genus}
+      cond: {none: {channel: no_channel}, text: {channel: text_injection, content: definition_text}, vec: {channel: single_layer_vector, target: modifier}}
+  e5:
+    file: "e5_{model}.json"
+    axes: {model: *models, group: [G2c, G2k], cond: [near, rename_semi, rename_opaque, inline, near+inline]}
+    where: {group: "{group}"}
+    cond: "{cond}"
+    stats: [acc]
+    meaning:
+      model: *m_model
+      group: *m_group
+      cond:
+        near: {channel: text_injection, content: definition_text, placement: place_adjacent}
+        rename_semi: {channel: text_injection, content: semi_renaming, placement: place_adjacent}
+        rename_opaque: {channel: text_injection, content: opaque_renaming, placement: place_adjacent}
+        inline: {channel: text_injection, content: inline_expansion}
+        near+inline: {channel: text_injection, content: [definition_text, inline_expansion], placement: place_adjacent}
+  e6_L8:
+    file: "e6_cross_use_L8.json"
+    at: ["{vec}"]
+    axes: {vec: {none: none, defonly: "results/e3_Qwen2.5-1.5B-Instruct_L8_defonly.pt", qa: "results/e3_Qwen2.5-1.5B-Instruct_L8_qa.pt"}}
+    cond: define_choice
+    stats: [acc, margin]
+    meaning: {vec: {none: {channel: no_channel}, defonly: {teacher: teacher_recite}, qa: {teacher: teacher_examples}}}
+  e6_L8_nll:
+    file: "e6_cross_use_L8.json"
+    at: ["{vec}"]
+    axes: {vec: {none: none, defonly: "results/e3_Qwen2.5-1.5B-Instruct_L8_defonly.pt", qa: "results/e3_Qwen2.5-1.5B-Instruct_L8_qa.pt"}}
+    cond: define_nll
+    stats: [mean]
+  e6_defqa:
+    file: "e6_cross_use_defqa_{layer}.json"
+    at: ["results/e3_Qwen2.5-1.5B-Instruct_{layer}_defqa.pt"]
+    axes: {layer: [L8, L14]}
+    cond: define_choice
+    stats: [acc, margin]
+    meaning: {layer: {L8: {teacher: teacher_both, layers: "=8"}, L14: {teacher: teacher_both, layers: "=14"}}}
+  e6_defqa_nll:
+    file: "e6_cross_use_defqa_{layer}.json"
+    at: ["results/e3_Qwen2.5-1.5B-Instruct_{layer}_defqa.pt"]
+    axes: {layer: [L8, L14]}
+    cond: define_nll
+    stats: [mean]
+  e7:
+    file: "e7_Qwen3-4B.json"
+    axes: {group: {redef: [G2c], new: [G3, G4]}, cond: [sys1, sys1-far500, sys1-far2000, gl5, gl15, gl55-first, gl55-last]}
+    where: {group: "{group}"}
+    cond: "{cond}"
+    stats: [acc]
+    meaning:
+      group: {redef: g_redef_conflict, new: g_new_word}
+      cond:
+        sys1: {content: relevant_definitions, placement: place_system}
+        sys1-far500: {content: relevant_definitions, placement: place_system, following_count: "=500_tokens_of_filler"}
+        sys1-far2000: {content: relevant_definitions, placement: place_system, following_count: "=2000_tokens_of_filler"}
+        gl5: {content: glossary, preceding_kind: other_definitions, preceding_count: "=0_to_4"}
+        gl15: {content: glossary, preceding_kind: other_definitions, preceding_count: "=0_to_14"}
+        gl55-first: {content: glossary, placement: glossary_head, following_count: "=54_definitions"}
+        gl55-last: {content: glossary, preceding_kind: other_definitions, preceding_count: "=54"}
+  e7b:
+    file: "e7_Qwen3-4B.json"
+    axes: {cond: [fill500-def, fill2000-def, gl55-pos14, gl55-pos27, gl55-pos41, pre-ordinary19, pre-redef23]}
+    where: {group: G2c}
+    cond: "{cond}"
+    stats: [acc]
+    meaning:
+      cond:
+        fill500-def: {preceding_kind: filler_text, preceding_count: "=500_tokens"}
+        fill2000-def: {preceding_kind: filler_text, preceding_count: "=2000_tokens"}
+        gl55-pos14: {preceding_kind: other_definitions, preceding_count: "=14"}
+        gl55-pos27: {preceding_kind: other_definitions, preceding_count: "=27"}
+        gl55-pos41: {preceding_kind: other_definitions, preceding_count: "=41"}
+        pre-ordinary19: {preceding_kind: ordinary_definitions, preceding_count: "=19"}
+        pre-redef23: {preceding_kind: other_redefinitions, preceding_count: "=23"}

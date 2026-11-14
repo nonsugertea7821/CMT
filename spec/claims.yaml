@@ -1,0 +1,215 @@
+# 観察・仮説・決定・残り項目。文法は tools/check_spec.py の冒頭を見よ。
+observations:
+  o_e1_redef_below_new_adjacent: {rel: lt, a: "e1.4b.G2c.near.acc", b: "e1.4b.G3.near.acc"}
+  o_e1_glossary_redef_like_none: {rel: approx, a: "e1.4b.G2c.glossary.acc", b: "e1.4b.G2c.none.acc", tol: 0.10}
+  o_e1_glossary_sibling_full: {rel: eq, a: "e1.4b.G3.glossary.acc", b: 1.0}
+  o_e1_glossary_replaced_full: {rel: eq, a: "e1.4b.G4.glossary.acc", b: 1.0}
+  o_e1_glossary_below_adjacent: {rel: lt, a: "e1.4b.G2c.glossary.acc", b: "e1.4b.G2c.near.acc"}
+  o_e1_filler_no_further_drop: {rel: approx, a: "e1.4b.G2c.far-2000.acc", b: "e1.4b.G2c.glossary.acc", tol: 0.05}
+  o_e5_opaque_above_adjacent_4b: {rel: gt, a: "e5.4b.G2c.rename_opaque.acc", b: "e5.4b.G2c.near.acc"}
+  o_e5_semi_like_adjacent_4b: {rel: approx, a: "e5.4b.G2c.rename_semi.acc", b: "e5.4b.G2c.near.acc", tol: 0.05}
+  o_e5_opaque_like_adjacent_15b: {rel: approx, a: "e5.15b.G2c.rename_opaque.acc", b: "e5.15b.G2c.near.acc", tol: 0.01}
+  o_e5_opaque_lowers_control_4b: {rel: lt, a: "e5.4b.G2k.rename_opaque.acc", b: "e5.4b.G2k.near.acc"}
+  o_type_text_rule_below_remap_15b: {rel: lt, a: "e1type.15b.G2c.rule.near.acc", b: "e1type.15b.G2c.remap.near.acc"}
+  o_type_text_rule_like_remap_4b: {rel: approx, a: "e1type.4b.G2c.rule.near.acc", b: "e1type.4b.G2c.remap.near.acc", tol: 0.01}
+  o_type_vec_rule_below_remap: {rel: lt, a: "e3type.L8_defqa.G2c.rule.vec.acc", b: "e3type.L8_defqa.G2c.remap.vec.acc"}
+  o_type_vec_rule_above_text_rule: {rel: gt, a: "e3type.L8_qa.G2c.rule.vec.acc", b: "e1type.15b.G2c.rule.near.acc"}
+  o_e3_recite_loss_near_zero: {rel: approx, a: "e3loss.L8_defonly.mean", b: 0.0, tol: 0.05}
+  o_e3_recite_breaks_control: {rel: lt, a: "e3.L8_defonly.G2k.vec.acc", b: "e3.L8_defonly.G2k.none.acc"}
+  o_e3_examples_raise_conflict: {rel: gt, a: "e3.L8_qa.G2c.vec.acc", b: "e3.L8_qa.G2c.none.acc"}
+  o_e3_examples_raise_control: {rel: gt, a: "e3.L8_qa.G2k.vec.acc", b: "e3.L8_qa.G2k.none.acc"}
+  o_e3_vec_ge_text_conflict: {rel: ge, a: "e3.L8_qa.G2c.vec.acc", b: "e1b.G2c.def+examples.acc"}
+  o_e3_vec_gt_text_control: {rel: gt, a: "e3.L8_qa.G2k.vec.acc", b: "e1b.G2k.def+examples.acc"}
+  o_e3_vec_more_order_robust: {rel: gt, a: "e3.L8_qa.G2c.vec.both", b: "e1b.G2c.def+examples.both"}
+  o_e3_combo_lowers_control_examples_only: {rel: lt, a: "e3.L8_qa.G2k.near+vec.acc", b: "e3.L8_qa.G2k.vec.acc"}
+  o_e3_combo_ok_conflict_both_teachers: {rel: ge, a: "e3.L8_defqa.G2c.near+vec.acc", b: "e3.L8_defqa.G2c.vec.acc"}
+  o_e3_combo_control_better_with_both_teachers: {rel: gt, a: "e3.L8_defqa.G2k.near+vec.acc", b: "e3.L8_qa.G2k.near+vec.acc"}
+  o_e3_both_teachers_same_conflict: {rel: eq, a: "e3.L8_defqa.G2c.vec.acc", b: "e3.L8_qa.G2c.vec.acc"}
+  o_e3_both_teachers_same_control: {rel: eq, a: "e3.L8_defqa.G2k.vec.acc", b: "e3.L8_qa.G2k.vec.acc"}
+  o_e3_layer14_breaks_control: {rel: lt, a: "e3.L14_defqa.G2k.vec.acc", b: "e3.L14_defqa.G2k.none.acc"}
+  o_e3_layer14_same_conflict: {rel: eq, a: "e3.L14_defqa.G2c.vec.acc", b: "e3.L8_defqa.G2c.vec.acc"}
+  o_e3b_fill_same_conflict: {rel: eq, a: "e3b.fill.G2c.vec.acc", b: "e3b.orig.G2c.vec.acc"}
+  o_e3b_truth_same_conflict: {rel: eq, a: "e3b.truth.G2c.vec.acc", b: "e3b.orig.G2c.vec.acc"}
+  o_e3b_text_varies_by_format: {rel: lt, a: "e3b.truth.G2c.text.acc", b: "e3b.orig.G2c.text.acc"}
+  o_e3b_control_gain_lost_in_fill: {rel: lt, a: "e3b.fill.G2k.vec.acc", b: "e3b.orig.G2k.vec.acc"}
+  o_e3b_control_back_to_none_in_fill: {rel: approx, a: "e3b.fill.G2k.vec.acc", b: "e3b.fill.G2k.none.acc", tol: 0.05}
+  o_e3b_all_vectors_same_conflict: {rel: approx, a: "e3b.orig.G2c.vec_all.acc", b: "e3b.orig.G2c.vec.acc", tol: 0.01}
+  o_e3b_all_vectors_same_control: {rel: approx, a: "e3b.orig.G2k.vec_all.acc", b: "e3b.orig.G2k.vec.acc", tol: 0.05}
+  o_e3b_unrelated_accuracy_kept: {rel: eq, a: "e3b_g1.vec_all.acc", b: 1.0}
+  o_e3b_unrelated_margin_drops: {rel: lt, a: "e3b_g1.vec_all.margin", b: "e3b_g1.none.margin"}
+  o_e3c_vec_above_none_free: {rel: gt, a: "e3c.G2c.vec.judged", b: "e3c.G2c.none.judged"}
+  o_e3c_vec_ge_text_free: {rel: ge, a: "e3c.G2c.vec.judged", b: "e3c.G2c.text.judged"}
+  o_e3c_vec_above_text_control_free: {rel: gt, a: "e3c.G2k.vec.judged", b: "e3c.G2k.text.judged"}
+  o_e6_none_prefers_ordinary: {rel: lt, a: "e6_L8.none.margin", b: -2.0}
+  o_e6_recite_paraphrase_at_chance: {rel: approx, a: "e6_L8.defonly.margin", b: 0.0, tol: 0.5}
+  o_e6_examples_paraphrase_at_chance: {rel: approx, a: "e6_L8.qa.margin", b: 0.0, tol: 0.5}
+  o_e6_examples_recital_harder: {rel: gt, a: "e6_L8_nll.qa.mean", b: "e6_L8_nll.none.mean"}
+  o_e6_both_teachers_recital_easier: {rel: lt, a: "e6_defqa_nll.L8.mean", b: "e6_L8_nll.none.mean"}
+  o_e6_both_teachers_paraphrase_at_chance: {rel: approx, a: "e6_defqa.L8.acc", b: 0.5, tol: 0.05}
+  o_e6_layer14_paraphrase_below_chance: {rel: lt, a: "e6_defqa.L14.acc", b: 0.5}
+  o_e7_filler_after_no_drop: {rel: approx, a: "e7.redef.sys1-far2000.acc", b: "e7.redef.sys1.acc", tol: 0.05}
+  o_e7_head_of_55_no_drop: {rel: approx, a: "e7.redef.gl55-first.acc", b: "e7.redef.sys1.acc", tol: 0.05}
+  o_e7_last_below_head: {rel: lt, a: "e7.redef.gl55-last.acc", b: "e7.redef.gl55-first.acc"}
+  o_e7_filler_before_no_drop: {rel: approx, a: "e7b.fill2000-def.acc", b: "e7.redef.sys1.acc", tol: 0.01}
+  o_e7_14_preceding_below_head: {rel: lt, a: "e7b.gl55-pos14.acc", b: "e7.redef.gl55-first.acc"}
+  o_e7_27_preceding_below_14: {rel: lt, a: "e7b.gl55-pos27.acc", b: "e7b.gl55-pos14.acc"}
+  o_e7_kind_of_preceding_irrelevant: {rel: approx, a: "e7b.pre-ordinary19.acc", b: "e7b.pre-redef23.acc", tol: 0.05}
+  o_e7_new_word_full_at_last: {rel: eq, a: "e7.new.gl55-last.acc", b: 1.0}
+  o_e7_15_definitions_no_drop: {rel: approx, a: "e7.redef.gl15.acc", b: "e7.redef.sys1.acc", tol: 0.05}
+  o_e4_modifier_transfers_in_converged_pair: {rel: gt, a: "e4.p3.test.vec.acc", b: "e4.p3.test.text.acc"}
+  o_e4_pair1_training_failed: {rel: approx, a: "e4.p1.train.vec.acc", b: 0.5, tol: 0.01}
+
+hypotheses:
+  # --- 文章での注入 ---
+  h_collision_lowers_following:
+    {s: prior_collision, p: lowers, o: redefinition_following, scope: [model_4b, text_injection], status: supported,
+     evidence: [o_e1_redef_below_new_adjacent, o_e1_glossary_redef_like_none, o_e1_glossary_sibling_full, o_e1_glossary_replaced_full, o_e5_opaque_above_adjacent_4b]}
+  h_chain_length_lowers_following:
+    {s: chain_length, p: lowers, o: redefinition_following, scope: [model_15b, text_injection, single_pass], status: partially_supported,
+     evidence: [o_type_text_rule_below_remap_15b, o_type_text_rule_like_remap_4b, o_e5_opaque_like_adjacent_15b],
+     note: "規則型と付け替え型の分類は、結果の一部を見たあとで行った"}
+  h_scratchpad_raises_rule_following:
+    {s: scratchpad, p: raises, o: redefinition_following, scope: [model_15b, rule_redefinition, text_injection], status: untested}
+  h_length_does_not_lower:
+    {s: context_length, p: does_not_lower, o: redefinition_following, scope: [model_4b, text_injection], status: supported,
+     evidence: [o_e1_filler_no_further_drop, o_e7_filler_after_no_drop, o_e7_head_of_55_no_drop],
+     note: "試した文脈は最大約3500トークン"}
+  h_distance_does_not_lower:
+    {s: distance_to_question, p: does_not_lower, o: redefinition_following, scope: [model_4b, text_injection], status: supported,
+     evidence: [o_e7_filler_after_no_drop, o_e7_last_below_head]}
+  h_depth_does_not_lower:
+    {s: context_depth, p: does_not_lower, o: redefinition_following, scope: [model_4b, text_injection], status: supported,
+     evidence: [o_e7_filler_before_no_drop]}
+  h_preceding_definitions_lower:
+    {s: preceding_definitions, p: lowers, o: redefinition_following, scope: [model_4b, glossary], status: supported,
+     evidence: [o_e7_last_below_head, o_e7_14_preceding_below_head, o_e7_27_preceding_below_14, o_e7_kind_of_preceding_irrelevant, o_e7_15_definitions_no_drop]}
+  h_following_definitions_do_not_lower:
+    {s: following_definitions, p: does_not_lower, o: redefinition_following, scope: [model_4b, glossary], status: supported,
+     evidence: [o_e7_head_of_55_no_drop]}
+  h_new_word_immune:
+    {s: new_word, p: is_immune_to, o: preceding_definitions, scope: [model_4b, glossary], status: supported,
+     evidence: [o_e7_new_word_full_at_last, o_e1_glossary_sibling_full, o_e1_glossary_replaced_full]}
+  h_attention_causes_preceding_effect:
+    {s: attention, p: causes, o: preceding_definition_effect, scope: [model_4b], status: untested,
+     note: "先頭に置くと落ちないことは、単純な注意の薄まりでは説明できない"}
+  h_opaque_renaming_raises:
+    {s: opaque_renaming, p: raises, o: redefinition_following, scope: [model_4b, text_injection], status: supported,
+     evidence: [o_e5_opaque_above_adjacent_4b]}
+  h_semi_renaming_does_not_raise:
+    {s: semi_renaming, p: does_not_raise, o: redefinition_following, scope: [model_4b, text_injection], status: supported,
+     evidence: [o_e5_semi_like_adjacent_4b]}
+  h_opaque_renaming_lowers_control:
+    {s: opaque_renaming, p: lowers, o: control_preservation, scope: [model_4b, text_injection], status: partially_supported,
+     evidence: [o_e5_opaque_lowers_control_4b], note: "差は1問"}
+  # --- 概念ベクトル ---
+  h_vector_raises_following:
+    {s: single_layer_vector, p: raises, o: redefinition_following, scope: [model_15b, teacher_examples], status: supported,
+     evidence: [o_e3_examples_raise_conflict, o_e3_vec_ge_text_conflict, o_e3_vec_more_order_robust]}
+  h_vector_raises_control:
+    {s: single_layer_vector, p: raises, o: control_preservation, scope: [model_15b, teacher_examples, fmt_yesno], status: supported,
+     evidence: [o_e3_examples_raise_control, o_e3_vec_gt_text_control]}
+  h_format_does_not_lower_following:
+    {s: question_format, p: does_not_lower, o: redefinition_following, scope: [model_15b, single_layer_vector], status: supported,
+     evidence: [o_e3b_fill_same_conflict, o_e3b_truth_same_conflict]}
+  h_format_lowers_control_gain:
+    {s: question_format, p: lowers, o: control_preservation, scope: [model_15b, single_layer_vector], status: supported,
+     evidence: [o_e3b_control_gain_lost_in_fill, o_e3b_control_back_to_none_in_fill]}
+  h_vector_count_does_not_lower:
+    {s: vector_count, p: does_not_lower, o: redefinition_following, scope: [model_15b, single_layer_vector], status: supported,
+     evidence: [o_e3b_all_vectors_same_conflict, o_e3b_all_vectors_same_control], note: "24本まで"}
+  h_unrelated_items_immune:
+    {s: unrelated_items, p: is_immune_to, o: single_layer_vector, scope: [model_15b], status: partially_supported,
+     evidence: [o_e3b_unrelated_accuracy_kept], against: [o_e3b_unrelated_margin_drops]}
+  h_vector_raises_following_free:
+    {s: single_layer_vector, p: raises, o: redefinition_following, scope: [model_15b, teacher_examples, fmt_free], status: supported,
+     evidence: [o_e3c_vec_above_none_free, o_e3c_vec_ge_text_free]}
+  h_layer14_lowers_control:
+    {s: layer_choice, p: lowers, o: control_preservation, scope: [model_15b, single_layer_vector, teacher_both], status: partially_supported,
+     evidence: [o_e3_layer14_breaks_control, o_e3_layer14_same_conflict], note: "第8層と第14層の2点だけ"}
+  h_rule_type_lowers_vector_following:
+    {s: rule_redefinition, p: lowers, o: redefinition_following, scope: [model_15b, single_layer_vector], status: partially_supported,
+     evidence: [o_type_vec_rule_below_remap], against: [o_type_vec_rule_above_text_rule],
+     note: "規則型でも文章より高い。分類は結果の一部を見たあとで行った"}
+  # --- 使い方をまたぐ転移 ---
+  h_recite_does_not_transfer_to_apply:
+    {s: usage_recite, p: does_not_transfer_to, o: usage_apply, scope: [model_15b, single_layer_vector], status: supported,
+     evidence: [o_e3_recite_loss_near_zero, o_e3_recite_breaks_control]}
+  h_recite_does_not_transfer_to_paraphrase:
+    {s: usage_recite, p: does_not_transfer_to, o: usage_define_paraphrase, scope: [model_15b, single_layer_vector], status: supported,
+     evidence: [o_e6_recite_paraphrase_at_chance, o_e6_none_prefers_ordinary]}
+  h_apply_does_not_transfer_to_paraphrase:
+    {s: usage_apply, p: does_not_transfer_to, o: usage_define_paraphrase, scope: [model_15b, single_layer_vector], status: supported,
+     evidence: [o_e6_examples_paraphrase_at_chance]}
+  h_apply_does_not_transfer_to_recite:
+    {s: usage_apply, p: does_not_transfer_to, o: usage_recite, scope: [model_15b, single_layer_vector], status: supported,
+     evidence: [o_e6_examples_recital_harder]}
+  h_apply_does_not_transfer_to_explain:
+    {s: usage_apply, p: does_not_transfer_to, o: usage_explain, scope: [model_15b, single_layer_vector], status: untested,
+     note: "生成された理由を目で読んだ観察のみ。数値化していない"}
+  h_recite_coexists_with_apply:
+    {s: usage_recite, p: coexists_with, o: usage_apply, scope: [model_15b, single_layer_vector, teacher_both], status: supported,
+     evidence: [o_e3_both_teachers_same_conflict, o_e3_both_teachers_same_control, o_e6_both_teachers_recital_easier]}
+  h_both_teachers_raise_control_in_combo:
+    {s: teacher_both, p: raises, o: control_preservation, scope: [model_15b, text_and_vector], status: supported,
+     evidence: [o_e3_combo_control_better_with_both_teachers, o_e3_combo_ok_conflict_both_teachers, o_e3_combo_lowers_control_examples_only]}
+  h_single_layer_does_not_reach_shared:
+    {s: single_layer_vector, p: does_not_raise, o: cross_usage_consistency, scope: [model_15b], status: supported,
+     evidence: [o_e6_both_teachers_paraphrase_at_chance, o_e6_layer14_paraphrase_below_chance, o_e6_recite_paraphrase_at_chance, o_e6_examples_paraphrase_at_chance]}
+  h_multi_layer_raises_consistency:
+    {s: multi_layer_vector, p: raises, o: cross_usage_consistency, scope: [model_15b], status: untested}
+  h_modifier_transfers_to_unseen_genus:
+    {s: modifier, p: transfers_to, o: unseen_genus, scope: [model_15b, single_layer_vector], status: partially_supported,
+     evidence: [o_e4_modifier_transfers_in_converged_pair, o_e4_pair1_training_failed],
+     note: "3組のうち2組は学習が収束しなかった。収束した1組だけの結果"}
+
+decisions:
+  d_goal:
+    {s: redefinition_success, p: is_the_goal_of, o: this_design, status: adopted, supersedes: [d_avoid_redefinition]}
+  d_avoid_redefinition:
+    {s: definition, p: is_limited_to, o: new_word, status: withdrawn}
+  d_metric:
+    {s: redefinition_success, p: is_measured_by, o: cross_usage_consistency, status: adopted, supersedes: [d_metric_following],
+     basis: [h_recite_does_not_transfer_to_apply, h_apply_does_not_transfer_to_paraphrase]}
+  d_metric_following:
+    {s: redefinition_success, p: is_measured_by, o: redefinition_following, status: withdrawn}
+  d_source_of_truth_location:
+    {s: source_of_truth, p: is_placed_at, o: typed_graph, status: adopted}
+  d_source_of_truth_content:
+    {s: source_of_truth, p: consists_of, o: [definition, application_example], status: tentative,
+     basis: [h_recite_does_not_transfer_to_apply, h_vector_raises_following]}
+  d_test_is_material:
+    {s: test, p: is_a_kind_of, o: application_example, status: tentative, basis: [h_recite_does_not_transfer_to_apply]}
+  d_term_server_selects:
+    {s: glossary, p: is_limited_to, o: relevant_definitions, status: tentative, basis: [h_preceding_definitions_lower]}
+  d_redefinition_at_head:
+    {s: redefinition, p: is_placed_at, o: glossary_head, status: tentative,
+     basis: [h_preceding_definitions_lower, h_following_definitions_do_not_lower]}
+  d_verdict_by_vector:
+    {s: verdict, p: is_assigned_to, o: concept_vector, status: tentative, basis: [h_vector_raises_following, h_vector_raises_following_free]}
+  d_explanation_by_text:
+    {s: usage_explain, p: is_assigned_to, o: text_injection, status: tentative, basis: [h_both_teachers_raise_control_in_combo]}
+  d_consolidation_in_vector:
+    {s: consolidation_target, p: is_assigned_to, o: concept_vector, status: tentative, basis: [h_vector_count_does_not_lower]}
+  d_symbol_selection_symbolic:
+    {s: symbol_selection, p: is_assigned_to, o: typed_graph, status: tentative}
+  d_vector_needs_open_weights:
+    {s: concept_vector, p: is_limited_to, o: open_weight_model, status: adopted}
+  d_text_for_api_models:
+    {s: text_injection, p: is_required_by, o: api_only_model, status: adopted}
+
+backlog:
+  - {id: b_e8_multi_layer, tests: [h_multi_layer_raises_consistency], status: running}
+  - {id: b_e9_scratchpad, tests: [h_scratchpad_raises_rule_following, h_chain_length_lowers_following], status: queued}
+  - {id: b_single_layer_20_and_4, tests: [h_layer14_lowers_control, h_single_layer_does_not_reach_shared], status: queued}
+  - {id: b_attention_observe_and_block, tests: [h_attention_causes_preceding_effect], status: queued}
+  - {id: b_measure_explanation, tests: [h_apply_does_not_transfer_to_explain], status: queued}
+  - {id: b_e4_retrain, tests: [h_modifier_transfers_to_unseen_genus], status: queued}
+  - {id: b_save_text_reference_for_paraphrase, tests: [h_single_layer_does_not_reach_shared], status: queued}
+  - {id: b_renaming_inside_glossary, tests: [h_opaque_renaming_raises, h_preceding_definitions_lower], status: queued}
+  - {id: b_symbol_selection, tests: [], status: queued}
+  - {id: b_japanese_generation_consistency, tests: [], status: queued}
+  - {id: b_lineage_operations_on_vectors, tests: [], status: queued}
+  - {id: b_delta_weights_comparison, tests: [], status: queued}
+  - {id: b_vectors_on_4b, tests: [h_vector_raises_following, h_single_layer_does_not_reach_shared], status: queued}
+  - {id: b_more_concepts, tests: [h_vector_count_does_not_lower], status: queued}
+  - {id: b_sparse_dictionary_observation, tests: [], status: queued}
