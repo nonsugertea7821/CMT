@@ -336,6 +336,8 @@ def stat(rows, cond, name):
     vals = [r[cond] for _, r in rows if cond in r]
     if not vals:
         raise KeyError(f"条件 {cond} の行がない")
+    # 選択肢の順序ごとの値を並べた形（[順序1, 順序2]）は、平均と「両方とも正」に直す
+    vals = [{"margin": sum(v) / len(v), "both": all(x > 0 for x in v)} if isinstance(v, list) else v for v in vals]
     n = len(vals)
     if name == "acc":
         return sum(v["margin"] > 0 for v in vals) / n, n

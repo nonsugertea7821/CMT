@@ -428,3 +428,20 @@ families:
     stats: [mean]
     meaning:
       cond: {loss_last: {nodes: [multi_layer_vector, teaching]}}
+  e9:
+    file: e9_{model}.json
+    axes:
+      model: {15b: Qwen2.5-1.5B-Instruct}
+      group: [G2c, G2k]
+      type: {rule: 規則, remap: 付け替え}
+      cond: [direct, cot]
+    where: {group: '{group}', type: '{type}'}
+    cond: '{cond}'
+    stats: [acc, both]
+    meaning:
+      model: {15b: model_15b}
+      group: {G2c: g_redef_conflict, G2k: g_redef_control}
+      type: {rule: rule_redefinition, remap: remap_redefinition}
+      cond:
+        direct: {nodes: [text_injection, definition_text, place_adjacent, single_pass]}
+        cot: {nodes: [text_injection, definition_text, place_adjacent, scratchpad]}

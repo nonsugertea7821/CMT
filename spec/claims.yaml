@@ -63,6 +63,9 @@ observations:
   o_e8_control_below_single_layer: {rel: lt, a: "e8.G2k.vec.acc", b: "e3.L8_defqa.G2k.vec.acc"}
   o_e8_less_order_robust_than_single_layer: {rel: lt, a: "e8.G2c.vec.both", b: "e3.L8_defqa.G2c.vec.both"}
   o_e8_training_loss_above_single_layer: {rel: gt, a: "e8loss.loss_last.mean", b: "e3loss.L8_defqa.mean"}
+  o_e9_scratchpad_not_above_direct_rule_15b: {rel: lt, a: "e9.15b.G2c.rule.cot.acc", b: "e9.15b.G2c.rule.direct.acc"}
+  o_e9_scratchpad_below_direct_remap_15b: {rel: lt, a: "e9.15b.G2c.remap.cot.acc", b: "e9.15b.G2c.remap.direct.acc"}
+  o_e9_scratchpad_below_direct_remap_control_15b: {rel: lt, a: "e9.15b.G2k.remap.cot.acc", b: "e9.15b.G2k.remap.direct.acc"}
 
 hypotheses:
   # --- 文章での注入 ---
@@ -70,11 +73,17 @@ hypotheses:
     {s: prior_collision, p: v_lower, o: redefinition_following, scope: [model_4b, text_injection], status: supported,
      evidence: [o_e1_redef_below_new_adjacent, o_e1_glossary_redef_like_none, o_e1_glossary_sibling_full, o_e1_glossary_replaced_full, o_e5_opaque_above_adjacent_4b]}
   h_chain_length_lowers_following:
-    {s: chain_length, p: v_lower, o: redefinition_following, scope: [model_15b, text_injection, single_pass], status: supported, limits: [post_hoc],
+    {s: chain_length, p: v_lower, o: redefinition_following, scope: [model_15b, text_injection, single_pass], status: mixed, limits: [post_hoc],
      evidence: [o_type_text_rule_below_remap_15b, o_type_text_rule_like_remap_4b, o_e5_opaque_like_adjacent_15b],
+     against: [o_e9_scratchpad_not_above_direct_rule_15b],
      note: "規則型と付け替え型の分類は、結果の一部を見たあとで行った"}
   h_scratchpad_raises_rule_following:
-    {s: scratchpad, p: v_raise, o: redefinition_following, scope: [model_15b, rule_redefinition, text_injection], status: untested}
+    {s: scratchpad, p: v_raise, o: redefinition_following, scope: [model_15b, rule_redefinition, text_injection], status: refuted, limits: [one_item],
+     against: [o_e9_scratchpad_not_above_direct_rule_15b],
+     note: "書き出した文を読むと、条件の読み取りではなく、数の大小の照合を誤っている（22歳は25歳以上である、など）"}
+  h_scratchpad_lowers_remap_following:
+    {s: scratchpad, p: v_lower, o: redefinition_following, scope: [model_15b, remap_redefinition, text_injection], status: supported,
+     evidence: [o_e9_scratchpad_below_direct_remap_15b, o_e9_scratchpad_below_direct_remap_control_15b]}
   h_length_does_not_lower:
     {s: context_length, p: v_not_lower, o: redefinition_following, scope: [model_4b, text_injection], status: supported, limits: [range],
      evidence: [o_e1_filler_no_further_drop, o_e7_filler_after_no_drop, o_e7_head_of_55_no_drop],
