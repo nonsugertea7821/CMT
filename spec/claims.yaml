@@ -58,6 +58,11 @@ observations:
   o_e7_15_definitions_no_drop: {rel: approx, a: "e7.redef.gl15.acc", b: "e7.redef.sys1.acc", tol: 0.05}
   o_e4_modifier_transfers_in_converged_pair: {rel: gt, a: "e4.p3.test.vec.acc", b: "e4.p3.test.text.acc"}
   o_e4_pair1_training_failed: {rel: approx, a: "e4.p1.train.vec.acc", b: 0.5, tol: 0.01}
+  o_e8_paraphrase_like_single_layer: {rel: approx, a: "e8def.vec.acc", b: "e6_defqa.L8.acc", tol: 0.05}
+  o_e8_conflict_ge_single_layer: {rel: ge, a: "e8.G2c.vec.acc", b: "e3.L8_defqa.G2c.vec.acc"}
+  o_e8_control_below_single_layer: {rel: lt, a: "e8.G2k.vec.acc", b: "e3.L8_defqa.G2k.vec.acc"}
+  o_e8_less_order_robust_than_single_layer: {rel: lt, a: "e8.G2c.vec.both", b: "e3.L8_defqa.G2c.vec.both"}
+  o_e8_training_loss_above_single_layer: {rel: gt, a: "e8loss.loss_last.mean", b: "e3loss.L8_defqa.mean"}
 
 hypotheses:
   # --- 文章での注入 ---
@@ -156,7 +161,10 @@ hypotheses:
     {s: single_layer_vector, p: v_not_raise, o: cross_usage_consistency, scope: [model_15b], status: supported,
      evidence: [o_e6_both_teachers_paraphrase_at_chance, o_e6_layer14_paraphrase_below_chance, o_e6_recite_paraphrase_at_chance, o_e6_examples_paraphrase_at_chance]}
   h_multi_layer_raises_consistency:
-    {s: multi_layer_vector, p: v_raise, o: cross_usage_consistency, scope: [model_15b], status: untested}
+    {s: multi_layer_vector, p: v_raise, o: cross_usage_consistency, scope: [model_15b], status: inconclusive,
+     against: [o_e8_paraphrase_like_single_layer, o_e8_control_below_single_layer, o_e8_less_order_robust_than_single_layer],
+     evidence: [o_e8_conflict_ge_single_layer],
+     note: "学習が収束していない（o_e8_training_loss_above_single_layer）。24概念中16概念で損失が0.3を超えた。学習率を変えてやり直す必要がある"}
   h_modifier_transfers_to_unseen_genus:
     {s: modifier, p: v_transfer, o: unseen_genus, scope: [model_15b, single_layer_vector], status: partially_supported,
      evidence: [o_e4_modifier_transfers_in_converged_pair, o_e4_pair1_training_failed],
@@ -201,8 +209,9 @@ decisions:
     {s: api_only_model, p: v_rely, o: text_injection, status: adopted}
 
 backlog:
-  - {id: b_e8_multi_layer, tests: [h_multi_layer_raises_consistency], status: running}
-  - {id: b_e9_scratchpad, tests: [h_scratchpad_raises_rule_following, h_chain_length_lowers_following], status: queued}
+  - {id: b_e8_multi_layer, tests: [h_multi_layer_raises_consistency], status: done}
+  - {id: b_e8_retrain_until_converged, tests: [h_multi_layer_raises_consistency], status: queued}
+  - {id: b_e9_scratchpad, tests: [h_scratchpad_raises_rule_following, h_chain_length_lowers_following], status: running}
   - {id: b_single_layer_20_and_4, tests: [h_layer14_lowers_control, h_single_layer_does_not_reach_shared], status: queued}
   - {id: b_attention_observe_and_block, tests: [h_attention_causes_preceding_effect], status: queued}
   - {id: b_measure_explanation, tests: [h_apply_does_not_transfer_to_explain], status: queued}

@@ -18,7 +18,7 @@ claims.yaml
     すべて真でなければ検査は失敗する。
   hypotheses: {識別子: {s, p, o, scope, status, evidence, against, supersedes, note}}
     s と o はノード、p は動詞。s は p の始点、o は p の終点に来られるものでなければならない。
-    status: supported / partially_supported / refuted / untested
+    status: supported / partially_supported / refuted / inconclusive（測ったが決められない）/ untested
   decisions: {識別子: {s, p, o, basis, status, supersedes, note}}  status: adopted / tentative / withdrawn
     p が is_a のときは、体系の上位・下位の関係そのもの。adopted なら、検査が構造から確かめる。
   backlog: [{id, tests, status}]  status: done / running / queued
@@ -398,7 +398,7 @@ def check_claims(C, values, T):
 
     for hid, h in hyps.items():
         triple(h, hid)
-        if h["status"] not in ("supported", "partially_supported", "refuted", "untested"):
+        if h["status"] not in ("supported", "partially_supported", "refuted", "inconclusive", "untested"):
             err(f"{hid}: status が不正")
         for t in h.get("scope", []):
             if t not in T.N:
@@ -410,7 +410,7 @@ def check_claims(C, values, T):
         for r in h.get("supersedes", []):
             if r not in hyps:
                 err(f"{hid}: supersedes の仮説 {r} が未定義")
-        if h["status"] in ("supported", "partially_supported", "refuted") and not (h.get("evidence") or h.get("against")):
+        if h["status"] in ("supported", "partially_supported", "refuted", "inconclusive") and not (h.get("evidence") or h.get("against")):
             err(f"{hid}: 根拠の観察がない")
     for did, d in decs.items():
         if d["status"] not in ("adopted", "tentative", "withdrawn"):

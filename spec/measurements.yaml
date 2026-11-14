@@ -390,3 +390,41 @@ families:
           nodes: [other_redefinitions]
           at:
           - {axis: count, of: preceding_definitions_set, value: 23}
+  e8:
+    file: e8_L2-13_d0.001.json
+    at: [apply]
+    axes: {group: [G2c, G2k], cond: [none, vec]}
+    where: {group: '{group}'}
+    cond: '{cond}'
+    stats: [acc, both]
+    meaning:
+      group: {G2c: g_redef_conflict, G2k: g_redef_control}
+      cond:
+        none: {nodes: [no_channel]}
+        vec: {nodes: [multi_layer_vector, teacher_both], at: [{axis: order, of: layer, value: {between: [2, 13]}}]}
+  e8def:
+    file: e8_L2-13_d0.001.json
+    at: [define]
+    axes: {cond: [none, vec]}
+    cond: '{cond}'
+    stats: [acc, both, margin]
+    meaning:
+      cond:
+        none: {nodes: [no_channel, usage_define_paraphrase]}
+        vec: {nodes: [multi_layer_vector, teacher_both, usage_define_paraphrase]}
+  e8nll:
+    file: e8_L2-13_d0.001.json
+    at: [define]
+    axes: {cond: [nll]}
+    cond: '{cond}'
+    stats: [mean]
+    meaning:
+      cond: {nll: {nodes: [multi_layer_vector, teacher_both, usage_recite]}}
+  e8loss:
+    file: e8_L2-13_d0.001.json
+    at: [train]
+    axes: {cond: [loss_last]}
+    cond: '{cond}'
+    stats: [mean]
+    meaning:
+      cond: {loss_last: {nodes: [multi_layer_vector, teaching]}}
