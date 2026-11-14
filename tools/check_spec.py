@@ -4,8 +4,9 @@ spec/ が正本。文章（docs/, experiments/README.md）は正本ではない�
 
 ontology.yaml  概念の体系。3本のツリーからなる。
   entities         実体のツリー。最上位は BFO の continuant と occurrent。
-                   {識別子: {ja, is: 上位, where: {軸: 値}, gloss}}。where を持たない実体は gloss が必須。
-  relations        関係のツリー。{識別子: {ja, is, domain, range, def | primitive | gloss}}。
+                   原始概念はこの2つだけで、gloss を持てるのもこの2つだけ。
+                   他のすべての実体は {ja, is: 上位, where: {軸: 値}} という概念式で記述する。
+  relations        関係のツリー。{識別子: {ja, is, domain, range, def | primitive}}。any はすべての実体。
                    def は述語論理の式。使える語は logic と、3本のツリーの識別子と、1文字の変数だけ。
   classifications  分類のツリー。{軸: {ja, is, from: 関係, values | values_from | number}}。
   検査: 表示語（ja）の一意性、上位・軸・値の解決、軸のもとになる関係の domain との型の一致、
@@ -57,6 +58,8 @@ def load(name):
 
 def is_a(E, x, y):
     """実体 x が y と同じか、y の下位か。"""
+    if y == "any":
+        return True
     hops = 0
     while x is not None and hops < 100:
         if x == y:
@@ -75,7 +78,7 @@ def valid_value(A, E, axis, val, where):
             if v not in a["values"]:
                 err(f"{where}: 軸 {axis} に値 {v} がない")
         elif "values_from" in a:
-            if v not in E or not is_a(E, v, a["values_from"]):
+            if v not in E or not is_a(E, v, a["values_from"]):  # any はすべての実体
                 err(f"{where}: 軸 {axis} の値 {v} は {a['values_from']} の下位でない")
         elif a.get("number"):
             if not isinstance(v, (int, float)):
@@ -86,7 +89,8 @@ def canonical(E, eid):
     e = E[eid]
     if "where" not in e:
         return eid
-    inner = ", ".join(f"{k}={e['where'][k]}" for k in sorted(e["where"]))
+    fmt = lambda v: "+".join(sorted(map(str, v))) if isinstance(v, list) else str(v)
+    inner = ", ".join(f"{k}={fmt(e['where'][k])}" for k in sorted(e["where"]))
     return f"{canonical(E, e['is'])}[{inner}]"
 
 
@@ -121,26 +125,33 @@ def check_ontology(O):
             err(f"classifications: {aid} は values / values_from / number のどれか1つを持つこと")
         for vid, v in (a.get("values") or {}).items():
             label(f"classifications.{aid}", vid, v.get("ja"))
-        if "values_from" in a and a["values_from"] not in E:
+        if "gloss" in a:
+            err(f"classifications: {aid} が gloss を持つ（gloss を持てるのは最上位 classification だけ）")
+        if "values_from" in a and a["values_from"] != "any" and a["values_from"] not in E:
             err(f"classifications: {aid} の values_from {a['values_from']} が未定義")
-    # 実体
+    # 実体。原始概念は continuant と occurrent だけ
+    TOPS = ("continuant", "occurrent")
     forms = {}
     for eid, e in E.items():
         label("entities", eid, e.get("ja"))
-        if eid == "entity":
+        if eid in TOPS:
+            if "gloss" not in e or "is" in e or "where" in e:
+                err(f"entities: 最上位 {eid} は gloss だけを持つこと")
             continue
+        if "gloss" in e:
+            err(f"entities: {eid} が gloss を持つ（gloss を持てるのは {TOPS} だけ。概念式で記述すること）")
         if e.get("is") not in E:
             err(f"entities: {eid} の上位 {e.get('is')} が未定義")
             continue
-        if "where" not in e and "gloss" not in e:
-            err(f"entities: 原始概念 {eid} に gloss がない")
+        if not e.get("where"):
+            err(f"entities: {eid} に概念式（where）がない")
         for axis, val in (e.get("where") or {}).items():
             valid_value(A, E, axis, val, f"entities.{eid}")
             rel = R.get(A.get(axis, {}).get("from"), {})
-            if rel.get("domain") in E and not is_a(E, e["is"], rel["domain"]):
+            if "domain" in rel and not is_a(E, e["is"], rel["domain"]):
                 err(f"entities: {eid} は軸 {axis} を使えない（上位 {e['is']} が、関係 {A[axis]['from']} の domain {rel['domain']} の下位でない）")
-    for eid in E:
-        if all(E.get(x, {}).get("is") in E or x == "entity" for x in [eid]) and "where" in E[eid] and E[eid].get("is") in E:
+    for eid, e in E.items():
+        if eid not in TOPS and e.get("is") in E and e.get("where"):
             f = canonical(E, eid)
             if f in forms:
                 err(f"entities: {eid} と {forms[f]} の概念式が同じ（{f}）")
@@ -151,20 +162,19 @@ def check_ontology(O):
         label("relations", rid, r.get("ja"))
         if rid == "relation":
             continue
+        if "gloss" in r:
+            err(f"relations: {rid} が gloss を持つ（gloss を持てるのは最上位 relation だけ）")
         if r.get("is") not in R:
             err(f"relations: {rid} の上位 {r.get('is')} が未定義")
-        if "domain" in r or "range" in r:
-            for k in ("domain", "range"):
-                if r.get(k) not in E:
-                    err(f"relations: {rid} の {k} {r.get(k)} が未定義")
-            if "def" in r:
-                for tok in re.findall(r"[A-Za-z_]+", r["def"]):
-                    if len(tok) > 1 and tok not in allowed:
-                        err(f"relations: {rid} の def の語 {tok} が未定義")
-            elif not r.get("primitive"):
-                err(f"relations: {rid} に def も primitive もない")
-        elif "gloss" not in r:
-            err(f"relations: 分類用の節 {rid} に gloss がない")
+        for k in ("domain", "range"):
+            if r.get(k) != "any" and r.get(k) not in E:
+                err(f"relations: {rid} の {k} {r.get(k)} が未定義")
+        if "def" in r:
+            for tok in re.findall(r"[A-Za-z_]+", r["def"]):
+                if len(tok) > 1 and tok not in allowed:
+                    err(f"relations: {rid} の def の語 {tok} が未定義")
+        elif not r.get("primitive"):
+            err(f"relations: {rid} に def も primitive もない")
     return E, R, A
 
 

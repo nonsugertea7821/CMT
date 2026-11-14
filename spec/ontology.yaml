@@ -1,27 +1,34 @@
 # 概念の体系。3本のツリーからなる。
 #   entities         実体のツリー。最上位は BFO の continuant（持続体）と occurrent（生起体）。
+#                    原始概念はこの2つだけで、説明文（gloss）を持てるのもこの2つだけ。
+#                    他のすべての実体は「上位の実体 [軸=値, ...]」という概念式（is と where）で記述する。
 #   relations        関係のツリー。各関係は、結ぶ実体の種類（domain, range）と、述語論理による定義（def）を持つ。
-#   classifications  分類のツリー。軸（axis）は関係を抽象として見たもの、値（values）はその具体。
-# 概念式: 実体は「上位の実体 [軸=値, ...]」で記述する（is と where）。式を持たない実体は原始概念で、gloss が必須。
+#                    primitive は、他の関係で定義しない関係。any はすべての実体。
+#   classifications  分類のツリー。軸は関係を抽象として見たもの（from）、値はその具体（values / values_from / number）。
 # 正規形（軸を整列した式）が同じ実体は同一とみなし、重複は検査で失敗する。
 
 entities:
-  entity: {ja: 実体, gloss: BFO の最上位}
-  # ===== 持続体 =====
-  continuant: {ja: 持続体, is: entity, gloss: 時間を通じて同一性を保って存在するもの}
-  independent_continuant: {ja: 独立持続体, is: continuant, gloss: 他に依存せず存在する持続体}
-  generically_dependent_continuant: {ja: 汎用依存持続体, is: continuant, gloss: 複製でき、担い手を替えても同一であり続ける持続体}
-  specifically_dependent_continuant: {ja: 特定依存持続体, is: continuant, gloss: 特定の担い手に依存して存在する持続体}
-  quality: {ja: 質, is: specifically_dependent_continuant, gloss: 担い手が現に持つ性質}
-  realizable_entity: {ja: 実現可能体, is: specifically_dependent_continuant, gloss: 過程の中で実現される性質}
-  role: {ja: 役割, is: realizable_entity, gloss: 状況によって担い手に与えられる実現可能体}
-  disposition: {ja: 傾向性, is: realizable_entity, gloss: 担い手の成り立ちに由来する実現可能体}
-  # ----- 情報 -----
-  information_entity: {ja: 情報, is: generically_dependent_continuant, gloss: 何かについて述べる、または何かを指す持続体}
-  word: {ja: 語, is: information_entity, gloss: 文章に現れる名前}
+  continuant: {ja: 持続体, gloss: 時間を通じて同一性を保って存在するもの}
+  occurrent: {ja: 生起体, gloss: 時間の中で起こり、展開するもの}
+  independent_continuant: {ja: 独立持続体, is: continuant, where: {dependence: on_nothing}}
+  specifically_dependent_continuant: {ja: 特定依存持続体, is: continuant, where: {dependence: on_specific_bearer}}
+  generically_dependent_continuant: {ja: 汎用依存持続体, is: continuant, where: {dependence: on_any_bearer}}
+  quality: {ja: 質, is: specifically_dependent_continuant, where: {realization: needs_no_process}}
+  realizable_entity: {ja: 実現可能体, is: specifically_dependent_continuant, where: {realization: needs_process}}
+  role: {ja: 役割, is: realizable_entity, where: {grounding: external_circumstance}}
+  disposition: {ja: 傾向性, is: realizable_entity, where: {grounding: internal_makeup}}
+  process: {ja: 過程, is: occurrent, where: {temporal_extent: extended}}
+  information_entity: {ja: 情報, is: generically_dependent_continuant, where: {aboutness: describes}}
+  word: {ja: 語, is: information_entity, where: {unit: name, language: natural}}
   common_word: {ja: 一般語, is: word, where: {prior_meaning_presence: present}}
   new_word: {ja: 新しい語, is: word, where: {prior_meaning_presence: absent}}
-  definition: {ja: 定義, is: information_entity, gloss: 概念の境界を述べた文}
+  modifier: {ja: 修飾, is: word, where: {expression_part: differentia}}
+  genus_concept: {ja: 上位概念, is: word, where: {expression_part: genus}}
+  seen_genus: {ja: 学習した上位概念, is: genus_concept, where: {training_use: used}}
+  unseen_genus: {ja: 学習していない上位概念, is: genus_concept, where: {training_use: not_used}}
+  code: {ja: コード, is: information_entity, where: {unit: passage, language: programming}}
+  symbol: {ja: シンボル, is: information_entity, where: {unit: name, language: programming}}
+  definition: {ja: 定義, is: information_entity, where: {unit: sentence, speech_act: states, content: concept}}
   redefinition: {ja: 再定義, is: definition, where: {target: common_word, agreement_with_prior: differs}}
   rule_redefinition: {ja: 規則型の再定義, is: redefinition, where: {boundary_kind: numeric_threshold_or_calendar}}
   remap_redefinition: {ja: 付け替え型の再定義, is: redefinition, where: {boundary_kind: scope_widened_or_narrowed}}
@@ -29,181 +36,241 @@ entities:
   relevant_definitions: {ja: 関係する定義だけ, is: definition, where: {relevance_to_question: relevant}}
   ordinary_definitions: {ja: 一般の意味どおりの定義, is: other_definitions, where: {agreement_with_prior: agrees}}
   other_redefinitions: {ja: 他の再定義, is: other_definitions, where: {agreement_with_prior: differs}}
-  definition_text: {ja: 定義文, is: information_entity, gloss: 定義を書いた文章}
-  application_example: {ja: 適用例, is: information_entity, gloss: 事例と、定義に沿った判定の組}
-  def_and_examples: {ja: 定義文と適用例, is: information_entity, gloss: 定義文と、適用例4問}
-  examples_only: {ja: 適用例だけ, is: information_entity, gloss: 適用例4問}
-  test: {ja: テスト, is: information_entity, gloss: 概念の境界を確かめる事例と判定の組}
-  glossary: {ja: 用語集, is: information_entity, gloss: 複数の定義を並べた一覧}
-  glossary_head: {ja: 用語集の先頭, is: information_entity, gloss: 用語集の中で、前に他の定義がない位置}
-  filler_text: {ja: 無関係な文章, is: information_entity, gloss: 設問にも定義にも関係しない文章}
-  context: {ja: 文脈, is: information_entity, gloss: モデルへの入力の全体}
-  place_adjacent: {ja: 設問の直前, is: information_entity, gloss: 利用者の発話の中で、設問のすぐ前の位置}
-  place_system: {ja: システムプロンプト, is: information_entity, gloss: 会話の冒頭に置く指示の領域}
-  label_token_positions: {ja: 語のトークン位置, is: information_entity, gloss: 入力の中で、対象の語が現れるトークンの位置}
-  case: {ja: 事例, is: information_entity, gloss: 概念に当たるかどうかを問われる対象}
+  case: {ja: 事例, is: information_entity, where: {unit: sentence, judged_against: concept}}
   conflict_case: {ja: 衝突する事例, is: case, where: {agreement_with_prior: differs}}
   control_case: {ja: 衝突しない事例, is: case, where: {agreement_with_prior: agrees}}
-  verdict: {ja: 判定, is: information_entity, gloss: 事例が概念に当たるかどうかの答え}
-  reason: {ja: 理由, is: information_entity, gloss: 判定の根拠を述べた文}
-  symbol: {ja: シンボル, is: information_entity, gloss: コード中で定義され参照される名前付きの実体}
-  modifier: {ja: 修飾, is: information_entity, gloss: 上位概念に付けて下位概念を作る種差}
-  genus_concept: {ja: 上位概念, is: information_entity, gloss: 修飾を付ける対象になる概念}
-  seen_genus: {ja: 学習した上位概念, is: genus_concept, where: {training_use: used}}
-  unseen_genus: {ja: 学習していない上位概念, is: genus_concept, where: {training_use: not_used}}
-  question_format: {ja: 設問形式, is: information_entity, gloss: 設問と答えの形}
-  fmt_yesno: {ja: はい・いいえの二択, is: question_format, gloss: 学習時と同じ設問形式}
-  fmt_fill: {ja: 空欄補充の二択, is: question_format, gloss: 当たる・当たらないを選ぶ形式}
-  fmt_truth: {ja: 正誤判定の二択, is: question_format, gloss: 文が正しいか誤りかを選ぶ形式}
-  fmt_free: {ja: 自由生成, is: question_format, gloss: 選択肢を示さずに答えさせる形式}
-  fmt_paraphrase_choice: {ja: 言い換えの二択, is: question_format, gloss: 定義の言い換えを2つ示して選ばせる形式}
-  item_group: {ja: 設問群, is: information_entity, gloss: 同じ種類の設問の集まり}
-  g_confusable: {ja: 一般の類義語・同音語の設問, is: item_group, gloss: 補償・保証・保障のような語の使い分けを問う設問}
-  g_redef_conflict: {ja: 再定義の衝突する設問, is: item_group, where: {content: conflict_case}}
-  g_redef_control: {ja: 再定義の衝突しない設問, is: item_group, where: {content: control_case}}
+  question: {ja: 設問, is: information_entity, where: {unit: sentence, speech_act: asks, content: case}}
+  verdict: {ja: 判定, is: information_entity, where: {unit: sentence, speech_act: answers, content: case}}
+  reason: {ja: 理由, is: information_entity, where: {unit: sentence, speech_act: states, content: verdict}}
+  application_example: {ja: 適用例, is: information_entity, where: {unit: pair, content: [case, verdict]}}
+  test: {ja: テスト, is: application_example, where: {use: verification}}
+  definition_text: {ja: 定義文, is: information_entity, where: {unit: passage, content: definition}}
+  examples_only: {ja: 適用例だけ, is: information_entity, where: {unit: passage, content: application_example}}
+  def_and_examples: {ja: 定義文と適用例, is: information_entity, where: {unit: passage, content: [definition, application_example]}}
+  filler_text: {ja: 無関係な文章, is: information_entity, where: {unit: passage, relevance_to_question: irrelevant}}
+  context: {ja: 文脈, is: information_entity, where: {unit: passage, input_of: model}}
+  glossary: {ja: 用語集, is: information_entity, where: {unit: list, content: definition}}
+  glossary_head: {ja: 用語集の先頭, is: information_entity, where: {unit: position, located_in: glossary, preceding_count: 0}}
+  place_system: {ja: システムプロンプト, is: information_entity, where: {unit: position, located_in: context, speaker: system}}
+  place_adjacent: {ja: 設問の直前, is: information_entity, where: {unit: position, located_in: context, speaker: user, immediately_before: question}}
+  label_token_positions: {ja: 語のトークン位置, is: information_entity, where: {unit: position, located_in: context, occupied_by: word}}
+  question_format: {ja: 設問形式, is: information_entity, where: {unit: form, content: [question, verdict]}}
+  fmt_yesno: {ja: はい・いいえの二択, is: question_format, where: {options: yes_or_no}}
+  fmt_fill: {ja: 空欄補充の二択, is: question_format, where: {options: applies_or_not}}
+  fmt_truth: {ja: 正誤判定の二択, is: question_format, where: {options: true_or_false}}
+  fmt_free: {ja: 自由生成, is: question_format, where: {options: no_options}}
+  fmt_paraphrase_choice: {ja: 言い換えの二択, is: question_format, where: {options: two_paraphrases}}
+  item_group: {ja: 設問群, is: information_entity, where: {unit: set, content: question}}
+  g_confusable: {ja: 一般の類義語・同音語の設問, is: item_group, where: {target: common_word, agreement_with_prior: agrees}}
+  g_redef_conflict: {ja: 再定義の衝突する設問, is: item_group, where: {target: conflict_case}}
+  g_redef_control: {ja: 再定義の衝突しない設問, is: item_group, where: {target: control_case}}
   g_new_word: {ja: 新しい語の設問, is: item_group, where: {target: new_word}}
-  g_sibling: {ja: 分化した兄弟概念の設問, is: g_new_word, gloss: 名前から中身が分からない兄弟概念を区別させる設問}
-  g_replaced: {ja: 置換された用語の設問, is: g_new_word, gloss: 廃止された語に代わる現行の語を選ばせる設問}
+  g_sibling: {ja: 分化した兄弟概念の設問, is: g_new_word, where: {task: distinguish_siblings}}
+  g_replaced: {ja: 置換された用語の設問, is: g_new_word, where: {task: choose_current_term}}
   unrelated_items: {ja: 無関係な設問, is: item_group, where: {relevance_to_question: irrelevant}}
-  # ----- 人工物 -----
-  artifact: {ja: 人工物, is: generically_dependent_continuant, gloss: 作られた情報的な構造物}
-  model: {ja: モデル, is: artifact, gloss: 重みを固定した言語モデル}
-  model_15b: {ja: Qwen2.5-1.5B-Instruct, is: model, gloss: 約15億パラメータ、28層}
-  model_4b: {ja: Qwen3-4B, is: model, gloss: 約40億パラメータ}
+  typed_graph: {ja: 型付きグラフ, is: information_entity, where: {unit: graph, content: concept, persistence: persistent}}
+  this_design: {ja: 本設計, is: information_entity, where: {unit: design, content: concept, target: model}}
+  artifact: {ja: 人工物, is: generically_dependent_continuant, where: {aboutness: does_not_describe}}
+  model: {ja: モデル, is: artifact, where: {function: language_modeling, weight_state: frozen}}
+  model_15b: {ja: Qwen2.5-1.5B-Instruct, is: model, where: {parameter_count: 1500000000, layer_total: 28}}
+  model_4b: {ja: Qwen3-4B, is: model, where: {parameter_count: 4000000000}}
   open_weight_model: {ja: 重みが公開されたモデル, is: model, where: {weight_access: open}}
   api_only_model: {ja: APIでしか使えないモデル, is: model, where: {weight_access: closed}}
-  weights: {ja: 重み, is: artifact, gloss: モデルの学習済みのパラメータ}
-  layer: {ja: 層, is: artifact, gloss: トークンのベクトルが順に通る処理段}
-  attention: {ja: 注意機構, is: artifact, gloss: 他のトークンの位置から情報を取り込む、層の中の部品}
-  typed_graph: {ja: 型付きグラフ, is: artifact, gloss: 概念と、概念間の型付きの関係を保持する永続層}
-  term_server: {ja: 用語サーバー, is: artifact, gloss: 語を概念に解決し、モデルへ渡す定義を選ぶ部品}
-  this_design: {ja: 本設計, is: artifact, gloss: CMT の設計}
-  # ----- 質 -----
-  factor: {ja: 要因, is: quality, gloss: 測定値を動かしうる、条件の性質}
-  context_length: {ja: 文脈の長さ, is: factor, gloss: 文脈のトークン数}
-  distance_to_question: {ja: 設問からの距離, is: factor, gloss: 定義と設問の間のトークン数}
-  context_depth: {ja: 文脈の深さ, is: factor, gloss: 定義の前にあるトークン数}
-  preceding_definitions: {ja: 前に並ぶ定義の数, is: factor, gloss: 関係する定義の前に置かれた他の定義の数}
-  following_definitions: {ja: 後ろに並ぶ定義の数, is: factor, gloss: 関係する定義の後ろに置かれた他の定義の数}
-  prior_collision: {ja: 元の意味との衝突, is: factor, gloss: 定義が語の元の意味と食い違うこと}
-  format_variation: {ja: 設問形式の違い, is: factor, gloss: 学習時と評価時で設問形式が違うこと}
-  vector_count: {ja: 同時に入れる概念ベクトルの数, is: factor, gloss: 1つの入力に対して有効にした概念ベクトルの本数}
-  layer_choice: {ja: 単一層の選び方, is: factor, gloss: 単一層の概念ベクトルを、どの層に加えるか}
-  chain_length: {ja: 連鎖の段数, is: factor, gloss: 答えに至るまでに連ねる必要がある連想の数}
-  metric: {ja: 指標, is: quality, gloss: 測定値の種類}
-  accuracy: {ja: 正答率, is: metric, gloss: 選択肢の順序を入れ替えた2回の平均で正答した設問の割合}
-  order_robust_accuracy: {ja: 選択肢の順序に頑健な正答率, is: metric, gloss: 2回とも正答した設問の割合}
-  recital_nll: {ja: 定義文の出しにくさ, is: metric, gloss: 定義文を出力するときの1トークンあたりの負の対数尤度}
-  training_loss: {ja: 学習の損失, is: metric, gloss: 学習の最後の反復での損失}
-  redefinition_following: {ja: 再定義への追従, is: quality, gloss: 衝突する事例で、再定義に沿って判定する度合い}
-  control_preservation: {ja: 衝突しない事例での判定の維持, is: quality, gloss: 衝突しない事例で、正しい判定を保つ度合い}
-  cross_usage_consistency: {ja: 使い方をまたぐ一貫性, is: quality, gloss: 1つの使い方で教えたときに、他の使い方も揃って変わる度合い}
-  redefinition_success: {ja: 再定義の成功, is: quality, gloss: 一般語を再定義したとき、モデルがすべての使い方で再定義に従うこと}
-  preceding_definition_effect: {ja: 前に並ぶ定義による追従の低下, is: quality, gloss: 再定義の前に他の定義が並ぶと、再定義への追従が下がる現象}
-  # ----- 役割と傾向性 -----
-  source_of_truth: {ja: 正本, is: role, gloss: 他のすべての記述がそこから導かれる、という役割}
-  consolidation_target: {ja: 変更の固定先, is: role, gloss: 安定した変更を保持しておく、という役割}
-  prior_meaning: {ja: 元の意味, is: disposition, gloss: モデルが学習済みの重みから、語に対して呼び出す推論の傾向}
-  # ===== 生起体 =====
-  occurrent: {ja: 生起体, is: entity, gloss: 時間の中で起こり、展開するもの}
-  process: {ja: 過程, is: occurrent, gloss: 時間的な部分を持つ生起体}
-  inference: {ja: 推論, is: process, gloss: モデルの中で、入力から出力へ至る計算}
-  concept: {ja: 概念, is: inference, gloss: 語を使うときに走る推論}
-  shared_inference: {ja: 使い方が共有する推論, is: inference, gloss: 1つの語のすべての使い方が参照する推論}
-  single_pass: {ja: 一度の処理, is: inference, gloss: 途中を書き出さず、層を一度通るだけで答えを出す推論}
-  usage: {ja: 使い方, is: process, gloss: 語を用いて課題を行う過程}
+  weights: {ja: 重み, is: artifact, where: {component_of: model, origin: learned}}
+  layer: {ja: 層, is: artifact, where: {component_of: model, function: token_transformation}}
+  attention: {ja: 注意機構, is: artifact, where: {component_of: layer, function: information_routing}}
+  term_server: {ja: 用語サーバー, is: artifact, where: {function: term_resolution}}
+  factor: {ja: 要因, is: quality, where: {experimental_role: varied}}
+  metric: {ja: 指標, is: quality, where: {experimental_role: measured}}
+  context_length: {ja: 文脈の長さ, is: factor, where: {bearer: context, quantity: token_count}}
+  context_depth: {ja: 文脈の深さ, is: factor, where: {bearer: definition, quantity: token_count, counted_side: before}}
+  distance_to_question: {ja: 設問からの距離, is: factor, where: {bearer: definition, quantity: token_count, counted_side: after}}
+  preceding_definitions: {ja: 前に並ぶ定義の数, is: factor, where: {bearer: relevant_definitions, quantity: definition_count, counted_side: before}}
+  following_definitions: {ja: 後ろに並ぶ定義の数, is: factor, where: {bearer: relevant_definitions, quantity: definition_count, counted_side: after}}
+  prior_collision: {ja: 元の意味との衝突, is: factor, where: {bearer: redefinition, quantity: mismatch}}
+  format_variation: {ja: 設問形式の違い, is: factor, where: {bearer: question_format, quantity: mismatch}}
+  vector_count: {ja: 同時に入れる概念ベクトルの数, is: factor, where: {bearer: concept_vector, quantity: instance_count}}
+  layer_choice: {ja: 単一層の選び方, is: factor, where: {bearer: single_layer_vector, quantity: layer_number}}
+  chain_length: {ja: 連鎖の段数, is: factor, where: {bearer: inference, quantity: step_count}}
+  accuracy: {ja: 正答率, is: metric, where: {bearer: verdict, quantity: proportion_correct, option_order: averaged}}
+  order_robust_accuracy: {ja: 選択肢の順序に頑健な正答率, is: metric, where: {bearer: verdict, quantity: proportion_correct, option_order: both_orders}}
+  recital_nll: {ja: 定義文の出しにくさ, is: metric, where: {bearer: definition_text, quantity: negative_log_likelihood}}
+  training_loss: {ja: 学習の損失, is: metric, where: {bearer: teaching, quantity: loss}}
+  redefinition_following: {ja: 再定義への追従, is: metric, where: {bearer: verdict, target: conflict_case, quantity: agreement_with_definition}}
+  control_preservation: {ja: 衝突しない事例での判定の維持, is: metric, where: {bearer: verdict, target: control_case, quantity: agreement_with_definition}}
+  redefinition_success: {ja: 再定義の成功, is: metric, where: {bearer: usage, target: redefinition, quantity: agreement_with_definition}}
+  cross_usage_consistency: {ja: 使い方をまたぐ一貫性, is: metric, where: {bearer: usage, target: redefinition, quantity: co_change}}
+  preceding_definition_effect: {ja: 前に並ぶ定義による追従の低下, is: metric, where: {bearer: verdict, target: conflict_case, quantity: decrease, attributed_to: preceding_definitions}}
+  source_of_truth: {ja: 正本, is: role, where: {role_function: origin_of_derivation}}
+  consolidation_target: {ja: 変更の固定先, is: role, where: {role_function: holder_of_stable_change}}
+  prior_meaning: {ja: 元の意味, is: disposition, where: {bearer: weights, target: word}}
+  inference: {ja: 推論, is: process, where: {performed_by: model}}
+  concept: {ja: 概念, is: inference, where: {triggered_by: word}}
+  shared_inference: {ja: 使い方が共有する推論, is: concept, where: {scope_of_use: all_usages}}
+  single_pass: {ja: 一度の処理, is: inference, where: {intermediate_output: not_written}}
+  scratchpad: {ja: 途中経過の書き出し, is: inference, where: {intermediate_output: written}}
+  usage: {ja: 使い方, is: process, where: {performed_by: model, target: word}}
   usage_recite: {ja: 定義文の暗唱, is: usage, where: {content: definition_text}}
   usage_apply: {ja: 適用, is: usage, where: {content: case}}
   usage_define_paraphrase: {ja: 定義の言い換えの選択, is: usage, where: {content: definition, answer_mode: fmt_paraphrase_choice}}
   usage_explain: {ja: 説明, is: usage, where: {content: reason}}
   taught_usage: {ja: 教えた使い方, is: usage, where: {training_use: used}}
   untaught_usage: {ja: 教えていない使い方, is: usage, where: {training_use: not_used}}
-  symbol_selection: {ja: シンボルの選定, is: process, gloss: 概念に対応するシンボルを選ぶ過程}
-  channel: {ja: 接続手段, is: process, gloss: 概念の定義をモデルの計算に届ける過程}
-  no_channel: {ja: 何もなし, is: channel, gloss: 定義を何も届けないこと}
-  text_injection: {ja: 文章での注入, is: channel, where: {placement: context}}
-  concept_vector: {ja: 概念ベクトル, is: channel, where: {placement: label_token_positions}}
-  single_layer_vector: {ja: 単一層の概念ベクトル, is: concept_vector, where: {layer_count: one}}
-  multi_layer_vector: {ja: 複数層の概念ベクトル, is: concept_vector, where: {layer_count: many}}
-  text_and_vector: {ja: 文章と概念ベクトルの併用, is: channel, gloss: 文章での注入と概念ベクトルを同時に使うこと}
-  delta_weights: {ja: 差分重み, is: channel, where: {placement: weights}}
-  renaming: {ja: 改名, is: channel, gloss: 再定義した一般語を、別の語に置き換えて渡すこと}
-  opaque_renaming: {ja: 元の語が見えない改名, is: renaming, where: {visibility_of_original: hidden}}
-  semi_renaming: {ja: 元の語が見える改名, is: renaming, where: {visibility_of_original: visible}}
-  inline_expansion: {ja: 設問中での定義の展開, is: channel, gloss: 設問中の語の直後に定義を書き添えること}
-  scratchpad: {ja: 途中経過の書き出し, is: process, gloss: 答えの前に、定義の条件と事例の照合を文章として書かせること}
-  teaching: {ja: 教示, is: process, gloss: 概念ベクトルを学習させる過程}
+  symbol_selection: {ja: シンボルの選定, is: process, where: {action: select, target: symbol}}
+  verification: {ja: 検証, is: process, where: {action: verify, target: concept}}
+  teaching: {ja: 教示, is: process, where: {action: teach, target: concept_vector}}
   teacher_recite: {ja: 定義文の暗唱を教師にする, is: teaching, where: {content: definition_text}}
   teacher_examples: {ja: 適用例を教師にする, is: teaching, where: {content: application_example}}
   teacher_both: {ja: 定義文の暗唱と適用例の両方を教師にする, is: teaching, where: {content: def_and_examples}}
+  channel: {ja: 接続手段, is: process, where: {action: deliver, content: definition, target: model}}
+  no_channel: {ja: 何もなし, is: channel, where: {delivered: nothing}}
+  text_injection: {ja: 文章での注入, is: channel, where: {placement: context}}
+  renaming: {ja: 改名, is: text_injection, where: {word_substitution: substituted}}
+  opaque_renaming: {ja: 元の語が見えない改名, is: renaming, where: {visibility_of_original: hidden}}
+  semi_renaming: {ja: 元の語が見える改名, is: renaming, where: {visibility_of_original: visible}}
+  inline_expansion: {ja: 設問中での定義の展開, is: text_injection, where: {position_to_word: immediately_after_word}}
+  concept_vector: {ja: 概念ベクトル, is: channel, where: {placement: label_token_positions}}
+  single_layer_vector: {ja: 単一層の概念ベクトル, is: concept_vector, where: {layer_count: one}}
+  multi_layer_vector: {ja: 複数層の概念ベクトル, is: concept_vector, where: {layer_count: many}}
+  text_and_vector: {ja: 文章と概念ベクトルの併用, is: channel, where: {placement: [context, label_token_positions]}}
+  delta_weights: {ja: 差分重み, is: channel, where: {placement: weights}}
 
 relations:
   relation: {ja: 関係, gloss: 2つの実体を結ぶもの}
   # ----- 効果 -----
-  effect_relation: {ja: 効果の関係, is: relation, gloss: 一方が他方の質を変える関係}
-  raises: {ja: を上げる, is: effect_relation, domain: entity, range: quality,
+  effect_relation: {ja: 質を変える, is: relation, domain: any, range: quality, primitive: true}
+  raises: {ja: を上げる, is: effect_relation, domain: any, range: quality,
            def: "forall x q. raises(x, q) iff value(q, with(x)) gt value(q, without(x))"}
-  does_not_raise: {ja: を上げない, is: effect_relation, domain: entity, range: quality,
+  does_not_raise: {ja: を上げない, is: effect_relation, domain: any, range: quality,
                    def: "forall x q. does_not_raise(x, q) iff not raises(x, q)"}
-  lowers: {ja: を下げる, is: effect_relation, domain: entity, range: quality,
+  lowers: {ja: を下げる, is: effect_relation, domain: any, range: quality,
            def: "forall x q. lowers(x, q) iff value(q, with(x)) lt value(q, without(x))"}
-  does_not_lower: {ja: を下げない, is: effect_relation, domain: entity, range: quality,
+  does_not_lower: {ja: を下げない, is: effect_relation, domain: any, range: quality,
                    def: "forall x q. does_not_lower(x, q) iff not lowers(x, q)"}
-  causes: {ja: の原因である, is: effect_relation, domain: entity, range: quality,
+  causes: {ja: の原因である, is: effect_relation, domain: any, range: quality,
            def: "forall x q. causes(x, q) iff (exists(q) implies exists(x)) and (not exists(x) implies not exists(q))"}
-  is_immune_to: {ja: の影響を受けない, is: effect_relation, domain: entity, range: entity,
+  is_immune_to: {ja: の影響を受けない, is: relation, domain: any, range: any,
                  def: "forall x y. is_immune_to(x, y) iff value(accuracy, with(x) and with(y)) eq value(accuracy, with(x) and without(y))"}
   # ----- 転移 -----
-  transfer_relation: {ja: 転移の関係, is: relation, gloss: 一方で得た変化が他方にも現れる関係}
-  transfers_to: {ja: に転移する, is: transfer_relation, domain: entity, range: entity,
+  transfer_relation: {ja: 変化が及ぶ, is: relation, domain: any, range: any, primitive: true}
+  transfers_to: {ja: に転移する, is: transfer_relation, domain: any, range: any,
                  def: "forall x y. transfers_to(x, y) iff forall c. changed(c, x) implies changed(c, y)"}
-  does_not_transfer_to: {ja: に転移しない, is: transfer_relation, domain: entity, range: entity,
+  does_not_transfer_to: {ja: に転移しない, is: transfer_relation, domain: any, range: any,
                          def: "forall x y. does_not_transfer_to(x, y) iff not transfers_to(x, y)"}
   coexists_with: {ja: と同居できる, is: transfer_relation, domain: usage, range: usage,
                   def: "forall x y. coexists_with(x, y) iff exists c. changed(c, x) and changed(c, y)"}
   # ----- 構造 -----
-  structural_relation: {ja: 構造の関係, is: relation, gloss: 実体どうしの成り立ちを述べる関係}
-  is_a_kind_of: {ja: の一種である, is: structural_relation, domain: entity, range: entity,
+  structural_relation: {ja: 成り立ちを述べる, is: relation, domain: any, range: any, primitive: true}
+  is_a_kind_of: {ja: の一種である, is: structural_relation, domain: any, range: any,
                  def: "forall x y. is_a_kind_of(x, y) iff forall i. instance_of(i, x) implies instance_of(i, y)"}
-  consists_of: {ja: からなる, is: structural_relation, domain: entity, range: entity,
+  consists_of: {ja: からなる, is: structural_relation, domain: any, range: any,
                 def: "forall x y. consists_of(x, y) iff forall p. part_of(p, x) iff instance_of(p, y)"}
   is_placed_at: {ja: に置く, is: structural_relation, domain: continuant, range: generically_dependent_continuant,
                  def: "forall x y. is_placed_at(x, y) iff part_of(x, y)"}
   # ----- 設計上の割り当て -----
-  design_relation: {ja: 設計の関係, is: relation, gloss: 設計として定める関係}
+  design_relation: {ja: 設計として定める, is: relation, domain: any, range: any, primitive: true}
   is_measured_by: {ja: で測る, is: design_relation, domain: quality, range: quality,
                    def: "forall x y. is_measured_by(x, y) iff value(x) eq value(y)"}
-  is_assigned_to: {ja: が担う, is: design_relation, domain: entity, range: entity,
+  is_assigned_to: {ja: が担う, is: design_relation, domain: any, range: any,
                    def: "forall x y. is_assigned_to(x, y) iff forall i. instance_of(i, x) implies realized_by(i, y)"}
-  is_limited_to: {ja: に限る, is: design_relation, domain: entity, range: entity,
+  is_limited_to: {ja: に限る, is: design_relation, domain: any, range: any,
                   def: "forall x y. is_limited_to(x, y) iff forall i. instance_of(i, x) implies instance_of(i, y) or applies_to(i, y)"}
   is_required_by: {ja: に必要である, is: design_relation, domain: process, range: artifact,
                    def: "forall x y. is_required_by(x, y) iff forall c. delivered_to(c, y) implies delivered_by(c, x)"}
-  is_the_goal_of: {ja: の目標である, is: design_relation, domain: quality, range: artifact,
+  is_the_goal_of: {ja: の目標である, is: design_relation, domain: quality, range: information_entity,
                    def: "forall x y. is_the_goal_of(x, y) iff maximizes(y, x)"}
-  # ----- 属性（分類の軸のもとになる関係） -----
-  attribute_relation: {ja: 属性の関係, is: relation, gloss: 実体と、その性質の値を結ぶ関係}
+  # ----- 属性（分類の軸のもとになる関係）。すべて原始関係 -----
+  attribute_relation: {ja: 性質を持つ, is: relation, domain: any, range: any, primitive: true}
+  depends_on: {ja: に依存する, is: attribute_relation, domain: continuant, range: continuant, primitive: true}
+  is_realized_in: {ja: の中で実現される, is: attribute_relation, domain: specifically_dependent_continuant, range: process, primitive: true}
+  is_grounded_in: {ja: に由来する, is: attribute_relation, domain: realizable_entity, range: any, primitive: true}
+  has_temporal_extent: {ja: 時間的な広がりを持つ, is: attribute_relation, domain: occurrent, range: occurrent, primitive: true}
+  is_about: {ja: について述べる, is: attribute_relation, domain: generically_dependent_continuant, range: any, primitive: true}
+  has_unit: {ja: という単位である, is: attribute_relation, domain: information_entity, range: information_entity, primitive: true}
+  is_written_in: {ja: で書かれる, is: attribute_relation, domain: information_entity, range: information_entity, primitive: true}
+  has_speech_act: {ja: という言語行為である, is: attribute_relation, domain: information_entity, range: process, primitive: true}
+  is_located_in: {ja: の中にある, is: attribute_relation, domain: information_entity, range: information_entity, primitive: true}
+  is_spoken_by: {ja: が発話する, is: attribute_relation, domain: information_entity, range: any, primitive: true}
+  is_occupied_by: {ja: が占める, is: attribute_relation, domain: information_entity, range: information_entity, primitive: true}
+  is_judged_against: {ja: に照らして判定される, is: attribute_relation, domain: information_entity, range: process, primitive: true}
+  is_input_of: {ja: の入力である, is: attribute_relation, domain: information_entity, range: artifact, primitive: true}
+  is_used_for: {ja: のために使う, is: attribute_relation, domain: information_entity, range: process, primitive: true}
+  persists: {ja: 保持される, is: attribute_relation, domain: information_entity, range: occurrent, primitive: true}
+  is_part_of_expression: {ja: 概念式の部分である, is: attribute_relation, domain: word, range: information_entity, primitive: true}
+  has_options: {ja: 選択肢を持つ, is: attribute_relation, domain: question_format, range: information_entity, primitive: true}
+  has_task: {ja: 課題を課す, is: attribute_relation, domain: item_group, range: process, primitive: true}
   has_prior_meaning: {ja: 元の意味を持つ, is: attribute_relation, domain: word, range: disposition, primitive: true}
   agrees_with_prior: {ja: 元の意味と一致する, is: attribute_relation, domain: information_entity, range: disposition, primitive: true}
   has_boundary_kind: {ja: 境界の決まり方を持つ, is: attribute_relation, domain: definition, range: quality, primitive: true}
   is_relevant_to: {ja: 設問に関係する, is: attribute_relation, domain: information_entity, range: information_entity, primitive: true}
-  has_target: {ja: を対象とする, is: attribute_relation, domain: entity, range: entity, primitive: true}
-  has_content: {ja: を内容とする, is: attribute_relation, domain: entity, range: entity, primitive: true}
+  has_target: {ja: を対象とする, is: attribute_relation, domain: any, range: any, primitive: true}
+  has_content: {ja: を内容とする, is: attribute_relation, domain: any, range: any, primitive: true}
+  has_function: {ja: という働きを持つ, is: attribute_relation, domain: artifact, range: process, primitive: true}
+  has_weight_state: {ja: 重みの状態を持つ, is: attribute_relation, domain: artifact, range: quality, primitive: true}
+  has_parameter_count: {ja: パラメータ数を持つ, is: attribute_relation, domain: model, range: quality, primitive: true}
+  has_layer_total: {ja: 層の総数を持つ, is: attribute_relation, domain: model, range: quality, primitive: true}
+  has_weight_access: {ja: 重みに触れられる, is: attribute_relation, domain: model, range: artifact, primitive: true}
+  is_component_of: {ja: の部品である, is: attribute_relation, domain: artifact, range: artifact, primitive: true}
+  has_origin: {ja: という成り立ちを持つ, is: attribute_relation, domain: artifact, range: process, primitive: true}
+  has_experimental_role: {ja: 実験での位置づけを持つ, is: attribute_relation, domain: quality, range: role, primitive: true}
+  is_borne_by: {ja: が担い手である, is: attribute_relation, domain: specifically_dependent_continuant, range: any, primitive: true}
+  has_quantity: {ja: という量である, is: attribute_relation, domain: quality, range: quality, primitive: true}
+  is_counted_on_side: {ja: の側で数える, is: attribute_relation, domain: quality, range: information_entity, primitive: true}
+  has_option_order: {ja: 選択肢の順序を扱う, is: attribute_relation, domain: quality, range: quality, primitive: true}
+  is_attributed_to: {ja: に帰する, is: attribute_relation, domain: quality, range: quality, primitive: true}
+  has_role_function: {ja: という役目を持つ, is: attribute_relation, domain: role, range: process, primitive: true}
+  is_performed_by: {ja: が行う, is: attribute_relation, domain: process, range: any, primitive: true}
+  is_triggered_by: {ja: をきっかけに走る, is: attribute_relation, domain: process, range: any, primitive: true}
+  has_scope_of_use: {ja: 使われる範囲を持つ, is: attribute_relation, domain: process, range: process, primitive: true}
+  has_intermediate_output: {ja: 途中の出力を持つ, is: attribute_relation, domain: process, range: information_entity, primitive: true}
+  has_action: {ja: という行為である, is: attribute_relation, domain: process, range: process, primitive: true}
+  delivers: {ja: を届ける, is: attribute_relation, domain: channel, range: any, primitive: true}
+  delivers_into: {ja: に届ける, is: attribute_relation, domain: channel, range: generically_dependent_continuant, primitive: true}
+  substitutes_word: {ja: 語を置き換える, is: attribute_relation, domain: channel, range: word, primitive: true}
+  is_positioned_to_word: {ja: 語に対して位置する, is: attribute_relation, domain: channel, range: word, primitive: true}
   is_delivered_by: {ja: によって届けられる, is: attribute_relation, domain: definition, range: channel, primitive: true}
   is_taught_by: {ja: によって教えられる, is: attribute_relation, domain: channel, range: teaching, primitive: true}
-  is_used_in_training: {ja: 学習に使われる, is: attribute_relation, domain: entity, range: teaching, primitive: true}
-  delivers_into: {ja: に届ける, is: attribute_relation, domain: channel, range: generically_dependent_continuant, primitive: true}
+  is_used_in_training: {ja: 学習に使われる, is: attribute_relation, domain: any, range: teaching, primitive: true}
   acts_at_layer: {ja: の層で働く, is: attribute_relation, domain: channel, range: layer, primitive: true}
   shows_original_word: {ja: 元の語を見せる, is: attribute_relation, domain: renaming, range: word, primitive: true}
   is_preceded_by: {ja: の後ろにある, is: attribute_relation, domain: information_entity, range: information_entity, primitive: true}
   is_followed_by: {ja: の前にある, is: attribute_relation, domain: information_entity, range: information_entity, primitive: true}
   answers_in: {ja: の形式で答える, is: attribute_relation, domain: process, range: question_format, primitive: true}
-  has_weight_access: {ja: 重みに触れられる, is: attribute_relation, domain: model, range: weights, primitive: true}
   is_installed_with: {ja: と同時に有効にする, is: attribute_relation, domain: channel, range: channel, primitive: true}
 
 classifications:
   classification: {ja: 分類, gloss: 軸と値によって実体を分けるもの}
-  # 値を列挙する軸
+  # ===== 値を列挙する軸 =====
+  # ----- BFO の区別 -----
+  dependence: {ja: 依存のしかた, is: classification, from: depends_on,
+               values: {on_nothing: {ja: 何にも依存しない}, on_specific_bearer: {ja: 特定の担い手に依存する}, on_any_bearer: {ja: 担い手を替えても同一である}}}
+  realization: {ja: 実現のしかた, is: classification, from: is_realized_in,
+                values: {needs_no_process: {ja: 過程がなくても現に成り立つ}, needs_process: {ja: 過程の中で実現される}}}
+  grounding: {ja: 由来, is: classification, from: is_grounded_in,
+              values: {external_circumstance: {ja: 外の状況から与えられる}, internal_makeup: {ja: 担い手の成り立ちに由来する}}}
+  temporal_extent: {ja: 時間的な広がり, is: classification, from: has_temporal_extent,
+                    values: {extended: {ja: 時間的な部分を持つ}}}
+  aboutness: {ja: 記述性, is: classification, from: is_about,
+              values: {describes: {ja: 何かについて述べる}, does_not_describe: {ja: 何についても述べない}}}
+  # ----- 情報 -----
+  unit: {ja: 単位, is: classification, from: has_unit,
+         values: {name: {ja: 名前}, sentence: {ja: 文}, passage: {ja: 文章}, pair: {ja: 組}, list: {ja: 一覧}, set: {ja: 集まり},
+                  position: {ja: 位置}, form: {ja: 形式}, graph: {ja: グラフ}, design: {ja: 設計}}}
+  language: {ja: 言語, is: classification, from: is_written_in,
+             values: {natural: {ja: 自然言語}, programming: {ja: プログラミング言語}}}
+  speech_act: {ja: 言語行為, is: classification, from: has_speech_act,
+               values: {states: {ja: 述べる}, asks: {ja: 問う}, answers: {ja: 答える}}}
+  speaker: {ja: 発話者, is: classification, from: is_spoken_by,
+            values: {system: {ja: システム}, user: {ja: 利用者}}}
+  persistence: {ja: 保持, is: classification, from: persists,
+                values: {persistent: {ja: 永続する}}}
+  expression_part: {ja: 概念式での位置, is: classification, from: is_part_of_expression,
+                    values: {genus: {ja: 類}, differentia: {ja: 種差}}}
+  options: {ja: 選択肢, is: classification, from: has_options,
+            values: {yes_or_no: {ja: はい・いいえ}, applies_or_not: {ja: 当たる・当たらない}, true_or_false: {ja: 正しい・誤り},
+                     two_paraphrases: {ja: 定義の言い換え2つ}, no_options: {ja: 選択肢なし}}}
+  task: {ja: 課題, is: classification, from: has_task,
+         values: {distinguish_siblings: {ja: 兄弟概念を区別する}, choose_current_term: {ja: 現行の語を選ぶ}}}
   prior_meaning_presence: {ja: 元の意味の有無, is: classification, from: has_prior_meaning,
                            values: {present: {ja: 元の意味がある}, absent: {ja: 元の意味がない}}}
   agreement_with_prior: {ja: 元の意味との一致, is: classification, from: agrees_with_prior,
@@ -212,23 +279,71 @@ classifications:
                   values: {numeric_threshold_or_calendar: {ja: 数値のしきい値または暦の計算で決まる}, scope_widened_or_narrowed: {ja: 対象の範囲の伸縮で決まる}}}
   relevance_to_question: {ja: 設問との関係, is: classification, from: is_relevant_to,
                           values: {relevant: {ja: 関係する}, irrelevant: {ja: 関係しない}}}
+  # ----- 人工物 -----
+  function: {ja: 働き, is: classification, from: has_function,
+             values: {language_modeling: {ja: 次のトークンを予測する}, token_transformation: {ja: トークンのベクトルを書き換える},
+                      information_routing: {ja: 他のトークンの位置から情報を取り込む}, term_resolution: {ja: 語を概念に解決して渡す定義を選ぶ}}}
+  weight_state: {ja: 重みの状態, is: classification, from: has_weight_state,
+                 values: {frozen: {ja: 固定されている}}}
+  weight_access: {ja: 重みへの到達, is: classification, from: has_weight_access,
+                  values: {open: {ja: 重みに触れられる状態}, closed: {ja: 重みに触れられない状態}}}
+  origin: {ja: 成り立ち, is: classification, from: has_origin,
+           values: {learned: {ja: 学習で得られた}}}
+  # ----- 質 -----
+  experimental_role: {ja: 実験での位置づけ, is: classification, from: has_experimental_role,
+                      values: {varied: {ja: 動かす条件}, measured: {ja: 測る量}}}
+  quantity: {ja: 量の種類, is: classification, from: has_quantity,
+             values: {token_count: {ja: トークン数}, definition_count: {ja: 定義の個数}, instance_count: {ja: 本数}, step_count: {ja: 段数},
+                      layer_number: {ja: 層の番号}, mismatch: {ja: 食い違いの有無}, proportion_correct: {ja: 正答の割合},
+                      negative_log_likelihood: {ja: 1トークンあたりの負の対数尤度}, loss: {ja: 最後の反復での損失},
+                      agreement_with_definition: {ja: 定義に沿う度合い}, co_change: {ja: 揃って変わる度合い}, decrease: {ja: 下がり幅}}}
+  counted_side: {ja: 数える側, is: classification, from: is_counted_on_side,
+                 values: {before: {ja: 前}, after: {ja: 後ろ}}}
+  option_order: {ja: 選択肢の順序の扱い, is: classification, from: has_option_order,
+                 values: {averaged: {ja: 順序を入れ替えた2回の平均で判定する}, both_orders: {ja: 2回とも正答した場合だけ数える}}}
+  role_function: {ja: 役目, is: classification, from: has_role_function,
+                  values: {origin_of_derivation: {ja: 他の記述がそこから導かれる}, holder_of_stable_change: {ja: 安定した変更を保持する}}}
+  # ----- 過程 -----
+  scope_of_use: {ja: 使われる範囲, is: classification, from: has_scope_of_use,
+                 values: {all_usages: {ja: すべての使い方が参照する}}}
+  intermediate_output: {ja: 途中の出力, is: classification, from: has_intermediate_output,
+                        values: {not_written: {ja: 途中を書き出さない}, written: {ja: 途中を書き出す}}}
+  action: {ja: 行為, is: classification, from: has_action,
+           values: {deliver: {ja: 届ける}, teach: {ja: 教える}, select: {ja: 選ぶ}, verify: {ja: 確かめる}}}
+  delivered: {ja: 届ける量, is: classification, from: delivers,
+              values: {nothing: {ja: 何も届けない}}}
+  word_substitution: {ja: 語の置き換え, is: classification, from: substitutes_word,
+                      values: {substituted: {ja: 別の語に置き換える}}}
+  position_to_word: {ja: 語に対する位置, is: classification, from: is_positioned_to_word,
+                     values: {immediately_after_word: {ja: 語の直後}}}
   training_use: {ja: 学習での使用, is: classification, from: is_used_in_training,
                  values: {used: {ja: 学習に使った}, not_used: {ja: 学習に使っていない}}}
   layer_count: {ja: 加える層の数, is: classification, from: acts_at_layer,
                 values: {one: {ja: 1つの層}, many: {ja: 複数の層}}}
   visibility_of_original: {ja: 元の語の見え方, is: classification, from: shows_original_word,
                            values: {hidden: {ja: 見えない}, visible: {ja: 見える}}}
-  weight_access: {ja: 重みへの到達, is: classification, from: has_weight_access,
-                  values: {open: {ja: 重みに触れられる状態}, closed: {ja: 重みに触れられない状態}}}
-  # 値が実体である軸
-  target: {ja: 対象, is: classification, from: has_target, values_from: entity}
-  content: {ja: 内容, is: classification, from: has_content, values_from: entity}
+  # ===== 値が実体である軸 =====
+  target: {ja: 対象, is: classification, from: has_target, values_from: any}
+  content: {ja: 内容, is: classification, from: has_content, values_from: any}
+  bearer: {ja: 担い手, is: classification, from: is_borne_by, values_from: any}
+  attributed_to: {ja: 帰する先, is: classification, from: is_attributed_to, values_from: quality}
+  performed_by: {ja: 行い手, is: classification, from: is_performed_by, values_from: any}
+  triggered_by: {ja: きっかけ, is: classification, from: is_triggered_by, values_from: any}
+  judged_against: {ja: 判定の基準, is: classification, from: is_judged_against, values_from: process}
+  input_of: {ja: 入力先, is: classification, from: is_input_of, values_from: artifact}
+  use: {ja: 用途, is: classification, from: is_used_for, values_from: process}
+  located_in: {ja: 所在, is: classification, from: is_located_in, values_from: information_entity}
+  occupied_by: {ja: 占めるもの, is: classification, from: is_occupied_by, values_from: information_entity}
+  immediately_before: {ja: 直後に来るもの, is: classification, from: is_followed_by, values_from: information_entity}
+  component_of: {ja: 所属先, is: classification, from: is_component_of, values_from: artifact}
   placement: {ja: 置き場所, is: classification, from: delivers_into, values_from: generically_dependent_continuant}
   channel_used: {ja: 使う接続手段, is: classification, from: is_delivered_by, values_from: channel}
   teacher: {ja: 教師, is: classification, from: is_taught_by, values_from: teaching}
   preceding_kind: {ja: 前にあるものの種類, is: classification, from: is_preceded_by, values_from: information_entity}
   answer_mode: {ja: 答えの形式, is: classification, from: answers_in, values_from: question_format}
-  # 値が数である軸
+  # ===== 値が数である軸 =====
+  parameter_count: {ja: パラメータ数, is: classification, from: has_parameter_count, number: true}
+  layer_total: {ja: 層の総数, is: classification, from: has_layer_total, number: true}
   layer_index: {ja: 加える層の番号, is: classification, from: acts_at_layer, number: true}
   installed_vectors: {ja: 同時に有効にした概念ベクトルの本数, is: classification, from: is_installed_with, number: true}
   preceding_count: {ja: 前に並ぶ定義の個数, is: classification, from: is_preceded_by, number: true}
