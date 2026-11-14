@@ -2,10 +2,12 @@
 #   entities         実体のツリー。最上位は BFO の continuant（持続体）と occurrent（生起体）。
 #                    原始概念はこの2つだけで、説明文（gloss）を持てるのもこの2つだけ。
 #                    他のすべての実体は「上位の実体 [軸=値, ...]」という概念式（is と where）で記述する。
-#   relations        関係のツリー。各関係は、結ぶ実体の種類（domain, range）と、述語論理による定義（def）を持つ。
-#                    primitive は、他の関係で定義しない原子関係。識別子はアンダースコア1個まで。
-#                    語が3つ以上連なる関係は合成なので、原子関係と実体の種類から def で定義する。any はすべての実体。
+#   relations        関係のツリー。原子関係は from_to（向きを持つ結び付き）だけ。
+#                    他のすべての関係は「上位の関係 [from=…, to=…, 軸=値, ...]」という式で記述する。
+#                    from と to は両端の種類。any はすべての実体、value は分類の値、number は数。
+#                    式だけで書けない合成関係に限り、述語論理の定義（def）を添える。
 #   classifications  分類のツリー。軸は関係を抽象として見たもの（from）、値はその具体（values / values_from / number）。
+#                    of: relation の軸は関係を分類する軸で、値は述語論理の法則（law）を持てる。law の r はその関係自身。
 # 正規形（軸を整列した式）が同じ実体は同一とみなし、重複は検査で失敗する。
 
 entities:
@@ -119,11 +121,13 @@ entities:
   untaught_usage: {ja: 教えていない使い方, is: usage, where: {training_use: not_used}}
   symbol_selection: {ja: シンボルの選定, is: process, where: {action: select, target: symbol}}
   verification: {ja: 検証, is: process, where: {action: verify, target: concept}}
-  teaching: {ja: 教示, is: process, where: {action: teach, target: concept_vector}}
+  teaching_act: {ja: 教えること, is: process, where: {action: teach}}
+  teaching: {ja: 教示, is: teaching_act, where: {target: concept_vector}}
   teacher_recite: {ja: 定義文の暗唱を教師にする, is: teaching, where: {content: definition_text}}
   teacher_examples: {ja: 適用例を教師にする, is: teaching, where: {content: application_example}}
   teacher_both: {ja: 定義文の暗唱と適用例の両方を教師にする, is: teaching, where: {content: def_and_examples}}
-  channel: {ja: 接続手段, is: process, where: {action: deliver, content: definition, target: model}}
+  delivering: {ja: 届けること, is: process, where: {action: deliver}}
+  channel: {ja: 接続手段, is: delivering, where: {content: definition, target: model}}
   no_channel: {ja: 何もなし, is: channel, where: {delivered: nothing}}
   text_injection: {ja: 文章での注入, is: channel, where: {placement: context}}
   renaming: {ja: 改名, is: text_injection, where: {word_substitution: substituted}}
@@ -135,121 +139,149 @@ entities:
   multi_layer_vector: {ja: 複数層の概念ベクトル, is: concept_vector, where: {layer_count: many}}
   text_and_vector: {ja: 文章と概念ベクトルの併用, is: channel, where: {placement: [context, label_token_positions]}}
   delta_weights: {ja: 差分重み, is: channel, where: {placement: weights}}
+  referring: {ja: 言及, is: process, where: {action: refer}}
+  relating: {ja: 関係づけ, is: process, where: {action: relate}}
+  matching: {ja: 照合, is: process, where: {action: match}}
+  judging: {ja: 判定すること, is: process, where: {action: judge}}
+  exposing: {ja: 公開, is: process, where: {action: expose}}
+  attributing: {ja: 帰属, is: process, where: {action: attribute}}
+  substituting: {ja: 置き換え, is: process, where: {action: substitute}}
+  triggering: {ja: 引き起こし, is: process, where: {action: trigger}}
+  reading: {ja: 読み取り, is: process, where: {action: read}}
 
 relations:
-  relation: {ja: 関係, gloss: 2つの実体を結ぶもの}
-  # ----- 効果 -----
-  effect_relation: {ja: 質を変える, is: relation, domain: any, range: quality, primitive: true}
-  raises: {ja: を上げる, is: effect_relation, domain: any, range: quality,
-           def: "forall x q. raises(x, q) iff value(q, with(x)) gt value(q, without(x))"}
-  does_not_raise: {ja: を上げない, is: effect_relation, domain: any, range: quality,
-                   def: "forall x q. does_not_raise(x, q) iff not raises(x, q)"}
-  lowers: {ja: を下げる, is: effect_relation, domain: any, range: quality,
-           def: "forall x q. lowers(x, q) iff value(q, with(x)) lt value(q, without(x))"}
-  does_not_lower: {ja: を下げない, is: effect_relation, domain: any, range: quality,
-                   def: "forall x q. does_not_lower(x, q) iff not lowers(x, q)"}
-  causes: {ja: の原因である, is: effect_relation, domain: any, range: quality,
-           def: "forall x q. causes(x, q) iff (exists(q) implies exists(x)) and (not exists(x) implies not exists(q))"}
-  is_immune_to: {ja: の影響を受けない, is: relation, domain: any, range: any,
-                 def: "forall x y. is_immune_to(x, y) iff value(accuracy, with(x) and with(y)) eq value(accuracy, with(x) and without(y))"}
-  # ----- 転移 -----
-  transfer_relation: {ja: 変化が及ぶ, is: relation, domain: any, range: any, primitive: true}
-  transfers_to: {ja: に転移する, is: transfer_relation, domain: any, range: any,
-                 def: "forall x y. transfers_to(x, y) iff forall c. changed(c, x) implies changed(c, y)"}
-  does_not_transfer_to: {ja: に転移しない, is: transfer_relation, domain: any, range: any,
-                         def: "forall x y. does_not_transfer_to(x, y) iff not transfers_to(x, y)"}
-  coexists_with: {ja: と同居できる, is: transfer_relation, domain: usage, range: usage,
-                  def: "forall x y. coexists_with(x, y) iff exists c. changed(c, x) and changed(c, y)"}
-  # ----- 構造 -----
-  structural_relation: {ja: 成り立ちを述べる, is: relation, domain: any, range: any, primitive: true}
-  is_a_kind_of: {ja: の一種である, is: structural_relation, domain: any, range: any,
-                 def: "forall x y. is_a_kind_of(x, y) iff forall i. instance_of(i, x) implies instance_of(i, y)"}
-  consists_of: {ja: からなる, is: structural_relation, domain: any, range: any,
-                def: "forall x y. consists_of(x, y) iff forall p. part_of(p, x) iff instance_of(p, y)"}
-  is_placed_at: {ja: に置く, is: structural_relation, domain: continuant, range: generically_dependent_continuant,
-                 def: "forall x y. is_placed_at(x, y) iff part_of(x, y)"}
-  # ----- 設計上の割り当て -----
-  design_relation: {ja: 設計として定める, is: relation, domain: any, range: any, primitive: true}
-  is_measured_by: {ja: で測る, is: design_relation, domain: quality, range: quality,
-                   def: "forall x y. is_measured_by(x, y) iff value(x) eq value(y)"}
-  is_assigned_to: {ja: が担う, is: design_relation, domain: any, range: any,
-                   def: "forall x y. is_assigned_to(x, y) iff forall i. instance_of(i, x) implies realized_by(i, y)"}
-  is_limited_to: {ja: に限る, is: design_relation, domain: any, range: any,
-                  def: "forall x y. is_limited_to(x, y) iff forall i. instance_of(i, x) implies instance_of(i, y) or applies_to(i, y)"}
-  is_required_by: {ja: に必要である, is: design_relation, domain: process, range: artifact,
-                   def: "forall x y. is_required_by(x, y) iff forall c. delivered_to(c, y) implies delivers(x, c)"}
-  is_the_goal_of: {ja: の目標である, is: design_relation, domain: quality, range: information_entity,
-                   def: "forall x y. is_the_goal_of(x, y) iff maximizes(y, x)"}
-  # ----- 属性の原子関係（分類の軸のもとになる）。識別子はアンダースコア1個まで -----
-  attribute_relation: {ja: 性質を持つ, is: relation, domain: any, range: any, primitive: true}
-  depends_on: {ja: に依存する, is: attribute_relation, domain: continuant, range: continuant, primitive: true}
-  inheres_in: {ja: に宿る, is: attribute_relation, domain: specifically_dependent_continuant, range: any, primitive: true}
-  realized_in: {ja: の中で実現される, is: attribute_relation, domain: specifically_dependent_continuant, range: process, primitive: true}
-  grounded_in: {ja: に由来する, is: attribute_relation, domain: realizable_entity, range: any, primitive: true}
-  extends_over: {ja: にわたって続く, is: attribute_relation, domain: occurrent, range: occurrent, primitive: true}
-  is_about: {ja: について述べる, is: attribute_relation, domain: generically_dependent_continuant, range: any, primitive: true}
-  part_of: {ja: の部分である, is: attribute_relation, domain: any, range: any, primitive: true}
-  located_in: {ja: の中にある, is: attribute_relation, domain: information_entity, range: information_entity, primitive: true}
-  precedes: {ja: の前にある, is: attribute_relation, domain: any, range: any, primitive: true}
-  has_unit: {ja: という単位である, is: attribute_relation, domain: information_entity, range: any, primitive: true}
-  written_in: {ja: で書かれる, is: attribute_relation, domain: information_entity, range: any, primitive: true}
-  has_force: {ja: という言語行為である, is: attribute_relation, domain: information_entity, range: any, primitive: true}
-  spoken_by: {ja: が発話する, is: attribute_relation, domain: information_entity, range: any, primitive: true}
-  occupied_by: {ja: が占める, is: attribute_relation, domain: information_entity, range: information_entity, primitive: true}
-  judged_against: {ja: に照らして判定される, is: attribute_relation, domain: information_entity, range: process, primitive: true}
-  relevant_to: {ja: に関係する, is: attribute_relation, domain: information_entity, range: information_entity, primitive: true}
-  agrees_with: {ja: と一致する, is: attribute_relation, domain: information_entity, range: any, primitive: true}
-  bounded_by: {ja: によって境界が決まる, is: attribute_relation, domain: definition, range: any, primitive: true}
-  persists: {ja: 保持される, is: attribute_relation, domain: information_entity, range: any, primitive: true}
-  input_of: {ja: の入力である, is: attribute_relation, domain: any, range: any, primitive: true}
-  output_of: {ja: の出力である, is: attribute_relation, domain: any, range: process, primitive: true}
-  used_for: {ja: のために使う, is: attribute_relation, domain: information_entity, range: process, primitive: true}
-  used_by: {ja: が使う, is: attribute_relation, domain: process, range: process, primitive: true}
-  has_target: {ja: を対象とする, is: attribute_relation, domain: any, range: any, primitive: true}
-  has_content: {ja: を内容とする, is: attribute_relation, domain: any, range: any, primitive: true}
-  has_options: {ja: 選択肢を持つ, is: attribute_relation, domain: question_format, range: any, primitive: true}
-  has_task: {ja: 課題を課す, is: attribute_relation, domain: item_group, range: any, primitive: true}
-  has_function: {ja: という働きを持つ, is: attribute_relation, domain: artifact, range: any, primitive: true}
-  has_origin: {ja: という成り立ちを持つ, is: attribute_relation, domain: artifact, range: any, primitive: true}
-  has_state: {ja: という状態にある, is: attribute_relation, domain: any, range: any, primitive: true}
-  has_count: {ja: という個数である, is: attribute_relation, domain: any, range: any, primitive: true}
-  exposes: {ja: を外から触れられるようにする, is: attribute_relation, domain: artifact, range: artifact, primitive: true}
-  has_quantity: {ja: という量である, is: attribute_relation, domain: quality, range: any, primitive: true}
-  has_method: {ja: という方法で測る, is: attribute_relation, domain: quality, range: any, primitive: true}
-  attributed_to: {ja: に帰する, is: attribute_relation, domain: quality, range: quality, primitive: true}
-  performed_by: {ja: が行う, is: attribute_relation, domain: process, range: any, primitive: true}
-  triggered_by: {ja: をきっかけに走る, is: attribute_relation, domain: process, range: any, primitive: true}
-  has_action: {ja: という行為である, is: attribute_relation, domain: process, range: any, primitive: true}
-  answers_in: {ja: の形式で答える, is: attribute_relation, domain: process, range: question_format, primitive: true}
-  delivers: {ja: を届ける, is: attribute_relation, domain: channel, range: any, primitive: true}
-  delivers_into: {ja: に届ける, is: attribute_relation, domain: channel, range: generically_dependent_continuant, primitive: true}
-  substitutes: {ja: を置き換える, is: attribute_relation, domain: channel, range: word, primitive: true}
-  taught_by: {ja: によって教えられる, is: attribute_relation, domain: channel, range: teaching, primitive: true}
-  acts_at: {ja: で働く, is: attribute_relation, domain: channel, range: artifact, primitive: true}
-  installed_with: {ja: と同時に有効にする, is: attribute_relation, domain: channel, range: channel, primitive: true}
-  # ----- 属性の合成関係。原子関係と実体の種類から定義する -----
-  follows: {ja: の後ろにある, is: attribute_relation, domain: any, range: any,
-            def: "forall x y. follows(x, y) iff precedes(y, x)"}
-  has_prior_meaning: {ja: 元の意味を持つ, is: attribute_relation, domain: word, range: disposition,
+  relation: {ja: 関係, gloss: 2つの要素を結ぶもの}
+  from_to: {ja: 結ぶ, is: relation, primitive: true, from: any, to: any}
+  # ===== 基本要素どうしの4つのマス =====
+  continuant_to_continuant: {ja: 持続体から持続体へ結ぶ, is: from_to, from: continuant, to: continuant}
+  continuant_to_occurrent: {ja: 持続体から生起体へ結ぶ, is: from_to, from: continuant, to: occurrent}
+  occurrent_to_continuant: {ja: 生起体から持続体へ結ぶ, is: from_to, from: occurrent, to: continuant}
+  occurrent_to_occurrent: {ja: 生起体から生起体へ結ぶ, is: from_to, from: occurrent, to: occurrent}
+  # ----- 持続体 → 持続体 -----
+  depends_on: {ja: に依存する, is: continuant_to_continuant, where: {existence: target_required}}
+  inheres_in: {ja: に宿る, is: depends_on, where: {specificity: specific_target}}
+  carried_by: {ja: に担われる, is: depends_on, where: {specificity: any_target}}
+  part_of: {ja: の部分である, is: continuant_to_continuant, where: {transitivity: transitive, symmetry: antisymmetric}}
+  located_in: {ja: の中にある, is: part_of, from: information_entity, to: information_entity}
+  occupied_by: {ja: が占める, is: continuant_to_continuant, from: information_entity, to: information_entity, where: {inverse_of: located_in}}
+  placed_before: {ja: より前に置かれる, is: continuant_to_continuant, where: {transitivity: transitive, symmetry: asymmetric},
+                  def: "forall x y. placed_before(x, y) iff exists p q. instance_of(p, reading) and instance_of(q, reading) and undergoes(x, p) and undergoes(y, q) and precedes(p, q)"}
+  placed_after: {ja: より後ろに置かれる, is: continuant_to_continuant, where: {inverse_of: placed_before}}
+  # ----- 持続体 → 生起体 -----
+  participates_in: {ja: に関与する, is: continuant_to_occurrent, where: {existence: target_required}}
+  acts_in: {ja: を行う, is: participates_in, where: {participation: acting}}
+  undergoes: {ja: を受ける, is: participates_in, where: {participation: undergoing}}
+  input_of: {ja: の入力である, is: participates_in, where: {participation: supplied}}
+  output_of: {ja: の出力である, is: participates_in, where: {participation: produced}}
+  used_for: {ja: のために使う, is: participates_in, where: {participation: instrumental}}
+  receives: {ja: の届け先になる, is: participates_in, where: {participation: receiving}}
+  hosts: {ja: の場になる, is: participates_in, where: {participation: hosting}}
+  shapes: {ja: に形式を与える, is: participates_in, where: {participation: shaping}}
+  realized_in: {ja: の中で実現される, is: participates_in, from: specifically_dependent_continuant}
+  # ----- 生起体 → 持続体 -----
+  has_participant: {ja: に関与される, is: occurrent_to_continuant, where: {inverse_of: participates_in}}
+  performed_by: {ja: が行う, is: occurrent_to_continuant, where: {inverse_of: acts_in}}
+  delivers: {ja: を届ける, is: occurrent_to_continuant, from: delivering, where: {inverse_of: undergoes}}
+  delivers_into: {ja: に届ける, is: occurrent_to_continuant, from: delivering, where: {inverse_of: receives}}
+  acts_at: {ja: で働く, is: occurrent_to_continuant, where: {inverse_of: hosts}}
+  answers_in: {ja: の形式で答える, is: occurrent_to_continuant, where: {inverse_of: shapes}}
+  # ----- 生起体 → 生起体 -----
+  precedes: {ja: の前に起こる, is: occurrent_to_occurrent, where: {transitivity: transitive, symmetry: asymmetric}}
+  follows: {ja: の後に起こる, is: occurrent_to_occurrent, where: {inverse_of: precedes}}
+  stage_of: {ja: の時間的な部分である, is: occurrent_to_occurrent, where: {transitivity: transitive, symmetry: antisymmetric}}
+  taught_by: {ja: によって教えられる, is: follows, from: channel, to: teaching}
+  installed_with: {ja: と同時に有効にする, is: occurrent_to_occurrent, from: channel, to: channel, where: {symmetry: symmetric}}
+  # ===== 両端の種類を問わない関係 =====
+  involved_in: {ja: に含まれて関わる, is: from_to, from: any, to: occurrent,
+                def: "forall x p. involved_in(x, p) iff participates_in(x, p) or stage_of(x, p)"}
+  triggered_by: {ja: をきっかけに走る, is: from_to, from: occurrent, to: any, where: {via: triggering}}
+  # ----- 生起体を介する関係（動詞の圧縮） -----
+  is_about: {ja: について述べる, is: from_to, from: generically_dependent_continuant, to: any, where: {via: referring}}
+  relevant_to: {ja: に関係する, is: from_to, from: information_entity, to: information_entity, where: {via: relating}}
+  agrees_with: {ja: と一致する, is: from_to, from: information_entity, to: any, where: {via: matching}}
+  judged_against: {ja: に照らして判定される, is: from_to, from: information_entity, to: process, where: {via: judging}}
+  exposes: {ja: を外から触れられるようにする, is: from_to, from: artifact, to: artifact, where: {via: exposing}}
+  attributed_to: {ja: に帰する, is: from_to, from: quality, to: quality, where: {via: attributing}}
+  substitutes: {ja: を置き換える, is: from_to, from: channel, to: word, where: {via: substituting}}
+  # ----- 値を取る関係（分類の値へ結ぶ） -----
+  takes: {ja: という値を取る, is: from_to, from: any, to: value}
+  has_count: {ja: という個数である, is: from_to, from: any, to: number}
+  has_unit: {ja: という単位である, is: takes, from: information_entity, where: {value_space: unit}}
+  written_in: {ja: で書かれる, is: takes, from: information_entity, where: {value_space: language}}
+  has_force: {ja: という言語行為である, is: takes, from: information_entity, where: {value_space: speech_act}}
+  spoken_by: {ja: が発話する, is: takes, from: information_entity, where: {value_space: speaker}}
+  persists: {ja: 保持される, is: takes, from: information_entity, where: {value_space: persistence}}
+  bounded_by: {ja: によって境界が決まる, is: takes, from: definition, where: {value_space: boundary_kind}}
+  has_options: {ja: 選択肢を持つ, is: takes, from: question_format, where: {value_space: options}}
+  has_task: {ja: 課題を課す, is: takes, from: item_group, where: {value_space: task}}
+  has_function: {ja: という働きを持つ, is: takes, from: artifact, where: {value_space: function}}
+  has_origin: {ja: という成り立ちを持つ, is: takes, from: artifact, where: {value_space: origin}}
+  has_state: {ja: という状態にある, is: takes, from: artifact, where: {value_space: weight_state}}
+  has_quantity: {ja: という量である, is: takes, from: quality, where: {value_space: quantity}}
+  has_method: {ja: という方法で測る, is: takes, from: quality, where: {value_space: option_order}}
+  grounded_in: {ja: に由来する, is: takes, from: realizable_entity, where: {value_space: grounding}}
+  extends_over: {ja: にわたって続く, is: takes, from: occurrent, where: {value_space: temporal_extent}}
+  has_action: {ja: という行為である, is: takes, from: process, where: {value_space: action}}
+  # ===== 合成関係。式だけでは書けないので、述語論理の定義を添える =====
+  has_target: {ja: を対象とする, is: from_to, from: any, to: any,
+               def: "forall x y. has_target(x, y) iff is_about(x, y) or undergoes(y, x) or inheres_in(x, y)"}
+  has_content: {ja: を内容とする, is: from_to, from: any, to: any,
+                def: "forall x y. has_content(x, y) iff is_about(x, y) or part_of(y, x) or involved_in(y, x)"}
+  has_prior_meaning: {ja: 元の意味を持つ, is: from_to, from: word, to: disposition,
                       def: "forall w d. has_prior_meaning(w, d) iff instance_of(d, prior_meaning) and has_target(d, w)"}
-  agrees_with_prior: {ja: 元の意味と一致する, is: attribute_relation, domain: information_entity, range: disposition,
+  agrees_with_prior: {ja: 元の意味と一致する, is: from_to, from: information_entity, to: disposition,
                       def: "forall i d. agrees_with_prior(i, d) iff instance_of(d, prior_meaning) and agrees_with(i, d)"}
-  has_weight_state: {ja: 重みの状態を持つ, is: attribute_relation, domain: artifact, range: any,
+  has_weight_state: {ja: 重みの状態を持つ, is: from_to, from: artifact, to: value,
                      def: "forall a q. has_weight_state(a, q) iff exists w. instance_of(w, weights) and part_of(w, a) and has_state(w, q)"}
-  has_parameter_count: {ja: パラメータ数を持つ, is: attribute_relation, domain: model, range: any,
+  has_parameter_count: {ja: パラメータ数を持つ, is: from_to, from: model, to: number,
                         def: "forall m n. has_parameter_count(m, n) iff exists w. instance_of(w, weights) and part_of(w, m) and has_count(w, n)"}
-  has_layer_total: {ja: 層の総数を持つ, is: attribute_relation, domain: model, range: any,
+  has_layer_total: {ja: 層の総数を持つ, is: from_to, from: model, to: number,
                     def: "forall m n. has_layer_total(m, n) iff exists l. instance_of(l, layer) and part_of(l, m) and has_count(l, n)"}
-  has_weight_access: {ja: 重みに触れられる, is: attribute_relation, domain: model, range: artifact,
+  has_weight_access: {ja: 重みに触れられる, is: from_to, from: model, to: artifact,
                       def: "forall m w. has_weight_access(m, w) iff instance_of(w, weights) and part_of(w, m) and exposes(m, w)"}
-  has_experimental_role: {ja: 実験での位置づけを持つ, is: attribute_relation, domain: quality, range: role,
+  has_experimental_role: {ja: 実験での位置づけを持つ, is: from_to, from: quality, to: role,
                           def: "forall q r. has_experimental_role(q, r) iff instance_of(r, role) and inheres_in(r, q)"}
-  has_intermediate_output: {ja: 途中の出力を持つ, is: attribute_relation, domain: process, range: information_entity,
-                            def: "forall p i. has_intermediate_output(p, i) iff output_of(i, p) and exists v. instance_of(v, verdict) and output_of(v, p) and precedes(i, v)"}
-  is_used_in_training: {ja: 学習に使われる, is: attribute_relation, domain: any, range: teaching,
-                        def: "forall x t. is_used_in_training(x, t) iff instance_of(t, teaching) and input_of(x, t)"}
-  shows_original_word: {ja: 元の語を見せる, is: attribute_relation, domain: renaming, range: word,
+  has_intermediate_output: {ja: 途中の出力を持つ, is: from_to, from: process, to: information_entity,
+                            def: "forall p i. has_intermediate_output(p, i) iff output_of(i, p) and exists v. instance_of(v, verdict) and output_of(v, p) and placed_before(i, v)"}
+  is_used_in_training: {ja: 学習に使われる, is: from_to, from: any, to: teaching,
+                        def: "forall x t. is_used_in_training(x, t) iff instance_of(t, teaching) and involved_in(x, t)"}
+  shows_original_word: {ja: 元の語を見せる, is: from_to, from: renaming, to: word,
                         def: "forall r w. shows_original_word(r, w) iff substitutes(r, w) and exists n. delivers(r, n) and part_of(w, n)"}
+  # ----- 仮説と決定で使う関係 -----
+  raises: {ja: を上げる, is: from_to, from: any, to: quality,
+           def: "forall x q. raises(x, q) iff value(q, with(x)) gt value(q, without(x))"}
+  does_not_raise: {ja: を上げない, is: from_to, from: any, to: quality,
+                   def: "forall x q. does_not_raise(x, q) iff not raises(x, q)"}
+  lowers: {ja: を下げる, is: from_to, from: any, to: quality,
+           def: "forall x q. lowers(x, q) iff value(q, with(x)) lt value(q, without(x))"}
+  does_not_lower: {ja: を下げない, is: from_to, from: any, to: quality,
+                   def: "forall x q. does_not_lower(x, q) iff not lowers(x, q)"}
+  causes: {ja: の原因である, is: from_to, from: any, to: quality,
+           def: "forall x q. causes(x, q) iff (exists(q) implies exists(x)) and (not exists(x) implies not exists(q))"}
+  is_immune_to: {ja: の影響を受けない, is: from_to, from: any, to: any,
+                 def: "forall x y. is_immune_to(x, y) iff value(accuracy, with(x) and with(y)) eq value(accuracy, with(x) and without(y))"}
+  transfers_to: {ja: に転移する, is: from_to, from: any, to: any,
+                 def: "forall x y. transfers_to(x, y) iff forall c. changed(c, x) implies changed(c, y)"}
+  does_not_transfer_to: {ja: に転移しない, is: from_to, from: any, to: any,
+                         def: "forall x y. does_not_transfer_to(x, y) iff not transfers_to(x, y)"}
+  coexists_with: {ja: と同居できる, is: from_to, from: usage, to: usage,
+                  def: "forall x y. coexists_with(x, y) iff exists c. changed(c, x) and changed(c, y)"}
+  is_a_kind_of: {ja: の一種である, is: from_to, from: any, to: any,
+                 def: "forall x y. is_a_kind_of(x, y) iff forall i. instance_of(i, x) implies instance_of(i, y)"}
+  consists_of: {ja: からなる, is: from_to, from: any, to: any,
+                def: "forall x y. consists_of(x, y) iff forall p. part_of(p, x) iff instance_of(p, y)"}
+  is_placed_at: {ja: に置く, is: from_to, from: continuant, to: generically_dependent_continuant,
+                 def: "forall x y. is_placed_at(x, y) iff part_of(x, y) or carried_by(x, y)"}
+  is_measured_by: {ja: で測る, is: from_to, from: quality, to: quality,
+                   def: "forall x y. is_measured_by(x, y) iff value(x) eq value(y)"}
+  is_assigned_to: {ja: が担う, is: from_to, from: any, to: any,
+                   def: "forall x y. is_assigned_to(x, y) iff forall i. instance_of(i, x) implies realized_by(i, y)"}
+  is_limited_to: {ja: に限る, is: from_to, from: any, to: any,
+                  def: "forall x y. is_limited_to(x, y) iff forall i. instance_of(i, x) implies instance_of(i, y) or applies_to(i, y)"}
+  is_required_by: {ja: に必要である, is: from_to, from: process, to: artifact,
+                   def: "forall x y. is_required_by(x, y) iff forall c. delivered_to(c, y) implies delivers(x, c)"}
+  is_the_goal_of: {ja: の目標である, is: from_to, from: quality, to: information_entity,
+                   def: "forall x y. is_the_goal_of(x, y) iff maximizes(y, x)"}
 
 classifications:
   classification: {ja: 分類, gloss: 軸と値によって実体を分けるもの}
@@ -310,19 +342,21 @@ classifications:
                       layer_number: {ja: 層の番号}, mismatch: {ja: 食い違いの有無}, proportion_correct: {ja: 正答の割合},
                       negative_log_likelihood: {ja: 1トークンあたりの負の対数尤度}, loss: {ja: 最後の反復での損失},
                       agreement_with_definition: {ja: 定義に沿う度合い}, co_change: {ja: 揃って変わる度合い}, decrease: {ja: 下がり幅}}}
-  counted_side: {ja: 数える側, is: classification, from: precedes,
+  counted_side: {ja: 数える側, is: classification, from: placed_before,
                  values: {before: {ja: 前}, after: {ja: 後ろ}}}
   option_order: {ja: 選択肢の順序の扱い, is: classification, from: has_method,
                  values: {averaged: {ja: 順序を入れ替えた2回の平均で判定する}, both_orders: {ja: 2回とも正答した場合だけ数える}}}
   role_function: {ja: 役目, is: classification, from: realized_in,
                   values: {origin_of_derivation: {ja: 他の記述がそこから導かれる}, holder_of_stable_change: {ja: 安定した変更を保持する}}}
   # ----- 過程 -----
-  scope_of_use: {ja: 使われる範囲, is: classification, from: used_by,
+  scope_of_use: {ja: 使われる範囲, is: classification, from: stage_of,
                  values: {all_usages: {ja: すべての使い方が参照する}}}
   intermediate_output: {ja: 途中の出力, is: classification, from: has_intermediate_output,
                         values: {not_written: {ja: 途中を書き出さない}, written: {ja: 途中を書き出す}}}
   action: {ja: 行為, is: classification, from: has_action,
-           values: {deliver: {ja: 届ける}, teach: {ja: 教える}, select: {ja: 選ぶ}, verify: {ja: 確かめる}}}
+           values: {deliver: {ja: 届ける}, teach: {ja: 教える}, select: {ja: 選ぶ}, verify: {ja: 確かめる}, refer: {ja: 言及する},
+                    relate: {ja: 関係づける}, match: {ja: 照合する}, judge: {ja: 判定する}, expose: {ja: 公開する},
+                    attribute: {ja: 帰属させる}, substitute: {ja: 置き換える}, trigger: {ja: 引き起こす}, read: {ja: 読み取る}}}
   delivered: {ja: 届ける量, is: classification, from: delivers,
               values: {nothing: {ja: 何も届けない}}}
   word_substitution: {ja: 語の置き換え, is: classification, from: substitutes,
@@ -347,23 +381,44 @@ classifications:
   use: {ja: 用途, is: classification, from: used_for, values_from: process}
   location: {ja: 所在, is: classification, from: located_in, values_from: information_entity}
   occupant: {ja: 占めるもの, is: classification, from: occupied_by, values_from: information_entity}
-  immediately_before: {ja: 直後に来るもの, is: classification, from: precedes, values_from: information_entity}
+  immediately_before: {ja: 直後に来るもの, is: classification, from: placed_before, values_from: information_entity}
   component_of: {ja: 所属先, is: classification, from: part_of, values_from: artifact}
   placement: {ja: 置き場所, is: classification, from: delivers_into, values_from: generically_dependent_continuant}
   channel_used: {ja: 使う接続手段, is: classification, from: delivers, values_from: channel}
   teacher: {ja: 教師, is: classification, from: taught_by, values_from: teaching}
-  preceding_kind: {ja: 前にあるものの種類, is: classification, from: follows, values_from: information_entity}
+  preceding_kind: {ja: 前にあるものの種類, is: classification, from: placed_after, values_from: information_entity}
   answer_mode: {ja: 答えの形式, is: classification, from: answers_in, values_from: question_format}
   # ===== 値が数である軸 =====
   parameter_count: {ja: パラメータ数, is: classification, from: has_parameter_count, number: true}
   layer_total: {ja: 層の総数, is: classification, from: has_layer_total, number: true}
   layer_index: {ja: 加える層の番号, is: classification, from: acts_at, number: true}
   installed_vectors: {ja: 同時に有効にした概念ベクトルの本数, is: classification, from: installed_with, number: true}
-  preceding_count: {ja: 前に並ぶ定義の個数, is: classification, from: follows, number: true}
-  preceding_count_max: {ja: 前に並ぶ定義の個数の上限, is: classification, from: follows, number: true}
-  preceding_filler_tokens: {ja: 前にある無関係な文章のトークン数, is: classification, from: follows, number: true}
-  following_filler_tokens: {ja: 後ろにある無関係な文章のトークン数, is: classification, from: precedes, number: true}
-  following_definitions_count: {ja: 後ろに並ぶ定義の個数, is: classification, from: precedes, number: true}
+  preceding_count: {ja: 前に並ぶ定義の個数, is: classification, from: placed_after, number: true}
+  preceding_count_max: {ja: 前に並ぶ定義の個数の上限, is: classification, from: placed_after, number: true}
+  preceding_filler_tokens: {ja: 前にある無関係な文章のトークン数, is: classification, from: placed_after, number: true}
+  following_filler_tokens: {ja: 後ろにある無関係な文章のトークン数, is: classification, from: placed_before, number: true}
+  following_definitions_count: {ja: 後ろに並ぶ定義の個数, is: classification, from: placed_before, number: true}
+  # ===== 関係を分類する軸。値は述語論理の法則を持つ。r はその関係自身 =====
+  existence: {ja: 存在の要請, is: classification, of: relation, from: from_to,
+              values: {target_required: {ja: 始点があれば終点もある, law: "forall x y. r(x, y) implies (exists(x) implies exists(y))"}}}
+  specificity: {ja: 相手の特定, is: classification, of: relation, from: from_to,
+                values: {specific_target: {ja: 相手は1つに決まる, law: "forall x y z. r(x, y) and r(x, z) implies y eq z"},
+                         any_target: {ja: 相手は替わってよい, law: "forall x. exists y z. r(x, y) and r(x, z) and not y eq z"}}}
+  transitivity: {ja: 推移性, is: classification, of: relation, from: from_to,
+                 values: {transitive: {ja: 推移的, law: "forall x y z. r(x, y) and r(y, z) implies r(x, z)"}}}
+  symmetry: {ja: 対称性, is: classification, of: relation, from: from_to,
+             values: {symmetric: {ja: 対称的, law: "forall x y. r(x, y) implies r(y, x)"},
+                      asymmetric: {ja: 非対称的, law: "forall x y. r(x, y) implies not r(y, x)"},
+                      antisymmetric: {ja: 反対称的, law: "forall x y. r(x, y) and r(y, x) implies x eq y"}}}
+  participation: {ja: 関わり方, is: classification, of: relation, from: from_to,
+                  values: {acting: {ja: する側}, undergoing: {ja: される側}, supplied: {ja: 入力になる側}, produced: {ja: 出力になる側},
+                           instrumental: {ja: 道具になる側}, receiving: {ja: 届け先になる側}, hosting: {ja: 場になる側}, shaping: {ja: 形式を与える側}}}
+  inverse_of: {ja: 逆向きにした関係, is: classification, of: relation, from: from_to, values_from: relation,
+               law: "forall x y. r(x, y) iff V(y, x)"}
+  via: {ja: 介する生起体, is: classification, of: relation, from: from_to, values_from: occurrent,
+        law: "forall x y. r(x, y) iff exists p. instance_of(p, V) and involved_in(x, p) and involved_in(y, p)"}
+  value_space: {ja: 値を取る軸, is: classification, of: relation, from: from_to, values_from: classification,
+                law: "forall x v. r(x, v) iff takes(x, v) and instance_of(v, V)"}
 
 # 関係の定義（def）で使える語。ここにない語と、上の3本のツリーにない識別子は、検査で失敗する。
 logic:

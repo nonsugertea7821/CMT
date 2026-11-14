@@ -6,11 +6,15 @@ ontology.yaml  概念の体系。3本のツリーからなる。
   entities         実体のツリー。最上位は BFO の continuant と occurrent。
                    原始概念はこの2つだけで、gloss を持てるのもこの2つだけ。
                    他のすべての実体は {ja, is: 上位, where: {軸: 値}} という概念式で記述する。
-  relations        関係のツリー。{識別子: {ja, is, domain, range, def | primitive}}。any はすべての実体。
+  relations        関係のツリー。原子関係は from_to（向きを持つ結び付き）だけ。
+                   他のすべての関係は {ja, is: 上位, from, to, where: {軸: 値}, def} という式で記述する。
+                   from と to は両端の種類で、上位から受け継ぐ。any はすべての実体、value は分類の値、number は数。
+                   def は、式だけで書けない合成関係に添える述語論理の定義。
                    def は述語論理の式。使える語は logic と、3本のツリーの識別子と、1文字の変数だけ。
   classifications  分類のツリー。{軸: {ja, is, from: 関係, values | values_from | number}}。
-  検査: 表示語（ja）の一意性、上位・軸・値の解決、軸のもとになる関係の domain との型の一致、
-        概念式の正規形の一意性、def の語の解決。
+                   of: relation の軸は関係を分類する軸で、値は述語論理の法則（law）を持てる。
+  検査: 表示語（ja）の一意性、上位・軸・値の解決、軸のもとになる関係の from との型の一致、
+        実体と関係それぞれの式の正規形の一意性、関係の端が上位を狭めていること、def と law の語の解決。
 
 measurements.yaml  測定値。値は experiments/results/ から計算する。手で書いた数値は持たない。
   families: {族: {file, at, axes, where, keyset, cond, stats, meaning}}
@@ -22,7 +26,7 @@ claims.yaml
   observations: {識別子: {rel, a, b, tol}}  rel は gt/lt/ge/le/approx/eq。a, b は測定値の識別子か数値。
     すべて真でなければ検査は失敗する。
   hypotheses: {識別子: {s, p, o, scope, status, evidence, against, supersedes, note}}
-    s と o は実体、p は関係。s は p の domain、o は p の range の下位でなければならない。
+    s と o は実体、p は関係。s は p の from、o は p の to の下位でなければならない。
     status: supported / partially_supported / refuted / untested
   decisions: {識別子: {s, p, o, basis, status, supersedes}}  status: adopted / tentative / withdrawn
   backlog: [{id, tests, status}]  status: done / running / queued
@@ -56,8 +60,11 @@ def load(name):
     return yaml.safe_load((SPEC / name).read_text(encoding="utf-8"))
 
 
+KEYWORDS = ("any", "value", "number")
+
+
 def is_a(E, x, y):
-    """実体 x が y と同じか、y の下位か。"""
+    """実体 x が y と同じか、y の下位か。any はすべての実体。"""
     if y == "any":
         return True
     hops = 0
@@ -68,30 +75,57 @@ def is_a(E, x, y):
     return False
 
 
-def valid_value(A, E, axis, val, where):
+def end(R, rid, side):
+    """関係の端（from / to）の種類。自分になければ上位から受け継ぐ。"""
+    hops = 0
+    while rid in R and hops < 100:
+        if side in R[rid]:
+            return R[rid][side]
+        rid, hops = R[rid].get("is"), hops + 1
+    return None
+
+
+def valid_value(A, E, R, axis, val, where, for_relation=False):
     a = A.get(axis)
     if a is None or axis == "classification":
         err(f"{where}: 軸 {axis} が未定義")
+        return
+    if bool(a.get("of") == "relation") != for_relation:
+        err(f"{where}: 軸 {axis} は{'関係' if a.get('of') == 'relation' else '実体'}を分類する軸である")
         return
     for v in val if isinstance(val, list) else [val]:
         if "values" in a:
             if v not in a["values"]:
                 err(f"{where}: 軸 {axis} に値 {v} がない")
         elif "values_from" in a:
-            if v not in E or not is_a(E, v, a["values_from"]):  # any はすべての実体
-                err(f"{where}: 軸 {axis} の値 {v} は {a['values_from']} の下位でない")
+            src = a["values_from"]
+            ok = (v in R) if src == "relation" else (v in A and v != "classification") if src == "classification" else (v in E and is_a(E, v, src))
+            if not ok:
+                err(f"{where}: 軸 {axis} の値 {v} は {src} でない")
         elif a.get("number"):
             if not isinstance(v, (int, float)):
                 err(f"{where}: 軸 {axis} の値 {v} は数でない")
+
+
+def _fmt(v):
+    return "+".join(sorted(map(str, v))) if isinstance(v, list) else str(v)
 
 
 def canonical(E, eid):
     e = E[eid]
     if "where" not in e:
         return eid
-    fmt = lambda v: "+".join(sorted(map(str, v))) if isinstance(v, list) else str(v)
-    inner = ", ".join(f"{k}={fmt(e['where'][k])}" for k in sorted(e["where"]))
+    inner = ", ".join(f"{k}={_fmt(e['where'][k])}" for k in sorted(e["where"]))
     return f"{canonical(E, e['is'])}[{inner}]"
+
+
+def canonical_rel(R, rid):
+    r = R[rid]
+    if r.get("primitive") or rid == "relation":
+        return rid
+    parts = [f"{k}={r[k]}" for k in ("from", "to") if k in r]
+    parts += [f"{k}={_fmt(r['where'][k])}" for k in sorted(r.get("where") or {})]
+    return f"{canonical_rel(R, r['is'])}[{', '.join(parts)}]" if parts else canonical_rel(R, r["is"])
 
 
 def check_ontology(O):
@@ -109,14 +143,23 @@ def check_ontology(O):
     ids = {}
     for kind, tree in (("entities", E), ("relations", R), ("classifications", A)):
         for key in tree:
-            if key in ids:
-                err(f"識別子 {key} が {ids[key]} と {kind} で重複")
+            if key in ids or key in KEYWORDS:
+                err(f"識別子 {key} が {ids.get(key, '予約語')} と {kind} で重複")
             ids[key] = kind
+    allowed = set(logic["connectives"]) | set(logic["primitive_predicates"]) | set(E) | set(R) | set(A)
+
+    def formula(text, where, extra=()):
+        for tok in re.findall(r"[A-Za-z_]+", text):
+            if len(tok) > 1 and tok not in allowed and tok not in extra:
+                err(f"{where}: 式の語 {tok} が未定義")
+
     # 分類
     for aid, a in A.items():
         label("classifications", aid, a.get("ja"))
         if aid == "classification":
             continue
+        if "gloss" in a:
+            err(f"classifications: {aid} が gloss を持つ（gloss を持てるのは最上位 classification だけ）")
         if a.get("is") not in A:
             err(f"classifications: {aid} の上位 {a.get('is')} が未定義")
         if a.get("from") not in R:
@@ -125,10 +168,15 @@ def check_ontology(O):
             err(f"classifications: {aid} は values / values_from / number のどれか1つを持つこと")
         for vid, v in (a.get("values") or {}).items():
             label(f"classifications.{aid}", vid, v.get("ja"))
-        if "gloss" in a:
-            err(f"classifications: {aid} が gloss を持つ（gloss を持てるのは最上位 classification だけ）")
-        if "values_from" in a and a["values_from"] != "any" and a["values_from"] not in E:
-            err(f"classifications: {aid} の values_from {a['values_from']} が未定義")
+            if "law" in v:
+                if a.get("of") != "relation":
+                    err(f"classifications: {aid}.{vid} の law は、関係を分類する軸でしか持てない")
+                formula(v["law"], f"classifications.{aid}.{vid}", ("r",))
+        if "law" in a:
+            formula(a["law"], f"classifications.{aid}", ("r", "V"))
+        src = a.get("values_from")
+        if src is not None and src not in ("any", "relation", "classification") and src not in E:
+            err(f"classifications: {aid} の values_from {src} が未定義")
     # 実体。原始概念は continuant と occurrent だけ
     TOPS = ("continuant", "occurrent")
     forms = {}
@@ -146,18 +194,18 @@ def check_ontology(O):
         if not e.get("where"):
             err(f"entities: {eid} に概念式（where）がない")
         for axis, val in (e.get("where") or {}).items():
-            valid_value(A, E, axis, val, f"entities.{eid}")
-            rel = R.get(A.get(axis, {}).get("from"), {})
-            if "domain" in rel and not is_a(E, e["is"], rel["domain"]):
-                err(f"entities: {eid} は軸 {axis} を使えない（上位 {e['is']} が、関係 {A[axis]['from']} の domain {rel['domain']} の下位でない）")
+            valid_value(A, E, R, axis, val, f"entities.{eid}")
+            frm = end(R, A.get(axis, {}).get("from"), "from")
+            if frm is not None and frm not in KEYWORDS and not is_a(E, e["is"], frm):
+                err(f"entities: {eid} は軸 {axis} を使えない（上位 {e['is']} が、関係 {A[axis]['from']} の from {frm} の下位でない）")
     for eid, e in E.items():
         if eid not in TOPS and e.get("is") in E and e.get("where"):
             f = canonical(E, eid)
             if f in forms:
                 err(f"entities: {eid} と {forms[f]} の概念式が同じ（{f}）")
             forms[f] = eid
-    # 関係
-    allowed = set(logic["connectives"]) | set(logic["primitive_predicates"]) | set(E) | set(R) | set(A)
+    # 関係。原子関係は from_to だけ
+    rforms = {}
     for rid, r in R.items():
         label("relations", rid, r.get("ja"))
         if rid == "relation":
@@ -166,27 +214,41 @@ def check_ontology(O):
             err(f"relations: {rid} が gloss を持つ（gloss を持てるのは最上位 relation だけ）")
         if r.get("is") not in R:
             err(f"relations: {rid} の上位 {r.get('is')} が未定義")
-        for k in ("domain", "range"):
-            if r.get(k) != "any" and r.get(k) not in E:
-                err(f"relations: {rid} の {k} {r.get(k)} が未定義")
+            continue
+        if r.get("primitive"):
+            if rid != "from_to":
+                err(f"relations: {rid} が原子関係になっている（原子関係は from_to だけ）")
+            continue
+        if not any(k in r for k in ("where", "def", "from", "to")):
+            err(f"relations: {rid} に式も定義もない（上位と区別できない）")
+        for side in ("from", "to"):
+            if side in r:
+                mine, up = r[side], end(R, r["is"], side)
+                if mine not in KEYWORDS and mine not in E:
+                    err(f"relations: {rid} の {side} {mine} が未定義")
+                elif up not in (None, "any") and mine != up and not (mine in E and up in E and is_a(E, mine, up)):
+                    err(f"relations: {rid} の {side} {mine} は、上位の {side} {up} を狭めていない")
+        for axis, val in (r.get("where") or {}).items():
+            valid_value(A, E, R, axis, val, f"relations.{rid}", for_relation=True)
         if "def" in r:
-            for tok in re.findall(r"[A-Za-z_]+", r["def"]):
-                if len(tok) > 1 and tok not in allowed:
-                    err(f"relations: {rid} の def の語 {tok} が未定義")
-        elif not r.get("primitive"):
-            err(f"relations: {rid} に def も primitive もない")
-        elif rid.count("_") > 1:
-            err(f"relations: 原子関係 {rid} の識別子にアンダースコアが2個以上ある（合成なので def で定義すること）")
+            formula(r["def"], f"relations.{rid}")
+        else:
+            f = canonical_rel(R, rid)
+            if f in rforms:
+                err(f"relations: {rid} と {rforms[f]} の式が同じ（{f}）")
+            rforms[f] = rid
+    if not R.get("from_to", {}).get("primitive"):
+        err("relations: 原子関係 from_to がない")
     return E, R, A
 
 
-def resolve_meaning(val, E, A, where):
+def resolve_meaning(val, E, A, R, where):
     if isinstance(val, dict):
         for axis, v in val.items():
-            valid_value(A, E, axis, v, where)
+            valid_value(A, E, R, axis, v, where)
     elif isinstance(val, list):
         for v in val:
-            resolve_meaning(v, E, A, where)
+            resolve_meaning(v, E, A, R, where)
     elif isinstance(val, str) and val not in E:
         err(f"{where}: 実体 {val} が未定義")
 
@@ -223,7 +285,7 @@ def stat(rows, cond, name):
     raise KeyError(f"統計量 {name} は未定義")
 
 
-def expand(M, E, A):
+def expand(M, E, A, R):
     values, meanings = {}, {}
     for fid, f in M["families"].items():
         axes = f["axes"]
@@ -231,7 +293,7 @@ def expand(M, E, A):
         keys = [list(axes[a]) if isinstance(axes[a], dict) else axes[a] for a in names]
         for a, mp in (f.get("meaning") or {}).items():
             for k, v in mp.items():
-                resolve_meaning(v, E, A, f"measurements.{fid}.meaning.{a}.{k}")
+                resolve_meaning(v, E, A, R, f"measurements.{fid}.meaning.{a}.{k}")
         for combo in itertools.product(*keys):
             b = dict(zip(names, combo))
             sub = {a: (axes[a][b[a]] if isinstance(axes[a], dict) else b[a]) for a in names}
@@ -282,17 +344,17 @@ def check_claims(C, values, E, R):
     hyps, decs = C["hypotheses"], C["decisions"]
 
     def triple(x, where):
-        rel = R.get(x["p"])
-        if rel is None or "domain" not in rel:
+        if x["p"] not in R or x["p"] in ("relation", "from_to"):
             err(f"{where}: 関係 {x['p']} が未定義")
             return
-        for part, bound in (("s", rel["domain"]), ("o", rel["range"])):
+        for part, side in (("s", "from"), ("o", "to")):
+            bound = end(R, x["p"], side)
             v = x[part]
             for t in v if isinstance(v, list) else [v]:
                 if t not in E:
                     err(f"{where}: 実体 {t} が未定義")
-                elif not is_a(E, t, bound):
-                    err(f"{where}: {t} は関係 {x['p']} の{'domain' if part == 's' else 'range'} {bound} の下位でない")
+                elif bound in ("value", "number") or not is_a(E, t, bound):
+                    err(f"{where}: {t} は関係 {x['p']} の {side} {bound} の下位でない")
 
     for hid, h in hyps.items():
         triple(h, hid)
@@ -336,10 +398,10 @@ def main():
     args = ap.parse_args()
     O, M, C = load("ontology.yaml"), load("measurements.yaml"), load("claims.yaml")
     E, R, A = check_ontology(O)
-    values, meanings = expand(M, E, A)
+    values, meanings = expand(M, E, A, R)
     check_claims(C, values, E, R)
     if args.expr:
-        print(canonical(E, args.expr))
+        print(canonical(E, args.expr) if args.expr in E else canonical_rel(R, args.expr))
     if args.values:
         for mid, (v, n) in sorted(values.items()):
             print(f"{mid} = {v:.2f} (n={n})")
