@@ -37,7 +37,7 @@ entities:
   relevant_definitions: {ja: 関係する定義だけ, is: definition, where: {relevance_to_question: relevant}}
   ordinary_definitions: {ja: 一般の意味どおりの定義, is: other_definitions, where: {agreement_with_prior: agrees}}
   other_redefinitions: {ja: 他の再定義, is: other_definitions, where: {agreement_with_prior: differs}}
-  case: {ja: 事例, is: information_entity, where: {unit: sentence, judged_against: concept}}
+  case: {ja: 事例, is: information_entity, where: {unit: sentence, criterion: concept}}
   conflict_case: {ja: 衝突する事例, is: case, where: {agreement_with_prior: differs}}
   control_case: {ja: 衝突しない事例, is: case, where: {agreement_with_prior: agrees}}
   question: {ja: 設問, is: information_entity, where: {unit: sentence, speech_act: asks, content: case}}
@@ -49,12 +49,12 @@ entities:
   examples_only: {ja: 適用例だけ, is: information_entity, where: {unit: passage, content: application_example}}
   def_and_examples: {ja: 定義文と適用例, is: information_entity, where: {unit: passage, content: [definition, application_example]}}
   filler_text: {ja: 無関係な文章, is: information_entity, where: {unit: passage, relevance_to_question: irrelevant}}
-  context: {ja: 文脈, is: information_entity, where: {unit: passage, input_of: model}}
+  context: {ja: 文脈, is: information_entity, where: {unit: passage, consumer: model}}
   glossary: {ja: 用語集, is: information_entity, where: {unit: list, content: definition}}
-  glossary_head: {ja: 用語集の先頭, is: information_entity, where: {unit: position, located_in: glossary, preceding_count: 0}}
-  place_system: {ja: システムプロンプト, is: information_entity, where: {unit: position, located_in: context, speaker: system}}
-  place_adjacent: {ja: 設問の直前, is: information_entity, where: {unit: position, located_in: context, speaker: user, immediately_before: question}}
-  label_token_positions: {ja: 語のトークン位置, is: information_entity, where: {unit: position, located_in: context, occupied_by: word}}
+  glossary_head: {ja: 用語集の先頭, is: information_entity, where: {unit: position, location: glossary, preceding_count: 0}}
+  place_system: {ja: システムプロンプト, is: information_entity, where: {unit: position, location: context, speaker: system}}
+  place_adjacent: {ja: 設問の直前, is: information_entity, where: {unit: position, location: context, speaker: user, immediately_before: question}}
+  label_token_positions: {ja: 語のトークン位置, is: information_entity, where: {unit: position, location: context, occupant: word}}
   question_format: {ja: 設問形式, is: information_entity, where: {unit: form, content: [question, verdict]}}
   fmt_yesno: {ja: はい・いいえの二択, is: question_format, where: {options: yes_or_no}}
   fmt_fill: {ja: 空欄補充の二択, is: question_format, where: {options: applies_or_not}}
@@ -101,16 +101,16 @@ entities:
   control_preservation: {ja: 衝突しない事例での判定の維持, is: metric, where: {bearer: verdict, target: control_case, quantity: agreement_with_definition}}
   redefinition_success: {ja: 再定義の成功, is: metric, where: {bearer: usage, target: redefinition, quantity: agreement_with_definition}}
   cross_usage_consistency: {ja: 使い方をまたぐ一貫性, is: metric, where: {bearer: usage, target: redefinition, quantity: co_change}}
-  preceding_definition_effect: {ja: 前に並ぶ定義による追従の低下, is: metric, where: {bearer: verdict, target: conflict_case, quantity: decrease, attributed_to: preceding_definitions}}
+  preceding_definition_effect: {ja: 前に並ぶ定義による追従の低下, is: metric, where: {bearer: verdict, target: conflict_case, quantity: decrease, attribution: preceding_definitions}}
   source_of_truth: {ja: 正本, is: role, where: {role_function: origin_of_derivation}}
   consolidation_target: {ja: 変更の固定先, is: role, where: {role_function: holder_of_stable_change}}
   prior_meaning: {ja: 元の意味, is: disposition, where: {bearer: weights, target: word}}
-  inference: {ja: 推論, is: process, where: {performed_by: model}}
-  concept: {ja: 概念, is: inference, where: {triggered_by: word}}
+  inference: {ja: 推論, is: process, where: {performer: model}}
+  concept: {ja: 概念, is: inference, where: {trigger: word}}
   shared_inference: {ja: 使い方が共有する推論, is: concept, where: {scope_of_use: all_usages}}
   single_pass: {ja: 一度の処理, is: inference, where: {intermediate_output: not_written}}
   scratchpad: {ja: 途中経過の書き出し, is: inference, where: {intermediate_output: written}}
-  usage: {ja: 使い方, is: process, where: {performed_by: model, target: word}}
+  usage: {ja: 使い方, is: process, where: {performer: model, target: word}}
   usage_recite: {ja: 定義文の暗唱, is: usage, where: {content: definition_text}}
   usage_apply: {ja: 適用, is: usage, where: {content: case}}
   usage_define_paraphrase: {ja: 定義の言い換えの選択, is: usage, where: {content: definition, answer_mode: fmt_paraphrase_choice}}
@@ -339,14 +339,14 @@ classifications:
   target: {ja: 対象, is: classification, from: has_target, values_from: any}
   content: {ja: 内容, is: classification, from: has_content, values_from: any}
   bearer: {ja: 担い手, is: classification, from: inheres_in, values_from: any}
-  attributed_to: {ja: 帰する先, is: classification, from: attributed_to, values_from: quality}
-  performed_by: {ja: 行い手, is: classification, from: performed_by, values_from: any}
-  triggered_by: {ja: きっかけ, is: classification, from: triggered_by, values_from: any}
-  judged_against: {ja: 判定の基準, is: classification, from: judged_against, values_from: process}
-  input_of: {ja: 入力先, is: classification, from: input_of, values_from: artifact}
+  attribution: {ja: 帰する先, is: classification, from: attributed_to, values_from: quality}
+  performer: {ja: 行い手, is: classification, from: performed_by, values_from: any}
+  trigger: {ja: きっかけ, is: classification, from: triggered_by, values_from: any}
+  criterion: {ja: 判定の基準, is: classification, from: judged_against, values_from: process}
+  consumer: {ja: 入力先, is: classification, from: input_of, values_from: artifact}
   use: {ja: 用途, is: classification, from: used_for, values_from: process}
-  located_in: {ja: 所在, is: classification, from: located_in, values_from: information_entity}
-  occupied_by: {ja: 占めるもの, is: classification, from: occupied_by, values_from: information_entity}
+  location: {ja: 所在, is: classification, from: located_in, values_from: information_entity}
+  occupant: {ja: 占めるもの, is: classification, from: occupied_by, values_from: information_entity}
   immediately_before: {ja: 直後に来るもの, is: classification, from: precedes, values_from: information_entity}
   component_of: {ja: 所属先, is: classification, from: part_of, values_from: artifact}
   placement: {ja: 置き場所, is: classification, from: delivers_into, values_from: generically_dependent_continuant}
