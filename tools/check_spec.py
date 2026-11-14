@@ -488,7 +488,9 @@ def check_claims(C, values, T):
         else:   # 状態は、根拠の観察から決まる
             have = sorted(k for k in ("evidence", "against") if h.get(k))
             want = [st for st, need in hf["status"]["derived"].items() if sorted(need) == have]
-            if want != [h["status"]]:
+            if not want:
+                err(f"{hid}: 根拠（{have or 'なし'}）に当たる状態が、体系の records.hypotheses.status.derived に書かれていない")
+            elif want != [h["status"]]:
                 err(f"{hid}: status は {h['status']} と書かれているが、根拠（{have or 'なし'}）からは {want[0]} になる")
         for lim in h.get("limits", []):
             if lim not in hf["limits"]["values"]:
