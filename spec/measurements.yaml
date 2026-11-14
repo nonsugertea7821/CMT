@@ -1,4 +1,5 @@
 # 測定値。値は experiments/results/ から計算する。文法は tools/check_spec.py の冒頭を見よ。
+# meaning の {軸: 値} は ontology.yaml の分類の軸と値。
 defaults:
   models: &models {15b: Qwen2.5-1.5B-Instruct, 4b: Qwen3-4B}
   m_model: &m_model {15b: model_15b, 4b: model_4b}
@@ -8,15 +9,15 @@ defaults:
     remap: ["01", "04", "05", "07", "08", "12", "14", "18", "19", "20", "22", "24"]
   m_type: &m_type {rule: rule_redefinition, remap: remap_redefinition}
   m_e3run: &m_e3run
-    L8_defonly: {channel: single_layer_vector, teacher: teacher_recite, layers: "=8"}
-    L8_qa: {channel: single_layer_vector, teacher: teacher_examples, layers: "=8"}
-    L8_defqa: {channel: single_layer_vector, teacher: teacher_both, layers: "=8"}
-    L14_defqa: {channel: single_layer_vector, teacher: teacher_both, layers: "=14"}
+    L8_defonly: {channel_used: single_layer_vector, teacher: teacher_recite, layer_index: 8}
+    L8_qa: {channel_used: single_layer_vector, teacher: teacher_examples, layer_index: 8}
+    L8_defqa: {channel_used: single_layer_vector, teacher: teacher_both, layer_index: 8}
+    L14_defqa: {channel_used: single_layer_vector, teacher: teacher_both, layer_index: 14}
   m_e3cond: &m_e3cond
-    none: {channel: no_channel}
-    vec: {channel: single_layer_vector}
-    near: {channel: text_injection, content: definition_text, placement: place_adjacent}
-    near+vec: {channel: text_and_vector, content: definition_text, placement: place_adjacent}
+    none: {channel_used: no_channel}
+    vec: {channel_used: single_layer_vector}
+    near: {channel_used: text_injection, content: definition_text, placement: place_adjacent}
+    near+vec: {channel_used: text_and_vector, content: definition_text, placement: place_adjacent}
 
 families:
   e1:
@@ -30,11 +31,11 @@ families:
       model: *m_model
       group: *m_group
       cond:
-        none: {channel: no_channel}
-        near: {channel: text_injection, content: definition_text, placement: place_adjacent}
-        glossary: {channel: text_injection, content: glossary, placement: place_system}
-        far-500: {channel: text_injection, content: glossary, placement: place_system, following_count: "=500_tokens_of_filler"}
-        far-2000: {channel: text_injection, content: glossary, placement: place_system, following_count: "=2000_tokens_of_filler"}
+        none: {channel_used: no_channel}
+        near: {channel_used: text_injection, content: definition_text, placement: place_adjacent}
+        glossary: {channel_used: text_injection, content: glossary, placement: place_system}
+        far-500: {channel_used: text_injection, content: glossary, placement: place_system, following_filler_tokens: 500}
+        far-2000: {channel_used: text_injection, content: glossary, placement: place_system, following_filler_tokens: 2000}
   e1type:
     file: "e1_{model}.json"
     at: [items]
@@ -53,8 +54,8 @@ families:
     meaning:
       group: *m_group
       cond:
-        examples: {channel: text_injection, content: examples_only, placement: place_adjacent}
-        def+examples: {channel: text_injection, content: def_and_examples, placement: place_adjacent}
+        examples: {channel_used: text_injection, content: examples_only, placement: place_adjacent}
+        def+examples: {channel_used: text_injection, content: def_and_examples, placement: place_adjacent}
   e3:
     file: "e3_Qwen2.5-1.5B-Instruct_{run}.json"
     at: [items]
@@ -88,17 +89,17 @@ families:
       fmt: {orig: fmt_yesno, fill: fmt_fill, truth: fmt_truth}
       group: *m_group
       cond:
-        none: {channel: no_channel}
-        text: {channel: text_injection, content: def_and_examples, placement: place_adjacent}
-        vec: {channel: single_layer_vector, teacher: teacher_examples, layers: "=8"}
-        vec_all: {channel: single_layer_vector, teacher: teacher_examples, layers: "=8", preceding_count: "=24_vectors_installed"}
+        none: {channel_used: no_channel}
+        text: {channel_used: text_injection, content: def_and_examples, placement: place_adjacent}
+        vec: {channel_used: single_layer_vector, teacher: teacher_examples, layer_index: 8}
+        vec_all: {channel_used: single_layer_vector, teacher: teacher_examples, layer_index: 8, installed_vectors: 24}
   e3b_g1:
     file: "e3b_transfer.json"
     axes: {cond: [none, vec_all]}
     where: {group: G1}
     cond: "{cond}"
     stats: [acc, margin]
-    meaning: {cond: {none: {channel: no_channel}, vec_all: {channel: single_layer_vector, preceding_count: "=24_vectors_installed"}}}
+    meaning: {cond: {none: {channel_used: no_channel}, vec_all: {channel_used: single_layer_vector, installed_vectors: 24}}}
   e3c:
     file: "e3c_generation.json"
     axes: {group: [G2c, G2k], cond: [none, text, vec]}
@@ -108,9 +109,9 @@ families:
     meaning:
       group: *m_group
       cond:
-        none: {channel: no_channel, answer_mode: fmt_free}
-        text: {channel: text_injection, content: def_and_examples, answer_mode: fmt_free}
-        vec: {channel: single_layer_vector, teacher: teacher_examples, answer_mode: fmt_free}
+        none: {channel_used: no_channel, answer_mode: fmt_free}
+        text: {channel_used: text_injection, content: def_and_examples, answer_mode: fmt_free}
+        vec: {channel_used: single_layer_vector, teacher: teacher_examples, answer_mode: fmt_free}
   e4:
     file: "e4_modifier_composition.json"
     axes: {pair: {p1: "甲種/乙種", p2: "青/赤", p3: "一類/二類"}, split: [train, test], cond: [none, text, vec]}
@@ -118,8 +119,8 @@ families:
     cond: "{cond}"
     stats: [acc]
     meaning:
-      split: {train: "=genus_used_in_training", test: unseen_genus}
-      cond: {none: {channel: no_channel}, text: {channel: text_injection, content: definition_text}, vec: {channel: single_layer_vector, target: modifier}}
+      split: {train: seen_genus, test: unseen_genus}
+      cond: {none: {channel_used: no_channel}, text: {channel_used: text_injection, content: definition_text}, vec: {channel_used: single_layer_vector, target: modifier}}
   e5:
     file: "e5_{model}.json"
     axes: {model: *models, group: [G2c, G2k], cond: [near, rename_semi, rename_opaque, inline, near+inline]}
@@ -130,18 +131,18 @@ families:
       model: *m_model
       group: *m_group
       cond:
-        near: {channel: text_injection, content: definition_text, placement: place_adjacent}
-        rename_semi: {channel: text_injection, content: semi_renaming, placement: place_adjacent}
-        rename_opaque: {channel: text_injection, content: opaque_renaming, placement: place_adjacent}
-        inline: {channel: text_injection, content: inline_expansion}
-        near+inline: {channel: text_injection, content: [definition_text, inline_expansion], placement: place_adjacent}
+        near: {channel_used: text_injection, content: definition_text, placement: place_adjacent}
+        rename_semi: {channel_used: text_injection, content: semi_renaming, placement: place_adjacent}
+        rename_opaque: {channel_used: text_injection, content: opaque_renaming, placement: place_adjacent}
+        inline: {channel_used: text_injection, content: inline_expansion}
+        near+inline: {channel_used: text_injection, content: [definition_text, inline_expansion], placement: place_adjacent}
   e6_L8:
     file: "e6_cross_use_L8.json"
     at: ["{vec}"]
     axes: {vec: {none: none, defonly: "results/e3_Qwen2.5-1.5B-Instruct_L8_defonly.pt", qa: "results/e3_Qwen2.5-1.5B-Instruct_L8_qa.pt"}}
     cond: define_choice
     stats: [acc, margin]
-    meaning: {vec: {none: {channel: no_channel}, defonly: {teacher: teacher_recite}, qa: {teacher: teacher_examples}}}
+    meaning: {vec: {none: {channel_used: no_channel}, defonly: {teacher: teacher_recite}, qa: {teacher: teacher_examples}}}
   e6_L8_nll:
     file: "e6_cross_use_L8.json"
     at: ["{vec}"]
@@ -154,7 +155,7 @@ families:
     axes: {layer: [L8, L14]}
     cond: define_choice
     stats: [acc, margin]
-    meaning: {layer: {L8: {teacher: teacher_both, layers: "=8"}, L14: {teacher: teacher_both, layers: "=14"}}}
+    meaning: {layer: {L8: {teacher: teacher_both, layer_index: 8}, L14: {teacher: teacher_both, layer_index: 14}}}
   e6_defqa_nll:
     file: "e6_cross_use_defqa_{layer}.json"
     at: ["results/e3_Qwen2.5-1.5B-Instruct_{layer}_defqa.pt"]
@@ -171,12 +172,12 @@ families:
       group: {redef: g_redef_conflict, new: g_new_word}
       cond:
         sys1: {content: relevant_definitions, placement: place_system}
-        sys1-far500: {content: relevant_definitions, placement: place_system, following_count: "=500_tokens_of_filler"}
-        sys1-far2000: {content: relevant_definitions, placement: place_system, following_count: "=2000_tokens_of_filler"}
-        gl5: {content: glossary, preceding_kind: other_definitions, preceding_count: "=0_to_4"}
-        gl15: {content: glossary, preceding_kind: other_definitions, preceding_count: "=0_to_14"}
-        gl55-first: {content: glossary, placement: glossary_head, following_count: "=54_definitions"}
-        gl55-last: {content: glossary, preceding_kind: other_definitions, preceding_count: "=54"}
+        sys1-far500: {content: relevant_definitions, placement: place_system, following_filler_tokens: 500}
+        sys1-far2000: {content: relevant_definitions, placement: place_system, following_filler_tokens: 2000}
+        gl5: {content: glossary, preceding_kind: other_definitions, preceding_count_max: 4}
+        gl15: {content: glossary, preceding_kind: other_definitions, preceding_count_max: 14}
+        gl55-first: {content: glossary, placement: glossary_head, following_definitions_count: 54}
+        gl55-last: {content: glossary, preceding_kind: other_definitions, preceding_count: 54}
   e7b:
     file: "e7_Qwen3-4B.json"
     axes: {cond: [fill500-def, fill2000-def, gl55-pos14, gl55-pos27, gl55-pos41, pre-ordinary19, pre-redef23]}
@@ -185,10 +186,10 @@ families:
     stats: [acc]
     meaning:
       cond:
-        fill500-def: {preceding_kind: filler_text, preceding_count: "=500_tokens"}
-        fill2000-def: {preceding_kind: filler_text, preceding_count: "=2000_tokens"}
-        gl55-pos14: {preceding_kind: other_definitions, preceding_count: "=14"}
-        gl55-pos27: {preceding_kind: other_definitions, preceding_count: "=27"}
-        gl55-pos41: {preceding_kind: other_definitions, preceding_count: "=41"}
-        pre-ordinary19: {preceding_kind: ordinary_definitions, preceding_count: "=19"}
-        pre-redef23: {preceding_kind: other_redefinitions, preceding_count: "=23"}
+        fill500-def: {preceding_kind: filler_text, preceding_filler_tokens: 500}
+        fill2000-def: {preceding_kind: filler_text, preceding_filler_tokens: 2000}
+        gl55-pos14: {preceding_kind: other_definitions, preceding_count: 14}
+        gl55-pos27: {preceding_kind: other_definitions, preceding_count: 27}
+        gl55-pos41: {preceding_kind: other_definitions, preceding_count: 41}
+        pre-ordinary19: {preceding_kind: ordinary_definitions, preceding_count: 19}
+        pre-redef23: {preceding_kind: other_redefinitions, preceding_count: 23}
