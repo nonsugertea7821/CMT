@@ -23,6 +23,7 @@ claims.yaml
     項目名は、ontology.yaml の records に書かれたものを使う。
     status は、根拠（evidence, against）から決まる。書かれた値と食い違うと、検査が失敗する。
     limits は、根拠の弱さの理由。体系に書かれた種類から選ぶ。
+    one_item（差が1問以内）は、根拠のうち大小を述べる観察（gt / lt）の差を問数に直して、検査が確かめる。
   decisions: {識別子: {s, p, o, basis, status, supersedes, note}}
     p が is_a のときは、体系の上位・下位の関係そのもの。adopted なら、検査が構造から確かめる。
   backlog: [{id, tests, status}]
@@ -451,7 +452,8 @@ def check_claims(C, values, T):
         if a is None or b is None:
             continue
         ns = [values[x][1] for x in (o["a"], o["b"]) if isinstance(x, str) and x in values]
-        gap[oid] = abs(a - b) * min(ns) if ns else None
+        # 大小を述べる観察（gt / lt）についてだけ、差を問数に直して控える。等しいと述べる観察は対象にしない
+        gap[oid] = abs(a - b) * min(ns) if ns and o["rel"] in ("gt", "lt") else None
         tol = o.get("tol", 0.005)
         holds = {"gt": a > b, "lt": a < b, "ge": a >= b - 1e-9, "le": a <= b + 1e-9,
                  "approx": abs(a - b) <= tol + 1e-9, "eq": abs(a - b) <= 0.005}[o["rel"]]
@@ -498,7 +500,7 @@ def check_claims(C, values, T):
         if "one_item" in h.get("limits", []):
             gs = [gap.get(r) for r in h.get("evidence", []) + h.get("against", [])]
             if not any(g is not None and g <= 1.0 + 1e-6 for g in gs):
-                err(f"{hid}: 留保「差が1問以内」と書かれているが、根拠の観察に、差が1問以内のものがない")
+                err(f"{hid}: 留保「差が1問以内」と書かれているが、根拠のうち大小を述べる観察に、差が1問以内のものがない")
         for t in h.get("scope", []):
             if t not in T.N:
                 err(f"{hid}: scope のノード {t} が未定義")
