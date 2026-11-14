@@ -6,6 +6,8 @@ ontology.yaml  概念の体系。書き方はそのファイルの冒頭を見�
   検査: 表示語の一意性 / gloss を持つのは最上位の2つだけ / 動詞の式（状態の関係・両端・第三のものの種類）の一意性 /
         動詞の下位が端を狭めていること / 修飾の型（その位置に来られるか）/ 分類の軸と値 / 概念の式の一意性 /
         役割が根拠となる定義を持つこと
+  records: 体系が、自分の記録（claims.yaml, measurements.yaml）について述べる部分。
+        記録の項目名と、status や統計量の値は、ここに書かれたものしか使えない。
 
 measurements.yaml  測定値。値は experiments/results/ から計算する。手で書いた数値は持たない。
   families: {族: {file, at, axes, where, keyset, cond, stats, meaning}}
@@ -18,10 +20,10 @@ claims.yaml
     すべて真でなければ検査は失敗する。
   hypotheses: {識別子: {s, p, o, scope, status, evidence, against, supersedes, note}}
     s と o はノード、p は動詞。s は p の始点、o は p の終点に来られるものでなければならない。
-    status: supported / partially_supported / refuted / inconclusive（測ったが決められない）/ untested
-  decisions: {識別子: {s, p, o, basis, status, supersedes, note}}  status: adopted / tentative / withdrawn
+    status と項目名は、ontology.yaml の records に書かれたものを使う。
+  decisions: {識別子: {s, p, o, basis, status, supersedes, note}}
     p が is_a のときは、体系の上位・下位の関係そのもの。adopted なら、検査が構造から確かめる。
-  backlog: [{id, tests, status}]  status: done / running / queued
+  backlog: [{id, tests, status}]
 
 使い方:
   python tools/check_spec.py              検査
@@ -58,7 +60,7 @@ def load(name):
 # ---------------------------------------------------------------- 概念の体系
 class Ontology:
     def __init__(self, O):
-        self.B, self.AX, self.N = O["base"], O["axes"], O["nodes"]
+        self.B, self.AX, self.N, self.R = O["base"], O["axes"], O["nodes"], O["records"]
 
     def end(self, nid, side):
         """動詞の端の種類。自分になければ上位の動詞から受け継ぐ。"""
@@ -258,6 +260,36 @@ class Ontology:
             if len(ids) > 1:
                 err(f"動詞の式が同じ: {ids}")
 
+    def check_records(self):
+        """記録の項目と値が、体系のノードに当たっていること。"""
+        for rid, r in self.R.items():
+            if r.get("is") not in self.N:
+                err(f"records.{rid}: is の {r.get('is')} が未定義")
+                continue
+            for fid, f in r["fields"].items():
+                where = f"records.{rid}.{fid}"
+                if "node" in f and f["node"] not in self.N:
+                    err(f"{where}: ノード {f['node']} が未定義")
+                if "position" in f and f["position"] not in ("from", "to"):
+                    err(f"{where}: position は from か to")
+                if "verb" in f:
+                    self.check_spot(f["verb"], where)
+                    if "with" in f and f["with"] not in self.N:
+                        err(f"{where}: with の {f['with']} が未定義")
+                for val, nid in (f.get("values") or {}).items():
+                    if nid not in self.N:
+                        err(f"{where}: 値 {val} に当たるノード {nid} が未定義")
+                    elif fid == "status" and not self.is_a(nid, r["is"]):
+                        err(f"{where}: 値 {val} に当たる {nid} は、{r['is']} の下位でない")
+                if not any(k in f for k in ("node", "position", "verb", "values", "function", "id")):
+                    err(f"{where}: 何に当たるかが書かれていない")
+
+    def fields(self, rid):
+        return self.R[rid]["fields"]
+
+    def values(self, rid, fid):
+        return set(self.R[rid]["fields"][fid]["values"])
+
     def expr(self, nid):
         """上位をたどって、式を並べる。"""
         out, hops = [], 0
@@ -319,6 +351,12 @@ def check_meaning(val, T, where):
 def expand(M, T):
     values, meanings = {}, {}
     for fid, f in M["families"].items():
+        for k in f:
+            if k not in T.fields("measurements"):
+                err(f"measurements.{fid}: 項目 {k} は、体系の records.measurements に書かれていない")
+        for st in f["stats"]:
+            if st not in T.values("measurements", "stats"):
+                err(f"measurements.{fid}: 統計量 {st} は、体系の records.measurements.stats に書かれていない")
         axes = f["axes"]
         names = list(axes)
         keys = [list(axes[a]) if isinstance(axes[a], dict) else axes[a] for a in names]
@@ -364,6 +402,15 @@ def val_of(x, values, where):
 
 def check_claims(C, values, T):
     obs = C["observations"]
+    for sect in ("observations", "hypotheses", "decisions"):
+        for cid, c in C[sect].items():
+            for k in c:
+                if k not in T.fields(sect):
+                    err(f"{cid}: 項目 {k} は、体系の records.{sect} に書かれていない")
+    for b in C["backlog"]:
+        for k in b:
+            if k not in T.fields("backlog"):
+                err(f"backlog {b.get('id')}: 項目 {k} は、体系の records.backlog に書かれていない")
     for oid, o in obs.items():
         a, b = val_of(o["a"], values, oid), val_of(o["b"], values, oid)
         if a is None or b is None:
@@ -398,8 +445,8 @@ def check_claims(C, values, T):
 
     for hid, h in hyps.items():
         triple(h, hid)
-        if h["status"] not in ("supported", "partially_supported", "refuted", "inconclusive", "untested"):
-            err(f"{hid}: status が不正")
+        if h["status"] not in T.values("hypotheses", "status"):
+            err(f"{hid}: status の {h['status']} は、体系の records.hypotheses.status に書かれていない")
         for t in h.get("scope", []):
             if t not in T.N:
                 err(f"{hid}: scope のノード {t} が未定義")
@@ -413,8 +460,8 @@ def check_claims(C, values, T):
         if h["status"] in ("supported", "partially_supported", "refuted", "inconclusive") and not (h.get("evidence") or h.get("against")):
             err(f"{hid}: 根拠の観察がない")
     for did, d in decs.items():
-        if d["status"] not in ("adopted", "tentative", "withdrawn"):
-            err(f"{did}: status が不正")
+        if d["status"] not in T.values("decisions", "status"):
+            err(f"{did}: status の {d['status']} は、体系の records.decisions.status に書かれていない")
         triple(d, did, structural_ok=True)
         for r in d.get("basis", []):
             if r not in hyps:
@@ -423,8 +470,8 @@ def check_claims(C, values, T):
             if r not in decs:
                 err(f"{did}: supersedes の決定 {r} が未定義")
     for b in C["backlog"]:
-        if b["status"] not in ("done", "running", "queued"):
-            err(f"backlog {b['id']}: status が不正")
+        if b["status"] not in T.values("backlog", "status"):
+            err(f"backlog {b['id']}: status の {b['status']} は、体系の records.backlog.status に書かれていない")
         for r in b.get("tests", []):
             if r not in hyps:
                 err(f"backlog {b['id']}: tests の仮説 {r} が未定義")
@@ -438,6 +485,7 @@ def main():
     args = ap.parse_args()
     T = Ontology(load("ontology.yaml"))
     T.check()
+    T.check_records()
     M, C = load("measurements.yaml"), load("claims.yaml")
     values, meanings = expand(M, T)
     check_claims(C, values, T)
