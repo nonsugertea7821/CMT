@@ -72,10 +72,10 @@ def question_text(item, swap: bool) -> tuple[str, int]:
 
 
 class Runner:
-    def __init__(self, model_name: str):
+    def __init__(self, model_name: str, dtype: str = "float32"):
         self.tok = AutoTokenizer.from_pretrained(model_name)
         self.model = AutoModelForCausalLM.from_pretrained(
-            model_name, torch_dtype=torch.float32, use_safetensors=True
+            model_name, dtype=getattr(torch, dtype), use_safetensors=True
         )
         self.model.eval()
         ids = [self.tok(s, add_special_tokens=False).input_ids for s in ("1", "2")]
@@ -87,7 +87,10 @@ class Runner:
         if system:
             msgs.append({"role": "system", "content": system})
         msgs.append({"role": "user", "content": user})
-        return self.tok.apply_chat_template(msgs, tokenize=False, add_generation_prompt=True)
+        # enable_thinking=False: 思考モードを持つモデル（Qwen3 など）で、直接答えさせる
+        return self.tok.apply_chat_template(
+            msgs, tokenize=False, add_generation_prompt=True, enable_thinking=False
+        )
 
     @torch.no_grad()
     def prefix_cache(self, prefix_text: str):
@@ -122,11 +125,12 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--model", required=True)
     ap.add_argument("--far", type=int, nargs="*", default=[500, 2000])
+    ap.add_argument("--dtype", default="float32")
     args = ap.parse_args()
 
     data = json.loads((ROOT / "data" / "concepts_ja.json").read_text(encoding="utf-8"))
     defs, items = data["defs"], data["items"]
-    r = Runner(args.model)
+    r = Runner(args.model, args.dtype)
 
     glossary = "以下は当プロジェクトの用語集である。回答はこの用語集の定義に従うこと。\n" + "\n".join(
         defs.values()

@@ -21,12 +21,13 @@ from e1_context_injection import ROOT, Runner
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--model", required=True)
+    ap.add_argument("--dtype", default="float32")
     args = ap.parse_args()
     data = json.loads((ROOT / "data" / "concepts_ja.json").read_text(encoding="utf-8"))
     defs = data["defs"]
     items = [it for it in data["items"] if it["group"] in ("G2c", "G2k")]
     concepts = sorted({it["defs"][0] for it in items})
-    r = Runner(args.model)
+    r = Runner(args.model, args.dtype)
 
     def sub(text, old, new):
         # 「翌週」のように別の語の一部である箇所は置き換えない
