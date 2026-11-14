@@ -30,6 +30,7 @@ def main():
     ap.add_argument("--model", required=True)
     ap.add_argument("--dtype", default="float32")
     ap.add_argument("--groups", nargs="+", default=["G2c", "G3", "G4"])
+    ap.add_argument("--set", choices=["a", "b"], default="a")
     args = ap.parse_args()
     data = json.loads((ROOT / "data" / "concepts_ja.json").read_text(encoding="utf-8"))
     defs = data["defs"]
@@ -64,6 +65,41 @@ def main():
         "gl55-first": lambda it: glossary(it, len(defs), "first"),
         "gl55-last": lambda it: glossary(it, len(defs), "last"),
     }
+    # --- 続き（--set b）: 「前に並ぶ定義」と「文脈の深さ」を区別する ---
+    g1 = [d for d in defs if any(d in it["defs"] for it in data["items"] if it["group"] == "G1")]
+    g2 = [d for d in defs if any(d in it["defs"] for it in data["items"] if it["group"] == "G2c")]
+
+    def filler_then_def(n):
+        return lambda it: "以下は参考の文章である。\n" + fill[n] + "\n\n" + glossary(it, len(it["defs"]), "first")
+
+    def at_position(pos):
+        def fn(it):
+            rel = list(it["defs"])
+            others = [d for d in defs if d not in rel]
+            random.Random(it["id"]).shuffle(others)
+            order = others[:pos] + rel + others[pos:]
+            return HEADER + "\n".join(defs[d] for d in order)
+
+        return fn
+
+    def preceded_by(pool):
+        def fn(it):
+            rel = list(it["defs"])
+            return HEADER + "\n".join(defs[d] for d in [d for d in pool if d not in rel] + rel)
+
+        return fn
+
+    conds_b = {
+        "fill500-def": filler_then_def(500),  # 無関係な文章のあとに定義
+        "fill2000-def": filler_then_def(2000),
+        "gl55-pos14": at_position(14),  # 全55定義。関係する定義の前に14定義
+        "gl55-pos27": at_position(27),
+        "gl55-pos41": at_position(41),
+        "pre-ordinary19": preceded_by(g1),  # 一般の意味どおりの定義19個のあとに置く
+        "pre-redef23": preceded_by(g2),  # 他の再定義23個のあとに置く
+    }
+    if args.set == "b":
+        conds = conds_b
     out = ROOT / "results" / f"e7_{args.model.split('/')[-1]}.json"
     res = json.loads(out.read_text(encoding="utf-8")) if out.exists() else {}
     for name, sys_fn in conds.items():
