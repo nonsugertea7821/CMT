@@ -355,6 +355,44 @@ nodes:
   item_running: {ja: 実行中の項目, is: backlog_item, mod: [{of: [v_refer, from], with: performed_experiment}, {of: [v_refer, from], with: measured_experiment, neg: true}]}
   item_queued: {ja: 未着手の項目, is: backlog_item, mod: [{of: [v_refer, from], with: performed_experiment, neg: true}]}
 
+  # ===== 体系が、自分の書き方（文法）について述べるための概念 =====
+  expression_part: {ja: 概念式の部分, is: information_entity, mod: [{of: [v_compose, from], with: concept_expression}]}
+  display_word: {ja: 表示語, is: word, mod: [{of: [v_agree, from], with: identifier}]}
+  gloss_text: {ja: 説明文, is: passage, mod: [{of: [v_express, from], with: natural_language}, {of: [v_refer, from], with: concept}]}
+  kind: {ja: 種類, form: [v_compose, to]}
+  participant: {ja: 関わるもの, form: [v_involve, to]}
+  third_participant: {ja: 第三のもの, is: participant, mod: [{of: [p, from], neg: true}, {of: [p, to], neg: true}]}
+  state_relation: {ja: 状態の関係, is: occurrent, mod: [{of: [v_stage, to], neg: true}]}
+  genus_part: {ja: 上位の指定, is: expression_part, mod: [{of: [v_refer, from], with: kind}]}
+  position_part: {ja: 位置の指定, is: expression_part, mod: [{of: [v_refer, from], with: p}]}
+  form_part: {ja: 形の指定, is: position_part, mod: [{of: [v_compose, from], with: modification_part, neg: true}]}
+  modification_part: {ja: 修飾の指定, is: expression_part, mod: [{of: [v_compose, to], with: position_part}]}
+  filler_part: {ja: もう一方の端の指定, is: expression_part, mod: [{of: [v_refer, from], with: participant}]}
+  negation_part: {ja: 否定の指定, is: expression_part, val: {truth: false}}
+  quantifier_part: {ja: 数量化の指定, is: expression_part, mod: [{of: [v_refer, from], with: participant, at: {count: {gt: 1}}}]}
+  value_part: {ja: 値の指定, is: expression_part, mod: [{of: [v_refer, from], with: value}]}
+  at_part: {ja: 修飾の中の値の指定, is: value_part, mod: [{of: [v_compose, from], with: modification_part}]}
+  val_part: {ja: 概念が取る値の指定, is: value_part, mod: [{of: [v_compose, from], with: modification_part, neg: true}]}
+  comparison_part: {ja: 比較の指定, is: expression_part, mod: [{of: [v_refer, from], with: value, at: {count: 2}}]}
+  cmp_a: {ja: 比べる一方, form: [v_level, from]}
+  cmp_b: {ja: 比べるもう一方, form: [v_level, to]}
+  same: {ja: 同じである, is: quality, of: [v_level, from]}
+  differ: {ja: 違っている, is: quality, of: [v_level, from], neg: true}
+  comparison_result: {ja: 比べた結果, is: quality, mod: [{of: [v_depend, from], with: comparison_part}]}
+  from_part: {ja: 始点の種類の指定, is: expression_part, mod: [{of: [v_refer, from], with: s}]}
+  to_part: {ja: 終点の種類の指定, is: expression_part, mod: [{of: [v_refer, from], with: o}]}
+  third_part: {ja: 第三のものの種類の指定, is: expression_part, mod: [{of: [v_refer, from], with: third_participant}]}
+  holds_part: {ja: 成り立つ状態の指定, is: expression_part, mod: [{of: [v_refer, from], with: state_relation}]}
+  before_part: {ja: 前の状態の指定, is: holds_part, mod: [{of: [v_come_before, from], with: after_part}]}
+  after_part: {ja: 後の状態の指定, is: holds_part, mod: [{of: [v_come_after, from], with: before_part}]}
+  arity: {ja: 端の数, is: magnitude, mod: [{of: [v_measure, from], with: state_relation}]}
+  law: {ja: 法則, is: sentence, mod: [{of: [v_refer, from], with: state_relation}], val: {truth: true}}
+  system_act: {ja: 体系そのものの行為, is: v_refer, from: system}
+  field: {ja: 記録の項目, is: identifier, mod: [{of: [v_compose, from], with: sentence}]}
+  record_description: {ja: 記録の種類の記述, is: information_entity, mod: [{of: [v_compose, from], with: system}, {of: [v_refer, from], with: sentence}]}
+  grammar_rule: {ja: 文法の規則, is: sentence, mod: [{of: [v_refer, from], with: expression_part}]}
+  grammar_description: {ja: 文法の記述, is: information_entity, mod: [{of: [v_compose, from], with: system}, {of: [v_compose, to], with: grammar_rule, at: {count: {gt: 1}}}]}
+
 # 体系が、自分の記録（claims.yaml と measurements.yaml）について述べる。
 # 記録の種類ごとに、それが何であるか（is）、識別子の種類（key）、持てる項目（fields）を書く。
 # 項目名は、ノードの識別子そのもの。その項目の中身は、そのノードに当たるものである。
@@ -367,3 +405,25 @@ records:
   row_keys: {is: row_keys, fields: [axis, pattern]}
   meaning: {is: meaning, fields: [identifier, value]}
   value: {is: value, fields: [axis, s, o]}
+
+# 体系が、自分の書き方（文法）について述べる。
+# 体系制御言語の文法の語が、どのノードに当たるかを書く。検査は、ここに書かれた語だけを文法の語として受け付ける。
+# logic は、述語論理の語。体系の中では定義しない。
+grammar:
+  system: {base: state_relation, axes: axis, nodes: concept_expression, records: record_description, grammar: grammar_description}
+  node: {ja: display_word, gloss: gloss_text, is: genus_part, from: from_part, to: to_part, new_kind: third_part,
+         holds: holds_part, before: before_part, after: after_part, form: form_part, of: position_part, neg: negation_part,
+         mod: modification_part, val: val_part, cmp: comparison_part, axis: axis}
+  mod: {of: position_part, with: filler_part, neg: negation_part, quant: quantifier_part, at: at_part}
+  cmp: {axis: axis, a: cmp_a, b: cmp_b, rel: comparison_result}
+  base: {ja: display_word, arity: arity, laws: law, system_act: system_act}
+  axes: {ja: display_word, from: state_relation, values: value}
+  records: {is: kind, key: identifier, fields: field}
+  grammar: {system: system, node: concept_expression, mod: modification_part, cmp: comparison_part, base: state_relation, axes: axis,
+            records: record_description, grammar: grammar_rule, position: position_part, rel: comparison_result,
+            function: value, values: value, logic: law}
+  position: {from: s, to: o, new: third_participant}
+  rel: {same: same, differ: differ}
+  function: {gt: v_come_after, ge: v_not_before, lt: v_come_before, le: v_not_after}
+  values: {number: magnitude, literal: word}
+  logic: [not, all, any, "true", "false", between]

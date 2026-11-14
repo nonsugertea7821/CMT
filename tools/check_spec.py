@@ -6,8 +6,9 @@ ontology.yaml  概念の体系。書き方はそのファイルの冒頭を見�
   検査: 表示語の一意性 / gloss を持つのは最上位の2つだけ / 動詞の式（状態の関係・両端・第三のものの種類）の一意性 /
         動詞の下位が端を狭めていること / 修飾の型（その位置に来られるか）/ 分類の軸と値 / 概念の式の一意性 /
         役割が根拠となる定義を持つこと
-  records: 体系が、自分の記録（claims.yaml, measurements.yaml）について述べる部分。
-        記録の項目名と、status や統計量の値は、ここに書かれたものしか使えない。
+  records: 体系が、自分の記録（claims.yaml, measurements.yaml）について述べる部分。項目名はノードの識別子。
+  grammar: 体系が、自分の書き方について述べる部分。文法の語が、どのノードに当たるかを書く。
+        検査は、ここに書かれた語だけを文法の語として受け付ける。logic は述語論理の語で、体系の中では定義しない。
 
 measurements.yaml と claims.yaml  記録。
   項目名は、ontology.yaml のノードの識別子そのもの。どの記録がどの項目を持てるかは、ontology.yaml の records にある。
@@ -40,7 +41,6 @@ ROOT = Path(__file__).resolve().parent.parent
 SPEC = ROOT / "spec"
 RESULTS = ROOT / "experiments" / "results"
 TOPS = ("continuant", "occurrent")
-FUNCS = {"gt": 1, "ge": 1, "lt": 1, "le": 1, "between": 2}   # 真偽を返す範囲の判定式。値の一種
 errors = []
 
 
@@ -55,7 +55,39 @@ def load(name):
 # ---------------------------------------------------------------- 概念の体系
 class Ontology:
     def __init__(self, O):
-        self.B, self.AX, self.N, self.R = O["base"], O["axes"], O["nodes"], O["records"]
+        self.O = O
+        self.B, self.AX, self.N, self.R, self.G = O["base"], O["axes"], O["nodes"], O["records"], O["grammar"]
+        # 真偽を返す範囲の判定式。値の一種。gt などは文法の function、between は述語論理の語
+        self.funcs = {op: 1 for op in self.G["function"]} | ({"between": 2} if "between" in self.G["logic"] else {})
+
+    def check_grammar(self):
+        """文法の語が、体系のノードに当たっていること。体系の各節が、文法に書かれた語だけを使っていること。"""
+        G = self.G
+        for sect, words in G.items():
+            if sect == "logic":
+                continue
+            if sect not in G["grammar"]:
+                err(f"grammar: 節 {sect} が、grammar.grammar に書かれていない")
+            for w, nid in words.items():
+                if nid not in self.N:
+                    err(f"grammar.{sect}.{w}: 当たるノード {nid} が未定義")
+        for k in self.O:
+            if k not in G["system"]:
+                err(f"体系の節 {k} が、grammar.system に書かれていない")
+        for bid, b in self.B.items():
+            for k in b:
+                if k not in G["base"]:
+                    err(f"base.{bid}: 語 {k} が、grammar.base に書かれていない")
+        for aid, a in self.AX.items():
+            for k in a:
+                if k not in G["axes"]:
+                    err(f"axes.{aid}: 語 {k} が、grammar.axes に書かれていない")
+            if isinstance(a["values"], str) and a["values"] not in G["values"]:
+                err(f"axes.{aid}: 値の種類 {a['values']} が、grammar.values に書かれていない")
+        for rid, r in self.R.items():
+            for k in r:
+                if k not in G["records"]:
+                    err(f"records.{rid}: 語 {k} が、grammar.records に書かれていない")
 
     def end(self, nid, side):
         """動詞の端の種類。自分になければ上位の動詞から受け継ぐ。"""
@@ -107,7 +139,7 @@ class Ontology:
             return False
         (op, arg), = v.items()
         args = arg if isinstance(arg, list) else [arg]
-        return op in FUNCS and len(args) == FUNCS[op] and all(isinstance(a, (int, float)) for a in args)
+        return op in self.funcs and len(args) == self.funcs[op] and all(isinstance(a, (int, float)) for a in args)
 
     def check_value(self, axis, v, where):
         if axis not in self.AX:
@@ -128,8 +160,8 @@ class Ontology:
         verb, pos = spec
         if not self.is_verb(verb):
             return err(f"{where}: {verb} は動詞でない")
-        if pos not in ("from", "to", "new"):
-            return err(f"{where}: 位置 {pos} は from / to / new")
+        if pos not in self.G["position"]:
+            return err(f"{where}: 位置 {pos} が、grammar.position に書かれていない")
         return verb, pos
 
     def check_state(self, vid, n):
@@ -169,9 +201,9 @@ class Ontology:
                 continue
             if "gloss" in n:
                 err(f"{nid}: gloss を持てるのは最上位の2つだけ。式で書くこと")
-            extra = set(n) - {"ja", "is", "from", "to", "new_kind", "holds", "before", "after", "form", "of", "neg", "mod", "val", "cmp", "axis"}
+            extra = set(n) - set(self.G["node"])
             if extra:
-                err(f"{nid}: 知らない項目 {extra}")
+                err(f"{nid}: 語 {extra} が、grammar.node に書かれていない")
             for side in ("from", "to", "new_kind"):
                 if side in n and n[side] != "any" and n[side] not in N:
                     err(f"{nid}: {side} の {n[side]} が未定義")
@@ -201,8 +233,10 @@ class Ontology:
             for axis, v in (n.get("val") or {}).items():
                 self.check_value(axis, v, f"{nid}.val")
             for i, c in enumerate(n.get("cmp") or []):
-                if c.get("axis") not in AX or c.get("a") not in N or c.get("b") not in N or c.get("rel") not in ("same", "differ"):
-                    err(f"{nid}.cmp[{i}]: 軸・比べる2つ・関係（same / differ）のどれかが正しくない")
+                if set(c) - set(self.G["cmp"]):
+                    err(f"{nid}.cmp[{i}]: 語 {set(c) - set(self.G['cmp'])} が、grammar.cmp に書かれていない")
+                if c.get("axis") not in AX or c.get("a") not in N or c.get("b") not in N or c.get("rel") not in self.G["rel"]:
+                    err(f"{nid}.cmp[{i}]: 軸・比べる2つ・比べた結果のどれかが正しくない")
             if "axis" in n:
                 if n["axis"] not in AX or AX[n["axis"]]["values"] != "number":
                     err(f"{nid}: axis {n['axis']} は数の軸でない")
@@ -226,10 +260,10 @@ class Ontology:
                         err(f"{where}: 位置 new には with を付けられない")
                     elif m["with"] not in N or not self.overlaps(m["with"], self.end(verb, other)):
                         err(f"{where}: {m['with']} は {verb} の {other}（{self.end(verb, other)}）に来られない")
-                if set(m) - {"of", "with", "neg", "quant", "at"}:
-                    err(f"{where}: 知らない項目")
-                if m.get("quant") not in (None, "all", "any"):
-                    err(f"{where}: quant は all か any。数は at で書く")
+                if set(m) - set(self.G["mod"]):
+                    err(f"{where}: 語 {set(m) - set(self.G['mod'])} が、grammar.mod に書かれていない")
+                if m.get("quant") is not None and m["quant"] not in self.G["logic"]:
+                    err(f"{where}: 数量化 {m['quant']} が、grammar.logic に書かれていない。数は at で書く")
                 for axis, v in (m.get("at") or {}).items():
                     self.check_value(axis, v, where)
                     if axis in AX and AX[axis]["from"] != "any" and AX[axis]["from"] not in self.base_of(verb):
@@ -534,6 +568,7 @@ def main():
     T = Ontology(load("ontology.yaml"))
     T.check()
     T.check_records()
+    T.check_grammar()
     M, C = load("measurements.yaml"), load("claims.yaml")
     values, meanings = expand(M, T)
     check_claims(C, values, T)
