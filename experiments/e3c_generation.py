@@ -24,7 +24,7 @@ from e3_concept_vectors import Injector, build_delta
 
 def judge(text):
     """出力の冒頭が「はい」か「いいえ」かで判定する。どちらでもなければ不明。"""
-    head = text.strip().lstrip("「『")
+    head = text.strip().removeprefix("答：").removeprefix("答:").strip().lstrip("「『")
     if head.startswith("はい"):
         return "はい"
     if head.startswith("いいえ"):
