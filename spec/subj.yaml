@@ -16,7 +16,10 @@ nodes:
   v_located: {ja: 所在する, extends: v_compose, from: land, to: region}
   v_begin: {ja: 始まる, extends: occurrent, from: process, to: any, holds: [{is: depend, from: from, to: to}, {is: after, from: from, to: to}]}
   v_end: {ja: 終わる, extends: occurrent, from: process, to: any, holds: [{is: depend, from: from, to: to}, {is: after, from: to, to: from}]}
-  v_grant: {ja: 権限を与えられる, extends: v_depend, from: permission, to: user}
+  v_sell: {ja: 販売する, extends: occurrent, from: agent, to: object, new_kind: money,
+           pre: [{is: part, from: to, to: from}], post: [{is: part, from: to, to: from, neg: true}, {is: part, from: new, to: from}]}
+  v_register: {ja: 登録者として関わらせる, extends: v_involve, from: service, to: person}
+  v_seated: {ja: 席にいる, extends: occurrent, from: person, to: process, holds: [{is: involve, from: to, to: from}]}
 
   # ===== 量。値は軸 amount の数 =====
   age: {ja: 年齢（歳）, extends: magnitude, mod: {of: [v_depend, from], with: person}, axis: amount}
@@ -27,29 +30,34 @@ nodes:
   days_since: {ja: 注文から経過した日数, extends: magnitude, mod: {of: [v_measure, from], with: order}, axis: amount}
   hour: {ja: 時刻（時）, extends: magnitude, mod: {of: [v_measure, from], with: day}, axis: amount}
   profit_gap: {ja: 利益から目標額を引いた額（円）, extends: magnitude, mod: {of: [v_depend, from], with: account}, axis: amount}
-  lateness: {ja: 開始時刻に席にいなかった, extends: quality, mod: {of: [v_depend, from], with: attendance}}
 
   # ===== もの =====
   agent: {ja: 主体, extends: independent_continuant, mod: {of: [v_perform, from]}}
   person: {ja: 人, extends: agent, mod: {of: [v_compose, to], with: agent, neg: true}}
   person_age_neg: {ja: 年齢を問わない人, extends: person, mod: {of: [v_depend, to], with: age, quant: any}}
   organization: {ja: 組織, extends: agent, mod: {of: [v_compose, to], with: person, at: {count: {gt: 1}}}}
-  corporation: {ja: 法人, extends: organization, mod: {of: [v_contract, from]}}
+  statute: {ja: 法律, extends: definition, mod: {of: [v_refer, from], with: organization}}
+  legal_personality: {ja: 法人格, extends: role, mod: {of: [v_depend, from], with: statute}}
+  corporation: {ja: 法人, extends: organization, mod: {of: [v_depend, to], with: legal_personality}}
   customer: {ja: 顧客, extends: corporation, mod: {of: [v_contract, to]}}
   employee: {ja: 社員, extends: person, mod: {of: [v_employ, to]}}
   minor: {ja: 未成年, extends: person, mod: {of: [v_depend, to], with: age, at: {amount: {lt: 25}}}}
   adult: {ja: 大人, extends: person_age_neg, mod: {of: [v_depend, to], with: height, at: {amount: {ge: 150}}}}
   address: {ja: 住所, extends: information_entity, mod: {of: [v_refer, from], with: land}}
-  family_base: {ja: 住所を持つ人, extends: person, mod: {of: [v_live, from], with: address}}
-  family: {ja: 家族, extends: family_base, mod: {of: [v_live, from], with: address, quant: all}}
-  user: {ja: 利用者, extends: person, mod: {of: [v_grant, to]}}
-  permission: {ja: 権限, extends: realizable_entity, mod: {of: [v_grant, from]}}
-  setting_permission: {ja: システムの設定を変更する権限, extends: permission, mod: {of: [v_depend, from], with: system_setting}}
+  shared_address: {ja: 二人以上が住む住所, extends: address, mod: {of: [v_live, to], with: person, at: {count: {gt: 1}}}}
+  family: {ja: 家族, extends: person, mod: {of: [v_live, from], with: shared_address}}
+  service: {ja: サービス, extends: process, mod: {of: [v_register, from]}}
+  user: {ja: 利用者, extends: person, mod: {of: [v_register, to], with: service}}
   system_setting: {ja: システムの設定, extends: information_entity, mod: {of: [v_compose, from], with: artifact}}
-  admin: {ja: 管理者, extends: user, mod: {of: [v_grant, to], with: setting_permission}}
+  access_rule: {ja: 権限の規則, extends: definition, mod: {of: [v_refer, from], with: user}}
+  setting_rule: {ja: 設定の変更を許す規則, extends: access_rule, mod: {of: [v_refer, from], with: system_setting}}
+  permission: {ja: 権限, extends: role, mod: {of: [v_depend, from], with: access_rule}}
+  setting_permission: {ja: システムの設定を変更する権限, extends: permission, mod: {of: [v_depend, from], with: setting_rule}}
+  admin: {ja: 管理者, extends: user, mod: {of: [v_depend, to], with: setting_permission}}
 
-  goods: {ja: 商品, extends: independent_continuant, mod: {of: [v_allocate, to]}}
-  warehouse: {ja: 倉庫, extends: independent_continuant, mod: {of: [v_store, to]}}
+  object: {ja: 物, extends: independent_continuant, mod: {of: [v_perform, from], neg: true}}
+  goods: {ja: 商品, extends: object, mod: {of: [v_sell, to]}}
+  warehouse: {ja: 倉庫, extends: object, mod: {of: [v_store, to]}}
   stored_goods: {ja: 倉庫にある商品, extends: goods, mod: {of: [v_store, from], with: warehouse}}
   stock: {ja: 在庫, extends: stored_goods, mod: {of: [v_allocate, to], with: order, neg: true}}
   category: {ja: 商品分類, extends: information_entity, mod: {of: [v_classify, to]}}
@@ -58,7 +66,8 @@ nodes:
   fruit_category: {ja: 分類「果物」, extends: category, mod: {of: [v_classify, to], with: tomato}}
   seafood_category: {ja: 分類「魚類」, extends: category, mod: {of: [v_classify, to], with: shrimp}}
 
-  order: {ja: 注文, extends: information_entity, mod: {of: [v_place, from]}}
+  order_content: {ja: 商品へ述べる情報, extends: information_entity, mod: {of: [v_refer, from], with: goods}}
+  order: {ja: 注文, extends: order_content, mod: {of: [v_place, from]}}
   large_order: {ja: 大口注文, extends: order, mod: {of: [v_allocate, from], with: goods, at: {count: {ge: 10}}}}
   recent_order: {ja: 直近一年間の注文, extends: order, mod: {of: [v_measure, to], with: days_since, at: {amount: {le: 365}}}}
   dormant_agent: {ja: 直近一年間に取引がない相手, extends: agent, mod: {of: [v_place, to], with: recent_order, neg: true}}
@@ -66,7 +75,7 @@ nodes:
   payment: {ja: 入金, extends: process, mod: {of: [v_pay, to]}}
   money: {ja: 金額（円）, extends: magnitude, mod: {of: [v_measure, from], with: process}, axis: amount}
   sales: {ja: 売上, extends: money, mod: {of: [v_measure, from], with: payment}}
-  plan: {ja: プラン, extends: information_entity, mod: {of: [v_refer, from], with: goods}}
+  plan: {ja: プラン, extends: information_entity, mod: {of: [v_refer, from], with: service}}
   free_plan: {ja: 無料, extends: plan, mod: {of: [v_depend, to], with: monthly_fee, at: {amount: {le: 500}}}}
   account: {ja: 収支, extends: information_entity, mod: {of: [v_refer, from], with: money}}
   deficit: {ja: 赤字, extends: account, mod: {of: [v_depend, to], with: profit_gap, at: {amount: {lt: 0}}}}
@@ -76,8 +85,11 @@ nodes:
   approved_inspection: {ja: 承認まで済んだ検収, extends: inspection, mod: {of: [v_stage, to], with: approval}}
   completed: {ja: 完了, extends: quality, mod: {of: [v_measure, from], with: approved_inspection}}
   delay: {ja: 遅延, extends: delivery, mod: {of: [v_measure, to], with: days_overdue, at: {amount: {ge: 3}}}}
-  attendance: {ja: 出席の記録, extends: information_entity, mod: {of: [v_refer, from], with: person}}
-  absence: {ja: 欠席, extends: attendance, mod: {of: [v_depend, to], with: lateness}}
+  meeting: {ja: 会議, extends: process, mod: {of: [v_involve, from], with: person, at: {count: {gt: 1}}}}
+  meeting_start: {ja: 会議の開始時刻, extends: process, mod: {of: [v_begin, to], with: meeting}}
+  absent_person: {ja: 開始時刻に席にいなかった人, extends: person, mod: {of: [v_seated, from], with: meeting_start, neg: true}}
+  attendance: {ja: 出席の記録, extends: information_entity, mod: {of: [v_refer, from], with: meeting}}
+  absence: {ja: 欠席, extends: attendance, mod: {of: [v_refer, from], with: absent_person}}
 
   # ===== 場所 =====
   land: {ja: 土地, extends: independent_continuant, mod: {of: [v_located, from]}}
