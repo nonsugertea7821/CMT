@@ -50,6 +50,7 @@ nodes:
   v_support: {ja: 支持する, extends: v_agree, from: evidence, to: hypothesis}
   v_contradict: {ja: 反する, extends: v_agree, from: against, to: hypothesis}
   v_qualify: {ja: 留保をつける, extends: v_refer, from: limitation, to: hypothesis}
+  v_challenge: {ja: 疑いを向ける, extends: v_refer, from: doubt, to: hypothesis}
   v_supersede: {ja: 取って代わる, extends: v_refer, from: sentence, to: supersedes}
   v_ground: {ja: 根拠にする, extends: v_depend, from: decision, to: basis}
   v_check: {ja: 確かめる, extends: v_refer, from: backlog_item, to: tests}
@@ -271,6 +272,8 @@ nodes:
   lim_one_item: {ja: 差が1問以内, extends: limitation, mod: {of: [v_refer, from], with: question, at: {count: 1}}}
   lim_unconverged: {ja: 学習が収束していない, extends: limitation, mod: {of: [v_refer, from], with: training_loss}}
   lim_single_case: {ja: 1例だけ, extends: limitation, mod: {of: [v_refer, from], with: observation, at: {count: 1}}}
+  doubt: {ja: 仮説への疑い, extends: sentence, mod: {of: [v_challenge, from], with: hypothesis}}
+  number_comparison: {ja: 数の大小の照合, extends: inference, mod: {of: [v_refer, to], with: number}}
   lim_unquantified: {ja: 数値化していない, extends: limitation, mod: {of: [v_refer, from], with: measured_value, neg: true}}
   decision: {ja: 決定, extends: definition, mod: {of: [v_compose, from], with: information_entity_design_to}}
   dec_adopted: {ja: 採用済みの決定, extends: decision, mod: adopted}
@@ -587,6 +590,7 @@ individuals:
   h_collision_lowers_following: {is: hyp_supported}
   h_chain_length_lowers_following: {is: hyp_mixed}
   h_scratchpad_raises_rule_following: {is: hyp_refuted}
+  h_number_comparison_lowers_rule_following: {is: hyp_untested}
   h_scratchpad_lowers_remap_following: {is: hyp_supported}
   h_scratchpad_raises_rule_following_4b: {is: hyp_supported}
   h_scratchpad_lowers_remap_following_4b: {is: hyp_refuted}
@@ -1274,6 +1278,12 @@ facts:
   - {is: v_scope, from: text_injection, to: h_scratchpad_raises_rule_following}
   - {is: v_qualify, from: lim_one_item, to: h_scratchpad_raises_rule_following}
   - {is: v_contradict, from: o_e9_scratchpad_not_above_direct_rule_15b, to: h_scratchpad_raises_rule_following}
+  - {is: v_challenge, from: h_number_comparison_lowers_rule_following, to: h_scratchpad_raises_rule_following}
+  - {is: v_refer, from: h_number_comparison_lowers_rule_following, to: {is: v_lower, from: number_comparison, to: redefinition_following}}
+  - {is: v_scope, from: model_15b, to: h_number_comparison_lowers_rule_following}
+  - {is: v_scope, from: rule_redefinition, to: h_number_comparison_lowers_rule_following}
+  - {is: v_scope, from: scratchpad, to: h_number_comparison_lowers_rule_following}
+  - {is: v_qualify, from: lim_unquantified, to: h_number_comparison_lowers_rule_following}
   - {is: v_refer, from: h_scratchpad_lowers_remap_following, to: {is: v_lower, from: scratchpad, to: redefinition_following}}
   - {is: v_scope, from: model_15b, to: h_scratchpad_lowers_remap_following}
   - {is: v_scope, from: remap_redefinition, to: h_scratchpad_lowers_remap_following}
@@ -1327,6 +1337,7 @@ facts:
   - {is: v_support, from: o_e1_glossary_replaced_full, to: h_new_word_immune}
   - {is: v_refer, from: h_attention_causes_preceding_effect, to: {is: v_cause, from: attention, to: preceding_definition_effect}}
   - {is: v_scope, from: model_4b, to: h_attention_causes_preceding_effect}
+  - {is: v_challenge, from: o_e7_head_of_55_no_drop, to: h_attention_causes_preceding_effect}
   - {is: v_refer, from: h_opaque_renaming_raises, to: {is: v_raise, from: opaque_renaming, to: redefinition_following}}
   - {is: v_scope, from: model_4b, to: h_opaque_renaming_raises}
   - {is: v_scope, from: text_injection, to: h_opaque_renaming_raises}
