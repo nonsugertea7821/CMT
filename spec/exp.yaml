@@ -59,8 +59,10 @@ nodes:
   v_filter_of: {ja: 行の限定として部分になる, extends: v_compose, from: row_filter, to: measurement_family}
   v_keys_of: {ja: 行の識別子による限定として部分になる, extends: v_compose, from: row_keys, to: measurement_family}
   v_entry_of: {ja: 条件ごとの記録として部分になる, extends: v_compose, from: condition_entry, to: measurement_family}
-  v_axis_of: {ja: 軸として部分になる, extends: v_compose, from: axis, to: measurement_family}
-  v_meaning_of: {ja: 意味づけとして部分になる, extends: v_compose, from: meaning, to: measurement_family}
+  v_axis_of: {ja: 軸として部分になる, extends: v_compose, from: family_axis, to: measurement_family}
+  v_value_of: {ja: 値として軸の部分になる, extends: v_compose, from: axis_value, to: family_axis}
+  v_denote: {ja: 軸の値が指す, extends: v_refer, from: axis_value, to: any}
+  v_spell: {ja: 結果ファイルでの書き方として指す, extends: v_denote, from: axis_value, to: passage}
   v_metric_of: {ja: 指標を述べる, extends: v_refer, from: measurement_family, to: metric}
 
   # ===== 修飾語。ある動詞の、ある位置を占めているという性質 =====
@@ -127,7 +129,6 @@ nodes:
   no_channel: {ja: 何もなし, extends: process, mod: {of: [v_stage, to], with: channel, neg: true}}
   note: {ja: 注記, extends: passage_express_from_natural_language, mod: {of: [v_refer, from], with: sentence}}
   expression_part_refer_from_identifier: {ja: 識別子へ述べる概念式の部分, extends: expression_part, mod: {of: [v_refer, from], with: identifier}}
-  identifier_refer_to_meaning: {ja: 意味づけから述べられる識別子, extends: identifier, mod: {of: [v_refer, to], with: meaning}}
 
   # ===== 設問・事例・判定 =====
   information_entity_refer_from_verdict: {ja: 判定へ述べる情報, extends: information_entity, mod: {of: [v_refer, from], with: verdict}}
@@ -239,18 +240,18 @@ nodes:
   row_keys: {ja: 行の識別子による限定, extends: row_filter, mod: {of: [v_refer, from], with: identifier}}
   logit_margin: {ja: ロジット差の平均, extends: metric, mod: {of: [v_measure, from], with: verdict}, axis: order}
   judged_accuracy: {ja: 自由生成での正答率, extends: accuracy, mod: {of: [v_depend, from], with: fmt_free}, axis: ratio}
+  family_axis: {ja: 測定の族の軸, extends: axis, mod: {of: [v_compose, from], with: measurement_family}}
+  axis_value: {ja: 軸の値, extends: value, mod: {of: [v_compose, from], with: family_axis}}
   measurement_family: {ja: 測定値の族, extends: information_entity, mod: {of: [v_refer, from], with: measured_value, at: {count: {gt: 1}}}}
   recital_nll: {ja: 定義文の出しにくさ, extends: metric, mod: {of: [v_measure, from], with: v_speak_definition}}
   axis_refer_to_row_keys: {ja: 行の識別子による限定から述べられる軸, extends: axis, mod: {of: [v_refer, to], with: row_keys}}
   pattern_compose_from_row_keys: {ja: 行の識別子による限定へ部分になる雛形, extends: pattern, mod: {of: [v_compose, from], with: row_keys}}
-  value_compose_from_meaning: {ja: 意味づけへ部分になる値, extends: value, mod: {of: [v_compose, from], with: meaning}}
   measured_value: {ja: 測定値, extends: magnitude, mod: {of: [v_depend, from], with: result_file}}
   mean_value: {ja: 平均, extends: magnitude, mod: {of: [v_depend, from], with: measured_value, at: {count: {gt: 1}}}}
   tolerance: {ja: 許容幅, extends: magnitude, mod: {of: [v_depend, from], with: observation}}
   metric: {ja: 指標, extends: quality, mod: measuring}
   row_filter: {ja: 行の限定, extends: sentence, mod: {of: [v_refer, from], with: result_row}}
   condition_entry: {ja: 条件ごとの記録, extends: information_entity_refer_from_verdict, mod: {of: [v_compose, from], with: result_row}}
-  meaning: {ja: 測定値の意味づけ, extends: sentence_refer_from_measured_value, mod: {of: [v_refer, from], with: identifier}}
 
   # ===== 観察・仮説・決定・残り項目 =====
   depended_information: {ja: 他の記述が依存する記述, extends: information_entity, mod: {of: [v_depend, to], with: information_entity, quant: all}}
@@ -347,6 +348,173 @@ individuals:
   e8nll: {is: measurement_family}
   e8loss: {is: measurement_family}
   e9: {is: measurement_family}
+  # ----- 測定の族の軸（is: family_axis）と、軸の値（is: axis_value）。val の text は測定値の識別子に使う字。
+  # 結果ファイルでの書き方（v_spell）と、値が指すもの（v_denote）は事実で書く。
+  e1_model: {is: family_axis, val: {text: model}}
+  e1_model_15b: {is: axis_value, val: {text: 15b}}
+  e1_model_4b: {is: axis_value, val: {text: 4b}}
+  e1_group: {is: family_axis, val: {text: group}}
+  e1_group_G1: {is: axis_value, val: {text: G1}}
+  e1_group_G2c: {is: axis_value, val: {text: G2c}}
+  e1_group_G2k: {is: axis_value, val: {text: G2k}}
+  e1_group_G3: {is: axis_value, val: {text: G3}}
+  e1_group_G4: {is: axis_value, val: {text: G4}}
+  e1_cond: {is: family_axis, val: {text: cond}}
+  e1_cond_none: {is: axis_value, val: {text: none}}
+  e1_cond_near: {is: axis_value, val: {text: near}}
+  e1_cond_glossary: {is: axis_value, val: {text: glossary}}
+  e1_cond_far_500: {is: axis_value, val: {text: far-500}}
+  e1_cond_far_2000: {is: axis_value, val: {text: far-2000}}
+  e1type_model: {is: family_axis, val: {text: model}}
+  e1type_model_15b: {is: axis_value, val: {text: 15b}}
+  e1type_model_4b: {is: axis_value, val: {text: 4b}}
+  e1type_group: {is: family_axis, val: {text: group}}
+  e1type_group_G2c: {is: axis_value, val: {text: G2c}}
+  e1type_group_G2k: {is: axis_value, val: {text: G2k}}
+  e1type_type: {is: family_axis, val: {text: type}}
+  e1type_type_rule: {is: axis_value, val: {text: rule}}
+  e1type_type_remap: {is: axis_value, val: {text: remap}}
+  e1type_cond: {is: family_axis, val: {text: cond}}
+  e1type_cond_none: {is: axis_value, val: {text: none}}
+  e1type_cond_near: {is: axis_value, val: {text: near}}
+  e1b_group: {is: family_axis, val: {text: group}}
+  e1b_group_G2c: {is: axis_value, val: {text: G2c}}
+  e1b_group_G2k: {is: axis_value, val: {text: G2k}}
+  e1b_cond: {is: family_axis, val: {text: cond}}
+  e1b_cond_examples: {is: axis_value, val: {text: examples}}
+  e1b_cond_def_examples: {is: axis_value, val: {text: def+examples}}
+  e3_run: {is: family_axis, val: {text: run}}
+  e3_run_L8_defonly: {is: axis_value, val: {text: L8_defonly}}
+  e3_run_L8_qa: {is: axis_value, val: {text: L8_qa}}
+  e3_run_L8_defqa: {is: axis_value, val: {text: L8_defqa}}
+  e3_run_L14_defqa: {is: axis_value, val: {text: L14_defqa}}
+  e3_group: {is: family_axis, val: {text: group}}
+  e3_group_G2c: {is: axis_value, val: {text: G2c}}
+  e3_group_G2k: {is: axis_value, val: {text: G2k}}
+  e3_cond: {is: family_axis, val: {text: cond}}
+  e3_cond_none: {is: axis_value, val: {text: none}}
+  e3_cond_vec: {is: axis_value, val: {text: vec}}
+  e3_cond_near: {is: axis_value, val: {text: near}}
+  e3_cond_near_vec: {is: axis_value, val: {text: near+vec}}
+  e3type_run: {is: family_axis, val: {text: run}}
+  e3type_run_L8_qa: {is: axis_value, val: {text: L8_qa}}
+  e3type_run_L8_defqa: {is: axis_value, val: {text: L8_defqa}}
+  e3type_group: {is: family_axis, val: {text: group}}
+  e3type_group_G2c: {is: axis_value, val: {text: G2c}}
+  e3type_group_G2k: {is: axis_value, val: {text: G2k}}
+  e3type_type: {is: family_axis, val: {text: type}}
+  e3type_type_rule: {is: axis_value, val: {text: rule}}
+  e3type_type_remap: {is: axis_value, val: {text: remap}}
+  e3type_cond: {is: family_axis, val: {text: cond}}
+  e3type_cond_vec: {is: axis_value, val: {text: vec}}
+  e3loss_run: {is: family_axis, val: {text: run}}
+  e3loss_run_L8_defonly: {is: axis_value, val: {text: L8_defonly}}
+  e3loss_run_L8_qa: {is: axis_value, val: {text: L8_qa}}
+  e3loss_run_L8_defqa: {is: axis_value, val: {text: L8_defqa}}
+  e3loss_run_L14_defqa: {is: axis_value, val: {text: L14_defqa}}
+  e3b_fmt: {is: family_axis, val: {text: fmt}}
+  e3b_fmt_orig: {is: axis_value, val: {text: orig}}
+  e3b_fmt_fill: {is: axis_value, val: {text: fill}}
+  e3b_fmt_truth: {is: axis_value, val: {text: truth}}
+  e3b_group: {is: family_axis, val: {text: group}}
+  e3b_group_G2c: {is: axis_value, val: {text: G2c}}
+  e3b_group_G2k: {is: axis_value, val: {text: G2k}}
+  e3b_cond: {is: family_axis, val: {text: cond}}
+  e3b_cond_none: {is: axis_value, val: {text: none}}
+  e3b_cond_text: {is: axis_value, val: {text: text}}
+  e3b_cond_vec: {is: axis_value, val: {text: vec}}
+  e3b_cond_vec_all: {is: axis_value, val: {text: vec_all}}
+  e3b_g1_cond: {is: family_axis, val: {text: cond}}
+  e3b_g1_cond_none: {is: axis_value, val: {text: none}}
+  e3b_g1_cond_vec_all: {is: axis_value, val: {text: vec_all}}
+  e3c_group: {is: family_axis, val: {text: group}}
+  e3c_group_G2c: {is: axis_value, val: {text: G2c}}
+  e3c_group_G2k: {is: axis_value, val: {text: G2k}}
+  e3c_cond: {is: family_axis, val: {text: cond}}
+  e3c_cond_none: {is: axis_value, val: {text: none}}
+  e3c_cond_text: {is: axis_value, val: {text: text}}
+  e3c_cond_vec: {is: axis_value, val: {text: vec}}
+  e4_pair: {is: family_axis, val: {text: pair}}
+  e4_pair_p1: {is: axis_value, val: {text: p1}}
+  e4_pair_p2: {is: axis_value, val: {text: p2}}
+  e4_pair_p3: {is: axis_value, val: {text: p3}}
+  e4_split: {is: family_axis, val: {text: split}}
+  e4_split_train: {is: axis_value, val: {text: train}}
+  e4_split_test: {is: axis_value, val: {text: test}}
+  e4_cond: {is: family_axis, val: {text: cond}}
+  e4_cond_none: {is: axis_value, val: {text: none}}
+  e4_cond_text: {is: axis_value, val: {text: text}}
+  e4_cond_vec: {is: axis_value, val: {text: vec}}
+  e5_model: {is: family_axis, val: {text: model}}
+  e5_model_15b: {is: axis_value, val: {text: 15b}}
+  e5_model_4b: {is: axis_value, val: {text: 4b}}
+  e5_group: {is: family_axis, val: {text: group}}
+  e5_group_G2c: {is: axis_value, val: {text: G2c}}
+  e5_group_G2k: {is: axis_value, val: {text: G2k}}
+  e5_cond: {is: family_axis, val: {text: cond}}
+  e5_cond_near: {is: axis_value, val: {text: near}}
+  e5_cond_rename_semi: {is: axis_value, val: {text: rename_semi}}
+  e5_cond_rename_opaque: {is: axis_value, val: {text: rename_opaque}}
+  e5_cond_inline: {is: axis_value, val: {text: inline}}
+  e5_cond_near_inline: {is: axis_value, val: {text: near+inline}}
+  e6_L8_vec: {is: family_axis, val: {text: vec}}
+  e6_L8_vec_none: {is: axis_value, val: {text: none}}
+  e6_L8_vec_defonly: {is: axis_value, val: {text: defonly}}
+  e6_L8_vec_qa: {is: axis_value, val: {text: qa}}
+  e6_L8_nll_vec: {is: family_axis, val: {text: vec}}
+  e6_L8_nll_vec_none: {is: axis_value, val: {text: none}}
+  e6_L8_nll_vec_defonly: {is: axis_value, val: {text: defonly}}
+  e6_L8_nll_vec_qa: {is: axis_value, val: {text: qa}}
+  e6_defqa_layer: {is: family_axis, val: {text: layer}}
+  e6_defqa_layer_L8: {is: axis_value, val: {text: L8}}
+  e6_defqa_layer_L14: {is: axis_value, val: {text: L14}}
+  e6_defqa_nll_layer: {is: family_axis, val: {text: layer}}
+  e6_defqa_nll_layer_L8: {is: axis_value, val: {text: L8}}
+  e6_defqa_nll_layer_L14: {is: axis_value, val: {text: L14}}
+  e7_group: {is: family_axis, val: {text: group}}
+  e7_group_redef: {is: axis_value, val: {text: redef}}
+  e7_group_new: {is: axis_value, val: {text: new}}
+  e7_cond: {is: family_axis, val: {text: cond}}
+  e7_cond_sys1: {is: axis_value, val: {text: sys1}}
+  e7_cond_sys1_far500: {is: axis_value, val: {text: sys1-far500}}
+  e7_cond_sys1_far2000: {is: axis_value, val: {text: sys1-far2000}}
+  e7_cond_gl5: {is: axis_value, val: {text: gl5}}
+  e7_cond_gl15: {is: axis_value, val: {text: gl15}}
+  e7_cond_gl55_first: {is: axis_value, val: {text: gl55-first}}
+  e7_cond_gl55_last: {is: axis_value, val: {text: gl55-last}}
+  e7b_cond: {is: family_axis, val: {text: cond}}
+  e7b_cond_fill500_def: {is: axis_value, val: {text: fill500-def}}
+  e7b_cond_fill2000_def: {is: axis_value, val: {text: fill2000-def}}
+  e7b_cond_gl55_pos14: {is: axis_value, val: {text: gl55-pos14}}
+  e7b_cond_gl55_pos27: {is: axis_value, val: {text: gl55-pos27}}
+  e7b_cond_gl55_pos41: {is: axis_value, val: {text: gl55-pos41}}
+  e7b_cond_pre_ordinary19: {is: axis_value, val: {text: pre-ordinary19}}
+  e7b_cond_pre_redef23: {is: axis_value, val: {text: pre-redef23}}
+  e8_group: {is: family_axis, val: {text: group}}
+  e8_group_G2c: {is: axis_value, val: {text: G2c}}
+  e8_group_G2k: {is: axis_value, val: {text: G2k}}
+  e8_cond: {is: family_axis, val: {text: cond}}
+  e8_cond_none: {is: axis_value, val: {text: none}}
+  e8_cond_vec: {is: axis_value, val: {text: vec}}
+  e8def_cond: {is: family_axis, val: {text: cond}}
+  e8def_cond_none: {is: axis_value, val: {text: none}}
+  e8def_cond_vec: {is: axis_value, val: {text: vec}}
+  e8nll_cond: {is: family_axis, val: {text: cond}}
+  e8nll_cond_nll: {is: axis_value, val: {text: nll}}
+  e8loss_cond: {is: family_axis, val: {text: cond}}
+  e8loss_cond_loss_last: {is: axis_value, val: {text: loss_last}}
+  e9_model: {is: family_axis, val: {text: model}}
+  e9_model_15b: {is: axis_value, val: {text: 15b}}
+  e9_model_4b: {is: axis_value, val: {text: 4b}}
+  e9_group: {is: family_axis, val: {text: group}}
+  e9_group_G2c: {is: axis_value, val: {text: G2c}}
+  e9_group_G2k: {is: axis_value, val: {text: G2k}}
+  e9_type: {is: family_axis, val: {text: type}}
+  e9_type_rule: {is: axis_value, val: {text: rule}}
+  e9_type_remap: {is: axis_value, val: {text: remap}}
+  e9_cond: {is: family_axis, val: {text: cond}}
+  e9_cond_direct: {is: axis_value, val: {text: direct}}
+  e9_cond_cot: {is: axis_value, val: {text: cot}}
 
   # ===== 観察。s と o は測定値で、p は大きさを比べる動詞（is: observation）
   o_e1_redef_below_new_adjacent: {is: observation}
@@ -513,151 +681,508 @@ facts:
   # ===== 測定の族（is: measurement_family）。値は experiments/results/ から計算する。手で書いた数値は持たない。
   - {is: v_file_of, from: 'e1_{model}.json', to: e1}
   - {is: v_rows_of, from: [items], to: e1}
-  - {is: v_axis_of, from: {model: {15b: Qwen2.5-1.5B-Instruct, 4b: Qwen3-4B}, group: [G1, G2c, G2k, G3, G4], cond: [none, near, glossary, far-500, far-2000]}, to: e1}
+  - {is: v_axis_of, from: e1_model, to: e1}
+  - {is: v_value_of, from: e1_model_15b, to: e1_model}
+  - {is: v_spell, from: e1_model_15b, to: Qwen2.5-1.5B-Instruct}
+  - {is: v_denote, from: e1_model_15b, to: model_15b}
+  - {is: v_value_of, from: e1_model_4b, to: e1_model}
+  - {is: v_spell, from: e1_model_4b, to: Qwen3-4B}
+  - {is: v_denote, from: e1_model_4b, to: model_4b}
+  - {is: v_axis_of, from: e1_group, to: e1}
+  - {is: v_value_of, from: e1_group_G1, to: e1_group}
+  - {is: v_denote, from: e1_group_G1, to: g_confusable}
+  - {is: v_value_of, from: e1_group_G2c, to: e1_group}
+  - {is: v_denote, from: e1_group_G2c, to: g_redef_conflict}
+  - {is: v_value_of, from: e1_group_G2k, to: e1_group}
+  - {is: v_denote, from: e1_group_G2k, to: g_redef_control}
+  - {is: v_value_of, from: e1_group_G3, to: e1_group}
+  - {is: v_denote, from: e1_group_G3, to: g_sibling}
+  - {is: v_value_of, from: e1_group_G4, to: e1_group}
+  - {is: v_denote, from: e1_group_G4, to: g_replaced}
+  - {is: v_axis_of, from: e1_cond, to: e1}
+  - {is: v_value_of, from: e1_cond_none, to: e1_cond}
+  - {is: v_denote, from: e1_cond_none, to: no_channel}
+  - {is: v_value_of, from: e1_cond_near, to: e1_cond}
+  - {is: v_denote, from: e1_cond_near, to: text_injection}
+  - {is: v_denote, from: e1_cond_near, to: definition_text}
+  - {is: v_denote, from: e1_cond_near, to: place_adjacent}
+  - {is: v_value_of, from: e1_cond_glossary, to: e1_cond}
+  - {is: v_denote, from: e1_cond_glossary, to: text_injection}
+  - {is: v_denote, from: e1_cond_glossary, to: glossary}
+  - {is: v_denote, from: e1_cond_glossary, to: place_system}
+  - {is: v_value_of, from: e1_cond_far_500, to: e1_cond}
+  - {is: v_denote, from: e1_cond_far_500, to: text_injection}
+  - {is: v_denote, from: e1_cond_far_500, to: glossary}
+  - {is: v_denote, from: e1_cond_far_500, to: place_system}
+  - {is: v_compose, from: following_text, to: e1_cond_far_500, at: {count: 500}}
+  - {is: v_value_of, from: e1_cond_far_2000, to: e1_cond}
+  - {is: v_denote, from: e1_cond_far_2000, to: text_injection}
+  - {is: v_denote, from: e1_cond_far_2000, to: glossary}
+  - {is: v_denote, from: e1_cond_far_2000, to: place_system}
+  - {is: v_compose, from: following_text, to: e1_cond_far_2000, at: {count: 2000}}
   - {is: v_filter_of, from: {group: '{group}'}, to: e1}
   - {is: v_entry_of, from: '{cond}', to: e1}
   - {is: v_metric_of, from: e1, to: accuracy}
   - {is: v_metric_of, from: e1, to: order_robust_accuracy}
-  - {is: v_meaning_of, from: {model: {15b: model_15b, 4b: model_4b}, group: {G1: g_confusable, G2c: g_redef_conflict, G2k: g_redef_control, G3: g_sibling, G4: g_replaced}, cond: {none: {identifier: [no_channel]}, near: {identifier: [text_injection, definition_text, place_adjacent]}, glossary: {identifier: [text_injection, glossary, place_system]}, far-500: {identifier: [text_injection, glossary, place_system], value: [{axis: count, s: following_text, o: 500}]}, far-2000: {identifier: [text_injection, glossary, place_system], value: [{axis: count, s: following_text, o: 2000}]}}}, to: e1}
   - {is: v_file_of, from: 'e1_{model}.json', to: e1type}
   - {is: v_rows_of, from: [items], to: e1type}
-  - {is: v_axis_of, from: {model: {15b: Qwen2.5-1.5B-Instruct, 4b: Qwen3-4B}, group: [G2c, G2k], type: {rule: ['02', '03', '06', 09, '10', '11', '13', '15', '16', '17', '21', '23'], remap: ['01', '04', '05', '07', 08, '12', '14', '18', '19', '20', '22', '24']}, cond: [none, near]}, to: e1type}
+  - {is: v_axis_of, from: e1type_model, to: e1type}
+  - {is: v_value_of, from: e1type_model_15b, to: e1type_model}
+  - {is: v_spell, from: e1type_model_15b, to: Qwen2.5-1.5B-Instruct}
+  - {is: v_denote, from: e1type_model_15b, to: model_15b}
+  - {is: v_value_of, from: e1type_model_4b, to: e1type_model}
+  - {is: v_spell, from: e1type_model_4b, to: Qwen3-4B}
+  - {is: v_denote, from: e1type_model_4b, to: model_4b}
+  - {is: v_axis_of, from: e1type_group, to: e1type}
+  - {is: v_value_of, from: e1type_group_G2c, to: e1type_group}
+  - {is: v_denote, from: e1type_group_G2c, to: g_redef_conflict}
+  - {is: v_value_of, from: e1type_group_G2k, to: e1type_group}
+  - {is: v_denote, from: e1type_group_G2k, to: g_redef_control}
+  - {is: v_axis_of, from: e1type_type, to: e1type}
+  - {is: v_value_of, from: e1type_type_rule, to: e1type_type}
+  - {is: v_spell, from: e1type_type_rule, to: ['02', '03', '06', 09, '10', '11', '13', '15', '16', '17', '21', '23']}
+  - {is: v_denote, from: e1type_type_rule, to: rule_redefinition}
+  - {is: v_value_of, from: e1type_type_remap, to: e1type_type}
+  - {is: v_spell, from: e1type_type_remap, to: ['01', '04', '05', '07', 08, '12', '14', '18', '19', '20', '22', '24']}
+  - {is: v_denote, from: e1type_type_remap, to: remap_redefinition}
+  - {is: v_axis_of, from: e1type_cond, to: e1type}
+  - {is: v_value_of, from: e1type_cond_none, to: e1type_cond}
+  - {is: v_value_of, from: e1type_cond_near, to: e1type_cond}
   - {is: v_keys_of, from: {axis: type, pattern: '{group}-#'}, to: e1type}
   - {is: v_entry_of, from: '{cond}', to: e1type}
   - {is: v_metric_of, from: e1type, to: accuracy}
-  - {is: v_meaning_of, from: {model: {15b: model_15b, 4b: model_4b}, group: {G1: g_confusable, G2c: g_redef_conflict, G2k: g_redef_control, G3: g_sibling, G4: g_replaced}, type: {rule: rule_redefinition, remap: remap_redefinition}}, to: e1type}
   - {is: v_file_of, from: e1b_Qwen2.5-1.5B-Instruct.json, to: e1b}
   - {is: v_rows_of, from: [items], to: e1b}
-  - {is: v_axis_of, from: {group: [G2c, G2k], cond: [examples, def+examples]}, to: e1b}
+  - {is: v_axis_of, from: e1b_group, to: e1b}
+  - {is: v_value_of, from: e1b_group_G2c, to: e1b_group}
+  - {is: v_denote, from: e1b_group_G2c, to: g_redef_conflict}
+  - {is: v_value_of, from: e1b_group_G2k, to: e1b_group}
+  - {is: v_denote, from: e1b_group_G2k, to: g_redef_control}
+  - {is: v_axis_of, from: e1b_cond, to: e1b}
+  - {is: v_value_of, from: e1b_cond_examples, to: e1b_cond}
+  - {is: v_denote, from: e1b_cond_examples, to: text_injection}
+  - {is: v_denote, from: e1b_cond_examples, to: examples_only}
+  - {is: v_denote, from: e1b_cond_examples, to: place_adjacent}
+  - {is: v_value_of, from: e1b_cond_def_examples, to: e1b_cond}
+  - {is: v_denote, from: e1b_cond_def_examples, to: text_injection}
+  - {is: v_denote, from: e1b_cond_def_examples, to: def_and_examples}
+  - {is: v_denote, from: e1b_cond_def_examples, to: place_adjacent}
   - {is: v_filter_of, from: {group: '{group}'}, to: e1b}
   - {is: v_entry_of, from: '{cond}', to: e1b}
   - {is: v_metric_of, from: e1b, to: accuracy}
   - {is: v_metric_of, from: e1b, to: order_robust_accuracy}
-  - {is: v_meaning_of, from: {group: {G1: g_confusable, G2c: g_redef_conflict, G2k: g_redef_control, G3: g_sibling, G4: g_replaced}, cond: {examples: {identifier: [text_injection, examples_only, place_adjacent]}, def+examples: {identifier: [text_injection, def_and_examples, place_adjacent]}}}, to: e1b}
   - {is: v_file_of, from: 'e3_Qwen2.5-1.5B-Instruct_{run}.json', to: e3}
   - {is: v_rows_of, from: [items], to: e3}
-  - {is: v_axis_of, from: {run: [L8_defonly, L8_qa, L8_defqa, L14_defqa], group: [G2c, G2k], cond: [none, vec, near, near+vec]}, to: e3}
+  - {is: v_axis_of, from: e3_run, to: e3}
+  - {is: v_value_of, from: e3_run_L8_defonly, to: e3_run}
+  - {is: v_denote, from: e3_run_L8_defonly, to: single_layer_vector}
+  - {is: v_denote, from: e3_run_L8_defonly, to: teacher_recite}
+  - {is: v_compose, from: layer, to: e3_run_L8_defonly, at: {order: 8}}
+  - {is: v_value_of, from: e3_run_L8_qa, to: e3_run}
+  - {is: v_denote, from: e3_run_L8_qa, to: single_layer_vector}
+  - {is: v_denote, from: e3_run_L8_qa, to: teacher_examples}
+  - {is: v_compose, from: layer, to: e3_run_L8_qa, at: {order: 8}}
+  - {is: v_value_of, from: e3_run_L8_defqa, to: e3_run}
+  - {is: v_denote, from: e3_run_L8_defqa, to: single_layer_vector}
+  - {is: v_denote, from: e3_run_L8_defqa, to: teacher_both}
+  - {is: v_compose, from: layer, to: e3_run_L8_defqa, at: {order: 8}}
+  - {is: v_value_of, from: e3_run_L14_defqa, to: e3_run}
+  - {is: v_denote, from: e3_run_L14_defqa, to: single_layer_vector}
+  - {is: v_denote, from: e3_run_L14_defqa, to: teacher_both}
+  - {is: v_compose, from: layer, to: e3_run_L14_defqa, at: {order: 14}}
+  - {is: v_axis_of, from: e3_group, to: e3}
+  - {is: v_value_of, from: e3_group_G2c, to: e3_group}
+  - {is: v_denote, from: e3_group_G2c, to: g_redef_conflict}
+  - {is: v_value_of, from: e3_group_G2k, to: e3_group}
+  - {is: v_denote, from: e3_group_G2k, to: g_redef_control}
+  - {is: v_axis_of, from: e3_cond, to: e3}
+  - {is: v_value_of, from: e3_cond_none, to: e3_cond}
+  - {is: v_denote, from: e3_cond_none, to: no_channel}
+  - {is: v_value_of, from: e3_cond_vec, to: e3_cond}
+  - {is: v_denote, from: e3_cond_vec, to: single_layer_vector}
+  - {is: v_value_of, from: e3_cond_near, to: e3_cond}
+  - {is: v_denote, from: e3_cond_near, to: text_injection}
+  - {is: v_denote, from: e3_cond_near, to: definition_text}
+  - {is: v_denote, from: e3_cond_near, to: place_adjacent}
+  - {is: v_value_of, from: e3_cond_near_vec, to: e3_cond}
+  - {is: v_denote, from: e3_cond_near_vec, to: text_and_vector}
+  - {is: v_denote, from: e3_cond_near_vec, to: definition_text}
+  - {is: v_denote, from: e3_cond_near_vec, to: place_adjacent}
   - {is: v_filter_of, from: {group: '{group}'}, to: e3}
   - {is: v_entry_of, from: '{cond}', to: e3}
   - {is: v_metric_of, from: e3, to: accuracy}
   - {is: v_metric_of, from: e3, to: order_robust_accuracy}
-  - {is: v_meaning_of, from: {run: {L8_defonly: {identifier: [single_layer_vector, teacher_recite], value: [{axis: order, s: layer, o: 8}]}, L8_qa: {identifier: [single_layer_vector, teacher_examples], value: [{axis: order, s: layer, o: 8}]}, L8_defqa: {identifier: [single_layer_vector, teacher_both], value: [{axis: order, s: layer, o: 8}]}, L14_defqa: {identifier: [single_layer_vector, teacher_both], value: [{axis: order, s: layer, o: 14}]}}, group: {G1: g_confusable, G2c: g_redef_conflict, G2k: g_redef_control, G3: g_sibling, G4: g_replaced}, cond: {none: {identifier: [no_channel]}, vec: {identifier: [single_layer_vector]}, near: {identifier: [text_injection, definition_text, place_adjacent]}, near+vec: {identifier: [text_and_vector, definition_text, place_adjacent]}}}, to: e3}
   - {is: v_file_of, from: 'e3_Qwen2.5-1.5B-Instruct_{run}.json', to: e3type}
   - {is: v_rows_of, from: [items], to: e3type}
-  - {is: v_axis_of, from: {run: [L8_qa, L8_defqa], group: [G2c, G2k], type: {rule: ['02', '03', '06', 09, '10', '11', '13', '15', '16', '17', '21', '23'], remap: ['01', '04', '05', '07', 08, '12', '14', '18', '19', '20', '22', '24']}, cond: [vec]}, to: e3type}
+  - {is: v_axis_of, from: e3type_run, to: e3type}
+  - {is: v_value_of, from: e3type_run_L8_qa, to: e3type_run}
+  - {is: v_denote, from: e3type_run_L8_qa, to: single_layer_vector}
+  - {is: v_denote, from: e3type_run_L8_qa, to: teacher_examples}
+  - {is: v_compose, from: layer, to: e3type_run_L8_qa, at: {order: 8}}
+  - {is: v_value_of, from: e3type_run_L8_defqa, to: e3type_run}
+  - {is: v_denote, from: e3type_run_L8_defqa, to: single_layer_vector}
+  - {is: v_denote, from: e3type_run_L8_defqa, to: teacher_both}
+  - {is: v_compose, from: layer, to: e3type_run_L8_defqa, at: {order: 8}}
+  - {is: v_axis_of, from: e3type_group, to: e3type}
+  - {is: v_value_of, from: e3type_group_G2c, to: e3type_group}
+  - {is: v_denote, from: e3type_group_G2c, to: g_redef_conflict}
+  - {is: v_value_of, from: e3type_group_G2k, to: e3type_group}
+  - {is: v_denote, from: e3type_group_G2k, to: g_redef_control}
+  - {is: v_axis_of, from: e3type_type, to: e3type}
+  - {is: v_value_of, from: e3type_type_rule, to: e3type_type}
+  - {is: v_spell, from: e3type_type_rule, to: ['02', '03', '06', 09, '10', '11', '13', '15', '16', '17', '21', '23']}
+  - {is: v_denote, from: e3type_type_rule, to: rule_redefinition}
+  - {is: v_value_of, from: e3type_type_remap, to: e3type_type}
+  - {is: v_spell, from: e3type_type_remap, to: ['01', '04', '05', '07', 08, '12', '14', '18', '19', '20', '22', '24']}
+  - {is: v_denote, from: e3type_type_remap, to: remap_redefinition}
+  - {is: v_axis_of, from: e3type_cond, to: e3type}
+  - {is: v_value_of, from: e3type_cond_vec, to: e3type_cond}
+  - {is: v_denote, from: e3type_cond_vec, to: single_layer_vector}
   - {is: v_keys_of, from: {axis: type, pattern: '{group}-#'}, to: e3type}
   - {is: v_entry_of, from: '{cond}', to: e3type}
   - {is: v_metric_of, from: e3type, to: accuracy}
-  - {is: v_meaning_of, from: {run: {L8_defonly: {identifier: [single_layer_vector, teacher_recite], value: [{axis: order, s: layer, o: 8}]}, L8_qa: {identifier: [single_layer_vector, teacher_examples], value: [{axis: order, s: layer, o: 8}]}, L8_defqa: {identifier: [single_layer_vector, teacher_both], value: [{axis: order, s: layer, o: 8}]}, L14_defqa: {identifier: [single_layer_vector, teacher_both], value: [{axis: order, s: layer, o: 14}]}}, group: {G1: g_confusable, G2c: g_redef_conflict, G2k: g_redef_control, G3: g_sibling, G4: g_replaced}, type: {rule: rule_redefinition, remap: remap_redefinition}, cond: {none: {identifier: [no_channel]}, vec: {identifier: [single_layer_vector]}, near: {identifier: [text_injection, definition_text, place_adjacent]}, near+vec: {identifier: [text_and_vector, definition_text, place_adjacent]}}}, to: e3type}
   - {is: v_file_of, from: 'e3_Qwen2.5-1.5B-Instruct_{run}.json', to: e3loss}
   - {is: v_rows_of, from: [train], to: e3loss}
-  - {is: v_axis_of, from: {run: [L8_defonly, L8_qa, L8_defqa, L14_defqa]}, to: e3loss}
+  - {is: v_axis_of, from: e3loss_run, to: e3loss}
+  - {is: v_value_of, from: e3loss_run_L8_defonly, to: e3loss_run}
+  - {is: v_denote, from: e3loss_run_L8_defonly, to: single_layer_vector}
+  - {is: v_denote, from: e3loss_run_L8_defonly, to: teacher_recite}
+  - {is: v_compose, from: layer, to: e3loss_run_L8_defonly, at: {order: 8}}
+  - {is: v_value_of, from: e3loss_run_L8_qa, to: e3loss_run}
+  - {is: v_denote, from: e3loss_run_L8_qa, to: single_layer_vector}
+  - {is: v_denote, from: e3loss_run_L8_qa, to: teacher_examples}
+  - {is: v_compose, from: layer, to: e3loss_run_L8_qa, at: {order: 8}}
+  - {is: v_value_of, from: e3loss_run_L8_defqa, to: e3loss_run}
+  - {is: v_denote, from: e3loss_run_L8_defqa, to: single_layer_vector}
+  - {is: v_denote, from: e3loss_run_L8_defqa, to: teacher_both}
+  - {is: v_compose, from: layer, to: e3loss_run_L8_defqa, at: {order: 8}}
+  - {is: v_value_of, from: e3loss_run_L14_defqa, to: e3loss_run}
+  - {is: v_denote, from: e3loss_run_L14_defqa, to: single_layer_vector}
+  - {is: v_denote, from: e3loss_run_L14_defqa, to: teacher_both}
+  - {is: v_compose, from: layer, to: e3loss_run_L14_defqa, at: {order: 14}}
   - {is: v_entry_of, from: loss_last, to: e3loss}
   - {is: v_metric_of, from: e3loss, to: mean_value}
-  - {is: v_meaning_of, from: {run: {L8_defonly: {identifier: [single_layer_vector, teacher_recite], value: [{axis: order, s: layer, o: 8}]}, L8_qa: {identifier: [single_layer_vector, teacher_examples], value: [{axis: order, s: layer, o: 8}]}, L8_defqa: {identifier: [single_layer_vector, teacher_both], value: [{axis: order, s: layer, o: 8}]}, L14_defqa: {identifier: [single_layer_vector, teacher_both], value: [{axis: order, s: layer, o: 14}]}}}, to: e3loss}
   - {is: v_file_of, from: e3b_transfer.json, to: e3b}
-  - {is: v_axis_of, from: {fmt: [orig, fill, truth], group: [G2c, G2k], cond: [none, text, vec, vec_all]}, to: e3b}
+  - {is: v_axis_of, from: e3b_fmt, to: e3b}
+  - {is: v_value_of, from: e3b_fmt_orig, to: e3b_fmt}
+  - {is: v_denote, from: e3b_fmt_orig, to: fmt_yesno}
+  - {is: v_value_of, from: e3b_fmt_fill, to: e3b_fmt}
+  - {is: v_denote, from: e3b_fmt_fill, to: fmt_fill}
+  - {is: v_value_of, from: e3b_fmt_truth, to: e3b_fmt}
+  - {is: v_denote, from: e3b_fmt_truth, to: fmt_truth}
+  - {is: v_axis_of, from: e3b_group, to: e3b}
+  - {is: v_value_of, from: e3b_group_G2c, to: e3b_group}
+  - {is: v_denote, from: e3b_group_G2c, to: g_redef_conflict}
+  - {is: v_value_of, from: e3b_group_G2k, to: e3b_group}
+  - {is: v_denote, from: e3b_group_G2k, to: g_redef_control}
+  - {is: v_axis_of, from: e3b_cond, to: e3b}
+  - {is: v_value_of, from: e3b_cond_none, to: e3b_cond}
+  - {is: v_denote, from: e3b_cond_none, to: no_channel}
+  - {is: v_value_of, from: e3b_cond_text, to: e3b_cond}
+  - {is: v_denote, from: e3b_cond_text, to: text_injection}
+  - {is: v_denote, from: e3b_cond_text, to: def_and_examples}
+  - {is: v_denote, from: e3b_cond_text, to: place_adjacent}
+  - {is: v_value_of, from: e3b_cond_vec, to: e3b_cond}
+  - {is: v_denote, from: e3b_cond_vec, to: single_layer_vector}
+  - {is: v_denote, from: e3b_cond_vec, to: teacher_examples}
+  - {is: v_compose, from: layer, to: e3b_cond_vec, at: {order: 8}}
+  - {is: v_value_of, from: e3b_cond_vec_all, to: e3b_cond}
+  - {is: v_denote, from: e3b_cond_vec_all, to: single_layer_vector}
+  - {is: v_denote, from: e3b_cond_vec_all, to: teacher_examples}
+  - {is: v_compose, from: layer, to: e3b_cond_vec_all, at: {order: 8}}
+  - {is: v_compose, from: concept_vector, to: e3b_cond_vec_all, at: {count: 24}}
   - {is: v_filter_of, from: {fmt: '{fmt}', group: '{group}'}, to: e3b}
   - {is: v_entry_of, from: '{cond}', to: e3b}
   - {is: v_metric_of, from: e3b, to: accuracy}
   - {is: v_metric_of, from: e3b, to: order_robust_accuracy}
-  - {is: v_meaning_of, from: {fmt: {orig: fmt_yesno, fill: fmt_fill, truth: fmt_truth}, group: {G1: g_confusable, G2c: g_redef_conflict, G2k: g_redef_control, G3: g_sibling, G4: g_replaced}, cond: {none: {identifier: [no_channel]}, text: {identifier: [text_injection, def_and_examples, place_adjacent]}, vec: {identifier: [single_layer_vector, teacher_examples], value: [{axis: order, s: layer, o: 8}]}, vec_all: {identifier: [single_layer_vector, teacher_examples], value: [{axis: order, s: layer, o: 8}, {axis: count, s: concept_vector, o: 24}]}}}, to: e3b}
   - {is: v_file_of, from: e3b_transfer.json, to: e3b_g1}
-  - {is: v_axis_of, from: {cond: [none, vec_all]}, to: e3b_g1}
+  - {is: v_axis_of, from: e3b_g1_cond, to: e3b_g1}
+  - {is: v_value_of, from: e3b_g1_cond_none, to: e3b_g1_cond}
+  - {is: v_denote, from: e3b_g1_cond_none, to: no_channel}
+  - {is: v_value_of, from: e3b_g1_cond_vec_all, to: e3b_g1_cond}
+  - {is: v_denote, from: e3b_g1_cond_vec_all, to: single_layer_vector}
+  - {is: v_compose, from: concept_vector, to: e3b_g1_cond_vec_all, at: {count: 24}}
   - {is: v_filter_of, from: {group: G1}, to: e3b_g1}
   - {is: v_entry_of, from: '{cond}', to: e3b_g1}
   - {is: v_metric_of, from: e3b_g1, to: accuracy}
   - {is: v_metric_of, from: e3b_g1, to: logit_margin}
-  - {is: v_meaning_of, from: {cond: {none: {identifier: [no_channel]}, vec_all: {identifier: [single_layer_vector], value: [{axis: count, s: concept_vector, o: 24}]}}}, to: e3b_g1}
   - {is: v_file_of, from: e3c_generation.json, to: e3c}
-  - {is: v_axis_of, from: {group: [G2c, G2k], cond: [none, text, vec]}, to: e3c}
+  - {is: v_axis_of, from: e3c_group, to: e3c}
+  - {is: v_value_of, from: e3c_group_G2c, to: e3c_group}
+  - {is: v_denote, from: e3c_group_G2c, to: g_redef_conflict}
+  - {is: v_value_of, from: e3c_group_G2k, to: e3c_group}
+  - {is: v_denote, from: e3c_group_G2k, to: g_redef_control}
+  - {is: v_axis_of, from: e3c_cond, to: e3c}
+  - {is: v_value_of, from: e3c_cond_none, to: e3c_cond}
+  - {is: v_denote, from: e3c_cond_none, to: no_channel}
+  - {is: v_denote, from: e3c_cond_none, to: fmt_free}
+  - {is: v_value_of, from: e3c_cond_text, to: e3c_cond}
+  - {is: v_denote, from: e3c_cond_text, to: text_injection}
+  - {is: v_denote, from: e3c_cond_text, to: def_and_examples}
+  - {is: v_denote, from: e3c_cond_text, to: fmt_free}
+  - {is: v_value_of, from: e3c_cond_vec, to: e3c_cond}
+  - {is: v_denote, from: e3c_cond_vec, to: single_layer_vector}
+  - {is: v_denote, from: e3c_cond_vec, to: teacher_examples}
+  - {is: v_denote, from: e3c_cond_vec, to: fmt_free}
   - {is: v_filter_of, from: {group: '{group}'}, to: e3c}
   - {is: v_entry_of, from: '{cond}', to: e3c}
   - {is: v_metric_of, from: e3c, to: judged_accuracy}
-  - {is: v_meaning_of, from: {group: {G1: g_confusable, G2c: g_redef_conflict, G2k: g_redef_control, G3: g_sibling, G4: g_replaced}, cond: {none: {identifier: [no_channel, fmt_free]}, text: {identifier: [text_injection, def_and_examples, fmt_free]}, vec: {identifier: [single_layer_vector, teacher_examples, fmt_free]}}}, to: e3c}
   - {is: v_file_of, from: e4_modifier_composition.json, to: e4}
-  - {is: v_axis_of, from: {pair: {p1: 甲種/乙種, p2: 青/赤, p3: 一類/二類}, split: [train, test], cond: [none, text, vec]}, to: e4}
+  - {is: v_axis_of, from: e4_pair, to: e4}
+  - {is: v_value_of, from: e4_pair_p1, to: e4_pair}
+  - {is: v_spell, from: e4_pair_p1, to: 甲種/乙種}
+  - {is: v_value_of, from: e4_pair_p2, to: e4_pair}
+  - {is: v_spell, from: e4_pair_p2, to: 青/赤}
+  - {is: v_value_of, from: e4_pair_p3, to: e4_pair}
+  - {is: v_spell, from: e4_pair_p3, to: 一類/二類}
+  - {is: v_axis_of, from: e4_split, to: e4}
+  - {is: v_value_of, from: e4_split_train, to: e4_split}
+  - {is: v_denote, from: e4_split_train, to: seen_genus}
+  - {is: v_value_of, from: e4_split_test, to: e4_split}
+  - {is: v_denote, from: e4_split_test, to: unseen_genus}
+  - {is: v_axis_of, from: e4_cond, to: e4}
+  - {is: v_value_of, from: e4_cond_none, to: e4_cond}
+  - {is: v_denote, from: e4_cond_none, to: no_channel}
+  - {is: v_value_of, from: e4_cond_text, to: e4_cond}
+  - {is: v_denote, from: e4_cond_text, to: text_injection}
+  - {is: v_denote, from: e4_cond_text, to: definition_text}
+  - {is: v_value_of, from: e4_cond_vec, to: e4_cond}
+  - {is: v_denote, from: e4_cond_vec, to: single_layer_vector}
+  - {is: v_denote, from: e4_cond_vec, to: modifier}
   - {is: v_filter_of, from: {pair: '{pair}', split: '{split}'}, to: e4}
   - {is: v_entry_of, from: '{cond}', to: e4}
   - {is: v_metric_of, from: e4, to: accuracy}
-  - {is: v_meaning_of, from: {split: {train: seen_genus, test: unseen_genus}, cond: {none: {identifier: [no_channel]}, text: {identifier: [text_injection, definition_text]}, vec: {identifier: [single_layer_vector, modifier]}}}, to: e4}
   - {is: v_file_of, from: 'e5_{model}.json', to: e5}
-  - {is: v_axis_of, from: {model: {15b: Qwen2.5-1.5B-Instruct, 4b: Qwen3-4B}, group: [G2c, G2k], cond: [near, rename_semi, rename_opaque, inline, near+inline]}, to: e5}
+  - {is: v_axis_of, from: e5_model, to: e5}
+  - {is: v_value_of, from: e5_model_15b, to: e5_model}
+  - {is: v_spell, from: e5_model_15b, to: Qwen2.5-1.5B-Instruct}
+  - {is: v_denote, from: e5_model_15b, to: model_15b}
+  - {is: v_value_of, from: e5_model_4b, to: e5_model}
+  - {is: v_spell, from: e5_model_4b, to: Qwen3-4B}
+  - {is: v_denote, from: e5_model_4b, to: model_4b}
+  - {is: v_axis_of, from: e5_group, to: e5}
+  - {is: v_value_of, from: e5_group_G2c, to: e5_group}
+  - {is: v_denote, from: e5_group_G2c, to: g_redef_conflict}
+  - {is: v_value_of, from: e5_group_G2k, to: e5_group}
+  - {is: v_denote, from: e5_group_G2k, to: g_redef_control}
+  - {is: v_axis_of, from: e5_cond, to: e5}
+  - {is: v_value_of, from: e5_cond_near, to: e5_cond}
+  - {is: v_denote, from: e5_cond_near, to: text_injection}
+  - {is: v_denote, from: e5_cond_near, to: definition_text}
+  - {is: v_denote, from: e5_cond_near, to: place_adjacent}
+  - {is: v_value_of, from: e5_cond_rename_semi, to: e5_cond}
+  - {is: v_denote, from: e5_cond_rename_semi, to: text_injection}
+  - {is: v_denote, from: e5_cond_rename_semi, to: semi_renaming}
+  - {is: v_denote, from: e5_cond_rename_semi, to: place_adjacent}
+  - {is: v_value_of, from: e5_cond_rename_opaque, to: e5_cond}
+  - {is: v_denote, from: e5_cond_rename_opaque, to: text_injection}
+  - {is: v_denote, from: e5_cond_rename_opaque, to: opaque_renaming}
+  - {is: v_denote, from: e5_cond_rename_opaque, to: place_adjacent}
+  - {is: v_value_of, from: e5_cond_inline, to: e5_cond}
+  - {is: v_denote, from: e5_cond_inline, to: text_injection}
+  - {is: v_denote, from: e5_cond_inline, to: inline_expansion}
+  - {is: v_value_of, from: e5_cond_near_inline, to: e5_cond}
+  - {is: v_denote, from: e5_cond_near_inline, to: text_injection}
+  - {is: v_denote, from: e5_cond_near_inline, to: definition_text}
+  - {is: v_denote, from: e5_cond_near_inline, to: inline_expansion}
+  - {is: v_denote, from: e5_cond_near_inline, to: place_adjacent}
   - {is: v_filter_of, from: {group: '{group}'}, to: e5}
   - {is: v_entry_of, from: '{cond}', to: e5}
   - {is: v_metric_of, from: e5, to: accuracy}
-  - {is: v_meaning_of, from: {model: {15b: model_15b, 4b: model_4b}, group: {G1: g_confusable, G2c: g_redef_conflict, G2k: g_redef_control, G3: g_sibling, G4: g_replaced}, cond: {near: {identifier: [text_injection, definition_text, place_adjacent]}, rename_semi: {identifier: [text_injection, semi_renaming, place_adjacent]}, rename_opaque: {identifier: [text_injection, opaque_renaming, place_adjacent]}, inline: {identifier: [text_injection, inline_expansion]}, near+inline: {identifier: [text_injection, definition_text, inline_expansion, place_adjacent]}}}, to: e5}
   - {is: v_file_of, from: e6_cross_use_L8.json, to: e6_L8}
   - {is: v_rows_of, from: ['{vec}'], to: e6_L8}
-  - {is: v_axis_of, from: {vec: {none: none, defonly: results/e3_Qwen2.5-1.5B-Instruct_L8_defonly.pt, qa: results/e3_Qwen2.5-1.5B-Instruct_L8_qa.pt}}, to: e6_L8}
+  - {is: v_axis_of, from: e6_L8_vec, to: e6_L8}
+  - {is: v_value_of, from: e6_L8_vec_none, to: e6_L8_vec}
+  - {is: v_spell, from: e6_L8_vec_none, to: none}
+  - {is: v_denote, from: e6_L8_vec_none, to: no_channel}
+  - {is: v_value_of, from: e6_L8_vec_defonly, to: e6_L8_vec}
+  - {is: v_spell, from: e6_L8_vec_defonly, to: results/e3_Qwen2.5-1.5B-Instruct_L8_defonly.pt}
+  - {is: v_denote, from: e6_L8_vec_defonly, to: teacher_recite}
+  - {is: v_value_of, from: e6_L8_vec_qa, to: e6_L8_vec}
+  - {is: v_spell, from: e6_L8_vec_qa, to: results/e3_Qwen2.5-1.5B-Instruct_L8_qa.pt}
+  - {is: v_denote, from: e6_L8_vec_qa, to: teacher_examples}
   - {is: v_entry_of, from: define_choice, to: e6_L8}
   - {is: v_metric_of, from: e6_L8, to: accuracy}
   - {is: v_metric_of, from: e6_L8, to: logit_margin}
-  - {is: v_meaning_of, from: {vec: {none: {identifier: [no_channel]}, defonly: {identifier: [teacher_recite]}, qa: {identifier: [teacher_examples]}}}, to: e6_L8}
   - {is: v_file_of, from: e6_cross_use_L8.json, to: e6_L8_nll}
   - {is: v_rows_of, from: ['{vec}'], to: e6_L8_nll}
-  - {is: v_axis_of, from: {vec: {none: none, defonly: results/e3_Qwen2.5-1.5B-Instruct_L8_defonly.pt, qa: results/e3_Qwen2.5-1.5B-Instruct_L8_qa.pt}}, to: e6_L8_nll}
+  - {is: v_axis_of, from: e6_L8_nll_vec, to: e6_L8_nll}
+  - {is: v_value_of, from: e6_L8_nll_vec_none, to: e6_L8_nll_vec}
+  - {is: v_spell, from: e6_L8_nll_vec_none, to: none}
+  - {is: v_value_of, from: e6_L8_nll_vec_defonly, to: e6_L8_nll_vec}
+  - {is: v_spell, from: e6_L8_nll_vec_defonly, to: results/e3_Qwen2.5-1.5B-Instruct_L8_defonly.pt}
+  - {is: v_value_of, from: e6_L8_nll_vec_qa, to: e6_L8_nll_vec}
+  - {is: v_spell, from: e6_L8_nll_vec_qa, to: results/e3_Qwen2.5-1.5B-Instruct_L8_qa.pt}
   - {is: v_entry_of, from: define_nll, to: e6_L8_nll}
   - {is: v_metric_of, from: e6_L8_nll, to: mean_value}
   - {is: v_file_of, from: 'e6_cross_use_defqa_{layer}.json', to: e6_defqa}
   - {is: v_rows_of, from: ['results/e3_Qwen2.5-1.5B-Instruct_{layer}_defqa.pt'], to: e6_defqa}
-  - {is: v_axis_of, from: {layer: [L8, L14]}, to: e6_defqa}
+  - {is: v_axis_of, from: e6_defqa_layer, to: e6_defqa}
+  - {is: v_value_of, from: e6_defqa_layer_L8, to: e6_defqa_layer}
+  - {is: v_denote, from: e6_defqa_layer_L8, to: teacher_both}
+  - {is: v_compose, from: layer, to: e6_defqa_layer_L8, at: {order: 8}}
+  - {is: v_value_of, from: e6_defqa_layer_L14, to: e6_defqa_layer}
+  - {is: v_denote, from: e6_defqa_layer_L14, to: teacher_both}
+  - {is: v_compose, from: layer, to: e6_defqa_layer_L14, at: {order: 14}}
   - {is: v_entry_of, from: define_choice, to: e6_defqa}
   - {is: v_metric_of, from: e6_defqa, to: accuracy}
   - {is: v_metric_of, from: e6_defqa, to: logit_margin}
-  - {is: v_meaning_of, from: {layer: {L8: {identifier: [teacher_both], value: [{axis: order, s: layer, o: 8}]}, L14: {identifier: [teacher_both], value: [{axis: order, s: layer, o: 14}]}}}, to: e6_defqa}
   - {is: v_file_of, from: 'e6_cross_use_defqa_{layer}.json', to: e6_defqa_nll}
   - {is: v_rows_of, from: ['results/e3_Qwen2.5-1.5B-Instruct_{layer}_defqa.pt'], to: e6_defqa_nll}
-  - {is: v_axis_of, from: {layer: [L8, L14]}, to: e6_defqa_nll}
+  - {is: v_axis_of, from: e6_defqa_nll_layer, to: e6_defqa_nll}
+  - {is: v_value_of, from: e6_defqa_nll_layer_L8, to: e6_defqa_nll_layer}
+  - {is: v_value_of, from: e6_defqa_nll_layer_L14, to: e6_defqa_nll_layer}
   - {is: v_entry_of, from: define_nll, to: e6_defqa_nll}
   - {is: v_metric_of, from: e6_defqa_nll, to: mean_value}
   - {is: v_file_of, from: e7_Qwen3-4B.json, to: e7}
-  - {is: v_axis_of, from: {group: {redef: [G2c], new: [G3, G4]}, cond: [sys1, sys1-far500, sys1-far2000, gl5, gl15, gl55-first, gl55-last]}, to: e7}
+  - {is: v_axis_of, from: e7_group, to: e7}
+  - {is: v_value_of, from: e7_group_redef, to: e7_group}
+  - {is: v_spell, from: e7_group_redef, to: [G2c]}
+  - {is: v_denote, from: e7_group_redef, to: g_redef_conflict}
+  - {is: v_value_of, from: e7_group_new, to: e7_group}
+  - {is: v_spell, from: e7_group_new, to: [G3, G4]}
+  - {is: v_denote, from: e7_group_new, to: group_new_word}
+  - {is: v_axis_of, from: e7_cond, to: e7}
+  - {is: v_value_of, from: e7_cond_sys1, to: e7_cond}
+  - {is: v_denote, from: e7_cond_sys1, to: relevant_definitions}
+  - {is: v_denote, from: e7_cond_sys1, to: place_system}
+  - {is: v_value_of, from: e7_cond_sys1_far500, to: e7_cond}
+  - {is: v_denote, from: e7_cond_sys1_far500, to: relevant_definitions}
+  - {is: v_denote, from: e7_cond_sys1_far500, to: place_system}
+  - {is: v_compose, from: following_text, to: e7_cond_sys1_far500, at: {count: 500}}
+  - {is: v_value_of, from: e7_cond_sys1_far2000, to: e7_cond}
+  - {is: v_denote, from: e7_cond_sys1_far2000, to: relevant_definitions}
+  - {is: v_denote, from: e7_cond_sys1_far2000, to: place_system}
+  - {is: v_compose, from: following_text, to: e7_cond_sys1_far2000, at: {count: 2000}}
+  - {is: v_value_of, from: e7_cond_gl5, to: e7_cond}
+  - {is: v_denote, from: e7_cond_gl5, to: glossary}
+  - {is: v_denote, from: e7_cond_gl5, to: other_definitions}
+  - {is: v_compose, from: preceding_definitions_set, to: e7_cond_gl5, at: {count: {'le': 4}}}
+  - {is: v_value_of, from: e7_cond_gl15, to: e7_cond}
+  - {is: v_denote, from: e7_cond_gl15, to: glossary}
+  - {is: v_denote, from: e7_cond_gl15, to: other_definitions}
+  - {is: v_compose, from: preceding_definitions_set, to: e7_cond_gl15, at: {count: {'le': 14}}}
+  - {is: v_value_of, from: e7_cond_gl55_first, to: e7_cond}
+  - {is: v_denote, from: e7_cond_gl55_first, to: glossary}
+  - {is: v_denote, from: e7_cond_gl55_first, to: glossary_head}
+  - {is: v_compose, from: following_definitions_set, to: e7_cond_gl55_first, at: {count: 54}}
+  - {is: v_value_of, from: e7_cond_gl55_last, to: e7_cond}
+  - {is: v_denote, from: e7_cond_gl55_last, to: glossary}
+  - {is: v_denote, from: e7_cond_gl55_last, to: other_definitions}
+  - {is: v_compose, from: preceding_definitions_set, to: e7_cond_gl55_last, at: {count: 54}}
   - {is: v_filter_of, from: {group: '{group}'}, to: e7}
   - {is: v_entry_of, from: '{cond}', to: e7}
   - {is: v_metric_of, from: e7, to: accuracy}
-  - {is: v_meaning_of, from: {group: {redef: g_redef_conflict, new: group_new_word}, cond: {sys1: {identifier: [relevant_definitions, place_system]}, sys1-far500: {identifier: [relevant_definitions, place_system], value: [{axis: count, s: following_text, o: 500}]}, sys1-far2000: {identifier: [relevant_definitions, place_system], value: [{axis: count, s: following_text, o: 2000}]}, gl5: {identifier: [glossary, other_definitions], value: [{axis: count, s: preceding_definitions_set, o: {le: 4}}]}, gl15: {identifier: [glossary, other_definitions], value: [{axis: count, s: preceding_definitions_set, o: {le: 14}}]}, gl55-first: {identifier: [glossary, glossary_head], value: [{axis: count, s: following_definitions_set, o: 54}]}, gl55-last: {identifier: [glossary, other_definitions], value: [{axis: count, s: preceding_definitions_set, o: 54}]}}}, to: e7}
   - {is: v_file_of, from: e7_Qwen3-4B.json, to: e7b}
-  - {is: v_axis_of, from: {cond: [fill500-def, fill2000-def, gl55-pos14, gl55-pos27, gl55-pos41, pre-ordinary19, pre-redef23]}, to: e7b}
+  - {is: v_axis_of, from: e7b_cond, to: e7b}
+  - {is: v_value_of, from: e7b_cond_fill500_def, to: e7b_cond}
+  - {is: v_denote, from: e7b_cond_fill500_def, to: filler_text}
+  - {is: v_compose, from: preceding_text, to: e7b_cond_fill500_def, at: {count: 500}}
+  - {is: v_value_of, from: e7b_cond_fill2000_def, to: e7b_cond}
+  - {is: v_denote, from: e7b_cond_fill2000_def, to: filler_text}
+  - {is: v_compose, from: preceding_text, to: e7b_cond_fill2000_def, at: {count: 2000}}
+  - {is: v_value_of, from: e7b_cond_gl55_pos14, to: e7b_cond}
+  - {is: v_denote, from: e7b_cond_gl55_pos14, to: other_definitions}
+  - {is: v_compose, from: preceding_definitions_set, to: e7b_cond_gl55_pos14, at: {count: 14}}
+  - {is: v_value_of, from: e7b_cond_gl55_pos27, to: e7b_cond}
+  - {is: v_denote, from: e7b_cond_gl55_pos27, to: other_definitions}
+  - {is: v_compose, from: preceding_definitions_set, to: e7b_cond_gl55_pos27, at: {count: 27}}
+  - {is: v_value_of, from: e7b_cond_gl55_pos41, to: e7b_cond}
+  - {is: v_denote, from: e7b_cond_gl55_pos41, to: other_definitions}
+  - {is: v_compose, from: preceding_definitions_set, to: e7b_cond_gl55_pos41, at: {count: 41}}
+  - {is: v_value_of, from: e7b_cond_pre_ordinary19, to: e7b_cond}
+  - {is: v_denote, from: e7b_cond_pre_ordinary19, to: ordinary_definitions}
+  - {is: v_compose, from: preceding_definitions_set, to: e7b_cond_pre_ordinary19, at: {count: 19}}
+  - {is: v_value_of, from: e7b_cond_pre_redef23, to: e7b_cond}
+  - {is: v_denote, from: e7b_cond_pre_redef23, to: other_redefinitions}
+  - {is: v_compose, from: preceding_definitions_set, to: e7b_cond_pre_redef23, at: {count: 23}}
   - {is: v_filter_of, from: {group: G2c}, to: e7b}
   - {is: v_entry_of, from: '{cond}', to: e7b}
   - {is: v_metric_of, from: e7b, to: accuracy}
-  - {is: v_meaning_of, from: {cond: {fill500-def: {identifier: [filler_text], value: [{axis: count, s: preceding_text, o: 500}]}, fill2000-def: {identifier: [filler_text], value: [{axis: count, s: preceding_text, o: 2000}]}, gl55-pos14: {identifier: [other_definitions], value: [{axis: count, s: preceding_definitions_set, o: 14}]}, gl55-pos27: {identifier: [other_definitions], value: [{axis: count, s: preceding_definitions_set, o: 27}]}, gl55-pos41: {identifier: [other_definitions], value: [{axis: count, s: preceding_definitions_set, o: 41}]}, pre-ordinary19: {identifier: [ordinary_definitions], value: [{axis: count, s: preceding_definitions_set, o: 19}]}, pre-redef23: {identifier: [other_redefinitions], value: [{axis: count, s: preceding_definitions_set, o: 23}]}}}, to: e7b}
   - {is: v_file_of, from: e8_L2-13_d0.001.json, to: e8}
   - {is: v_rows_of, from: [apply], to: e8}
-  - {is: v_axis_of, from: {group: [G2c, G2k], cond: [none, vec]}, to: e8}
+  - {is: v_axis_of, from: e8_group, to: e8}
+  - {is: v_value_of, from: e8_group_G2c, to: e8_group}
+  - {is: v_denote, from: e8_group_G2c, to: g_redef_conflict}
+  - {is: v_value_of, from: e8_group_G2k, to: e8_group}
+  - {is: v_denote, from: e8_group_G2k, to: g_redef_control}
+  - {is: v_axis_of, from: e8_cond, to: e8}
+  - {is: v_value_of, from: e8_cond_none, to: e8_cond}
+  - {is: v_denote, from: e8_cond_none, to: no_channel}
+  - {is: v_value_of, from: e8_cond_vec, to: e8_cond}
+  - {is: v_denote, from: e8_cond_vec, to: multi_layer_vector}
+  - {is: v_denote, from: e8_cond_vec, to: teacher_both}
+  - {is: v_compose, from: layer, to: e8_cond_vec, at: {order: {'between': [2, 13]}}}
   - {is: v_filter_of, from: {group: '{group}'}, to: e8}
   - {is: v_entry_of, from: '{cond}', to: e8}
   - {is: v_metric_of, from: e8, to: accuracy}
   - {is: v_metric_of, from: e8, to: order_robust_accuracy}
-  - {is: v_meaning_of, from: {group: {G2c: g_redef_conflict, G2k: g_redef_control}, cond: {none: {identifier: [no_channel]}, vec: {identifier: [multi_layer_vector, teacher_both], value: [{axis: order, s: layer, o: {between: [2, 13]}}]}}}, to: e8}
   - {is: v_file_of, from: e8_L2-13_d0.001.json, to: e8def}
   - {is: v_rows_of, from: [define], to: e8def}
-  - {is: v_axis_of, from: {cond: [none, vec]}, to: e8def}
+  - {is: v_axis_of, from: e8def_cond, to: e8def}
+  - {is: v_value_of, from: e8def_cond_none, to: e8def_cond}
+  - {is: v_denote, from: e8def_cond_none, to: no_channel}
+  - {is: v_denote, from: e8def_cond_none, to: usage_define_paraphrase}
+  - {is: v_value_of, from: e8def_cond_vec, to: e8def_cond}
+  - {is: v_denote, from: e8def_cond_vec, to: multi_layer_vector}
+  - {is: v_denote, from: e8def_cond_vec, to: teacher_both}
+  - {is: v_denote, from: e8def_cond_vec, to: usage_define_paraphrase}
   - {is: v_entry_of, from: '{cond}', to: e8def}
   - {is: v_metric_of, from: e8def, to: accuracy}
   - {is: v_metric_of, from: e8def, to: order_robust_accuracy}
   - {is: v_metric_of, from: e8def, to: logit_margin}
-  - {is: v_meaning_of, from: {cond: {none: {identifier: [no_channel, usage_define_paraphrase]}, vec: {identifier: [multi_layer_vector, teacher_both, usage_define_paraphrase]}}}, to: e8def}
   - {is: v_file_of, from: e8_L2-13_d0.001.json, to: e8nll}
   - {is: v_rows_of, from: [define], to: e8nll}
-  - {is: v_axis_of, from: {cond: [nll]}, to: e8nll}
+  - {is: v_axis_of, from: e8nll_cond, to: e8nll}
+  - {is: v_value_of, from: e8nll_cond_nll, to: e8nll_cond}
+  - {is: v_denote, from: e8nll_cond_nll, to: multi_layer_vector}
+  - {is: v_denote, from: e8nll_cond_nll, to: teacher_both}
+  - {is: v_denote, from: e8nll_cond_nll, to: usage_recite}
   - {is: v_entry_of, from: '{cond}', to: e8nll}
   - {is: v_metric_of, from: e8nll, to: mean_value}
-  - {is: v_meaning_of, from: {cond: {nll: {identifier: [multi_layer_vector, teacher_both, usage_recite]}}}, to: e8nll}
   - {is: v_file_of, from: e8_L2-13_d0.001.json, to: e8loss}
   - {is: v_rows_of, from: [train], to: e8loss}
-  - {is: v_axis_of, from: {cond: [loss_last]}, to: e8loss}
+  - {is: v_axis_of, from: e8loss_cond, to: e8loss}
+  - {is: v_value_of, from: e8loss_cond_loss_last, to: e8loss_cond}
+  - {is: v_denote, from: e8loss_cond_loss_last, to: multi_layer_vector}
+  - {is: v_denote, from: e8loss_cond_loss_last, to: teaching}
   - {is: v_entry_of, from: '{cond}', to: e8loss}
   - {is: v_metric_of, from: e8loss, to: mean_value}
-  - {is: v_meaning_of, from: {cond: {loss_last: {identifier: [multi_layer_vector, teaching]}}}, to: e8loss}
   - {is: v_file_of, from: 'e9_{model}.json', to: e9}
-  - {is: v_axis_of, from: {model: {15b: Qwen2.5-1.5B-Instruct, 4b: Qwen3-4B}, group: [G2c, G2k], type: {rule: 規則, remap: 付け替え}, cond: [direct, cot]}, to: e9}
+  - {is: v_axis_of, from: e9_model, to: e9}
+  - {is: v_value_of, from: e9_model_15b, to: e9_model}
+  - {is: v_spell, from: e9_model_15b, to: Qwen2.5-1.5B-Instruct}
+  - {is: v_denote, from: e9_model_15b, to: model_15b}
+  - {is: v_value_of, from: e9_model_4b, to: e9_model}
+  - {is: v_spell, from: e9_model_4b, to: Qwen3-4B}
+  - {is: v_denote, from: e9_model_4b, to: model_4b}
+  - {is: v_axis_of, from: e9_group, to: e9}
+  - {is: v_value_of, from: e9_group_G2c, to: e9_group}
+  - {is: v_denote, from: e9_group_G2c, to: g_redef_conflict}
+  - {is: v_value_of, from: e9_group_G2k, to: e9_group}
+  - {is: v_denote, from: e9_group_G2k, to: g_redef_control}
+  - {is: v_axis_of, from: e9_type, to: e9}
+  - {is: v_value_of, from: e9_type_rule, to: e9_type}
+  - {is: v_spell, from: e9_type_rule, to: 規則}
+  - {is: v_denote, from: e9_type_rule, to: rule_redefinition}
+  - {is: v_value_of, from: e9_type_remap, to: e9_type}
+  - {is: v_spell, from: e9_type_remap, to: 付け替え}
+  - {is: v_denote, from: e9_type_remap, to: remap_redefinition}
+  - {is: v_axis_of, from: e9_cond, to: e9}
+  - {is: v_value_of, from: e9_cond_direct, to: e9_cond}
+  - {is: v_denote, from: e9_cond_direct, to: text_injection}
+  - {is: v_denote, from: e9_cond_direct, to: definition_text}
+  - {is: v_denote, from: e9_cond_direct, to: place_adjacent}
+  - {is: v_denote, from: e9_cond_direct, to: single_pass}
+  - {is: v_value_of, from: e9_cond_cot, to: e9_cond}
+  - {is: v_denote, from: e9_cond_cot, to: text_injection}
+  - {is: v_denote, from: e9_cond_cot, to: definition_text}
+  - {is: v_denote, from: e9_cond_cot, to: place_adjacent}
+  - {is: v_denote, from: e9_cond_cot, to: scratchpad}
   - {is: v_filter_of, from: {group: '{group}', type: '{type}'}, to: e9}
   - {is: v_entry_of, from: '{cond}', to: e9}
   - {is: v_metric_of, from: e9, to: accuracy}
   - {is: v_metric_of, from: e9, to: order_robust_accuracy}
-  - {is: v_meaning_of, from: {model: {15b: model_15b, 4b: model_4b}, group: {G2c: g_redef_conflict, G2k: g_redef_control}, type: {rule: rule_redefinition, remap: remap_redefinition}, cond: {direct: {identifier: [text_injection, definition_text, place_adjacent, single_pass]}, cot: {identifier: [text_injection, definition_text, place_adjacent, scratchpad]}}}, to: e9}
 
   # ===== 観察。s と o は測定値で、p は大きさを比べる動詞（is: observation）
   - {is: v_refer, from: o_e1_redef_below_new_adjacent, to: {is: v_come_before, from: e1.4b.G2c.near.accuracy, to: e1.4b.G3.near.accuracy}}

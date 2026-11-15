@@ -86,7 +86,7 @@ KINDS = {"measurement_family": "families", "observation": "observations", "hypot
          "decision": "decisions", "backlog_item": "backlog"}   # この検査が中身を確かめる種類
 
 
-LITERAL = {"ja", "holds", "pre", "post", "result_file", "row_collection", "row_filter", "row_keys", "condition_entry", "axis", "note"}
+LITERAL = {"ja", "holds", "pre", "post", "result_file", "row_collection", "row_filter", "row_keys", "condition_entry", "passage", "note", "val"}
 
 
 def qualify(x, local, dom):
@@ -117,7 +117,7 @@ def merge_domain(name, O):
     return D
 
 
-MANY = {"scope", "evidence", "against", "limitation", "supersedes", "basis", "tests", "metric"}   # 検査が並びとして読む関係
+MANY = {"scope", "evidence", "against", "limitation", "supersedes", "basis", "tests", "metric", "any"}   # 検査が並びとして読む関係
 
 
 def gather(D, T, name):
@@ -139,6 +139,10 @@ def gather(D, T, name):
             continue
         if "at" in f:
             subj, rel, val = f.get("to"), f.get("from"), (f["at"] or {}).get("count")
+            if subj in I:
+                I[subj].setdefault("_at", []).extend({"axis": a, "s": q(rel), "o": o} for a, o in (f["at"] or {}).items())
+            if val is None:
+                continue
         elif verb == "v_refer" and isinstance(f.get("to"), dict):
             P = f["to"]
             subj = f.get("from")
@@ -153,7 +157,8 @@ def gather(D, T, name):
         else:
             sides = [pos for pos in ("from", "to") if isinstance(f.get(pos), str) and f[pos] in I
                      and T.is_a(T.I.get(f[pos]), T.end(verb, pos))]
-            if len(sides) != 1:
+            sides = sides[:1]   # 両方の位置に個体があれば、始点についての事実
+            if not sides:
                 err(f"{where}: 動詞 {verb} のどちらの位置にも、その位置の種類に当たる個体がない（または両方にある）")
                 continue
             other = {"from": "to", "to": "from"}[sides[0]]
@@ -165,16 +170,47 @@ def gather(D, T, name):
         I[subj].setdefault(rel, []).append(val)
     for subj, x in I.items():
         for rel, vs in list(x.items()):
-            if isinstance(vs, list) and rel not in T.G["individuals"] and rel not in ("o",):
+            if isinstance(vs, list) and rel not in T.G["individuals"] and rel not in ("o", "_at"):
                 if rel not in MANY and len(vs) > 1:
                     err(f"{name} {subj}: 関係 {rel} の事実が2つ以上ある")
                 x[rel] = vs if rel in MANY else vs[0]
+
+
+def axes_of(I, T):
+    """測定の族の軸と軸の値（個体）を、族ごとの形に並べる。expand が読む形:
+    axis: {軸の字: [値の字] | {値の字: 書き方}}、meaning: {軸の字: {値の字: 指すもの | {identifier, value}}}。
+    並びは、個体を書いた順。"""
+    kind = lambda x: x.get("is")
+    for aid, a in I.items():
+        if not T.is_a(kind(a), "family_axis"):
+            continue
+        fam = I.get(a.get("measurement_family"))
+        if fam is None or not T.is_a(kind(fam), "measurement_family"):
+            err(f"exp {aid}: 測定の族の軸が、どの族の部分でもない")
+            continue
+        vals = [(vid, v) for vid, v in I.items() if T.is_a(kind(v), "axis_value") and v.get("family_axis") == aid]
+        if not vals:
+            err(f"exp {aid}: 測定の族の軸に、値がない")
+        label = lambda x: (x.get("val") or {}).get("text")
+        al = label(a)
+        if any("passage" in v for _, v in vals):
+            fam.setdefault("axis", {})[al] = {label(v): v.get("passage", label(v)) for _, v in vals}
+        else:
+            fam.setdefault("axis", {})[al] = [label(v) for _, v in vals]
+        for vid, v in vals:
+            ids, at = v.get("any", []), v.get("_at", [])
+            if isinstance(ids, str):
+                ids = [ids]
+            if ids or at:
+                m = ids[0] if len(ids) == 1 and not at else {"identifier": ids} | ({"value": at} if at else {})
+                fam.setdefault("meaning", {}).setdefault(al, {})[label(v)] = m
 
 
 def load_domain(name, D, T):
     """領域の個体を種類ごとに分ける。個体についての関係は、事実（動詞の個体）から集める（gather）。
     仮説・決定・残り項目の個体は、状態を表す下位の種類に属する。この検査が中身を確かめない種類の個体は、種類と項目だけを確かめる。"""
     gather(D, T, name)
+    axes_of(D["individuals"], T)
     for k in D:
         if k not in T.G["domain"] and k != "_local":
             err(f"{name}: 語 {k} が、grammar.domain に書かれていない")
@@ -188,7 +224,7 @@ def load_domain(name, D, T):
             continue
         for ax, v in (x.get("val") or {}).items():
             T.check_value(ax, v, f"{name} {iid}")
-        T.check_counts(kind, {f: v for f, v in x.items() if f not in T.G["individuals"]}, f"{name} {iid}")
+        T.check_counts(kind, {f: v for f, v in x.items() if f not in T.G["individuals"] and f != "_at"}, f"{name} {iid}")
         base = [k for k in KINDS if T.is_a(kind, k)]
         if not base:
             continue
@@ -742,16 +778,10 @@ def check_meaning(val, T, where):
         if val not in T.N and val not in T.I:
             err(f"{where}: ノード {val} が未定義")
         return
-    for k in val:
-        if not T.field_ok("meaning", k):
-            err(f"{where}: 項目 {k} は、種類 meaning の個体に書けない")
     for nid in val.get("identifier", []):
         if nid not in T.N:
             err(f"{where}: ノード {nid} が未定義")
     for v in val.get("value", []):
-        for k in v:
-            if not T.field_ok("value", k):
-                err(f"{where}: 項目 {k} は、種類 value の個体に書けない")
         if v.get("s") not in T.N:
             err(f"{where}: 値の s {v.get('s')} が未定義")
         T.check_value(v.get("axis"), v.get("o"), where)
