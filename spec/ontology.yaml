@@ -38,6 +38,7 @@ base:
 axes:
   count: {ja: 個数, source: any, value: number}   # どの関係についても「いくつと結ばれるか」を見られる
   ratio: {ja: 割合, source: part, value: number}
+  amount: {ja: 量, source: any, value: number}   # 質の大きさ。単位は質の種類が決める
   order: {ja: 順番, source: after, value: number}
   text: {ja: 文字列, source: refer, value: literal}
   truth: {ja: 真偽, source: refer, value: [true, false]}
@@ -287,6 +288,7 @@ individuals:
   core: {is: domain, ja: 核}
   run: {is: domain, ja: 実行}
   exp: {is: domain, ja: 実験}
+  subj: {is: domain, ja: 題材}
   # ===== 規則の変数。規則の中で、個体やノードの代わりに置く。
   var1: {is: variable, ja: 変数1}
   var2: {is: variable, ja: 変数2}
@@ -375,6 +377,7 @@ facts:
   - {is: v_use, from: run, to: core}
   - {is: v_use, from: exp, to: core}
   - {is: v_use, from: exp, to: run}
+  - {is: v_use, from: subj, to: core}
   - {is: v_assume, from: part_transitive, to: {is: part, from: var1, to: var3}}
   - {is: v_assume, from: part_transitive, to: {is: part, from: var3, to: var2}}
   - {is: v_derive, from: part_transitive, to: {is: part, from: var1, to: var2}}

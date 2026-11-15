@@ -1,0 +1,120 @@
+# 領域 subj（題材）。実験で定義を与える語を、体系制御言語で書く。体系（ontology.yaml）の一部で、同じ検査にかかる。
+# 書き方は exp.yaml と同じ。core を使う。固有のもの（曜日、地域、品目）は個体で書き、種類の式の中から参照する。
+domain: subj
+nodes:
+  # ===== 動詞 =====
+  v_contract: {ja: 契約を結ぶ, extends: occurrent, from: agent, to: agent, holds: [{is: depend, from: new, to: from}, {is: depend, from: new, to: to}]}
+  v_employ: {ja: 雇用する, extends: v_contract, from: organization, to: person}
+  v_place: {ja: 発注する, extends: v_depend, from: order, to: agent}
+  v_store: {ja: 保管される, extends: v_compose, from: goods, to: warehouse}
+  v_allocate: {ja: 引き当てられる, extends: v_depend, from: order, to: goods}
+  v_pay: {ja: 入金する, extends: v_perform, from: agent, to: payment}
+  v_approve: {ja: 承認する, extends: v_perform, from: agent, to: approval}
+  v_classify: {ja: 商品分類で分類される, extends: v_compose, from: goods, to: category}
+  v_live: {ja: 住む, extends: v_depend, from: person, to: address}
+  v_weekday_of: {ja: 曜日である, extends: v_measure, from: weekday, to: day}
+  v_located: {ja: 所在する, extends: v_compose, from: land, to: region}
+  v_begin: {ja: 始まる, extends: occurrent, from: process, to: any, holds: [{is: depend, from: from, to: to}, {is: after, from: from, to: to}]}
+  v_end: {ja: 終わる, extends: occurrent, from: process, to: any, holds: [{is: depend, from: from, to: to}, {is: after, from: to, to: from}]}
+  v_grant: {ja: 権限を与えられる, extends: v_depend, from: permission, to: user}
+
+  # ===== 量。値は軸 amount の数 =====
+  age: {ja: 年齢（歳）, extends: magnitude, mod: {of: [v_depend, from], with: person}, axis: amount}
+  height: {ja: 身長（センチ）, extends: magnitude, mod: {of: [v_depend, from], with: person_age_neg}, axis: amount}
+  monthly_fee: {ja: 月額（円）, extends: magnitude, mod: {of: [v_depend, from], with: plan}, axis: amount}
+  population: {ja: 人口（人）, extends: magnitude, mod: {of: [v_depend, from], with: municipality}, axis: amount}
+  days_overdue: {ja: 納期を過ぎた日数, extends: magnitude, mod: {of: [v_measure, from], with: delivery}, axis: amount}
+  days_since: {ja: 注文から経過した日数, extends: magnitude, mod: {of: [v_measure, from], with: order}, axis: amount}
+  hour: {ja: 時刻（時）, extends: magnitude, mod: {of: [v_measure, from], with: day}, axis: amount}
+  profit_gap: {ja: 利益から目標額を引いた額（円）, extends: magnitude, mod: {of: [v_depend, from], with: account}, axis: amount}
+  lateness: {ja: 開始時刻に席にいなかった, extends: quality, mod: {of: [v_depend, from], with: attendance}}
+
+  # ===== もの =====
+  agent: {ja: 主体, extends: independent_continuant, mod: {of: [v_perform, from]}}
+  person: {ja: 人, extends: agent, mod: {of: [v_compose, to], with: agent, neg: true}}
+  person_age_neg: {ja: 年齢を問わない人, extends: person, mod: {of: [v_depend, to], with: age, quant: any}}
+  organization: {ja: 組織, extends: agent, mod: {of: [v_compose, to], with: person, at: {count: {gt: 1}}}}
+  corporation: {ja: 法人, extends: organization, mod: {of: [v_contract, from]}}
+  customer: {ja: 顧客, extends: corporation, mod: {of: [v_contract, to]}}
+  employee: {ja: 社員, extends: person, mod: {of: [v_employ, to]}}
+  minor: {ja: 未成年, extends: person, mod: {of: [v_depend, to], with: age, at: {amount: {lt: 25}}}}
+  adult: {ja: 大人, extends: person_age_neg, mod: {of: [v_depend, to], with: height, at: {amount: {ge: 150}}}}
+  address: {ja: 住所, extends: information_entity, mod: {of: [v_refer, from], with: land}}
+  family_base: {ja: 住所を持つ人, extends: person, mod: {of: [v_live, from], with: address}}
+  family: {ja: 家族, extends: family_base, mod: {of: [v_live, from], with: address, quant: all}}
+  user: {ja: 利用者, extends: person, mod: {of: [v_grant, to]}}
+  permission: {ja: 権限, extends: realizable_entity, mod: {of: [v_grant, from]}}
+  setting_permission: {ja: システムの設定を変更する権限, extends: permission, mod: {of: [v_depend, from], with: system_setting}}
+  system_setting: {ja: システムの設定, extends: information_entity, mod: {of: [v_compose, from], with: artifact}}
+  admin: {ja: 管理者, extends: user, mod: {of: [v_grant, to], with: setting_permission}}
+
+  goods: {ja: 商品, extends: independent_continuant, mod: {of: [v_allocate, to]}}
+  warehouse: {ja: 倉庫, extends: independent_continuant, mod: {of: [v_store, to]}}
+  stored_goods: {ja: 倉庫にある商品, extends: goods, mod: {of: [v_store, from], with: warehouse}}
+  stock: {ja: 在庫, extends: stored_goods, mod: {of: [v_allocate, to], with: order, neg: true}}
+  category: {ja: 商品分類, extends: information_entity, mod: {of: [v_classify, to]}}
+  fruit: {ja: 果物, extends: goods, mod: {of: [v_classify, from], with: fruit_category}}
+  fish: {ja: 魚類, extends: goods, mod: {of: [v_classify, from], with: seafood_category}}
+  fruit_category: {ja: 分類「果物」, extends: category, mod: {of: [v_classify, to], with: tomato}}
+  seafood_category: {ja: 分類「魚類」, extends: category, mod: {of: [v_classify, to], with: shrimp}}
+
+  order: {ja: 注文, extends: information_entity, mod: {of: [v_place, from]}}
+  large_order: {ja: 大口注文, extends: order, mod: {of: [v_allocate, from], with: goods, at: {count: {ge: 10}}}}
+  recent_order: {ja: 直近一年間の注文, extends: order, mod: {of: [v_measure, to], with: days_since, at: {amount: {le: 365}}}}
+  dormant_agent: {ja: 直近一年間に取引がない相手, extends: agent, mod: {of: [v_place, to], with: recent_order, neg: true}}
+  new_order: {ja: 新規, extends: order, mod: {of: [v_place, from], with: dormant_agent}}
+  payment: {ja: 入金, extends: process, mod: {of: [v_pay, to]}}
+  money: {ja: 金額（円）, extends: magnitude, mod: {of: [v_measure, from], with: process}, axis: amount}
+  sales: {ja: 売上, extends: money, mod: {of: [v_measure, from], with: payment}}
+  plan: {ja: プラン, extends: information_entity, mod: {of: [v_refer, from], with: goods}}
+  free_plan: {ja: 無料, extends: plan, mod: {of: [v_depend, to], with: monthly_fee, at: {amount: {le: 500}}}}
+  account: {ja: 収支, extends: information_entity, mod: {of: [v_refer, from], with: money}}
+  deficit: {ja: 赤字, extends: account, mod: {of: [v_depend, to], with: profit_gap, at: {amount: {lt: 0}}}}
+  delivery: {ja: 納品, extends: process, mod: {of: [v_involve, from], with: goods}}
+  inspection: {ja: 検収, extends: process, mod: {of: [v_stage, from], with: delivery}}
+  approval: {ja: 承認, extends: process, mod: {of: [v_approve, to]}}
+  approved_inspection: {ja: 承認まで済んだ検収, extends: inspection, mod: {of: [v_stage, to], with: approval}}
+  completed: {ja: 完了, extends: quality, mod: {of: [v_measure, from], with: approved_inspection}}
+  delay: {ja: 遅延, extends: delivery, mod: {of: [v_measure, to], with: days_overdue, at: {amount: {ge: 3}}}}
+  attendance: {ja: 出席の記録, extends: information_entity, mod: {of: [v_refer, from], with: person}}
+  absence: {ja: 欠席, extends: attendance, mod: {of: [v_depend, to], with: lateness}}
+
+  # ===== 場所 =====
+  land: {ja: 土地, extends: independent_continuant, mod: {of: [v_located, from]}}
+  region: {ja: 地方, extends: independent_continuant, mod: {of: [v_located, to]}}
+  municipality: {ja: 市町村, extends: region, mod: {of: [v_compose, from], with: region}}
+  urban: {ja: 都市部, extends: municipality, mod: {of: [v_depend, to], with: population, at: {amount: {ge: 10000}}}}
+  domestic: {ja: 国内, extends: land, mod: {of: [v_located, from], with: honshu}}
+
+  # ===== 時間 =====
+  day: {ja: 日, extends: process, mod: {of: [v_weekday_of, to]}}
+  business_day: {ja: 営業日, extends: day, mod: {of: [v_weekday_of, to], with: sunday, neg: true}}
+  weekday_base: {ja: 日曜でない日, extends: day, mod: {of: [v_weekday_of, to], with: sunday, neg: true, quant: any}}
+  weekday_day: {ja: 平日, extends: weekday_base, mod: {of: [v_weekday_of, to], with: monday, neg: true}}
+  weekday: {ja: 曜日, extends: quality, mod: {of: [v_weekday_of, from]}}
+  week_span: {ja: 七日間, extends: process, mod: {of: [v_stage, to], with: day, at: {count: 7}}}
+  week: {ja: 週, extends: week_span, mod: {of: [v_begin, from], with: thursday_day}}
+  thursday_day: {ja: 木曜の日, extends: day, mod: {of: [v_weekday_of, to], with: thursday}}
+  time_span: {ja: 時間帯, extends: process, mod: {of: [v_stage, from], with: day}}
+  morning_base: {ja: 9時に始まる時間帯, extends: time_span, mod: {of: [v_begin, from], with: hour, at: {amount: 9}}}
+  morning: {ja: 午前, extends: morning_base, mod: {of: [v_end, from], with: hour, at: {amount: 13}}}
+  night_base: {ja: 15時に始まる時間帯, extends: time_span, mod: {of: [v_begin, from], with: hour, at: {amount: 15}}}
+  night: {ja: 夜間, extends: night_base, mod: {of: [v_end, from], with: hour, at: {amount: 6}}}
+
+individuals:
+  sunday: {is: weekday, ja: 日曜}
+  monday: {is: weekday, ja: 月曜}
+  thursday: {is: weekday, ja: 木曜}
+  honshu: {is: region, ja: 本州}
+  tomato: {is: goods, ja: トマト}
+  sweet_potato: {is: goods, ja: さつまいも}
+  shrimp: {is: goods, ja: エビ}
+  squid: {is: goods, ja: イカ}
+  shellfish: {is: goods, ja: 貝}
+
+facts:
+  - {is: v_classify, from: tomato, to: fruit_category}
+  - {is: v_classify, from: sweet_potato, to: fruit_category}
+  - {is: v_classify, from: shrimp, to: seafood_category}
+  - {is: v_classify, from: squid, to: seafood_category}
+  - {is: v_classify, from: shellfish, to: seafood_category}

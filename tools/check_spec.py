@@ -130,6 +130,7 @@ def merge_domain(name, O):
     if dom not in O["domains"]:
         err(f"{name}: 領域 {dom} が domains に書かれていない")
     local = set(D.get("nodes") or {})
+    D.setdefault("individuals", {})
     for nid, n in (D.get("nodes") or {}).items():
         O["nodes"][f"{dom}.{nid}"] = qualify(n, local, dom)
     D["individuals"] = {iid: qualify(x, local, dom) for iid, x in D["individuals"].items()}
@@ -397,7 +398,7 @@ class Ontology:
     def __init__(self, O):
         self.O = O
         self.B, self.AX, self.N, self.G = O["base"], O["axes"], O["nodes"], O["grammar"]
-        self.I, self.Idom = {}, None   # 個体の識別子 → 種類、個体が書かれた領域
+        self.I, self.Idom, self.Isubj = {}, None, {}   # 個体の識別子 → 種類、個体が書かれた領域
         for nid, n in self.N.items():  # mod は単一。中では並びとして扱う（限定の数は法則 single の規則が確かめる）
             if isinstance(n.get("extends"), list):
                 err(f"{nid}: extends は並べない。AND は「属する」（is）で限定して書く")
@@ -604,7 +605,7 @@ class Ontology:
             for r in self.refs(nid):
                 add("refer", nid, r)
         for i in self.I:
-            add("domain", i, self.Idom if i not in (self.O.get("individuals") or {}) else "core")
+            add("domain", i, "core" if i in (self.O.get("individuals") or {}) else self.Isubj.get(i, self.Idom))
         for aid, a in self.AX.items():
             add("exists", aid)
             for v in a["value"] if isinstance(a["value"], list) else []:
@@ -829,7 +830,7 @@ class Ontology:
                 for axis, v in (m.get("at") or {}).items():
                     self.check_value(axis, v, where)
                     if axis in AX and AX[axis]["source"] != "any" and AX[axis]["source"] not in self.base_of(verb):
-                        err(f"{where}: 軸 {axis} は基礎の関係 {AX[axis]['from']} を抽象にしたものだが、{verb} はそれを使っていない")
+                        err(f"{where}: 軸 {axis} は基礎の関係 {AX[axis]['source']} を抽象にしたものだが、{verb} はそれを使っていない")
             if not ("holds" in n or "pre" in n):
                 key = yaml.safe_dump({k: n[k] for k in ("extends", "from", "to", "of", "mod", "neg", "val", "cmp", "axis") if k in n}, sort_keys=True)
                 if key in forms:
@@ -1143,9 +1144,10 @@ def main():
     ap.add_argument("--show")
     ap.add_argument("--expr")
     args = ap.parse_args()
-    for f in ("ontology.yaml", "exp.yaml"):
+    for f in ("ontology.yaml", "subj.yaml", "exp.yaml"):
         natural_language_only_in_ja(f, yaml.safe_load(open(SPEC / f)))
     O = load("ontology.yaml")
+    S = merge_domain("subj.yaml", O)
     D = merge_domain("exp.yaml", O)
     T = Ontology(O)
     T.Idom = D["domain"]
@@ -1162,6 +1164,13 @@ def main():
             err(f"ontology.yaml {iid}: 個体は {{is: 種類, ja}} で書き、種類はノード")
     T.I |= {iid: x.get("is") for iid, x in core.items() if x.get("is") in T.N}
     gather({"domain": "core", "_local": set(), "individuals": core, "facts": O.get("facts")}, T, "ontology.yaml")
+    subj = {iid: dict(x) for iid, x in S["individuals"].items()}
+    for iid, x in subj.items():
+        if iid in T.I or iid in T.N or iid in core:
+            err(f"subj.yaml {iid}: 個体の識別子が、ほかの個体かノードと重なっている")
+    T.I |= {iid: x.get("is") for iid, x in subj.items() if x.get("is") in T.N}
+    T.Isubj = {iid: "subj" for iid in subj}
+    gather({"domain": "subj", "_local": S["_local"], "individuals": subj, "facts": S.get("facts")}, T, "subj.yaml")
     T.check()
     T.check_grammar()
     T.check_domains()
