@@ -107,6 +107,8 @@ def train_vector(r, inj, label, definition, steps, lr, objective="def", qa=None)
         msk_b[i, :k, 0] = torch.tensor(mask, dtype=torch.float32)
     losses = []
     chunk = 4  # 一度に流す例の数。浅い層ほど逆伝播が深くメモリを使うので、小分けにして勾配を足し合わせる
+    if width > 256:
+        chunk = 1  # 概念式の定義は長く、右パディングで全行が広がるので1例ずつ（損失は例ごとの和なので結果は変わらない）
     for _ in range(steps):
         opt.zero_grad()
         total = 0.0
