@@ -54,7 +54,7 @@ def load(name):
 
 # ---------------------------------------------------------------- 概念の体系
 # 法則のうち、この検査が当てはめるもの / 実行の検査（run_spec.py）が当てはめるもの
-LAWS_HERE = {"truth_distinct", "inherit", "narrow", "acyclic", "monotone", "specific"}
+LAWS_HERE = {"truth_distinct", "inherit", "narrow", "acyclic", "monotone", "specific", "unique_in_domain", "layered"}
 LAWS_RUN = {"transitive", "antisymmetric", "asymmetric", "end_exists", "step", "frame", "halt"}
 
 
@@ -72,14 +72,14 @@ class Ontology:
             if sect not in G["grammar"]:
                 err(f"grammar: 節 {sect} が、grammar.grammar に書かれていない")
             for w in words:
-                if w not in self.N:
+                if self.resolve(w, sect) is None:
                     err(f"grammar.{sect}: 語 {w} がノードになっていない")
         L = self.O["laws"]
         for lid, l in L.items():
             for k in l:
                 if k not in G["laws"]:
                     err(f"laws.{lid}: 語 {k} が、grammar.laws に書かれていない")
-            if l.get("scope") not in self.N or l.get("scope") not in G["grammar"]:
+            if self.resolve(l.get("scope"), l.get("scope")) is None or l.get("scope") not in G["grammar"]:
                 err(f"laws.{lid}: 掛かる節 {l.get('scope')} が、ノードでないか、grammar.grammar に書かれていない")
             if lid not in LAWS_HERE | LAWS_RUN:
                 err(f"laws.{lid}: 当てはめる検査がない")
@@ -105,7 +105,7 @@ class Ontology:
         for k, v in self.O["runtime"].items():
             if k not in G["runtime"]:
                 err(f"runtime: 語 {k} が、grammar.runtime に書かれていない")
-            elif v not in self.N or not self.is_a(v, k) and not (k == "pre_rule" and v in G["logic"]):
+            elif self.resolve(v, "run") is None or not self.is_a(self.resolve(v, "run"), self.resolve(k, "run")) and not (k == "pre_rule" and v in G["logic"]):
                 err(f"runtime.{k}: 値 {v} が、{k} の下位のノードでない")
         for k, v in self.O["syntax"].items():
             if k not in G["syntax"]:
@@ -134,6 +134,63 @@ class Ontology:
             for k in r:
                 if k not in G["records"]:
                     err(f"records.{rid}: 語 {k} が、grammar.records に書かれていない")
+
+    def resolve(self, word, dom):
+        """領域を書かない語を、ノードの識別子に解決する。その領域、core、ほかの領域にただ1つ、の順に探す。"""
+        if f"{dom}.{word}" in self.N:
+            return f"{dom}.{word}"
+        if word in self.N:
+            return word
+        found = [i for i in self.N if i.split(".", 1)[-1] == word]
+        return found[0] if len(found) == 1 else None
+
+    def domain(self, nid):
+        return nid.split(".", 1)[0] if "." in nid else "core"
+
+    def refs(self, nid):
+        """ノードの式が参照しているノード。"""
+        n, out = self.N[nid], set(self.parents(nid))
+        for k in ("from", "to", "new_kind"):
+            out.add(n.get(k))
+        for k in ("of", "form"):
+            if k in n:
+                out.add(n[k][0])
+        for m in n.get("mod") or []:
+            if isinstance(m, dict):
+                out |= {m["of"][0], m.get("with")}
+            else:
+                out.add(m)
+        for x in n.get("cmp") or []:
+            out |= {x.get("a"), x.get("b")}
+        return {r for r in out if r in self.N}
+
+    def check_domains(self):
+        D = self.O["domains"]
+        for did, d in D.items():
+            for k in d:
+                if k not in self.G["domains"]:
+                    err(f"domains.{did}: 語 {k} が、grammar.domains に書かれていない")
+            for u in d.get("uses", []):
+                if u not in D:
+                    err(f"domains.{did}: 使う領域 {u} が未定義")
+            seen, todo = set(), list(d.get("uses", []))
+            while todo:
+                u = todo.pop()
+                if u == did:
+                    err(f"domains.{did}: uses が循環している")
+                    break
+                if u in D and u not in seen:
+                    seen.add(u)
+                    todo += D[u].get("uses", [])
+        for nid in self.N:
+            dom = self.domain(nid)
+            if dom not in D:
+                err(f"{nid}: 領域 {dom} が domains に書かれていない")
+                continue
+            ok = {dom} | set(D[dom].get("uses", []))
+            for r in self.refs(nid):  # 法則 layered
+                if self.domain(r) not in ok:
+                    err(f"{nid}: 領域 {dom} から、使うと書かれていない領域のノード {r} を参照している")
 
     def parents(self, nid):
         """上位。extends に並べたものは AND（そのすべてに当てはまる）。"""
@@ -301,9 +358,10 @@ class Ontology:
         seen, forms = {}, {}
         for nid, n in N.items():
             ja = n.get("ja")
-            if not ja or ja in seen:
-                err(f"{nid}: 表示語がない、または {seen.get(ja)} と重複（同音異義）")
-            seen[ja] = nid
+            key = (self.domain(nid), ja)  # 法則 unique_in_domain
+            if not ja or key in seen:
+                err(f"{nid}: 表示語がない、または {seen.get(key)} と重複（同音異義）")
+            seen[key] = nid
             if nid in TOPS:
                 if set(n) != {"ja", "gloss"}:
                     err(f"{nid}: 最上位は gloss だけを持つ")
@@ -679,6 +737,7 @@ def main():
     T.check_records()
     T.check_grammar()
     T.check_hierarchy()
+    T.check_domains()
     M, C = load("measurements.yaml"), load("claims.yaml")
     values, meanings = expand(M, T)
     check_claims(C, values, T)

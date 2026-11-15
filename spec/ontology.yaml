@@ -32,6 +32,13 @@ base:
 
 # 法則（公理）。体系が、証明なしに置くもの。ja は表示で、当てはめるのは実行器。
 # scope は、法則が掛かる節。どの法則も、検査（check_spec.py）か実行の検査（run_spec.py）のどちらかが当てはめる。
+# 名前空間（領域）。識別子は「領域.名前」と書く。領域を書かない識別子は core に属する。
+# 表示語と名前は、同じ領域の中では重複できない。領域が違えば重複してよい（法則 unique_in_domain）。
+# ノードは、自分の領域か、その領域が uses に挙げた領域のノードだけを参照できる（法則 layered）。循環する uses は書けない。
+domains:
+  core: {ja: 核, uses: []}
+  run: {ja: 実行, uses: [core]}
+
 laws:
   transitive: {ja: 推移的, scope: base}
   antisymmetric: {ja: 反対称的, scope: base}
@@ -43,6 +50,8 @@ laws:
   acyclic: {ja: 定義は自分自身を参照しない, scope: nodes}
   monotone: {ja: 階層を降りるたびに限定が増える, scope: nodes}
   specific: {ja: より具体的な概念があればその下に置く, scope: nodes}
+  unique_in_domain: {ja: 表示語は同じ領域の中で重複しない, scope: domains}
+  layered: {ja: 参照できるのは自分の領域と使う領域だけ, scope: domains}
   step: {ja: 前の状態が成り立つとき後の状態に置き換える, scope: run}
   frame: {ja: 動詞が触れなかった文は変わらない, scope: run}
   halt: {ja: 当てはまる動詞がなければ止まる, scope: run}
@@ -420,13 +429,13 @@ nodes:
   is: {ja: 属する, extends: p, to: kind}
   individuals: {ja: 個体, form: [is, from]}
   facts: {ja: 個体についての文, extends: sentence, mod: [{of: [v_refer, from], with: individuals}]}
-  state: {ja: 個体の状態, extends: information_entity, mod: [{of: [v_compose, to], with: facts}]}
+  run.state: {ja: 状態, extends: information_entity, mod: [{of: [v_compose, to], with: facts}]}
   rewrite_rule: {ja: 書き換えの規則, extends: definition, mod: [{of: [v_refer, from], with: post}]}
-  v_execute: {ja: 実行する, extends: occurrent, from: continuant, to: state, new_kind: state,
+  run.v_execute: {ja: 実行する, extends: occurrent, from: continuant, to: run.state, new_kind: run.state,
               pre: ["not exists(new)"], post: ["exists(new)", "after(new, to)"]}
-  executor: {ja: 実行器, extends: role, mod: [{of: [v_depend, from], with: rewrite_rule}, {of: [v_execute, from]}]}
-  halted: {ja: 止まった状態, extends: state, mod: [{of: [v_execute, to], neg: true}]}
-  run: {ja: 実行の記録, extends: information_entity, mod: [{of: [v_refer, from], with: v_execute}]}
+  run.executor: {ja: 実行器, extends: role, mod: [{of: [v_depend, from], with: rewrite_rule}, {of: [run.v_execute, from]}]}
+  run.halted: {ja: 止まった状態, extends: run.state, mod: [{of: [run.v_execute, to], neg: true}]}
+  run.run: {ja: 実行の記録, extends: information_entity, mod: [{of: [v_refer, from], with: run.v_execute}]}
 
   # ===== 文法の語のうち、上に無かったもの。文法の語は、すべてノードの識別子である =====
   new: {ja: 第三の位置, extends: position, mod: [{of: [v_refer, from], with: third_participant}]}
@@ -437,7 +446,7 @@ nodes:
   nodes: {ja: ノードの節, extends: section, mod: [{of: [v_refer, from], with: concept_expression}]}
   source: {ja: もとになる関係の指定, extends: holds, mod: [{of: [v_compose, from], with: axes}]}
   key: {ja: 記録の識別子の指定, extends: expression_part, mod: [{of: [v_refer, from], with: identifier}, {of: [v_compose, from], with: records}]}
-  steps: {ja: 歩みの並び, extends: information_entity, mod: [{of: [v_refer, from], with: v_execute, at: {count: {ge: 1}}}]}
+  run.steps: {ja: 歩みの並び, extends: information_entity, mod: [{of: [v_refer, from], with: run.v_execute, at: {count: {ge: 1}}}]}
   expect: {ja: 期待する文, extends: facts, val: {truth: true}}
   function: {ja: 関数, extends: value, mod: [{of: [v_refer, from], with: value}]}
   logic: {ja: 述語論理の語, extends: word, mod: [{of: [v_refer, from], with: sentence}]}
@@ -448,25 +457,30 @@ nodes:
   number: {ja: 数の値, extends: value, mod: [{of: [v_refer, from], with: magnitude}]}
   literal: {ja: 文字の値, extends: value, mod: [{of: [v_refer, from], with: word}]}
 
-  # ===== 実行の戦略と実行時の意味論。実行の検査（run_spec.py）は、runtime の節に書かれた選択に従う =====
-  strategy: {ja: 実行の戦略, extends: definition, mod: [{of: [v_refer, from], with: v_execute}]}
-  runtime: {ja: 実行時の意味論の節, extends: section, mod: [{of: [v_refer, from], with: strategy}]}
-  world: {ja: 書かれていない文の扱い, extends: strategy, mod: [{of: [v_refer, from], with: facts}]}
-  closed_world: {ja: 書かれていない文は成り立たない, extends: world, val: {truth: false}}
-  pre_rule: {ja: 前の状態の確かめ方, extends: strategy, mod: [{of: [v_refer, from], with: pre}]}
-  post_rule: {ja: 後の状態の作り方, extends: strategy, mod: [{of: [v_refer, from], with: post}]}
-  replace: {ja: 否定の文を取り除き肯定の文を加える, extends: post_rule, mod: [{of: [v_refer, from], with: not}]}
-  law_check: {ja: 法則を確かめる時点, extends: strategy, mod: [{of: [v_refer, from], with: laws}]}
-  every_step: {ja: 1歩ごとに確かめる, extends: law_check, mod: [{of: [v_come_after, from], with: steps}]}
-  binding: {ja: 位置への個体の割り当て方, extends: strategy, mod: [{of: [v_refer, from], with: individuals}]}
-  distinct: {ja: 位置ごとに別の個体を割り当てる, extends: binding, cmp: [{axis: text, a: from, b: to, rel: differ}]}
-  choice: {ja: 当てはまる動詞の選び方, extends: strategy, mod: [{of: [v_refer, from], with: steps}]}
-  recorded: {ja: 実行の記録が選び方を与える, extends: choice, mod: [{of: [v_depend, from], with: run}]}
-  progress: {ja: 当てはまるとみなす条件, extends: strategy, mod: [{of: [v_refer, from], with: halted}]}
-  changes_state: {ja: 前の状態が成り立ち後の状態がまだ成り立っていない, extends: progress, mod: [{of: [v_come_before, from], with: post}]}
+  # ===== 実行の戦略と実行時の意味論。実行の検査（run_spec.py）は、run.runtime の節に書かれた選択に従う =====
+  run.strategy: {ja: 実行の戦略, extends: definition, mod: [{of: [v_refer, from], with: run.v_execute}]}
+  run.runtime: {ja: 実行時の意味論の節, extends: section, mod: [{of: [v_refer, from], with: run.strategy}]}
+  run.world: {ja: 書かれていない文の扱い, extends: run.strategy, mod: [{of: [v_refer, from], with: facts}]}
+  run.closed_world: {ja: 書かれていない文は成り立たない, extends: run.world, val: {truth: false}}
+  run.pre_rule: {ja: 前の状態の確かめ方, extends: run.strategy, mod: [{of: [v_refer, from], with: pre}]}
+  run.post_rule: {ja: 後の状態の作り方, extends: run.strategy, mod: [{of: [v_refer, from], with: post}]}
+  run.replace: {ja: 否定の文を取り除き肯定の文を加える, extends: run.post_rule, mod: [{of: [v_refer, from], with: not}]}
+  run.law_check: {ja: 法則を確かめる時点, extends: run.strategy, mod: [{of: [v_refer, from], with: laws}]}
+  run.every_step: {ja: 1歩ごとに確かめる, extends: run.law_check, mod: [{of: [v_come_after, from], with: run.steps}]}
+  run.binding: {ja: 位置への個体の割り当て方, extends: run.strategy, mod: [{of: [v_refer, from], with: individuals}]}
+  run.distinct: {ja: 位置ごとに別の個体を割り当てる, extends: run.binding, cmp: [{axis: text, a: from, b: to, rel: differ}]}
+  run.choice: {ja: 当てはまる動詞の選び方, extends: run.strategy, mod: [{of: [v_refer, from], with: run.steps}]}
+  run.recorded: {ja: 実行の記録が選び方を与える, extends: run.choice, mod: [{of: [v_depend, from], with: run.run}]}
+  run.progress: {ja: 当てはまるとみなす条件, extends: run.strategy, mod: [{of: [v_refer, from], with: run.halted}]}
+  run.changes_state: {ja: 前の状態が成り立ち後の状態がまだ成り立っていない, extends: run.progress, mod: [{of: [v_come_before, from], with: post}]}
   # ===== 構文糖衣。短い書き方と、それが表すものの対応 =====
   syntax: {ja: 構文糖衣の節, extends: section, mod: [{of: [v_refer, from], with: pattern}]}
   formula: {ja: 状態の関係の式, extends: pattern, mod: [{of: [v_refer, from], with: state_relation}]}
+
+  # ===== 名前空間 =====
+  domain: {ja: 領域, extends: information_entity, mod: [{of: [v_compose, to], with: concept_expression}]}
+  domains: {ja: 領域の節, extends: section, mod: [{of: [v_refer, from], with: domain}]}
+  uses: {ja: 使う領域の指定, extends: expression_part, mod: [{of: [v_refer, from], with: domain}]}
 
 # 体系が、自分の記録（claims.yaml と measurements.yaml）について述べる。
 # 記録の種類ごとに、それが何であるか（is）、識別子の種類（key）、持てる項目（fields）を書く。
@@ -499,8 +513,8 @@ syntax:
 # 体系が、自分の書き方（文法）について述べる。
 # 文法の語は、すべてノードの識別子である。節ごとに、そこで使える語を並べる。検査は、ここに並んだ語だけを受け付ける。
 grammar:
-  grammar: [system, nodes, mod, cmp, base, axes, records, laws, run, position, rel, function, value, logic, runtime, syntax, grammar]
-  system: [base, laws, axes, nodes, records, runtime, syntax, grammar]
+  grammar: [system, nodes, mod, cmp, base, axes, records, laws, run, position, rel, function, value, logic, runtime, syntax, domains, grammar]
+  system: [domains, base, laws, axes, nodes, records, runtime, syntax, grammar]
   nodes: [ja, gloss, extends, from, to, new_kind, holds, pre, post, form, of, neg, mod, val, cmp, axis]
   mod: [of, with, neg, quant, at]
   cmp: [axis, a, b, rel]
@@ -516,3 +530,4 @@ grammar:
   logic: [not, all, any, between]   # true と false は、真偽の軸の値
   runtime: [world, pre_rule, post_rule, law_check, binding, choice, progress]
   syntax: [formula]
+  domains: [ja, uses]
