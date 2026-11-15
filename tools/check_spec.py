@@ -115,7 +115,8 @@ def load_domain(name, D, T):
         if kind not in T.N:
             err(f"{name} {iid}: 種類 {kind} がノードでない")
             continue
-        T.I[iid] = kind
+        for ax, v in (x.get("val") or {}).items():
+            T.check_value(ax, v, f"{name} {iid}")
         T.check_fields(kind, {f: v for f, v in x.items() if f not in T.G["individuals"]}, f"{name} {iid}", D["domain"])
         base = [k for k in KINDS if T.is_a(kind, k)]
         if not base:
@@ -137,7 +138,7 @@ class Ontology:
     def __init__(self, O):
         self.O = O
         self.B, self.AX, self.N, self.G = O["base"], O["axes"], O["nodes"], O["grammar"]
-        self.I = {}   # 個体の識別子 → 種類
+        self.I, self.Idom = {}, None   # 個体の識別子 → 種類、個体が書かれた領域
         for nid, n in self.N.items():  # 法則 single。mod は単一。中では並びとして扱う
             if "mod" in n:
                 if isinstance(n["mod"], list):
@@ -268,6 +269,9 @@ class Ontology:
                 err(f"{nid}: 領域 {dom} が domains に書かれていない")
                 continue
             ok = {dom} | set(D[dom].get("uses", []))
+            for m in self.N[nid].get("mod") or []:   # 個体は、それが書かれた領域に属する
+                if isinstance(m, dict) and m.get("with") in self.I and self.Idom not in ok:
+                    err(f"{nid}: 領域 {dom} から、使うと書かれていない領域の個体 {m['with']} を参照している")
             for r in self.refs(nid):  # 法則 layered
                 if self.domain(r) not in ok:
                     err(f"{nid}: 領域 {dom} から、使うと書かれていない領域のノード {r} を参照している")
@@ -360,6 +364,8 @@ class Ontology:
     def is_a(self, x, y, hops=0):
         if y == "any":
             return True
+        if x in self.I:   # 個体は、成員が1つの種類。自分自身か、自分の種類の上位に当たる
+            return x == y or self.is_a(self.I[x], y, hops + 1)
         if x is None or x == "any" or x not in self.N or hops > 80:
             return x == y
         if x == y:
@@ -505,7 +511,7 @@ class Ontology:
                     other = {"from": "to", "to": "from"}.get(pos)
                     if other is None:
                         err(f"{where}: 位置 new には with を付けられない")
-                    elif m["with"] not in N or not self.overlaps(m["with"], self.end(verb, other)):
+                    elif (m["with"] not in N and m["with"] not in self.I) or not self.overlaps(m["with"], self.end(verb, other)):
                         err(f"{where}: {m['with']} は {verb} の {other}（{self.end(verb, other)}）に来られない")
                 if set(m) - set(self.G["mod"]):
                     err(f"{where}: 語 {set(m) - set(self.G['mod'])} が、grammar.mod に書かれていない")
@@ -542,17 +548,31 @@ class Ontology:
     def field_ok(self, kind, f, dom="core"):
         """種類 kind の個体に、項目 f を書けるか。項目の表は持たず、式から決める。
         f が動詞かその位置の形（s, p, o）: kind が「について述べる」の始点に来る種類（文）であること。
-        それ以外: f かその下位に、kind のものとの関係で限定されたノードがあること。"""
+        それ以外: f かその下位に、kind のものとの関係で限定されたノードがあること。または、kind の式が f のものとの関係で限定されていること。"""
         f = f if f in self.N else self.resolve(f, dom)
         if f is None:
             return False
         if "form" in self.N[f] or self.is_verb(f):
             return any(m["of"] == ["v_refer", "from"] for m in self.mods_of(kind))
         cands = [f] + [k for k in self.N if self.is_concept(k) and f in self.ancestors(k)]
+        if any(m.get("with") in self.N and self.is_a(f, m["with"]) for m in self.mods_of(kind)):   # 種類の式が、f のものとの関係で限定されている
+            return True
         return any(m.get("with") in self.N and self.is_a(kind, m["with"]) for c in cands for m in self.mods_of(c))
 
+    def count_ok(self, want, v):
+        if isinstance(want, dict):
+            (op, arg), = want.items()
+            return {"gt": v > arg, "ge": v >= arg, "lt": v < arg, "le": v <= arg}.get(op, True) if not isinstance(arg, list) else arg[0] <= v <= arg[1]
+        return want == v
+
     def check_fields(self, kind, x, where, dom="core"):
+        """個体の項目。値が数なら、個数の軸の固定値。種類の式がその個数を限定していれば、その範囲に入っていること。"""
         for f, v in x.items():
+            if isinstance(v, (int, float)) and not isinstance(v, bool) and f in self.N and not self.is_a(f, "magnitude"):
+                for m in self.mods_of(kind):
+                    want = (m.get("at") or {}).get("count")
+                    if want is not None and m.get("with") in self.N and self.is_a(f, m["with"]) and not self.count_ok(want, v):
+                        err(f"{where}: {f} の個数 {v} が、種類 {kind} の限定 {want} に入っていない")
             if not self.field_ok(kind, f, dom):
                 err(f"{where}: 項目 {f} は、種類 {kind} の個体に書けない（{kind} との関係で限定されたノードでない）")
 
@@ -737,7 +757,7 @@ def check_claims(C, values, T):
         ss = x["s"] if isinstance(x["s"], list) else [x["s"]]
         oo = x["o"] if isinstance(x["o"], list) else [x["o"]]
         for t in ss + oo:
-            if t not in T.N:
+            if t not in T.N and t not in T.I:
                 err(f"{where}: ノード {t} が未定義")
                 return
         if x["p"] == "is_a":
@@ -808,6 +828,8 @@ def main():
     O = load("ontology.yaml")
     D = merge_domain("exp.yaml", O)
     T = Ontology(O)
+    T.Idom = D["domain"]
+    T.I = {iid: x.get("is") for iid, x in D["individuals"].items() if x.get("is") in O["nodes"]}
     T.check()
     T.check_grammar()
     T.check_hierarchy()

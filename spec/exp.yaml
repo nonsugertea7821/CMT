@@ -73,12 +73,6 @@ nodes:
   position_after_word: {ja: 語の直後, extends: information_entity_compose_from_question, mod: {of: [v_come_after, from], with: word, at: {order: 1}}}
   preceding_text: {ja: 定義の前にある文章, extends: passage, mod: {of: [v_come_after, to], with: definition}}
   following_text: {ja: 定義の後ろにある文章, extends: passage, mod: {of: [v_come_after, from], with: definition}}
-  opt_yes: {ja: 選択肢「はい」, extends: option, val: {text: はい}}
-  opt_no: {ja: 選択肢「いいえ」, extends: option, val: {text: いいえ}}
-  opt_applies: {ja: 選択肢「当たる」, extends: option, val: {text: 当たる}}
-  opt_not_applies: {ja: 選択肢「当たらない」, extends: option, val: {text: 当たらない}}
-  opt_correct: {ja: 選択肢「正しい」, extends: option, val: {text: 正しい}}
-  opt_wrong: {ja: 選択肢「誤り」, extends: option, val: {text: 誤り}}
   question_format_compose_to_opt_yes: {ja: 選択肢「はい」から部分になる設問形式, extends: question_format, mod: {of: [v_compose, to], with: opt_yes}}
   fmt_yesno: {ja: はい・いいえの二択, extends: question_format_compose_to_opt_yes, mod: {of: [v_compose, to], with: opt_no}}
   question_format_compose_to_opt_applies: {ja: 選択肢「当たる」から部分になる設問形式, extends: question_format, mod: {of: [v_compose, to], with: opt_applies}}
@@ -88,14 +82,14 @@ nodes:
   fmt_paraphrase_choice: {ja: 言い換えの二択, extends: question_format, mod: {of: [v_compose, to], with: definition, at: {count: 2}}}
   item_group: {ja: 設問群, extends: information_entity, mod: {of: [v_compose, to], with: question, at: {count: {gt: 1}}}}
   item_group_refer_from_common_word: {ja: 一般語へ述べる設問群, extends: item_group, mod: {of: [v_refer, from], with: common_word}}
-  g_confusable: {ja: 一般の類義語・同音語の設問, extends: item_group_refer_from_common_word, mod: {of: [v_agree, from], with: prior_meaning}}
-  g_redef_conflict: {ja: 再定義の衝突する設問, extends: item_group, mod: {of: [v_refer, from], with: conflict_case}}
-  g_redef_control: {ja: 再定義の衝突しない設問, extends: item_group, mod: {of: [v_refer, from], with: control_case}}
-  g_new_word: {ja: 新しい語の設問, extends: item_group, mod: {of: [v_refer, from], with: new_word}}
+  group_confusable: {ja: 一般の類義語・同音語の設問, extends: item_group_refer_from_common_word, mod: {of: [v_agree, from], with: prior_meaning}}
+  group_redef_conflict: {ja: 再定義の衝突する設問, extends: item_group, mod: {of: [v_refer, from], with: conflict_case}}
+  group_redef_control: {ja: 再定義の衝突しない設問, extends: item_group, mod: {of: [v_refer, from], with: control_case}}
+  group_new_word: {ja: 新しい語の設問, extends: item_group, mod: {of: [v_refer, from], with: new_word}}
   information_entity_compose_to_new_word_n: {ja: 新しい語から部分になる（count2）情報, extends: information_entity, mod: {of: [v_compose, to], with: new_word, at: {count: 2}}}
   sibling_pair: {ja: 兄弟概念の組, extends: information_entity_compose_to_new_word_n, mod: {of: [v_compose, to], with: genus_concept, at: {count: 1}}}
-  g_sibling: {ja: 分化した兄弟概念の設問, extends: g_new_word, mod: {of: [v_refer, from], with: sibling_pair}}
-  g_replaced: {ja: 置換された用語の設問, extends: g_new_word, mod: {of: [v_refer, from], with: replaced_word}}
+  group_sibling: {ja: 分化した兄弟概念の設問, extends: group_new_word, mod: {of: [v_refer, from], with: sibling_pair}}
+  group_replaced: {ja: 置換された用語の設問, extends: group_new_word, mod: {of: [v_refer, from], with: replaced_word}}
   unrelated_items: {ja: 無関係な設問, extends: item_group, mod: {of: [v_refer, from], with: redefinition, neg: true}}
   information_entity_refer_from_concept_n: {ja: '概念へ述べる（count{"gt": 1}）情報', extends: information_entity, mod: {of: [v_refer, from], with: concept, at: {count: {gt: 1}}}}
   information_entity_refer_from_concept_n_refer_from_v_depend: {ja: '依存するへ述べる概念へ述べる（count{"gt": 1}）情報', extends: information_entity_refer_from_concept_n, mod: {of: [v_refer, from], with: v_depend}}
@@ -188,10 +182,33 @@ nodes:
   identifier_refer_to_meaning: {ja: 意味づけから述べられる識別子, extends: identifier, mod: {of: [v_refer, to], with: meaning}}
   value_compose_from_meaning: {ja: 意味づけへ部分になる値, extends: value, mod: {of: [v_compose, from], with: meaning}}
 
+  # ----- 個体を参照する種類。個体は、成員が1つの種類として、種類の書ける位置に書ける。
+  model_design: {ja: モデルについての設計, extends: information_entity_design_to, mod: {of: [v_refer, from], with: model}}
+  design_decision: {ja: 本設計の決定, extends: decision, mod: {of: [v_compose, from], with: this_design}}
+
 individuals:
   # ===== モデル。種類ではなく、1つずつの成果物。
-  model_15b: {is: open_weight_model, ja: Qwen2.5-1.5B-Instruct}
-  model_4b: {is: open_weight_model, ja: Qwen3-4B}
+  # 数の項目は、その種類のものが、この個体との関係でいくつあるか（個数の軸の固定値）。
+  model_15b: {is: open_weight_model, ja: Qwen2.5-1.5B-Instruct, weights: 1500000000, layer: 28}
+  model_4b: {is: open_weight_model, ja: Qwen3-4B, weights: 4000000000}
+
+  # ===== 設計。1つしかない。
+  this_design: {is: model_design, ja: 本設計}
+
+  # ===== 選択肢。文字列が1つに決まっている。
+  opt_yes: {is: option, ja: 選択肢「はい」, val: {text: はい}}
+  opt_no: {is: option, ja: 選択肢「いいえ」, val: {text: いいえ}}
+  opt_applies: {is: option, ja: 選択肢「当たる」, val: {text: 当たる}}
+  opt_not_applies: {is: option, ja: 選択肢「当たらない」, val: {text: 当たらない}}
+  opt_correct: {is: option, ja: 選択肢「正しい」, val: {text: 正しい}}
+  opt_wrong: {is: option, ja: 選択肢「誤り」, val: {text: 誤り}}
+
+  # ===== 設問群。experiments/data/ にある設問の集まり。
+  g_confusable: {is: group_confusable}
+  g_redef_conflict: {is: group_redef_conflict}
+  g_redef_control: {is: group_redef_control}
+  g_sibling: {is: group_sibling}
+  g_replaced: {is: group_replaced}
 
   # ===== 測定の族（is: measurement_family）。値は experiments/results/ から計算する。手で書いた数値は持たない。
   # 測定値の識別子は「族.軸の値....指標」。
@@ -531,7 +548,7 @@ individuals:
     condition_entry: '{cond}'
     metric: [accuracy]
     meaning:
-      group: {redef: g_redef_conflict, new: g_new_word}
+      group: {redef: g_redef_conflict, new: group_new_word}
       cond:
         sys1:
           identifier: [relevant_definitions, place_system]
