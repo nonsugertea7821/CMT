@@ -347,6 +347,8 @@ individuals:
   e8nll: {is: measurement_family}
   e8loss: {is: measurement_family}
   e9: {is: measurement_family}
+  e10: {is: measurement_family}
+  e11: {is: measurement_family}
   # ----- 測定の族の軸（is: family_axis）と、軸の値（is: axis_value）。val の text は測定値の識別子に使う字。
   # 結果ファイルでの書き方（v_spell）と、値が指すもの（v_denote）は事実で書く。
   e1_model: {is: family_axis, val: {text: model}}
@@ -389,6 +391,7 @@ individuals:
   e3_run_L14_defqa: {is: axis_value, val: {text: L14_defqa}}
   e3_run_L20_defqa: {is: axis_value, val: {text: L20_defqa}}
   e3_run_L4_defqa: {is: axis_value, val: {text: L4_defqa}}
+  e3_run_L8_exprdefqa: {is: axis_value, val: {text: L8_exprdefqa}}
   e3_group: {is: family_axis, val: {text: group}}
   e3_group_G2c: {is: axis_value, val: {text: G2c}}
   e3_group_G2k: {is: axis_value, val: {text: G2k}}
@@ -522,6 +525,20 @@ individuals:
   e9_cond: {is: family_axis, val: {text: cond}}
   e9_cond_direct: {is: axis_value, val: {text: direct}}
   e9_cond_cot: {is: axis_value, val: {text: cot}}
+  e10_group: {is: family_axis, val: {text: group}}
+  e10_group_G2c: {is: axis_value, val: {text: G2c}}
+  e10_group_G2k: {is: axis_value, val: {text: G2k}}
+  e10_cond: {is: family_axis, val: {text: cond}}
+  e10_cond_none: {is: axis_value, val: {text: none}}
+  e10_cond_near: {is: axis_value, val: {text: near}}
+  e10_cond_expr: {is: axis_value, val: {text: expr}}
+  e10_cond_expr_masked: {is: axis_value, val: {text: expr_masked}}
+  e11_group: {is: family_axis, val: {text: group}}
+  e11_group_G2c: {is: axis_value, val: {text: G2c}}
+  e11_group_G2k: {is: axis_value, val: {text: G2k}}
+  e11_cond: {is: family_axis, val: {text: cond}}
+  e11_cond_direct: {is: axis_value, val: {text: direct}}
+  e11_cond_write: {is: axis_value, val: {text: write}}
 
   # ===== 観察。s と o は測定値で、p は大きさを比べる動詞（is: observation）
   o_e1_redef_below_new_adjacent: {is: observation}
@@ -597,6 +614,10 @@ individuals:
   o_e9_scratchpad_like_direct_remap_4b: {is: observation}
   o_e9_scratchpad_not_below_direct_remap_control_4b: {is: observation}
   o_e9_scratchpad_below_direct_remap_control_15b: {is: observation}
+  o_e10_expr_above_none_conflict: {is: observation}
+  o_e10_expr_below_none_control: {is: observation}
+  o_e11_write_below_direct_conflict: {is: observation}
+  o_e3_expr_teacher_raises_conflict: {is: observation}
 
   # ===== 仮説（is: hypothesis）
   # --- 文章での注入 ---
@@ -637,7 +658,7 @@ individuals:
   h_both_teachers_raise_control_in_combo: {is: hyp_supported}
   h_single_layer_does_not_reach_shared: {is: hyp_supported}
   h_multi_layer_raises_consistency: {is: hyp_mixed}
-  h_cscl_raises_following: {is: hyp_untested}
+  h_cscl_raises_following: {is: hyp_mixed}
   h_model_can_write_cscl: {is: hyp_untested}
   h_modifier_transfers_to_unseen_genus: {is: hyp_supported}
 
@@ -664,10 +685,10 @@ individuals:
   # ===== 残り項目（is: backlog_item）
   b_e8_multi_layer: {is: item_done}
   b_e8_retrain_until_converged: {is: item_queued}
-  b_write_subject_concepts_in_cscl: {is: item_queued}
-  b_definitions_given_as_concept_expressions: {is: item_queued}
-  b_model_writes_concept_expressions: {is: item_queued}
-  b_vectors_taught_from_concept_expressions: {is: item_queued}
+  b_write_subject_concepts_in_cscl: {is: item_done}
+  b_definitions_given_as_concept_expressions: {is: item_done}
+  b_model_writes_concept_expressions: {is: item_done}
+  b_vectors_taught_from_concept_expressions: {is: item_done}
   b_e9_scratchpad: {is: item_done}
   b_single_layer_20_and_4: {is: item_done}
   b_attention_observe_and_block: {is: item_queued}
@@ -812,6 +833,11 @@ facts:
   - {is: v_denote, from: e3_run_L4_defqa, to: single_layer_vector}
   - {is: v_denote, from: e3_run_L4_defqa, to: teacher_both}
   - {is: v_compose, from: layer, to: e3_run_L4_defqa, at: {order: 4}}
+  - {is: v_value_of, from: e3_run_L8_exprdefqa, to: e3_run}
+  - {is: v_denote, from: e3_run_L8_exprdefqa, to: single_layer_vector}
+  - {is: v_denote, from: e3_run_L8_exprdefqa, to: teacher_both}
+  - {is: v_denote, from: e3_run_L8_exprdefqa, to: concept_expression}
+  - {is: v_compose, from: layer, to: e3_run_L8_exprdefqa, at: {order: 8}}
   - {is: v_axis_of, from: e3_group, to: e3}
   - {is: v_value_of, from: e3_group_G2c, to: e3_group}
   - {is: v_denote, from: e3_group_G2c, to: g_redef_conflict}
@@ -1221,6 +1247,51 @@ facts:
   - {is: v_entry_of, from: '{cond}', to: e9}
   - {is: v_metric_of, from: e9, to: accuracy}
   - {is: v_metric_of, from: e9, to: order_robust_accuracy}
+  - {is: v_file_of, from: 'e10_Qwen2.5-1.5B-Instruct.json', to: e10}
+  - {is: v_rows_of, from: [items], to: e10}
+  - {is: v_axis_of, from: e10_group, to: e10}
+  - {is: v_value_of, from: e10_group_G2c, to: e10_group}
+  - {is: v_denote, from: e10_group_G2c, to: g_redef_conflict}
+  - {is: v_value_of, from: e10_group_G2k, to: e10_group}
+  - {is: v_denote, from: e10_group_G2k, to: g_redef_control}
+  - {is: v_axis_of, from: e10_cond, to: e10}
+  - {is: v_value_of, from: e10_cond_none, to: e10_cond}
+  - {is: v_denote, from: e10_cond_none, to: no_channel}
+  - {is: v_value_of, from: e10_cond_near, to: e10_cond}
+  - {is: v_denote, from: e10_cond_near, to: text_injection}
+  - {is: v_denote, from: e10_cond_near, to: definition_text}
+  - {is: v_denote, from: e10_cond_near, to: place_adjacent}
+  - {is: v_value_of, from: e10_cond_expr, to: e10_cond}
+  - {is: v_denote, from: e10_cond_expr, to: text_injection}
+  - {is: v_denote, from: e10_cond_expr, to: concept_expression}
+  - {is: v_denote, from: e10_cond_expr, to: place_adjacent}
+  - {is: v_value_of, from: e10_cond_expr_masked, to: e10_cond}
+  - {is: v_denote, from: e10_cond_expr_masked, to: text_injection}
+  - {is: v_denote, from: e10_cond_expr_masked, to: concept_expression}
+  - {is: v_denote, from: e10_cond_expr_masked, to: place_adjacent}
+  - {is: v_filter_of, from: {group: '{group}'}, to: e10}
+  - {is: v_entry_of, from: '{cond}', to: e10}
+  - {is: v_metric_of, from: e10, to: accuracy}
+  - {is: v_metric_of, from: e10, to: order_robust_accuracy}
+  - {is: v_file_of, from: 'e11_Qwen2.5-1.5B-Instruct.json', to: e11}
+  - {is: v_axis_of, from: e11_group, to: e11}
+  - {is: v_value_of, from: e11_group_G2c, to: e11_group}
+  - {is: v_denote, from: e11_group_G2c, to: g_redef_conflict}
+  - {is: v_value_of, from: e11_group_G2k, to: e11_group}
+  - {is: v_denote, from: e11_group_G2k, to: g_redef_control}
+  - {is: v_axis_of, from: e11_cond, to: e11}
+  - {is: v_value_of, from: e11_cond_direct, to: e11_cond}
+  - {is: v_denote, from: e11_cond_direct, to: text_injection}
+  - {is: v_denote, from: e11_cond_direct, to: concept_expression}
+  - {is: v_denote, from: e11_cond_direct, to: single_pass}
+  - {is: v_value_of, from: e11_cond_write, to: e11_cond}
+  - {is: v_denote, from: e11_cond_write, to: text_injection}
+  - {is: v_denote, from: e11_cond_write, to: concept_expression}
+  - {is: v_denote, from: e11_cond_write, to: scratchpad}
+  - {is: v_filter_of, from: {group: '{group}'}, to: e11}
+  - {is: v_entry_of, from: '{cond}', to: e11}
+  - {is: v_metric_of, from: e11, to: accuracy}
+  - {is: v_metric_of, from: e11, to: order_robust_accuracy}
 
   # ===== 観察。s と o は測定値で、p は大きさを比べる動詞（is: observation）
   - {is: v_refer, from: o_e1_redef_below_new_adjacent, to: {is: v_come_before, from: e1.4b.G2c.near.accuracy, to: e1.4b.G3.near.accuracy}}
@@ -1292,6 +1363,10 @@ facts:
   - {is: v_refer, from: o_e9_scratchpad_like_direct_remap_4b, to: {is: v_level, from: e9.4b.G2c.remap.cot.accuracy, to: e9.4b.G2c.remap.direct.accuracy}}
   - {is: v_refer, from: o_e9_scratchpad_not_below_direct_remap_control_4b, to: {is: v_not_before, from: e9.4b.G2k.remap.cot.accuracy, to: e9.4b.G2k.remap.direct.accuracy}}
   - {is: v_refer, from: o_e9_scratchpad_below_direct_remap_control_15b, to: {is: v_come_before, from: e9.15b.G2k.remap.cot.accuracy, to: e9.15b.G2k.remap.direct.accuracy}}
+  - {is: v_refer, from: o_e10_expr_above_none_conflict, to: {is: v_come_after, from: e10.G2c.expr.accuracy, to: e10.G2c.none.accuracy}}
+  - {is: v_refer, from: o_e10_expr_below_none_control, to: {is: v_come_before, from: e10.G2k.expr.accuracy, to: e10.G2k.none.accuracy}}
+  - {is: v_refer, from: o_e11_write_below_direct_conflict, to: {is: v_come_before, from: e11.G2c.write.accuracy, to: e11.G2c.direct.accuracy}}
+  - {is: v_refer, from: o_e3_expr_teacher_raises_conflict, to: {is: v_come_after, from: e3.L8_exprdefqa.G2c.vec.accuracy, to: e3.L8_exprdefqa.G2c.none.accuracy}}
 
   # ===== 仮説（is: hypothesis）
   - {is: v_refer, from: h_collision_lowers_following, to: {is: v_lower, from: prior_collision, to: redefinition_following}}
@@ -1340,6 +1415,10 @@ facts:
   - {is: v_scope, from: text_injection, to: h_scratchpad_lowers_remap_following_4b}
   - {is: v_contradict, from: o_e9_scratchpad_like_direct_remap_4b, to: h_scratchpad_lowers_remap_following_4b}
   - {is: v_contradict, from: o_e9_scratchpad_not_below_direct_remap_control_4b, to: h_scratchpad_lowers_remap_following_4b}
+  - {is: v_support, from: o_e10_expr_above_none_conflict, to: h_cscl_raises_following}
+  - {is: v_contradict, from: o_e10_expr_below_none_control, to: h_cscl_raises_following}
+  - {is: v_contradict, from: o_e11_write_below_direct_conflict, to: h_cscl_raises_following}
+  - {is: v_support, from: o_e3_expr_teacher_raises_conflict, to: h_cscl_raises_following}
   - {is: v_refer, from: h_length_does_not_lower, to: {is: v_not_lower, from: context_length, to: redefinition_following}}
   - {is: v_scope, from: model_4b, to: h_length_does_not_lower}
   - {is: v_scope, from: text_injection, to: h_length_does_not_lower}
