@@ -6,7 +6,10 @@
 
 使い方: python tools/render_expr.py 顧客 在庫
 """
+import re
 import sys
+
+import yaml
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).parent))
@@ -84,7 +87,7 @@ class Renderer:
                 out.append(f"{_ja(self.T, v, self.S)}({_ja(self.T, a, self.S)}, {_ja(self.T, b, self.S)})")
         return out
 
-    def text(self, word):
+    def text(self, word, mask=False):
         """語の概念式と、それがたどる subj の種類と事実。"""
         start = self.by_ja[word]
         seen, order, todo = set(), [], [start]
@@ -96,7 +99,12 @@ class Renderer:
             order.append(x)
             todo += self.refs(x)
         local = {x.split(".", 1)[1] for x in seen}
-        return "\n".join(self.raw(local))
+        lines = self.raw(local)
+        if mask:   # 表示名を外す。語そのものの種類と、個体（設問に出てくる固有のもの）の表示名は残す
+            keep = start.split(".", 1)[1]
+            lines = [l if l.startswith(keep + ":") or l.startswith("{") or "{is:" in l.split(":", 1)[1][:6]
+                     else re.sub(r"ja: [^,]*, ", "", l) for l in lines]
+        return "\n".join(lines)
 
     def raw(self, local):
         """subj.yaml に書いたままの行。種類の行と、それらに触れる個体と事実の行。"""
@@ -114,7 +122,7 @@ class Renderer:
                 nodes.append(l.strip())
             elif k and k.group(1) in inds:
                 ind.append(l.strip())
-            elif l.startswith("  - ") and any(re.search(rf"\b{x}\b", l) for x in local):
+            elif l.startswith("  - ") and any((yaml.safe_load(l[4:]) or {}).get(k) in local for k in ("from", "to")):
                 facts.append(l.strip()[2:])
         return nodes + ind + facts
 
