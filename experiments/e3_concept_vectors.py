@@ -160,11 +160,19 @@ def main():
     ap.add_argument("--limit", type=int, default=0, help="概念数の上限（試行用）")
     ap.add_argument("--objective", choices=["def", "qa", "defqa"], default="def")
     ap.add_argument("--tag", default="")
+    ap.add_argument("--def-source", choices=["ja", "expr"], default="ja",
+                    help="定義の出どころ。expr は概念式（spec/subj.yaml に書いたまま）を、暗唱にも near にも使う")
     args = ap.parse_args()
 
     data = json.loads((ROOT / "data" / "concepts_ja.json").read_text(encoding="utf-8"))
     defs = data["defs"]
     items = [it for it in data["items"] if it["group"] in args.groups]
+    if args.def_source == "expr":
+        import sys
+        sys.path.insert(0, str(ROOT.parent / "tools"))
+        import render_expr
+        R = render_expr.Renderer()
+        defs = {c: R.text(c) for it in items for c in it["defs"]}
     concepts = sorted({d for it in items for d in it["defs"]})
     if args.limit:
         concepts = concepts[: args.limit]
