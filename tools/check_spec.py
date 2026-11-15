@@ -132,6 +132,8 @@ LITERAL = {"display", "holds", "pre", "post", "result_file", "row_collection", "
 def qualify(x, local, dom):
     """領域のファイルの中で、領域を書かずに書かれた識別子を「領域.名前」に直す。文字列そのものを値とする項目は直さない。"""
     if isinstance(x, str):
+        if x.startswith("core."):   # 領域 core の識別子を、領域を書いて明示したもの（同じ名前が自分の領域にあるとき）
+            return x[len("core."):]
         return f"{dom}.{x}" if x in local else x
     if isinstance(x, list):
         return [qualify(v, local, dom) for v in x]
@@ -1178,7 +1180,7 @@ def register_domains(O):
             err(f"{name}: 領域 {dom} を、個体 {{is: domain}} として宣言していない")
         O["domains"][dom] = {"display": me.get("display"), "uses": []}
         for f in y.get("facts") or []:
-            if isinstance(f, dict) and f.get("is") == "v_use":
+            if isinstance(f, dict) and qualify(f.get("is"), set(y.get("nodes") or {}), dom) == "v_use":
                 if f.get("from") != dom:
                     err(f"{name}: 領域の使用は、自分の領域についてだけ書く（{f}）")
                 O["domains"][dom]["uses"].append(f.get("to"))
