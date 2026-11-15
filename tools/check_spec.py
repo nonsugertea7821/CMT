@@ -9,10 +9,11 @@ ontology.yaml  概念の体系。書き方はそのファイルの冒頭を見�
   grammar: 体系が、自分の書き方について述べる部分。文法の語は、すべてノードの識別子。節ごとに、使える語を並べる。
         検査は、ここに書かれた語だけを文法の語として受け付ける。logic は述語論理の語で、体系の中では定義しない。
 
-exp.yaml  領域 exp。測定・観察・仮説・決定・残り項目を、個体として書く。
-  個体は is で種類に属する。仮説・決定・残り項目は、状態を表す下位の種類に属する（is: hyp_supported など）。
-  項目名は、ontology.yaml のノードの識別子そのもの。項目の表は持たない。ある種類の個体に書ける項目は、
-  その種類のものとの関係で限定されたノード（またはその上位）と、文の中身（s, p, o）だけ。留保や指標の値も、ノードの識別子。
+exp.yaml  領域 exp。種類（nodes）、個体（individuals）、事実（facts）を持つ。
+  個体は is で種類に1つだけ属する。仮説・決定・残り項目は、状態を表す下位の種類に属する（is: hyp_supported など）。
+  事実は [関係, 始点の個体, 終点] で、1つの事実に1つの関係。関係は、ontology.yaml のノードの識別子。
+  ある種類の個体に書ける関係は、その種類のものとの関係で限定されたノード（またはその上位）と、文の中身（s, p, o）だけ。
+  検査は、事実を個体ごとに集めた形で読む。
   測定値: 族ごとに、軸（axis）の直積で展開する。識別子は「族.軸の値....指標」。値は結果ファイルから計算する。
   観察・仮説・決定: どれも「s が、p という関係で、o に」という文。
     観察の s と o は測定値（o は数でもよい）、p は大きさを比べる動詞。真偽は、動詞の式（後ろにある、の成立と不成立）を
@@ -102,7 +103,31 @@ def merge_domain(name, O):
     for nid, n in (D.get("nodes") or {}).items():
         O["nodes"][f"{dom}.{nid}"] = qualify(n, local, dom)
     D["individuals"] = {iid: qualify(x, local, dom) for iid, x in D["individuals"].items()}
+    gather(D, local, dom, name)
     return D
+
+
+MANY = {"scope", "evidence", "against", "limitation", "supersedes", "basis", "tests", "metric"}   # 検査が並びとして読む関係
+
+
+def gather(D, local, dom, name):
+    """事実（[関係, 始点の個体, 終点]）を、個体ごとに集める。検査は、集めた形を読む。
+    書くときは、1つの事実に1つの関係。個体に関係を並べて書くことはしない。"""
+    got = {}
+    for i, f in enumerate(D.get("facts") or []):
+        if not (isinstance(f, list) and len(f) == 3 and isinstance(f[0], str)):
+            err(f"{name} facts[{i}]: 事実は [関係, 始点の個体, 終点] で書く")
+            continue
+        rel, subj, obj = f
+        if subj not in D["individuals"]:
+            err(f"{name} facts[{i}]: 始点 {subj} が個体でない")
+            continue
+        if any(k not in ("is", "ja", "val") for k in D["individuals"][subj]):
+            err(f"{name} {subj}: 個体には is, ja, val だけを書く。関係は facts に書く")
+        got.setdefault(subj, {}).setdefault(rel, []).append(obj if rel in LITERAL else qualify(obj, local, dom))
+    for subj, rels in got.items():
+        for rel, vs in rels.items():
+            D["individuals"][subj][rel] = vs if rel in MANY or len(vs) > 1 else vs[0]
 
 
 def load_domain(name, D, T):
@@ -111,6 +136,10 @@ def load_domain(name, D, T):
     for k in D:
         if k not in T.G["domain"]:
             err(f"{name}: 語 {k} が、grammar.domain に書かれていない")
+    for iid, x in D["individuals"].items():
+        for k, v in x.items():
+            if k not in T.G["individuals"] and isinstance(v, list) and k not in MANY and k != "o" and k not in LITERAL:
+                err(f"{name} {iid}: 関係 {k} の事実が2つ以上ある")
     out = {sect: {} for sect in KINDS.values()}
     for iid, x in D["individuals"].items():
         if iid in T.N or T.resolve(iid, D["domain"]):

@@ -69,10 +69,11 @@ axes:
   truth: {ja: 真偽, source: refer, value: [true, false]}
 
 nodes:
+  # ===== 最上位。説明文（gloss）を持つのは、この2つだけ =====
   continuant: {ja: 持続体, gloss: 時間を通じて同一性を保って存在するもの}
   occurrent: {ja: 生起体, gloss: 時間の中で起こり、展開するもの}
 
-  # ----- 静的 -----
+  # ===== 動詞・静的。holds に、成り立っている状態の関係を書く =====
   v_depend: {ja: 依存する, extends: occurrent, from: continuant, to: continuant, holds: ["depend(from, to)"]}
   v_compose: {ja: 部分になる, extends: occurrent, from: continuant, to: continuant, holds: ["part(from, to)"]}
   v_stage: {ja: 時間的な部分になる, extends: occurrent, from: occurrent, to: occurrent, holds: ["part(from, to)"]}
@@ -84,7 +85,14 @@ nodes:
   v_involve: {ja: に関わらせる, extends: occurrent, from: occurrent, to: continuant, holds: ["involve(from, to)"]}
   v_perform: {ja: 行う, extends: occurrent, from: continuant, to: occurrent, holds: ["involve(to, from)"]}
   v_trigger: {ja: 引き起こす, extends: occurrent, from: any, to: occurrent, holds: ["after(to, from)", "depend(to, from)"]}
-  # ----- 動的 -----
+
+  # ===== 動詞・大きさを比べる。「後ろに置かれる」が、より大きい、に当たる =====
+  v_come_before: {ja: 前に置かれる, extends: occurrent, from: continuant, to: continuant, holds: ["after(to, from)"]}
+  v_not_before: {ja: 前には置かれない, extends: occurrent, from: continuant, to: continuant, holds: ["not after(to, from)"]}
+  v_not_after: {ja: 後ろには置かれない, extends: occurrent, from: continuant, to: continuant, holds: ["not after(from, to)"]}
+  v_level: {ja: 同じ位置にある, extends: occurrent, from: continuant, to: continuant, holds: ["not after(from, to)", "not after(to, from)"]}
+
+  # ===== 動詞・動的。pre と post に、起こる前後の状態の関係を書く =====
   v_design: {ja: 設計する, extends: occurrent, from: continuant, to: continuant, pre: ["not exists(to)"], post: ["exists(to)"]}
   v_compute: {ja: 計算する, extends: occurrent, from: continuant, to: any, pre: ["not exists(to)"], post: ["exists(to)"]}
   v_learn: {ja: 学習する, extends: occurrent, from: continuant, to: continuant, new_kind: realizable_entity,
@@ -93,6 +101,11 @@ nodes:
              pre: ["exists(new)", "depend(new, to)"], post: ["not exists(new)"]}
   v_vary: {ja: 動かす, extends: occurrent, from: continuant, to: continuant, new_kind: quality,
            pre: ["depend(new, to)"], post: ["not depend(new, to)"]}
+
+  # ===== 文の骨組み。何が（s）、どう関係し（p）、何に（o）。p は、すべての関係の上位 =====
+  p: {ja: 関係づける, extends: occurrent, from: any, to: any, holds: ["exists(from)", "exists(to)"]}
+  s: {ja: 始点に来るもの, form: [p, from]}
+  o: {ja: 終点に来るもの, form: [p, to]}
 
   # ===== BFO の区別 =====
   dependent: {ja: 依存するもの, form: [v_depend, from]}
@@ -106,33 +119,34 @@ nodes:
   magnitude: {ja: 大きさ, extends: quality, mod: {of: [v_come_after, from], with: quality}}
   process: {ja: 過程, extends: occurrent, mod: {of: [v_stage, to]}}
 
-  # ===== 場面と、そこでの取り決め（役割の根拠になる定義） =====
-  process_stage_to_v_vary: {ja: 動かすから時間的な部分になる過程, extends: process, mod: {of: [v_stage, to], with: v_vary}}
-  experiment: {ja: 実験, extends: process_stage_to_v_vary, mod: {of: [v_stage, to], with: v_measure}}
-  experiment_protocol: {ja: 実験の取り決め, extends: definition, mod: {of: [v_refer, from], with: experiment}}
-
-  # ===== 修飾語 =====
+  # ===== 修飾語。ある動詞の、ある位置を占めているという性質 =====
   frozen: {ja: 固定されている, extends: quality, of: [v_freeze, to]}
   learned: {ja: 学習で得られた, extends: quality, of: [v_learn, new]}
 
-  # ===== 情報 =====
+  # ===== 情報と言語 =====
   information_entity: {ja: 情報, extends: generically_dependent_continuant, mod: {of: [v_refer, from]}}
   language: {ja: 言語, extends: information_entity, mod: {of: [v_express, to]}}
   system: {ja: 体系, extends: information_entity, mod: {of: [v_compose, to], with: concept_expression, at: {count: {gt: 1}}}}
   controlled_language: {ja: 体系制御言語, extends: language, mod: {of: [v_depend, from], with: system}}
   definition_compose_from_system: {ja: 体系へ部分になる定義, extends: definition, mod: {of: [v_compose, from], with: system}}
   concept_expression: {ja: 概念式, extends: definition_compose_from_system, mod: {of: [v_express, from], with: controlled_language}}
-  passage_express_from_natural_language: {ja: 自然言語へで書かれる文章, extends: passage, mod: {of: [v_express, from], with: natural_language}}
   natural_language: {ja: 自然言語, extends: language, mod: {of: [v_design, to], neg: true}}
   information_entity_compose_to_word: {ja: 語から部分になる情報, extends: information_entity, mod: {of: [v_compose, to], with: word}}
   sentence: {ja: 文, extends: information_entity_compose_to_word, mod: {of: [v_express, from], with: language}}
   passage: {ja: 文章, extends: information_entity, mod: {of: [v_compose, to], with: sentence}}
+  passage_express_from_natural_language: {ja: 自然言語へで書かれる文章, extends: passage, mod: {of: [v_express, from], with: natural_language}}
   information_entity_express_from_natural_language: {ja: 自然言語へで書かれる情報, extends: information_entity, mod: {of: [v_express, from], with: natural_language}}
   word: {ja: 語, extends: information_entity_express_from_natural_language, mod: {of: [v_compose, from], with: sentence}}
   definition: {ja: 定義, extends: sentence, mod: {of: [v_refer, from], with: concept}}
+  information_entity_express_from_controlled_language: {ja: 体系制御言語へで書かれる情報, extends: information_entity, mod: {of: [v_express, from], with: controlled_language}}
+  identifier: {ja: 識別子, extends: information_entity_express_from_controlled_language, mod: {of: [v_refer, from], with: concept_expression, at: {count: 1}}}
+  pattern: {ja: 識別子の雛形, extends: information_entity, mod: {of: [v_refer, from], with: identifier, at: {count: {gt: 1}}}}
+  information_entity_refer_from_p: {ja: 関係づけるへ述べる情報, extends: information_entity, mod: {of: [v_refer, from], with: p}}
+  axis: {ja: 軸, extends: information_entity_refer_from_p, mod: {of: [v_compose, to], with: value}}
+  value: {ja: 値, extends: information_entity, mod: {of: [v_compose, from], with: axis}}
+  hypothesis: {ja: 仮説, extends: sentence, mod: {of: [v_refer, from], with: occurrent}}
 
-
-  # ===== 人工物 =====
+  # ===== 人工物とモデル =====
   artifact: {ja: 人工物, extends: generically_dependent_continuant, mod: {of: [v_refer, from], neg: true}}
   artifact_compose_from_model: {ja: モデルへ部分になる人工物, extends: artifact, mod: {of: [v_compose, from], with: model}}
   weights: {ja: 重み, extends: artifact_compose_from_model, mod: learned}
@@ -140,37 +154,16 @@ nodes:
   artifact_compute_from: {ja: 計算する人工物, extends: artifact, mod: {of: [v_compute, from]}}
   model: {ja: モデル, extends: artifact_compute_from, mod: {of: [v_compose, to], with: frozen_weights}}
 
-
-  # ===== 生起体 =====
+  # ===== 過程・実験・推論 =====
+  process_stage_to_v_vary: {ja: 動かすから時間的な部分になる過程, extends: process, mod: {of: [v_stage, to], with: v_vary}}
+  experiment: {ja: 実験, extends: process_stage_to_v_vary, mod: {of: [v_stage, to], with: v_measure}}
+  experiment_protocol: {ja: 実験の取り決め, extends: definition, mod: {of: [v_refer, from], with: experiment}}
+  role_depend_from_experiment_protocol: {ja: 実験の取り決めへ依存する役割, extends: role, mod: {of: [v_depend, from], with: experiment_protocol}}
   inference: {ja: 推論, extends: process, mod: {of: [v_perform, to], with: model}}
   concept: {ja: 概念, extends: inference, mod: {of: [v_trigger, to], with: word}}
 
-  # new は、始点がない場合の終点の値（比べる相手）
-
-  # 記録の項目名は、ここにあるノードの識別子そのもの。
-  # ----- 文の骨組み: 何が（s）、どう関係し（p）、何に（o） -----
-  p: {ja: 関係づける, extends: occurrent, from: any, to: any, holds: ["exists(from)", "exists(to)"]}
-  s: {ja: 始点に来るもの, form: [p, from]}
-  o: {ja: 終点に来るもの, form: [p, to]}
-  # ----- 大きさを比べる動詞。「後ろにある」が、より大きい、に当たる -----
-  v_come_before: {ja: 前に置かれる, extends: occurrent, from: continuant, to: continuant, holds: ["after(to, from)"]}
-  v_not_before: {ja: 前には置かれない, extends: occurrent, from: continuant, to: continuant, holds: ["not after(to, from)"]}
-  v_not_after: {ja: 後ろには置かれない, extends: occurrent, from: continuant, to: continuant, holds: ["not after(from, to)"]}
-  v_level: {ja: 同じ位置にある, extends: occurrent, from: continuant, to: continuant, holds: ["not after(from, to)", "not after(to, from)"]}
-  # ----- 識別子と結果ファイル -----
-  information_entity_express_from_controlled_language: {ja: 体系制御言語へで書かれる情報, extends: information_entity, mod: {of: [v_express, from], with: controlled_language}}
-  identifier: {ja: 識別子, extends: information_entity_express_from_controlled_language, mod: {of: [v_refer, from], with: concept_expression, at: {count: 1}}}
-  pattern: {ja: 識別子の雛形, extends: information_entity, mod: {of: [v_refer, from], with: identifier, at: {count: {gt: 1}}}}
-  # ----- 測定値 -----
-  information_entity_refer_from_p: {ja: 関係づけるへ述べる情報, extends: information_entity, mod: {of: [v_refer, from], with: p}}
-  axis: {ja: 軸, extends: information_entity_refer_from_p, mod: {of: [v_compose, to], with: value}}
-  value: {ja: 値, extends: information_entity, mod: {of: [v_compose, from], with: axis}}
-  # ----- 観察・仮説・決定・残り項目 -----
-  hypothesis: {ja: 仮説, extends: sentence, mod: {of: [v_refer, from], with: occurrent}}
-  role_depend_from_experiment_protocol: {ja: 実験の取り決めへ依存する役割, extends: role, mod: {of: [v_depend, from], with: experiment_protocol}}
+  # ===== 体系が、自分の書き方（文法）について述べるための語。文法の語は、すべてノードの識別子 =====
   scope: {ja: 適用範囲, extends: role_depend_from_experiment_protocol, mod: {of: [v_depend, from], with: hypothesis}}
-
-  # ===== 体系が、自分の書き方（文法）について述べるための概念 =====
   expression_part: {ja: 概念式の部分, extends: information_entity, mod: {of: [v_compose, from], with: concept_expression}}
   ja: {ja: 表示語, extends: word, mod: {of: [v_agree, from], with: identifier}}
   gloss: {ja: 説明文, extends: passage_express_from_natural_language, mod: {of: [v_refer, from], with: concept}}
@@ -207,28 +200,6 @@ nodes:
   system_act: {ja: 体系そのものの行為, extends: v_refer, from: system}
   grammar_rule: {ja: 文法の規則, extends: sentence, mod: {of: [v_refer, from], with: expression_part}}
   grammar: {ja: 文法の記述, extends: section, mod: {of: [v_compose, to], with: grammar_rule, at: {count: {gt: 1}}}}
-
-  # ===== 述語論理の語。「について述べる」の限定として書く。区別は法則 truth_distinct が与える =====
-  sentence_refer_from_sentence: {ja: 文へ述べる文, extends: sentence, mod: {of: [v_refer, from], with: sentence}}
-  not: {ja: 否定, extends: sentence_refer_from_sentence, cmp: [{axis: truth, a: not, b: sentence, rel: differ}]}
-  any: {ja: 存在の数量化, extends: sentence, mod: {of: [v_refer, from], with: participant, at: {count: {ge: 1}}}}
-  all: {ja: 全称の数量化, extends: not, mod: {of: [v_refer, from], with: any}}
-  value_not_before_from: {ja: 前には置かれない値, extends: value, mod: {of: [v_not_before, from]}}
-  between: {ja: 範囲の判定, extends: value_not_before_from, mod: {of: [v_not_after, from]}}
-  # ===== 個体の層と実行 =====
-  is: {ja: 属する, extends: p, to: kind}
-  individuals: {ja: 個体, form: [is, from]}
-  facts: {ja: 個体についての文, extends: sentence, mod: {of: [v_refer, from], with: individuals}}
-  run.state: {ja: 状態, extends: information_entity, mod: {of: [v_compose, to], with: facts}}
-  rewrite_rule: {ja: 書き換えの規則, extends: definition, mod: {of: [v_refer, from], with: post}}
-  run.v_execute: {ja: 実行する, extends: occurrent, from: continuant, to: run.state, new_kind: run.state,
-              pre: ["not exists(new)"], post: ["exists(new)", "after(new, to)"]}
-  role_depend_from_rewrite_rule: {ja: 書き換えの規則へ依存する役割, extends: role, mod: {of: [v_depend, from], with: rewrite_rule}}
-  run.executor: {ja: 実行器, extends: role_depend_from_rewrite_rule, mod: {of: [run.v_execute, from]}}
-  run.halted: {ja: 止まった状態, extends: run.state, mod: {of: [run.v_execute, to], neg: true}}
-  run.run: {ja: 実行の記録, extends: information_entity, mod: {of: [v_refer, from], with: run.v_execute}}
-
-  # ===== 文法の語のうち、上に無かったもの。文法の語は、すべてノードの識別子である =====
   new: {ja: 第三の位置, extends: position, mod: {of: [v_refer, from], with: third_participant}}
   of: {ja: 位置の指定, extends: expression_part, mod: {of: [v_refer, from], with: position}}
   section: {ja: 体系の節, extends: information_entity, mod: {of: [v_compose, from], with: system}}
@@ -236,18 +207,43 @@ nodes:
   axes: {ja: 軸の節, extends: section, mod: {of: [v_refer, from], with: axis}}
   nodes: {ja: ノードの節, extends: section, mod: {of: [v_refer, from], with: concept_expression}}
   source: {ja: もとになる関係の指定, extends: holds, mod: {of: [v_compose, from], with: axes}}
-  run.steps: {ja: 歩みの並び, extends: information_entity, mod: {of: [v_refer, from], with: run.v_execute, at: {count: {ge: 1}}}}
-  expect: {ja: 期待する文, extends: facts, val: {truth: true}}
+
+  # ===== 値と関数。軸の値は、固定値か、真偽を返す範囲の判定式 =====
   function: {ja: 関数, extends: value, mod: {of: [v_refer, from], with: value}}
-  logic: {ja: 述語論理の語, extends: word, mod: {of: [v_refer, from], with: sentence}}
   gt: {ja: より大きいという判定, extends: function, mod: {of: [v_come_after, from]}}
   ge: {ja: 以上という判定, extends: function, mod: {of: [v_not_before, from]}}
   lt: {ja: より小さいという判定, extends: function, mod: {of: [v_come_before, from]}}
   le: {ja: 以下という判定, extends: function, mod: {of: [v_not_after, from]}}
   number: {ja: 数の値, extends: value, mod: {of: [v_refer, from], with: magnitude}}
   literal: {ja: 文字の値, extends: value, mod: {of: [v_refer, from], with: word}}
+  value_not_before_from: {ja: 前には置かれない値, extends: value, mod: {of: [v_not_before, from]}}
+  between: {ja: 範囲の判定, extends: value_not_before_from, mod: {of: [v_not_after, from]}}
 
-  # ===== 実行の戦略と実行時の意味論。実行の検査（run_spec.py）は、run.runtime の節に書かれた選択に従う =====
+  # ===== 述語論理の語。「について述べる」の限定として書く。区別は法則 truth_distinct が与える =====
+  logic: {ja: 述語論理の語, extends: word, mod: {of: [v_refer, from], with: sentence}}
+  sentence_refer_from_sentence: {ja: 文へ述べる文, extends: sentence, mod: {of: [v_refer, from], with: sentence}}
+  not: {ja: 否定, extends: sentence_refer_from_sentence, cmp: [{axis: truth, a: not, b: sentence, rel: differ}]}
+  any: {ja: 存在の数量化, extends: sentence, mod: {of: [v_refer, from], with: participant, at: {count: {ge: 1}}}}
+  all: {ja: 全称の数量化, extends: not, mod: {of: [v_refer, from], with: any}}
+
+  # ===== 個体と事実。個体は is で種類に1つだけ属する。事実は、1つの関係だけを述べる =====
+  is: {ja: 属する, extends: p, to: kind}
+  individuals: {ja: 個体, form: [is, from]}
+  facts: {ja: 個体についての文, extends: sentence, mod: {of: [v_refer, from], with: individuals}}
+  expect: {ja: 期待する文, extends: facts, val: {truth: true}}
+
+  # ===== 実行。動的な動詞は、個体の状態を書き換える規則である =====
+  rewrite_rule: {ja: 書き換えの規則, extends: definition, mod: {of: [v_refer, from], with: post}}
+  role_depend_from_rewrite_rule: {ja: 書き換えの規則へ依存する役割, extends: role, mod: {of: [v_depend, from], with: rewrite_rule}}
+  run.state: {ja: 状態, extends: information_entity, mod: {of: [v_compose, to], with: facts}}
+  run.v_execute: {ja: 実行する, extends: occurrent, from: continuant, to: run.state, new_kind: run.state,
+              pre: ["not exists(new)"], post: ["exists(new)", "after(new, to)"]}
+  run.executor: {ja: 実行器, extends: role_depend_from_rewrite_rule, mod: {of: [run.v_execute, from]}}
+  run.halted: {ja: 止まった状態, extends: run.state, mod: {of: [run.v_execute, to], neg: true}}
+  run.run: {ja: 実行の記録, extends: information_entity, mod: {of: [v_refer, from], with: run.v_execute}}
+  run.steps: {ja: 歩みの並び, extends: information_entity, mod: {of: [v_refer, from], with: run.v_execute, at: {count: {ge: 1}}}}
+
+  # ===== 実行の戦略と実行時の意味論。実行の検査（run_spec.py）は、runtime の節に書かれた選択に従う =====
   run.strategy: {ja: 実行の戦略, extends: definition, mod: {of: [v_refer, from], with: run.v_execute}}
   run.runtime: {ja: 実行時の意味論の節, extends: section, mod: {of: [v_refer, from], with: run.strategy}}
   run.world: {ja: 書かれていない文の扱い, extends: run.strategy, mod: {of: [v_refer, from], with: facts}}
@@ -263,21 +259,15 @@ nodes:
   run.recorded: {ja: 実行の記録が選び方を与える, extends: run.choice, mod: {of: [v_depend, from], with: run.run}}
   run.progress: {ja: 当てはまるとみなす条件, extends: run.strategy, mod: {of: [v_refer, from], with: run.halted}}
   run.changes_state: {ja: 前の状態が成り立ち後の状態がまだ成り立っていない, extends: run.progress, mod: {of: [v_come_before, from], with: post}}
+
   # ===== 構文糖衣。短い書き方と、それが表すものの対応 =====
   syntax: {ja: 構文糖衣の節, extends: section, mod: {of: [v_refer, from], with: pattern}}
   formula: {ja: 状態の関係の式, extends: pattern, mod: {of: [v_refer, from], with: state_relation}}
 
-  # ===== 名前空間 =====
+  # ===== 名前空間。領域ごとに識別子を持ち、ほかの領域のものは「領域.名前」で参照する =====
   domain: {ja: 領域, extends: information_entity, mod: {of: [v_compose, to], with: concept_expression}}
   domains: {ja: 領域の節, extends: section, mod: {of: [v_refer, from], with: domain}}
   uses: {ja: 使う領域の指定, extends: expression_part, mod: {of: [v_refer, from], with: domain}}
-
-# 体系が、自分の記録（領域のファイルに書かれた個体）について述べる。個体は is で種類に属する。
-# 記録の種類ごとに、それが何であるか（is）、識別子の種類（key）、持てる項目（fields）を書く。
-# 項目名は、ノードの識別子そのもの。その項目の中身は、そのノードに当たるものである。
-
-  # 個体の項目。ある種類の個体に書ける項目は、「その種類のものとの関係で限定された下位」を持つノードだけ。
-
 
 # 実行時の意味論。実行器が、書き換えの規則をどう当てはめるか。語も値もノードの識別子。
 # 実行の検査は、ここに書かれた選択に従う。実装のない選択が書かれていれば、エラーにする。
@@ -314,5 +304,5 @@ grammar:
   runtime: [world, pre_rule, post_rule, law_check, binding, choice, progress]
   syntax: [formula]
   domains: [ja, uses]
-  domain: [domain, nodes, individuals]   # 領域のファイル（spec/exp.yaml）
+  domain: [domain, nodes, individuals, facts]   # 領域のファイル（spec/exp.yaml）
   individuals: [is, ja, val]
