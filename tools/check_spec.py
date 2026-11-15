@@ -86,7 +86,7 @@ KINDS = {"measurement_family": "families", "observation": "observations", "hypot
          "decision": "decisions", "backlog_item": "backlog"}   # この検査が中身を確かめる種類
 
 
-LITERAL = {"ja", "holds", "pre", "post", "result_file", "row_collection", "row_filter", "row_keys", "condition_entry", "passage", "note", "val"}
+LITERAL = {"ja", "holds", "pre", "post", "result_file", "row_collection", "row_filter", "pattern", "condition_entry", "passage", "note", "val"}
 
 
 def qualify(x, local, dom):
@@ -163,6 +163,10 @@ def gather(D, T, name):
                 continue
             other = {"from": "to", "to": "from"}[sides[0]]
             subj, rel = f[sides[0]], short(T.end(verb, other))
+            ov = f.get(other)
+            if isinstance(ov, str) and ov in I and not T.occupies(T.I.get(ov), T.end(verb, other), verb):
+                err(f"{where}: {other} の {ov} は、動詞 {verb} のその位置（{T.end(verb, other)}）を占められない")
+                continue
             val = f.get(other) if rel in LITERAL else q(f.get(other))
         if subj not in I:
             err(f"{where}: 始点 {subj} が個体でない")
@@ -188,6 +192,8 @@ def axes_of(I, T):
         if fam is None or not T.is_a(kind(fam), "measurement_family"):
             err(f"exp {aid}: 測定の族の軸が、どの族の部分でもない")
             continue
+        if "pattern" in a:
+            fam["row_keys"] = {"axis": label(a), "pattern": a["pattern"]}
         vals = [(vid, v) for vid, v in I.items() if T.is_a(kind(v), "axis_value") and v.get("family_axis") == aid]
         if not vals:
             err(f"exp {aid}: 測定の族の軸に、値がない")
@@ -471,6 +477,23 @@ class Ontology:
         if not isinstance(w, str) or w in self.N or w in self.I or w == "any":
             return w
         return self.resolve(w, self.Idom or "core") or w
+
+    def occupies(self, kind, end, verb):
+        """個体（種類 kind）が、動詞 verb の端の種類 end の位置を占めてよいか。
+        役割は、位置を占めることで決まる。役割でない種類は、その動詞（または上位の動詞）の位置で
+        定義された分（修飾と cmp）を外し、残りの種類に属していればよい。"""
+        if self.is_a(kind, end) or self.is_a(end, "role"):
+            return True
+        n = end
+        while n in self.N:
+            ms = self.N[n].get("mod")
+            ms = ms if isinstance(ms, list) else [ms]
+            positional = "cmp" in self.N[n] or any(isinstance(m, dict) and isinstance(m.get("of"), list)
+                                                   and self.is_a(verb, self.q(m["of"][0])) for m in ms)
+            if not positional:
+                break
+            n = self.q(self.N[n].get("extends"))
+        return n is not None and self.is_a(kind, n)
 
     def is_a(self, x, y, hops=0):
         if hops == 0:
@@ -793,9 +816,6 @@ def expand(M, T):
         for st in f["metric"]:
             if st not in T.N or not (T.is_a(st, "metric") or T.is_a(st, "magnitude")):
                 err(f"measurements.{fid}: 指標 {st} は、体系の指標でも大きさでもない")
-        for k in f.get("row_keys", {}):
-            if not T.field_ok("row_keys", k):
-                err(f"measurements.{fid}: 項目 {k} は、種類 row_keys の個体に書けない")
         axes = f["axis"]
         names = list(axes)
         keys = [list(axes[a]) if isinstance(axes[a], dict) else axes[a] for a in names]

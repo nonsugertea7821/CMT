@@ -57,7 +57,7 @@ nodes:
   v_file_of: {ja: 結果ファイルとして部分になる, extends: v_compose, from: result_file, to: measurement_family}
   v_rows_of: {ja: 行の集まりとして部分になる, extends: v_compose, from: row_collection, to: measurement_family}
   v_filter_of: {ja: 行の限定として部分になる, extends: v_compose, from: row_filter, to: measurement_family}
-  v_keys_of: {ja: 行の識別子による限定として部分になる, extends: v_compose, from: row_keys, to: measurement_family}
+  v_keys_of: {ja: 行の識別子の雛形として軸の部分になる, extends: v_compose, from: pattern, to: family_axis}
   v_entry_of: {ja: 条件ごとの記録として部分になる, extends: v_compose, from: condition_entry, to: measurement_family}
   v_axis_of: {ja: 軸として部分になる, extends: v_compose, from: family_axis, to: measurement_family}
   v_value_of: {ja: 値として軸の部分になる, extends: v_compose, from: axis_value, to: family_axis}
@@ -237,15 +237,12 @@ nodes:
   information_entity_compose_from_result_file: {ja: 結果ファイルへ部分になる情報, extends: information_entity, mod: {of: [v_compose, from], with: result_file}}
   result_row: {ja: 結果の行, extends: information_entity_compose_from_result_file, mod: {of: [v_refer, from], with: question}}
   row_collection: {ja: 行の集まり, extends: information_entity_compose_from_result_file, mod: {of: [v_compose, to], with: result_row, at: {count: {gt: 1}}}}
-  row_keys: {ja: 行の識別子による限定, extends: row_filter, mod: {of: [v_refer, from], with: identifier}}
   logit_margin: {ja: ロジット差の平均, extends: metric, mod: {of: [v_measure, from], with: verdict}, axis: order}
   judged_accuracy: {ja: 自由生成での正答率, extends: accuracy, mod: {of: [v_depend, from], with: fmt_free}, axis: ratio}
   family_axis: {ja: 測定の族の軸, extends: axis, mod: {of: [v_compose, from], with: measurement_family}}
   axis_value: {ja: 軸の値, extends: value, mod: {of: [v_compose, from], with: family_axis}}
   measurement_family: {ja: 測定値の族, extends: information_entity, mod: {of: [v_refer, from], with: measured_value, at: {count: {gt: 1}}}}
   recital_nll: {ja: 定義文の出しにくさ, extends: metric, mod: {of: [v_measure, from], with: v_speak_definition}}
-  axis_refer_to_row_keys: {ja: 行の識別子による限定から述べられる軸, extends: axis, mod: {of: [v_refer, to], with: row_keys}}
-  pattern_compose_from_row_keys: {ja: 行の識別子による限定へ部分になる雛形, extends: pattern, mod: {of: [v_compose, from], with: row_keys}}
   measured_value: {ja: 測定値, extends: magnitude, mod: {of: [v_depend, from], with: result_file}}
   mean_value: {ja: 平均, extends: magnitude, mod: {of: [v_depend, from], with: measured_value, at: {count: {gt: 1}}}}
   tolerance: {ja: 許容幅, extends: magnitude, mod: {of: [v_depend, from], with: observation}}
@@ -280,7 +277,7 @@ nodes:
   decision: {ja: 決定, extends: definition, mod: {of: [v_compose, from], with: information_entity_design_to}}
   dec_adopted: {ja: 採用済みの決定, extends: decision, mod: adopted}
   dec_tentative: {ja: 暫定の決定, extends: decision, mod: not_adopted}
-  dec_withdrawn: {ja: 取り下げた決定, extends: decision, mod: withdrawn}
+  dec_withdrawn: {ja: 取り下げた決定, extends: withdrawn_sentence, mod: {of: [is, from], with: decision}}
   basis: {ja: 根拠となる仮説, extends: hypothesis, mod: {of: [v_depend, to], with: decision}}
   performed_experiment: {ja: 行われた実験, extends: experiment, mod: {of: [v_perform, to]}}
   measured_experiment: {ja: 結果ファイルが述べる実験, extends: experiment, mod: {of: [v_refer, to], with: result_file}}
@@ -739,6 +736,7 @@ facts:
   - {is: v_value_of, from: e1type_group_G2k, to: e1type_group}
   - {is: v_denote, from: e1type_group_G2k, to: g_redef_control}
   - {is: v_axis_of, from: e1type_type, to: e1type}
+  - {is: v_keys_of, from: '{group}-#', to: e1type_type}
   - {is: v_value_of, from: e1type_type_rule, to: e1type_type}
   - {is: v_spell, from: e1type_type_rule, to: ['02', '03', '06', 09, '10', '11', '13', '15', '16', '17', '21', '23']}
   - {is: v_denote, from: e1type_type_rule, to: rule_redefinition}
@@ -748,7 +746,6 @@ facts:
   - {is: v_axis_of, from: e1type_cond, to: e1type}
   - {is: v_value_of, from: e1type_cond_none, to: e1type_cond}
   - {is: v_value_of, from: e1type_cond_near, to: e1type_cond}
-  - {is: v_keys_of, from: {axis: type, pattern: '{group}-#'}, to: e1type}
   - {is: v_entry_of, from: '{cond}', to: e1type}
   - {is: v_metric_of, from: e1type, to: accuracy}
   - {is: v_file_of, from: e1b_Qwen2.5-1.5B-Instruct.json, to: e1b}
@@ -829,6 +826,7 @@ facts:
   - {is: v_value_of, from: e3type_group_G2k, to: e3type_group}
   - {is: v_denote, from: e3type_group_G2k, to: g_redef_control}
   - {is: v_axis_of, from: e3type_type, to: e3type}
+  - {is: v_keys_of, from: '{group}-#', to: e3type_type}
   - {is: v_value_of, from: e3type_type_rule, to: e3type_type}
   - {is: v_spell, from: e3type_type_rule, to: ['02', '03', '06', 09, '10', '11', '13', '15', '16', '17', '21', '23']}
   - {is: v_denote, from: e3type_type_rule, to: rule_redefinition}
@@ -838,7 +836,6 @@ facts:
   - {is: v_axis_of, from: e3type_cond, to: e3type}
   - {is: v_value_of, from: e3type_cond_vec, to: e3type_cond}
   - {is: v_denote, from: e3type_cond_vec, to: single_layer_vector}
-  - {is: v_keys_of, from: {axis: type, pattern: '{group}-#'}, to: e3type}
   - {is: v_entry_of, from: '{cond}', to: e3type}
   - {is: v_metric_of, from: e3type, to: accuracy}
   - {is: v_file_of, from: 'e3_Qwen2.5-1.5B-Instruct_{run}.json', to: e3loss}
