@@ -1138,12 +1138,8 @@ def natural_language_only_in_ja(name, x, path=()):
             err(f"{name} {'.'.join(path)}: 自然言語は表示名 ja にだけ書く（{x[:20]}）")
 
 
-def main():
-    ap = argparse.ArgumentParser()
-    ap.add_argument("--values", action="store_true")
-    ap.add_argument("--show")
-    ap.add_argument("--expr")
-    args = ap.parse_args()
+def build():
+    """体系を読み、検査して、(体系, ontology, 領域 subj, 測定の族, 文) を返す。誤りは errors に積む。"""
     for f in ("ontology.yaml", "subj.yaml", "exp.yaml"):
         natural_language_only_in_ja(f, yaml.safe_load(open(SPEC / f)))
     O = load("ontology.yaml")
@@ -1176,6 +1172,16 @@ def main():
     T.check_domains()
     T.check_laws()
     M, C = load_domain("exp.yaml", D, T)
+    return T, O, S, M, C
+
+
+def main():
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--values", action="store_true")
+    ap.add_argument("--show")
+    ap.add_argument("--expr")
+    args = ap.parse_args()
+    T, O, S, M, C = build()
     values, meanings = expand(M, T)
     check_claims(C, values, T)
     if args.expr:
