@@ -19,7 +19,7 @@ nodes:
   v_adopt: {display: 採用する, extends: occurrent, from: continuant, to: continuant, new_kind: role, pre: [{is: depend, from: new, to: to, neg: true}], post: [{is: depend, from: new, to: to}]}
   v_withdraw: {display: 取り下げる, extends: occurrent, from: continuant, to: continuant, new_kind: role, pre: [{is: depend, from: new, to: to}], post: [{is: depend, from: new, to: to, neg: true}]}
   v_happen_after: {display: 後に起こる, extends: occurrent, from: occurrent, to: occurrent, holds: [{is: after, from: from, to: to}]}
-  v_use: {display: 使う, extends: occurrent, from: any, to: continuant, holds: [{is: involve, from: new, to: to}, {is: depend, from: new, to: from}]}
+  v_utilize: {display: 用いる, extends: occurrent, from: any, to: continuant, holds: [{is: involve, from: new, to: to}, {is: depend, from: new, to: from}]}
   v_speak: {display: 発話する, extends: occurrent, from: continuant, to: continuant, pre: [{is: exists, from: to, neg: true}], post: [{is: exists, from: to}, {is: depend, from: to, to: from}]}
   v_see: {display: 見る, extends: occurrent, from: continuant, to: continuant, new_kind: quality,
           pre: [{is: exists, from: new, neg: true}], post: [{is: exists, from: new}, {is: depend, from: new, to: from}, {is: refer, from: new, to: to}]}
@@ -145,7 +145,7 @@ nodes:
   control_case: {display: 衝突しない事例, extends: case, cmp: [{axis: truth, a: verdict_by_definition, b: verdict_by_prior, rel: same}]}
   information_entity_compose_to_case: {display: 事例から部分になる情報, extends: information_entity, mod: {of: [v_compose, to], with: case}}
   application_example: {display: 適用例, extends: information_entity_compose_to_case, mod: {of: [v_compose, to], with: verdict}}
-  test: {display: テスト, extends: application_example, mod: {of: [v_use, to], with: verification}}
+  test: {display: テスト, extends: application_example, mod: {of: [v_utilize, to], with: verification}}
   label_token_positions: {display: 語のトークン位置, extends: information_entity_compose_to_word, mod: {of: [v_compose, from], with: context}}
   information_entity_compose_from_question: {display: 設問へ部分になる情報, extends: information_entity, mod: {of: [v_compose, from], with: question}}
   position_after_word: {display: 語の直後, extends: information_entity_compose_from_question, mod: {of: [v_come_after, from], with: word, at: {order: 1}}}
@@ -299,6 +299,7 @@ nodes:
   consolidation_target: {display: 変更の固定先, extends: role, mod: {of: [v_depend, from], with: rule_consolidation}}
 
 individuals:
+  exp: {is: domain, display: 実験}
   # ===== モデル。種類ではなく、1つずつの成果物。
   # 数の項目は、その種類のものが、この個体との関係でいくつあるか（個数の軸の固定値）。
   model_15b: {is: open_weight_model, display: Qwen2.5-1.5B-Instruct}
@@ -677,6 +678,8 @@ individuals:
   b_sparse_dictionary_observation: {is: item_queued}
 
 facts:
+  - {is: v_use, from: exp, to: core}
+  - {is: v_use, from: exp, to: run}
 
   # ===== モデル。種類ではなく、1つずつの成果物。
   - {is: v_compose, from: weights, to: model_15b, at: {count: 1500000000}}

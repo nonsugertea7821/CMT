@@ -23,7 +23,7 @@ from pathlib import Path
 import yaml
 
 sys.path.insert(0, str(Path(__file__).parent))
-from check_spec import Facts, Ontology, atom, evaluate, law_rules, load, merge_domain, variables  # noqa: E402
+from check_spec import Facts, Ontology, atom, evaluate, law_rules, in_scope, load, root_name, merge_domain, register_domains, variables  # noqa: E402
 
 ROOT = Path(__file__).parent.parent / "spec"
 
@@ -146,15 +146,16 @@ class Machine:
 
 
 def main():
-    O = load("ontology.yaml")
-    merge_domain("exp.yaml", O)   # 実行の記録は、領域 exp の種類と動詞を「exp.名前」で使える
+    O = load(root_name())
+    for _, name in register_domains(O):   # 実行の記録は、領域の種類と動詞を「領域.名前」で使える
+        merge_domain(name, O)
     T = Ontology(O)
     G = T.G["run"]
     for k, v in T.O["runtime"].items():
         if v not in IMPLEMENTED.get(k, ()):
             print(f"実行の検査に失敗: runtime.{k} の選択 {v} は、この検査に実装がない")
             sys.exit(1)
-    errors, n_steps, files = [], 0, sorted((ROOT / "runs").glob("*.yaml"))
+    errors, n_steps, files = [], 0, in_scope("runs")
     for path in files:
         run = yaml.safe_load(path.read_text(encoding="utf-8"))
         for k in run:

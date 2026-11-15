@@ -40,6 +40,23 @@ import yaml
 
 ROOT = Path(__file__).resolve().parent.parent
 SPEC = ROOT / "spec"
+CONFIG = ROOT / "cscl.yaml"   # 体系の範囲（tsconfig に当たる）
+
+
+def root_name():
+    """本体のファイル（spec/ からの相対）。"""
+    return str((ROOT / config()["root"]).resolve().relative_to(SPEC))
+
+
+def config():
+    return yaml.safe_load(CONFIG.read_text(encoding="utf-8"))
+
+
+def in_scope(key):
+    """cscl.yaml の範囲（include から exclude を除いたもの）にあるファイル。"""
+    c = config()
+    excl = {p.resolve() for g in c.get("exclude") or [] for p in ROOT.glob(g)}
+    return sorted({p.resolve() for g in c.get(key) or [] for p in ROOT.glob(g)} - excl)
 RESULTS = ROOT / "experiments" / "results"
 TOPS = ("continuant", "occurrent")
 errors = []
@@ -80,7 +97,7 @@ _Unique.construct_mapping = _mapping
 
 def load(name):
     O = yaml.load((SPEC / name).read_text(encoding="utf-8"), Loader=_Unique)
-    if name == "ontology.yaml":
+    if name == root_name():
         core_sections(O)
     return O
 
@@ -1138,15 +1155,62 @@ def natural_language_only_in_ja(name, x, path=()):
             err(f"{name} {'.'.join(path)}: 自然言語は表示名 display にだけ書く（{x[:20]}）")
 
 
+def domain_files():
+    """領域のファイル。cscl.yaml の範囲にあり、最上位に domain を持つ YAML。本体（root）は含めない。"""
+    out, root = {}, (ROOT / config()["root"]).resolve()
+    for p in in_scope("include"):
+        if p == root:
+            continue
+        y = yaml.safe_load(p.read_text(encoding="utf-8")) or {}
+        if isinstance(y, dict) and "domain" in y:
+            out[y["domain"]] = str(p.relative_to(SPEC))
+    return out
+
+
+def register_domains(O):
+    """各領域のファイルが自分で宣言した領域（{is: domain} の個体）と、使う領域（v_use の事実）を、体系の domains に加える。
+    依存は領域ごとに宣言する（クレートが自分の依存を書くのと同じ）。使う領域の順に並べて返す。"""
+    files = domain_files()
+    for dom, name in files.items():
+        y = yaml.safe_load((SPEC / name).read_text(encoding="utf-8"))
+        me = (y.get("individuals") or {}).get(dom) or {}
+        if me.get("is") != "domain":
+            err(f"{name}: 領域 {dom} を、個体 {{is: domain}} として宣言していない")
+        O["domains"][dom] = {"display": me.get("display"), "uses": []}
+        for f in y.get("facts") or []:
+            if isinstance(f, dict) and f.get("is") == "v_use":
+                if f.get("from") != dom:
+                    err(f"{name}: 領域の使用は、自分の領域についてだけ書く（{f}）")
+                O["domains"][dom]["uses"].append(f.get("to"))
+    order, seen = [], set()
+
+    def visit(d, stack=()):
+        if d in seen or d not in files:
+            return
+        if d in stack:
+            return err(f"領域 {d}: uses が循環している")
+        for u in O["domains"][d]["uses"]:
+            visit(u, stack + (d,))
+        seen.add(d)
+        order.append(d)
+    for d in files:
+        visit(d)
+    return [(d, files[d]) for d in order]
+
+
 def build():
-    """体系を読み、検査して、(体系, ontology, 領域 subj, 測定の族, 文) を返す。誤りは errors に積む。"""
-    for f in ("ontology.yaml", "subj.yaml", "exp.yaml"):
-        natural_language_only_in_ja(f, yaml.safe_load(open(SPEC / f)))
-    O = load("ontology.yaml")
-    S = merge_domain("subj.yaml", O)
-    D = merge_domain("exp.yaml", O)
+    """体系を読み、検査して、(体系, ontology, 領域 subj, 測定の族, 文) を返す。誤りは errors に積む。
+    領域のファイルは自分で見つけ、使う領域の順に読む。領域 exp の個体（測定・観察・仮説など）は、中身まで検査する。"""
+    O = load(root_name())
+    natural_language_only_in_ja(root_name(), yaml.safe_load(open(SPEC / root_name())))
+    order = register_domains(O)
+    Dm = {}
+    for dom, name in order:
+        natural_language_only_in_ja(name, yaml.safe_load(open(SPEC / name)))
+        Dm[dom] = (name, merge_domain(name, O))
     T = Ontology(O)
-    T.Idom = D["domain"]
+    _, D = Dm["exp"]
+    T.Idom = "exp"
     for iid, x in D["individuals"].items():
         if not isinstance(x.get("is"), str):
             err(f"exp.yaml {iid}: is は種類を1つだけ書く。並べない")
@@ -1160,18 +1224,25 @@ def build():
             err(f"ontology.yaml {iid}: 個体は {{is: 種類, display}} で書き、種類はノード")
     T.I |= {iid: x.get("is") for iid, x in core.items() if x.get("is") in T.N}
     gather({"domain": "core", "_local": set(), "individuals": core, "facts": O.get("facts")}, T, "ontology.yaml")
-    subj = {iid: dict(x) for iid, x in S["individuals"].items()}
-    for iid, x in subj.items():
-        if iid in T.I or iid in T.N or iid in core:
-            err(f"subj.yaml {iid}: 個体の識別子が、ほかの個体かノードと重なっている")
-    T.I |= {iid: x.get("is") for iid, x in subj.items() if x.get("is") in T.N}
-    T.Isubj = {iid: "subj" for iid in subj}
-    gather({"domain": "subj", "_local": S["_local"], "individuals": subj, "facts": S.get("facts")}, T, "subj.yaml")
+    others = {}
+    for dom, (name, X) in Dm.items():
+        if dom == "exp":
+            continue
+        ind = {iid: dict(x) for iid, x in X["individuals"].items()}
+        for iid in ind:
+            if iid in T.I or iid in T.N or iid in core:
+                err(f"{name} {iid}: 個体の識別子が、ほかの個体かノードと重なっている")
+        T.I |= {iid: x.get("is") for iid, x in ind.items() if x.get("is") in T.N}
+        T.Isubj |= {iid: dom for iid in ind}
+        others[dom] = (name, X, ind)
+    for dom, (name, X, ind) in others.items():
+        gather({"domain": dom, "_local": X["_local"], "individuals": ind, "facts": X.get("facts")}, T, name)
     T.check()
     T.check_grammar()
     T.check_domains()
     T.check_laws()
     M, C = load_domain("exp.yaml", D, T)
+    S = others.get("subj", (None, {"individuals": {}, "facts": [], "_local": set()}))[1]
     return T, O, S, M, C
 
 

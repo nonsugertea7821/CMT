@@ -1,0 +1,8 @@
+# CSCL（Concept System Control Language、概念体系制御言語）の体系の範囲。
+# 体系の範囲。tsconfig の include / exclude、Cargo の workspace members に当たる。
+# 検査器（tools/check_spec.py）と実行器（tools/run_spec.py）は、ここに書いた範囲のファイルだけを読む。
+# 領域どうしの依存（どの領域を使うか）は、ここではなく、各領域のファイルが自分で宣言する（v_use の事実）。
+root: spec/ontology.yaml     # 本体。領域 core と run
+include: [spec/*.yaml]       # 領域のファイル。最上位に domain を持つもの
+exclude: [spec/notes.yaml]   # 控え。体系ではない
+runs: [spec/runs/*.yaml]     # 実行の記録
