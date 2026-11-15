@@ -179,6 +179,8 @@ nodes:
   v_assume: {ja: 前提に置く, extends: v_refer, from: law_rule, to: premise}
   v_derive: {ja: 導く, extends: v_refer, from: law_rule, to: derived}
   v_require: {ja: 成り立つことを求める, extends: v_refer, from: law_rule, to: required}
+  variable: {ja: 変数, extends: expression_part, mod: {of: [v_refer, from], with: law_rule}}
+  law_relation: {ja: 導いた関係, extends: expression_part, mod: {of: [v_refer, to], with: derived}}
   v_govern: {ja: 掛かる, extends: v_refer, from: law_given, to: information_entity}
   system_act: {ja: 体系そのものの行為, extends: v_refer, from: system}
   grammar_rule: {ja: 文法の規則, extends: sentence, mod: {of: [v_refer, from], with: expression_part}}
@@ -282,29 +284,88 @@ grammar:
 # 領域と法則の個体。
 individuals:
   # ===== 領域。識別子は「領域.名前」と書く。領域を書かない識別子は core に属する。
-  # 表示語と名前は、同じ領域の中では重複できない（法則 unique_in_domain）。
-  # ノードは、自分の領域か、その領域が使う領域のノードだけを参照できる（法則 layered）。使う関係は循環しない。
   core: {is: domain, ja: 核}
   run: {is: domain, ja: 実行}
   exp: {is: domain, ja: 実験}
-  # ===== 規則で書いた法則。関係ごとに書く（関係の上を量化しない）。位置の語 from / to / new を変数に使う。
-  # 前提（v_assume）がすべて成り立つとき、導く文（v_derive）を状態に足し、求める文（v_require）が成り立っていなければ違反。
+  # ===== 規則の変数。規則の中で、個体やノードの代わりに置く。
+  var1: {is: variable, ja: 変数1}
+  var2: {is: variable, ja: 変数2}
+  var3: {is: variable, ja: 変数3}
+  var4: {is: variable, ja: 変数4}
+  var5: {is: variable, ja: 変数5}
+  # ===== 導いた関係。規則が導き、規則の前提に使う。
+  r_parent: {is: law_relation, ja: 上位である}
+  r_ancestor: {is: law_relation, ja: 祖先である}
+  r_end_from: {is: law_relation, ja: 始点の種類である}
+  r_end_to: {is: law_relation, ja: 終点の種類である}
+  r_end_new_kind: {is: law_relation, ja: 第三のものの種類である}
+  r_kind_up: {is: law_relation, ja: 種類として上である}
+  r_below: {is: law_relation, ja: 種類として下である}
+  r_limit: {is: law_relation, ja: 限定である}
+  r_own: {is: law_relation, ja: 自分で足した式である}
+  r_acc: {is: law_relation, ja: 積み上がった式である}
+  r_adds: {is: law_relation, ja: 上位にない式を足している}
+  r_concept: {is: law_relation, ja: 概念である}
+  r_candidate: {is: law_relation, ja: 具体的な候補である}
+  r_missing: {is: law_relation, ja: 候補の式が欠けている}
+  r_visible: {is: law_relation, ja: 参照できる}
+  # ===== 規則で書いた法則。前提（v_assume）がすべて成り立つとき、導く文（v_derive）を足し、求める文（v_require）が成り立っていなければ違反。
+  # 否定の前提は、書かれていない（導かれていない）ことを表す。前提にだけ出てくる変数は「どれでも」と読む。
+  # 基礎の関係の法則は実行の状態に、体系の書き方の法則は、検査が体系の書き方から読んだ文に当てはめる。
+  # 体系の書き方の文: exists, extends, mod, of, position, with, neg, from, to, new_kind, axis, form, holds, pre, val, cmp, ja, domain, refer, value, v_use。
   part_transitive: {is: law_rule, ja: 部分であることは推移的}
   after_transitive: {is: law_rule, ja: 後ろにあることは推移的}
   part_antisymmetric: {is: law_rule, ja: 部分であることは反対称的}
   after_asymmetric: {is: law_rule, ja: 後ろにあることは非対称的}
   depend_end_exists: {is: law_rule, ja: 依存する始点が在れば終点も在る}
   involve_end_exists: {is: law_rule, ja: 関わられる始点が在れば終点も在る}
-  # ===== 意味を検査や実行器が与える法則。体系が自分の書き方について述べるものと、規則の当てはめ方そのもの。
-  truth_distinct: {is: law_given, ja: 真偽の値は2つで互いに違う}
-  inherit: {is: law_given, ja: 下位は上位の端を引き継ぐ}
-  narrow: {is: law_given, ja: 下位は上位を狭めることしかできない}
-  acyclic: {is: law_given, ja: 定義は自分自身を参照しない}
-  monotone: {is: law_given, ja: 階層を降りるたびに限定が増える}
-  specific: {is: law_given, ja: より具体的な概念があればその下に置く}
-  single: {is: law_given, ja: 1つのノードが足せる限定は1つだけ}
-  unique_in_domain: {is: law_given, ja: 表示語は同じ領域の中で重複しない}
-  layered: {is: law_given, ja: 参照できるのは自分の領域と使う領域だけ}
+  # --- 体系の書き方
+  parent_by_extends: {is: law_rule, ja: extends に書いたものは上位}
+  parent_by_is: {is: law_rule, ja: 「属する」の始点として限定した種類は上位}
+  ancestor_by_parent: {is: law_rule, ja: 上位は祖先}
+  ancestor_by_step: {is: law_rule, ja: 上位の祖先は祖先}
+  acyclic: {is: law_rule, ja: 定義は自分自身を参照しない（自分の祖先にならない）}
+  inherit_from_own: {is: law_rule, ja: 端 from は自分に書いたもの}
+  inherit_from: {is: law_rule, ja: 端 from を書かなければ上位から引き継ぐ}
+  inherit_to_own: {is: law_rule, ja: 端 to は自分に書いたもの}
+  inherit_to: {is: law_rule, ja: 端 to を書かなければ上位から引き継ぐ}
+  inherit_new_kind_own: {is: law_rule, ja: 端 new_kind は自分に書いたもの}
+  inherit_new_kind: {is: law_rule, ja: 端 new_kind を書かなければ上位から引き継ぐ}
+  kind_up_by_parent: {is: law_rule, ja: 上位は種類として上}
+  kind_up_by_form_from: {is: law_rule, ja: 形（from）は、その位置の端の種類の下}
+  kind_up_by_form_to: {is: law_rule, ja: 形（to）は、その位置の端の種類の下}
+  kind_up_by_form_new: {is: law_rule, ja: 形（new）は、その位置の端の種類の下}
+  kind_up_by_form_new_any: {is: law_rule, ja: 第三の位置の種類が書かれていない形は any の下}
+  below_self: {is: law_rule, ja: 自分は自分の下}
+  below_any: {is: law_rule, ja: すべては any の下}
+  below_by_step: {is: law_rule, ja: 種類として上のものの下は下}
+  narrow_from: {is: law_rule, ja: 下位の動詞の端 from は、上位の動詞の端を狭める}
+  narrow_to: {is: law_rule, ja: 下位の動詞の端 to は、上位の動詞の端を狭める}
+  limit_by_mod: {is: law_rule, ja: mod は限定}
+  limit_by_val: {is: law_rule, ja: val は限定}
+  limit_by_cmp: {is: law_rule, ja: cmp は限定}
+  single: {is: law_rule, ja: 1つのノードが足せる限定は1つだけ}
+  own_by_limit: {is: law_rule, ja: r_limit は自分で足した式}
+  own_by_from: {is: law_rule, ja: from は自分で足した式}
+  own_by_to: {is: law_rule, ja: to は自分で足した式}
+  own_by_new_kind: {is: law_rule, ja: new_kind は自分で足した式}
+  own_by_axis: {is: law_rule, ja: axis は自分で足した式}
+  acc_own: {is: law_rule, ja: 自分で足した式は積み上がった式}
+  acc_ancestor: {is: law_rule, ja: 祖先が足した式は積み上がった式}
+  adds: {is: law_rule, ja: 上位に積み上がっていない式を自分で足している}
+  concept_kind: {is: law_rule, ja: 上位を持ち、修飾語・形・動詞でないものは概念}
+  monotone: {is: law_rule, ja: 階層を降りるたびに限定が増える}
+  parents_unordered: {is: law_rule, ja: 上位に並べた2つは、上下の関係にない}
+  specific_candidate: {is: law_rule, ja: 上位の下にあり、互いに上下でない別の概念}
+  specific_missing: {is: law_rule, ja: 候補の式に、自分にない式がある}
+  specific: {is: law_rule, ja: より具体的な概念があればその下に置く}
+  unique_in_domain: {is: law_rule, ja: 表示語は同じ領域の中で重複しない}
+  visible_self: {is: law_rule, ja: 領域は自分を参照できる}
+  visible_use: {is: law_rule, ja: 領域は使う領域を参照できる}
+  layered: {is: law_rule, ja: 参照できるのは自分の領域と使う領域だけ}
+  truth_two: {is: law_rule, ja: 真偽の軸は true と false を持つ}
+  truth_only: {is: law_rule, ja: 真偽の軸の値は true か false}
+  # ===== 意味を検査や実行器が与える法則。規則の当てはめ方そのもの。
   unique_names: {is: law_given, ja: 名前の違う個体は同じでない}
   step: {is: law_given, ja: 前の状態が成り立つとき後の状態に置き換える}
   frame: {is: law_given, ja: 動詞が触れなかった文は変わらない}
@@ -314,33 +375,167 @@ facts:
   - {is: v_use, from: run, to: core}
   - {is: v_use, from: exp, to: core}
   - {is: v_use, from: exp, to: run}
-  - {is: v_assume, from: part_transitive, to: {is: part, from: from, to: new}}
-  - {is: v_assume, from: part_transitive, to: {is: part, from: new, to: to}}
-  - {is: v_derive, from: part_transitive, to: {is: part, from: from, to: to}}
-  - {is: v_assume, from: after_transitive, to: {is: after, from: from, to: new}}
-  - {is: v_assume, from: after_transitive, to: {is: after, from: new, to: to}}
-  - {is: v_derive, from: after_transitive, to: {is: after, from: from, to: to}}
-  - {is: v_assume, from: part_antisymmetric, to: {is: part, from: from, to: to}}
-  - {is: v_assume, from: part_antisymmetric, to: {is: part, from: to, to: from}}
-  - {is: v_require, from: part_antisymmetric, to: {is: same, from: from, to: to}}
-  - {is: v_assume, from: after_asymmetric, to: {is: after, from: from, to: to}}
-  - {is: v_require, from: after_asymmetric, to: {is: after, from: to, to: from, neg: true}}
-  - {is: v_assume, from: depend_end_exists, to: {is: exists, from: from}}
-  - {is: v_assume, from: depend_end_exists, to: {is: depend, from: from, to: to}}
-  - {is: v_require, from: depend_end_exists, to: {is: exists, from: to}}
-  - {is: v_assume, from: involve_end_exists, to: {is: exists, from: from}}
-  - {is: v_assume, from: involve_end_exists, to: {is: involve, from: from, to: to}}
-  - {is: v_require, from: involve_end_exists, to: {is: exists, from: to}}
-  - {is: v_govern, from: truth_distinct, to: axes}
-  - {is: v_govern, from: inherit, to: nodes}
-  - {is: v_govern, from: narrow, to: nodes}
-  - {is: v_govern, from: acyclic, to: nodes}
-  - {is: v_govern, from: monotone, to: nodes}
-  - {is: v_govern, from: specific, to: nodes}
-  - {is: v_govern, from: single, to: nodes}
-  - {is: v_govern, from: unique_in_domain, to: nodes}
-  - {is: v_govern, from: layered, to: nodes}
-  - {is: v_govern, from: unique_names, to: individuals}
+  - {is: v_assume, from: part_transitive, to: {is: part, from: var1, to: var3}}
+  - {is: v_assume, from: part_transitive, to: {is: part, from: var3, to: var2}}
+  - {is: v_derive, from: part_transitive, to: {is: part, from: var1, to: var2}}
+  - {is: v_assume, from: after_transitive, to: {is: after, from: var1, to: var3}}
+  - {is: v_assume, from: after_transitive, to: {is: after, from: var3, to: var2}}
+  - {is: v_derive, from: after_transitive, to: {is: after, from: var1, to: var2}}
+  - {is: v_assume, from: part_antisymmetric, to: {is: part, from: var1, to: var2}}
+  - {is: v_assume, from: part_antisymmetric, to: {is: part, from: var2, to: var1}}
+  - {is: v_require, from: part_antisymmetric, to: {is: same, from: var1, to: var2}}
+  - {is: v_assume, from: after_asymmetric, to: {is: after, from: var1, to: var2}}
+  - {is: v_require, from: after_asymmetric, to: {is: after, from: var2, to: var1, neg: true}}
+  - {is: v_assume, from: depend_end_exists, to: {is: exists, from: var1}}
+  - {is: v_assume, from: depend_end_exists, to: {is: depend, from: var1, to: var2}}
+  - {is: v_require, from: depend_end_exists, to: {is: exists, from: var2}}
+  - {is: v_assume, from: involve_end_exists, to: {is: exists, from: var1}}
+  - {is: v_assume, from: involve_end_exists, to: {is: involve, from: var1, to: var2}}
+  - {is: v_require, from: involve_end_exists, to: {is: exists, from: var2}}
+  - {is: v_assume, from: parent_by_extends, to: {is: extends, from: var1, to: var2}}
+  - {is: v_derive, from: parent_by_extends, to: {is: r_parent, from: var1, to: var2}}
+  - {is: v_assume, from: parent_by_is, to: {is: mod, from: var1, to: var3}}
+  - {is: v_assume, from: parent_by_is, to: {is: of, from: var3, to: is}}
+  - {is: v_assume, from: parent_by_is, to: {is: position, from: var3, to: from}}
+  - {is: v_assume, from: parent_by_is, to: {is: with, from: var3, to: var2}}
+  - {is: v_assume, from: parent_by_is, to: {is: neg, from: var3, to: true, neg: true}}
+  - {is: v_derive, from: parent_by_is, to: {is: r_parent, from: var1, to: var2}}
+  - {is: v_assume, from: ancestor_by_parent, to: {is: r_parent, from: var1, to: var2}}
+  - {is: v_derive, from: ancestor_by_parent, to: {is: r_ancestor, from: var1, to: var2}}
+  - {is: v_assume, from: ancestor_by_step, to: {is: r_parent, from: var1, to: var3}}
+  - {is: v_assume, from: ancestor_by_step, to: {is: r_ancestor, from: var3, to: var2}}
+  - {is: v_derive, from: ancestor_by_step, to: {is: r_ancestor, from: var1, to: var2}}
+  - {is: v_assume, from: acyclic, to: {is: r_ancestor, from: var1, to: var2}}
+  - {is: v_require, from: acyclic, to: {is: same, from: var1, to: var2, neg: true}}
+  - {is: v_assume, from: inherit_from_own, to: {is: from, from: var1, to: var2}}
+  - {is: v_derive, from: inherit_from_own, to: {is: r_end_from, from: var1, to: var2}}
+  - {is: v_assume, from: inherit_from, to: {is: extends, from: var1, to: var3}}
+  - {is: v_assume, from: inherit_from, to: {is: r_end_from, from: var3, to: var2}}
+  - {is: v_assume, from: inherit_from, to: {is: from, from: var1, to: var4, neg: true}}
+  - {is: v_derive, from: inherit_from, to: {is: r_end_from, from: var1, to: var2}}
+  - {is: v_assume, from: inherit_to_own, to: {is: to, from: var1, to: var2}}
+  - {is: v_derive, from: inherit_to_own, to: {is: r_end_to, from: var1, to: var2}}
+  - {is: v_assume, from: inherit_to, to: {is: extends, from: var1, to: var3}}
+  - {is: v_assume, from: inherit_to, to: {is: r_end_to, from: var3, to: var2}}
+  - {is: v_assume, from: inherit_to, to: {is: to, from: var1, to: var4, neg: true}}
+  - {is: v_derive, from: inherit_to, to: {is: r_end_to, from: var1, to: var2}}
+  - {is: v_assume, from: inherit_new_kind_own, to: {is: new_kind, from: var1, to: var2}}
+  - {is: v_derive, from: inherit_new_kind_own, to: {is: r_end_new_kind, from: var1, to: var2}}
+  - {is: v_assume, from: inherit_new_kind, to: {is: extends, from: var1, to: var3}}
+  - {is: v_assume, from: inherit_new_kind, to: {is: r_end_new_kind, from: var3, to: var2}}
+  - {is: v_assume, from: inherit_new_kind, to: {is: new_kind, from: var1, to: var4, neg: true}}
+  - {is: v_derive, from: inherit_new_kind, to: {is: r_end_new_kind, from: var1, to: var2}}
+  - {is: v_assume, from: kind_up_by_parent, to: {is: r_parent, from: var1, to: var2}}
+  - {is: v_derive, from: kind_up_by_parent, to: {is: r_kind_up, from: var1, to: var2}}
+  - {is: v_assume, from: kind_up_by_form_from, to: {is: form, from: var1, to: var3}}
+  - {is: v_assume, from: kind_up_by_form_from, to: {is: position, from: var1, to: from}}
+  - {is: v_assume, from: kind_up_by_form_from, to: {is: r_end_from, from: var3, to: var2}}
+  - {is: v_derive, from: kind_up_by_form_from, to: {is: r_kind_up, from: var1, to: var2}}
+  - {is: v_assume, from: kind_up_by_form_to, to: {is: form, from: var1, to: var3}}
+  - {is: v_assume, from: kind_up_by_form_to, to: {is: position, from: var1, to: to}}
+  - {is: v_assume, from: kind_up_by_form_to, to: {is: r_end_to, from: var3, to: var2}}
+  - {is: v_derive, from: kind_up_by_form_to, to: {is: r_kind_up, from: var1, to: var2}}
+  - {is: v_assume, from: kind_up_by_form_new, to: {is: form, from: var1, to: var3}}
+  - {is: v_assume, from: kind_up_by_form_new, to: {is: position, from: var1, to: new}}
+  - {is: v_assume, from: kind_up_by_form_new, to: {is: r_end_new_kind, from: var3, to: var2}}
+  - {is: v_derive, from: kind_up_by_form_new, to: {is: r_kind_up, from: var1, to: var2}}
+  - {is: v_assume, from: kind_up_by_form_new_any, to: {is: form, from: var1, to: var3}}
+  - {is: v_assume, from: kind_up_by_form_new_any, to: {is: position, from: var1, to: new}}
+  - {is: v_assume, from: kind_up_by_form_new_any, to: {is: r_end_new_kind, from: var3, to: var4, neg: true}}
+  - {is: v_derive, from: kind_up_by_form_new_any, to: {is: r_kind_up, from: var1, to: any}}
+  - {is: v_assume, from: below_self, to: {is: exists, from: var1}}
+  - {is: v_derive, from: below_self, to: {is: r_below, from: var1, to: var1}}
+  - {is: v_assume, from: below_any, to: {is: exists, from: var1}}
+  - {is: v_derive, from: below_any, to: {is: r_below, from: var1, to: any}}
+  - {is: v_assume, from: below_by_step, to: {is: r_kind_up, from: var1, to: var3}}
+  - {is: v_assume, from: below_by_step, to: {is: r_below, from: var3, to: var2}}
+  - {is: v_derive, from: below_by_step, to: {is: r_below, from: var1, to: var2}}
+  - {is: v_assume, from: narrow_from, to: {is: from, from: var1, to: var2}}
+  - {is: v_assume, from: narrow_from, to: {is: extends, from: var1, to: var3}}
+  - {is: v_assume, from: narrow_from, to: {is: r_end_from, from: var3, to: var4}}
+  - {is: v_assume, from: narrow_from, to: {is: r_end_to, from: var3, to: var5}}
+  - {is: v_require, from: narrow_from, to: {is: r_below, from: var2, to: var4}}
+  - {is: v_assume, from: narrow_to, to: {is: to, from: var1, to: var2}}
+  - {is: v_assume, from: narrow_to, to: {is: extends, from: var1, to: var3}}
+  - {is: v_assume, from: narrow_to, to: {is: r_end_to, from: var3, to: var4}}
+  - {is: v_assume, from: narrow_to, to: {is: r_end_from, from: var3, to: var5}}
+  - {is: v_require, from: narrow_to, to: {is: r_below, from: var2, to: var4}}
+  - {is: v_assume, from: limit_by_mod, to: {is: mod, from: var1, to: var2}}
+  - {is: v_derive, from: limit_by_mod, to: {is: r_limit, from: var1, to: var2}}
+  - {is: v_assume, from: limit_by_val, to: {is: val, from: var1, to: var2}}
+  - {is: v_derive, from: limit_by_val, to: {is: r_limit, from: var1, to: var2}}
+  - {is: v_assume, from: limit_by_cmp, to: {is: cmp, from: var1, to: var2}}
+  - {is: v_derive, from: limit_by_cmp, to: {is: r_limit, from: var1, to: var2}}
+  - {is: v_assume, from: single, to: {is: r_limit, from: var1, to: var2}}
+  - {is: v_assume, from: single, to: {is: r_limit, from: var1, to: var3}}
+  - {is: v_require, from: single, to: {is: same, from: var2, to: var3}}
+  - {is: v_assume, from: own_by_limit, to: {is: r_limit, from: var1, to: var2}}
+  - {is: v_derive, from: own_by_limit, to: {is: r_own, from: var1, to: var2}}
+  - {is: v_assume, from: own_by_from, to: {is: from, from: var1, to: var2}}
+  - {is: v_derive, from: own_by_from, to: {is: r_own, from: var1, to: var2}}
+  - {is: v_assume, from: own_by_to, to: {is: to, from: var1, to: var2}}
+  - {is: v_derive, from: own_by_to, to: {is: r_own, from: var1, to: var2}}
+  - {is: v_assume, from: own_by_new_kind, to: {is: new_kind, from: var1, to: var2}}
+  - {is: v_derive, from: own_by_new_kind, to: {is: r_own, from: var1, to: var2}}
+  - {is: v_assume, from: own_by_axis, to: {is: axis, from: var1, to: var2}}
+  - {is: v_derive, from: own_by_axis, to: {is: r_own, from: var1, to: var2}}
+  - {is: v_assume, from: acc_own, to: {is: r_own, from: var1, to: var2}}
+  - {is: v_derive, from: acc_own, to: {is: r_acc, from: var1, to: var2}}
+  - {is: v_assume, from: acc_ancestor, to: {is: r_ancestor, from: var1, to: var3}}
+  - {is: v_assume, from: acc_ancestor, to: {is: r_own, from: var3, to: var2}}
+  - {is: v_derive, from: acc_ancestor, to: {is: r_acc, from: var1, to: var2}}
+  - {is: v_assume, from: adds, to: {is: r_parent, from: var1, to: var3}}
+  - {is: v_assume, from: adds, to: {is: r_own, from: var1, to: var2}}
+  - {is: v_assume, from: adds, to: {is: r_acc, from: var3, to: var2, neg: true}}
+  - {is: v_derive, from: adds, to: {is: r_adds, from: var1, to: var3}}
+  - {is: v_assume, from: concept_kind, to: {is: extends, from: var1, to: var2}}
+  - {is: v_assume, from: concept_kind, to: {is: of, from: var1, to: var3, neg: true}}
+  - {is: v_assume, from: concept_kind, to: {is: form, from: var1, to: var3, neg: true}}
+  - {is: v_assume, from: concept_kind, to: {is: holds, from: var1, to: var3, neg: true}}
+  - {is: v_assume, from: concept_kind, to: {is: pre, from: var1, to: var3, neg: true}}
+  - {is: v_derive, from: concept_kind, to: {is: r_concept, from: var1}}
+  - {is: v_assume, from: monotone, to: {is: r_parent, from: var1, to: var2}}
+  - {is: v_assume, from: monotone, to: {is: r_concept, from: var1}}
+  - {is: v_assume, from: monotone, to: {is: r_concept, from: var2}}
+  - {is: v_require, from: monotone, to: {is: r_adds, from: var1, to: var2}}
+  - {is: v_assume, from: parents_unordered, to: {is: r_parent, from: var1, to: var2}}
+  - {is: v_assume, from: parents_unordered, to: {is: r_parent, from: var1, to: var3}}
+  - {is: v_require, from: parents_unordered, to: {is: r_ancestor, from: var2, to: var3, neg: true}}
+  - {is: v_assume, from: specific_candidate, to: {is: r_parent, from: var1, to: var3}}
+  - {is: v_assume, from: specific_candidate, to: {is: r_ancestor, from: var2, to: var3}}
+  - {is: v_assume, from: specific_candidate, to: {is: r_concept, from: var1}}
+  - {is: v_assume, from: specific_candidate, to: {is: r_concept, from: var2}}
+  - {is: v_assume, from: specific_candidate, to: {is: r_own, from: var2, to: var4}}
+  - {is: v_assume, from: specific_candidate, to: {is: same, from: var1, to: var2, neg: true}}
+  - {is: v_assume, from: specific_candidate, to: {is: r_ancestor, from: var1, to: var2, neg: true}}
+  - {is: v_assume, from: specific_candidate, to: {is: r_ancestor, from: var2, to: var1, neg: true}}
+  - {is: v_derive, from: specific_candidate, to: {is: r_candidate, from: var1, to: var2}}
+  - {is: v_assume, from: specific_missing, to: {is: r_candidate, from: var1, to: var2}}
+  - {is: v_assume, from: specific_missing, to: {is: r_acc, from: var2, to: var3}}
+  - {is: v_assume, from: specific_missing, to: {is: r_acc, from: var1, to: var3, neg: true}}
+  - {is: v_derive, from: specific_missing, to: {is: r_missing, from: var1, to: var2}}
+  - {is: v_assume, from: specific, to: {is: r_candidate, from: var1, to: var2}}
+  - {is: v_require, from: specific, to: {is: r_missing, from: var1, to: var2}}
+  - {is: v_assume, from: unique_in_domain, to: {is: ja, from: var1, to: var3}}
+  - {is: v_assume, from: unique_in_domain, to: {is: ja, from: var2, to: var3}}
+  - {is: v_assume, from: unique_in_domain, to: {is: domain, from: var1, to: var4}}
+  - {is: v_assume, from: unique_in_domain, to: {is: domain, from: var2, to: var4}}
+  - {is: v_require, from: unique_in_domain, to: {is: same, from: var1, to: var2}}
+  - {is: v_assume, from: visible_self, to: {is: domain, from: var1, to: var3}}
+  - {is: v_derive, from: visible_self, to: {is: r_visible, from: var3, to: var3}}
+  - {is: v_assume, from: visible_use, to: {is: v_use, from: var1, to: var2}}
+  - {is: v_derive, from: visible_use, to: {is: r_visible, from: var1, to: var2}}
+  - {is: v_assume, from: layered, to: {is: refer, from: var1, to: var2}}
+  - {is: v_assume, from: layered, to: {is: domain, from: var1, to: var3}}
+  - {is: v_assume, from: layered, to: {is: domain, from: var2, to: var4}}
+  - {is: v_require, from: layered, to: {is: r_visible, from: var3, to: var4}}
+  - {is: v_assume, from: truth_two, to: {is: exists, from: truth}}
+  - {is: v_require, from: truth_two, to: {is: value, from: truth, to: true}}
+  - {is: v_require, from: truth_two, to: {is: value, from: truth, to: false}}
+  - {is: v_assume, from: truth_only, to: {is: value, from: truth, to: var1}}
+  - {is: v_assume, from: truth_only, to: {is: same, from: var1, to: true, neg: true}}
+  - {is: v_require, from: truth_only, to: {is: same, from: var1, to: false}}
+  - {is: v_govern, from: unique_names, to: run.run}
   - {is: v_govern, from: step, to: run.run}
   - {is: v_govern, from: frame, to: run.run}
   - {is: v_govern, from: halt, to: run.run}

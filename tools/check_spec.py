@@ -99,7 +99,10 @@ def core_sections(O):
         if f.get("is") == "v_use" and f.get("from") in O["domains"]:
             O["domains"][f["from"]]["uses"].append(f.get("to"))
         elif f.get("is") in key and f.get("from") in O["laws"]:
-            O["laws"][f["from"]][key[f["is"]]].append(f.get("to"))
+            t = f.get("to")
+            if isinstance(t, dict):   # 規則の中の true / false は語
+                t = {k: ("true" if v is True else "false" if v is False else v) if k in ("from", "to") else v for k, v in t.items()}
+            O["laws"][f["from"]][key[f["is"]]].append(t)
 
 
 KINDS = {"measurement_family": "families", "observation": "observations", "hypothesis": "hypotheses",
@@ -261,10 +264,132 @@ def load_domain(name, D, T):
     return {"families": out.pop("families")}, out
 
 
+# ---------------------------------------------------------------- 規則
+def law_rules(O):
+    return [(lid, l) for lid, l in O["laws"].items() if l["kind"] == "law_rule"]
+
+
+def variables(O):
+    return {i for i, x in (O.get("individuals") or {}).items() if x.get("is") == "variable"}
+
+
+class Facts:
+    """関係ごとの文の集まり。位置ごとの索引を持つ。"""
+    def __init__(self, items=()):
+        self.by, self.idx = collections.defaultdict(set), collections.defaultdict(set)
+        for rel, xs in items:
+            self.add(rel, xs)
+
+    def add(self, rel, xs):
+        if xs in self.by[rel]:
+            return False
+        self.by[rel].add(xs)
+        for i, x in enumerate(xs):
+            self.idx[(rel, i, x)].add(xs)
+        return True
+
+    def has(self, rel, xs):
+        return xs in self.by.get(rel, ())
+
+    def find(self, rel, pat):
+        """pat: 位置ごとの値か None。"""
+        cands = None
+        for i, x in enumerate(pat):
+            if x is not None:
+                c = self.idx.get((rel, i, x), set())
+                cands = c if cands is None or len(c) < len(cands) else cands
+        for xs in (self.by.get(rel, ()) if cands is None else list(cands)):
+            if len(xs) == len(pat) and all(p is None or p == x for p, x in zip(pat, xs)):
+                yield xs
+
+
+def matches(atoms, F, V, b=None):
+    """前提の並びを満たす束縛を挙げる。肯定の前提を先に、否定の前提をあとに見る。
+    否定の前提は、書かれていない（導かれていない）こと。束縛されていない変数は「どれでも」と読む。same は名前が同じこと。"""
+    b = dict(b or {})
+    atoms = sorted(atoms, key=lambda f: bool(atom(f)[0]))
+    if not atoms:
+        yield b
+        return
+    neg, rel, args = atom(atoms[0])
+    val = lambda a: b.get(a) if a in V else a
+    if rel == "same":
+        x, y = (val(a) for a in args)
+        if neg:
+            if x is None or y is None or x != y:
+                yield from matches(atoms[1:], F, V, b)
+        elif x is not None and y is not None:
+            if x == y:
+                yield from matches(atoms[1:], F, V, b)
+        elif x is not None or y is not None:
+            known = x if x is not None else y
+            yield from matches(atoms[1:], F, V, b | {a: known for a in args if a in V and a not in b})
+        return
+    pat = tuple(val(a) for a in args)
+    if neg:
+        if next(F.find(rel, pat), None) is None:
+            yield from matches(atoms[1:], F, V, b)
+        return
+    for xs in F.find(rel, pat):
+        nb, ok = dict(b), True
+        for a, x in zip(args, xs):
+            if a in V:
+                if nb.get(a, x) != x:
+                    ok = False
+                    break
+                nb[a] = x
+        if ok:
+            yield from matches(atoms[1:], F, V, nb)
+
+
+def strata(rules):
+    """導く関係を、否定の前提に使う関係より後の層に置く。層に分けられなければ、その関係を返す。"""
+    heads = {atom(f)[1] for _, l in rules for f in l["derive"]}
+    st = {h: 0 for h in heads}
+    for _ in range(len(heads) + 2):
+        changed = False
+        for _, l in rules:
+            for f in l["derive"]:
+                h = atom(f)[1]
+                for p in l["assume"]:
+                    neg, r, _ = atom(p)
+                    if r in st:
+                        need = st[r] + (1 if neg else 0)
+                        if need > st[h]:
+                            st[h], changed = need, True
+        if not changed:
+            return st, None
+    return st, [h for h in st if st[h] > len(heads)]
+
+
+def evaluate(rules, F, V):
+    """導く文を層ごとに足して閉じ、求める文が成り立たない束縛を、(法則, 束縛, 求める文) で返す。"""
+    st, bad = strata(rules)
+    if bad:
+        return [("strata", {}, f"否定を通して循環している関係 {bad}")]
+    for level in sorted(set(st.values())):
+        layer = [(lid, l) for lid, l in rules if l["derive"] and all(st[atom(f)[1]] == level for f in l["derive"])]
+        changed = True
+        while changed:
+            changed = False
+            for lid, l in layer:
+                for b in list(matches(l["assume"], F, V)):
+                    for f in l["derive"]:
+                        _, rel, args = atom(f)
+                        changed |= F.add(rel, tuple(b.get(a, a) if a in V else a for a in args))
+    out = []
+    for lid, l in rules:
+        for f in l["require"]:
+            for b in matches(l["assume"], F, V):
+                if next(matches([f], F, V, b), None) is None:
+                    out.append((lid, b, f))
+    return out
+
+
 # ---------------------------------------------------------------- 概念の体系
 # 法則のうち、この検査が当てはめるもの / 実行の検査（run_spec.py）が当てはめるもの
 # 規則で書いた法則（law_rule）は、実行の検査がその規則を読んで当てはめる。ここには、意味を検査が与える法則（law_given）だけを挙げる。
-LAWS_HERE = {"truth_distinct", "inherit", "narrow", "acyclic", "monotone", "specific", "single", "unique_in_domain", "layered"}
+LAWS_HERE = set()
 LAWS_RUN = {"unique_names", "step", "frame", "halt"}
 
 
@@ -273,17 +398,15 @@ class Ontology:
         self.O = O
         self.B, self.AX, self.N, self.G = O["base"], O["axes"], O["nodes"], O["grammar"]
         self.I, self.Idom = {}, None   # 個体の識別子 → 種類、個体が書かれた領域
-        for nid, n in self.N.items():  # 法則 single。mod は単一。中では並びとして扱う
+        for nid, n in self.N.items():  # mod は単一。中では並びとして扱う（限定の数は法則 single の規則が確かめる）
             if isinstance(n.get("extends"), list):
                 err(f"{nid}: extends は並べない。AND は「属する」（is）で限定して書く")
                 n["extends"] = n["extends"][0]
             if "mod" in n:
                 if isinstance(n["mod"], list):
-                    err(f"{nid}: mod は並べない。限定は1つだけ（法則 single）")
+                    err(f"{nid}: mod は並べない。限定は1つだけ")
                 else:
                     n["mod"] = [n["mod"]]
-            if len(n.get("mod") or []) + len(n.get("val") or {}) + len(n.get("cmp") or []) > 1:
-                err(f"{nid}: 限定が2つ以上ある（法則 single）")
         # 真偽を返す範囲の判定式。値の一種。gt などは文法の function、between は述語論理の語
         self.funcs = {op: 1 for op in self.G["function"]} | ({"between": 2} if "between" in self.G["logic"] else {})
 
@@ -302,17 +425,18 @@ class Ontology:
             if l["kind"] == "law_rule":
                 if not l["assume"] or not (l["derive"] or l["require"]) or l["govern"]:
                     err(f"{where}: 規則で書いた法則は、前提と、導く文か求める文を持ち、掛かる節を持たない")
-                vars_ = set()
-                for f in l["assume"]:
-                    vars_ |= set(atom(f)[2])
+                V = variables(self.O)
+                rels = set(self.B) | set(self.N) | {i for i, x in (self.O.get("individuals") or {}).items() if x.get("is") == "law_relation"}
+                bound = {a for f in l["assume"] if not atom(f)[0] for a in atom(f)[2] if a in V}
                 for part in ("assume", "derive", "require"):
                     for f in l[part]:
                         neg, rel, args = atom(f)
-                        if (not isinstance(f, dict) or set(f) - {"is", "from", "to", "new", "neg"} or rel not in self.B
-                                or len(args) != self.B[rel]["arity"] or any(a not in G["position"] for a in args)):
-                            err(f"{where}: {part} の {f} が、基礎の関係と位置の語で書かれていない")
-                        if part != "assume" and set(args) - vars_:
-                            err(f"{where}: {part} の {f} に、前提に出てこない位置の語がある")
+                        if not isinstance(f, dict) or set(f) - {"is", "from", "to", "neg"} or rel not in rels or not args:
+                            err(f"{where}: {part} の {f} が、関係（基礎の関係・文法の語・導いた関係）と項で書かれていない")
+                        if rel in self.B and len(args) != self.B[rel]["arity"]:
+                            err(f"{where}: {part} の {f} の端の数が、{rel} と合わない")
+                        if part != "assume" and {a for a in args if a in V} - bound:
+                            err(f"{where}: {part} の {f} に、肯定の前提に出てこない変数がある")
                         if part == "derive" and neg:
                             err(f"{where}: 導く文は否定にしない（書かれていない文は成り立たない）")
             else:
@@ -325,19 +449,6 @@ class Ontology:
                     err(f"{where}: 当てはめる検査がない")
         for lid in (LAWS_HERE | LAWS_RUN) - {k for k, l in L.items() if l["kind"] == "law_given"}:
             err(f"法則 {lid} を検査が当てはめているが、law_given の個体として書かれていない")
-        # 法則 truth_distinct
-        tv = self.AX["truth"]["value"]
-        if not (isinstance(tv, list) and len(tv) == 2 and tv[0] != tv[1]):
-            err("axes.truth: 値は2つで、互いに違うこと")
-        # 法則 acyclic
-        for nid in self.N:
-            x, seen = nid, set()
-            while x in self.N:
-                if x in seen:
-                    err(f"{nid}: 上位をたどると自分に戻る")
-                    break
-                seen.add(x)
-                x = self.up(x)
         for k, v in self.O["runtime"].items():
             if k not in G["runtime"]:
                 err(f"runtime: 語 {k} が、grammar.runtime に書かれていない")
@@ -406,13 +517,6 @@ class Ontology:
             if dom not in D:
                 err(f"{nid}: 領域 {dom} が domains に書かれていない")
                 continue
-            ok = {dom} | set(D[dom].get("uses", []))
-            for m in self.N[nid].get("mod") or []:   # 個体は、それが書かれた領域に属する
-                if isinstance(m, dict) and m.get("with") in self.I and self.Idom not in ok:
-                    err(f"{nid}: 領域 {dom} から、使うと書かれていない領域の個体 {m['with']} を参照している")
-            for r in self.refs(nid):  # 法則 layered
-                if self.domain(r) not in ok:
-                    err(f"{nid}: 領域 {dom} から、使うと書かれていない領域のノード {r} を参照している")
 
     def parents(self, nid):
         """上位。extends に書いたものと、「属する」（is）の始点として限定した種類。
@@ -459,27 +563,63 @@ class Ontology:
             s |= self.own(a)
         return s
 
-    def check_hierarchy(self):
-        """法則 monotone: 階層を降りるたびに、限定が増える。
-        法則 specific: 自分の限定の一部だけで書ける概念が別にあれば、その下に置く（具体的な概念を、抽象的な位置に置かない）。"""
-        C = [i for i in self.N if self.is_concept(i)]
-        A = {i: self.acc(i) for i in C}
-        anc = {i: set(self.ancestors(i)) for i in C}
-        for x in C:
-            ps = self.parents(x)
-            for p in ps:
-                if p in A and not A[p] < A[x]:
-                    err(f"{x}: 上位の {p} より限定が増えていない（法則 monotone）")
-            for i, p in enumerate(ps):
-                for q in ps[i + 1:]:
-                    if p in anc.get(q, ()) or q in anc.get(p, ()) or p == q:
-                        err(f"{x}: 上位に並べた {p} と {q} が、上下の関係にある")
-            for y in C:
-                if y == x or y in anc[x] or x in anc[y] or not self.own(y):
-                    continue
-                if anc[y] & set(ps) and A[y] <= A[x]:
-                    same = "（限定が同じ。同じ概念）" if A[y] == A[x] else ""
-                    err(f"{x}: より具体的な {y} があるのに、その下に置かれていない（法則 specific）{same}")
+    def syntax_facts(self):
+        """体系の書き方を、文法の語を関係とする文に直す。法則の規則は、この文に当てはめる。"""
+        out, dump = [], lambda x: yaml.safe_dump(x, sort_keys=True, allow_unicode=True).strip()
+        add = lambda rel, *xs: out.append((rel, tuple(xs)))
+        for nid, n in self.N.items():
+            add("exists", nid)
+            add("domain", nid, self.domain(nid))
+            if n.get("ja"):
+                add("ja", nid, n["ja"])
+            if isinstance(n.get("extends"), str):
+                add("extends", nid, n["extends"])
+            for k in ("from", "to", "new_kind", "axis"):
+                if isinstance(n.get(k), str):
+                    add(k, nid, n[k])
+            for k in ("of", "form"):
+                if isinstance(n.get(k), list) and len(n[k]) == 2:
+                    add(k, nid, n[k][0])
+                    add("position", nid, n[k][1])
+            for k in ("holds", "pre"):
+                for i, _ in enumerate(n.get(k) or []):
+                    add(k, nid, i)
+            for m in n.get("mod") or []:
+                t = dump(m) if isinstance(m, dict) else m
+                add("mod", nid, t)
+                if isinstance(m, dict):
+                    if isinstance(m.get("of"), list) and len(m["of"]) == 2:
+                        add("of", t, m["of"][0])
+                        add("position", t, m["of"][1])
+                    if m.get("with") is not None:
+                        add("with", t, m["with"])
+                    if m.get("neg"):
+                        add("neg", t, "true")
+                    if isinstance(m.get("with"), str) and m["with"] in self.I:
+                        add("refer", nid, m["with"])
+            for x in (n.get("val") or {}).items():
+                add("val", nid, "val " + dump(list(x)))
+            for x in n.get("cmp") or []:
+                add("cmp", nid, "cmp " + dump(x))
+            for r in self.refs(nid):
+                add("refer", nid, r)
+        for i in self.I:
+            add("domain", i, self.Idom if i not in (self.O.get("individuals") or {}) else "core")
+        for aid, a in self.AX.items():
+            add("exists", aid)
+            for v in a["value"] if isinstance(a["value"], list) else []:
+                add("value", aid, "true" if v is True else "false" if v is False else v)
+        for did, d in self.O["domains"].items():
+            for u in d["uses"]:
+                add("v_use", did, u)
+        return out
+
+    def check_laws(self):
+        """規則で書いた法則を、体系の書き方の文に当てはめる。"""
+        V = variables(self.O)
+        for lid, b, f in evaluate(law_rules(self.O), Facts(self.syntax_facts()), V):
+            where = ", ".join(f"{k}={v}" for k, v in sorted(b.items()))
+            err(f"法則 {lid}（{self.O['laws'].get(lid, {}).get('ja', '')}）に反する: {where}")
 
     def end(self, nid, side):
         """動詞の端の種類。自分になければ上位の動詞から受け継ぐ。"""
@@ -614,8 +754,8 @@ class Ontology:
         for nid, n in N.items():
             ja = n.get("ja")
             key = (self.domain(nid), ja)  # 法則 unique_in_domain
-            if not ja or key in seen:
-                err(f"{nid}: 表示語がない、または {seen.get(key)} と重複（同音異義）")
+            if not ja:
+                err(f"{nid}: 表示語がない")
             seen[key] = nid
             if nid in TOPS:
                 if set(n) != {"ja", "gloss"}:
@@ -639,9 +779,6 @@ class Ontology:
                 if not self.is_a(nid, "occurrent"):
                     err(f"{nid}: 動詞は生起体の下に置く")
                 if self.is_verb(self.up(nid)):
-                    for side in ("from", "to"):
-                        if side in n and not self.is_a(n[side], self.end(self.up(nid), side)):
-                            err(f"{nid}: {side} の {n[side]} は、上位の {self.end(self.up(nid), side)} を狭めていない")
                     if not any(k in n for k in ("from", "to", "mod")) and len(self.parents(nid)) < 2:
                         err(f"{nid}: 上位の動詞と区別する式がない")
                 else:
@@ -1027,8 +1164,8 @@ def main():
     gather({"domain": "core", "_local": set(), "individuals": core, "facts": O.get("facts")}, T, "ontology.yaml")
     T.check()
     T.check_grammar()
-    T.check_hierarchy()
     T.check_domains()
+    T.check_laws()
     M, C = load_domain("exp.yaml", D, T)
     values, meanings = expand(M, T)
     check_claims(C, values, T)

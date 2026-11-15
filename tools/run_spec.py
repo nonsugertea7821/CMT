@@ -23,7 +23,7 @@ from pathlib import Path
 import yaml
 
 sys.path.insert(0, str(Path(__file__).parent))
-from check_spec import Ontology, atom, load, merge_domain  # noqa: E402
+from check_spec import Facts, Ontology, atom, evaluate, law_rules, load, merge_domain, variables  # noqa: E402
 
 ROOT = Path(__file__).parent.parent / "spec"
 
@@ -80,42 +80,14 @@ class Machine:
     def holds(self, neg, rel, args):
         return ((rel, args) in self.facts) != neg
 
-    def matches(self, atoms, facts, b=None):
-        """前提の並びを満たす束縛（位置の語 → 個体）を、すべて挙げる。"""
-        b = b or {}
-        if not atoms:
-            yield dict(b)
-            return
-        neg, rel, args = atom(atoms[0])
-        for r, xs in facts:
-            if r != rel or len(xs) != len(args):
-                continue
-            if all(b.get(v, x) == x for v, x in zip(args, xs)) and len({(v, x) for v, x in zip(args, xs)}) == len(set(args)):
-                yield from self.matches(atoms[1:], facts, b | dict(zip(args, xs)))
-
     def check_laws(self, where):
-        """規則で書いた法則（ontology.yaml の law_rule）を当てはめる。導く文を足して閉じてから、求める文を確かめる。
-        same は、名前が同じであることとして読む（法則 unique_names）。"""
-        rules = [(lid, l) for lid, l in self.T.O["laws"].items() if l["kind"] == "law_rule"]
-        facts, changed = set(self.facts), True
-        while changed:
-            changed = False
-            for lid, l in rules:
-                for b in list(self.matches(l["assume"], facts)):
-                    for f in l["derive"]:
-                        _, rel, args = atom(f)
-                        new = (rel, tuple(b[a] for a in args))
-                        if new not in facts:
-                            facts.add(new)
-                            changed = True
-        for lid, l in rules:
-            for b in self.matches(l["assume"], facts):
-                for f in l["require"]:
-                    neg, rel, args = atom(f)
-                    xs = tuple(b[a] for a in args)
-                    ok = (len(set(xs)) == 1) if rel == "same" else ((rel, xs) in facts)
-                    if ok == neg:
-                        self.err(f"{where}: {dict(b)} が法則 {lid} に反する")
+        """規則で書いた法則（ontology.yaml の law_rule）のうち、基礎の関係だけで書かれたものを、状態に当てはめる。
+        導く文を足して閉じてから、求める文を確かめる。same は名前が同じであること（法則 unique_names）。"""
+        T = self.T
+        rules = [(lid, l) for lid, l in law_rules(T.O)
+                 if all(atom(f)[1] in T.B for p in ("assume", "derive", "require") for f in l[p])]
+        for lid, b, f in evaluate(rules, Facts(self.facts), variables(T.O)):
+            self.err(f"{where}: {dict(sorted(b.items()))} が法則 {lid}（{T.O['laws'][lid]['ja']}）に反する")
 
     def bind(self, verb, b):
         """束縛が、動詞の端の種類に合うか。合えば、before と after の式を個体で書いたものを返す。"""
