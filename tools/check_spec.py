@@ -854,6 +854,10 @@ def main():
     D = merge_domain("exp.yaml", O)
     T = Ontology(O)
     T.Idom = D["domain"]
+    for iid, x in D["individuals"].items():
+        if not isinstance(x.get("is"), str):
+            err(f"exp.yaml {iid}: is は種類を1つだけ書く。並べない")
+            x["is"] = None
     T.I = {iid: x.get("is") for iid, x in D["individuals"].items() if x.get("is") in O["nodes"]}
     T.check()
     T.check_grammar()
