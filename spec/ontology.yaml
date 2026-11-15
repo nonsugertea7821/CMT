@@ -27,40 +27,14 @@
 
 base:
   exists: {ja: 在る, arity: 1}
-  depend: {ja: 依存する, arity: 2, laws: [end_exists]}
-  part: {ja: 部分である, arity: 2, laws: [transitive, antisymmetric]}
-  after: {ja: 後ろにある, arity: 2, laws: [transitive, asymmetric]}
-  involve: {ja: 生起体に持続体が関わる, arity: 2, laws: [end_exists]}
+  depend: {ja: 依存する, arity: 2}
+  part: {ja: 部分である, arity: 2}
+  after: {ja: 後ろにある, arity: 2}
+  involve: {ja: 生起体に持続体が関わる, arity: 2}
+  same: {ja: 同じである, arity: 2}
   refer: {ja: について述べる, arity: 2, system_act: true}
 
-# 法則（公理）。体系が、証明なしに置くもの。ja は表示で、当てはめるのは実行器。
-# scope は、法則が掛かる節。どの法則も、検査（check_spec.py）か実行の検査（run_spec.py）のどちらかが当てはめる。
-# 名前空間（領域）。識別子は「領域.名前」と書く。領域を書かない識別子は core に属する。
-# 表示語と名前は、同じ領域の中では重複できない。領域が違えば重複してよい（法則 unique_in_domain）。
-# ノードは、自分の領域か、その領域が uses に挙げた領域のノードだけを参照できる（法則 layered）。循環する uses は書けない。
-domains:
-  core: {ja: 核, uses: []}
-  run: {ja: 実行, uses: [core]}
-  exp: {ja: 実験, uses: [core, run]}
-
-laws:
-  transitive: {ja: 推移的, scope: base}
-  antisymmetric: {ja: 反対称的, scope: base}
-  asymmetric: {ja: 非対称的, scope: base}
-  end_exists: {ja: 始点が在れば終点も在る, scope: base}
-  truth_distinct: {ja: 真偽の値は2つで互いに違う, scope: axes}
-  inherit: {ja: 下位は上位の端を引き継ぐ, scope: nodes}
-  narrow: {ja: 下位は上位を狭めることしかできない, scope: nodes}
-  acyclic: {ja: 定義は自分自身を参照しない, scope: nodes}
-  monotone: {ja: 階層を降りるたびに限定が増える, scope: nodes}
-  specific: {ja: より具体的な概念があればその下に置く, scope: nodes}
-  single: {ja: 1つのノードが足せる限定は1つだけ, scope: nodes}
-  unique_in_domain: {ja: 表示語は同じ領域の中で重複しない, scope: domains}
-  layered: {ja: 参照できるのは自分の領域と使う領域だけ, scope: domains}
-  step: {ja: 前の状態が成り立つとき後の状態に置き換える, scope: run}
-  frame: {ja: 動詞が触れなかった文は変わらない, scope: run}
-  halt: {ja: 当てはまる動詞がなければ止まる, scope: run}
-
+# 法則（公理）と名前空間（領域）は、個体と事実で書く（このファイルの individuals と facts）。
 axes:
   count: {ja: 個数, source: any, value: number}   # どの関係についても「いくつと結ばれるか」を見られる
   ratio: {ja: 割合, source: part, value: number}
@@ -197,6 +171,15 @@ nodes:
   arity: {ja: 端の数, extends: magnitude, mod: {of: [v_measure, from], with: state_relation}}
   sentence_refer_from_state_relation: {ja: 状態の関係へ述べる文, extends: sentence, mod: {of: [v_refer, from], with: state_relation}}
   laws: {ja: 法則, extends: sentence_refer_from_state_relation, val: {truth: true}}
+  law_rule: {ja: 規則で書いた法則, extends: laws, mod: {of: [v_assume, from], with: premise}}
+  law_given: {ja: 意味を検査が与える法則, extends: laws, mod: {of: [v_assume, from], with: premise, neg: true}}
+  premise: {ja: 法則の前提, extends: sentence_refer_from_state_relation, mod: {of: [v_assume, to], with: law_rule}}
+  derived: {ja: 法則が導く文, extends: sentence_refer_from_state_relation, mod: {of: [v_derive, to], with: law_rule}}
+  required: {ja: 法則が求める文, extends: sentence_refer_from_state_relation, mod: {of: [v_require, to], with: law_rule}}
+  v_assume: {ja: 前提に置く, extends: v_refer, from: law_rule, to: premise}
+  v_derive: {ja: 導く, extends: v_refer, from: law_rule, to: derived}
+  v_require: {ja: 成り立つことを求める, extends: v_refer, from: law_rule, to: required}
+  v_govern: {ja: 掛かる, extends: v_refer, from: law_given, to: information_entity}
   system_act: {ja: 体系そのものの行為, extends: v_refer, from: system}
   grammar_rule: {ja: 文法の規則, extends: sentence, mod: {of: [v_refer, from], with: expression_part}}
   grammar: {ja: 文法の記述, extends: section, mod: {of: [v_compose, to], with: grammar_rule, at: {count: {gt: 1}}}}
@@ -262,8 +245,7 @@ nodes:
 
   # ===== 名前空間。領域ごとに識別子を持ち、ほかの領域のものは「領域.名前」で参照する =====
   domain: {ja: 領域, extends: information_entity, mod: {of: [v_compose, to], with: concept_expression}}
-  domains: {ja: 領域の節, extends: section, mod: {of: [v_refer, from], with: domain}}
-  uses: {ja: 使う領域の指定, extends: expression_part, mod: {of: [v_refer, from], with: domain}}
+  v_use: {ja: 使う, extends: v_depend, from: domain, to: domain}
 
 # 実行時の意味論。実行器が、書き換えの規則をどう当てはめるか。語も値もノードの識別子。
 # 実行の検査は、ここに書かれた選択に従う。実装のない選択が書かれていれば、エラーにする。
@@ -279,14 +261,13 @@ runtime:
 # 体系が、自分の書き方（文法）について述べる。
 # 文法の語は、すべてノードの識別子である。節ごとに、そこで使える語を並べる。検査は、ここに並んだ語だけを受け付ける。
 grammar:
-  grammar: [system, nodes, mod, cmp, base, axes, laws, run, position, rel, function, value, logic, runtime, domains, domain, individuals, facts, grammar]
-  system: [domains, base, laws, axes, nodes, runtime, grammar]
+  grammar: [system, nodes, mod, cmp, base, axes, run, position, rel, function, value, logic, runtime, domain, individuals, facts, grammar]
+  system: [base, axes, nodes, individuals, facts, runtime, grammar]
   nodes: [ja, gloss, extends, from, to, new_kind, holds, pre, post, form, of, neg, mod, val, cmp, axis]
   mod: [of, with, neg, quant, at]
   cmp: [axis, a, b, rel]
-  base: [ja, arity, laws, system_act]
+  base: [ja, arity, system_act]
   axes: [ja, source, value]
-  laws: [ja, scope]
   run: [individuals, facts, steps, expect, halted]   # 実行の記録（spec/runs/*.yaml）
   position: [from, to, new]
   rel: [same, differ]
@@ -294,7 +275,72 @@ grammar:
   value: [number, literal]
   logic: [not, all, any, between]   # true と false は、真偽の軸の値
   runtime: [world, pre_rule, post_rule, law_check, binding, choice, progress]
-  domains: [ja, uses]
   domain: [domain, nodes, individuals, facts]   # 領域のファイル（spec/exp.yaml）
   individuals: [is, ja, val]
   facts: [is, from, to, new, at, neg]   # 事実は動詞の個体。位置に名前を付けて書く。holds / pre / post も同じ形
+
+# 領域と法則の個体。
+individuals:
+  # ===== 領域。識別子は「領域.名前」と書く。領域を書かない識別子は core に属する。
+  # 表示語と名前は、同じ領域の中では重複できない（法則 unique_in_domain）。
+  # ノードは、自分の領域か、その領域が使う領域のノードだけを参照できる（法則 layered）。使う関係は循環しない。
+  core: {is: domain, ja: 核}
+  run: {is: domain, ja: 実行}
+  exp: {is: domain, ja: 実験}
+  # ===== 規則で書いた法則。関係ごとに書く（関係の上を量化しない）。位置の語 from / to / new を変数に使う。
+  # 前提（v_assume）がすべて成り立つとき、導く文（v_derive）を状態に足し、求める文（v_require）が成り立っていなければ違反。
+  part_transitive: {is: law_rule, ja: 部分であることは推移的}
+  after_transitive: {is: law_rule, ja: 後ろにあることは推移的}
+  part_antisymmetric: {is: law_rule, ja: 部分であることは反対称的}
+  after_asymmetric: {is: law_rule, ja: 後ろにあることは非対称的}
+  depend_end_exists: {is: law_rule, ja: 依存する始点が在れば終点も在る}
+  involve_end_exists: {is: law_rule, ja: 関わられる始点が在れば終点も在る}
+  # ===== 意味を検査や実行器が与える法則。体系が自分の書き方について述べるものと、規則の当てはめ方そのもの。
+  truth_distinct: {is: law_given, ja: 真偽の値は2つで互いに違う}
+  inherit: {is: law_given, ja: 下位は上位の端を引き継ぐ}
+  narrow: {is: law_given, ja: 下位は上位を狭めることしかできない}
+  acyclic: {is: law_given, ja: 定義は自分自身を参照しない}
+  monotone: {is: law_given, ja: 階層を降りるたびに限定が増える}
+  specific: {is: law_given, ja: より具体的な概念があればその下に置く}
+  single: {is: law_given, ja: 1つのノードが足せる限定は1つだけ}
+  unique_in_domain: {is: law_given, ja: 表示語は同じ領域の中で重複しない}
+  layered: {is: law_given, ja: 参照できるのは自分の領域と使う領域だけ}
+  unique_names: {is: law_given, ja: 名前の違う個体は同じでない}
+  step: {is: law_given, ja: 前の状態が成り立つとき後の状態に置き換える}
+  frame: {is: law_given, ja: 動詞が触れなかった文は変わらない}
+  halt: {is: law_given, ja: 当てはまる動詞がなければ止まる}
+
+facts:
+  - {is: v_use, from: run, to: core}
+  - {is: v_use, from: exp, to: core}
+  - {is: v_use, from: exp, to: run}
+  - {is: v_assume, from: part_transitive, to: {is: part, from: from, to: new}}
+  - {is: v_assume, from: part_transitive, to: {is: part, from: new, to: to}}
+  - {is: v_derive, from: part_transitive, to: {is: part, from: from, to: to}}
+  - {is: v_assume, from: after_transitive, to: {is: after, from: from, to: new}}
+  - {is: v_assume, from: after_transitive, to: {is: after, from: new, to: to}}
+  - {is: v_derive, from: after_transitive, to: {is: after, from: from, to: to}}
+  - {is: v_assume, from: part_antisymmetric, to: {is: part, from: from, to: to}}
+  - {is: v_assume, from: part_antisymmetric, to: {is: part, from: to, to: from}}
+  - {is: v_require, from: part_antisymmetric, to: {is: same, from: from, to: to}}
+  - {is: v_assume, from: after_asymmetric, to: {is: after, from: from, to: to}}
+  - {is: v_require, from: after_asymmetric, to: {is: after, from: to, to: from, neg: true}}
+  - {is: v_assume, from: depend_end_exists, to: {is: exists, from: from}}
+  - {is: v_assume, from: depend_end_exists, to: {is: depend, from: from, to: to}}
+  - {is: v_require, from: depend_end_exists, to: {is: exists, from: to}}
+  - {is: v_assume, from: involve_end_exists, to: {is: exists, from: from}}
+  - {is: v_assume, from: involve_end_exists, to: {is: involve, from: from, to: to}}
+  - {is: v_require, from: involve_end_exists, to: {is: exists, from: to}}
+  - {is: v_govern, from: truth_distinct, to: axes}
+  - {is: v_govern, from: inherit, to: nodes}
+  - {is: v_govern, from: narrow, to: nodes}
+  - {is: v_govern, from: acyclic, to: nodes}
+  - {is: v_govern, from: monotone, to: nodes}
+  - {is: v_govern, from: specific, to: nodes}
+  - {is: v_govern, from: single, to: nodes}
+  - {is: v_govern, from: unique_in_domain, to: nodes}
+  - {is: v_govern, from: layered, to: nodes}
+  - {is: v_govern, from: unique_names, to: individuals}
+  - {is: v_govern, from: step, to: run.run}
+  - {is: v_govern, from: frame, to: run.run}
+  - {is: v_govern, from: halt, to: run.run}

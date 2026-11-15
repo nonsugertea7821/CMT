@@ -1,8 +1,9 @@
 """実行の記録（spec/runs/*.yaml）を、体系の書き換え規則に照らして検査する。
 
 実行器は役割で、担い手は何でもよい（LLM、プログラム、機械）。この検査は、担い手が書いた実行の記録が
-体系に適合しているかを確かめる。当てはめる法則は、ontology.yaml の laws のうち次のもの:
-  transitive / antisymmetric / asymmetric / end_exists  状態が、基礎の関係の法則を満たす
+体系に適合しているかを確かめる。当てはめる法則は、ontology.yaml の法則の個体のうち次のもの:
+  規則で書いた法則（law_rule）  前提・導く文・求める文を読んで、状態に当てはめる
+  unique_names  名前の違う個体は同じでない（same の読み方）
   step   動詞の pre がすべて成り立つときだけ適用でき、post に置き換わる
   frame  post に書かれていない文は変わらない
   halt   halted: true と書かれた記録では、当てはまる動詞がもうない
@@ -79,28 +80,42 @@ class Machine:
     def holds(self, neg, rel, args):
         return ((rel, args) in self.facts) != neg
 
+    def matches(self, atoms, facts, b=None):
+        """前提の並びを満たす束縛（位置の語 → 個体）を、すべて挙げる。"""
+        b = b or {}
+        if not atoms:
+            yield dict(b)
+            return
+        neg, rel, args = atom(atoms[0])
+        for r, xs in facts:
+            if r != rel or len(xs) != len(args):
+                continue
+            if all(b.get(v, x) == x for v, x in zip(args, xs)) and len({(v, x) for v, x in zip(args, xs)}) == len(set(args)):
+                yield from self.matches(atoms[1:], facts, b | dict(zip(args, xs)))
+
     def check_laws(self, where):
-        for rel, b in self.T.B.items():
-            pairs = {a for r, a in self.facts if r == rel}
-            laws = b.get("laws", [])
-            if "transitive" in laws:  # 推移的に閉じてから見る
-                changed = True
-                while changed:
-                    new = {(a, d) for a, b2 in pairs for c, d in pairs if b2 == c} - pairs
-                    pairs |= new
-                    changed = bool(new)
-            if "asymmetric" in laws:
-                for a, b2 in pairs:
-                    if (b2, a) in pairs:
-                        self.err(f"{where}: {rel}({a}, {b2}) が法則 asymmetric に反する")
-            if "antisymmetric" in laws:
-                for a, b2 in pairs:
-                    if a != b2 and (b2, a) in pairs:
-                        self.err(f"{where}: {rel}({a}, {b2}) が法則 antisymmetric に反する")
-            if "end_exists" in laws:
-                for a, b2 in pairs:
-                    if ("exists", (a,)) in self.facts and ("exists", (b2,)) not in self.facts:
-                        self.err(f"{where}: {rel}({a}, {b2}) が法則 end_exists に反する（{b2} が在らない）")
+        """規則で書いた法則（ontology.yaml の law_rule）を当てはめる。導く文を足して閉じてから、求める文を確かめる。
+        same は、名前が同じであることとして読む（法則 unique_names）。"""
+        rules = [(lid, l) for lid, l in self.T.O["laws"].items() if l["kind"] == "law_rule"]
+        facts, changed = set(self.facts), True
+        while changed:
+            changed = False
+            for lid, l in rules:
+                for b in list(self.matches(l["assume"], facts)):
+                    for f in l["derive"]:
+                        _, rel, args = atom(f)
+                        new = (rel, tuple(b[a] for a in args))
+                        if new not in facts:
+                            facts.add(new)
+                            changed = True
+        for lid, l in rules:
+            for b in self.matches(l["assume"], facts):
+                for f in l["require"]:
+                    neg, rel, args = atom(f)
+                    xs = tuple(b[a] for a in args)
+                    ok = (len(set(xs)) == 1) if rel == "same" else ((rel, xs) in facts)
+                    if ok == neg:
+                        self.err(f"{where}: {dict(b)} が法則 {lid} に反する")
 
     def bind(self, verb, b):
         """束縛が、動詞の端の種類に合うか。合えば、before と after の式を個体で書いたものを返す。"""

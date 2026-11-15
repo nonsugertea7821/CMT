@@ -79,7 +79,27 @@ _Unique.construct_mapping = _mapping
 
 
 def load(name):
-    return yaml.load((SPEC / name).read_text(encoding="utf-8"), Loader=_Unique)
+    O = yaml.load((SPEC / name).read_text(encoding="utf-8"), Loader=_Unique)
+    if name == "ontology.yaml":
+        core_sections(O)
+    return O
+
+
+def core_sections(O):
+    """領域と法則は、ontology.yaml の個体と事実で書く。検査と実行器が読む形に並べる（中身の検査は、ほかと同じく gather が行う）:
+    domains: {領域: {ja, uses: [使う領域]}}、laws: {法則: {kind, ja, assume, derive, require, govern}}。"""
+    I, F = O.get("individuals") or {}, O.get("facts") or []
+    O["domains"] = {i: {"ja": x.get("ja"), "uses": []} for i, x in I.items() if x.get("is") == "domain"}
+    O["laws"] = {i: {"kind": x["is"], "ja": x.get("ja"), "assume": [], "derive": [], "require": [], "govern": []}
+                 for i, x in I.items() if x.get("is") in ("law_rule", "law_given")}
+    key = {"v_assume": "assume", "v_derive": "derive", "v_require": "require", "v_govern": "govern"}
+    for f in F:
+        if not isinstance(f, dict):
+            continue
+        if f.get("is") == "v_use" and f.get("from") in O["domains"]:
+            O["domains"][f["from"]]["uses"].append(f.get("to"))
+        elif f.get("is") in key and f.get("from") in O["laws"]:
+            O["laws"][f["from"]][key[f["is"]]].append(f.get("to"))
 
 
 KINDS = {"measurement_family": "families", "observation": "observations", "hypothesis": "hypotheses",
@@ -117,7 +137,7 @@ def merge_domain(name, O):
     return D
 
 
-MANY = {"scope", "evidence", "against", "limitation", "supersedes", "basis", "tests", "metric", "any"}   # 検査が並びとして読む関係
+MANY = {"scope", "evidence", "against", "limitation", "supersedes", "basis", "tests", "metric", "any", "domain", "premise", "derived", "required", "information_entity"}   # 検査が並びとして読む関係
 
 
 def gather(D, T, name):
@@ -243,8 +263,9 @@ def load_domain(name, D, T):
 
 # ---------------------------------------------------------------- 概念の体系
 # 法則のうち、この検査が当てはめるもの / 実行の検査（run_spec.py）が当てはめるもの
+# 規則で書いた法則（law_rule）は、実行の検査がその規則を読んで当てはめる。ここには、意味を検査が与える法則（law_given）だけを挙げる。
 LAWS_HERE = {"truth_distinct", "inherit", "narrow", "acyclic", "monotone", "specific", "single", "unique_in_domain", "layered"}
-LAWS_RUN = {"transitive", "antisymmetric", "asymmetric", "end_exists", "step", "frame", "halt"}
+LAWS_RUN = {"unique_names", "step", "frame", "halt"}
 
 
 class Ontology:
@@ -277,19 +298,33 @@ class Ontology:
                     err(f"grammar.{sect}: 語 {w} がノードになっていない")
         L = self.O["laws"]
         for lid, l in L.items():
-            for k in l:
-                if k not in G["laws"]:
-                    err(f"laws.{lid}: 語 {k} が、grammar.laws に書かれていない")
-            if self.resolve(l.get("scope"), l.get("scope")) is None or l.get("scope") not in G["grammar"]:
-                err(f"laws.{lid}: 掛かる節 {l.get('scope')} が、ノードでないか、grammar.grammar に書かれていない")
-            if lid not in LAWS_HERE | LAWS_RUN:
-                err(f"laws.{lid}: 当てはめる検査がない")
-        for lid in (LAWS_HERE | LAWS_RUN) - set(L):
-            err(f"法則 {lid} を検査が当てはめているが、laws に書かれていない")
-        for bid, b in self.B.items():
-            for lid in b.get("laws", []):
-                if lid not in L:
-                    err(f"base.{bid}: 法則 {lid} が laws に書かれていない")
+            where = f"法則 {lid}"
+            if l["kind"] == "law_rule":
+                if not l["assume"] or not (l["derive"] or l["require"]) or l["govern"]:
+                    err(f"{where}: 規則で書いた法則は、前提と、導く文か求める文を持ち、掛かる節を持たない")
+                vars_ = set()
+                for f in l["assume"]:
+                    vars_ |= set(atom(f)[2])
+                for part in ("assume", "derive", "require"):
+                    for f in l[part]:
+                        neg, rel, args = atom(f)
+                        if (not isinstance(f, dict) or set(f) - {"is", "from", "to", "new", "neg"} or rel not in self.B
+                                or len(args) != self.B[rel]["arity"] or any(a not in G["position"] for a in args)):
+                            err(f"{where}: {part} の {f} が、基礎の関係と位置の語で書かれていない")
+                        if part != "assume" and set(args) - vars_:
+                            err(f"{where}: {part} の {f} に、前提に出てこない位置の語がある")
+                        if part == "derive" and neg:
+                            err(f"{where}: 導く文は否定にしない（書かれていない文は成り立たない）")
+            else:
+                if l["assume"] or l["derive"] or l["require"] or not l["govern"]:
+                    err(f"{where}: 意味を検査が与える法則は、規則を持たず、掛かる節を持つ")
+                for t in l["govern"]:
+                    if t not in self.N:
+                        err(f"{where}: 掛かる先 {t} がノードでない")
+                if lid not in LAWS_HERE | LAWS_RUN:
+                    err(f"{where}: 当てはめる検査がない")
+        for lid in (LAWS_HERE | LAWS_RUN) - {k for k, l in L.items() if l["kind"] == "law_given"}:
+            err(f"法則 {lid} を検査が当てはめているが、law_given の個体として書かれていない")
         # 法則 truth_distinct
         tv = self.AX["truth"]["value"]
         if not (isinstance(tv, list) and len(tv) == 2 and tv[0] != tv[1]):
@@ -309,7 +344,7 @@ class Ontology:
             elif self.resolve(v, "run") is None or not self.is_a(self.resolve(v, "run"), self.resolve(k, "run")) and not (k == "pre_rule" and v in G["logic"]):
                 err(f"runtime.{k}: 値 {v} が、{k} の下位のノードでない")
         for k in self.O:
-            if k not in G["system"]:
+            if k not in G["system"] and k not in ("domains", "laws"):   # 個体と事実から並べた形（core_sections）
                 err(f"体系の節 {k} が、grammar.system に書かれていない")
         for bid, b in self.B.items():
             for k in b:
@@ -354,9 +389,6 @@ class Ontology:
     def check_domains(self):
         D = self.O["domains"]
         for did, d in D.items():
-            for k in d:
-                if k not in self.G["domains"]:
-                    err(f"domains.{did}: 語 {k} が、grammar.domains に書かれていない")
             for u in d.get("uses", []):
                 if u not in D:
                     err(f"domains.{did}: 使う領域 {u} が未定義")
@@ -570,7 +602,8 @@ class Ontology:
     def check(self):
         N, AX, B = self.N, self.AX, self.B
         for bid, b in B.items():
-            if not b.get("laws") and not b.get("system_act") and b["arity"] != 1:
+            ruled = any(atom(f)[1] == bid for l in self.O["laws"].values() for p in ("assume", "derive", "require") for f in l[p])
+            if not ruled and not b.get("system_act") and b["arity"] != 1:
                 err(f"base: {bid} に法則がない（法則を持たない基礎の関係は、体系の行為 1個だけ）")
         if sum(bool(b.get("system_act")) for b in B.values()) != 1:
             err("base: 体系そのものの行為は、ちょうど1個であること")
@@ -984,6 +1017,14 @@ def main():
             err(f"exp.yaml {iid}: is は種類を1つだけ書く。並べない")
             x["is"] = None
     T.I = {iid: x.get("is") for iid, x in D["individuals"].items() if x.get("is") in O["nodes"]}
+    core = {iid: dict(x) for iid, x in (O.get("individuals") or {}).items()}
+    for iid, x in core.items():
+        if iid in T.I or iid in T.N:
+            err(f"ontology.yaml {iid}: 個体の識別子が、ほかの個体かノードと重なっている")
+        if set(x) - set(T.G["individuals"]) or x.get("is") not in T.N:
+            err(f"ontology.yaml {iid}: 個体は {{is: 種類, ja}} で書き、種類はノード")
+    T.I |= {iid: x.get("is") for iid, x in core.items() if x.get("is") in T.N}
+    gather({"domain": "core", "_local": set(), "individuals": core, "facts": O.get("facts")}, T, "ontology.yaml")
     T.check()
     T.check_grammar()
     T.check_hierarchy()
