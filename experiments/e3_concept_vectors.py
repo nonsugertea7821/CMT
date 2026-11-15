@@ -106,21 +106,31 @@ def train_vector(r, inj, label, definition, steps, lr, objective="def", qa=None)
         lab_b[i, n_prompt:k] = torch.tensor(ids[n_prompt:])
         msk_b[i, :k, 0] = torch.tensor(mask, dtype=torch.float32)
     losses = []
-    chunk = 4  # 一度に流す例の数。浅い層ほど逆伝播が深くメモリを使うので、小分けにして勾配を足し合わせる
-    if width > 256:
-        chunk = 1  # 概念式の定義は長く、右パディングで全行が広がるので1例ずつ（損失は例ごとの和なので結果は変わらない）
+    # 一度に流す例のまとまり。浅い層ほど逆伝播が深くメモリを使うので、小分けにして勾配を足し合わせる。
+    # 長さの近い例どうしをまとめ、まとまりごとに幅を切り詰める（長い定義文に短い設問が引き延ばされないように）。
+    # 損失は例ごとの和なので、まとめ方で結果は変わらない
+    lens = [len(ids) for ids, _, _ in rows]
+    order = sorted(range(n), key=lambda i: lens[i])
+    groups, cur = [], []
+    for i in order:
+        if cur and (len(cur) + 1) * lens[i] > 1024:
+            groups.append(cur)
+            cur = []
+        cur.append(i)
+    groups.append(cur)
     for _ in range(steps):
         opt.zero_grad()
         total = 0.0
-        for i in range(0, n, chunk):
-            sl = slice(i, i + chunk)
+        for g in groups:
+            w = max(lens[i] for i in g)
+            sl = (torch.tensor(g), slice(0, w))
             inj.delta = msk_b[sl] * v.view(1, 1, -1)
             logits = r.model(ids_b[sl], attention_mask=att_b[sl]).logits
             # 例ごとの平均損失を、例の間で平均する（長い定義文が短い設問を圧倒しないように）
             per_tok = torch.nn.functional.cross_entropy(
-                logits[:, :-1].reshape(-1, logits.shape[-1]), lab_b[sl, 1:].reshape(-1), reduction="none"
+                logits[:, :-1].reshape(-1, logits.shape[-1]), lab_b[sl][:, 1:].reshape(-1), reduction="none"
             ).view(logits.shape[0], -1)
-            valid = (lab_b[sl, 1:] != -100).float()
+            valid = (lab_b[sl][:, 1:] != -100).float()
             loss = ((per_tok * valid).sum(1) / valid.sum(1)).sum() / n
             loss.backward()
             total += loss.item()
