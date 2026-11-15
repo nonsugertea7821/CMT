@@ -388,6 +388,7 @@ individuals:
   e3_run_L8_defqa: {is: axis_value, val: {text: L8_defqa}}
   e3_run_L14_defqa: {is: axis_value, val: {text: L14_defqa}}
   e3_run_L20_defqa: {is: axis_value, val: {text: L20_defqa}}
+  e3_run_L4_defqa: {is: axis_value, val: {text: L4_defqa}}
   e3_group: {is: family_axis, val: {text: group}}
   e3_group_G2c: {is: axis_value, val: {text: G2c}}
   e3_group_G2k: {is: axis_value, val: {text: G2k}}
@@ -413,6 +414,7 @@ individuals:
   e3loss_run_L8_defqa: {is: axis_value, val: {text: L8_defqa}}
   e3loss_run_L14_defqa: {is: axis_value, val: {text: L14_defqa}}
   e3loss_run_L20_defqa: {is: axis_value, val: {text: L20_defqa}}
+  e3loss_run_L4_defqa: {is: axis_value, val: {text: L4_defqa}}
   e3b_fmt: {is: family_axis, val: {text: fmt}}
   e3b_fmt_orig: {is: axis_value, val: {text: orig}}
   e3b_fmt_fill: {is: axis_value, val: {text: fill}}
@@ -470,10 +472,12 @@ individuals:
   e6_defqa_layer_L8: {is: axis_value, val: {text: L8}}
   e6_defqa_layer_L14: {is: axis_value, val: {text: L14}}
   e6_defqa_layer_L20: {is: axis_value, val: {text: L20}}
+  e6_defqa_layer_L4: {is: axis_value, val: {text: L4}}
   e6_defqa_nll_layer: {is: family_axis, val: {text: layer}}
   e6_defqa_nll_layer_L8: {is: axis_value, val: {text: L8}}
   e6_defqa_nll_layer_L14: {is: axis_value, val: {text: L14}}
   e6_defqa_nll_layer_L20: {is: axis_value, val: {text: L20}}
+  e6_defqa_nll_layer_L4: {is: axis_value, val: {text: L4}}
   e7_group: {is: family_axis, val: {text: group}}
   e7_group_redef: {is: axis_value, val: {text: redef}}
   e7_group_new: {is: axis_value, val: {text: new}}
@@ -569,6 +573,8 @@ individuals:
   o_e6_layer14_paraphrase_below_chance: {is: observation}
   o_e6_layer20_paraphrase_below_chance: {is: observation}
   o_e3_layer20_keeps_control: {is: observation}
+  o_e6_layer4_paraphrase_below_chance: {is: observation}
+  o_e3_layer4_keeps_control: {is: observation}
   o_e7_filler_after_no_drop: {is: observation}
   o_e7_head_of_55_no_drop: {is: observation}
   o_e7_last_below_head: {is: observation}
@@ -663,7 +669,7 @@ individuals:
   b_model_writes_concept_expressions: {is: item_queued}
   b_vectors_taught_from_concept_expressions: {is: item_queued}
   b_e9_scratchpad: {is: item_done}
-  b_single_layer_20_and_4: {is: item_queued}
+  b_single_layer_20_and_4: {is: item_done}
   b_attention_observe_and_block: {is: item_queued}
   b_measure_explanation: {is: item_queued}
   b_e4_retrain: {is: item_queued}
@@ -802,6 +808,10 @@ facts:
   - {is: v_denote, from: e3_run_L20_defqa, to: teacher_both}
   - {is: v_compose, from: layer, to: e3_run_L14_defqa, at: {order: 14}}
   - {is: v_compose, from: layer, to: e3_run_L20_defqa, at: {order: 20}}
+  - {is: v_value_of, from: e3_run_L4_defqa, to: e3_run}
+  - {is: v_denote, from: e3_run_L4_defqa, to: single_layer_vector}
+  - {is: v_denote, from: e3_run_L4_defqa, to: teacher_both}
+  - {is: v_compose, from: layer, to: e3_run_L4_defqa, at: {order: 4}}
   - {is: v_axis_of, from: e3_group, to: e3}
   - {is: v_value_of, from: e3_group_G2c, to: e3_group}
   - {is: v_denote, from: e3_group_G2c, to: g_redef_conflict}
@@ -876,6 +886,10 @@ facts:
   - {is: v_denote, from: e3loss_run_L20_defqa, to: teacher_both}
   - {is: v_compose, from: layer, to: e3loss_run_L14_defqa, at: {order: 14}}
   - {is: v_compose, from: layer, to: e3loss_run_L20_defqa, at: {order: 20}}
+  - {is: v_value_of, from: e3loss_run_L4_defqa, to: e3loss_run}
+  - {is: v_denote, from: e3loss_run_L4_defqa, to: single_layer_vector}
+  - {is: v_denote, from: e3loss_run_L4_defqa, to: teacher_both}
+  - {is: v_compose, from: layer, to: e3loss_run_L4_defqa, at: {order: 4}}
   - {is: v_entry_of, from: loss_last, to: e3loss}
   - {is: v_metric_of, from: e3loss, to: mean_value}
   - {is: v_file_of, from: e3b_transfer.json, to: e3b}
@@ -1043,6 +1057,9 @@ facts:
   - {is: v_denote, from: e6_defqa_layer_L20, to: teacher_both}
   - {is: v_compose, from: layer, to: e6_defqa_layer_L14, at: {order: 14}}
   - {is: v_compose, from: layer, to: e6_defqa_layer_L20, at: {order: 20}}
+  - {is: v_value_of, from: e6_defqa_layer_L4, to: e6_defqa_layer}
+  - {is: v_denote, from: e6_defqa_layer_L4, to: teacher_both}
+  - {is: v_compose, from: layer, to: e6_defqa_layer_L4, at: {order: 4}}
   - {is: v_entry_of, from: define_choice, to: e6_defqa}
   - {is: v_metric_of, from: e6_defqa, to: accuracy}
   - {is: v_metric_of, from: e6_defqa, to: logit_margin}
@@ -1052,6 +1069,7 @@ facts:
   - {is: v_value_of, from: e6_defqa_nll_layer_L8, to: e6_defqa_nll_layer}
   - {is: v_value_of, from: e6_defqa_nll_layer_L14, to: e6_defqa_nll_layer}
   - {is: v_value_of, from: e6_defqa_nll_layer_L20, to: e6_defqa_nll_layer}
+  - {is: v_value_of, from: e6_defqa_nll_layer_L4, to: e6_defqa_nll_layer}
   - {is: v_entry_of, from: define_nll, to: e6_defqa_nll}
   - {is: v_metric_of, from: e6_defqa_nll, to: mean_value}
   - {is: v_file_of, from: e7_Qwen3-4B.json, to: e7}
@@ -1464,7 +1482,10 @@ facts:
   - {is: v_support, from: o_e6_layer14_paraphrase_below_chance, to: h_single_layer_does_not_reach_shared}
   - {is: v_refer, from: o_e6_layer20_paraphrase_below_chance, to: {is: v_come_before, from: e6_defqa.L20.accuracy, to: 0.5}}
   - {is: v_support, from: o_e6_layer20_paraphrase_below_chance, to: h_single_layer_does_not_reach_shared}
+  - {is: v_refer, from: o_e6_layer4_paraphrase_below_chance, to: {is: v_come_before, from: e6_defqa.L4.accuracy, to: 0.5}}
+  - {is: v_support, from: o_e6_layer4_paraphrase_below_chance, to: h_single_layer_does_not_reach_shared}
   - {is: v_refer, from: o_e3_layer20_keeps_control, to: {is: v_come_before, from: e3.L20_defqa.G2k.none.accuracy, to: e3.L20_defqa.G2k.vec.accuracy}}
+  - {is: v_refer, from: o_e3_layer4_keeps_control, to: {is: v_come_before, from: e3.L4_defqa.G2k.none.accuracy, to: e3.L4_defqa.G2k.vec.accuracy}}
   - {is: v_support, from: o_e6_recite_paraphrase_at_chance, to: h_single_layer_does_not_reach_shared}
   - {is: v_support, from: o_e6_examples_paraphrase_at_chance, to: h_single_layer_does_not_reach_shared}
   - {is: v_refer, from: h_multi_layer_raises_consistency, to: {is: v_raise, from: multi_layer_vector, to: cross_usage_consistency}}
