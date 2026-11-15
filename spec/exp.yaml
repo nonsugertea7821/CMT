@@ -51,7 +51,6 @@ nodes:
   v_contradict: {ja: 反する, extends: v_agree, from: against, to: hypothesis}
   v_qualify: {ja: 留保をつける, extends: v_refer, from: limitation, to: hypothesis}
   v_supersede: {ja: 取って代わる, extends: v_refer, from: sentence, to: supersedes}
-  v_annotate: {ja: 注記する, extends: v_refer, from: note, to: sentence}
   v_ground: {ja: 根拠にする, extends: v_depend, from: decision, to: basis}
   v_check: {ja: 確かめる, extends: v_refer, from: backlog_item, to: tests}
   v_file_of: {ja: 結果ファイルとして部分になる, extends: v_compose, from: result_file, to: measurement_family}
@@ -127,7 +126,6 @@ nodes:
   scratchpad: {ja: 途中経過の書き出し, extends: inference, mod: {of: [v_stage, to], with: v_speak_reason}}
   single_pass: {ja: 一度の処理, extends: inference, mod: {of: [v_stage, to], with: v_speak_reason, neg: true}}
   no_channel: {ja: 何もなし, extends: process, mod: {of: [v_stage, to], with: channel, neg: true}}
-  note: {ja: 注記, extends: passage_express_from_natural_language, mod: {of: [v_refer, from], with: sentence}}
   expression_part_refer_from_identifier: {ja: 識別子へ述べる概念式の部分, extends: expression_part, mod: {of: [v_refer, from], with: identifier}}
 
   # ===== 設問・事例・判定 =====
@@ -1270,14 +1268,12 @@ facts:
   - {is: v_support, from: o_type_text_rule_like_remap_4b, to: h_chain_length_lowers_following}
   - {is: v_support, from: o_e5_opaque_like_adjacent_15b, to: h_chain_length_lowers_following}
   - {is: v_contradict, from: o_e9_scratchpad_not_above_direct_rule_15b, to: h_chain_length_lowers_following}
-  - {is: v_annotate, from: 規則型と付け替え型の分類は、結果の一部を見たあとで行った, to: h_chain_length_lowers_following}
   - {is: v_refer, from: h_scratchpad_raises_rule_following, to: {is: v_raise, from: scratchpad, to: redefinition_following}}
   - {is: v_scope, from: model_15b, to: h_scratchpad_raises_rule_following}
   - {is: v_scope, from: rule_redefinition, to: h_scratchpad_raises_rule_following}
   - {is: v_scope, from: text_injection, to: h_scratchpad_raises_rule_following}
   - {is: v_qualify, from: lim_one_item, to: h_scratchpad_raises_rule_following}
   - {is: v_contradict, from: o_e9_scratchpad_not_above_direct_rule_15b, to: h_scratchpad_raises_rule_following}
-  - {is: v_annotate, from: 書き出した文を読むと、条件の読み取りではなく、数の大小の照合を誤っている（22歳は25歳以上である、など）, to: h_scratchpad_raises_rule_following}
   - {is: v_refer, from: h_scratchpad_lowers_remap_following, to: {is: v_lower, from: scratchpad, to: redefinition_following}}
   - {is: v_scope, from: model_15b, to: h_scratchpad_lowers_remap_following}
   - {is: v_scope, from: remap_redefinition, to: h_scratchpad_lowers_remap_following}
@@ -1289,7 +1285,6 @@ facts:
   - {is: v_scope, from: rule_redefinition, to: h_scratchpad_raises_rule_following_4b}
   - {is: v_scope, from: text_injection, to: h_scratchpad_raises_rule_following_4b}
   - {is: v_support, from: o_e9_scratchpad_above_direct_rule_4b, to: h_scratchpad_raises_rule_following_4b}
-  - {is: v_annotate, from: 12問のうち、正答が9問から11問に増えた, to: h_scratchpad_raises_rule_following_4b}
   - {is: v_refer, from: h_scratchpad_lowers_remap_following_4b, to: {is: v_lower, from: scratchpad, to: redefinition_following}}
   - {is: v_scope, from: model_4b, to: h_scratchpad_lowers_remap_following_4b}
   - {is: v_scope, from: remap_redefinition, to: h_scratchpad_lowers_remap_following_4b}
@@ -1303,7 +1298,6 @@ facts:
   - {is: v_support, from: o_e1_filler_no_further_drop, to: h_length_does_not_lower}
   - {is: v_support, from: o_e7_filler_after_no_drop, to: h_length_does_not_lower}
   - {is: v_support, from: o_e7_head_of_55_no_drop, to: h_length_does_not_lower}
-  - {is: v_annotate, from: 試した文脈は最大約3500トークン, to: h_length_does_not_lower}
   - {is: v_refer, from: h_distance_does_not_lower, to: {is: v_not_lower, from: distance_to_question, to: redefinition_following}}
   - {is: v_scope, from: model_4b, to: h_distance_does_not_lower}
   - {is: v_scope, from: text_injection, to: h_distance_does_not_lower}
@@ -1333,7 +1327,6 @@ facts:
   - {is: v_support, from: o_e1_glossary_replaced_full, to: h_new_word_immune}
   - {is: v_refer, from: h_attention_causes_preceding_effect, to: {is: v_cause, from: attention, to: preceding_definition_effect}}
   - {is: v_scope, from: model_4b, to: h_attention_causes_preceding_effect}
-  - {is: v_annotate, from: 先頭に置くと落ちないことは、単純な注意の薄まりでは説明できない, to: h_attention_causes_preceding_effect}
   - {is: v_refer, from: h_opaque_renaming_raises, to: {is: v_raise, from: opaque_renaming, to: redefinition_following}}
   - {is: v_scope, from: model_4b, to: h_opaque_renaming_raises}
   - {is: v_scope, from: text_injection, to: h_opaque_renaming_raises}
@@ -1347,7 +1340,6 @@ facts:
   - {is: v_scope, from: text_injection, to: h_opaque_renaming_lowers_control}
   - {is: v_qualify, from: lim_one_item, to: h_opaque_renaming_lowers_control}
   - {is: v_support, from: o_e5_opaque_lowers_control_4b, to: h_opaque_renaming_lowers_control}
-  - {is: v_annotate, from: 差は1問, to: h_opaque_renaming_lowers_control}
   - {is: v_refer, from: h_vector_raises_following, to: {is: v_raise, from: single_layer_vector, to: redefinition_following}}
   - {is: v_scope, from: model_15b, to: h_vector_raises_following}
   - {is: v_scope, from: teacher_examples, to: h_vector_raises_following}
@@ -1376,7 +1368,6 @@ facts:
   - {is: v_qualify, from: lim_range, to: h_vector_count_does_not_lower}
   - {is: v_support, from: o_e3b_all_vectors_same_conflict, to: h_vector_count_does_not_lower}
   - {is: v_support, from: o_e3b_all_vectors_same_control, to: h_vector_count_does_not_lower}
-  - {is: v_annotate, from: 24本まで, to: h_vector_count_does_not_lower}
   - {is: v_refer, from: h_unrelated_items_immune, to: {is: v_immune, from: unrelated_items, to: single_layer_vector}}
   - {is: v_scope, from: model_15b, to: h_unrelated_items_immune}
   - {is: v_support, from: o_e3b_unrelated_accuracy_kept, to: h_unrelated_items_immune}
@@ -1394,14 +1385,12 @@ facts:
   - {is: v_qualify, from: lim_range, to: h_layer14_lowers_control}
   - {is: v_support, from: o_e3_layer14_breaks_control, to: h_layer14_lowers_control}
   - {is: v_support, from: o_e3_layer14_same_conflict, to: h_layer14_lowers_control}
-  - {is: v_annotate, from: 第8層と第14層の2点だけ, to: h_layer14_lowers_control}
   - {is: v_refer, from: h_rule_type_lowers_vector_following, to: {is: v_lower, from: rule_redefinition, to: redefinition_following}}
   - {is: v_scope, from: model_15b, to: h_rule_type_lowers_vector_following}
   - {is: v_scope, from: single_layer_vector, to: h_rule_type_lowers_vector_following}
   - {is: v_qualify, from: lim_post_hoc, to: h_rule_type_lowers_vector_following}
   - {is: v_support, from: o_type_vec_rule_below_remap, to: h_rule_type_lowers_vector_following}
   - {is: v_contradict, from: o_type_vec_rule_above_text_rule, to: h_rule_type_lowers_vector_following}
-  - {is: v_annotate, from: 規則型でも文章より高い。分類は結果の一部を見たあとで行った, to: h_rule_type_lowers_vector_following}
   - {is: v_refer, from: h_recite_does_not_transfer_to_apply, to: {is: v_not_transfer, from: usage_recite, to: usage_apply}}
   - {is: v_scope, from: model_15b, to: h_recite_does_not_transfer_to_apply}
   - {is: v_scope, from: single_layer_vector, to: h_recite_does_not_transfer_to_apply}
@@ -1424,7 +1413,6 @@ facts:
   - {is: v_scope, from: model_15b, to: h_apply_does_not_transfer_to_explain}
   - {is: v_scope, from: single_layer_vector, to: h_apply_does_not_transfer_to_explain}
   - {is: v_qualify, from: lim_unquantified, to: h_apply_does_not_transfer_to_explain}
-  - {is: v_annotate, from: 生成された理由を目で読んだ観察のみ。数値化していない, to: h_apply_does_not_transfer_to_explain}
   - {is: v_refer, from: h_recite_coexists_with_apply, to: {is: v_coexist, from: usage_recite, to: usage_apply}}
   - {is: v_scope, from: model_15b, to: h_recite_coexists_with_apply}
   - {is: v_scope, from: single_layer_vector, to: h_recite_coexists_with_apply}
@@ -1451,12 +1439,9 @@ facts:
   - {is: v_contradict, from: o_e8_control_below_single_layer, to: h_multi_layer_raises_consistency}
   - {is: v_contradict, from: o_e8_less_order_robust_than_single_layer, to: h_multi_layer_raises_consistency}
   - {is: v_support, from: o_e8_conflict_ge_single_layer, to: h_multi_layer_raises_consistency}
-  - {is: v_annotate, from: 学習が収束していない（o_e8_training_loss_above_single_layer）。24概念中16概念で損失が0.3を超えた。学習率を変えてやり直す必要がある, to: h_multi_layer_raises_consistency}
   - {is: v_refer, from: h_controlled_language_raises_following, to: {is: v_raise, from: controlled_language, to: redefinition_following}}
   - {is: v_scope, from: text_injection, to: h_controlled_language_raises_following}
-  - {is: v_annotate, from: これまでの実験は、定義をすべて自然言語の文で渡している。概念式で渡した場合は測っていない, to: h_controlled_language_raises_following}
   - {is: v_refer, from: h_model_can_write_controlled_language, to: {is: v_speak, from: model, to: concept_expression}}
-  - {is: v_annotate, from: モデルに概念式を書かせ、検査が通るかで判定する, to: h_model_can_write_controlled_language}
   - {is: v_refer, from: h_modifier_transfers_to_unseen_genus, to: {is: v_transfer, from: modifier, to: unseen_genus}}
   - {is: v_scope, from: model_15b, to: h_modifier_transfers_to_unseen_genus}
   - {is: v_scope, from: single_layer_vector, to: h_modifier_transfers_to_unseen_genus}
@@ -1464,7 +1449,6 @@ facts:
   - {is: v_qualify, from: lim_single_case, to: h_modifier_transfers_to_unseen_genus}
   - {is: v_support, from: o_e4_modifier_transfers_in_converged_pair, to: h_modifier_transfers_to_unseen_genus}
   - {is: v_support, from: o_e4_pair1_training_failed, to: h_modifier_transfers_to_unseen_genus}
-  - {is: v_annotate, from: 3組のうち2組は学習が収束しなかった。収束した1組だけの結果, to: h_modifier_transfers_to_unseen_genus}
 
   # ===== 決定（is: decision）
   - {is: v_refer, from: d_goal, to: {is: v_raise, from: this_design, to: redefinition_success}}
@@ -1486,7 +1470,6 @@ facts:
   - {is: v_refer, from: d_redefinition_at_head, to: {is: extends, from: redefinition, to: glossary_head}}
   - {is: v_ground, from: d_redefinition_at_head, to: h_preceding_definitions_lower}
   - {is: v_ground, from: d_redefinition_at_head, to: h_following_definitions_do_not_lower}
-  - {is: v_annotate, from: 検査は、この決定を構造から確かめない（tentative）。用語集に入れる再定義は、先頭に置く、という取り決め, to: d_redefinition_at_head}
   - {is: v_refer, from: d_verdict_by_vector, to: {is: v_rely, from: verdict, to: concept_vector}}
   - {is: v_ground, from: d_verdict_by_vector, to: h_vector_raises_following}
   - {is: v_ground, from: d_verdict_by_vector, to: h_vector_raises_following_free}
@@ -1494,11 +1477,8 @@ facts:
   - {is: v_ground, from: d_explanation_by_text, to: h_both_teachers_raise_control_in_combo}
   - {is: v_refer, from: d_consolidation_in_vector, to: {is: extends, from: change_holder, to: taught_vector}}
   - {is: v_ground, from: d_consolidation_in_vector, to: h_vector_count_does_not_lower}
-  - {is: v_annotate, from: 検査は、この決定を構造から確かめない（tentative）。与えられた意味を保持するのは、教示で得られたベクトル、という取り決め, to: d_consolidation_in_vector}
   - {is: v_refer, from: d_source_of_truth_in_controlled_language, to: {is: v_express, from: depended_information, to: controlled_language}}
-  - {is: v_annotate, from: 体系制御言語とは、ontology.yaml の書き方による記述そのものを指す, to: d_source_of_truth_in_controlled_language}
   - {is: v_refer, from: d_rendered_text_is_derived, to: {is: v_rely, from: rendered_text, to: depended_information}}
-  - {is: v_annotate, from: 自然言語の文は、正本から変換して得る表示。変換は LLM が行ってもシステムが行ってもよい, to: d_rendered_text_is_derived}
   - {is: v_refer, from: d_symbol_selection_symbolic, to: {is: v_rely, from: symbol_selection, to: typed_graph}}
   - {is: v_refer, from: d_vector_needs_open_weights, to: {is: v_rely, from: concept_vector, to: open_weight_model}}
   - {is: v_refer, from: d_text_for_api_models, to: {is: v_rely, from: api_only_model, to: text_injection}}

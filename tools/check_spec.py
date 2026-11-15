@@ -86,7 +86,7 @@ KINDS = {"measurement_family": "families", "observation": "observations", "hypot
          "decision": "decisions", "backlog_item": "backlog"}   # この検査が中身を確かめる種類
 
 
-LITERAL = {"ja", "holds", "pre", "post", "result_file", "row_collection", "row_filter", "pattern", "condition_entry", "passage", "note", "val"}
+LITERAL = {"ja", "holds", "pre", "post", "result_file", "row_collection", "row_filter", "pattern", "condition_entry", "passage", "val"}
 
 
 def qualify(x, local, dom):
@@ -949,12 +949,32 @@ def check_claims(C, values, T):
                 err(f"backlog {b['identifier']}: tests の仮説 {r} が未定義")
 
 
+def natural_language_only_in_ja(name, x, path=()):
+    """自然言語を書けるのは、表示名 ja だけ。例外は、字そのものが値であるもの:
+    最上位2つの gloss、選択肢の字（val.text）、結果ファイルでの書き方（v_spell の終点）。"""
+    if isinstance(x, dict):
+        if x.get("is") == "v_spell":
+            return
+        for k, v in x.items():
+            natural_language_only_in_ja(name, v, path + (str(k),))
+    elif isinstance(x, list):
+        for v in x:
+            natural_language_only_in_ja(name, v, path)
+    elif isinstance(x, str) and re.search(r"[^\x00-\x7f]", x):
+        top = path[:1] == ("nodes",) and path[-1] == "gloss" and path[1] in ("continuant", "occurrent")
+        opt = path[:1] == ("individuals",) and path[-2:] == ("val", "text")
+        if path[-1:] != ("ja",) and not top and not opt:
+            err(f"{name} {'.'.join(path)}: 自然言語は表示名 ja にだけ書く（{x[:20]}）")
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--values", action="store_true")
     ap.add_argument("--show")
     ap.add_argument("--expr")
     args = ap.parse_args()
+    for f in ("ontology.yaml", "exp.yaml"):
+        natural_language_only_in_ja(f, yaml.safe_load(open(SPEC / f)))
     O = load("ontology.yaml")
     D = merge_domain("exp.yaml", O)
     T = Ontology(O)
