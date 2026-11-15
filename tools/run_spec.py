@@ -22,7 +22,7 @@ from pathlib import Path
 import yaml
 
 sys.path.insert(0, str(Path(__file__).parent))
-from check_spec import Ontology, load  # noqa: E402
+from check_spec import Ontology, load, merge_domain  # noqa: E402
 
 ROOT = Path(__file__).parent.parent / "spec"
 
@@ -156,7 +156,9 @@ class Machine:
 
 def main():
     global FORMULA
-    T = Ontology(load("ontology.yaml"))
+    O = load("ontology.yaml")
+    merge_domain("exp.yaml", O)   # 実行の記録は、領域 exp の種類と動詞を「exp.名前」で使える
+    T = Ontology(O)
     G = T.G["run"]
     FORMULA = T.O["syntax"]["formula"]["pattern"]
     for k, v in T.O["runtime"].items():

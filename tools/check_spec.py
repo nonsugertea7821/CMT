@@ -44,6 +44,10 @@ TOPS = ("continuant", "occurrent")
 errors = []
 
 
+def short(w):
+    return w.split(".")[-1] if isinstance(w, str) else w
+
+
 def err(msg):
     errors.append(msg)
 
@@ -361,7 +365,15 @@ class Ontology:
             return self.spot_type(*n["form"])
         return None
 
+    def q(self, w):
+        """検査が名前で参照する語を、ノードの識別子に解決する（領域を書かない語は、個体の領域、core の順に探す）。"""
+        if not isinstance(w, str) or w in self.N or w in self.I or w == "any":
+            return w
+        return self.resolve(w, self.Idom or "core") or w
+
     def is_a(self, x, y, hops=0):
+        if hops == 0:
+            x, y = self.q(x), self.q(y)
         if y == "any":
             return True
         if x in self.I:   # 個体は、成員が1つの種類。自分自身か、自分の種類の上位に当たる
@@ -549,7 +561,7 @@ class Ontology:
         """種類 kind の個体に、項目 f を書けるか。項目の表は持たず、式から決める。
         f が動詞かその位置の形（s, p, o）: kind が「について述べる」の始点に来る種類（文）であること。
         それ以外: f かその下位に、kind のものとの関係で限定されたノードがあること。または、kind の式が f のものとの関係で限定されていること。"""
-        f = f if f in self.N else self.resolve(f, dom)
+        kind, f = self.q(kind), f if f in self.N else self.resolve(f, dom)
         if f is None:
             return False
         if "form" in self.N[f] or self.is_verb(f):
@@ -568,6 +580,7 @@ class Ontology:
     def check_fields(self, kind, x, where, dom="core"):
         """個体の項目。値が数なら、個数の軸の固定値。種類の式がその個数を限定していれば、その範囲に入っていること。"""
         for f, v in x.items():
+            f = self.q(f)
             if isinstance(v, (int, float)) and not isinstance(v, bool) and f in self.N and not self.is_a(f, "magnitude"):
                 for m in self.mods_of(kind):
                     want = (m.get("at") or {}).get("count")
@@ -578,6 +591,7 @@ class Ontology:
 
     def kinds_of(self, nid):
         """nid の下位のうち、それより下を持たないノード。status や留保の値として使えるもの。"""
+        nid = self.q(nid)
         has_child = {p for k in self.N for p in self.parents(k)}
         return [k for k in self.N if k not in has_child and k != nid and nid in self.ancestors(k)]
 
@@ -585,8 +599,8 @@ class Ontology:
         """状態のノードの式から、「支持する観察がある / 反する観察がある」の組を読み取る。"""
         pat = {}
         for m in [m for x in [nid] + self.ancestors(nid) for m in (self.N[x].get("mod") or [])]:
-            if isinstance(m, dict) and m.get("of") == ["v_agree", "to"] and m.get("with") in ("evidence", "against"):
-                pat[m["with"]] = not m.get("neg")
+            if isinstance(m, dict) and m.get("of") == ["v_agree", "to"] and short(m.get("with")) in ("evidence", "against"):
+                pat[short(m["with"])] = not m.get("neg")
         return pat if set(pat) == {"evidence", "against"} else None
 
     def compare(self, verb, a, b, tol):
@@ -710,9 +724,9 @@ def expand(M, T):
                 allowed = {fmt(f["row_keys"]["pattern"]).replace("#", str(x)) for x in sub[axis]}
                 rows = [(k, r) for k, r in rows if k in allowed]
             for st in f["metric"]:
-                mid = ".".join([fid] + [str(b[a]) for a in names] + [st])
+                mid = ".".join([fid] + [str(b[a]) for a in names] + [short(st)])
                 try:
-                    values[mid] = stat(rows, fmt(f["condition_entry"]), st)
+                    values[mid] = stat(rows, fmt(f["condition_entry"]), short(st))
                 except KeyError as e:
                     err(f"measurements: {mid}: {e}")
                 meanings[mid] = {a: (f.get("meaning") or {}).get(a, {}).get(b[a], b[a]) for a in names} | {"metric": st}
@@ -739,7 +753,7 @@ def check_claims(C, values, T):
         if not T.is_verb(o["p"]):
             err(f"{oid}: p の {o['p']} は動詞でない")
             continue
-        near = T.end(o["p"], "new_kind") == "tolerance"
+        near = short(T.end(o["p"], "new_kind")) == "tolerance"
         if near != ("tolerance" in o):
             err(f"{oid}: 許容幅は、動詞 {o['p']} の第三のものが許容幅であるときにだけ、必ず書く")
             continue
@@ -763,7 +777,7 @@ def check_claims(C, values, T):
         if x["p"] == "is_a":
             if not structural_ok:
                 err(f"{where}: is_a を使えるのは決定だけ")
-            elif x.get("status") == "dec_adopted" and not all(T.is_a(a, b) for a in ss for b in oo):
+            elif T.is_a(x.get("status"), "dec_adopted") and not all(T.is_a(a, b) for a in ss for b in oo):
                 err(f"{where}: 採用済みの決定だが、体系の上で {ss} は {oo} の下位になっていない")
             return
         if not T.is_verb(x["p"]):
@@ -780,7 +794,7 @@ def check_claims(C, values, T):
         triple(h, hid)
         have = {"evidence": bool(h.get("evidence")), "against": bool(h.get("against"))}
         want = [k for k, v in patterns.items() if v == have]
-        if h["status"] not in patterns:
+        if short(h["status"]) not in {short(k) for k in patterns}:
             err(f"{hid}: 種類 {h["status"]} は、仮説の状態のノードでない")
         elif want != [h["status"]]:
             err(f"{hid}: 種類は {h["status"]} と書かれているが、根拠の有無からは {want} になる")
@@ -794,7 +808,7 @@ def check_claims(C, values, T):
         for lim in h.get("limitation", []):
             if lim not in T.kinds_of("limitation"):
                 err(f"{hid}: 留保 {lim} は、留保のノードでない")
-        if "lim_one_item" in h.get("limitation", []):
+        if "lim_one_item" in [short(x) for x in h.get("limitation", [])]:
             gs = [gap.get(r) for r in h.get("evidence", []) + h.get("against", [])]
             if not any(g is not None and g <= 1.0 + 1e-6 for g in gs):
                 err(f"{hid}: 留保「差が1問以内」と書かれているが、根拠のうち大小を述べる観察に、差が1問以内のものがない")
