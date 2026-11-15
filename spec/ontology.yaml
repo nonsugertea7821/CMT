@@ -74,36 +74,36 @@ nodes:
   occurrent: {ja: 生起体, gloss: 時間の中で起こり、展開するもの}
 
   # ===== 動詞・静的。holds に、成り立っている状態の関係を書く =====
-  v_depend: {ja: 依存する, extends: occurrent, from: continuant, to: continuant, holds: ["depend(from, to)"]}
-  v_compose: {ja: 部分になる, extends: occurrent, from: continuant, to: continuant, holds: ["part(from, to)"]}
-  v_stage: {ja: 時間的な部分になる, extends: occurrent, from: occurrent, to: occurrent, holds: ["part(from, to)"]}
-  v_come_after: {ja: 後ろに置かれる, extends: occurrent, from: continuant, to: continuant, holds: ["after(from, to)"]}
-  v_refer: {ja: 述べる, extends: occurrent, from: continuant, to: any, holds: ["refer(from, to)"]}
-  v_agree: {ja: 一致する, extends: occurrent, from: continuant, to: continuant, holds: ["refer(from, new)", "refer(to, new)"]}
-  v_measure: {ja: 測る, extends: occurrent, from: continuant, to: any, holds: ["refer(from, to)", "depend(from, to)"]}
-  v_express: {ja: で書かれる, extends: occurrent, from: continuant, to: continuant, holds: ["depend(from, to)", "part(new, from)", "part(new, to)"]}
-  v_involve: {ja: に関わらせる, extends: occurrent, from: occurrent, to: continuant, holds: ["involve(from, to)"]}
-  v_perform: {ja: 行う, extends: occurrent, from: continuant, to: occurrent, holds: ["involve(to, from)"]}
-  v_trigger: {ja: 引き起こす, extends: occurrent, from: any, to: occurrent, holds: ["after(to, from)", "depend(to, from)"]}
+  v_depend: {ja: 依存する, extends: occurrent, from: continuant, to: continuant, holds: [{is: depend, from: from, to: to}]}
+  v_compose: {ja: 部分になる, extends: occurrent, from: continuant, to: continuant, holds: [{is: part, from: from, to: to}]}
+  v_stage: {ja: 時間的な部分になる, extends: occurrent, from: occurrent, to: occurrent, holds: [{is: part, from: from, to: to}]}
+  v_come_after: {ja: 後ろに置かれる, extends: occurrent, from: continuant, to: continuant, holds: [{is: after, from: from, to: to}]}
+  v_refer: {ja: 述べる, extends: occurrent, from: continuant, to: any, holds: [{is: refer, from: from, to: to}]}
+  v_agree: {ja: 一致する, extends: occurrent, from: continuant, to: continuant, holds: [{is: refer, from: from, to: new}, {is: refer, from: to, to: new}]}
+  v_measure: {ja: 測る, extends: occurrent, from: continuant, to: any, holds: [{is: refer, from: from, to: to}, {is: depend, from: from, to: to}]}
+  v_express: {ja: で書かれる, extends: occurrent, from: continuant, to: continuant, holds: [{is: depend, from: from, to: to}, {is: part, from: new, to: from}, {is: part, from: new, to: to}]}
+  v_involve: {ja: に関わらせる, extends: occurrent, from: occurrent, to: continuant, holds: [{is: involve, from: from, to: to}]}
+  v_perform: {ja: 行う, extends: occurrent, from: continuant, to: occurrent, holds: [{is: involve, from: to, to: from}]}
+  v_trigger: {ja: 引き起こす, extends: occurrent, from: any, to: occurrent, holds: [{is: after, from: to, to: from}, {is: depend, from: to, to: from}]}
 
   # ===== 動詞・大きさを比べる。「後ろに置かれる」が、より大きい、に当たる =====
-  v_come_before: {ja: 前に置かれる, extends: occurrent, from: continuant, to: continuant, holds: ["after(to, from)"]}
-  v_not_before: {ja: 前には置かれない, extends: occurrent, from: continuant, to: continuant, holds: ["not after(to, from)"]}
-  v_not_after: {ja: 後ろには置かれない, extends: occurrent, from: continuant, to: continuant, holds: ["not after(from, to)"]}
-  v_level: {ja: 同じ位置にある, extends: occurrent, from: continuant, to: continuant, holds: ["not after(from, to)", "not after(to, from)"]}
+  v_come_before: {ja: 前に置かれる, extends: occurrent, from: continuant, to: continuant, holds: [{is: after, from: to, to: from}]}
+  v_not_before: {ja: 前には置かれない, extends: occurrent, from: continuant, to: continuant, holds: [{is: after, from: to, to: from, neg: true}]}
+  v_not_after: {ja: 後ろには置かれない, extends: occurrent, from: continuant, to: continuant, holds: [{is: after, from: from, to: to, neg: true}]}
+  v_level: {ja: 同じ位置にある, extends: occurrent, from: continuant, to: continuant, holds: [{is: after, from: from, to: to, neg: true}, {is: after, from: to, to: from, neg: true}]}
 
   # ===== 動詞・動的。pre と post に、起こる前後の状態の関係を書く =====
-  v_design: {ja: 設計する, extends: occurrent, from: continuant, to: continuant, pre: ["not exists(to)"], post: ["exists(to)"]}
-  v_compute: {ja: 計算する, extends: occurrent, from: continuant, to: any, pre: ["not exists(to)"], post: ["exists(to)"]}
+  v_design: {ja: 設計する, extends: occurrent, from: continuant, to: continuant, pre: [{is: exists, from: to, neg: true}], post: [{is: exists, from: to}]}
+  v_compute: {ja: 計算する, extends: occurrent, from: continuant, to: any, pre: [{is: exists, from: to, neg: true}], post: [{is: exists, from: to}]}
   v_learn: {ja: 学習する, extends: occurrent, from: continuant, to: continuant, new_kind: realizable_entity,
-            pre: ["not exists(new)"], post: ["exists(new)", "depend(new, from)", "refer(new, to)"]}
+            pre: [{is: exists, from: new, neg: true}], post: [{is: exists, from: new}, {is: depend, from: new, to: from}, {is: refer, from: new, to: to}]}
   v_freeze: {ja: 固定する, extends: occurrent, from: continuant, to: continuant, new_kind: realizable_entity,
-             pre: ["exists(new)", "depend(new, to)"], post: ["not exists(new)"]}
+             pre: [{is: exists, from: new}, {is: depend, from: new, to: to}], post: [{is: exists, from: new, neg: true}]}
   v_vary: {ja: 動かす, extends: occurrent, from: continuant, to: continuant, new_kind: quality,
-           pre: ["depend(new, to)"], post: ["not depend(new, to)"]}
+           pre: [{is: depend, from: new, to: to}], post: [{is: depend, from: new, to: to, neg: true}]}
 
   # ===== 文の骨組み。何が（s）、どう関係し（p）、何に（o）。p は、すべての関係の上位 =====
-  p: {ja: 関係づける, extends: occurrent, from: any, to: any, holds: ["exists(from)", "exists(to)"]}
+  p: {ja: 関係づける, extends: occurrent, from: any, to: any, holds: [{is: exists, from: from}, {is: exists, from: to}]}
   s: {ja: 始点に来るもの, form: [p, from]}
   o: {ja: 終点に来るもの, form: [p, to]}
 
@@ -237,7 +237,7 @@ nodes:
   role_depend_from_rewrite_rule: {ja: 書き換えの規則へ依存する役割, extends: role, mod: {of: [v_depend, from], with: rewrite_rule}}
   run.state: {ja: 状態, extends: information_entity, mod: {of: [v_compose, to], with: facts}}
   run.v_execute: {ja: 実行する, extends: occurrent, from: continuant, to: run.state, new_kind: run.state,
-              pre: ["not exists(new)"], post: ["exists(new)", "after(new, to)"]}
+              pre: [{is: exists, from: new, neg: true}], post: [{is: exists, from: new}, {is: after, from: new, to: to}]}
   run.executor: {ja: 実行器, extends: role_depend_from_rewrite_rule, mod: {of: [run.v_execute, from]}}
   run.halted: {ja: 止まった状態, extends: run.state, mod: {of: [run.v_execute, to], neg: true}}
   run.run: {ja: 実行の記録, extends: information_entity, mod: {of: [v_refer, from], with: run.v_execute}}
@@ -260,10 +260,6 @@ nodes:
   run.progress: {ja: 当てはまるとみなす条件, extends: run.strategy, mod: {of: [v_refer, from], with: run.halted}}
   run.changes_state: {ja: 前の状態が成り立ち後の状態がまだ成り立っていない, extends: run.progress, mod: {of: [v_come_before, from], with: post}}
 
-  # ===== 構文糖衣。短い書き方と、それが表すものの対応 =====
-  syntax: {ja: 構文糖衣の節, extends: section, mod: {of: [v_refer, from], with: pattern}}
-  formula: {ja: 状態の関係の式, extends: pattern, mod: {of: [v_refer, from], with: state_relation}}
-
   # ===== 名前空間。領域ごとに識別子を持ち、ほかの領域のものは「領域.名前」で参照する =====
   domain: {ja: 領域, extends: information_entity, mod: {of: [v_compose, to], with: concept_expression}}
   domains: {ja: 領域の節, extends: section, mod: {of: [v_refer, from], with: domain}}
@@ -280,15 +276,11 @@ runtime:
   choice: recorded
   progress: changes_state
 
-# 構文糖衣。短い書き方（正規表現）と、それが表す部分の名前。部分の名前はノードの識別子。
-syntax:
-  formula: {pattern: '(?P<not>not )?(?P<base>\w+)\((?P<from>\w+)(?:, (?P<to>\w+))?\)', value: [not, base, from, to]}
-
 # 体系が、自分の書き方（文法）について述べる。
 # 文法の語は、すべてノードの識別子である。節ごとに、そこで使える語を並べる。検査は、ここに並んだ語だけを受け付ける。
 grammar:
-  grammar: [system, nodes, mod, cmp, base, axes, laws, run, position, rel, function, value, logic, runtime, syntax, domains, domain, individuals, facts, grammar]
-  system: [domains, base, laws, axes, nodes, runtime, syntax, grammar]
+  grammar: [system, nodes, mod, cmp, base, axes, laws, run, position, rel, function, value, logic, runtime, domains, domain, individuals, facts, grammar]
+  system: [domains, base, laws, axes, nodes, runtime, grammar]
   nodes: [ja, gloss, extends, from, to, new_kind, holds, pre, post, form, of, neg, mod, val, cmp, axis]
   mod: [of, with, neg, quant, at]
   cmp: [axis, a, b, rel]
@@ -302,8 +294,7 @@ grammar:
   value: [number, literal]
   logic: [not, all, any, between]   # true と false は、真偽の軸の値
   runtime: [world, pre_rule, post_rule, law_check, binding, choice, progress]
-  syntax: [formula]
   domains: [ja, uses]
   domain: [domain, nodes, individuals, facts]   # 領域のファイル（spec/exp.yaml）
   individuals: [is, ja, val]
-  facts: [is, from, to, new, at, neg]   # 事実は動詞の個体。位置に名前を付けて書く
+  facts: [is, from, to, new, at, neg]   # 事実は動詞の個体。位置に名前を付けて書く。holds / pre / post も同じ形

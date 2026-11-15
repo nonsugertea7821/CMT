@@ -45,6 +45,13 @@ TOPS = ("continuant", "occurrent")
 errors = []
 
 
+def atom(f):
+    """状態の関係の型（{is: 基礎の関係, from: 位置, to: 位置, neg: 否定}）を (否定, 関係, 位置の並び) に直す。"""
+    if not isinstance(f, dict):
+        return False, None, ()
+    return bool(f.get("neg")), f.get("is"), tuple(f[k] for k in ("from", "to") if k in f)
+
+
 def short(w):
     return w.split(".")[-1] if isinstance(w, str) else w
 
@@ -259,16 +266,6 @@ class Ontology:
                 err(f"runtime: 語 {k} が、grammar.runtime に書かれていない")
             elif self.resolve(v, "run") is None or not self.is_a(self.resolve(v, "run"), self.resolve(k, "run")) and not (k == "pre_rule" and v in G["logic"]):
                 err(f"runtime.{k}: 値 {v} が、{k} の下位のノードでない")
-        for k, v in self.O["syntax"].items():
-            if k not in G["syntax"]:
-                err(f"syntax: 語 {k} が、grammar.syntax に書かれていない")
-            try:
-                names = set(re.compile(v["pattern"]).groupindex)
-            except re.error as e:
-                err(f"syntax.{k}: 書き方が読めない（{e}）")
-                continue
-            if names != set(v["value"]) or any(x not in self.N for x in v["value"]):
-                err(f"syntax.{k}: 部分の名前 {sorted(names)} が、value と合わないか、ノードでない")
         for k in self.O:
             if k not in G["system"]:
                 err(f"体系の節 {k} が、grammar.system に書かれていない")
@@ -462,7 +459,7 @@ class Ontology:
         while verb in self.N and hops < 50:
             fs = [f for k in ("holds", "pre", "post") for f in self.N[verb].get(k, [])]
             if fs:
-                return {re.search(r"(\w+)\(", f).group(1) for f in fs}
+                return {atom(f)[1] for f in fs}
             verb, hops = self.up(verb), hops + 1
         return set()
 
@@ -501,10 +498,10 @@ class Ontology:
             err(f"{vid}: 静的（holds）か動的（pre / post）のどちらかで書く")
         for key in ("holds", "pre", "post"):
             for f in n.get(key, []):
-                m = re.fullmatch(self.O["syntax"]["formula"]["pattern"], f)
-                args = [a for a in (m.group("from"), m.group("to")) if a] if m else []
-                if not m or m.group("base") not in self.B or len(args) != self.B[m.group("base")]["arity"] or any(a not in ("from", "to", "new") for a in args):
-                    err(f"{vid}: 式 {f} が基礎の関係に合わない")
+                ok = isinstance(f, dict) and not set(f) - set(self.G["facts"]) - {"at"} and f.get("is") in self.B
+                args = atom(f)[2] if ok else ()
+                if not ok or "at" in f or len(args) != self.B[f["is"]]["arity"] or any(a not in self.G["position"] for a in args):
+                    err(f"{vid}: {key} の {f} が、基礎の関係と位置で書かれていない")
 
     def grounding(self, nid):
         return [m["with"] for x in [nid] + self.ancestors(nid) for m in (self.N[x].get("mod") or [])
@@ -619,7 +616,7 @@ class Ontology:
         sig = collections.defaultdict(list)
         for nid, n in N.items():
             if "holds" in n or "pre" in n:
-                s = tuple(tuple(sorted(n.get(k, []))) for k in ("holds", "pre", "post")) + (n["from"], n["to"], n.get("new_kind"))
+                s = tuple(tuple(sorted(map(atom, n.get(k, [])))) for k in ("holds", "pre", "post")) + (n["from"], n["to"], n.get("new_kind"))
                 sig[s].append(nid)
         for ids in sig.values():
             if len(ids) > 1:
@@ -678,21 +675,21 @@ class Ontology:
         while verb in self.N and "holds" not in self.N[verb] and hops < 50:
             verb, hops = self.up(verb), hops + 1
         n = self.N.get(verb, {})
-        if not n.get("holds") or any(not re.fullmatch(r"(not )?after\((from|to), (from|to)\)", f) for f in n["holds"]):
+        fs = [atom(f) for f in n.get("holds", [])]
+        if not fs or any(rel != "after" or len(args) != 2 or set(args) - {"from", "to"} for _, rel, args in fs):
             return None
         x = {"from": a, "to": b}
         out = True
-        for f in n["holds"]:
-            m = re.fullmatch(r"(not )?after\((\w+), (\w+)\)", f)
-            later = x[m.group(2)] - x[m.group(3)] > tol
-            out = out and (not later if m.group(1) else later)
+        for neg, _, (p1, p2) in fs:
+            later = x[p1] - x[p2] > tol
+            out = out and (not later if neg else later)
         return out
 
     def is_strict(self, verb):
         hops = 0
         while verb in self.N and "holds" not in self.N[verb] and hops < 50:
             verb, hops = self.up(verb), hops + 1
-        return any(f.startswith("after(") for f in self.N.get(verb, {}).get("holds", []))
+        return any(atom(f)[1] == "after" for f in self.N.get(verb, {}).get("holds", []))
 
     def expr(self, nid):
         """上位をたどって、式を並べる。"""

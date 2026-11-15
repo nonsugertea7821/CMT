@@ -10,40 +10,40 @@
 domain: exp
 nodes:
   # ===== 動詞 =====
-  v_answer: {ja: 答える, extends: occurrent, from: continuant, to: continuant, holds: ["refer(from, to)", "after(from, to)"]}
+  v_answer: {ja: 答える, extends: occurrent, from: continuant, to: continuant, holds: [{is: refer, from: from, to: to}, {is: after, from: from, to: to}]}
   v_judge: {ja: 判定する, extends: occurrent, from: continuant, to: continuant, new_kind: information_entity,
-            pre: ["not exists(new)"], post: ["exists(new)", "depend(new, from)", "refer(new, to)"]}
+            pre: [{is: exists, from: new, neg: true}], post: [{is: exists, from: new}, {is: depend, from: new, to: from}, {is: refer, from: new, to: to}]}
   v_teach: {ja: 教える, extends: occurrent, from: continuant, to: continuant, new_kind: realizable_entity,
-            pre: ["not exists(new)"], post: ["exists(new)", "depend(new, to)", "refer(new, from)"]}
+            pre: [{is: exists, from: new, neg: true}], post: [{is: exists, from: new}, {is: depend, from: new, to: to}, {is: refer, from: new, to: from}]}
   v_judge_case: {ja: 事例を判定する, extends: v_judge, to: case}
-  v_adopt: {ja: 採用する, extends: occurrent, from: continuant, to: continuant, new_kind: role, pre: ["not depend(new, to)"], post: ["depend(new, to)"]}
-  v_withdraw: {ja: 取り下げる, extends: occurrent, from: continuant, to: continuant, new_kind: role, pre: ["depend(new, to)"], post: ["not depend(new, to)"]}
-  v_happen_after: {ja: 後に起こる, extends: occurrent, from: occurrent, to: occurrent, holds: ["after(from, to)"]}
-  v_use: {ja: 使う, extends: occurrent, from: any, to: continuant, holds: ["involve(new, to)", "depend(new, from)"]}
-  v_speak: {ja: 発話する, extends: occurrent, from: continuant, to: continuant, pre: ["not exists(to)"], post: ["exists(to)", "depend(to, from)"]}
+  v_adopt: {ja: 採用する, extends: occurrent, from: continuant, to: continuant, new_kind: role, pre: [{is: depend, from: new, to: to, neg: true}], post: [{is: depend, from: new, to: to}]}
+  v_withdraw: {ja: 取り下げる, extends: occurrent, from: continuant, to: continuant, new_kind: role, pre: [{is: depend, from: new, to: to}], post: [{is: depend, from: new, to: to, neg: true}]}
+  v_happen_after: {ja: 後に起こる, extends: occurrent, from: occurrent, to: occurrent, holds: [{is: after, from: from, to: to}]}
+  v_use: {ja: 使う, extends: occurrent, from: any, to: continuant, holds: [{is: involve, from: new, to: to}, {is: depend, from: new, to: from}]}
+  v_speak: {ja: 発話する, extends: occurrent, from: continuant, to: continuant, pre: [{is: exists, from: to, neg: true}], post: [{is: exists, from: to}, {is: depend, from: to, to: from}]}
   v_see: {ja: 見る, extends: occurrent, from: continuant, to: continuant, new_kind: quality,
-          pre: ["not exists(new)"], post: ["exists(new)", "depend(new, from)", "refer(new, to)"]}
+          pre: [{is: exists, from: new, neg: true}], post: [{is: exists, from: new}, {is: depend, from: new, to: from}, {is: refer, from: new, to: to}]}
   v_expose: {ja: 公開する, extends: occurrent, from: continuant, to: continuant, new_kind: realizable_entity,
-             pre: ["not exists(new)"], post: ["exists(new)", "depend(new, to)"]}
-  v_deliver: {ja: 届ける, extends: occurrent, from: continuant, to: continuant, pre: ["not part(to, new)"], post: ["part(to, new)"]}
+             pre: [{is: exists, from: new, neg: true}], post: [{is: exists, from: new}, {is: depend, from: new, to: to}]}
+  v_deliver: {ja: 届ける, extends: occurrent, from: continuant, to: continuant, pre: [{is: part, from: to, to: new, neg: true}], post: [{is: part, from: to, to: new}]}
   v_substitute: {ja: 置き換える, extends: occurrent, from: continuant, to: continuant,
-                 pre: ["part(to, new)", "not part(from, new)"], post: ["not part(to, new)", "part(from, new)"]}
+                 pre: [{is: part, from: to, to: new}, {is: part, from: from, to: new, neg: true}], post: [{is: part, from: to, to: new, neg: true}, {is: part, from: from, to: new}]}
   v_speak_definition: {ja: 定義文を発話する, extends: v_speak, to: definition_text}
   v_speak_reason: {ja: 理由を発話する, extends: v_speak, to: reason}
   v_judge_definition: {ja: 定義を判定する, extends: v_judge, to: definition}
   v_read: {ja: 読む, extends: v_see, to: information_entity}
-  v_raise: {ja: を上げる, extends: occurrent, from: any, to: continuant, holds: ["after(to, new)", "depend(to, from)"]}
-  v_not_raise: {ja: を上げない, extends: occurrent, from: any, to: continuant, holds: ["not after(to, new)", "depend(to, from)"]}
-  v_lower: {ja: を下げる, extends: occurrent, from: any, to: continuant, holds: ["after(new, to)", "depend(to, from)"]}
-  v_not_lower: {ja: を下げない, extends: occurrent, from: any, to: continuant, holds: ["not after(new, to)", "depend(to, from)"]}
-  v_cause: {ja: の原因である, extends: occurrent, from: any, to: continuant, holds: ["after(to, from)", "depend(to, from)"]}
-  v_immune: {ja: の影響を受けない, extends: occurrent, from: any, to: any, holds: ["not depend(from, to)"]}
-  v_transfer: {ja: に転移する, extends: occurrent, from: any, to: any, holds: ["depend(to, from)"]}
-  v_not_transfer: {ja: に転移しない, extends: occurrent, from: any, to: any, holds: ["not depend(to, from)"]}
-  v_coexist: {ja: と同居できる, extends: occurrent, from: occurrent, to: occurrent, holds: ["depend(from, new)", "depend(to, new)"]}
-  v_consist: {ja: からなる, extends: occurrent, from: continuant, to: continuant, holds: ["part(to, from)"]}
-  v_rely: {ja: に頼る, extends: occurrent, from: any, to: any, holds: ["depend(from, to)"]}
-  v_near: {ja: ほぼ同じ位置にある, extends: occurrent, from: continuant, to: continuant, new_kind: tolerance, holds: ["not after(from, to)", "not after(to, from)"]}
+  v_raise: {ja: を上げる, extends: occurrent, from: any, to: continuant, holds: [{is: after, from: to, to: new}, {is: depend, from: to, to: from}]}
+  v_not_raise: {ja: を上げない, extends: occurrent, from: any, to: continuant, holds: [{is: after, from: to, to: new, neg: true}, {is: depend, from: to, to: from}]}
+  v_lower: {ja: を下げる, extends: occurrent, from: any, to: continuant, holds: [{is: after, from: new, to: to}, {is: depend, from: to, to: from}]}
+  v_not_lower: {ja: を下げない, extends: occurrent, from: any, to: continuant, holds: [{is: after, from: new, to: to, neg: true}, {is: depend, from: to, to: from}]}
+  v_cause: {ja: の原因である, extends: occurrent, from: any, to: continuant, holds: [{is: after, from: to, to: from}, {is: depend, from: to, to: from}]}
+  v_immune: {ja: の影響を受けない, extends: occurrent, from: any, to: any, holds: [{is: depend, from: from, to: to, neg: true}]}
+  v_transfer: {ja: に転移する, extends: occurrent, from: any, to: any, holds: [{is: depend, from: to, to: from}]}
+  v_not_transfer: {ja: に転移しない, extends: occurrent, from: any, to: any, holds: [{is: depend, from: to, to: from, neg: true}]}
+  v_coexist: {ja: と同居できる, extends: occurrent, from: occurrent, to: occurrent, holds: [{is: depend, from: from, to: new}, {is: depend, from: to, to: new}]}
+  v_consist: {ja: からなる, extends: occurrent, from: continuant, to: continuant, holds: [{is: part, from: to, to: from}]}
+  v_rely: {ja: に頼る, extends: occurrent, from: any, to: any, holds: [{is: depend, from: from, to: to}]}
+  v_near: {ja: ほぼ同じ位置にある, extends: occurrent, from: continuant, to: continuant, new_kind: tolerance, holds: [{is: after, from: from, to: to, neg: true}, {is: after, from: to, to: from, neg: true}]}
 
   # ----- 個体についての事実に使う動詞。終点か始点を、その関係で限定された種類に狭める
   v_scope: {ja: 適用範囲になる, extends: v_depend, from: scope, to: hypothesis}

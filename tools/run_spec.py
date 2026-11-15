@@ -22,12 +22,11 @@ from pathlib import Path
 import yaml
 
 sys.path.insert(0, str(Path(__file__).parent))
-from check_spec import Ontology, load, merge_domain  # noqa: E402
+from check_spec import Ontology, atom, load, merge_domain  # noqa: E402
 
 ROOT = Path(__file__).parent.parent / "spec"
 
 
-FORMULA = None  # 式の書き方。体系の syntax.formula から読む
 
 
 def fact(d, T):
@@ -39,13 +38,6 @@ def fact(d, T):
 
 def show(d):
     return f"{'not ' if d.get('neg') else ''}{d.get('is')}({', '.join(str(d[p]) for p in ('from', 'to') if p in d)})"
-
-
-def parse(f):
-    m = re.fullmatch(FORMULA, f)
-    if not m:
-        raise ValueError(f"式 {f} が読めない")
-    return bool(m.group("not")), m.group("base"), tuple(a for a in (m.group("from"), m.group("to")) if a)
 
 
 # 実行時の意味論のうち、この検査が実装している選択。体系の runtime に、ここにない選択が書かれていればエラー。
@@ -132,7 +124,7 @@ class Machine:
         for key in ("pre", "post"):
             out[key] = []
             for f in n.get(key, []):
-                neg, rel, args = parse(f)
+                neg, rel, args = atom(f)
                 if any(a not in b for a in args):
                     return None, f"式 {f} の位置に個体が束縛されていない"
                 out[key].append((neg, rel, tuple(b[a] for a in args)))
@@ -157,7 +149,7 @@ class Machine:
         for vid, n in T.N.items():
             if "pre" not in n:
                 continue
-            poss = ["from", "to"] + (["new"] if any("new" in f for f in n["pre"] + n["post"]) else [])
+            poss = ["from", "to"] + (["new"] if any("new" in atom(f)[2] for f in n["pre"] + n["post"]) else [])
             for combo in itertools.permutations(self.ind, len(poss)):
                 b = dict(zip(poss, combo))
                 r, _ = self.bind(vid, b)
@@ -167,12 +159,10 @@ class Machine:
 
 
 def main():
-    global FORMULA
     O = load("ontology.yaml")
     merge_domain("exp.yaml", O)   # 実行の記録は、領域 exp の種類と動詞を「exp.名前」で使える
     T = Ontology(O)
     G = T.G["run"]
-    FORMULA = T.O["syntax"]["formula"]["pattern"]
     for k, v in T.O["runtime"].items():
         if v not in IMPLEMENTED.get(k, ()):
             print(f"実行の検査に失敗: runtime.{k} の選択 {v} は、この検査に実装がない")
