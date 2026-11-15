@@ -54,7 +54,7 @@ class LineChecker:
                 out.append((raw, "unparsed", ["YAML として読めない"]))
                 continue
             if isinstance(y, dict) and len(y) == 1 and isinstance(next(iter(y.values())), dict) and "is" in next(iter(y.values())) \
-                    and set(next(iter(y.values()))) <= {"is", "ja"}:
+                    and set(next(iter(y.values()))) <= {"is", "display"}:
                 (name, x), = y.items()
                 k = self.node(x["is"])
                 if k is None:

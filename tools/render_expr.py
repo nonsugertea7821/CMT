@@ -21,8 +21,8 @@ DOM = "subj"
 
 def _ja(T, x, S):
     if x in T.N:
-        return T.N[x].get("ja", x)
-    return (S["individuals"].get(x) or {}).get("ja", x)
+        return T.N[x].get("display", x)
+    return (S["individuals"].get(x) or {}).get("display", x)
 
 
 def _val(v):
@@ -52,7 +52,7 @@ class Renderer:
         self.T, self.O, self.S, _, _ = check_spec.build()
         if check_spec.errors:
             raise SystemExit("体系の検査に失敗: " + "; ".join(check_spec.errors[:3]))
-        self.by_ja = {n.get("ja"): nid for nid, n in self.T.N.items() if nid.startswith(DOM + ".")}
+        self.by_ja = {n.get("display"): nid for nid, n in self.T.N.items() if nid.startswith(DOM + ".")}
 
     def line(self, nid):
         T, n = self.T, self.T.N[nid]
@@ -64,7 +64,7 @@ class Renderer:
             parts.append(_mod(T, m, self.S) if isinstance(m, dict) else _ja(T, m, self.S))
         if "axis" in n:
             parts.append("量")
-        return f"{n['ja']} ＝ " + " ∧ ".join(parts)
+        return f"{n['display']} ＝ " + " ∧ ".join(parts)
 
     def refs(self, nid):
         n, out = self.T.N[nid], []
@@ -103,7 +103,7 @@ class Renderer:
         if mask:   # 表示名を外す。語そのものの種類と、個体（設問に出てくる固有のもの）の表示名は残す
             keep = start.split(".", 1)[1]
             lines = [l if l.startswith(keep + ":") or l.startswith("{") or "{is:" in l.split(":", 1)[1][:6]
-                     else re.sub(r"ja: [^,]*, ", "", l) for l in lines]
+                     else re.sub(r"display: [^,]*, ", "", l) for l in lines]
         return "\n".join(lines)
 
     def raw(self, local):

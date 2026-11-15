@@ -172,7 +172,7 @@ def main():
         sys.path.insert(0, str(ROOT.parent / "tools"))
         import render_expr
         R = render_expr.Renderer()
-        defs = {c: R.text(c) for it in items for c in it["defs"]}
+        defs = {c: R.text(c, mask=True) for it in items for c in it["defs"]}
     concepts = sorted({d for it in items for d in it["defs"]})
     if args.limit:
         concepts = concepts[: args.limit]

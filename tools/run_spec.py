@@ -87,7 +87,7 @@ class Machine:
         rules = [(lid, l) for lid, l in law_rules(T.O)
                  if all(atom(f)[1] in T.B for p in ("assume", "derive", "require") for f in l[p])]
         for lid, b, f in evaluate(rules, Facts(self.facts), variables(T.O)):
-            self.err(f"{where}: {dict(sorted(b.items()))} が法則 {lid}（{T.O['laws'][lid]['ja']}）に反する")
+            self.err(f"{where}: {dict(sorted(b.items()))} が法則 {lid}（{T.O['laws'][lid]['display']}）に反する")
 
     def bind(self, verb, b):
         """束縛が、動詞の端の種類に合うか。合えば、before と after の式を個体で書いたものを返す。"""

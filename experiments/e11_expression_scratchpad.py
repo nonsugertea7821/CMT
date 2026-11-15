@@ -1,6 +1,6 @@
 """E11: 概念式をそのまま与え、途中経過も概念式の書き方で書かせる。書いた行は、1行ずつ体系で検査する。
 
-条件（どちらも、語の概念式を spec/subj.yaml に書いたまま、設問の直前に置く）:
+条件（どちらも、語の概念式を spec/subj.yaml に書いたまま（語そのもの以外の表示名は外す）、設問の直前に置く）:
   direct  番号だけを即答させる（E10 の expr と同じ）
   write   先に、事例を個体・事実・帰属の行で書かせ、そのあとで番号を答えさせる
 
@@ -44,7 +44,7 @@ def main():
     for it in items:
         if it["id"] in res:
             continue
-        expr = "\n".join(R.text(d) for d in it["defs"])
+        expr = "\n".join(R.text(d, mask=True) for d in it["defs"])
         row = {"group": it["group"], "concept": it["defs"][0], "direct": [], "write": [], "written": [], "checked": []}
         for swap in (False, True):
             body, correct_no = question_text(it, swap)

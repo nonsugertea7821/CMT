@@ -87,10 +87,10 @@ def load(name):
 
 def core_sections(O):
     """領域と法則は、ontology.yaml の個体と事実で書く。検査と実行器が読む形に並べる（中身の検査は、ほかと同じく gather が行う）:
-    domains: {領域: {ja, uses: [使う領域]}}、laws: {法則: {kind, ja, assume, derive, require, govern}}。"""
+    domains: {領域: {display, uses: [使う領域]}}、laws: {法則: {kind, display, assume, derive, require, govern}}。"""
     I, F = O.get("individuals") or {}, O.get("facts") or []
-    O["domains"] = {i: {"ja": x.get("ja"), "uses": []} for i, x in I.items() if x.get("is") == "domain"}
-    O["laws"] = {i: {"kind": x["is"], "ja": x.get("ja"), "assume": [], "derive": [], "require": [], "govern": []}
+    O["domains"] = {i: {"display": x.get("display"), "uses": []} for i, x in I.items() if x.get("is") == "domain"}
+    O["laws"] = {i: {"kind": x["is"], "display": x.get("display"), "assume": [], "derive": [], "require": [], "govern": []}
                  for i, x in I.items() if x.get("is") in ("law_rule", "law_given")}
     key = {"v_assume": "assume", "v_derive": "derive", "v_require": "require", "v_govern": "govern"}
     for f in F:
@@ -109,7 +109,7 @@ KINDS = {"measurement_family": "families", "observation": "observations", "hypot
          "decision": "decisions", "backlog_item": "backlog"}   # この検査が中身を確かめる種類
 
 
-LITERAL = {"ja", "holds", "pre", "post", "result_file", "row_collection", "row_filter", "pattern", "condition_entry", "passage", "val"}
+LITERAL = {"display", "holds", "pre", "post", "result_file", "row_collection", "row_filter", "pattern", "condition_entry", "passage", "val"}
 
 
 def qualify(x, local, dom):
@@ -135,8 +135,8 @@ def merge_domain(name, O):
         O["nodes"][f"{dom}.{nid}"] = qualify(n, local, dom)
     D["individuals"] = {iid: qualify(x, local, dom) for iid, x in D["individuals"].items()}
     for iid, x in D["individuals"].items():
-        if set(x) - {"is", "ja", "val"}:
-            err(f"{name} {iid}: 個体には is, ja, val だけを書く。関係は facts に書く")
+        if set(x) - {"is", "display", "val"}:
+            err(f"{name} {iid}: 個体には is, display, val だけを書く。関係は facts に書く")
     D["_local"] = local
     return D
 
@@ -571,8 +571,8 @@ class Ontology:
         for nid, n in self.N.items():
             add("exists", nid)
             add("domain", nid, self.domain(nid))
-            if n.get("ja"):
-                add("ja", nid, n["ja"])
+            if n.get("display"):
+                add("display", nid, n["display"])
             if isinstance(n.get("extends"), str):
                 add("extends", nid, n["extends"])
             for k in ("from", "to", "new_kind", "axis"):
@@ -620,7 +620,7 @@ class Ontology:
         V = variables(self.O)
         for lid, b, f in evaluate(law_rules(self.O), Facts(self.syntax_facts()), V):
             where = ", ".join(f"{k}={v}" for k, v in sorted(b.items()))
-            err(f"法則 {lid}（{self.O['laws'].get(lid, {}).get('ja', '')}）に反する: {where}")
+            err(f"法則 {lid}（{self.O['laws'].get(lid, {}).get('display', '')}）に反する: {where}")
 
     def end(self, nid, side):
         """動詞の端の種類。自分になければ上位の動詞から受け継ぐ。"""
@@ -753,13 +753,13 @@ class Ontology:
                 err(f"axes: {aid} のもとになる関係 {a['from']} が未定義")
         seen, forms = {}, {}
         for nid, n in N.items():
-            ja = n.get("ja")
+            ja = n.get("display")
             key = (self.domain(nid), ja)  # 法則 unique_in_domain
             if not ja:
                 err(f"{nid}: 表示語がない")
             seen[key] = nid
             if nid in TOPS:
-                if set(n) != {"ja", "gloss"}:
+                if set(n) != {"display", "gloss"}:
                     err(f"{nid}: 最上位は gloss だけを持つ")
                 continue
             if "gloss" in n:
@@ -927,7 +927,7 @@ class Ontology:
         while nid in self.N and hops < 80:
             n = self.N[nid]
             body = {k: n[k] for k in ("from", "to", "new_kind", "holds", "pre", "post", "form", "of", "neg", "mod", "val", "cmp", "axis", "gloss") if k in n}
-            out.append(f"{nid}（{n['ja']}） {body}")
+            out.append(f"{nid}（{n['display']}） {body}")
             nid, hops = self.parent(nid), hops + 1
         return "\n  ← ".join(out)
 
@@ -1048,7 +1048,7 @@ def check_claims(C, values, T):
         if holds is None:
             err(f"{oid}: 動詞 {o['p']} は、大きさを比べる動詞（「後ろにある」だけで書かれた静的な動詞）でない")
         elif not holds:
-            err(f"observations: {oid} が成り立たない（{T.N[o['p']]['ja']}: s={vals[0]:.3f}, o={vals[1]:.3f}）")
+            err(f"observations: {oid} が成り立たない（{T.N[o['p']]['display']}: s={vals[0]:.3f}, o={vals[1]:.3f}）")
         ns = [values[x][1] for x in (o["s"], o["o"]) if isinstance(x, str) and x in values]
         gap[oid] = abs(vals[0] - vals[1]) * min(ns) if T.is_strict(o["p"]) else None
 
@@ -1121,7 +1121,7 @@ def check_claims(C, values, T):
 
 
 def natural_language_only_in_ja(name, x, path=()):
-    """自然言語を書けるのは、表示名 ja だけ。例外は、字そのものが値であるもの:
+    """自然言語を書けるのは、表示名 display だけ。例外は、字そのものが値であるもの:
     最上位2つの gloss、選択肢の字（val.text）、結果ファイルでの書き方（v_spell の終点）。"""
     if isinstance(x, dict):
         if x.get("is") == "v_spell":
@@ -1134,8 +1134,8 @@ def natural_language_only_in_ja(name, x, path=()):
     elif isinstance(x, str) and re.search(r"[^\x00-\x7f]", x):
         top = path[:1] == ("nodes",) and path[-1] == "gloss" and path[1] in ("continuant", "occurrent")
         opt = path[:1] == ("individuals",) and path[-2:] == ("val", "text")
-        if path[-1:] != ("ja",) and not top and not opt:
-            err(f"{name} {'.'.join(path)}: 自然言語は表示名 ja にだけ書く（{x[:20]}）")
+        if path[-1:] != ("display",) and not top and not opt:
+            err(f"{name} {'.'.join(path)}: 自然言語は表示名 display にだけ書く（{x[:20]}）")
 
 
 def build():
@@ -1157,7 +1157,7 @@ def build():
         if iid in T.I or iid in T.N:
             err(f"ontology.yaml {iid}: 個体の識別子が、ほかの個体かノードと重なっている")
         if set(x) - set(T.G["individuals"]) or x.get("is") not in T.N:
-            err(f"ontology.yaml {iid}: 個体は {{is: 種類, ja}} で書き、種類はノード")
+            err(f"ontology.yaml {iid}: 個体は {{is: 種類, display}} で書き、種類はノード")
     T.I |= {iid: x.get("is") for iid, x in core.items() if x.get("is") in T.N}
     gather({"domain": "core", "_local": set(), "individuals": core, "facts": O.get("facts")}, T, "ontology.yaml")
     subj = {iid: dict(x) for iid, x in S["individuals"].items()}
