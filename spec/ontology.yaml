@@ -400,11 +400,10 @@ nodes:
   hyp_refuted: {ja: 反証された仮説, extends: hypothesis_agree_to_evidence_not, mod: {of: [v_agree, to], with: against}}
   hyp_mixed: {ja: 支持と反証の両方がある仮説, extends: hypothesis_agree_to_evidence, mod: {of: [v_agree, to], with: against}}
   hyp_untested: {ja: 未検証の仮説, extends: hypothesis_agree_to_evidence_not, mod: {of: [v_agree, to], with: against, neg: true}}
-  status: {ja: 状態, extends: quality, mod: {of: [v_depend, from], with: sentence}}
   role_depend_from_experiment_protocol: {ja: 実験の取り決めへ依存する役割, extends: role, mod: {of: [v_depend, from], with: experiment_protocol}}
   scope: {ja: 適用範囲, extends: role_depend_from_experiment_protocol, mod: {of: [v_depend, from], with: hypothesis}}
   note: {ja: 注記, extends: passage_express_from_natural_language, mod: {of: [v_refer, from], with: sentence}}
-  supersedes: {ja: 置き換えられた文, extends: sentence, mod: withdrawn}
+  supersedes: {ja: 置き換えられた文, extends: withdrawn_sentence, mod: {of: [v_refer, to], with: sentence}}
   sentence_refer_from_hypothesis: {ja: 仮説へ述べる文, extends: sentence, mod: {of: [v_refer, from], with: hypothesis}}
   limitation: {ja: 留保, extends: sentence_refer_from_hypothesis, mod: {of: [v_refer, from], with: observation}}
   lim_post_hoc: {ja: 結果を見たあとで分類した, extends: limitation, mod: {of: [v_come_after, from], with: observation}}
@@ -462,8 +461,6 @@ nodes:
   sentence_refer_from_state_relation: {ja: 状態の関係へ述べる文, extends: sentence, mod: {of: [v_refer, from], with: state_relation}}
   laws: {ja: 法則, extends: sentence_refer_from_state_relation, val: {truth: true}}
   system_act: {ja: 体系そのものの行為, extends: v_refer, from: system}
-  fields: {ja: 記録の項目, extends: identifier, mod: {of: [v_compose, from], with: sentence}}
-  records: {ja: 記録の種類の記述, extends: section, mod: {of: [v_refer, from], with: sentence}}
   grammar_rule: {ja: 文法の規則, extends: sentence, mod: {of: [v_refer, from], with: expression_part}}
   grammar: {ja: 文法の記述, extends: section, mod: {of: [v_compose, to], with: grammar_rule, at: {count: {gt: 1}}}}
 
@@ -496,7 +493,6 @@ nodes:
   nodes: {ja: ノードの節, extends: section, mod: {of: [v_refer, from], with: concept_expression}}
   source: {ja: もとになる関係の指定, extends: holds, mod: {of: [v_compose, from], with: axes}}
   expression_part_refer_from_identifier: {ja: 識別子へ述べる概念式の部分, extends: expression_part, mod: {of: [v_refer, from], with: identifier}}
-  key: {ja: 記録の識別子の指定, extends: expression_part_refer_from_identifier, mod: {of: [v_compose, from], with: records}}
   run.steps: {ja: 歩みの並び, extends: information_entity, mod: {of: [v_refer, from], with: run.v_execute, at: {count: {ge: 1}}}}
   expect: {ja: 期待する文, extends: facts, val: {truth: true}}
   function: {ja: 関数, extends: value, mod: {of: [v_refer, from], with: value}}
@@ -536,15 +532,22 @@ nodes:
 # 体系が、自分の記録（領域のファイルに書かれた個体）について述べる。個体は is で種類に属する。
 # 記録の種類ごとに、それが何であるか（is）、識別子の種類（key）、持てる項目（fields）を書く。
 # 項目名は、ノードの識別子そのもの。その項目の中身は、そのノードに当たるものである。
-records:
-  observations: {is: observation, key: identifier, fields: [s, p, o, tolerance]}
-  hypotheses: {is: hypothesis, key: identifier, fields: [s, p, o, scope, status, evidence, against, limitation, supersedes, note]}
-  decisions: {is: decision, key: identifier, fields: [s, p, o, status, basis, supersedes, note]}
-  backlog: {is: backlog_item, fields: [identifier, tests, status]}
-  measurements: {is: measurement_family, key: identifier, fields: [result_file, row_collection, row_filter, row_keys, condition_entry, axis, metric, meaning]}
-  row_keys: {is: row_keys, fields: [axis, pattern]}
-  meaning: {is: meaning, fields: [identifier, value]}
-  value: {is: value, fields: [axis, s, o]}
+
+  # 個体の項目。ある種類の個体に書ける項目は、「その種類のものとの関係で限定された下位」を持つノードだけ。
+  result_file_compose_from_measurement_family: {ja: 測定値の族へ部分になる結果ファイル, extends: result_file, mod: {of: [v_compose, from], with: measurement_family}}
+  row_collection_compose_from_measurement_family: {ja: 測定値の族へ部分になる行の集まり, extends: row_collection, mod: {of: [v_compose, from], with: measurement_family}}
+  row_filter_compose_from_measurement_family: {ja: 測定値の族へ部分になる行の限定, extends: row_filter, mod: {of: [v_compose, from], with: measurement_family}}
+  row_keys_compose_from_measurement_family: {ja: 測定値の族へ部分になる行の識別子による限定, extends: row_keys, mod: {of: [v_compose, from], with: measurement_family}}
+  condition_entry_compose_from_measurement_family: {ja: 測定値の族へ部分になる条件ごとの記録, extends: condition_entry, mod: {of: [v_compose, from], with: measurement_family}}
+  axis_compose_from_measurement_family: {ja: 測定値の族へ部分になる軸, extends: axis, mod: {of: [v_compose, from], with: measurement_family}}
+  metric_refer_to_measurement_family: {ja: 測定値の族から述べられる指標, extends: metric, mod: {of: [v_refer, to], with: measurement_family}}
+  meaning_compose_from_measurement_family: {ja: 測定値の族へ部分になる意味づけ, extends: meaning, mod: {of: [v_compose, from], with: measurement_family}}
+  axis_refer_to_row_keys: {ja: 行の識別子による限定から述べられる軸, extends: axis, mod: {of: [v_refer, to], with: row_keys}}
+  pattern_compose_from_row_keys: {ja: 行の識別子による限定へ部分になる雛形, extends: pattern, mod: {of: [v_compose, from], with: row_keys}}
+  identifier_refer_to_meaning: {ja: 意味づけから述べられる識別子, extends: identifier, mod: {of: [v_refer, to], with: meaning}}
+  value_compose_from_meaning: {ja: 意味づけへ部分になる値, extends: value, mod: {of: [v_compose, from], with: meaning}}
+  withdrawn_sentence: {ja: 取り下げられた文, extends: sentence, mod: withdrawn}
+
 
 # 実行時の意味論。実行器が、書き換えの規則をどう当てはめるか。語も値もノードの識別子。
 # 実行の検査は、ここに書かれた選択に従う。実装のない選択が書かれていれば、エラーにする。
@@ -564,14 +567,13 @@ syntax:
 # 体系が、自分の書き方（文法）について述べる。
 # 文法の語は、すべてノードの識別子である。節ごとに、そこで使える語を並べる。検査は、ここに並んだ語だけを受け付ける。
 grammar:
-  grammar: [system, nodes, mod, cmp, base, axes, records, laws, run, position, rel, function, value, logic, runtime, syntax, domains, domain, individuals, grammar]
-  system: [domains, base, laws, axes, nodes, records, runtime, syntax, grammar]
+  grammar: [system, nodes, mod, cmp, base, axes, laws, run, position, rel, function, value, logic, runtime, syntax, domains, domain, individuals, grammar]
+  system: [domains, base, laws, axes, nodes, runtime, syntax, grammar]
   nodes: [ja, gloss, extends, from, to, new_kind, holds, pre, post, form, of, neg, mod, val, cmp, axis]
   mod: [of, with, neg, quant, at]
   cmp: [axis, a, b, rel]
   base: [ja, arity, laws, system_act]
   axes: [ja, source, value]
-  records: [is, key, fields]
   laws: [ja, scope]
   run: [individuals, facts, steps, expect, halted]   # 実行の記録（spec/runs/*.yaml）
   position: [from, to, new]

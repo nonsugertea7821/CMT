@@ -6,13 +6,13 @@ ontology.yaml  概念の体系。書き方はそのファイルの冒頭を見�
   検査: 表示語の一意性 / gloss を持つのは最上位の2つだけ / 動詞の式（状態の関係・両端・第三のものの種類）の一意性 /
         動詞の下位が端を狭めていること / 修飾の型（その位置に来られるか）/ 分類の軸と値 / 概念の式の一意性 /
         役割が根拠となる定義を持つこと
-  records: 体系が、自分の記録（exp.yaml の個体）について述べる部分。項目名はノードの識別子。
   grammar: 体系が、自分の書き方について述べる部分。文法の語は、すべてノードの識別子。節ごとに、使える語を並べる。
         検査は、ここに書かれた語だけを文法の語として受け付ける。logic は述語論理の語で、体系の中では定義しない。
 
 exp.yaml  領域 exp。測定・観察・仮説・決定・残り項目を、個体として書く。
-  項目名は、ontology.yaml のノードの識別子そのもの。どの記録がどの項目を持てるかは、ontology.yaml の records にある。
-  status や留保や指標の値も、ノードの識別子。
+  個体は is で種類に属する。仮説・決定・残り項目は、状態を表す下位の種類に属する（is: hyp_supported など）。
+  項目名は、ontology.yaml のノードの識別子そのもの。項目の表は持たない。ある種類の個体に書ける項目は、
+  その種類のものとの関係で限定されたノード（またはその上位）と、文の中身（s, p, o）だけ。留保や指標の値も、ノードの識別子。
   測定値: 族ごとに、軸（axis）の直積で展開する。識別子は「族.軸の値....指標」。値は結果ファイルから計算する。
   観察・仮説・決定: どれも「s が、p という関係で、o に」という文。
     観察の s と o は測定値（o は数でもよい）、p は大きさを比べる動詞。真偽は、動詞の式（後ろにある、の成立と不成立）を
@@ -70,26 +70,35 @@ def load(name):
     return yaml.load((SPEC / name).read_text(encoding="utf-8"), Loader=_Unique)
 
 
+KINDS = {"measurement_family": "families", "observation": "observations", "hypothesis": "hypotheses",
+         "decision": "decisions", "backlog_item": "backlog"}   # この検査が中身を確かめる種類
+
+
 def load_domain(name, T):
-    """領域のファイルを読み、個体を種類ごとに分ける。種類と集まりの対応は、体系の records から読む。"""
+    """領域のファイルを読み、個体を種類ごとに分ける。個体に書ける項目は、種類の式から決まる（Ontology.field_ok）。
+    仮説・決定・残り項目の個体は、状態を表す下位の種類に属する。"""
     D = load(name)
     for k in D:
         if k not in T.G["domain"]:
             err(f"{name}: 語 {k} が、grammar.domain に書かれていない")
     if D.get("domain") not in T.O["domains"]:
         err(f"{name}: 領域 {D.get('domain')} が domains に書かれていない")
-    by_kind = {r["is"]: rid for rid, r in T.R.items() if "key" in r or rid == "backlog"}
-    out = {rid: {} for rid in by_kind.values()}
+    out = {sect: {} for sect in KINDS.values()}
     for iid, x in D["individuals"].items():
         kind = x.pop("is", None)
         if kind not in T.N:
             err(f"{name} {iid}: 種類 {kind} がノードでない")
-        elif kind not in by_kind:
-            err(f"{name} {iid}: 種類 {kind} の記録は、体系の records に書かれていない")
-        else:
-            out[by_kind[kind]][iid] = x
+            continue
+        base = [k for k in KINDS if T.is_a(kind, k)]
+        if not base:
+            err(f"{name} {iid}: 種類 {kind} の個体を確かめる方法が、検査にない")
+            continue
+        T.check_fields(kind, x, f"{name} {iid}")
+        if base[0] in ("hypothesis", "decision", "backlog_item"):
+            x["status"] = kind
+        out[KINDS[base[0]]][iid] = x
     out["backlog"] = [{"identifier": k, **v} for k, v in out["backlog"].items()]
-    return {"families": out.pop("measurements")}, out
+    return {"families": out.pop("families")}, out
 
 
 # ---------------------------------------------------------------- 概念の体系
@@ -101,7 +110,7 @@ LAWS_RUN = {"transitive", "antisymmetric", "asymmetric", "end_exists", "step", "
 class Ontology:
     def __init__(self, O):
         self.O = O
-        self.B, self.AX, self.N, self.R, self.G = O["base"], O["axes"], O["nodes"], O["records"], O["grammar"]
+        self.B, self.AX, self.N, self.G = O["base"], O["axes"], O["nodes"], O["grammar"]
         for nid, n in self.N.items():  # 法則 single。mod は単一。中では並びとして扱う
             if "mod" in n:
                 if isinstance(n["mod"], list):
@@ -178,10 +187,6 @@ class Ontology:
                     err(f"axes.{aid}: 語 {k} が、grammar.axes に書かれていない")
             if isinstance(a["value"], str) and a["value"] not in G["value"]:
                 err(f"axes.{aid}: 値の種類 {a['values']} が、grammar.values に書かれていない")
-        for rid, r in self.R.items():
-            for k in r:
-                if k not in G["records"]:
-                    err(f"records.{rid}: 語 {k} が、grammar.records に書かれていない")
 
     def resolve(self, word, dom):
         """領域を書かない語を、ノードの識別子に解決する。その領域、core、ほかの領域にただ1つ、の順に探す。"""
@@ -504,20 +509,24 @@ class Ontology:
             if len(ids) > 1:
                 err(f"動詞の式が同じ: {ids}")
 
-    def check_records(self):
-        """記録の項目名が、体系のノードであること。"""
-        for rid, r in self.R.items():
-            if set(r) - {"is", "key", "fields"}:
-                err(f"records.{rid}: 知らない項目 {set(r) - {'is', 'key', 'fields'}}")
-            for k in ("is", "key"):
-                if k in r and r[k] not in self.N:
-                    err(f"records.{rid}: {k} の {r[k]} が未定義")
-            for f in r["fields"]:
-                if f not in self.N:
-                    err(f"records.{rid}: 項目 {f} は、ノードとして定義されていない")
+    def mods_of(self, nid):
+        return [m for x in [nid] + self.ancestors(nid) for m in (self.N[x].get("mod") or []) if isinstance(m, dict)]
 
-    def fields(self, rid):
-        return self.R[rid]["fields"]
+    def field_ok(self, kind, f):
+        """種類 kind の個体に、項目 f を書けるか。項目の表は持たず、式から決める。
+        f が動詞かその位置の形（s, p, o）: kind が「について述べる」の始点に来る種類（文）であること。
+        それ以外: f かその下位に、kind のものとの関係で限定されたノードがあること。"""
+        if f not in self.N:
+            return False
+        if "form" in self.N[f] or self.is_verb(f):
+            return any(m["of"] == ["v_refer", "from"] for m in self.mods_of(kind))
+        cands = [f] + [k for k in self.N if self.is_concept(k) and f in self.ancestors(k)]
+        return any(m.get("with") in self.N and self.is_a(kind, m["with"]) for c in cands for m in self.mods_of(c))
+
+    def check_fields(self, kind, x, where):
+        for f, v in x.items():
+            if not self.field_ok(kind, f):
+                err(f"{where}: 項目 {f} は、種類 {kind} の個体に書けない（{kind} との関係で限定されたノードでない）")
 
     def kinds_of(self, nid):
         """nid の下位のうち、それより下を持たないノード。status や留保の値として使えるもの。"""
@@ -606,15 +615,15 @@ def check_meaning(val, T, where):
             err(f"{where}: ノード {val} が未定義")
         return
     for k in val:
-        if k not in T.fields("meaning"):
-            err(f"{where}: 項目 {k} は、体系の records.meaning に書かれていない")
+        if not T.field_ok("meaning", k):
+            err(f"{where}: 項目 {k} は、種類 meaning の個体に書けない")
     for nid in val.get("identifier", []):
         if nid not in T.N:
             err(f"{where}: ノード {nid} が未定義")
     for v in val.get("value", []):
         for k in v:
-            if k not in T.fields("value"):
-                err(f"{where}: 値の項目 {k} は、体系の records.value に書かれていない")
+            if not T.field_ok("value", k):
+                err(f"{where}: 項目 {k} は、種類 value の個体に書けない")
         if v.get("s") not in T.N:
             err(f"{where}: 値の s {v.get('s')} が未定義")
         T.check_value(v.get("axis"), v.get("o"), where)
@@ -623,15 +632,12 @@ def check_meaning(val, T, where):
 def expand(M, T):
     values, meanings = {}, {}
     for fid, f in M["families"].items():
-        for k in f:
-            if k not in T.fields("measurements"):
-                err(f"measurements.{fid}: 項目 {k} は、体系の records.measurements に書かれていない")
         for st in f["metric"]:
             if st not in T.N or not (T.is_a(st, "metric") or T.is_a(st, "magnitude")):
                 err(f"measurements.{fid}: 指標 {st} は、体系の指標でも大きさでもない")
         for k in f.get("row_keys", {}):
-            if k not in T.fields("row_keys"):
-                err(f"measurements.{fid}: row_keys の項目 {k} は、体系の records.row_keys に書かれていない")
+            if not T.field_ok("row_keys", k):
+                err(f"measurements.{fid}: 項目 {k} は、種類 row_keys の個体に書けない")
         axes = f["axis"]
         names = list(axes)
         keys = [list(axes[a]) if isinstance(axes[a], dict) else axes[a] for a in names]
@@ -667,16 +673,6 @@ def expand(M, T):
 
 # ---------------------------------------------------------------- 観察・仮説・決定
 def check_claims(C, values, T):
-    for sect in ("observations", "hypotheses", "decisions"):
-        for cid, c in C[sect].items():
-            for k in c:
-                if k not in T.fields(sect):
-                    err(f"{cid}: 項目 {k} は、体系の records.{sect} に書かれていない")
-    for b in C["backlog"]:
-        for k in b:
-            if k not in T.fields("backlog"):
-                err(f"backlog {b.get('identifier')}: 項目 {k} は、体系の records.backlog に書かれていない")
-
     # 観察: 測定値どうし（または測定値と数）を、大きさを比べる動詞で結んだ文。すべて真であること
     obs = C["observations"]
     gap = {}   # 大小を述べる観察について、2つの値の差を問数に直したもの
@@ -737,9 +733,9 @@ def check_claims(C, values, T):
         have = {"evidence": bool(h.get("evidence")), "against": bool(h.get("against"))}
         want = [k for k, v in patterns.items() if v == have]
         if h["status"] not in patterns:
-            err(f"{hid}: status の {h['status']} は、仮説の状態のノードでない")
+            err(f"{hid}: 種類 {h["status"]} は、仮説の状態のノードでない")
         elif want != [h["status"]]:
-            err(f"{hid}: status は {h['status']} と書かれているが、根拠の有無からは {want} になる")
+            err(f"{hid}: 種類は {h["status"]} と書かれているが、根拠の有無からは {want} になる")
         for t in h.get("scope", []):
             if t not in T.N:
                 err(f"{hid}: scope のノード {t} が未定義")
@@ -783,7 +779,6 @@ def main():
     args = ap.parse_args()
     T = Ontology(load("ontology.yaml"))
     T.check()
-    T.check_records()
     T.check_grammar()
     T.check_hierarchy()
     T.check_domains()
