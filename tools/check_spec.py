@@ -54,7 +54,7 @@ def load(name):
 
 # ---------------------------------------------------------------- 概念の体系
 # 法則のうち、この検査が当てはめるもの / 実行の検査（run_spec.py）が当てはめるもの
-LAWS_HERE = {"truth_distinct", "inherit", "narrow", "acyclic", "monotone", "specific", "unique_in_domain", "layered"}
+LAWS_HERE = {"truth_distinct", "inherit", "narrow", "acyclic", "monotone", "specific", "single", "unique_in_domain", "layered"}
 LAWS_RUN = {"transitive", "antisymmetric", "asymmetric", "end_exists", "step", "frame", "halt"}
 
 
@@ -62,6 +62,14 @@ class Ontology:
     def __init__(self, O):
         self.O = O
         self.B, self.AX, self.N, self.R, self.G = O["base"], O["axes"], O["nodes"], O["records"], O["grammar"]
+        for nid, n in self.N.items():  # 法則 single。mod は単一。中では並びとして扱う
+            if "mod" in n:
+                if isinstance(n["mod"], list):
+                    err(f"{nid}: mod は並べない。限定は1つだけ（法則 single）")
+                else:
+                    n["mod"] = [n["mod"]]
+            if len(n.get("mod") or []) + len(n.get("val") or {}) + len(n.get("cmp") or []) > 1:
+                err(f"{nid}: 限定が2つ以上ある（法則 single）")
         # 真偽を返す範囲の判定式。値の一種。gt などは文法の function、between は述語論理の語
         self.funcs = {op: 1 for op in self.G["function"]} | ({"between": 2} if "between" in self.G["logic"] else {})
 
@@ -341,7 +349,7 @@ class Ontology:
                     err(f"{vid}: 式 {f} が基礎の関係に合わない")
 
     def grounding(self, nid):
-        return [m["with"] for m in (self.N[nid].get("mod") or [])
+        return [m["with"] for x in [nid] + self.ancestors(nid) for m in (self.N[x].get("mod") or [])
                 if isinstance(m, dict) and m.get("of") == ["v_depend", "from"] and "with" in m and not m.get("neg")
                 and self.is_a(m["with"], "definition")]
 
@@ -472,13 +480,14 @@ class Ontology:
         return self.R[rid]["fields"]
 
     def kinds_of(self, nid):
-        """nid の直接の下位にあるノード。status や留保の値として使えるもの。"""
-        return [k for k, n in self.N.items() if nid in self.parents(k)]
+        """nid の下位のうち、それより下を持たないノード。status や留保の値として使えるもの。"""
+        has_child = {p for k in self.N for p in self.parents(k)}
+        return [k for k in self.N if k not in has_child and k != nid and nid in self.ancestors(k)]
 
     def status_pattern(self, nid):
         """状態のノードの式から、「支持する観察がある / 反する観察がある」の組を読み取る。"""
         pat = {}
-        for m in self.N[nid].get("mod") or []:
+        for m in [m for x in [nid] + self.ancestors(nid) for m in (self.N[x].get("mod") or [])]:
             if isinstance(m, dict) and m.get("of") == ["v_agree", "to"] and m.get("with") in ("evidence", "against"):
                 pat[m["with"]] = not m.get("neg")
         return pat if set(pat) == {"evidence", "against"} else None
