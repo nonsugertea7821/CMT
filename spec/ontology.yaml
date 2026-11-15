@@ -11,6 +11,7 @@
 #       動詞の下位は、端の種類を狭めて書く（extends: 動詞, from / to: 狭めた種類）。
 # 形:   form: [動詞, 位置]。位置は from / to / new。その位置に来るもの全体。
 # 修飾語: of: [動詞, 位置]。その位置を占めているという性質。質か実現可能体の下に置く。
+# 上位: extends: 上位 または [上位, 上位]。並べたものは AND。階層を降りるたびに限定が増える（法則 monotone, specific）。
 # 修飾: mod: [修飾語 | {of: [動詞, 位置], with: もう一方の端の中身, neg: 否定, quant: all | any, at: {軸: 値}}]
 #       「その動詞の、その位置を占めるもの」に限定する。
 # 分類: 軸は関係を抽象として見たもの、値はその具体。値は、固定値か、関数（真偽を返す範囲の判定式）。
@@ -40,6 +41,8 @@ laws:
   inherit: {ja: 下位は上位の端を引き継ぐ, scope: nodes}
   narrow: {ja: 下位は上位を狭めることしかできない, scope: nodes}
   acyclic: {ja: 定義は自分自身を参照しない, scope: nodes}
+  monotone: {ja: 階層を降りるたびに限定が増える, scope: nodes}
+  specific: {ja: より具体的な概念があればその下に置く, scope: nodes}
   step: {ja: 前の状態が成り立つとき後の状態に置き換える, scope: run}
   frame: {ja: 動詞が触れなかった文は変わらない, scope: run}
   halt: {ja: 当てはまる動詞がなければ止まる, scope: run}
@@ -115,9 +118,9 @@ nodes:
   experiment: {ja: 実験, extends: process, mod: [{of: [v_stage, to], with: v_vary}, {of: [v_stage, to], with: v_measure}]}
   experiment_protocol: {ja: 実験の取り決め, extends: definition, mod: [{of: [v_refer, from], with: experiment}]}
   depended_information: {ja: 他の記述が依存する記述, extends: information_entity, mod: [{of: [v_depend, to], with: information_entity, quant: all}]}
-  rule_source_of_truth: {ja: 正本の取り決め, extends: definition, mod: [{of: [v_compose, from], with: this_design}, {of: [v_refer, from], with: depended_information}]}
+  rule_source_of_truth: {ja: 正本の取り決め, extends: decision, mod: [{of: [v_refer, from], with: depended_information}]}
   change_holder: {ja: 与えられた意味が依存するもの, extends: continuant, mod: [{of: [v_depend, to], with: assigned_meaning}]}
-  rule_consolidation: {ja: 変更の固定先の取り決め, extends: definition, mod: [{of: [v_compose, from], with: this_design}, {of: [v_refer, from], with: change_holder}]}
+  rule_consolidation: {ja: 変更の固定先の取り決め, extends: decision, mod: [{of: [v_refer, from], with: change_holder}]}
 
   # ===== 修飾語 =====
   frozen: {ja: 固定されている, extends: quality, of: [v_freeze, to]}
@@ -175,7 +178,7 @@ nodes:
   test: {ja: テスト, extends: application_example, mod: [{of: [v_use, to], with: verification}]}
   definition_text: {ja: 定義文, extends: passage, mod: [{of: [v_compose, to], with: definition}]}
   examples_only: {ja: 適用例だけ, extends: passage, mod: [{of: [v_compose, to], with: application_example}]}
-  def_and_examples: {ja: 定義文と適用例, extends: passage, mod: [{of: [v_compose, to], with: definition}, {of: [v_compose, to], with: application_example}]}
+  def_and_examples: {ja: 定義文と適用例, extends: [definition_text, examples_only]}
   filler_text: {ja: 無関係な文章, extends: passage, mod: [{of: [v_agree, from], with: question, neg: true}]}
   context: {ja: 文脈, extends: passage, mod: [{of: [v_read, to], with: model}]}
   glossary: {ja: 用語集, extends: information_entity, mod: [{of: [v_compose, to], with: definition, at: {count: {gt: 1}}}]}
@@ -260,11 +263,11 @@ nodes:
   shared_inference: {ja: 使い方が共有する推論, extends: concept, mod: [{of: [v_stage, from], with: usage, quant: all}]}
   scratchpad: {ja: 途中経過の書き出し, extends: inference, mod: [{of: [v_stage, to], with: v_speak_reason}]}
   single_pass: {ja: 一度の処理, extends: inference, mod: [{of: [v_stage, to], with: v_speak_reason, neg: true}]}
-  usage: {ja: 使い方, extends: process, mod: [{of: [v_perform, to], with: model}, {of: [v_involve, from], with: word}]}
+  usage: {ja: 使い方, extends: inference, mod: [{of: [v_involve, from], with: word}]}
   usage_recite: {ja: 定義文の暗唱, extends: usage, mod: [{of: [v_stage, to], with: v_speak_definition}]}
   usage_apply: {ja: 適用, extends: usage, mod: [{of: [v_stage, to], with: v_judge_case}]}
   usage_define_paraphrase: {ja: 定義の言い換えの選択, extends: usage, mod: [{of: [v_stage, to], with: v_judge_definition}]}
-  usage_explain: {ja: 説明, extends: usage, mod: [{of: [v_stage, to], with: v_speak_reason}, {of: [v_stage, to], with: v_judge_case}]}
+  usage_explain: {ja: 説明, extends: usage_apply, mod: [{of: [v_stage, to], with: v_speak_reason}]}
   taught_usage: {ja: 教えた使い方, extends: usage, mod: [{of: [v_refer, to], with: teaching_material}]}
   untaught_usage: {ja: 教えていない使い方, extends: usage, mod: [{of: [v_refer, to], with: teaching_material, neg: true}]}
   verification: {ja: 検証, extends: v_judge, to: application_example}
@@ -279,7 +282,7 @@ nodes:
   concept_vector: {ja: 概念ベクトル, extends: channel, mod: [{of: [v_involve, from], with: taught_vector}, {of: [v_involve, from], with: label_token_positions}]}
   single_layer_vector: {ja: 単一層の概念ベクトル, extends: concept_vector, mod: [{of: [v_involve, from], with: layer, at: {count: 1}}]}
   multi_layer_vector: {ja: 複数層の概念ベクトル, extends: concept_vector, mod: [{of: [v_involve, from], with: layer, at: {count: {gt: 1}}}]}
-  text_and_vector: {ja: 文章と概念ベクトルの併用, extends: channel, mod: [{of: [v_involve, from], with: context}, {of: [v_involve, from], with: layer}]}
+  text_and_vector: {ja: 文章と概念ベクトルの併用, extends: [text_injection, concept_vector]}
   delta_weights: {ja: 差分重み, extends: channel, mod: [{of: [v_involve, from], with: weights}]}
   teaching: {ja: 教示, extends: v_teach, to: layer}
   teacher_recite: {ja: 定義文の暗唱を教師にする, extends: teaching, from: definition_text}
@@ -332,7 +335,7 @@ nodes:
   mean_value: {ja: 平均, extends: magnitude, mod: [{of: [v_depend, from], with: measured_value, at: {count: {gt: 1}}}]}
   tolerance: {ja: 許容幅, extends: magnitude, mod: [{of: [v_depend, from], with: observation}]}
   logit_margin: {ja: ロジット差の平均, extends: metric, mod: [{of: [v_measure, from], with: verdict}], axis: order}
-  judged_accuracy: {ja: 自由生成での正答率, extends: metric, mod: [{of: [v_measure, from], with: verdict}, {of: [v_depend, from], with: fmt_free}], axis: ratio}
+  judged_accuracy: {ja: 自由生成での正答率, extends: accuracy, mod: [{of: [v_depend, from], with: fmt_free}], axis: ratio}
   measurement_family: {ja: 測定値の族, extends: information_entity, mod: [{of: [v_refer, from], with: measured_value, at: {count: {gt: 1}}}]}
   axis: {ja: 軸, extends: information_entity, mod: [{of: [v_refer, from], with: p}, {of: [v_compose, to], with: value}]}
   value: {ja: 値, extends: information_entity, mod: [{of: [v_compose, from], with: axis}]}
@@ -404,9 +407,9 @@ nodes:
   laws: {ja: 法則, extends: sentence, mod: [{of: [v_refer, from], with: state_relation}], val: {truth: true}}
   system_act: {ja: 体系そのものの行為, extends: v_refer, from: system}
   fields: {ja: 記録の項目, extends: identifier, mod: [{of: [v_compose, from], with: sentence}]}
-  records: {ja: 記録の種類の記述, extends: information_entity, mod: [{of: [v_compose, from], with: system}, {of: [v_refer, from], with: sentence}]}
+  records: {ja: 記録の種類の記述, extends: section, mod: [{of: [v_refer, from], with: sentence}]}
   grammar_rule: {ja: 文法の規則, extends: sentence, mod: [{of: [v_refer, from], with: expression_part}]}
-  grammar: {ja: 文法の記述, extends: information_entity, mod: [{of: [v_compose, from], with: system}, {of: [v_compose, to], with: grammar_rule, at: {count: {gt: 1}}}]}
+  grammar: {ja: 文法の記述, extends: section, mod: [{of: [v_compose, to], with: grammar_rule, at: {count: {gt: 1}}}]}
 
   # ===== 述語論理の語。「について述べる」の限定として書く。区別は法則 truth_distinct が与える =====
   not: {ja: 否定, extends: sentence, mod: [{of: [v_refer, from], with: sentence}], cmp: [{axis: truth, a: not, b: sentence, rel: differ}]}
@@ -432,7 +435,7 @@ nodes:
   base: {ja: 基礎の節, extends: section, mod: [{of: [v_refer, from], with: state_relation}]}
   axes: {ja: 軸の節, extends: section, mod: [{of: [v_refer, from], with: axis}]}
   nodes: {ja: ノードの節, extends: section, mod: [{of: [v_refer, from], with: concept_expression}]}
-  source: {ja: もとになる関係の指定, extends: expression_part, mod: [{of: [v_refer, from], with: state_relation}, {of: [v_compose, from], with: axes}]}
+  source: {ja: もとになる関係の指定, extends: holds, mod: [{of: [v_compose, from], with: axes}]}
   key: {ja: 記録の識別子の指定, extends: expression_part, mod: [{of: [v_refer, from], with: identifier}, {of: [v_compose, from], with: records}]}
   steps: {ja: 歩みの並び, extends: information_entity, mod: [{of: [v_refer, from], with: v_execute, at: {count: {ge: 1}}}]}
   expect: {ja: 期待する文, extends: facts, val: {truth: true}}

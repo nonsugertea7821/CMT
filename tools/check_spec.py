@@ -54,7 +54,7 @@ def load(name):
 
 # ---------------------------------------------------------------- 概念の体系
 # 法則のうち、この検査が当てはめるもの / 実行の検査（run_spec.py）が当てはめるもの
-LAWS_HERE = {"truth_distinct", "inherit", "narrow", "acyclic"}
+LAWS_HERE = {"truth_distinct", "inherit", "narrow", "acyclic", "monotone", "specific"}
 LAWS_RUN = {"transitive", "antisymmetric", "asymmetric", "end_exists", "step", "frame", "halt"}
 
 
@@ -101,7 +101,7 @@ class Ontology:
                     err(f"{nid}: 上位をたどると自分に戻る")
                     break
                 seen.add(x)
-                x = self.N[x].get("extends")
+                x = self.up(x)
         for k in self.O:
             if k not in G["system"]:
                 err(f"体系の節 {k} が、grammar.system に書かれていない")
@@ -120,13 +120,75 @@ class Ontology:
                 if k not in G["records"]:
                     err(f"records.{rid}: 語 {k} が、grammar.records に書かれていない")
 
+    def parents(self, nid):
+        """上位。extends に並べたものは AND（そのすべてに当てはまる）。"""
+        e = self.N[nid].get("extends")
+        return [] if e is None else (e if isinstance(e, list) else [e])
+
+    def up(self, nid):
+        ps = self.parents(nid)
+        return ps[0] if ps else None
+
+    def ancestors(self, nid):
+        out, todo = [], self.parents(nid)
+        while todo:
+            x = todo.pop()
+            if x in self.N and x not in out:
+                out.append(x)
+                todo += self.parents(x)
+        return out
+
+    def is_concept(self, nid):
+        n = self.N[nid]
+        return "extends" in n and "of" not in n and "form" not in n and "holds" not in n and "pre" not in n and nid not in TOPS
+
+    def own(self, nid):
+        """そのノードが自分で足している限定。"""
+        n = self.N[nid]
+        s = {yaml.safe_dump(m, sort_keys=True, allow_unicode=True) for m in (n.get("mod") or [])}
+        s |= {"val " + yaml.safe_dump(list(x), allow_unicode=True) for x in (n.get("val") or {}).items()}
+        s |= {"cmp " + yaml.safe_dump(x, sort_keys=True, allow_unicode=True) for x in (n.get("cmp") or [])}
+        for k in ("axis", "from", "to", "new_kind"):
+            if k in n:
+                s.add(f"{k} {n[k]}")
+        return s
+
+    def acc(self, nid):
+        """上位から積み上がった限定の全体。概念の同一性は、これで決まる。"""
+        s = set(self.own(nid))
+        for a in self.ancestors(nid):
+            s |= self.own(a)
+        return s
+
+    def check_hierarchy(self):
+        """法則 monotone: 階層を降りるたびに、限定が増える。
+        法則 specific: 自分の限定の一部だけで書ける概念が別にあれば、その下に置く（具体的な概念を、抽象的な位置に置かない）。"""
+        C = [i for i in self.N if self.is_concept(i)]
+        A = {i: self.acc(i) for i in C}
+        anc = {i: set(self.ancestors(i)) for i in C}
+        for x in C:
+            ps = self.parents(x)
+            for p in ps:
+                if p in A and not A[p] < A[x]:
+                    err(f"{x}: 上位の {p} より限定が増えていない（法則 monotone）")
+            for i, p in enumerate(ps):
+                for q in ps[i + 1:]:
+                    if p in anc.get(q, ()) or q in anc.get(p, ()) or p == q:
+                        err(f"{x}: 上位に並べた {p} と {q} が、上下の関係にある")
+            for y in C:
+                if y == x or y in anc[x] or x in anc[y] or not self.own(y):
+                    continue
+                if anc[y] & set(ps) and A[y] <= A[x]:
+                    same = "（限定が同じ。同じ概念）" if A[y] == A[x] else ""
+                    err(f"{x}: より具体的な {y} があるのに、その下に置かれていない（法則 specific）{same}")
+
     def end(self, nid, side):
         """動詞の端の種類。自分になければ上位の動詞から受け継ぐ。"""
         hops = 0
         while nid in self.N and hops < 50:
             if side in self.N[nid]:
                 return self.N[nid][side]
-            nid, hops = self.N[nid].get("extends"), hops + 1
+            nid, hops = self.up(nid), hops + 1
         return None
 
     def is_verb(self, nid):
@@ -138,20 +200,21 @@ class Ontology:
     def parent(self, nid):
         n = self.N[nid]
         if "extends" in n:
-            return n["extends"]
+            return self.up(nid)
         if "form" in n:
             return self.spot_type(*n["form"])
         return None
 
-    def is_a(self, x, y):
+    def is_a(self, x, y, hops=0):
         if y == "any":
             return True
-        hops = 0
-        while x is not None and x != "any" and hops < 80:
-            if x == y:
-                return True
-            x, hops = self.parent(x), hops + 1
-        return False
+        if x is None or x == "any" or x not in self.N or hops > 80:
+            return x == y
+        if x == y:
+            return True
+        n = self.N[x]
+        ups = self.parents(x) if "extends" in n else ([self.spot_type(*n["form"])] if "form" in n else [])
+        return any(self.is_a(u, y, hops + 1) for u in ups)
 
     def overlaps(self, x, y):
         return x == "any" or self.is_a(x, y) or self.is_a(y, x)
@@ -162,7 +225,7 @@ class Ontology:
             fs = [f for k in ("holds", "pre", "post") for f in self.N[verb].get(k, [])]
             if fs:
                 return {re.search(r"(\w+)\(", f).group(1) for f in fs}
-            verb, hops = self.N[verb].get("extends"), hops + 1
+            verb, hops = self.up(verb), hops + 1
         return set()
 
     def is_function(self, v):
@@ -241,17 +304,17 @@ class Ontology:
             if "form" in n:
                 self.check_spot(n["form"], nid)
                 continue
-            if n.get("extends") not in N:
+            if not self.parents(nid) or any(p not in N for p in self.parents(nid)):
                 err(f"{nid}: 上位がない、または未定義")
                 continue
             if self.is_verb(nid):
                 if not self.is_a(nid, "occurrent"):
                     err(f"{nid}: 動詞は生起体の下に置く")
-                if self.is_verb(n["extends"]):
+                if self.is_verb(self.up(nid)):
                     for side in ("from", "to"):
-                        if side in n and not self.is_a(n[side], self.end(n["extends"], side)):
-                            err(f"{nid}: {side} の {n[side]} は、上位の {self.end(n['extends'], side)} を狭めていない")
-                    if not any(k in n for k in ("from", "to", "mod")):
+                        if side in n and not self.is_a(n[side], self.end(self.up(nid), side)):
+                            err(f"{nid}: {side} の {n[side]} は、上位の {self.end(self.up(nid), side)} を狭めていない")
+                    if not any(k in n for k in ("from", "to", "mod")) and len(self.parents(nid)) < 2:
                         err(f"{nid}: 上位の動詞と区別する式がない")
                 else:
                     self.check_state(nid, n)
@@ -259,7 +322,7 @@ class Ontology:
                 self.check_spot(n["of"], nid)
                 if not self.is_a(nid, "specifically_dependent_continuant"):
                     err(f"{nid}: 修飾語は特定依存持続体の下に置く")
-            elif not (n.get("mod") or n.get("val") or n.get("cmp")):
+            elif not (n.get("mod") or n.get("val") or n.get("cmp") or len(self.parents(nid)) > 1):
                 err(f"{nid}: 式がない")
             for axis, v in (n.get("val") or {}).items():
                 self.check_value(axis, v, f"{nid}.val")
@@ -337,7 +400,7 @@ class Ontology:
 
     def kinds_of(self, nid):
         """nid の直接の下位にあるノード。status や留保の値として使えるもの。"""
-        return [k for k, n in self.N.items() if n.get("extends") == nid]
+        return [k for k, n in self.N.items() if nid in self.parents(k)]
 
     def status_pattern(self, nid):
         """状態のノードの式から、「支持する観察がある / 反する観察がある」の組を読み取る。"""
@@ -351,7 +414,7 @@ class Ontology:
         """大きさを比べる動詞の式（後ろにある、の成立と不成立）を、2つの数に当てはめる。"""
         hops = 0
         while verb in self.N and "holds" not in self.N[verb] and hops < 50:
-            verb, hops = self.N[verb].get("extends"), hops + 1
+            verb, hops = self.up(verb), hops + 1
         n = self.N.get(verb, {})
         if not n.get("holds") or any(not re.fullmatch(r"(not )?after\((from|to), (from|to)\)", f) for f in n["holds"]):
             return None
@@ -366,7 +429,7 @@ class Ontology:
     def is_strict(self, verb):
         hops = 0
         while verb in self.N and "holds" not in self.N[verb] and hops < 50:
-            verb, hops = self.N[verb].get("extends"), hops + 1
+            verb, hops = self.up(verb), hops + 1
         return any(f.startswith("after(") for f in self.N.get(verb, {}).get("holds", []))
 
     def expr(self, nid):
@@ -600,6 +663,7 @@ def main():
     T.check()
     T.check_records()
     T.check_grammar()
+    T.check_hierarchy()
     M, C = load("measurements.yaml"), load("claims.yaml")
     values, meanings = expand(M, T)
     check_claims(C, values, T)
