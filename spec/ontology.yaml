@@ -102,9 +102,9 @@ nodes:
   information_entity: {display: 情報, extends: generically_dependent_continuant, mod: {of: [v_refer, from]}}
   language: {display: 言語, extends: information_entity, mod: {of: [v_express, to]}}
   system: {display: 体系, extends: information_entity, mod: {of: [v_compose, to], with: concept_expression, at: {count: {gt: 1}}}}
-  controlled_language: {display: 概念体系制御言語, extends: language, mod: {of: [v_depend, from], with: system}}
+  cscl: {display: 概念体系制御言語, extends: language, mod: {of: [v_depend, from], with: system}}
   definition_compose_from_system: {display: 体系へ部分になる定義, extends: definition, mod: {of: [v_compose, from], with: system}}
-  concept_expression: {display: 概念式, extends: definition_compose_from_system, mod: {of: [v_express, from], with: controlled_language}}
+  concept_expression: {display: 概念式, extends: definition_compose_from_system, mod: {of: [v_express, from], with: cscl}}
   natural_language: {display: 自然言語, extends: language, mod: {of: [v_design, to], neg: true}}
   information_entity_compose_to_word: {display: 語から部分になる情報, extends: information_entity, mod: {of: [v_compose, to], with: word}}
   sentence: {display: 文, extends: information_entity_compose_to_word, mod: {of: [v_express, from], with: language}}
@@ -113,8 +113,8 @@ nodes:
   information_entity_express_from_natural_language: {display: 自然言語へで書かれる情報, extends: information_entity, mod: {of: [v_express, from], with: natural_language}}
   word: {display: 語, extends: information_entity_express_from_natural_language, mod: {of: [v_compose, from], with: sentence}}
   definition: {display: 定義, extends: sentence, mod: {of: [v_refer, from], with: concept}}
-  information_entity_express_from_controlled_language: {display: 概念体系制御言語へで書かれる情報, extends: information_entity, mod: {of: [v_express, from], with: controlled_language}}
-  identifier: {display: 識別子, extends: information_entity_express_from_controlled_language, mod: {of: [v_refer, from], with: concept_expression, at: {count: 1}}}
+  information_entity_express_from_cscl: {display: 概念体系制御言語へで書かれる情報, extends: information_entity, mod: {of: [v_express, from], with: cscl}}
+  identifier: {display: 識別子, extends: information_entity_express_from_cscl, mod: {of: [v_refer, from], with: concept_expression, at: {count: 1}}}
   pattern: {display: 識別子の雛形, extends: information_entity, mod: {of: [v_refer, from], with: identifier, at: {count: {gt: 1}}}}
   information_entity_refer_from_p: {display: 関係づけるへ述べる情報, extends: information_entity, mod: {of: [v_refer, from], with: p}}
   axis: {display: 軸, extends: information_entity_refer_from_p, mod: {of: [v_compose, to], with: value}}

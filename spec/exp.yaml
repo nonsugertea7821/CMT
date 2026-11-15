@@ -631,8 +631,8 @@ individuals:
   h_both_teachers_raise_control_in_combo: {is: hyp_supported}
   h_single_layer_does_not_reach_shared: {is: hyp_supported}
   h_multi_layer_raises_consistency: {is: hyp_mixed}
-  h_controlled_language_raises_following: {is: hyp_untested}
-  h_model_can_write_controlled_language: {is: hyp_untested}
+  h_cscl_raises_following: {is: hyp_untested}
+  h_model_can_write_cscl: {is: hyp_untested}
   h_modifier_transfers_to_unseen_genus: {is: hyp_supported}
 
   # ===== 決定（is: decision）
@@ -649,7 +649,7 @@ individuals:
   d_verdict_by_vector: {is: design_dec_tentative}
   d_explanation_by_text: {is: design_dec_tentative}
   d_consolidation_in_vector: {is: design_dec_tentative}
-  d_source_of_truth_in_controlled_language: {is: design_dec_adopted}
+  d_source_of_truth_in_cscl: {is: design_dec_adopted}
   d_rendered_text_is_derived: {is: design_dec_adopted}
   d_symbol_selection_symbolic: {is: design_dec_tentative}
   d_vector_needs_open_weights: {is: design_dec_adopted}
@@ -658,7 +658,7 @@ individuals:
   # ===== 残り項目（is: backlog_item）
   b_e8_multi_layer: {is: item_done}
   b_e8_retrain_until_converged: {is: item_queued}
-  b_write_subject_concepts_in_controlled_language: {is: item_queued}
+  b_write_subject_concepts_in_cscl: {is: item_queued}
   b_definitions_given_as_concept_expressions: {is: item_queued}
   b_model_writes_concept_expressions: {is: item_queued}
   b_vectors_taught_from_concept_expressions: {is: item_queued}
@@ -1474,9 +1474,9 @@ facts:
   - {is: v_contradict, from: o_e8_control_below_single_layer, to: h_multi_layer_raises_consistency}
   - {is: v_contradict, from: o_e8_less_order_robust_than_single_layer, to: h_multi_layer_raises_consistency}
   - {is: v_support, from: o_e8_conflict_ge_single_layer, to: h_multi_layer_raises_consistency}
-  - {is: v_refer, from: h_controlled_language_raises_following, to: {is: v_raise, from: controlled_language, to: redefinition_following}}
-  - {is: v_scope, from: text_injection, to: h_controlled_language_raises_following}
-  - {is: v_refer, from: h_model_can_write_controlled_language, to: {is: v_speak, from: model, to: concept_expression}}
+  - {is: v_refer, from: h_cscl_raises_following, to: {is: v_raise, from: cscl, to: redefinition_following}}
+  - {is: v_scope, from: text_injection, to: h_cscl_raises_following}
+  - {is: v_refer, from: h_model_can_write_cscl, to: {is: v_speak, from: model, to: concept_expression}}
   - {is: v_refer, from: h_modifier_transfers_to_unseen_genus, to: {is: v_transfer, from: modifier, to: unseen_genus}}
   - {is: v_scope, from: model_15b, to: h_modifier_transfers_to_unseen_genus}
   - {is: v_scope, from: single_layer_vector, to: h_modifier_transfers_to_unseen_genus}
@@ -1512,7 +1512,7 @@ facts:
   - {is: v_ground, from: d_explanation_by_text, to: h_both_teachers_raise_control_in_combo}
   - {is: v_refer, from: d_consolidation_in_vector, to: {is: extends, from: change_holder, to: taught_vector}}
   - {is: v_ground, from: d_consolidation_in_vector, to: h_vector_count_does_not_lower}
-  - {is: v_refer, from: d_source_of_truth_in_controlled_language, to: {is: v_express, from: depended_information, to: controlled_language}}
+  - {is: v_refer, from: d_source_of_truth_in_cscl, to: {is: v_express, from: depended_information, to: cscl}}
   - {is: v_refer, from: d_rendered_text_is_derived, to: {is: v_rely, from: rendered_text, to: depended_information}}
   - {is: v_refer, from: d_symbol_selection_symbolic, to: {is: v_rely, from: symbol_selection, to: typed_graph}}
   - {is: v_refer, from: d_vector_needs_open_weights, to: {is: v_rely, from: concept_vector, to: open_weight_model}}
@@ -1521,10 +1521,10 @@ facts:
   # ===== 残り項目（is: backlog_item）
   - {is: v_check, from: b_e8_multi_layer, to: h_multi_layer_raises_consistency}
   - {is: v_check, from: b_e8_retrain_until_converged, to: h_multi_layer_raises_consistency}
-  - {is: v_check, from: b_write_subject_concepts_in_controlled_language, to: h_controlled_language_raises_following}
-  - {is: v_check, from: b_definitions_given_as_concept_expressions, to: h_controlled_language_raises_following}
-  - {is: v_check, from: b_model_writes_concept_expressions, to: h_model_can_write_controlled_language}
-  - {is: v_check, from: b_vectors_taught_from_concept_expressions, to: h_controlled_language_raises_following}
+  - {is: v_check, from: b_write_subject_concepts_in_cscl, to: h_cscl_raises_following}
+  - {is: v_check, from: b_definitions_given_as_concept_expressions, to: h_cscl_raises_following}
+  - {is: v_check, from: b_model_writes_concept_expressions, to: h_model_can_write_cscl}
+  - {is: v_check, from: b_vectors_taught_from_concept_expressions, to: h_cscl_raises_following}
   - {is: v_check, from: b_e9_scratchpad, to: h_scratchpad_raises_rule_following}
   - {is: v_check, from: b_e9_scratchpad, to: h_scratchpad_raises_rule_following_4b}
   - {is: v_check, from: b_e9_scratchpad, to: h_chain_length_lowers_following}
