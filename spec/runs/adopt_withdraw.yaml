@@ -1,9 +1,15 @@
 # 決定を採用し、取り下げる。書き換え規則は v_adopt と v_withdraw。
+# 状態の事実は、基礎の関係の個体: {is: 基礎の関係, from: 始点, to: 終点}。歩みは、動的な動詞の個体。
 individuals: {sys1: {is: system}, dec1: {is: exp.decision}, role1: {is: role}}
-facts: ["exists(sys1)", "exists(dec1)", "exists(role1)"]
+facts:
+  - {is: exists, from: sys1}
+  - {is: exists, from: dec1}
+  - {is: exists, from: role1}
 steps:
-  - [exp.v_adopt, {from: sys1, to: dec1, new: role1}]
-  - [exp.v_withdraw, {from: sys1, to: dec1, new: role1}]
-  - [exp.v_adopt, {from: sys1, to: dec1, new: role1}]
-expect: ["depend(role1, dec1)", "not depend(dec1, role1)"]
+  - {is: exp.v_adopt, from: sys1, to: dec1, new: role1}
+  - {is: exp.v_withdraw, from: sys1, to: dec1, new: role1}
+  - {is: exp.v_adopt, from: sys1, to: dec1, new: role1}
+expect:
+  - {is: depend, from: role1, to: dec1}
+  - {is: depend, from: dec1, to: role1, neg: true}
 halted: false

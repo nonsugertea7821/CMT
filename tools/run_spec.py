@@ -30,6 +30,17 @@ ROOT = Path(__file__).parent.parent / "spec"
 FORMULA = None  # 式の書き方。体系の syntax.formula から読む
 
 
+def fact(d, T):
+    """事実（基礎の関係の個体）を、(否定, 関係, 端の並び) に直す。位置は名前で書く。"""
+    if not isinstance(d, dict) or set(d) - set(T.G["facts"]) or d.get("is") not in T.B:
+        raise ValueError(f"事実 {d} は {{is: 基礎の関係, from: 始点, to: 終点, neg: 否定}} で書く")
+    return bool(d.get("neg")), d["is"], tuple(d[p] for p in ("from", "to") if p in d)
+
+
+def show(d):
+    return f"{'not ' if d.get('neg') else ''}{d.get('is')}({', '.join(str(d[p]) for p in ('from', 'to') if p in d)})"
+
+
 def parse(f):
     m = re.fullmatch(FORMULA, f)
     if not m:
@@ -59,7 +70,8 @@ class Machine:
                 self.err(f"個体 {i} の種類 {k} が未定義")
         self.facts = set()
         for f in run.get("facts", []):
-            neg, rel, args = parse(f)
+            neg, rel, args = fact(f, T)
+            f = show(f)
             if neg:
                 self.err(f"最初の状態に否定 {f} は書かない（書かれていない文は成り立っていない）")
             self.fact_ok(rel, args, f)
@@ -173,12 +185,16 @@ def main():
                 errors.append(f"{path.name}: 語 {k} が、grammar.run に書かれていない")
         m = Machine(T, run, path.name)
         m.check_laws("最初の状態")
-        for i, (verb, b) in enumerate(run.get("steps", [])):
+        for i, st in enumerate(run.get("steps", [])):
+            if not isinstance(st, dict) or set(st) - set(T.G["facts"]) or "is" not in st:
+                m.err(f"steps[{i}]: 歩みは {{is: 動的な動詞, from, to, new}} で書く")
+                continue
+            verb, b = st["is"], {k: v for k, v in st.items() if k != "is"}
             m.step(verb, b, f"steps[{i}] {verb}")
             n_steps += 1
         for f in run.get("expect", []):
-            if not m.holds(*parse(f)):
-                m.err(f"expect の {f} が、最後の状態で成り立っていない")
+            if not m.holds(*fact(f, T)):
+                m.err(f"expect の {show(f)} が、最後の状態で成り立っていない")
         if "halted" in run:  # 法則 halt
             rest = m.applicable()
             if run["halted"] != (not rest):

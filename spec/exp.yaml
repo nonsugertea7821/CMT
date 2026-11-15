@@ -3,7 +3,9 @@
 #              ほかの領域からは exp.名前 と書いて参照する。core と run は参照できるが、逆はできない（法則 layered）。
 # individuals: 個体。is で種類に1つだけ属する（ほかに表示語 ja と、軸の値 val を持てる）。
 #              仮説・決定・残り項目は、状態を表す下位の種類に属する（例 is: hyp_supported）。
-# facts:       事実。1つの事実に1つの関係だけを書く。個体に関係を並べて書く（関係の省略になる AND）ことはしない。
+# facts:       事実。1つの事実は、1つの動詞の個体で、位置に名前を付けて書く: {is: 動詞, from: 始点, to: 終点, new: 第三のもの}。
+#              文（観察・仮説・決定）が述べる中身は、同じ形を v_refer の終点に置く。中身は主張されない（事実ではない）。
+#              個数は at で書く: {is: v_compose, from: layer, to: model_15b, at: {count: 28}}（層が28個、部分になる）。
 # 種類と個体の分け方: それ自体が個体を持つものが種類。1つしかないもの（特定のモデル、個々の観察）が個体。
 domain: exp
 nodes:
@@ -42,6 +44,24 @@ nodes:
   v_consist: {ja: からなる, extends: occurrent, from: continuant, to: continuant, holds: ["part(to, from)"]}
   v_rely: {ja: に頼る, extends: occurrent, from: any, to: any, holds: ["depend(from, to)"]}
   v_near: {ja: ほぼ同じ位置にある, extends: occurrent, from: continuant, to: continuant, new_kind: tolerance, holds: ["not after(from, to)", "not after(to, from)"]}
+
+  # ----- 個体についての事実に使う動詞。終点か始点を、その関係で限定された種類に狭める
+  v_scope: {ja: 適用範囲になる, extends: v_depend, from: scope, to: hypothesis}
+  v_support: {ja: 支持する, extends: v_agree, from: evidence, to: hypothesis}
+  v_contradict: {ja: 反する, extends: v_agree, from: against, to: hypothesis}
+  v_qualify: {ja: 留保をつける, extends: v_refer, from: limitation, to: hypothesis}
+  v_supersede: {ja: 取って代わる, extends: v_refer, from: sentence, to: supersedes}
+  v_annotate: {ja: 注記する, extends: v_refer, from: note, to: sentence}
+  v_ground: {ja: 根拠にする, extends: v_depend, from: decision, to: basis}
+  v_check: {ja: 確かめる, extends: v_refer, from: backlog_item, to: tests}
+  v_file_of: {ja: 結果ファイルとして部分になる, extends: v_compose, from: result_file, to: measurement_family}
+  v_rows_of: {ja: 行の集まりとして部分になる, extends: v_compose, from: row_collection, to: measurement_family}
+  v_filter_of: {ja: 行の限定として部分になる, extends: v_compose, from: row_filter, to: measurement_family}
+  v_keys_of: {ja: 行の識別子による限定として部分になる, extends: v_compose, from: row_keys, to: measurement_family}
+  v_entry_of: {ja: 条件ごとの記録として部分になる, extends: v_compose, from: condition_entry, to: measurement_family}
+  v_axis_of: {ja: 軸として部分になる, extends: v_compose, from: axis, to: measurement_family}
+  v_meaning_of: {ja: 意味づけとして部分になる, extends: v_compose, from: meaning, to: measurement_family}
+  v_metric_of: {ja: 指標を述べる, extends: v_refer, from: measurement_family, to: metric}
 
   # ===== 修飾語。ある動詞の、ある位置を占めているという性質 =====
   varied: {ja: 動かす条件である, extends: role, of: [v_vary, to], mod: {of: [v_depend, from], with: experiment_protocol}}
@@ -221,14 +241,6 @@ nodes:
   judged_accuracy: {ja: 自由生成での正答率, extends: accuracy, mod: {of: [v_depend, from], with: fmt_free}, axis: ratio}
   measurement_family: {ja: 測定値の族, extends: information_entity, mod: {of: [v_refer, from], with: measured_value, at: {count: {gt: 1}}}}
   recital_nll: {ja: 定義文の出しにくさ, extends: metric, mod: {of: [v_measure, from], with: v_speak_definition}}
-  result_file_compose_from_measurement_family: {ja: 測定値の族へ部分になる結果ファイル, extends: result_file, mod: {of: [v_compose, from], with: measurement_family}}
-  row_collection_compose_from_measurement_family: {ja: 測定値の族へ部分になる行の集まり, extends: row_collection, mod: {of: [v_compose, from], with: measurement_family}}
-  row_filter_compose_from_measurement_family: {ja: 測定値の族へ部分になる行の限定, extends: row_filter, mod: {of: [v_compose, from], with: measurement_family}}
-  row_keys_compose_from_measurement_family: {ja: 測定値の族へ部分になる行の識別子による限定, extends: row_keys, mod: {of: [v_compose, from], with: measurement_family}}
-  condition_entry_compose_from_measurement_family: {ja: 測定値の族へ部分になる条件ごとの記録, extends: condition_entry, mod: {of: [v_compose, from], with: measurement_family}}
-  axis_compose_from_measurement_family: {ja: 測定値の族へ部分になる軸, extends: axis, mod: {of: [v_compose, from], with: measurement_family}}
-  metric_refer_to_measurement_family: {ja: 測定値の族から述べられる指標, extends: metric, mod: {of: [v_refer, to], with: measurement_family}}
-  meaning_compose_from_measurement_family: {ja: 測定値の族へ部分になる意味づけ, extends: meaning, mod: {of: [v_compose, from], with: measurement_family}}
   axis_refer_to_row_keys: {ja: 行の識別子による限定から述べられる軸, extends: axis, mod: {of: [v_refer, to], with: row_keys}}
   pattern_compose_from_row_keys: {ja: 行の識別子による限定へ部分になる雛形, extends: pattern, mod: {of: [v_compose, from], with: row_keys}}
   value_compose_from_meaning: {ja: 意味づけへ部分になる値, extends: value, mod: {of: [v_compose, from], with: meaning}}
@@ -491,770 +503,502 @@ individuals:
   b_more_concepts: {is: item_queued}
   b_sparse_dictionary_observation: {is: item_queued}
 
-# 事実。1つの事実は、1つの関係: [関係, 始点の個体, 終点]。関係は、ノードの識別子。
-# 個体に書ける関係は、その種類の式から決まる（種類のものとの関係で限定されたノード、または文の中身 s, p, o）。
 facts:
 
   # ===== モデル。種類ではなく、1つずつの成果物。
-  - [weights, model_15b, 1500000000]
-  - [layer, model_15b, 28]
-  - [weights, model_4b, 4000000000]
+  - {is: v_compose, from: weights, to: model_15b, at: {count: 1500000000}}
+  - {is: v_compose, from: layer, to: model_15b, at: {count: 28}}
+  - {is: v_compose, from: weights, to: model_4b, at: {count: 4000000000}}
 
   # ===== 測定の族（is: measurement_family）。値は experiments/results/ から計算する。手で書いた数値は持たない。
-  - [result_file, e1, 'e1_{model}.json']
-  - [row_collection, e1, [items]]
-  - [axis, e1, {model: {15b: Qwen2.5-1.5B-Instruct, 4b: Qwen3-4B}, group: [G1, G2c, G2k, G3, G4], cond: [none, near, glossary, far-500, far-2000]}]
-  - [row_filter, e1, {group: '{group}'}]
-  - [condition_entry, e1, '{cond}']
-  - [metric, e1, accuracy]
-  - [metric, e1, order_robust_accuracy]
-  - [meaning, e1, {model: {15b: model_15b, 4b: model_4b}, group: {G1: g_confusable, G2c: g_redef_conflict, G2k: g_redef_control, G3: g_sibling, G4: g_replaced}, cond: {none: {identifier: [no_channel]}, near: {identifier: [text_injection, definition_text, place_adjacent]}, glossary: {identifier: [text_injection, glossary, place_system]}, far-500: {identifier: [text_injection, glossary, place_system], value: [{axis: count, s: following_text, o: 500}]}, far-2000: {identifier: [text_injection, glossary, place_system], value: [{axis: count, s: following_text, o: 2000}]}}}]
-  - [result_file, e1type, 'e1_{model}.json']
-  - [row_collection, e1type, [items]]
-  - [axis, e1type, {model: {15b: Qwen2.5-1.5B-Instruct, 4b: Qwen3-4B}, group: [G2c, G2k], type: {rule: ['02', '03', '06', 09, '10', '11', '13', '15', '16', '17', '21', '23'], remap: ['01', '04', '05', '07', 08, '12', '14', '18', '19', '20', '22', '24']}, cond: [none, near]}]
-  - [row_keys, e1type, {axis: type, pattern: '{group}-#'}]
-  - [condition_entry, e1type, '{cond}']
-  - [metric, e1type, accuracy]
-  - [meaning, e1type, {model: {15b: model_15b, 4b: model_4b}, group: {G1: g_confusable, G2c: g_redef_conflict, G2k: g_redef_control, G3: g_sibling, G4: g_replaced}, type: {rule: rule_redefinition, remap: remap_redefinition}}]
-  - [result_file, e1b, e1b_Qwen2.5-1.5B-Instruct.json]
-  - [row_collection, e1b, [items]]
-  - [axis, e1b, {group: [G2c, G2k], cond: [examples, def+examples]}]
-  - [row_filter, e1b, {group: '{group}'}]
-  - [condition_entry, e1b, '{cond}']
-  - [metric, e1b, accuracy]
-  - [metric, e1b, order_robust_accuracy]
-  - [meaning, e1b, {group: {G1: g_confusable, G2c: g_redef_conflict, G2k: g_redef_control, G3: g_sibling, G4: g_replaced}, cond: {examples: {identifier: [text_injection, examples_only, place_adjacent]}, def+examples: {identifier: [text_injection, def_and_examples, place_adjacent]}}}]
-  - [result_file, e3, 'e3_Qwen2.5-1.5B-Instruct_{run}.json']
-  - [row_collection, e3, [items]]
-  - [axis, e3, {run: [L8_defonly, L8_qa, L8_defqa, L14_defqa], group: [G2c, G2k], cond: [none, vec, near, near+vec]}]
-  - [row_filter, e3, {group: '{group}'}]
-  - [condition_entry, e3, '{cond}']
-  - [metric, e3, accuracy]
-  - [metric, e3, order_robust_accuracy]
-  - [meaning, e3, {run: {L8_defonly: {identifier: [single_layer_vector, teacher_recite], value: [{axis: order, s: layer, o: 8}]}, L8_qa: {identifier: [single_layer_vector, teacher_examples], value: [{axis: order, s: layer, o: 8}]}, L8_defqa: {identifier: [single_layer_vector, teacher_both], value: [{axis: order, s: layer, o: 8}]}, L14_defqa: {identifier: [single_layer_vector, teacher_both], value: [{axis: order, s: layer, o: 14}]}}, group: {G1: g_confusable, G2c: g_redef_conflict, G2k: g_redef_control, G3: g_sibling, G4: g_replaced}, cond: {none: {identifier: [no_channel]}, vec: {identifier: [single_layer_vector]}, near: {identifier: [text_injection, definition_text, place_adjacent]}, near+vec: {identifier: [text_and_vector, definition_text, place_adjacent]}}}]
-  - [result_file, e3type, 'e3_Qwen2.5-1.5B-Instruct_{run}.json']
-  - [row_collection, e3type, [items]]
-  - [axis, e3type, {run: [L8_qa, L8_defqa], group: [G2c, G2k], type: {rule: ['02', '03', '06', 09, '10', '11', '13', '15', '16', '17', '21', '23'], remap: ['01', '04', '05', '07', 08, '12', '14', '18', '19', '20', '22', '24']}, cond: [vec]}]
-  - [row_keys, e3type, {axis: type, pattern: '{group}-#'}]
-  - [condition_entry, e3type, '{cond}']
-  - [metric, e3type, accuracy]
-  - [meaning, e3type, {run: {L8_defonly: {identifier: [single_layer_vector, teacher_recite], value: [{axis: order, s: layer, o: 8}]}, L8_qa: {identifier: [single_layer_vector, teacher_examples], value: [{axis: order, s: layer, o: 8}]}, L8_defqa: {identifier: [single_layer_vector, teacher_both], value: [{axis: order, s: layer, o: 8}]}, L14_defqa: {identifier: [single_layer_vector, teacher_both], value: [{axis: order, s: layer, o: 14}]}}, group: {G1: g_confusable, G2c: g_redef_conflict, G2k: g_redef_control, G3: g_sibling, G4: g_replaced}, type: {rule: rule_redefinition, remap: remap_redefinition}, cond: {none: {identifier: [no_channel]}, vec: {identifier: [single_layer_vector]}, near: {identifier: [text_injection, definition_text, place_adjacent]}, near+vec: {identifier: [text_and_vector, definition_text, place_adjacent]}}}]
-  - [result_file, e3loss, 'e3_Qwen2.5-1.5B-Instruct_{run}.json']
-  - [row_collection, e3loss, [train]]
-  - [axis, e3loss, {run: [L8_defonly, L8_qa, L8_defqa, L14_defqa]}]
-  - [condition_entry, e3loss, loss_last]
-  - [metric, e3loss, mean_value]
-  - [meaning, e3loss, {run: {L8_defonly: {identifier: [single_layer_vector, teacher_recite], value: [{axis: order, s: layer, o: 8}]}, L8_qa: {identifier: [single_layer_vector, teacher_examples], value: [{axis: order, s: layer, o: 8}]}, L8_defqa: {identifier: [single_layer_vector, teacher_both], value: [{axis: order, s: layer, o: 8}]}, L14_defqa: {identifier: [single_layer_vector, teacher_both], value: [{axis: order, s: layer, o: 14}]}}}]
-  - [result_file, e3b, e3b_transfer.json]
-  - [axis, e3b, {fmt: [orig, fill, truth], group: [G2c, G2k], cond: [none, text, vec, vec_all]}]
-  - [row_filter, e3b, {fmt: '{fmt}', group: '{group}'}]
-  - [condition_entry, e3b, '{cond}']
-  - [metric, e3b, accuracy]
-  - [metric, e3b, order_robust_accuracy]
-  - [meaning, e3b, {fmt: {orig: fmt_yesno, fill: fmt_fill, truth: fmt_truth}, group: {G1: g_confusable, G2c: g_redef_conflict, G2k: g_redef_control, G3: g_sibling, G4: g_replaced}, cond: {none: {identifier: [no_channel]}, text: {identifier: [text_injection, def_and_examples, place_adjacent]}, vec: {identifier: [single_layer_vector, teacher_examples], value: [{axis: order, s: layer, o: 8}]}, vec_all: {identifier: [single_layer_vector, teacher_examples], value: [{axis: order, s: layer, o: 8}, {axis: count, s: concept_vector, o: 24}]}}}]
-  - [result_file, e3b_g1, e3b_transfer.json]
-  - [axis, e3b_g1, {cond: [none, vec_all]}]
-  - [row_filter, e3b_g1, {group: G1}]
-  - [condition_entry, e3b_g1, '{cond}']
-  - [metric, e3b_g1, accuracy]
-  - [metric, e3b_g1, logit_margin]
-  - [meaning, e3b_g1, {cond: {none: {identifier: [no_channel]}, vec_all: {identifier: [single_layer_vector], value: [{axis: count, s: concept_vector, o: 24}]}}}]
-  - [result_file, e3c, e3c_generation.json]
-  - [axis, e3c, {group: [G2c, G2k], cond: [none, text, vec]}]
-  - [row_filter, e3c, {group: '{group}'}]
-  - [condition_entry, e3c, '{cond}']
-  - [metric, e3c, judged_accuracy]
-  - [meaning, e3c, {group: {G1: g_confusable, G2c: g_redef_conflict, G2k: g_redef_control, G3: g_sibling, G4: g_replaced}, cond: {none: {identifier: [no_channel, fmt_free]}, text: {identifier: [text_injection, def_and_examples, fmt_free]}, vec: {identifier: [single_layer_vector, teacher_examples, fmt_free]}}}]
-  - [result_file, e4, e4_modifier_composition.json]
-  - [axis, e4, {pair: {p1: 甲種/乙種, p2: 青/赤, p3: 一類/二類}, split: [train, test], cond: [none, text, vec]}]
-  - [row_filter, e4, {pair: '{pair}', split: '{split}'}]
-  - [condition_entry, e4, '{cond}']
-  - [metric, e4, accuracy]
-  - [meaning, e4, {split: {train: seen_genus, test: unseen_genus}, cond: {none: {identifier: [no_channel]}, text: {identifier: [text_injection, definition_text]}, vec: {identifier: [single_layer_vector, modifier]}}}]
-  - [result_file, e5, 'e5_{model}.json']
-  - [axis, e5, {model: {15b: Qwen2.5-1.5B-Instruct, 4b: Qwen3-4B}, group: [G2c, G2k], cond: [near, rename_semi, rename_opaque, inline, near+inline]}]
-  - [row_filter, e5, {group: '{group}'}]
-  - [condition_entry, e5, '{cond}']
-  - [metric, e5, accuracy]
-  - [meaning, e5, {model: {15b: model_15b, 4b: model_4b}, group: {G1: g_confusable, G2c: g_redef_conflict, G2k: g_redef_control, G3: g_sibling, G4: g_replaced}, cond: {near: {identifier: [text_injection, definition_text, place_adjacent]}, rename_semi: {identifier: [text_injection, semi_renaming, place_adjacent]}, rename_opaque: {identifier: [text_injection, opaque_renaming, place_adjacent]}, inline: {identifier: [text_injection, inline_expansion]}, near+inline: {identifier: [text_injection, definition_text, inline_expansion, place_adjacent]}}}]
-  - [result_file, e6_L8, e6_cross_use_L8.json]
-  - [row_collection, e6_L8, ['{vec}']]
-  - [axis, e6_L8, {vec: {none: none, defonly: results/e3_Qwen2.5-1.5B-Instruct_L8_defonly.pt, qa: results/e3_Qwen2.5-1.5B-Instruct_L8_qa.pt}}]
-  - [condition_entry, e6_L8, define_choice]
-  - [metric, e6_L8, accuracy]
-  - [metric, e6_L8, logit_margin]
-  - [meaning, e6_L8, {vec: {none: {identifier: [no_channel]}, defonly: {identifier: [teacher_recite]}, qa: {identifier: [teacher_examples]}}}]
-  - [result_file, e6_L8_nll, e6_cross_use_L8.json]
-  - [row_collection, e6_L8_nll, ['{vec}']]
-  - [axis, e6_L8_nll, {vec: {none: none, defonly: results/e3_Qwen2.5-1.5B-Instruct_L8_defonly.pt, qa: results/e3_Qwen2.5-1.5B-Instruct_L8_qa.pt}}]
-  - [condition_entry, e6_L8_nll, define_nll]
-  - [metric, e6_L8_nll, mean_value]
-  - [result_file, e6_defqa, 'e6_cross_use_defqa_{layer}.json']
-  - [row_collection, e6_defqa, ['results/e3_Qwen2.5-1.5B-Instruct_{layer}_defqa.pt']]
-  - [axis, e6_defqa, {layer: [L8, L14]}]
-  - [condition_entry, e6_defqa, define_choice]
-  - [metric, e6_defqa, accuracy]
-  - [metric, e6_defqa, logit_margin]
-  - [meaning, e6_defqa, {layer: {L8: {identifier: [teacher_both], value: [{axis: order, s: layer, o: 8}]}, L14: {identifier: [teacher_both], value: [{axis: order, s: layer, o: 14}]}}}]
-  - [result_file, e6_defqa_nll, 'e6_cross_use_defqa_{layer}.json']
-  - [row_collection, e6_defqa_nll, ['results/e3_Qwen2.5-1.5B-Instruct_{layer}_defqa.pt']]
-  - [axis, e6_defqa_nll, {layer: [L8, L14]}]
-  - [condition_entry, e6_defqa_nll, define_nll]
-  - [metric, e6_defqa_nll, mean_value]
-  - [result_file, e7, e7_Qwen3-4B.json]
-  - [axis, e7, {group: {redef: [G2c], new: [G3, G4]}, cond: [sys1, sys1-far500, sys1-far2000, gl5, gl15, gl55-first, gl55-last]}]
-  - [row_filter, e7, {group: '{group}'}]
-  - [condition_entry, e7, '{cond}']
-  - [metric, e7, accuracy]
-  - [meaning, e7, {group: {redef: g_redef_conflict, new: group_new_word}, cond: {sys1: {identifier: [relevant_definitions, place_system]}, sys1-far500: {identifier: [relevant_definitions, place_system], value: [{axis: count, s: following_text, o: 500}]}, sys1-far2000: {identifier: [relevant_definitions, place_system], value: [{axis: count, s: following_text, o: 2000}]}, gl5: {identifier: [glossary, other_definitions], value: [{axis: count, s: preceding_definitions_set, o: {le: 4}}]}, gl15: {identifier: [glossary, other_definitions], value: [{axis: count, s: preceding_definitions_set, o: {le: 14}}]}, gl55-first: {identifier: [glossary, glossary_head], value: [{axis: count, s: following_definitions_set, o: 54}]}, gl55-last: {identifier: [glossary, other_definitions], value: [{axis: count, s: preceding_definitions_set, o: 54}]}}}]
-  - [result_file, e7b, e7_Qwen3-4B.json]
-  - [axis, e7b, {cond: [fill500-def, fill2000-def, gl55-pos14, gl55-pos27, gl55-pos41, pre-ordinary19, pre-redef23]}]
-  - [row_filter, e7b, {group: G2c}]
-  - [condition_entry, e7b, '{cond}']
-  - [metric, e7b, accuracy]
-  - [meaning, e7b, {cond: {fill500-def: {identifier: [filler_text], value: [{axis: count, s: preceding_text, o: 500}]}, fill2000-def: {identifier: [filler_text], value: [{axis: count, s: preceding_text, o: 2000}]}, gl55-pos14: {identifier: [other_definitions], value: [{axis: count, s: preceding_definitions_set, o: 14}]}, gl55-pos27: {identifier: [other_definitions], value: [{axis: count, s: preceding_definitions_set, o: 27}]}, gl55-pos41: {identifier: [other_definitions], value: [{axis: count, s: preceding_definitions_set, o: 41}]}, pre-ordinary19: {identifier: [ordinary_definitions], value: [{axis: count, s: preceding_definitions_set, o: 19}]}, pre-redef23: {identifier: [other_redefinitions], value: [{axis: count, s: preceding_definitions_set, o: 23}]}}}]
-  - [result_file, e8, e8_L2-13_d0.001.json]
-  - [row_collection, e8, [apply]]
-  - [axis, e8, {group: [G2c, G2k], cond: [none, vec]}]
-  - [row_filter, e8, {group: '{group}'}]
-  - [condition_entry, e8, '{cond}']
-  - [metric, e8, accuracy]
-  - [metric, e8, order_robust_accuracy]
-  - [meaning, e8, {group: {G2c: g_redef_conflict, G2k: g_redef_control}, cond: {none: {identifier: [no_channel]}, vec: {identifier: [multi_layer_vector, teacher_both], value: [{axis: order, s: layer, o: {between: [2, 13]}}]}}}]
-  - [result_file, e8def, e8_L2-13_d0.001.json]
-  - [row_collection, e8def, [define]]
-  - [axis, e8def, {cond: [none, vec]}]
-  - [condition_entry, e8def, '{cond}']
-  - [metric, e8def, accuracy]
-  - [metric, e8def, order_robust_accuracy]
-  - [metric, e8def, logit_margin]
-  - [meaning, e8def, {cond: {none: {identifier: [no_channel, usage_define_paraphrase]}, vec: {identifier: [multi_layer_vector, teacher_both, usage_define_paraphrase]}}}]
-  - [result_file, e8nll, e8_L2-13_d0.001.json]
-  - [row_collection, e8nll, [define]]
-  - [axis, e8nll, {cond: [nll]}]
-  - [condition_entry, e8nll, '{cond}']
-  - [metric, e8nll, mean_value]
-  - [meaning, e8nll, {cond: {nll: {identifier: [multi_layer_vector, teacher_both, usage_recite]}}}]
-  - [result_file, e8loss, e8_L2-13_d0.001.json]
-  - [row_collection, e8loss, [train]]
-  - [axis, e8loss, {cond: [loss_last]}]
-  - [condition_entry, e8loss, '{cond}']
-  - [metric, e8loss, mean_value]
-  - [meaning, e8loss, {cond: {loss_last: {identifier: [multi_layer_vector, teaching]}}}]
-  - [result_file, e9, 'e9_{model}.json']
-  - [axis, e9, {model: {15b: Qwen2.5-1.5B-Instruct, 4b: Qwen3-4B}, group: [G2c, G2k], type: {rule: 規則, remap: 付け替え}, cond: [direct, cot]}]
-  - [row_filter, e9, {group: '{group}', type: '{type}'}]
-  - [condition_entry, e9, '{cond}']
-  - [metric, e9, accuracy]
-  - [metric, e9, order_robust_accuracy]
-  - [meaning, e9, {model: {15b: model_15b, 4b: model_4b}, group: {G2c: g_redef_conflict, G2k: g_redef_control}, type: {rule: rule_redefinition, remap: remap_redefinition}, cond: {direct: {identifier: [text_injection, definition_text, place_adjacent, single_pass]}, cot: {identifier: [text_injection, definition_text, place_adjacent, scratchpad]}}}]
+  - {is: v_file_of, from: 'e1_{model}.json', to: e1}
+  - {is: v_rows_of, from: [items], to: e1}
+  - {is: v_axis_of, from: {model: {15b: Qwen2.5-1.5B-Instruct, 4b: Qwen3-4B}, group: [G1, G2c, G2k, G3, G4], cond: [none, near, glossary, far-500, far-2000]}, to: e1}
+  - {is: v_filter_of, from: {group: '{group}'}, to: e1}
+  - {is: v_entry_of, from: '{cond}', to: e1}
+  - {is: v_metric_of, from: e1, to: accuracy}
+  - {is: v_metric_of, from: e1, to: order_robust_accuracy}
+  - {is: v_meaning_of, from: {model: {15b: model_15b, 4b: model_4b}, group: {G1: g_confusable, G2c: g_redef_conflict, G2k: g_redef_control, G3: g_sibling, G4: g_replaced}, cond: {none: {identifier: [no_channel]}, near: {identifier: [text_injection, definition_text, place_adjacent]}, glossary: {identifier: [text_injection, glossary, place_system]}, far-500: {identifier: [text_injection, glossary, place_system], value: [{axis: count, s: following_text, o: 500}]}, far-2000: {identifier: [text_injection, glossary, place_system], value: [{axis: count, s: following_text, o: 2000}]}}}, to: e1}
+  - {is: v_file_of, from: 'e1_{model}.json', to: e1type}
+  - {is: v_rows_of, from: [items], to: e1type}
+  - {is: v_axis_of, from: {model: {15b: Qwen2.5-1.5B-Instruct, 4b: Qwen3-4B}, group: [G2c, G2k], type: {rule: ['02', '03', '06', 09, '10', '11', '13', '15', '16', '17', '21', '23'], remap: ['01', '04', '05', '07', 08, '12', '14', '18', '19', '20', '22', '24']}, cond: [none, near]}, to: e1type}
+  - {is: v_keys_of, from: {axis: type, pattern: '{group}-#'}, to: e1type}
+  - {is: v_entry_of, from: '{cond}', to: e1type}
+  - {is: v_metric_of, from: e1type, to: accuracy}
+  - {is: v_meaning_of, from: {model: {15b: model_15b, 4b: model_4b}, group: {G1: g_confusable, G2c: g_redef_conflict, G2k: g_redef_control, G3: g_sibling, G4: g_replaced}, type: {rule: rule_redefinition, remap: remap_redefinition}}, to: e1type}
+  - {is: v_file_of, from: e1b_Qwen2.5-1.5B-Instruct.json, to: e1b}
+  - {is: v_rows_of, from: [items], to: e1b}
+  - {is: v_axis_of, from: {group: [G2c, G2k], cond: [examples, def+examples]}, to: e1b}
+  - {is: v_filter_of, from: {group: '{group}'}, to: e1b}
+  - {is: v_entry_of, from: '{cond}', to: e1b}
+  - {is: v_metric_of, from: e1b, to: accuracy}
+  - {is: v_metric_of, from: e1b, to: order_robust_accuracy}
+  - {is: v_meaning_of, from: {group: {G1: g_confusable, G2c: g_redef_conflict, G2k: g_redef_control, G3: g_sibling, G4: g_replaced}, cond: {examples: {identifier: [text_injection, examples_only, place_adjacent]}, def+examples: {identifier: [text_injection, def_and_examples, place_adjacent]}}}, to: e1b}
+  - {is: v_file_of, from: 'e3_Qwen2.5-1.5B-Instruct_{run}.json', to: e3}
+  - {is: v_rows_of, from: [items], to: e3}
+  - {is: v_axis_of, from: {run: [L8_defonly, L8_qa, L8_defqa, L14_defqa], group: [G2c, G2k], cond: [none, vec, near, near+vec]}, to: e3}
+  - {is: v_filter_of, from: {group: '{group}'}, to: e3}
+  - {is: v_entry_of, from: '{cond}', to: e3}
+  - {is: v_metric_of, from: e3, to: accuracy}
+  - {is: v_metric_of, from: e3, to: order_robust_accuracy}
+  - {is: v_meaning_of, from: {run: {L8_defonly: {identifier: [single_layer_vector, teacher_recite], value: [{axis: order, s: layer, o: 8}]}, L8_qa: {identifier: [single_layer_vector, teacher_examples], value: [{axis: order, s: layer, o: 8}]}, L8_defqa: {identifier: [single_layer_vector, teacher_both], value: [{axis: order, s: layer, o: 8}]}, L14_defqa: {identifier: [single_layer_vector, teacher_both], value: [{axis: order, s: layer, o: 14}]}}, group: {G1: g_confusable, G2c: g_redef_conflict, G2k: g_redef_control, G3: g_sibling, G4: g_replaced}, cond: {none: {identifier: [no_channel]}, vec: {identifier: [single_layer_vector]}, near: {identifier: [text_injection, definition_text, place_adjacent]}, near+vec: {identifier: [text_and_vector, definition_text, place_adjacent]}}}, to: e3}
+  - {is: v_file_of, from: 'e3_Qwen2.5-1.5B-Instruct_{run}.json', to: e3type}
+  - {is: v_rows_of, from: [items], to: e3type}
+  - {is: v_axis_of, from: {run: [L8_qa, L8_defqa], group: [G2c, G2k], type: {rule: ['02', '03', '06', 09, '10', '11', '13', '15', '16', '17', '21', '23'], remap: ['01', '04', '05', '07', 08, '12', '14', '18', '19', '20', '22', '24']}, cond: [vec]}, to: e3type}
+  - {is: v_keys_of, from: {axis: type, pattern: '{group}-#'}, to: e3type}
+  - {is: v_entry_of, from: '{cond}', to: e3type}
+  - {is: v_metric_of, from: e3type, to: accuracy}
+  - {is: v_meaning_of, from: {run: {L8_defonly: {identifier: [single_layer_vector, teacher_recite], value: [{axis: order, s: layer, o: 8}]}, L8_qa: {identifier: [single_layer_vector, teacher_examples], value: [{axis: order, s: layer, o: 8}]}, L8_defqa: {identifier: [single_layer_vector, teacher_both], value: [{axis: order, s: layer, o: 8}]}, L14_defqa: {identifier: [single_layer_vector, teacher_both], value: [{axis: order, s: layer, o: 14}]}}, group: {G1: g_confusable, G2c: g_redef_conflict, G2k: g_redef_control, G3: g_sibling, G4: g_replaced}, type: {rule: rule_redefinition, remap: remap_redefinition}, cond: {none: {identifier: [no_channel]}, vec: {identifier: [single_layer_vector]}, near: {identifier: [text_injection, definition_text, place_adjacent]}, near+vec: {identifier: [text_and_vector, definition_text, place_adjacent]}}}, to: e3type}
+  - {is: v_file_of, from: 'e3_Qwen2.5-1.5B-Instruct_{run}.json', to: e3loss}
+  - {is: v_rows_of, from: [train], to: e3loss}
+  - {is: v_axis_of, from: {run: [L8_defonly, L8_qa, L8_defqa, L14_defqa]}, to: e3loss}
+  - {is: v_entry_of, from: loss_last, to: e3loss}
+  - {is: v_metric_of, from: e3loss, to: mean_value}
+  - {is: v_meaning_of, from: {run: {L8_defonly: {identifier: [single_layer_vector, teacher_recite], value: [{axis: order, s: layer, o: 8}]}, L8_qa: {identifier: [single_layer_vector, teacher_examples], value: [{axis: order, s: layer, o: 8}]}, L8_defqa: {identifier: [single_layer_vector, teacher_both], value: [{axis: order, s: layer, o: 8}]}, L14_defqa: {identifier: [single_layer_vector, teacher_both], value: [{axis: order, s: layer, o: 14}]}}}, to: e3loss}
+  - {is: v_file_of, from: e3b_transfer.json, to: e3b}
+  - {is: v_axis_of, from: {fmt: [orig, fill, truth], group: [G2c, G2k], cond: [none, text, vec, vec_all]}, to: e3b}
+  - {is: v_filter_of, from: {fmt: '{fmt}', group: '{group}'}, to: e3b}
+  - {is: v_entry_of, from: '{cond}', to: e3b}
+  - {is: v_metric_of, from: e3b, to: accuracy}
+  - {is: v_metric_of, from: e3b, to: order_robust_accuracy}
+  - {is: v_meaning_of, from: {fmt: {orig: fmt_yesno, fill: fmt_fill, truth: fmt_truth}, group: {G1: g_confusable, G2c: g_redef_conflict, G2k: g_redef_control, G3: g_sibling, G4: g_replaced}, cond: {none: {identifier: [no_channel]}, text: {identifier: [text_injection, def_and_examples, place_adjacent]}, vec: {identifier: [single_layer_vector, teacher_examples], value: [{axis: order, s: layer, o: 8}]}, vec_all: {identifier: [single_layer_vector, teacher_examples], value: [{axis: order, s: layer, o: 8}, {axis: count, s: concept_vector, o: 24}]}}}, to: e3b}
+  - {is: v_file_of, from: e3b_transfer.json, to: e3b_g1}
+  - {is: v_axis_of, from: {cond: [none, vec_all]}, to: e3b_g1}
+  - {is: v_filter_of, from: {group: G1}, to: e3b_g1}
+  - {is: v_entry_of, from: '{cond}', to: e3b_g1}
+  - {is: v_metric_of, from: e3b_g1, to: accuracy}
+  - {is: v_metric_of, from: e3b_g1, to: logit_margin}
+  - {is: v_meaning_of, from: {cond: {none: {identifier: [no_channel]}, vec_all: {identifier: [single_layer_vector], value: [{axis: count, s: concept_vector, o: 24}]}}}, to: e3b_g1}
+  - {is: v_file_of, from: e3c_generation.json, to: e3c}
+  - {is: v_axis_of, from: {group: [G2c, G2k], cond: [none, text, vec]}, to: e3c}
+  - {is: v_filter_of, from: {group: '{group}'}, to: e3c}
+  - {is: v_entry_of, from: '{cond}', to: e3c}
+  - {is: v_metric_of, from: e3c, to: judged_accuracy}
+  - {is: v_meaning_of, from: {group: {G1: g_confusable, G2c: g_redef_conflict, G2k: g_redef_control, G3: g_sibling, G4: g_replaced}, cond: {none: {identifier: [no_channel, fmt_free]}, text: {identifier: [text_injection, def_and_examples, fmt_free]}, vec: {identifier: [single_layer_vector, teacher_examples, fmt_free]}}}, to: e3c}
+  - {is: v_file_of, from: e4_modifier_composition.json, to: e4}
+  - {is: v_axis_of, from: {pair: {p1: 甲種/乙種, p2: 青/赤, p3: 一類/二類}, split: [train, test], cond: [none, text, vec]}, to: e4}
+  - {is: v_filter_of, from: {pair: '{pair}', split: '{split}'}, to: e4}
+  - {is: v_entry_of, from: '{cond}', to: e4}
+  - {is: v_metric_of, from: e4, to: accuracy}
+  - {is: v_meaning_of, from: {split: {train: seen_genus, test: unseen_genus}, cond: {none: {identifier: [no_channel]}, text: {identifier: [text_injection, definition_text]}, vec: {identifier: [single_layer_vector, modifier]}}}, to: e4}
+  - {is: v_file_of, from: 'e5_{model}.json', to: e5}
+  - {is: v_axis_of, from: {model: {15b: Qwen2.5-1.5B-Instruct, 4b: Qwen3-4B}, group: [G2c, G2k], cond: [near, rename_semi, rename_opaque, inline, near+inline]}, to: e5}
+  - {is: v_filter_of, from: {group: '{group}'}, to: e5}
+  - {is: v_entry_of, from: '{cond}', to: e5}
+  - {is: v_metric_of, from: e5, to: accuracy}
+  - {is: v_meaning_of, from: {model: {15b: model_15b, 4b: model_4b}, group: {G1: g_confusable, G2c: g_redef_conflict, G2k: g_redef_control, G3: g_sibling, G4: g_replaced}, cond: {near: {identifier: [text_injection, definition_text, place_adjacent]}, rename_semi: {identifier: [text_injection, semi_renaming, place_adjacent]}, rename_opaque: {identifier: [text_injection, opaque_renaming, place_adjacent]}, inline: {identifier: [text_injection, inline_expansion]}, near+inline: {identifier: [text_injection, definition_text, inline_expansion, place_adjacent]}}}, to: e5}
+  - {is: v_file_of, from: e6_cross_use_L8.json, to: e6_L8}
+  - {is: v_rows_of, from: ['{vec}'], to: e6_L8}
+  - {is: v_axis_of, from: {vec: {none: none, defonly: results/e3_Qwen2.5-1.5B-Instruct_L8_defonly.pt, qa: results/e3_Qwen2.5-1.5B-Instruct_L8_qa.pt}}, to: e6_L8}
+  - {is: v_entry_of, from: define_choice, to: e6_L8}
+  - {is: v_metric_of, from: e6_L8, to: accuracy}
+  - {is: v_metric_of, from: e6_L8, to: logit_margin}
+  - {is: v_meaning_of, from: {vec: {none: {identifier: [no_channel]}, defonly: {identifier: [teacher_recite]}, qa: {identifier: [teacher_examples]}}}, to: e6_L8}
+  - {is: v_file_of, from: e6_cross_use_L8.json, to: e6_L8_nll}
+  - {is: v_rows_of, from: ['{vec}'], to: e6_L8_nll}
+  - {is: v_axis_of, from: {vec: {none: none, defonly: results/e3_Qwen2.5-1.5B-Instruct_L8_defonly.pt, qa: results/e3_Qwen2.5-1.5B-Instruct_L8_qa.pt}}, to: e6_L8_nll}
+  - {is: v_entry_of, from: define_nll, to: e6_L8_nll}
+  - {is: v_metric_of, from: e6_L8_nll, to: mean_value}
+  - {is: v_file_of, from: 'e6_cross_use_defqa_{layer}.json', to: e6_defqa}
+  - {is: v_rows_of, from: ['results/e3_Qwen2.5-1.5B-Instruct_{layer}_defqa.pt'], to: e6_defqa}
+  - {is: v_axis_of, from: {layer: [L8, L14]}, to: e6_defqa}
+  - {is: v_entry_of, from: define_choice, to: e6_defqa}
+  - {is: v_metric_of, from: e6_defqa, to: accuracy}
+  - {is: v_metric_of, from: e6_defqa, to: logit_margin}
+  - {is: v_meaning_of, from: {layer: {L8: {identifier: [teacher_both], value: [{axis: order, s: layer, o: 8}]}, L14: {identifier: [teacher_both], value: [{axis: order, s: layer, o: 14}]}}}, to: e6_defqa}
+  - {is: v_file_of, from: 'e6_cross_use_defqa_{layer}.json', to: e6_defqa_nll}
+  - {is: v_rows_of, from: ['results/e3_Qwen2.5-1.5B-Instruct_{layer}_defqa.pt'], to: e6_defqa_nll}
+  - {is: v_axis_of, from: {layer: [L8, L14]}, to: e6_defqa_nll}
+  - {is: v_entry_of, from: define_nll, to: e6_defqa_nll}
+  - {is: v_metric_of, from: e6_defqa_nll, to: mean_value}
+  - {is: v_file_of, from: e7_Qwen3-4B.json, to: e7}
+  - {is: v_axis_of, from: {group: {redef: [G2c], new: [G3, G4]}, cond: [sys1, sys1-far500, sys1-far2000, gl5, gl15, gl55-first, gl55-last]}, to: e7}
+  - {is: v_filter_of, from: {group: '{group}'}, to: e7}
+  - {is: v_entry_of, from: '{cond}', to: e7}
+  - {is: v_metric_of, from: e7, to: accuracy}
+  - {is: v_meaning_of, from: {group: {redef: g_redef_conflict, new: group_new_word}, cond: {sys1: {identifier: [relevant_definitions, place_system]}, sys1-far500: {identifier: [relevant_definitions, place_system], value: [{axis: count, s: following_text, o: 500}]}, sys1-far2000: {identifier: [relevant_definitions, place_system], value: [{axis: count, s: following_text, o: 2000}]}, gl5: {identifier: [glossary, other_definitions], value: [{axis: count, s: preceding_definitions_set, o: {le: 4}}]}, gl15: {identifier: [glossary, other_definitions], value: [{axis: count, s: preceding_definitions_set, o: {le: 14}}]}, gl55-first: {identifier: [glossary, glossary_head], value: [{axis: count, s: following_definitions_set, o: 54}]}, gl55-last: {identifier: [glossary, other_definitions], value: [{axis: count, s: preceding_definitions_set, o: 54}]}}}, to: e7}
+  - {is: v_file_of, from: e7_Qwen3-4B.json, to: e7b}
+  - {is: v_axis_of, from: {cond: [fill500-def, fill2000-def, gl55-pos14, gl55-pos27, gl55-pos41, pre-ordinary19, pre-redef23]}, to: e7b}
+  - {is: v_filter_of, from: {group: G2c}, to: e7b}
+  - {is: v_entry_of, from: '{cond}', to: e7b}
+  - {is: v_metric_of, from: e7b, to: accuracy}
+  - {is: v_meaning_of, from: {cond: {fill500-def: {identifier: [filler_text], value: [{axis: count, s: preceding_text, o: 500}]}, fill2000-def: {identifier: [filler_text], value: [{axis: count, s: preceding_text, o: 2000}]}, gl55-pos14: {identifier: [other_definitions], value: [{axis: count, s: preceding_definitions_set, o: 14}]}, gl55-pos27: {identifier: [other_definitions], value: [{axis: count, s: preceding_definitions_set, o: 27}]}, gl55-pos41: {identifier: [other_definitions], value: [{axis: count, s: preceding_definitions_set, o: 41}]}, pre-ordinary19: {identifier: [ordinary_definitions], value: [{axis: count, s: preceding_definitions_set, o: 19}]}, pre-redef23: {identifier: [other_redefinitions], value: [{axis: count, s: preceding_definitions_set, o: 23}]}}}, to: e7b}
+  - {is: v_file_of, from: e8_L2-13_d0.001.json, to: e8}
+  - {is: v_rows_of, from: [apply], to: e8}
+  - {is: v_axis_of, from: {group: [G2c, G2k], cond: [none, vec]}, to: e8}
+  - {is: v_filter_of, from: {group: '{group}'}, to: e8}
+  - {is: v_entry_of, from: '{cond}', to: e8}
+  - {is: v_metric_of, from: e8, to: accuracy}
+  - {is: v_metric_of, from: e8, to: order_robust_accuracy}
+  - {is: v_meaning_of, from: {group: {G2c: g_redef_conflict, G2k: g_redef_control}, cond: {none: {identifier: [no_channel]}, vec: {identifier: [multi_layer_vector, teacher_both], value: [{axis: order, s: layer, o: {between: [2, 13]}}]}}}, to: e8}
+  - {is: v_file_of, from: e8_L2-13_d0.001.json, to: e8def}
+  - {is: v_rows_of, from: [define], to: e8def}
+  - {is: v_axis_of, from: {cond: [none, vec]}, to: e8def}
+  - {is: v_entry_of, from: '{cond}', to: e8def}
+  - {is: v_metric_of, from: e8def, to: accuracy}
+  - {is: v_metric_of, from: e8def, to: order_robust_accuracy}
+  - {is: v_metric_of, from: e8def, to: logit_margin}
+  - {is: v_meaning_of, from: {cond: {none: {identifier: [no_channel, usage_define_paraphrase]}, vec: {identifier: [multi_layer_vector, teacher_both, usage_define_paraphrase]}}}, to: e8def}
+  - {is: v_file_of, from: e8_L2-13_d0.001.json, to: e8nll}
+  - {is: v_rows_of, from: [define], to: e8nll}
+  - {is: v_axis_of, from: {cond: [nll]}, to: e8nll}
+  - {is: v_entry_of, from: '{cond}', to: e8nll}
+  - {is: v_metric_of, from: e8nll, to: mean_value}
+  - {is: v_meaning_of, from: {cond: {nll: {identifier: [multi_layer_vector, teacher_both, usage_recite]}}}, to: e8nll}
+  - {is: v_file_of, from: e8_L2-13_d0.001.json, to: e8loss}
+  - {is: v_rows_of, from: [train], to: e8loss}
+  - {is: v_axis_of, from: {cond: [loss_last]}, to: e8loss}
+  - {is: v_entry_of, from: '{cond}', to: e8loss}
+  - {is: v_metric_of, from: e8loss, to: mean_value}
+  - {is: v_meaning_of, from: {cond: {loss_last: {identifier: [multi_layer_vector, teaching]}}}, to: e8loss}
+  - {is: v_file_of, from: 'e9_{model}.json', to: e9}
+  - {is: v_axis_of, from: {model: {15b: Qwen2.5-1.5B-Instruct, 4b: Qwen3-4B}, group: [G2c, G2k], type: {rule: 規則, remap: 付け替え}, cond: [direct, cot]}, to: e9}
+  - {is: v_filter_of, from: {group: '{group}', type: '{type}'}, to: e9}
+  - {is: v_entry_of, from: '{cond}', to: e9}
+  - {is: v_metric_of, from: e9, to: accuracy}
+  - {is: v_metric_of, from: e9, to: order_robust_accuracy}
+  - {is: v_meaning_of, from: {model: {15b: model_15b, 4b: model_4b}, group: {G2c: g_redef_conflict, G2k: g_redef_control}, type: {rule: rule_redefinition, remap: remap_redefinition}, cond: {direct: {identifier: [text_injection, definition_text, place_adjacent, single_pass]}, cot: {identifier: [text_injection, definition_text, place_adjacent, scratchpad]}}}, to: e9}
 
   # ===== 観察。s と o は測定値で、p は大きさを比べる動詞（is: observation）
-  - [s, o_e1_redef_below_new_adjacent, e1.4b.G2c.near.accuracy]
-  - [p, o_e1_redef_below_new_adjacent, v_come_before]
-  - [o, o_e1_redef_below_new_adjacent, e1.4b.G3.near.accuracy]
-  - [s, o_e1_glossary_redef_like_none, e1.4b.G2c.glossary.accuracy]
-  - [p, o_e1_glossary_redef_like_none, v_near]
-  - [o, o_e1_glossary_redef_like_none, e1.4b.G2c.none.accuracy]
-  - [tolerance, o_e1_glossary_redef_like_none, 0.1]
-  - [s, o_e1_glossary_sibling_full, e1.4b.G3.glossary.accuracy]
-  - [p, o_e1_glossary_sibling_full, v_level]
-  - [o, o_e1_glossary_sibling_full, 1.0]
-  - [s, o_e1_glossary_replaced_full, e1.4b.G4.glossary.accuracy]
-  - [p, o_e1_glossary_replaced_full, v_level]
-  - [o, o_e1_glossary_replaced_full, 1.0]
-  - [s, o_e1_glossary_below_adjacent, e1.4b.G2c.glossary.accuracy]
-  - [p, o_e1_glossary_below_adjacent, v_come_before]
-  - [o, o_e1_glossary_below_adjacent, e1.4b.G2c.near.accuracy]
-  - [s, o_e1_filler_no_further_drop, e1.4b.G2c.far-2000.accuracy]
-  - [p, o_e1_filler_no_further_drop, v_near]
-  - [o, o_e1_filler_no_further_drop, e1.4b.G2c.glossary.accuracy]
-  - [tolerance, o_e1_filler_no_further_drop, 0.05]
-  - [s, o_e5_opaque_above_adjacent_4b, e5.4b.G2c.rename_opaque.accuracy]
-  - [p, o_e5_opaque_above_adjacent_4b, v_come_after]
-  - [o, o_e5_opaque_above_adjacent_4b, e5.4b.G2c.near.accuracy]
-  - [s, o_e5_semi_like_adjacent_4b, e5.4b.G2c.rename_semi.accuracy]
-  - [p, o_e5_semi_like_adjacent_4b, v_near]
-  - [o, o_e5_semi_like_adjacent_4b, e5.4b.G2c.near.accuracy]
-  - [tolerance, o_e5_semi_like_adjacent_4b, 0.05]
-  - [s, o_e5_opaque_like_adjacent_15b, e5.15b.G2c.rename_opaque.accuracy]
-  - [p, o_e5_opaque_like_adjacent_15b, v_near]
-  - [o, o_e5_opaque_like_adjacent_15b, e5.15b.G2c.near.accuracy]
-  - [tolerance, o_e5_opaque_like_adjacent_15b, 0.01]
-  - [s, o_e5_opaque_lowers_control_4b, e5.4b.G2k.rename_opaque.accuracy]
-  - [p, o_e5_opaque_lowers_control_4b, v_come_before]
-  - [o, o_e5_opaque_lowers_control_4b, e5.4b.G2k.near.accuracy]
-  - [s, o_type_text_rule_below_remap_15b, e1type.15b.G2c.rule.near.accuracy]
-  - [p, o_type_text_rule_below_remap_15b, v_come_before]
-  - [o, o_type_text_rule_below_remap_15b, e1type.15b.G2c.remap.near.accuracy]
-  - [s, o_type_text_rule_like_remap_4b, e1type.4b.G2c.rule.near.accuracy]
-  - [p, o_type_text_rule_like_remap_4b, v_near]
-  - [o, o_type_text_rule_like_remap_4b, e1type.4b.G2c.remap.near.accuracy]
-  - [tolerance, o_type_text_rule_like_remap_4b, 0.01]
-  - [s, o_type_vec_rule_below_remap, e3type.L8_defqa.G2c.rule.vec.accuracy]
-  - [p, o_type_vec_rule_below_remap, v_come_before]
-  - [o, o_type_vec_rule_below_remap, e3type.L8_defqa.G2c.remap.vec.accuracy]
-  - [s, o_type_vec_rule_above_text_rule, e3type.L8_qa.G2c.rule.vec.accuracy]
-  - [p, o_type_vec_rule_above_text_rule, v_come_after]
-  - [o, o_type_vec_rule_above_text_rule, e1type.15b.G2c.rule.near.accuracy]
-  - [s, o_e3_recite_loss_near_zero, e3loss.L8_defonly.mean_value]
-  - [p, o_e3_recite_loss_near_zero, v_near]
-  - [o, o_e3_recite_loss_near_zero, 0.0]
-  - [tolerance, o_e3_recite_loss_near_zero, 0.05]
-  - [s, o_e3_recite_breaks_control, e3.L8_defonly.G2k.vec.accuracy]
-  - [p, o_e3_recite_breaks_control, v_come_before]
-  - [o, o_e3_recite_breaks_control, e3.L8_defonly.G2k.none.accuracy]
-  - [s, o_e3_examples_raise_conflict, e3.L8_qa.G2c.vec.accuracy]
-  - [p, o_e3_examples_raise_conflict, v_come_after]
-  - [o, o_e3_examples_raise_conflict, e3.L8_qa.G2c.none.accuracy]
-  - [s, o_e3_examples_raise_control, e3.L8_qa.G2k.vec.accuracy]
-  - [p, o_e3_examples_raise_control, v_come_after]
-  - [o, o_e3_examples_raise_control, e3.L8_qa.G2k.none.accuracy]
-  - [s, o_e3_vec_ge_text_conflict, e3.L8_qa.G2c.vec.accuracy]
-  - [p, o_e3_vec_ge_text_conflict, v_not_before]
-  - [o, o_e3_vec_ge_text_conflict, e1b.G2c.def+examples.accuracy]
-  - [s, o_e3_vec_gt_text_control, e3.L8_qa.G2k.vec.accuracy]
-  - [p, o_e3_vec_gt_text_control, v_come_after]
-  - [o, o_e3_vec_gt_text_control, e1b.G2k.def+examples.accuracy]
-  - [s, o_e3_vec_more_order_robust, e3.L8_qa.G2c.vec.order_robust_accuracy]
-  - [p, o_e3_vec_more_order_robust, v_come_after]
-  - [o, o_e3_vec_more_order_robust, e1b.G2c.def+examples.order_robust_accuracy]
-  - [s, o_e3_combo_lowers_control_examples_only, e3.L8_qa.G2k.near+vec.accuracy]
-  - [p, o_e3_combo_lowers_control_examples_only, v_come_before]
-  - [o, o_e3_combo_lowers_control_examples_only, e3.L8_qa.G2k.vec.accuracy]
-  - [s, o_e3_combo_ok_conflict_both_teachers, e3.L8_defqa.G2c.near+vec.accuracy]
-  - [p, o_e3_combo_ok_conflict_both_teachers, v_not_before]
-  - [o, o_e3_combo_ok_conflict_both_teachers, e3.L8_defqa.G2c.vec.accuracy]
-  - [s, o_e3_combo_control_better_with_both_teachers, e3.L8_defqa.G2k.near+vec.accuracy]
-  - [p, o_e3_combo_control_better_with_both_teachers, v_come_after]
-  - [o, o_e3_combo_control_better_with_both_teachers, e3.L8_qa.G2k.near+vec.accuracy]
-  - [s, o_e3_both_teachers_same_conflict, e3.L8_defqa.G2c.vec.accuracy]
-  - [p, o_e3_both_teachers_same_conflict, v_level]
-  - [o, o_e3_both_teachers_same_conflict, e3.L8_qa.G2c.vec.accuracy]
-  - [s, o_e3_both_teachers_same_control, e3.L8_defqa.G2k.vec.accuracy]
-  - [p, o_e3_both_teachers_same_control, v_level]
-  - [o, o_e3_both_teachers_same_control, e3.L8_qa.G2k.vec.accuracy]
-  - [s, o_e3_layer14_breaks_control, e3.L14_defqa.G2k.vec.accuracy]
-  - [p, o_e3_layer14_breaks_control, v_come_before]
-  - [o, o_e3_layer14_breaks_control, e3.L14_defqa.G2k.none.accuracy]
-  - [s, o_e3_layer14_same_conflict, e3.L14_defqa.G2c.vec.accuracy]
-  - [p, o_e3_layer14_same_conflict, v_level]
-  - [o, o_e3_layer14_same_conflict, e3.L8_defqa.G2c.vec.accuracy]
-  - [s, o_e3b_fill_same_conflict, e3b.fill.G2c.vec.accuracy]
-  - [p, o_e3b_fill_same_conflict, v_level]
-  - [o, o_e3b_fill_same_conflict, e3b.orig.G2c.vec.accuracy]
-  - [s, o_e3b_truth_same_conflict, e3b.truth.G2c.vec.accuracy]
-  - [p, o_e3b_truth_same_conflict, v_level]
-  - [o, o_e3b_truth_same_conflict, e3b.orig.G2c.vec.accuracy]
-  - [s, o_e3b_text_varies_by_format, e3b.truth.G2c.text.accuracy]
-  - [p, o_e3b_text_varies_by_format, v_come_before]
-  - [o, o_e3b_text_varies_by_format, e3b.orig.G2c.text.accuracy]
-  - [s, o_e3b_control_gain_lost_in_fill, e3b.fill.G2k.vec.accuracy]
-  - [p, o_e3b_control_gain_lost_in_fill, v_come_before]
-  - [o, o_e3b_control_gain_lost_in_fill, e3b.orig.G2k.vec.accuracy]
-  - [s, o_e3b_control_back_to_none_in_fill, e3b.fill.G2k.vec.accuracy]
-  - [p, o_e3b_control_back_to_none_in_fill, v_near]
-  - [o, o_e3b_control_back_to_none_in_fill, e3b.fill.G2k.none.accuracy]
-  - [tolerance, o_e3b_control_back_to_none_in_fill, 0.05]
-  - [s, o_e3b_all_vectors_same_conflict, e3b.orig.G2c.vec_all.accuracy]
-  - [p, o_e3b_all_vectors_same_conflict, v_near]
-  - [o, o_e3b_all_vectors_same_conflict, e3b.orig.G2c.vec.accuracy]
-  - [tolerance, o_e3b_all_vectors_same_conflict, 0.01]
-  - [s, o_e3b_all_vectors_same_control, e3b.orig.G2k.vec_all.accuracy]
-  - [p, o_e3b_all_vectors_same_control, v_near]
-  - [o, o_e3b_all_vectors_same_control, e3b.orig.G2k.vec.accuracy]
-  - [tolerance, o_e3b_all_vectors_same_control, 0.05]
-  - [s, o_e3b_unrelated_accuracy_kept, e3b_g1.vec_all.accuracy]
-  - [p, o_e3b_unrelated_accuracy_kept, v_level]
-  - [o, o_e3b_unrelated_accuracy_kept, 1.0]
-  - [s, o_e3b_unrelated_margin_drops, e3b_g1.vec_all.logit_margin]
-  - [p, o_e3b_unrelated_margin_drops, v_come_before]
-  - [o, o_e3b_unrelated_margin_drops, e3b_g1.none.logit_margin]
-  - [s, o_e3c_vec_above_none_free, e3c.G2c.vec.judged_accuracy]
-  - [p, o_e3c_vec_above_none_free, v_come_after]
-  - [o, o_e3c_vec_above_none_free, e3c.G2c.none.judged_accuracy]
-  - [s, o_e3c_vec_ge_text_free, e3c.G2c.vec.judged_accuracy]
-  - [p, o_e3c_vec_ge_text_free, v_not_before]
-  - [o, o_e3c_vec_ge_text_free, e3c.G2c.text.judged_accuracy]
-  - [s, o_e3c_vec_above_text_control_free, e3c.G2k.vec.judged_accuracy]
-  - [p, o_e3c_vec_above_text_control_free, v_come_after]
-  - [o, o_e3c_vec_above_text_control_free, e3c.G2k.text.judged_accuracy]
-  - [s, o_e6_none_prefers_ordinary, e6_L8.none.logit_margin]
-  - [p, o_e6_none_prefers_ordinary, v_come_before]
-  - [o, o_e6_none_prefers_ordinary, -2.0]
-  - [s, o_e6_recite_paraphrase_at_chance, e6_L8.defonly.logit_margin]
-  - [p, o_e6_recite_paraphrase_at_chance, v_near]
-  - [o, o_e6_recite_paraphrase_at_chance, 0.0]
-  - [tolerance, o_e6_recite_paraphrase_at_chance, 0.5]
-  - [s, o_e6_examples_paraphrase_at_chance, e6_L8.qa.logit_margin]
-  - [p, o_e6_examples_paraphrase_at_chance, v_near]
-  - [o, o_e6_examples_paraphrase_at_chance, 0.0]
-  - [tolerance, o_e6_examples_paraphrase_at_chance, 0.5]
-  - [s, o_e6_examples_recital_harder, e6_L8_nll.qa.mean_value]
-  - [p, o_e6_examples_recital_harder, v_come_after]
-  - [o, o_e6_examples_recital_harder, e6_L8_nll.none.mean_value]
-  - [s, o_e6_both_teachers_recital_easier, e6_defqa_nll.L8.mean_value]
-  - [p, o_e6_both_teachers_recital_easier, v_come_before]
-  - [o, o_e6_both_teachers_recital_easier, e6_L8_nll.none.mean_value]
-  - [s, o_e6_both_teachers_paraphrase_at_chance, e6_defqa.L8.accuracy]
-  - [p, o_e6_both_teachers_paraphrase_at_chance, v_near]
-  - [o, o_e6_both_teachers_paraphrase_at_chance, 0.5]
-  - [tolerance, o_e6_both_teachers_paraphrase_at_chance, 0.05]
-  - [s, o_e6_layer14_paraphrase_below_chance, e6_defqa.L14.accuracy]
-  - [p, o_e6_layer14_paraphrase_below_chance, v_come_before]
-  - [o, o_e6_layer14_paraphrase_below_chance, 0.5]
-  - [s, o_e7_filler_after_no_drop, e7.redef.sys1-far2000.accuracy]
-  - [p, o_e7_filler_after_no_drop, v_near]
-  - [o, o_e7_filler_after_no_drop, e7.redef.sys1.accuracy]
-  - [tolerance, o_e7_filler_after_no_drop, 0.05]
-  - [s, o_e7_head_of_55_no_drop, e7.redef.gl55-first.accuracy]
-  - [p, o_e7_head_of_55_no_drop, v_near]
-  - [o, o_e7_head_of_55_no_drop, e7.redef.sys1.accuracy]
-  - [tolerance, o_e7_head_of_55_no_drop, 0.05]
-  - [s, o_e7_last_below_head, e7.redef.gl55-last.accuracy]
-  - [p, o_e7_last_below_head, v_come_before]
-  - [o, o_e7_last_below_head, e7.redef.gl55-first.accuracy]
-  - [s, o_e7_filler_before_no_drop, e7b.fill2000-def.accuracy]
-  - [p, o_e7_filler_before_no_drop, v_near]
-  - [o, o_e7_filler_before_no_drop, e7.redef.sys1.accuracy]
-  - [tolerance, o_e7_filler_before_no_drop, 0.01]
-  - [s, o_e7_14_preceding_below_head, e7b.gl55-pos14.accuracy]
-  - [p, o_e7_14_preceding_below_head, v_come_before]
-  - [o, o_e7_14_preceding_below_head, e7.redef.gl55-first.accuracy]
-  - [s, o_e7_27_preceding_below_14, e7b.gl55-pos27.accuracy]
-  - [p, o_e7_27_preceding_below_14, v_come_before]
-  - [o, o_e7_27_preceding_below_14, e7b.gl55-pos14.accuracy]
-  - [s, o_e7_kind_of_preceding_irrelevant, e7b.pre-ordinary19.accuracy]
-  - [p, o_e7_kind_of_preceding_irrelevant, v_near]
-  - [o, o_e7_kind_of_preceding_irrelevant, e7b.pre-redef23.accuracy]
-  - [tolerance, o_e7_kind_of_preceding_irrelevant, 0.05]
-  - [s, o_e7_new_word_full_at_last, e7.new.gl55-last.accuracy]
-  - [p, o_e7_new_word_full_at_last, v_level]
-  - [o, o_e7_new_word_full_at_last, 1.0]
-  - [s, o_e7_15_definitions_no_drop, e7.redef.gl15.accuracy]
-  - [p, o_e7_15_definitions_no_drop, v_near]
-  - [o, o_e7_15_definitions_no_drop, e7.redef.sys1.accuracy]
-  - [tolerance, o_e7_15_definitions_no_drop, 0.05]
-  - [s, o_e4_modifier_transfers_in_converged_pair, e4.p3.test.vec.accuracy]
-  - [p, o_e4_modifier_transfers_in_converged_pair, v_come_after]
-  - [o, o_e4_modifier_transfers_in_converged_pair, e4.p3.test.text.accuracy]
-  - [s, o_e4_pair1_training_failed, e4.p1.train.vec.accuracy]
-  - [p, o_e4_pair1_training_failed, v_near]
-  - [o, o_e4_pair1_training_failed, 0.5]
-  - [tolerance, o_e4_pair1_training_failed, 0.01]
-  - [s, o_e8_paraphrase_like_single_layer, e8def.vec.accuracy]
-  - [p, o_e8_paraphrase_like_single_layer, v_near]
-  - [o, o_e8_paraphrase_like_single_layer, e6_defqa.L8.accuracy]
-  - [tolerance, o_e8_paraphrase_like_single_layer, 0.05]
-  - [s, o_e8_conflict_ge_single_layer, e8.G2c.vec.accuracy]
-  - [p, o_e8_conflict_ge_single_layer, v_not_before]
-  - [o, o_e8_conflict_ge_single_layer, e3.L8_defqa.G2c.vec.accuracy]
-  - [s, o_e8_control_below_single_layer, e8.G2k.vec.accuracy]
-  - [p, o_e8_control_below_single_layer, v_come_before]
-  - [o, o_e8_control_below_single_layer, e3.L8_defqa.G2k.vec.accuracy]
-  - [s, o_e8_less_order_robust_than_single_layer, e8.G2c.vec.order_robust_accuracy]
-  - [p, o_e8_less_order_robust_than_single_layer, v_come_before]
-  - [o, o_e8_less_order_robust_than_single_layer, e3.L8_defqa.G2c.vec.order_robust_accuracy]
-  - [s, o_e8_training_loss_above_single_layer, e8loss.loss_last.mean_value]
-  - [p, o_e8_training_loss_above_single_layer, v_come_after]
-  - [o, o_e8_training_loss_above_single_layer, e3loss.L8_defqa.mean_value]
-  - [s, o_e9_scratchpad_not_above_direct_rule_15b, e9.15b.G2c.rule.cot.accuracy]
-  - [p, o_e9_scratchpad_not_above_direct_rule_15b, v_come_before]
-  - [o, o_e9_scratchpad_not_above_direct_rule_15b, e9.15b.G2c.rule.direct.accuracy]
-  - [s, o_e9_scratchpad_below_direct_remap_15b, e9.15b.G2c.remap.cot.accuracy]
-  - [p, o_e9_scratchpad_below_direct_remap_15b, v_come_before]
-  - [o, o_e9_scratchpad_below_direct_remap_15b, e9.15b.G2c.remap.direct.accuracy]
-  - [s, o_e9_scratchpad_above_direct_rule_4b, e9.4b.G2c.rule.cot.accuracy]
-  - [p, o_e9_scratchpad_above_direct_rule_4b, v_come_after]
-  - [o, o_e9_scratchpad_above_direct_rule_4b, e9.4b.G2c.rule.direct.accuracy]
-  - [s, o_e9_scratchpad_like_direct_remap_4b, e9.4b.G2c.remap.cot.accuracy]
-  - [p, o_e9_scratchpad_like_direct_remap_4b, v_level]
-  - [o, o_e9_scratchpad_like_direct_remap_4b, e9.4b.G2c.remap.direct.accuracy]
-  - [s, o_e9_scratchpad_not_below_direct_remap_control_4b, e9.4b.G2k.remap.cot.accuracy]
-  - [p, o_e9_scratchpad_not_below_direct_remap_control_4b, v_not_before]
-  - [o, o_e9_scratchpad_not_below_direct_remap_control_4b, e9.4b.G2k.remap.direct.accuracy]
-  - [s, o_e9_scratchpad_below_direct_remap_control_15b, e9.15b.G2k.remap.cot.accuracy]
-  - [p, o_e9_scratchpad_below_direct_remap_control_15b, v_come_before]
-  - [o, o_e9_scratchpad_below_direct_remap_control_15b, e9.15b.G2k.remap.direct.accuracy]
+  - {is: v_refer, from: o_e1_redef_below_new_adjacent, to: {is: v_come_before, from: e1.4b.G2c.near.accuracy, to: e1.4b.G3.near.accuracy}}
+  - {is: v_refer, from: o_e1_glossary_redef_like_none, to: {is: v_near, from: e1.4b.G2c.glossary.accuracy, to: e1.4b.G2c.none.accuracy, new: 0.1}}
+  - {is: v_refer, from: o_e1_glossary_sibling_full, to: {is: v_level, from: e1.4b.G3.glossary.accuracy, to: 1.0}}
+  - {is: v_refer, from: o_e1_glossary_replaced_full, to: {is: v_level, from: e1.4b.G4.glossary.accuracy, to: 1.0}}
+  - {is: v_refer, from: o_e1_glossary_below_adjacent, to: {is: v_come_before, from: e1.4b.G2c.glossary.accuracy, to: e1.4b.G2c.near.accuracy}}
+  - {is: v_refer, from: o_e1_filler_no_further_drop, to: {is: v_near, from: e1.4b.G2c.far-2000.accuracy, to: e1.4b.G2c.glossary.accuracy, new: 0.05}}
+  - {is: v_refer, from: o_e5_opaque_above_adjacent_4b, to: {is: v_come_after, from: e5.4b.G2c.rename_opaque.accuracy, to: e5.4b.G2c.near.accuracy}}
+  - {is: v_refer, from: o_e5_semi_like_adjacent_4b, to: {is: v_near, from: e5.4b.G2c.rename_semi.accuracy, to: e5.4b.G2c.near.accuracy, new: 0.05}}
+  - {is: v_refer, from: o_e5_opaque_like_adjacent_15b, to: {is: v_near, from: e5.15b.G2c.rename_opaque.accuracy, to: e5.15b.G2c.near.accuracy, new: 0.01}}
+  - {is: v_refer, from: o_e5_opaque_lowers_control_4b, to: {is: v_come_before, from: e5.4b.G2k.rename_opaque.accuracy, to: e5.4b.G2k.near.accuracy}}
+  - {is: v_refer, from: o_type_text_rule_below_remap_15b, to: {is: v_come_before, from: e1type.15b.G2c.rule.near.accuracy, to: e1type.15b.G2c.remap.near.accuracy}}
+  - {is: v_refer, from: o_type_text_rule_like_remap_4b, to: {is: v_near, from: e1type.4b.G2c.rule.near.accuracy, to: e1type.4b.G2c.remap.near.accuracy, new: 0.01}}
+  - {is: v_refer, from: o_type_vec_rule_below_remap, to: {is: v_come_before, from: e3type.L8_defqa.G2c.rule.vec.accuracy, to: e3type.L8_defqa.G2c.remap.vec.accuracy}}
+  - {is: v_refer, from: o_type_vec_rule_above_text_rule, to: {is: v_come_after, from: e3type.L8_qa.G2c.rule.vec.accuracy, to: e1type.15b.G2c.rule.near.accuracy}}
+  - {is: v_refer, from: o_e3_recite_loss_near_zero, to: {is: v_near, from: e3loss.L8_defonly.mean_value, to: 0.0, new: 0.05}}
+  - {is: v_refer, from: o_e3_recite_breaks_control, to: {is: v_come_before, from: e3.L8_defonly.G2k.vec.accuracy, to: e3.L8_defonly.G2k.none.accuracy}}
+  - {is: v_refer, from: o_e3_examples_raise_conflict, to: {is: v_come_after, from: e3.L8_qa.G2c.vec.accuracy, to: e3.L8_qa.G2c.none.accuracy}}
+  - {is: v_refer, from: o_e3_examples_raise_control, to: {is: v_come_after, from: e3.L8_qa.G2k.vec.accuracy, to: e3.L8_qa.G2k.none.accuracy}}
+  - {is: v_refer, from: o_e3_vec_ge_text_conflict, to: {is: v_not_before, from: e3.L8_qa.G2c.vec.accuracy, to: e1b.G2c.def+examples.accuracy}}
+  - {is: v_refer, from: o_e3_vec_gt_text_control, to: {is: v_come_after, from: e3.L8_qa.G2k.vec.accuracy, to: e1b.G2k.def+examples.accuracy}}
+  - {is: v_refer, from: o_e3_vec_more_order_robust, to: {is: v_come_after, from: e3.L8_qa.G2c.vec.order_robust_accuracy, to: e1b.G2c.def+examples.order_robust_accuracy}}
+  - {is: v_refer, from: o_e3_combo_lowers_control_examples_only, to: {is: v_come_before, from: e3.L8_qa.G2k.near+vec.accuracy, to: e3.L8_qa.G2k.vec.accuracy}}
+  - {is: v_refer, from: o_e3_combo_ok_conflict_both_teachers, to: {is: v_not_before, from: e3.L8_defqa.G2c.near+vec.accuracy, to: e3.L8_defqa.G2c.vec.accuracy}}
+  - {is: v_refer, from: o_e3_combo_control_better_with_both_teachers, to: {is: v_come_after, from: e3.L8_defqa.G2k.near+vec.accuracy, to: e3.L8_qa.G2k.near+vec.accuracy}}
+  - {is: v_refer, from: o_e3_both_teachers_same_conflict, to: {is: v_level, from: e3.L8_defqa.G2c.vec.accuracy, to: e3.L8_qa.G2c.vec.accuracy}}
+  - {is: v_refer, from: o_e3_both_teachers_same_control, to: {is: v_level, from: e3.L8_defqa.G2k.vec.accuracy, to: e3.L8_qa.G2k.vec.accuracy}}
+  - {is: v_refer, from: o_e3_layer14_breaks_control, to: {is: v_come_before, from: e3.L14_defqa.G2k.vec.accuracy, to: e3.L14_defqa.G2k.none.accuracy}}
+  - {is: v_refer, from: o_e3_layer14_same_conflict, to: {is: v_level, from: e3.L14_defqa.G2c.vec.accuracy, to: e3.L8_defqa.G2c.vec.accuracy}}
+  - {is: v_refer, from: o_e3b_fill_same_conflict, to: {is: v_level, from: e3b.fill.G2c.vec.accuracy, to: e3b.orig.G2c.vec.accuracy}}
+  - {is: v_refer, from: o_e3b_truth_same_conflict, to: {is: v_level, from: e3b.truth.G2c.vec.accuracy, to: e3b.orig.G2c.vec.accuracy}}
+  - {is: v_refer, from: o_e3b_text_varies_by_format, to: {is: v_come_before, from: e3b.truth.G2c.text.accuracy, to: e3b.orig.G2c.text.accuracy}}
+  - {is: v_refer, from: o_e3b_control_gain_lost_in_fill, to: {is: v_come_before, from: e3b.fill.G2k.vec.accuracy, to: e3b.orig.G2k.vec.accuracy}}
+  - {is: v_refer, from: o_e3b_control_back_to_none_in_fill, to: {is: v_near, from: e3b.fill.G2k.vec.accuracy, to: e3b.fill.G2k.none.accuracy, new: 0.05}}
+  - {is: v_refer, from: o_e3b_all_vectors_same_conflict, to: {is: v_near, from: e3b.orig.G2c.vec_all.accuracy, to: e3b.orig.G2c.vec.accuracy, new: 0.01}}
+  - {is: v_refer, from: o_e3b_all_vectors_same_control, to: {is: v_near, from: e3b.orig.G2k.vec_all.accuracy, to: e3b.orig.G2k.vec.accuracy, new: 0.05}}
+  - {is: v_refer, from: o_e3b_unrelated_accuracy_kept, to: {is: v_level, from: e3b_g1.vec_all.accuracy, to: 1.0}}
+  - {is: v_refer, from: o_e3b_unrelated_margin_drops, to: {is: v_come_before, from: e3b_g1.vec_all.logit_margin, to: e3b_g1.none.logit_margin}}
+  - {is: v_refer, from: o_e3c_vec_above_none_free, to: {is: v_come_after, from: e3c.G2c.vec.judged_accuracy, to: e3c.G2c.none.judged_accuracy}}
+  - {is: v_refer, from: o_e3c_vec_ge_text_free, to: {is: v_not_before, from: e3c.G2c.vec.judged_accuracy, to: e3c.G2c.text.judged_accuracy}}
+  - {is: v_refer, from: o_e3c_vec_above_text_control_free, to: {is: v_come_after, from: e3c.G2k.vec.judged_accuracy, to: e3c.G2k.text.judged_accuracy}}
+  - {is: v_refer, from: o_e6_none_prefers_ordinary, to: {is: v_come_before, from: e6_L8.none.logit_margin, to: -2.0}}
+  - {is: v_refer, from: o_e6_recite_paraphrase_at_chance, to: {is: v_near, from: e6_L8.defonly.logit_margin, to: 0.0, new: 0.5}}
+  - {is: v_refer, from: o_e6_examples_paraphrase_at_chance, to: {is: v_near, from: e6_L8.qa.logit_margin, to: 0.0, new: 0.5}}
+  - {is: v_refer, from: o_e6_examples_recital_harder, to: {is: v_come_after, from: e6_L8_nll.qa.mean_value, to: e6_L8_nll.none.mean_value}}
+  - {is: v_refer, from: o_e6_both_teachers_recital_easier, to: {is: v_come_before, from: e6_defqa_nll.L8.mean_value, to: e6_L8_nll.none.mean_value}}
+  - {is: v_refer, from: o_e6_both_teachers_paraphrase_at_chance, to: {is: v_near, from: e6_defqa.L8.accuracy, to: 0.5, new: 0.05}}
+  - {is: v_refer, from: o_e6_layer14_paraphrase_below_chance, to: {is: v_come_before, from: e6_defqa.L14.accuracy, to: 0.5}}
+  - {is: v_refer, from: o_e7_filler_after_no_drop, to: {is: v_near, from: e7.redef.sys1-far2000.accuracy, to: e7.redef.sys1.accuracy, new: 0.05}}
+  - {is: v_refer, from: o_e7_head_of_55_no_drop, to: {is: v_near, from: e7.redef.gl55-first.accuracy, to: e7.redef.sys1.accuracy, new: 0.05}}
+  - {is: v_refer, from: o_e7_last_below_head, to: {is: v_come_before, from: e7.redef.gl55-last.accuracy, to: e7.redef.gl55-first.accuracy}}
+  - {is: v_refer, from: o_e7_filler_before_no_drop, to: {is: v_near, from: e7b.fill2000-def.accuracy, to: e7.redef.sys1.accuracy, new: 0.01}}
+  - {is: v_refer, from: o_e7_14_preceding_below_head, to: {is: v_come_before, from: e7b.gl55-pos14.accuracy, to: e7.redef.gl55-first.accuracy}}
+  - {is: v_refer, from: o_e7_27_preceding_below_14, to: {is: v_come_before, from: e7b.gl55-pos27.accuracy, to: e7b.gl55-pos14.accuracy}}
+  - {is: v_refer, from: o_e7_kind_of_preceding_irrelevant, to: {is: v_near, from: e7b.pre-ordinary19.accuracy, to: e7b.pre-redef23.accuracy, new: 0.05}}
+  - {is: v_refer, from: o_e7_new_word_full_at_last, to: {is: v_level, from: e7.new.gl55-last.accuracy, to: 1.0}}
+  - {is: v_refer, from: o_e7_15_definitions_no_drop, to: {is: v_near, from: e7.redef.gl15.accuracy, to: e7.redef.sys1.accuracy, new: 0.05}}
+  - {is: v_refer, from: o_e4_modifier_transfers_in_converged_pair, to: {is: v_come_after, from: e4.p3.test.vec.accuracy, to: e4.p3.test.text.accuracy}}
+  - {is: v_refer, from: o_e4_pair1_training_failed, to: {is: v_near, from: e4.p1.train.vec.accuracy, to: 0.5, new: 0.01}}
+  - {is: v_refer, from: o_e8_paraphrase_like_single_layer, to: {is: v_near, from: e8def.vec.accuracy, to: e6_defqa.L8.accuracy, new: 0.05}}
+  - {is: v_refer, from: o_e8_conflict_ge_single_layer, to: {is: v_not_before, from: e8.G2c.vec.accuracy, to: e3.L8_defqa.G2c.vec.accuracy}}
+  - {is: v_refer, from: o_e8_control_below_single_layer, to: {is: v_come_before, from: e8.G2k.vec.accuracy, to: e3.L8_defqa.G2k.vec.accuracy}}
+  - {is: v_refer, from: o_e8_less_order_robust_than_single_layer, to: {is: v_come_before, from: e8.G2c.vec.order_robust_accuracy, to: e3.L8_defqa.G2c.vec.order_robust_accuracy}}
+  - {is: v_refer, from: o_e8_training_loss_above_single_layer, to: {is: v_come_after, from: e8loss.loss_last.mean_value, to: e3loss.L8_defqa.mean_value}}
+  - {is: v_refer, from: o_e9_scratchpad_not_above_direct_rule_15b, to: {is: v_come_before, from: e9.15b.G2c.rule.cot.accuracy, to: e9.15b.G2c.rule.direct.accuracy}}
+  - {is: v_refer, from: o_e9_scratchpad_below_direct_remap_15b, to: {is: v_come_before, from: e9.15b.G2c.remap.cot.accuracy, to: e9.15b.G2c.remap.direct.accuracy}}
+  - {is: v_refer, from: o_e9_scratchpad_above_direct_rule_4b, to: {is: v_come_after, from: e9.4b.G2c.rule.cot.accuracy, to: e9.4b.G2c.rule.direct.accuracy}}
+  - {is: v_refer, from: o_e9_scratchpad_like_direct_remap_4b, to: {is: v_level, from: e9.4b.G2c.remap.cot.accuracy, to: e9.4b.G2c.remap.direct.accuracy}}
+  - {is: v_refer, from: o_e9_scratchpad_not_below_direct_remap_control_4b, to: {is: v_not_before, from: e9.4b.G2k.remap.cot.accuracy, to: e9.4b.G2k.remap.direct.accuracy}}
+  - {is: v_refer, from: o_e9_scratchpad_below_direct_remap_control_15b, to: {is: v_come_before, from: e9.15b.G2k.remap.cot.accuracy, to: e9.15b.G2k.remap.direct.accuracy}}
 
   # ===== 仮説（is: hypothesis）
-  - [s, h_collision_lowers_following, prior_collision]
-  - [p, h_collision_lowers_following, v_lower]
-  - [o, h_collision_lowers_following, redefinition_following]
-  - [scope, h_collision_lowers_following, model_4b]
-  - [scope, h_collision_lowers_following, text_injection]
-  - [evidence, h_collision_lowers_following, o_e1_redef_below_new_adjacent]
-  - [evidence, h_collision_lowers_following, o_e1_glossary_redef_like_none]
-  - [evidence, h_collision_lowers_following, o_e1_glossary_sibling_full]
-  - [evidence, h_collision_lowers_following, o_e1_glossary_replaced_full]
-  - [evidence, h_collision_lowers_following, o_e5_opaque_above_adjacent_4b]
-  - [s, h_chain_length_lowers_following, chain_length]
-  - [p, h_chain_length_lowers_following, v_lower]
-  - [o, h_chain_length_lowers_following, redefinition_following]
-  - [scope, h_chain_length_lowers_following, model_15b]
-  - [scope, h_chain_length_lowers_following, text_injection]
-  - [scope, h_chain_length_lowers_following, single_pass]
-  - [limitation, h_chain_length_lowers_following, lim_post_hoc]
-  - [evidence, h_chain_length_lowers_following, o_type_text_rule_below_remap_15b]
-  - [evidence, h_chain_length_lowers_following, o_type_text_rule_like_remap_4b]
-  - [evidence, h_chain_length_lowers_following, o_e5_opaque_like_adjacent_15b]
-  - [against, h_chain_length_lowers_following, o_e9_scratchpad_not_above_direct_rule_15b]
-  - [note, h_chain_length_lowers_following, 規則型と付け替え型の分類は、結果の一部を見たあとで行った]
-  - [s, h_scratchpad_raises_rule_following, scratchpad]
-  - [p, h_scratchpad_raises_rule_following, v_raise]
-  - [o, h_scratchpad_raises_rule_following, redefinition_following]
-  - [scope, h_scratchpad_raises_rule_following, model_15b]
-  - [scope, h_scratchpad_raises_rule_following, rule_redefinition]
-  - [scope, h_scratchpad_raises_rule_following, text_injection]
-  - [limitation, h_scratchpad_raises_rule_following, lim_one_item]
-  - [against, h_scratchpad_raises_rule_following, o_e9_scratchpad_not_above_direct_rule_15b]
-  - [note, h_scratchpad_raises_rule_following, 書き出した文を読むと、条件の読み取りではなく、数の大小の照合を誤っている（22歳は25歳以上である、など）]
-  - [s, h_scratchpad_lowers_remap_following, scratchpad]
-  - [p, h_scratchpad_lowers_remap_following, v_lower]
-  - [o, h_scratchpad_lowers_remap_following, redefinition_following]
-  - [scope, h_scratchpad_lowers_remap_following, model_15b]
-  - [scope, h_scratchpad_lowers_remap_following, remap_redefinition]
-  - [scope, h_scratchpad_lowers_remap_following, text_injection]
-  - [evidence, h_scratchpad_lowers_remap_following, o_e9_scratchpad_below_direct_remap_15b]
-  - [evidence, h_scratchpad_lowers_remap_following, o_e9_scratchpad_below_direct_remap_control_15b]
-  - [s, h_scratchpad_raises_rule_following_4b, scratchpad]
-  - [p, h_scratchpad_raises_rule_following_4b, v_raise]
-  - [o, h_scratchpad_raises_rule_following_4b, redefinition_following]
-  - [scope, h_scratchpad_raises_rule_following_4b, model_4b]
-  - [scope, h_scratchpad_raises_rule_following_4b, rule_redefinition]
-  - [scope, h_scratchpad_raises_rule_following_4b, text_injection]
-  - [evidence, h_scratchpad_raises_rule_following_4b, o_e9_scratchpad_above_direct_rule_4b]
-  - [note, h_scratchpad_raises_rule_following_4b, 12問のうち、正答が9問から11問に増えた]
-  - [s, h_scratchpad_lowers_remap_following_4b, scratchpad]
-  - [p, h_scratchpad_lowers_remap_following_4b, v_lower]
-  - [o, h_scratchpad_lowers_remap_following_4b, redefinition_following]
-  - [scope, h_scratchpad_lowers_remap_following_4b, model_4b]
-  - [scope, h_scratchpad_lowers_remap_following_4b, remap_redefinition]
-  - [scope, h_scratchpad_lowers_remap_following_4b, text_injection]
-  - [against, h_scratchpad_lowers_remap_following_4b, o_e9_scratchpad_like_direct_remap_4b]
-  - [against, h_scratchpad_lowers_remap_following_4b, o_e9_scratchpad_not_below_direct_remap_control_4b]
-  - [s, h_length_does_not_lower, context_length]
-  - [p, h_length_does_not_lower, v_not_lower]
-  - [o, h_length_does_not_lower, redefinition_following]
-  - [scope, h_length_does_not_lower, model_4b]
-  - [scope, h_length_does_not_lower, text_injection]
-  - [limitation, h_length_does_not_lower, lim_range]
-  - [evidence, h_length_does_not_lower, o_e1_filler_no_further_drop]
-  - [evidence, h_length_does_not_lower, o_e7_filler_after_no_drop]
-  - [evidence, h_length_does_not_lower, o_e7_head_of_55_no_drop]
-  - [note, h_length_does_not_lower, 試した文脈は最大約3500トークン]
-  - [s, h_distance_does_not_lower, distance_to_question]
-  - [p, h_distance_does_not_lower, v_not_lower]
-  - [o, h_distance_does_not_lower, redefinition_following]
-  - [scope, h_distance_does_not_lower, model_4b]
-  - [scope, h_distance_does_not_lower, text_injection]
-  - [evidence, h_distance_does_not_lower, o_e7_filler_after_no_drop]
-  - [evidence, h_distance_does_not_lower, o_e7_last_below_head]
-  - [s, h_depth_does_not_lower, context_depth]
-  - [p, h_depth_does_not_lower, v_not_lower]
-  - [o, h_depth_does_not_lower, redefinition_following]
-  - [scope, h_depth_does_not_lower, model_4b]
-  - [scope, h_depth_does_not_lower, text_injection]
-  - [evidence, h_depth_does_not_lower, o_e7_filler_before_no_drop]
-  - [s, h_preceding_definitions_lower, preceding_definitions]
-  - [p, h_preceding_definitions_lower, v_lower]
-  - [o, h_preceding_definitions_lower, redefinition_following]
-  - [scope, h_preceding_definitions_lower, model_4b]
-  - [scope, h_preceding_definitions_lower, glossary]
-  - [evidence, h_preceding_definitions_lower, o_e7_last_below_head]
-  - [evidence, h_preceding_definitions_lower, o_e7_14_preceding_below_head]
-  - [evidence, h_preceding_definitions_lower, o_e7_27_preceding_below_14]
-  - [evidence, h_preceding_definitions_lower, o_e7_kind_of_preceding_irrelevant]
-  - [evidence, h_preceding_definitions_lower, o_e7_15_definitions_no_drop]
-  - [s, h_following_definitions_do_not_lower, following_definitions]
-  - [p, h_following_definitions_do_not_lower, v_not_lower]
-  - [o, h_following_definitions_do_not_lower, redefinition_following]
-  - [scope, h_following_definitions_do_not_lower, model_4b]
-  - [scope, h_following_definitions_do_not_lower, glossary]
-  - [evidence, h_following_definitions_do_not_lower, o_e7_head_of_55_no_drop]
-  - [s, h_new_word_immune, new_word]
-  - [p, h_new_word_immune, v_immune]
-  - [o, h_new_word_immune, preceding_definitions]
-  - [scope, h_new_word_immune, model_4b]
-  - [scope, h_new_word_immune, glossary]
-  - [evidence, h_new_word_immune, o_e7_new_word_full_at_last]
-  - [evidence, h_new_word_immune, o_e1_glossary_sibling_full]
-  - [evidence, h_new_word_immune, o_e1_glossary_replaced_full]
-  - [s, h_attention_causes_preceding_effect, attention]
-  - [p, h_attention_causes_preceding_effect, v_cause]
-  - [o, h_attention_causes_preceding_effect, preceding_definition_effect]
-  - [scope, h_attention_causes_preceding_effect, model_4b]
-  - [note, h_attention_causes_preceding_effect, 先頭に置くと落ちないことは、単純な注意の薄まりでは説明できない]
-  - [s, h_opaque_renaming_raises, opaque_renaming]
-  - [p, h_opaque_renaming_raises, v_raise]
-  - [o, h_opaque_renaming_raises, redefinition_following]
-  - [scope, h_opaque_renaming_raises, model_4b]
-  - [scope, h_opaque_renaming_raises, text_injection]
-  - [evidence, h_opaque_renaming_raises, o_e5_opaque_above_adjacent_4b]
-  - [s, h_semi_renaming_does_not_raise, semi_renaming]
-  - [p, h_semi_renaming_does_not_raise, v_not_raise]
-  - [o, h_semi_renaming_does_not_raise, redefinition_following]
-  - [scope, h_semi_renaming_does_not_raise, model_4b]
-  - [scope, h_semi_renaming_does_not_raise, text_injection]
-  - [evidence, h_semi_renaming_does_not_raise, o_e5_semi_like_adjacent_4b]
-  - [s, h_opaque_renaming_lowers_control, opaque_renaming]
-  - [p, h_opaque_renaming_lowers_control, v_lower]
-  - [o, h_opaque_renaming_lowers_control, control_preservation]
-  - [scope, h_opaque_renaming_lowers_control, model_4b]
-  - [scope, h_opaque_renaming_lowers_control, text_injection]
-  - [limitation, h_opaque_renaming_lowers_control, lim_one_item]
-  - [evidence, h_opaque_renaming_lowers_control, o_e5_opaque_lowers_control_4b]
-  - [note, h_opaque_renaming_lowers_control, 差は1問]
-  - [s, h_vector_raises_following, single_layer_vector]
-  - [p, h_vector_raises_following, v_raise]
-  - [o, h_vector_raises_following, redefinition_following]
-  - [scope, h_vector_raises_following, model_15b]
-  - [scope, h_vector_raises_following, teacher_examples]
-  - [evidence, h_vector_raises_following, o_e3_examples_raise_conflict]
-  - [evidence, h_vector_raises_following, o_e3_vec_ge_text_conflict]
-  - [evidence, h_vector_raises_following, o_e3_vec_more_order_robust]
-  - [s, h_vector_raises_control, single_layer_vector]
-  - [p, h_vector_raises_control, v_raise]
-  - [o, h_vector_raises_control, control_preservation]
-  - [scope, h_vector_raises_control, model_15b]
-  - [scope, h_vector_raises_control, teacher_examples]
-  - [scope, h_vector_raises_control, fmt_yesno]
-  - [evidence, h_vector_raises_control, o_e3_examples_raise_control]
-  - [evidence, h_vector_raises_control, o_e3_vec_gt_text_control]
-  - [s, h_format_does_not_lower_following, format_variation]
-  - [p, h_format_does_not_lower_following, v_not_lower]
-  - [o, h_format_does_not_lower_following, redefinition_following]
-  - [scope, h_format_does_not_lower_following, model_15b]
-  - [scope, h_format_does_not_lower_following, single_layer_vector]
-  - [evidence, h_format_does_not_lower_following, o_e3b_fill_same_conflict]
-  - [evidence, h_format_does_not_lower_following, o_e3b_truth_same_conflict]
-  - [s, h_format_lowers_control_gain, format_variation]
-  - [p, h_format_lowers_control_gain, v_lower]
-  - [o, h_format_lowers_control_gain, control_preservation]
-  - [scope, h_format_lowers_control_gain, model_15b]
-  - [scope, h_format_lowers_control_gain, single_layer_vector]
-  - [evidence, h_format_lowers_control_gain, o_e3b_control_gain_lost_in_fill]
-  - [evidence, h_format_lowers_control_gain, o_e3b_control_back_to_none_in_fill]
-  - [s, h_vector_count_does_not_lower, vector_count]
-  - [p, h_vector_count_does_not_lower, v_not_lower]
-  - [o, h_vector_count_does_not_lower, redefinition_following]
-  - [scope, h_vector_count_does_not_lower, model_15b]
-  - [scope, h_vector_count_does_not_lower, single_layer_vector]
-  - [limitation, h_vector_count_does_not_lower, lim_range]
-  - [evidence, h_vector_count_does_not_lower, o_e3b_all_vectors_same_conflict]
-  - [evidence, h_vector_count_does_not_lower, o_e3b_all_vectors_same_control]
-  - [note, h_vector_count_does_not_lower, 24本まで]
-  - [s, h_unrelated_items_immune, unrelated_items]
-  - [p, h_unrelated_items_immune, v_immune]
-  - [o, h_unrelated_items_immune, single_layer_vector]
-  - [scope, h_unrelated_items_immune, model_15b]
-  - [evidence, h_unrelated_items_immune, o_e3b_unrelated_accuracy_kept]
-  - [against, h_unrelated_items_immune, o_e3b_unrelated_margin_drops]
-  - [s, h_vector_raises_following_free, single_layer_vector]
-  - [p, h_vector_raises_following_free, v_raise]
-  - [o, h_vector_raises_following_free, redefinition_following]
-  - [scope, h_vector_raises_following_free, model_15b]
-  - [scope, h_vector_raises_following_free, teacher_examples]
-  - [scope, h_vector_raises_following_free, fmt_free]
-  - [evidence, h_vector_raises_following_free, o_e3c_vec_above_none_free]
-  - [evidence, h_vector_raises_following_free, o_e3c_vec_ge_text_free]
-  - [s, h_layer14_lowers_control, layer_choice]
-  - [p, h_layer14_lowers_control, v_lower]
-  - [o, h_layer14_lowers_control, control_preservation]
-  - [scope, h_layer14_lowers_control, model_15b]
-  - [scope, h_layer14_lowers_control, single_layer_vector]
-  - [scope, h_layer14_lowers_control, teacher_both]
-  - [limitation, h_layer14_lowers_control, lim_range]
-  - [evidence, h_layer14_lowers_control, o_e3_layer14_breaks_control]
-  - [evidence, h_layer14_lowers_control, o_e3_layer14_same_conflict]
-  - [note, h_layer14_lowers_control, 第8層と第14層の2点だけ]
-  - [s, h_rule_type_lowers_vector_following, rule_redefinition]
-  - [p, h_rule_type_lowers_vector_following, v_lower]
-  - [o, h_rule_type_lowers_vector_following, redefinition_following]
-  - [scope, h_rule_type_lowers_vector_following, model_15b]
-  - [scope, h_rule_type_lowers_vector_following, single_layer_vector]
-  - [limitation, h_rule_type_lowers_vector_following, lim_post_hoc]
-  - [evidence, h_rule_type_lowers_vector_following, o_type_vec_rule_below_remap]
-  - [against, h_rule_type_lowers_vector_following, o_type_vec_rule_above_text_rule]
-  - [note, h_rule_type_lowers_vector_following, 規則型でも文章より高い。分類は結果の一部を見たあとで行った]
-  - [s, h_recite_does_not_transfer_to_apply, usage_recite]
-  - [p, h_recite_does_not_transfer_to_apply, v_not_transfer]
-  - [o, h_recite_does_not_transfer_to_apply, usage_apply]
-  - [scope, h_recite_does_not_transfer_to_apply, model_15b]
-  - [scope, h_recite_does_not_transfer_to_apply, single_layer_vector]
-  - [evidence, h_recite_does_not_transfer_to_apply, o_e3_recite_loss_near_zero]
-  - [evidence, h_recite_does_not_transfer_to_apply, o_e3_recite_breaks_control]
-  - [s, h_recite_does_not_transfer_to_paraphrase, usage_recite]
-  - [p, h_recite_does_not_transfer_to_paraphrase, v_not_transfer]
-  - [o, h_recite_does_not_transfer_to_paraphrase, usage_define_paraphrase]
-  - [scope, h_recite_does_not_transfer_to_paraphrase, model_15b]
-  - [scope, h_recite_does_not_transfer_to_paraphrase, single_layer_vector]
-  - [evidence, h_recite_does_not_transfer_to_paraphrase, o_e6_recite_paraphrase_at_chance]
-  - [evidence, h_recite_does_not_transfer_to_paraphrase, o_e6_none_prefers_ordinary]
-  - [s, h_apply_does_not_transfer_to_paraphrase, usage_apply]
-  - [p, h_apply_does_not_transfer_to_paraphrase, v_not_transfer]
-  - [o, h_apply_does_not_transfer_to_paraphrase, usage_define_paraphrase]
-  - [scope, h_apply_does_not_transfer_to_paraphrase, model_15b]
-  - [scope, h_apply_does_not_transfer_to_paraphrase, single_layer_vector]
-  - [evidence, h_apply_does_not_transfer_to_paraphrase, o_e6_examples_paraphrase_at_chance]
-  - [s, h_apply_does_not_transfer_to_recite, usage_apply]
-  - [p, h_apply_does_not_transfer_to_recite, v_not_transfer]
-  - [o, h_apply_does_not_transfer_to_recite, usage_recite]
-  - [scope, h_apply_does_not_transfer_to_recite, model_15b]
-  - [scope, h_apply_does_not_transfer_to_recite, single_layer_vector]
-  - [evidence, h_apply_does_not_transfer_to_recite, o_e6_examples_recital_harder]
-  - [s, h_apply_does_not_transfer_to_explain, usage_apply]
-  - [p, h_apply_does_not_transfer_to_explain, v_not_transfer]
-  - [o, h_apply_does_not_transfer_to_explain, usage_explain]
-  - [scope, h_apply_does_not_transfer_to_explain, model_15b]
-  - [scope, h_apply_does_not_transfer_to_explain, single_layer_vector]
-  - [limitation, h_apply_does_not_transfer_to_explain, lim_unquantified]
-  - [note, h_apply_does_not_transfer_to_explain, 生成された理由を目で読んだ観察のみ。数値化していない]
-  - [s, h_recite_coexists_with_apply, usage_recite]
-  - [p, h_recite_coexists_with_apply, v_coexist]
-  - [o, h_recite_coexists_with_apply, usage_apply]
-  - [scope, h_recite_coexists_with_apply, model_15b]
-  - [scope, h_recite_coexists_with_apply, single_layer_vector]
-  - [scope, h_recite_coexists_with_apply, teacher_both]
-  - [evidence, h_recite_coexists_with_apply, o_e3_both_teachers_same_conflict]
-  - [evidence, h_recite_coexists_with_apply, o_e3_both_teachers_same_control]
-  - [evidence, h_recite_coexists_with_apply, o_e6_both_teachers_recital_easier]
-  - [s, h_both_teachers_raise_control_in_combo, teacher_both]
-  - [p, h_both_teachers_raise_control_in_combo, v_raise]
-  - [o, h_both_teachers_raise_control_in_combo, control_preservation]
-  - [scope, h_both_teachers_raise_control_in_combo, model_15b]
-  - [scope, h_both_teachers_raise_control_in_combo, text_and_vector]
-  - [evidence, h_both_teachers_raise_control_in_combo, o_e3_combo_control_better_with_both_teachers]
-  - [evidence, h_both_teachers_raise_control_in_combo, o_e3_combo_ok_conflict_both_teachers]
-  - [evidence, h_both_teachers_raise_control_in_combo, o_e3_combo_lowers_control_examples_only]
-  - [s, h_single_layer_does_not_reach_shared, single_layer_vector]
-  - [p, h_single_layer_does_not_reach_shared, v_not_raise]
-  - [o, h_single_layer_does_not_reach_shared, cross_usage_consistency]
-  - [scope, h_single_layer_does_not_reach_shared, model_15b]
-  - [evidence, h_single_layer_does_not_reach_shared, o_e6_both_teachers_paraphrase_at_chance]
-  - [evidence, h_single_layer_does_not_reach_shared, o_e6_layer14_paraphrase_below_chance]
-  - [evidence, h_single_layer_does_not_reach_shared, o_e6_recite_paraphrase_at_chance]
-  - [evidence, h_single_layer_does_not_reach_shared, o_e6_examples_paraphrase_at_chance]
-  - [s, h_multi_layer_raises_consistency, multi_layer_vector]
-  - [p, h_multi_layer_raises_consistency, v_raise]
-  - [o, h_multi_layer_raises_consistency, cross_usage_consistency]
-  - [scope, h_multi_layer_raises_consistency, model_15b]
-  - [limitation, h_multi_layer_raises_consistency, lim_unconverged]
-  - [against, h_multi_layer_raises_consistency, o_e8_paraphrase_like_single_layer]
-  - [against, h_multi_layer_raises_consistency, o_e8_control_below_single_layer]
-  - [against, h_multi_layer_raises_consistency, o_e8_less_order_robust_than_single_layer]
-  - [evidence, h_multi_layer_raises_consistency, o_e8_conflict_ge_single_layer]
-  - [note, h_multi_layer_raises_consistency, 学習が収束していない（o_e8_training_loss_above_single_layer）。24概念中16概念で損失が0.3を超えた。学習率を変えてやり直す必要がある]
-  - [s, h_controlled_language_raises_following, controlled_language]
-  - [p, h_controlled_language_raises_following, v_raise]
-  - [o, h_controlled_language_raises_following, redefinition_following]
-  - [scope, h_controlled_language_raises_following, text_injection]
-  - [note, h_controlled_language_raises_following, これまでの実験は、定義をすべて自然言語の文で渡している。概念式で渡した場合は測っていない]
-  - [s, h_model_can_write_controlled_language, model]
-  - [p, h_model_can_write_controlled_language, v_speak]
-  - [o, h_model_can_write_controlled_language, concept_expression]
-  - [note, h_model_can_write_controlled_language, モデルに概念式を書かせ、検査が通るかで判定する]
-  - [s, h_modifier_transfers_to_unseen_genus, modifier]
-  - [p, h_modifier_transfers_to_unseen_genus, v_transfer]
-  - [o, h_modifier_transfers_to_unseen_genus, unseen_genus]
-  - [scope, h_modifier_transfers_to_unseen_genus, model_15b]
-  - [scope, h_modifier_transfers_to_unseen_genus, single_layer_vector]
-  - [limitation, h_modifier_transfers_to_unseen_genus, lim_unconverged]
-  - [limitation, h_modifier_transfers_to_unseen_genus, lim_single_case]
-  - [evidence, h_modifier_transfers_to_unseen_genus, o_e4_modifier_transfers_in_converged_pair]
-  - [evidence, h_modifier_transfers_to_unseen_genus, o_e4_pair1_training_failed]
-  - [note, h_modifier_transfers_to_unseen_genus, 3組のうち2組は学習が収束しなかった。収束した1組だけの結果]
+  - {is: v_refer, from: h_collision_lowers_following, to: {is: v_lower, from: prior_collision, to: redefinition_following}}
+  - {is: v_scope, from: model_4b, to: h_collision_lowers_following}
+  - {is: v_scope, from: text_injection, to: h_collision_lowers_following}
+  - {is: v_support, from: o_e1_redef_below_new_adjacent, to: h_collision_lowers_following}
+  - {is: v_support, from: o_e1_glossary_redef_like_none, to: h_collision_lowers_following}
+  - {is: v_support, from: o_e1_glossary_sibling_full, to: h_collision_lowers_following}
+  - {is: v_support, from: o_e1_glossary_replaced_full, to: h_collision_lowers_following}
+  - {is: v_support, from: o_e5_opaque_above_adjacent_4b, to: h_collision_lowers_following}
+  - {is: v_refer, from: h_chain_length_lowers_following, to: {is: v_lower, from: chain_length, to: redefinition_following}}
+  - {is: v_scope, from: model_15b, to: h_chain_length_lowers_following}
+  - {is: v_scope, from: text_injection, to: h_chain_length_lowers_following}
+  - {is: v_scope, from: single_pass, to: h_chain_length_lowers_following}
+  - {is: v_qualify, from: lim_post_hoc, to: h_chain_length_lowers_following}
+  - {is: v_support, from: o_type_text_rule_below_remap_15b, to: h_chain_length_lowers_following}
+  - {is: v_support, from: o_type_text_rule_like_remap_4b, to: h_chain_length_lowers_following}
+  - {is: v_support, from: o_e5_opaque_like_adjacent_15b, to: h_chain_length_lowers_following}
+  - {is: v_contradict, from: o_e9_scratchpad_not_above_direct_rule_15b, to: h_chain_length_lowers_following}
+  - {is: v_annotate, from: 規則型と付け替え型の分類は、結果の一部を見たあとで行った, to: h_chain_length_lowers_following}
+  - {is: v_refer, from: h_scratchpad_raises_rule_following, to: {is: v_raise, from: scratchpad, to: redefinition_following}}
+  - {is: v_scope, from: model_15b, to: h_scratchpad_raises_rule_following}
+  - {is: v_scope, from: rule_redefinition, to: h_scratchpad_raises_rule_following}
+  - {is: v_scope, from: text_injection, to: h_scratchpad_raises_rule_following}
+  - {is: v_qualify, from: lim_one_item, to: h_scratchpad_raises_rule_following}
+  - {is: v_contradict, from: o_e9_scratchpad_not_above_direct_rule_15b, to: h_scratchpad_raises_rule_following}
+  - {is: v_annotate, from: 書き出した文を読むと、条件の読み取りではなく、数の大小の照合を誤っている（22歳は25歳以上である、など）, to: h_scratchpad_raises_rule_following}
+  - {is: v_refer, from: h_scratchpad_lowers_remap_following, to: {is: v_lower, from: scratchpad, to: redefinition_following}}
+  - {is: v_scope, from: model_15b, to: h_scratchpad_lowers_remap_following}
+  - {is: v_scope, from: remap_redefinition, to: h_scratchpad_lowers_remap_following}
+  - {is: v_scope, from: text_injection, to: h_scratchpad_lowers_remap_following}
+  - {is: v_support, from: o_e9_scratchpad_below_direct_remap_15b, to: h_scratchpad_lowers_remap_following}
+  - {is: v_support, from: o_e9_scratchpad_below_direct_remap_control_15b, to: h_scratchpad_lowers_remap_following}
+  - {is: v_refer, from: h_scratchpad_raises_rule_following_4b, to: {is: v_raise, from: scratchpad, to: redefinition_following}}
+  - {is: v_scope, from: model_4b, to: h_scratchpad_raises_rule_following_4b}
+  - {is: v_scope, from: rule_redefinition, to: h_scratchpad_raises_rule_following_4b}
+  - {is: v_scope, from: text_injection, to: h_scratchpad_raises_rule_following_4b}
+  - {is: v_support, from: o_e9_scratchpad_above_direct_rule_4b, to: h_scratchpad_raises_rule_following_4b}
+  - {is: v_annotate, from: 12問のうち、正答が9問から11問に増えた, to: h_scratchpad_raises_rule_following_4b}
+  - {is: v_refer, from: h_scratchpad_lowers_remap_following_4b, to: {is: v_lower, from: scratchpad, to: redefinition_following}}
+  - {is: v_scope, from: model_4b, to: h_scratchpad_lowers_remap_following_4b}
+  - {is: v_scope, from: remap_redefinition, to: h_scratchpad_lowers_remap_following_4b}
+  - {is: v_scope, from: text_injection, to: h_scratchpad_lowers_remap_following_4b}
+  - {is: v_contradict, from: o_e9_scratchpad_like_direct_remap_4b, to: h_scratchpad_lowers_remap_following_4b}
+  - {is: v_contradict, from: o_e9_scratchpad_not_below_direct_remap_control_4b, to: h_scratchpad_lowers_remap_following_4b}
+  - {is: v_refer, from: h_length_does_not_lower, to: {is: v_not_lower, from: context_length, to: redefinition_following}}
+  - {is: v_scope, from: model_4b, to: h_length_does_not_lower}
+  - {is: v_scope, from: text_injection, to: h_length_does_not_lower}
+  - {is: v_qualify, from: lim_range, to: h_length_does_not_lower}
+  - {is: v_support, from: o_e1_filler_no_further_drop, to: h_length_does_not_lower}
+  - {is: v_support, from: o_e7_filler_after_no_drop, to: h_length_does_not_lower}
+  - {is: v_support, from: o_e7_head_of_55_no_drop, to: h_length_does_not_lower}
+  - {is: v_annotate, from: 試した文脈は最大約3500トークン, to: h_length_does_not_lower}
+  - {is: v_refer, from: h_distance_does_not_lower, to: {is: v_not_lower, from: distance_to_question, to: redefinition_following}}
+  - {is: v_scope, from: model_4b, to: h_distance_does_not_lower}
+  - {is: v_scope, from: text_injection, to: h_distance_does_not_lower}
+  - {is: v_support, from: o_e7_filler_after_no_drop, to: h_distance_does_not_lower}
+  - {is: v_support, from: o_e7_last_below_head, to: h_distance_does_not_lower}
+  - {is: v_refer, from: h_depth_does_not_lower, to: {is: v_not_lower, from: context_depth, to: redefinition_following}}
+  - {is: v_scope, from: model_4b, to: h_depth_does_not_lower}
+  - {is: v_scope, from: text_injection, to: h_depth_does_not_lower}
+  - {is: v_support, from: o_e7_filler_before_no_drop, to: h_depth_does_not_lower}
+  - {is: v_refer, from: h_preceding_definitions_lower, to: {is: v_lower, from: preceding_definitions, to: redefinition_following}}
+  - {is: v_scope, from: model_4b, to: h_preceding_definitions_lower}
+  - {is: v_scope, from: glossary, to: h_preceding_definitions_lower}
+  - {is: v_support, from: o_e7_last_below_head, to: h_preceding_definitions_lower}
+  - {is: v_support, from: o_e7_14_preceding_below_head, to: h_preceding_definitions_lower}
+  - {is: v_support, from: o_e7_27_preceding_below_14, to: h_preceding_definitions_lower}
+  - {is: v_support, from: o_e7_kind_of_preceding_irrelevant, to: h_preceding_definitions_lower}
+  - {is: v_support, from: o_e7_15_definitions_no_drop, to: h_preceding_definitions_lower}
+  - {is: v_refer, from: h_following_definitions_do_not_lower, to: {is: v_not_lower, from: following_definitions, to: redefinition_following}}
+  - {is: v_scope, from: model_4b, to: h_following_definitions_do_not_lower}
+  - {is: v_scope, from: glossary, to: h_following_definitions_do_not_lower}
+  - {is: v_support, from: o_e7_head_of_55_no_drop, to: h_following_definitions_do_not_lower}
+  - {is: v_refer, from: h_new_word_immune, to: {is: v_immune, from: new_word, to: preceding_definitions}}
+  - {is: v_scope, from: model_4b, to: h_new_word_immune}
+  - {is: v_scope, from: glossary, to: h_new_word_immune}
+  - {is: v_support, from: o_e7_new_word_full_at_last, to: h_new_word_immune}
+  - {is: v_support, from: o_e1_glossary_sibling_full, to: h_new_word_immune}
+  - {is: v_support, from: o_e1_glossary_replaced_full, to: h_new_word_immune}
+  - {is: v_refer, from: h_attention_causes_preceding_effect, to: {is: v_cause, from: attention, to: preceding_definition_effect}}
+  - {is: v_scope, from: model_4b, to: h_attention_causes_preceding_effect}
+  - {is: v_annotate, from: 先頭に置くと落ちないことは、単純な注意の薄まりでは説明できない, to: h_attention_causes_preceding_effect}
+  - {is: v_refer, from: h_opaque_renaming_raises, to: {is: v_raise, from: opaque_renaming, to: redefinition_following}}
+  - {is: v_scope, from: model_4b, to: h_opaque_renaming_raises}
+  - {is: v_scope, from: text_injection, to: h_opaque_renaming_raises}
+  - {is: v_support, from: o_e5_opaque_above_adjacent_4b, to: h_opaque_renaming_raises}
+  - {is: v_refer, from: h_semi_renaming_does_not_raise, to: {is: v_not_raise, from: semi_renaming, to: redefinition_following}}
+  - {is: v_scope, from: model_4b, to: h_semi_renaming_does_not_raise}
+  - {is: v_scope, from: text_injection, to: h_semi_renaming_does_not_raise}
+  - {is: v_support, from: o_e5_semi_like_adjacent_4b, to: h_semi_renaming_does_not_raise}
+  - {is: v_refer, from: h_opaque_renaming_lowers_control, to: {is: v_lower, from: opaque_renaming, to: control_preservation}}
+  - {is: v_scope, from: model_4b, to: h_opaque_renaming_lowers_control}
+  - {is: v_scope, from: text_injection, to: h_opaque_renaming_lowers_control}
+  - {is: v_qualify, from: lim_one_item, to: h_opaque_renaming_lowers_control}
+  - {is: v_support, from: o_e5_opaque_lowers_control_4b, to: h_opaque_renaming_lowers_control}
+  - {is: v_annotate, from: 差は1問, to: h_opaque_renaming_lowers_control}
+  - {is: v_refer, from: h_vector_raises_following, to: {is: v_raise, from: single_layer_vector, to: redefinition_following}}
+  - {is: v_scope, from: model_15b, to: h_vector_raises_following}
+  - {is: v_scope, from: teacher_examples, to: h_vector_raises_following}
+  - {is: v_support, from: o_e3_examples_raise_conflict, to: h_vector_raises_following}
+  - {is: v_support, from: o_e3_vec_ge_text_conflict, to: h_vector_raises_following}
+  - {is: v_support, from: o_e3_vec_more_order_robust, to: h_vector_raises_following}
+  - {is: v_refer, from: h_vector_raises_control, to: {is: v_raise, from: single_layer_vector, to: control_preservation}}
+  - {is: v_scope, from: model_15b, to: h_vector_raises_control}
+  - {is: v_scope, from: teacher_examples, to: h_vector_raises_control}
+  - {is: v_scope, from: fmt_yesno, to: h_vector_raises_control}
+  - {is: v_support, from: o_e3_examples_raise_control, to: h_vector_raises_control}
+  - {is: v_support, from: o_e3_vec_gt_text_control, to: h_vector_raises_control}
+  - {is: v_refer, from: h_format_does_not_lower_following, to: {is: v_not_lower, from: format_variation, to: redefinition_following}}
+  - {is: v_scope, from: model_15b, to: h_format_does_not_lower_following}
+  - {is: v_scope, from: single_layer_vector, to: h_format_does_not_lower_following}
+  - {is: v_support, from: o_e3b_fill_same_conflict, to: h_format_does_not_lower_following}
+  - {is: v_support, from: o_e3b_truth_same_conflict, to: h_format_does_not_lower_following}
+  - {is: v_refer, from: h_format_lowers_control_gain, to: {is: v_lower, from: format_variation, to: control_preservation}}
+  - {is: v_scope, from: model_15b, to: h_format_lowers_control_gain}
+  - {is: v_scope, from: single_layer_vector, to: h_format_lowers_control_gain}
+  - {is: v_support, from: o_e3b_control_gain_lost_in_fill, to: h_format_lowers_control_gain}
+  - {is: v_support, from: o_e3b_control_back_to_none_in_fill, to: h_format_lowers_control_gain}
+  - {is: v_refer, from: h_vector_count_does_not_lower, to: {is: v_not_lower, from: vector_count, to: redefinition_following}}
+  - {is: v_scope, from: model_15b, to: h_vector_count_does_not_lower}
+  - {is: v_scope, from: single_layer_vector, to: h_vector_count_does_not_lower}
+  - {is: v_qualify, from: lim_range, to: h_vector_count_does_not_lower}
+  - {is: v_support, from: o_e3b_all_vectors_same_conflict, to: h_vector_count_does_not_lower}
+  - {is: v_support, from: o_e3b_all_vectors_same_control, to: h_vector_count_does_not_lower}
+  - {is: v_annotate, from: 24本まで, to: h_vector_count_does_not_lower}
+  - {is: v_refer, from: h_unrelated_items_immune, to: {is: v_immune, from: unrelated_items, to: single_layer_vector}}
+  - {is: v_scope, from: model_15b, to: h_unrelated_items_immune}
+  - {is: v_support, from: o_e3b_unrelated_accuracy_kept, to: h_unrelated_items_immune}
+  - {is: v_contradict, from: o_e3b_unrelated_margin_drops, to: h_unrelated_items_immune}
+  - {is: v_refer, from: h_vector_raises_following_free, to: {is: v_raise, from: single_layer_vector, to: redefinition_following}}
+  - {is: v_scope, from: model_15b, to: h_vector_raises_following_free}
+  - {is: v_scope, from: teacher_examples, to: h_vector_raises_following_free}
+  - {is: v_scope, from: fmt_free, to: h_vector_raises_following_free}
+  - {is: v_support, from: o_e3c_vec_above_none_free, to: h_vector_raises_following_free}
+  - {is: v_support, from: o_e3c_vec_ge_text_free, to: h_vector_raises_following_free}
+  - {is: v_refer, from: h_layer14_lowers_control, to: {is: v_lower, from: layer_choice, to: control_preservation}}
+  - {is: v_scope, from: model_15b, to: h_layer14_lowers_control}
+  - {is: v_scope, from: single_layer_vector, to: h_layer14_lowers_control}
+  - {is: v_scope, from: teacher_both, to: h_layer14_lowers_control}
+  - {is: v_qualify, from: lim_range, to: h_layer14_lowers_control}
+  - {is: v_support, from: o_e3_layer14_breaks_control, to: h_layer14_lowers_control}
+  - {is: v_support, from: o_e3_layer14_same_conflict, to: h_layer14_lowers_control}
+  - {is: v_annotate, from: 第8層と第14層の2点だけ, to: h_layer14_lowers_control}
+  - {is: v_refer, from: h_rule_type_lowers_vector_following, to: {is: v_lower, from: rule_redefinition, to: redefinition_following}}
+  - {is: v_scope, from: model_15b, to: h_rule_type_lowers_vector_following}
+  - {is: v_scope, from: single_layer_vector, to: h_rule_type_lowers_vector_following}
+  - {is: v_qualify, from: lim_post_hoc, to: h_rule_type_lowers_vector_following}
+  - {is: v_support, from: o_type_vec_rule_below_remap, to: h_rule_type_lowers_vector_following}
+  - {is: v_contradict, from: o_type_vec_rule_above_text_rule, to: h_rule_type_lowers_vector_following}
+  - {is: v_annotate, from: 規則型でも文章より高い。分類は結果の一部を見たあとで行った, to: h_rule_type_lowers_vector_following}
+  - {is: v_refer, from: h_recite_does_not_transfer_to_apply, to: {is: v_not_transfer, from: usage_recite, to: usage_apply}}
+  - {is: v_scope, from: model_15b, to: h_recite_does_not_transfer_to_apply}
+  - {is: v_scope, from: single_layer_vector, to: h_recite_does_not_transfer_to_apply}
+  - {is: v_support, from: o_e3_recite_loss_near_zero, to: h_recite_does_not_transfer_to_apply}
+  - {is: v_support, from: o_e3_recite_breaks_control, to: h_recite_does_not_transfer_to_apply}
+  - {is: v_refer, from: h_recite_does_not_transfer_to_paraphrase, to: {is: v_not_transfer, from: usage_recite, to: usage_define_paraphrase}}
+  - {is: v_scope, from: model_15b, to: h_recite_does_not_transfer_to_paraphrase}
+  - {is: v_scope, from: single_layer_vector, to: h_recite_does_not_transfer_to_paraphrase}
+  - {is: v_support, from: o_e6_recite_paraphrase_at_chance, to: h_recite_does_not_transfer_to_paraphrase}
+  - {is: v_support, from: o_e6_none_prefers_ordinary, to: h_recite_does_not_transfer_to_paraphrase}
+  - {is: v_refer, from: h_apply_does_not_transfer_to_paraphrase, to: {is: v_not_transfer, from: usage_apply, to: usage_define_paraphrase}}
+  - {is: v_scope, from: model_15b, to: h_apply_does_not_transfer_to_paraphrase}
+  - {is: v_scope, from: single_layer_vector, to: h_apply_does_not_transfer_to_paraphrase}
+  - {is: v_support, from: o_e6_examples_paraphrase_at_chance, to: h_apply_does_not_transfer_to_paraphrase}
+  - {is: v_refer, from: h_apply_does_not_transfer_to_recite, to: {is: v_not_transfer, from: usage_apply, to: usage_recite}}
+  - {is: v_scope, from: model_15b, to: h_apply_does_not_transfer_to_recite}
+  - {is: v_scope, from: single_layer_vector, to: h_apply_does_not_transfer_to_recite}
+  - {is: v_support, from: o_e6_examples_recital_harder, to: h_apply_does_not_transfer_to_recite}
+  - {is: v_refer, from: h_apply_does_not_transfer_to_explain, to: {is: v_not_transfer, from: usage_apply, to: usage_explain}}
+  - {is: v_scope, from: model_15b, to: h_apply_does_not_transfer_to_explain}
+  - {is: v_scope, from: single_layer_vector, to: h_apply_does_not_transfer_to_explain}
+  - {is: v_qualify, from: lim_unquantified, to: h_apply_does_not_transfer_to_explain}
+  - {is: v_annotate, from: 生成された理由を目で読んだ観察のみ。数値化していない, to: h_apply_does_not_transfer_to_explain}
+  - {is: v_refer, from: h_recite_coexists_with_apply, to: {is: v_coexist, from: usage_recite, to: usage_apply}}
+  - {is: v_scope, from: model_15b, to: h_recite_coexists_with_apply}
+  - {is: v_scope, from: single_layer_vector, to: h_recite_coexists_with_apply}
+  - {is: v_scope, from: teacher_both, to: h_recite_coexists_with_apply}
+  - {is: v_support, from: o_e3_both_teachers_same_conflict, to: h_recite_coexists_with_apply}
+  - {is: v_support, from: o_e3_both_teachers_same_control, to: h_recite_coexists_with_apply}
+  - {is: v_support, from: o_e6_both_teachers_recital_easier, to: h_recite_coexists_with_apply}
+  - {is: v_refer, from: h_both_teachers_raise_control_in_combo, to: {is: v_raise, from: teacher_both, to: control_preservation}}
+  - {is: v_scope, from: model_15b, to: h_both_teachers_raise_control_in_combo}
+  - {is: v_scope, from: text_and_vector, to: h_both_teachers_raise_control_in_combo}
+  - {is: v_support, from: o_e3_combo_control_better_with_both_teachers, to: h_both_teachers_raise_control_in_combo}
+  - {is: v_support, from: o_e3_combo_ok_conflict_both_teachers, to: h_both_teachers_raise_control_in_combo}
+  - {is: v_support, from: o_e3_combo_lowers_control_examples_only, to: h_both_teachers_raise_control_in_combo}
+  - {is: v_refer, from: h_single_layer_does_not_reach_shared, to: {is: v_not_raise, from: single_layer_vector, to: cross_usage_consistency}}
+  - {is: v_scope, from: model_15b, to: h_single_layer_does_not_reach_shared}
+  - {is: v_support, from: o_e6_both_teachers_paraphrase_at_chance, to: h_single_layer_does_not_reach_shared}
+  - {is: v_support, from: o_e6_layer14_paraphrase_below_chance, to: h_single_layer_does_not_reach_shared}
+  - {is: v_support, from: o_e6_recite_paraphrase_at_chance, to: h_single_layer_does_not_reach_shared}
+  - {is: v_support, from: o_e6_examples_paraphrase_at_chance, to: h_single_layer_does_not_reach_shared}
+  - {is: v_refer, from: h_multi_layer_raises_consistency, to: {is: v_raise, from: multi_layer_vector, to: cross_usage_consistency}}
+  - {is: v_scope, from: model_15b, to: h_multi_layer_raises_consistency}
+  - {is: v_qualify, from: lim_unconverged, to: h_multi_layer_raises_consistency}
+  - {is: v_contradict, from: o_e8_paraphrase_like_single_layer, to: h_multi_layer_raises_consistency}
+  - {is: v_contradict, from: o_e8_control_below_single_layer, to: h_multi_layer_raises_consistency}
+  - {is: v_contradict, from: o_e8_less_order_robust_than_single_layer, to: h_multi_layer_raises_consistency}
+  - {is: v_support, from: o_e8_conflict_ge_single_layer, to: h_multi_layer_raises_consistency}
+  - {is: v_annotate, from: 学習が収束していない（o_e8_training_loss_above_single_layer）。24概念中16概念で損失が0.3を超えた。学習率を変えてやり直す必要がある, to: h_multi_layer_raises_consistency}
+  - {is: v_refer, from: h_controlled_language_raises_following, to: {is: v_raise, from: controlled_language, to: redefinition_following}}
+  - {is: v_scope, from: text_injection, to: h_controlled_language_raises_following}
+  - {is: v_annotate, from: これまでの実験は、定義をすべて自然言語の文で渡している。概念式で渡した場合は測っていない, to: h_controlled_language_raises_following}
+  - {is: v_refer, from: h_model_can_write_controlled_language, to: {is: v_speak, from: model, to: concept_expression}}
+  - {is: v_annotate, from: モデルに概念式を書かせ、検査が通るかで判定する, to: h_model_can_write_controlled_language}
+  - {is: v_refer, from: h_modifier_transfers_to_unseen_genus, to: {is: v_transfer, from: modifier, to: unseen_genus}}
+  - {is: v_scope, from: model_15b, to: h_modifier_transfers_to_unseen_genus}
+  - {is: v_scope, from: single_layer_vector, to: h_modifier_transfers_to_unseen_genus}
+  - {is: v_qualify, from: lim_unconverged, to: h_modifier_transfers_to_unseen_genus}
+  - {is: v_qualify, from: lim_single_case, to: h_modifier_transfers_to_unseen_genus}
+  - {is: v_support, from: o_e4_modifier_transfers_in_converged_pair, to: h_modifier_transfers_to_unseen_genus}
+  - {is: v_support, from: o_e4_pair1_training_failed, to: h_modifier_transfers_to_unseen_genus}
+  - {is: v_annotate, from: 3組のうち2組は学習が収束しなかった。収束した1組だけの結果, to: h_modifier_transfers_to_unseen_genus}
 
   # ===== 決定（is: decision）
-  - [s, d_goal, this_design]
-  - [p, d_goal, v_raise]
-  - [o, d_goal, redefinition_success]
-  - [supersedes, d_goal, d_avoid_redefinition]
-  - [s, d_avoid_redefinition, definition]
-  - [p, d_avoid_redefinition, v_refer]
-  - [o, d_avoid_redefinition, new_word]
-  - [s, d_metric, cross_usage_consistency]
-  - [p, d_metric, v_measure]
-  - [o, d_metric, redefinition_success]
-  - [supersedes, d_metric, d_metric_following]
-  - [basis, d_metric, h_recite_does_not_transfer_to_apply]
-  - [basis, d_metric, h_apply_does_not_transfer_to_paraphrase]
-  - [s, d_metric_following, redefinition_following]
-  - [p, d_metric_following, v_measure]
-  - [o, d_metric_following, redefinition_success]
-  - [s, d_source_of_truth_location, depended_information]
-  - [p, d_source_of_truth_location, v_compose]
-  - [o, d_source_of_truth_location, typed_graph]
-  - [s, d_source_of_truth_content, depended_information]
-  - [p, d_source_of_truth_content, v_consist]
-  - [o, d_source_of_truth_content, definition]
-  - [o, d_source_of_truth_content, application_example]
-  - [basis, d_source_of_truth_content, h_recite_does_not_transfer_to_apply]
-  - [basis, d_source_of_truth_content, h_vector_raises_following]
-  - [s, d_test_is_material, test]
-  - [p, d_test_is_material, is_a]
-  - [o, d_test_is_material, application_example]
-  - [basis, d_test_is_material, h_recite_does_not_transfer_to_apply]
-  - [s, d_term_server_selects, glossary]
-  - [p, d_term_server_selects, v_consist]
-  - [o, d_term_server_selects, relevant_definitions]
-  - [basis, d_term_server_selects, h_preceding_definitions_lower]
-  - [s, d_redefinition_at_head, redefinition]
-  - [p, d_redefinition_at_head, is_a]
-  - [o, d_redefinition_at_head, glossary_head]
-  - [basis, d_redefinition_at_head, h_preceding_definitions_lower]
-  - [basis, d_redefinition_at_head, h_following_definitions_do_not_lower]
-  - [note, d_redefinition_at_head, 検査は、この決定を構造から確かめない（tentative）。用語集に入れる再定義は、先頭に置く、という取り決め]
-  - [s, d_verdict_by_vector, verdict]
-  - [p, d_verdict_by_vector, v_rely]
-  - [o, d_verdict_by_vector, concept_vector]
-  - [basis, d_verdict_by_vector, h_vector_raises_following]
-  - [basis, d_verdict_by_vector, h_vector_raises_following_free]
-  - [s, d_explanation_by_text, usage_explain]
-  - [p, d_explanation_by_text, v_rely]
-  - [o, d_explanation_by_text, text_injection]
-  - [basis, d_explanation_by_text, h_both_teachers_raise_control_in_combo]
-  - [s, d_consolidation_in_vector, change_holder]
-  - [p, d_consolidation_in_vector, is_a]
-  - [o, d_consolidation_in_vector, taught_vector]
-  - [basis, d_consolidation_in_vector, h_vector_count_does_not_lower]
-  - [note, d_consolidation_in_vector, 検査は、この決定を構造から確かめない（tentative）。与えられた意味を保持するのは、教示で得られたベクトル、という取り決め]
-  - [s, d_source_of_truth_in_controlled_language, depended_information]
-  - [p, d_source_of_truth_in_controlled_language, v_express]
-  - [o, d_source_of_truth_in_controlled_language, controlled_language]
-  - [note, d_source_of_truth_in_controlled_language, 体系制御言語とは、ontology.yaml の書き方による記述そのものを指す]
-  - [s, d_rendered_text_is_derived, rendered_text]
-  - [p, d_rendered_text_is_derived, v_rely]
-  - [o, d_rendered_text_is_derived, depended_information]
-  - [note, d_rendered_text_is_derived, 自然言語の文は、正本から変換して得る表示。変換は LLM が行ってもシステムが行ってもよい]
-  - [s, d_symbol_selection_symbolic, symbol_selection]
-  - [p, d_symbol_selection_symbolic, v_rely]
-  - [o, d_symbol_selection_symbolic, typed_graph]
-  - [s, d_vector_needs_open_weights, concept_vector]
-  - [p, d_vector_needs_open_weights, v_rely]
-  - [o, d_vector_needs_open_weights, open_weight_model]
-  - [s, d_text_for_api_models, api_only_model]
-  - [p, d_text_for_api_models, v_rely]
-  - [o, d_text_for_api_models, text_injection]
+  - {is: v_refer, from: d_goal, to: {is: v_raise, from: this_design, to: redefinition_success}}
+  - {is: v_supersede, from: d_goal, to: d_avoid_redefinition}
+  - {is: v_refer, from: d_avoid_redefinition, to: {is: v_refer, from: definition, to: new_word}}
+  - {is: v_refer, from: d_metric, to: {is: v_measure, from: cross_usage_consistency, to: redefinition_success}}
+  - {is: v_supersede, from: d_metric, to: d_metric_following}
+  - {is: v_ground, from: d_metric, to: h_recite_does_not_transfer_to_apply}
+  - {is: v_ground, from: d_metric, to: h_apply_does_not_transfer_to_paraphrase}
+  - {is: v_refer, from: d_metric_following, to: {is: v_measure, from: redefinition_following, to: redefinition_success}}
+  - {is: v_refer, from: d_source_of_truth_location, to: {is: v_compose, from: depended_information, to: typed_graph}}
+  - {is: v_refer, from: d_source_of_truth_content, to: {is: v_consist, from: depended_information, to: [definition, application_example]}}
+  - {is: v_ground, from: d_source_of_truth_content, to: h_recite_does_not_transfer_to_apply}
+  - {is: v_ground, from: d_source_of_truth_content, to: h_vector_raises_following}
+  - {is: v_refer, from: d_test_is_material, to: {is: extends, from: test, to: application_example}}
+  - {is: v_ground, from: d_test_is_material, to: h_recite_does_not_transfer_to_apply}
+  - {is: v_refer, from: d_term_server_selects, to: {is: v_consist, from: glossary, to: relevant_definitions}}
+  - {is: v_ground, from: d_term_server_selects, to: h_preceding_definitions_lower}
+  - {is: v_refer, from: d_redefinition_at_head, to: {is: extends, from: redefinition, to: glossary_head}}
+  - {is: v_ground, from: d_redefinition_at_head, to: h_preceding_definitions_lower}
+  - {is: v_ground, from: d_redefinition_at_head, to: h_following_definitions_do_not_lower}
+  - {is: v_annotate, from: 検査は、この決定を構造から確かめない（tentative）。用語集に入れる再定義は、先頭に置く、という取り決め, to: d_redefinition_at_head}
+  - {is: v_refer, from: d_verdict_by_vector, to: {is: v_rely, from: verdict, to: concept_vector}}
+  - {is: v_ground, from: d_verdict_by_vector, to: h_vector_raises_following}
+  - {is: v_ground, from: d_verdict_by_vector, to: h_vector_raises_following_free}
+  - {is: v_refer, from: d_explanation_by_text, to: {is: v_rely, from: usage_explain, to: text_injection}}
+  - {is: v_ground, from: d_explanation_by_text, to: h_both_teachers_raise_control_in_combo}
+  - {is: v_refer, from: d_consolidation_in_vector, to: {is: extends, from: change_holder, to: taught_vector}}
+  - {is: v_ground, from: d_consolidation_in_vector, to: h_vector_count_does_not_lower}
+  - {is: v_annotate, from: 検査は、この決定を構造から確かめない（tentative）。与えられた意味を保持するのは、教示で得られたベクトル、という取り決め, to: d_consolidation_in_vector}
+  - {is: v_refer, from: d_source_of_truth_in_controlled_language, to: {is: v_express, from: depended_information, to: controlled_language}}
+  - {is: v_annotate, from: 体系制御言語とは、ontology.yaml の書き方による記述そのものを指す, to: d_source_of_truth_in_controlled_language}
+  - {is: v_refer, from: d_rendered_text_is_derived, to: {is: v_rely, from: rendered_text, to: depended_information}}
+  - {is: v_annotate, from: 自然言語の文は、正本から変換して得る表示。変換は LLM が行ってもシステムが行ってもよい, to: d_rendered_text_is_derived}
+  - {is: v_refer, from: d_symbol_selection_symbolic, to: {is: v_rely, from: symbol_selection, to: typed_graph}}
+  - {is: v_refer, from: d_vector_needs_open_weights, to: {is: v_rely, from: concept_vector, to: open_weight_model}}
+  - {is: v_refer, from: d_text_for_api_models, to: {is: v_rely, from: api_only_model, to: text_injection}}
 
   # ===== 残り項目（is: backlog_item）
-  - [tests, b_e8_multi_layer, h_multi_layer_raises_consistency]
-  - [tests, b_e8_retrain_until_converged, h_multi_layer_raises_consistency]
-  - [tests, b_write_subject_concepts_in_controlled_language, h_controlled_language_raises_following]
-  - [tests, b_definitions_given_as_concept_expressions, h_controlled_language_raises_following]
-  - [tests, b_model_writes_concept_expressions, h_model_can_write_controlled_language]
-  - [tests, b_vectors_taught_from_concept_expressions, h_controlled_language_raises_following]
-  - [tests, b_e9_scratchpad, h_scratchpad_raises_rule_following]
-  - [tests, b_e9_scratchpad, h_scratchpad_raises_rule_following_4b]
-  - [tests, b_e9_scratchpad, h_chain_length_lowers_following]
-  - [tests, b_single_layer_20_and_4, h_layer14_lowers_control]
-  - [tests, b_single_layer_20_and_4, h_single_layer_does_not_reach_shared]
-  - [tests, b_attention_observe_and_block, h_attention_causes_preceding_effect]
-  - [tests, b_measure_explanation, h_apply_does_not_transfer_to_explain]
-  - [tests, b_e4_retrain, h_modifier_transfers_to_unseen_genus]
-  - [tests, b_save_text_reference_for_paraphrase, h_single_layer_does_not_reach_shared]
-  - [tests, b_renaming_inside_glossary, h_opaque_renaming_raises]
-  - [tests, b_renaming_inside_glossary, h_preceding_definitions_lower]
-  - [tests, b_vectors_on_4b, h_vector_raises_following]
-  - [tests, b_vectors_on_4b, h_single_layer_does_not_reach_shared]
-  - [tests, b_more_concepts, h_vector_count_does_not_lower]
+  - {is: v_check, from: b_e8_multi_layer, to: h_multi_layer_raises_consistency}
+  - {is: v_check, from: b_e8_retrain_until_converged, to: h_multi_layer_raises_consistency}
+  - {is: v_check, from: b_write_subject_concepts_in_controlled_language, to: h_controlled_language_raises_following}
+  - {is: v_check, from: b_definitions_given_as_concept_expressions, to: h_controlled_language_raises_following}
+  - {is: v_check, from: b_model_writes_concept_expressions, to: h_model_can_write_controlled_language}
+  - {is: v_check, from: b_vectors_taught_from_concept_expressions, to: h_controlled_language_raises_following}
+  - {is: v_check, from: b_e9_scratchpad, to: h_scratchpad_raises_rule_following}
+  - {is: v_check, from: b_e9_scratchpad, to: h_scratchpad_raises_rule_following_4b}
+  - {is: v_check, from: b_e9_scratchpad, to: h_chain_length_lowers_following}
+  - {is: v_check, from: b_single_layer_20_and_4, to: h_layer14_lowers_control}
+  - {is: v_check, from: b_single_layer_20_and_4, to: h_single_layer_does_not_reach_shared}
+  - {is: v_check, from: b_attention_observe_and_block, to: h_attention_causes_preceding_effect}
+  - {is: v_check, from: b_measure_explanation, to: h_apply_does_not_transfer_to_explain}
+  - {is: v_check, from: b_e4_retrain, to: h_modifier_transfers_to_unseen_genus}
+  - {is: v_check, from: b_save_text_reference_for_paraphrase, to: h_single_layer_does_not_reach_shared}
+  - {is: v_check, from: b_renaming_inside_glossary, to: h_opaque_renaming_raises}
+  - {is: v_check, from: b_renaming_inside_glossary, to: h_preceding_definitions_lower}
+  - {is: v_check, from: b_vectors_on_4b, to: h_vector_raises_following}
+  - {is: v_check, from: b_vectors_on_4b, to: h_single_layer_does_not_reach_shared}
+  - {is: v_check, from: b_more_concepts, to: h_vector_count_does_not_lower}

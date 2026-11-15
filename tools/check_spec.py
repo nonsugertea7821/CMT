@@ -11,8 +11,8 @@ ontology.yaml  概念の体系。書き方はそのファイルの冒頭を見�
 
 exp.yaml  領域 exp。種類（nodes）、個体（individuals）、事実（facts）を持つ。
   個体は is で種類に1つだけ属する。仮説・決定・残り項目は、状態を表す下位の種類に属する（is: hyp_supported など）。
-  事実は [関係, 始点の個体, 終点] で、1つの事実に1つの関係。関係は、ontology.yaml のノードの識別子。
-  ある種類の個体に書ける関係は、その種類のものとの関係で限定されたノード（またはその上位）と、文の中身（s, p, o）だけ。
+  事実は動詞の個体で、位置に名前を付けて書く: {is: 動詞, from: 始点, to: 終点}。個体は、動詞のその位置の種類に
+  当たらなければならない。文が述べる中身は、同じ形を v_refer の終点に置く（主張ではない）。
   検査は、事実を個体ごとに集めた形で読む。
   測定値: 族ごとに、軸（axis）の直積で展開する。識別子は「族.軸の値....指標」。値は結果ファイルから計算する。
   観察・仮説・決定: どれも「s が、p という関係で、o に」という文。
@@ -103,43 +103,74 @@ def merge_domain(name, O):
     for nid, n in (D.get("nodes") or {}).items():
         O["nodes"][f"{dom}.{nid}"] = qualify(n, local, dom)
     D["individuals"] = {iid: qualify(x, local, dom) for iid, x in D["individuals"].items()}
-    gather(D, local, dom, name)
+    for iid, x in D["individuals"].items():
+        if set(x) - {"is", "ja", "val"}:
+            err(f"{name} {iid}: 個体には is, ja, val だけを書く。関係は facts に書く")
+    D["_local"] = local
     return D
 
 
 MANY = {"scope", "evidence", "against", "limitation", "supersedes", "basis", "tests", "metric"}   # 検査が並びとして読む関係
 
 
-def gather(D, local, dom, name):
-    """事実（[関係, 始点の個体, 終点]）を、個体ごとに集める。検査は、集めた形を読む。
-    書くときは、1つの事実に1つの関係。個体に関係を並べて書くことはしない。"""
-    got = {}
+def gather(D, T, name):
+    """事実を、個体ごとに集める。検査は、集めた形（個体 → {関係の名: 値}）を読む。
+    事実は動詞の個体: {is: 動詞, from, to, new, at, neg}。位置には名前を付ける。
+    - 個体が、動詞のある位置の種類に当たるとき、その個体についての事実。関係の名は、もう一方の位置の種類。
+    - at を持つ事実は、始点の種類のものがいくつ終点の部分になるか（個数）。関係の名は、始点の種類。
+    - v_refer の終点が事実の形をしていれば、それは文が述べる中身（主張ではない）。s, p, o, tolerance として読む。"""
+    dom, local, I = D["domain"], D["_local"], D["individuals"]
+    q = lambda v: qualify(v, local, dom)
     for i, f in enumerate(D.get("facts") or []):
-        if not (isinstance(f, list) and len(f) == 3 and isinstance(f[0], str)):
-            err(f"{name} facts[{i}]: 事実は [関係, 始点の個体, 終点] で書く")
+        where = f"{name} facts[{i}]"
+        if not isinstance(f, dict) or set(f) - set(T.G["facts"]) or "is" not in f:
+            err(f"{where}: 事実は {{is: 動詞, from: 始点, to: 終点}} で書き、語は grammar.facts のものだけ")
             continue
-        rel, subj, obj = f
-        if subj not in D["individuals"]:
-            err(f"{name} facts[{i}]: 始点 {subj} が個体でない")
+        verb = q(f["is"])
+        if not T.is_verb(verb):
+            err(f"{where}: {f['is']} は動詞でない")
             continue
-        if any(k not in ("is", "ja", "val") for k in D["individuals"][subj]):
-            err(f"{name} {subj}: 個体には is, ja, val だけを書く。関係は facts に書く")
-        got.setdefault(subj, {}).setdefault(rel, []).append(obj if rel in LITERAL else qualify(obj, local, dom))
-    for subj, rels in got.items():
-        for rel, vs in rels.items():
-            D["individuals"][subj][rel] = vs if rel in MANY or len(vs) > 1 else vs[0]
+        if "at" in f:
+            subj, rel, val = f.get("to"), f.get("from"), (f["at"] or {}).get("count")
+        elif verb == "v_refer" and isinstance(f.get("to"), dict):
+            P = f["to"]
+            subj = f.get("from")
+            if subj in I:
+                I[subj]["s"], I[subj]["o"] = q(P.get("from")), q(P.get("to"))
+                I[subj]["p"] = "is_a" if P.get("is") == "extends" else q(P.get("is"))
+                if "new" in P:
+                    I[subj]["tolerance"] = P["new"]
+            else:
+                err(f"{where}: 始点 {subj} が個体でない")
+            continue
+        else:
+            sides = [pos for pos in ("from", "to") if isinstance(f.get(pos), str) and f[pos] in I
+                     and T.is_a(T.I.get(f[pos]), T.end(verb, pos))]
+            if len(sides) != 1:
+                err(f"{where}: 動詞 {verb} のどちらの位置にも、その位置の種類に当たる個体がない（または両方にある）")
+                continue
+            other = {"from": "to", "to": "from"}[sides[0]]
+            subj, rel = f[sides[0]], short(T.end(verb, other))
+            val = f.get(other) if rel in LITERAL else q(f.get(other))
+        if subj not in I:
+            err(f"{where}: 始点 {subj} が個体でない")
+            continue
+        I[subj].setdefault(rel, []).append(val)
+    for subj, x in I.items():
+        for rel, vs in list(x.items()):
+            if isinstance(vs, list) and rel not in T.G["individuals"] and rel not in ("o",):
+                if rel not in MANY and len(vs) > 1:
+                    err(f"{name} {subj}: 関係 {rel} の事実が2つ以上ある")
+                x[rel] = vs if rel in MANY else vs[0]
 
 
 def load_domain(name, D, T):
-    """領域の個体を種類ごとに分ける。個体に書ける項目は、種類の式から決まる（Ontology.field_ok）。
+    """領域の個体を種類ごとに分ける。個体についての関係は、事実（動詞の個体）から集める（gather）。
     仮説・決定・残り項目の個体は、状態を表す下位の種類に属する。この検査が中身を確かめない種類の個体は、種類と項目だけを確かめる。"""
+    gather(D, T, name)
     for k in D:
-        if k not in T.G["domain"]:
+        if k not in T.G["domain"] and k != "_local":
             err(f"{name}: 語 {k} が、grammar.domain に書かれていない")
-    for iid, x in D["individuals"].items():
-        for k, v in x.items():
-            if k not in T.G["individuals"] and isinstance(v, list) and k not in MANY and k != "o" and k not in LITERAL:
-                err(f"{name} {iid}: 関係 {k} の事実が2つ以上ある")
     out = {sect: {} for sect in KINDS.values()}
     for iid, x in D["individuals"].items():
         if iid in T.N or T.resolve(iid, D["domain"]):
@@ -150,7 +181,7 @@ def load_domain(name, D, T):
             continue
         for ax, v in (x.get("val") or {}).items():
             T.check_value(ax, v, f"{name} {iid}")
-        T.check_fields(kind, {f: v for f, v in x.items() if f not in T.G["individuals"]}, f"{name} {iid}", D["domain"])
+        T.check_counts(kind, {f: v for f, v in x.items() if f not in T.G["individuals"]}, f"{name} {iid}")
         base = [k for k in KINDS if T.is_a(kind, k)]
         if not base:
             continue
@@ -617,8 +648,8 @@ class Ontology:
             return {"gt": v > arg, "ge": v >= arg, "lt": v < arg, "le": v <= arg}.get(op, True) if not isinstance(arg, list) else arg[0] <= v <= arg[1]
         return want == v
 
-    def check_fields(self, kind, x, where, dom="core"):
-        """個体の項目。値が数なら、個数の軸の固定値。種類の式がその個数を限定していれば、その範囲に入っていること。"""
+    def check_counts(self, kind, x, where):
+        """個数の事実が、種類の式の個数の限定に入っていること。"""
         for f, v in x.items():
             f = self.q(f)
             if isinstance(v, (int, float)) and not isinstance(v, bool) and f in self.N and not self.is_a(f, "magnitude"):
@@ -626,8 +657,6 @@ class Ontology:
                     want = (m.get("at") or {}).get("count")
                     if want is not None and m.get("with") in self.N and self.is_a(f, m["with"]) and not self.count_ok(want, v):
                         err(f"{where}: {f} の個数 {v} が、種類 {kind} の限定 {want} に入っていない")
-            if not self.field_ok(kind, f, dom):
-                err(f"{where}: 項目 {f} は、種類 {kind} の個体に書けない（{kind} との関係で限定されたノードでない）")
 
     def kinds_of(self, nid):
         """nid の下位のうち、それより下を持たないノード。status や留保の値として使えるもの。"""
