@@ -160,7 +160,7 @@ nodes:
   test: {ja: テスト, extends: application_example, mod: {of: [v_use, to], with: verification}}
   definition_text: {ja: 定義文, extends: passage, mod: {of: [v_compose, to], with: definition}}
   examples_only: {ja: 適用例だけ, extends: passage, mod: {of: [v_compose, to], with: application_example}}
-  def_and_examples: {ja: 定義文と適用例, extends: [definition_text, examples_only]}
+  def_and_examples: {ja: 定義文と適用例, extends: definition_text, mod: {of: [is, from], with: examples_only}}
   filler_text: {ja: 無関係な文章, extends: passage, mod: {of: [v_agree, from], with: question, neg: true}}
   context: {ja: 文脈, extends: passage, mod: {of: [v_read, to], with: model}}
   glossary: {ja: 用語集, extends: information_entity, mod: {of: [v_compose, to], with: definition, at: {count: {gt: 1}}}}
@@ -248,7 +248,7 @@ nodes:
   concept_vector: {ja: 概念ベクトル, extends: channel_involve_from_taught_vector, mod: {of: [v_involve, from], with: label_token_positions}}
   single_layer_vector: {ja: 単一層の概念ベクトル, extends: concept_vector, mod: {of: [v_involve, from], with: layer, at: {count: 1}}}
   multi_layer_vector: {ja: 複数層の概念ベクトル, extends: concept_vector, mod: {of: [v_involve, from], with: layer, at: {count: {gt: 1}}}}
-  text_and_vector: {ja: 文章と概念ベクトルの併用, extends: [text_injection, concept_vector]}
+  text_and_vector: {ja: 文章と概念ベクトルの併用, extends: text_injection, mod: {of: [is, from], with: concept_vector}}
   delta_weights: {ja: 差分重み, extends: channel, mod: {of: [v_involve, from], with: weights}}
   teacher_recite: {ja: 定義文の暗唱を教師にする, extends: teaching, from: definition_text}
   teacher_examples: {ja: 適用例を教師にする, extends: teaching, from: examples_only}
@@ -287,6 +287,9 @@ nodes:
   # ----- 個体を参照する種類。個体は、成員が1つの種類として、種類の書ける位置に書ける。
   model_design: {ja: モデルについての設計, extends: information_entity_design_to, mod: {of: [v_refer, from], with: model}}
   design_decision: {ja: 本設計の決定, extends: decision, mod: {of: [v_compose, from], with: this_design}}
+  design_dec_adopted: {ja: 本設計の採用済みの決定, extends: dec_adopted, mod: {of: [is, from], with: design_decision}}
+  design_dec_tentative: {ja: 本設計の暫定の決定, extends: dec_tentative, mod: {of: [is, from], with: design_decision}}
+  design_dec_withdrawn: {ja: 本設計の取り下げた決定, extends: dec_withdrawn, mod: {of: [is, from], with: design_decision}}
 
 individuals:
   # ===== モデル。種類ではなく、1つずつの成果物。
@@ -1000,46 +1003,46 @@ individuals:
   # ===== 決定（is: decision）
   # p は動詞。is_a だけは動詞ではなく、体系の上位・下位の関係そのもので、検査が構造から確かめる。
   d_goal:
-    {is: dec_adopted, s: this_design, p: v_raise, o: redefinition_success, supersedes: [d_avoid_redefinition]}
+    {is: design_dec_adopted, s: this_design, p: v_raise, o: redefinition_success, supersedes: [d_avoid_redefinition]}
   d_avoid_redefinition:
-    {is: dec_withdrawn, s: definition, p: v_refer, o: new_word}
+    {is: design_dec_withdrawn, s: definition, p: v_refer, o: new_word}
   d_metric:
-    {is: dec_adopted, s: cross_usage_consistency, p: v_measure, o: redefinition_success, supersedes: [d_metric_following],
+    {is: design_dec_adopted, s: cross_usage_consistency, p: v_measure, o: redefinition_success, supersedes: [d_metric_following],
      basis: [h_recite_does_not_transfer_to_apply, h_apply_does_not_transfer_to_paraphrase]}
   d_metric_following:
-    {is: dec_withdrawn, s: redefinition_following, p: v_measure, o: redefinition_success}
+    {is: design_dec_withdrawn, s: redefinition_following, p: v_measure, o: redefinition_success}
   d_source_of_truth_location:
-    {is: dec_adopted, s: depended_information, p: v_compose, o: typed_graph}
+    {is: design_dec_adopted, s: depended_information, p: v_compose, o: typed_graph}
   d_source_of_truth_content:
-    {is: dec_tentative, s: depended_information, p: v_consist, o: [definition, application_example],
+    {is: design_dec_tentative, s: depended_information, p: v_consist, o: [definition, application_example],
      basis: [h_recite_does_not_transfer_to_apply, h_vector_raises_following]}
   d_test_is_material:
-    {is: dec_adopted, s: test, p: is_a, o: application_example, basis: [h_recite_does_not_transfer_to_apply]}
+    {is: design_dec_adopted, s: test, p: is_a, o: application_example, basis: [h_recite_does_not_transfer_to_apply]}
   d_term_server_selects:
-    {is: dec_tentative, s: glossary, p: v_consist, o: relevant_definitions, basis: [h_preceding_definitions_lower]}
+    {is: design_dec_tentative, s: glossary, p: v_consist, o: relevant_definitions, basis: [h_preceding_definitions_lower]}
   d_redefinition_at_head:
-    {is: dec_tentative, s: redefinition, p: is_a, o: glossary_head,
+    {is: design_dec_tentative, s: redefinition, p: is_a, o: glossary_head,
      basis: [h_preceding_definitions_lower, h_following_definitions_do_not_lower],
      note: "検査は、この決定を構造から確かめない（tentative）。用語集に入れる再定義は、先頭に置く、という取り決め"}
   d_verdict_by_vector:
-    {is: dec_tentative, s: verdict, p: v_rely, o: concept_vector, basis: [h_vector_raises_following, h_vector_raises_following_free]}
+    {is: design_dec_tentative, s: verdict, p: v_rely, o: concept_vector, basis: [h_vector_raises_following, h_vector_raises_following_free]}
   d_explanation_by_text:
-    {is: dec_tentative, s: usage_explain, p: v_rely, o: text_injection, basis: [h_both_teachers_raise_control_in_combo]}
+    {is: design_dec_tentative, s: usage_explain, p: v_rely, o: text_injection, basis: [h_both_teachers_raise_control_in_combo]}
   d_consolidation_in_vector:
-    {is: dec_tentative, s: change_holder, p: is_a, o: taught_vector, basis: [h_vector_count_does_not_lower],
+    {is: design_dec_tentative, s: change_holder, p: is_a, o: taught_vector, basis: [h_vector_count_does_not_lower],
      note: "検査は、この決定を構造から確かめない（tentative）。与えられた意味を保持するのは、教示で得られたベクトル、という取り決め"}
   d_source_of_truth_in_controlled_language:
-    {is: dec_adopted, s: depended_information, p: v_express, o: controlled_language,
+    {is: design_dec_adopted, s: depended_information, p: v_express, o: controlled_language,
      note: "体系制御言語とは、ontology.yaml の書き方による記述そのものを指す"}
   d_rendered_text_is_derived:
-    {is: dec_adopted, s: rendered_text, p: v_rely, o: depended_information,
+    {is: design_dec_adopted, s: rendered_text, p: v_rely, o: depended_information,
      note: "自然言語の文は、正本から変換して得る表示。変換は LLM が行ってもシステムが行ってもよい"}
   d_symbol_selection_symbolic:
-    {is: dec_tentative, s: symbol_selection, p: v_rely, o: typed_graph}
+    {is: design_dec_tentative, s: symbol_selection, p: v_rely, o: typed_graph}
   d_vector_needs_open_weights:
-    {is: dec_adopted, s: concept_vector, p: v_rely, o: open_weight_model}
+    {is: design_dec_adopted, s: concept_vector, p: v_rely, o: open_weight_model}
   d_text_for_api_models:
-    {is: dec_adopted, s: api_only_model, p: v_rely, o: text_injection}
+    {is: design_dec_adopted, s: api_only_model, p: v_rely, o: text_injection}
 
   # ===== 残り項目（is: backlog_item）
   b_e8_multi_layer: {is: item_done, tests: [h_multi_layer_raises_consistency]}

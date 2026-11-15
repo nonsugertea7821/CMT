@@ -144,6 +144,9 @@ class Ontology:
         self.B, self.AX, self.N, self.G = O["base"], O["axes"], O["nodes"], O["grammar"]
         self.I, self.Idom = {}, None   # 個体の識別子 → 種類、個体が書かれた領域
         for nid, n in self.N.items():  # 法則 single。mod は単一。中では並びとして扱う
+            if isinstance(n.get("extends"), list):
+                err(f"{nid}: extends は並べない。AND は「属する」（is）で限定して書く")
+                n["extends"] = n["extends"][0]
             if "mod" in n:
                 if isinstance(n["mod"], list):
                     err(f"{nid}: mod は並べない。限定は1つだけ（法則 single）")
@@ -281,9 +284,14 @@ class Ontology:
                     err(f"{nid}: 領域 {dom} から、使うと書かれていない領域のノード {r} を参照している")
 
     def parents(self, nid):
-        """上位。extends に並べたものは AND（そのすべてに当てはまる）。"""
-        e = self.N[nid].get("extends")
-        return [] if e is None else (e if isinstance(e, list) else [e])
+        """上位。extends に書いたものと、「属する」（is）の始点として限定した種類。
+        AND は並べて書かず、「A のうち、B に属するもの」と、関係を明示して書く。"""
+        n = self.N[nid]
+        out = [n["extends"]] if isinstance(n.get("extends"), str) else []
+        for m in n.get("mod") or []:
+            if isinstance(m, dict) and m.get("of") == ["is", "from"] and not m.get("neg") and m.get("with") in self.N:
+                out.append(m["with"])
+        return out
 
     def up(self, nid):
         ps = self.parents(nid)
@@ -523,6 +531,9 @@ class Ontology:
                     other = {"from": "to", "to": "from"}.get(pos)
                     if other is None:
                         err(f"{where}: 位置 new には with を付けられない")
+                    elif verb == "is":   # 「属する」の終点は、種類そのもの（その成員ではない）
+                        if m["with"] not in N or not self.is_concept(m["with"]):
+                            err(f"{where}: {m['with']} は種類でない")
                     elif (m["with"] not in N and m["with"] not in self.I) or not self.overlaps(m["with"], self.end(verb, other)):
                         err(f"{where}: {m['with']} は {verb} の {other}（{self.end(verb, other)}）に来られない")
                 if set(m) - set(self.G["mod"]):
