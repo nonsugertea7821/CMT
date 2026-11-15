@@ -448,6 +448,26 @@ nodes:
   number: {ja: 数の値, extends: value, mod: [{of: [v_refer, from], with: magnitude}]}
   literal: {ja: 文字の値, extends: value, mod: [{of: [v_refer, from], with: word}]}
 
+  # ===== 実行の戦略と実行時の意味論。実行の検査（run_spec.py）は、runtime の節に書かれた選択に従う =====
+  strategy: {ja: 実行の戦略, extends: definition, mod: [{of: [v_refer, from], with: v_execute}]}
+  runtime: {ja: 実行時の意味論の節, extends: section, mod: [{of: [v_refer, from], with: strategy}]}
+  world: {ja: 書かれていない文の扱い, extends: strategy, mod: [{of: [v_refer, from], with: facts}]}
+  closed_world: {ja: 書かれていない文は成り立たない, extends: world, val: {truth: false}}
+  pre_rule: {ja: 前の状態の確かめ方, extends: strategy, mod: [{of: [v_refer, from], with: pre}]}
+  post_rule: {ja: 後の状態の作り方, extends: strategy, mod: [{of: [v_refer, from], with: post}]}
+  replace: {ja: 否定の文を取り除き肯定の文を加える, extends: post_rule, mod: [{of: [v_refer, from], with: not}]}
+  law_check: {ja: 法則を確かめる時点, extends: strategy, mod: [{of: [v_refer, from], with: laws}]}
+  every_step: {ja: 1歩ごとに確かめる, extends: law_check, mod: [{of: [v_come_after, from], with: steps}]}
+  binding: {ja: 位置への個体の割り当て方, extends: strategy, mod: [{of: [v_refer, from], with: individuals}]}
+  distinct: {ja: 位置ごとに別の個体を割り当てる, extends: binding, cmp: [{axis: text, a: from, b: to, rel: differ}]}
+  choice: {ja: 当てはまる動詞の選び方, extends: strategy, mod: [{of: [v_refer, from], with: steps}]}
+  recorded: {ja: 実行の記録が選び方を与える, extends: choice, mod: [{of: [v_depend, from], with: run}]}
+  progress: {ja: 当てはまるとみなす条件, extends: strategy, mod: [{of: [v_refer, from], with: halted}]}
+  changes_state: {ja: 前の状態が成り立ち後の状態がまだ成り立っていない, extends: progress, mod: [{of: [v_come_before, from], with: post}]}
+  # ===== 構文糖衣。短い書き方と、それが表すものの対応 =====
+  syntax: {ja: 構文糖衣の節, extends: section, mod: [{of: [v_refer, from], with: pattern}]}
+  formula: {ja: 状態の関係の式, extends: pattern, mod: [{of: [v_refer, from], with: state_relation}]}
+
 # 体系が、自分の記録（claims.yaml と measurements.yaml）について述べる。
 # 記録の種類ごとに、それが何であるか（is）、識別子の種類（key）、持てる項目（fields）を書く。
 # 項目名は、ノードの識別子そのもの。その項目の中身は、そのノードに当たるものである。
@@ -461,11 +481,26 @@ records:
   meaning: {is: meaning, fields: [identifier, value]}
   value: {is: value, fields: [axis, s, o]}
 
+# 実行時の意味論。実行器が、書き換えの規則をどう当てはめるか。語も値もノードの識別子。
+# 実行の検査は、ここに書かれた選択に従う。実装のない選択が書かれていれば、エラーにする。
+runtime:
+  world: closed_world
+  pre_rule: all
+  post_rule: replace
+  law_check: every_step
+  binding: distinct
+  choice: recorded
+  progress: changes_state
+
+# 構文糖衣。短い書き方（正規表現）と、それが表す部分の名前。部分の名前はノードの識別子。
+syntax:
+  formula: {pattern: '(?P<not>not )?(?P<base>\w+)\((?P<from>\w+)(?:, (?P<to>\w+))?\)', value: [not, base, from, to]}
+
 # 体系が、自分の書き方（文法）について述べる。
 # 文法の語は、すべてノードの識別子である。節ごとに、そこで使える語を並べる。検査は、ここに並んだ語だけを受け付ける。
 grammar:
-  grammar: [system, nodes, mod, cmp, base, axes, records, laws, run, position, rel, function, value, logic, grammar]
-  system: [base, laws, axes, nodes, records, grammar]
+  grammar: [system, nodes, mod, cmp, base, axes, records, laws, run, position, rel, function, value, logic, runtime, syntax, grammar]
+  system: [base, laws, axes, nodes, records, runtime, syntax, grammar]
   nodes: [ja, gloss, extends, from, to, new_kind, holds, pre, post, form, of, neg, mod, val, cmp, axis]
   mod: [of, with, neg, quant, at]
   cmp: [axis, a, b, rel]
@@ -479,3 +514,5 @@ grammar:
   function: [gt, ge, lt, le]
   value: [number, literal]
   logic: [not, all, any, between]   # true と false は、真偽の軸の値
+  runtime: [world, pre_rule, post_rule, law_check, binding, choice, progress]
+  syntax: [formula]

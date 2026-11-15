@@ -102,6 +102,21 @@ class Ontology:
                     break
                 seen.add(x)
                 x = self.up(x)
+        for k, v in self.O["runtime"].items():
+            if k not in G["runtime"]:
+                err(f"runtime: 語 {k} が、grammar.runtime に書かれていない")
+            elif v not in self.N or not self.is_a(v, k) and not (k == "pre_rule" and v in G["logic"]):
+                err(f"runtime.{k}: 値 {v} が、{k} の下位のノードでない")
+        for k, v in self.O["syntax"].items():
+            if k not in G["syntax"]:
+                err(f"syntax: 語 {k} が、grammar.syntax に書かれていない")
+            try:
+                names = set(re.compile(v["pattern"]).groupindex)
+            except re.error as e:
+                err(f"syntax.{k}: 書き方が読めない（{e}）")
+                continue
+            if names != set(v["value"]) or any(x not in self.N for x in v["value"]):
+                err(f"syntax.{k}: 部分の名前 {sorted(names)} が、value と合わないか、ノードでない")
         for k in self.O:
             if k not in G["system"]:
                 err(f"体系の節 {k} が、grammar.system に書かれていない")
@@ -263,9 +278,9 @@ class Ontology:
             err(f"{vid}: 静的（holds）か動的（pre / post）のどちらかで書く")
         for key in ("holds", "pre", "post"):
             for f in n.get(key, []):
-                m = re.fullmatch(r"(not )?(\w+)\((\w+)(?:, (\w+))?\)", f)
-                args = [a for a in m.groups()[2:] if a] if m else []
-                if not m or m.group(2) not in self.B or len(args) != self.B[m.group(2)]["arity"] or any(a not in ("from", "to", "new") for a in args):
+                m = re.fullmatch(self.O["syntax"]["formula"]["pattern"], f)
+                args = [a for a in (m.group("from"), m.group("to")) if a] if m else []
+                if not m or m.group("base") not in self.B or len(args) != self.B[m.group("base")]["arity"] or any(a not in ("from", "to", "new") for a in args):
                     err(f"{vid}: 式 {f} が基礎の関係に合わない")
 
     def grounding(self, nid):

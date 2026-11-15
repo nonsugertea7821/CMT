@@ -27,16 +27,32 @@ from check_spec import Ontology, load  # noqa: E402
 ROOT = Path(__file__).parent.parent / "spec"
 
 
+FORMULA = None  # 式の書き方。体系の syntax.formula から読む
+
+
 def parse(f):
-    m = re.fullmatch(r"(not )?(\w+)\((\w+)(?:, (\w+))?\)", f)
+    m = re.fullmatch(FORMULA, f)
     if not m:
         raise ValueError(f"式 {f} が読めない")
-    return bool(m.group(1)), m.group(2), tuple(a for a in m.groups()[2:] if a)
+    return bool(m.group("not")), m.group("base"), tuple(a for a in (m.group("from"), m.group("to")) if a)
+
+
+# 実行時の意味論のうち、この検査が実装している選択。体系の runtime に、ここにない選択が書かれていればエラー。
+IMPLEMENTED = {
+    "world": {"closed_world"},
+    "pre_rule": {"all", "any"},
+    "post_rule": {"replace"},
+    "law_check": {"every_step"},
+    "binding": {"distinct"},
+    "choice": {"recorded"},
+    "progress": {"changes_state"},
+}
 
 
 class Machine:
     def __init__(self, T, run, name):
-        self.T, self.name, self.errors = T, name, []
+        self.T, self.name, self.errors, self.R = T, name, [], T.O["runtime"]
+        self.quant = all if self.R["pre_rule"] == "all" else any
         self.ind = run["individuals"]
         for i, k in self.ind.items():
             if k not in T.N:
@@ -87,7 +103,7 @@ class Machine:
         T, n = self.T, None
         x = verb
         while x in T.N and not ("pre" in T.N[x] or "holds" in T.N[x]):
-            x = T.N[x].get("extends")
+            x = T.up(x)
         n = T.N.get(x)
         if n is None or "pre" not in n:
             return None, f"{verb} は動的な動詞でない"
@@ -114,9 +130,11 @@ class Machine:
         r, why = self.bind(verb, b)
         if r is None:
             return self.err(f"{where}: {why}")
-        for neg, rel, args in r["pre"]:  # 法則 step
-            if not self.holds(neg, rel, args):
-                return self.err(f"{where}: pre の {'not ' if neg else ''}{rel}{args} が成り立っていない")
+        if len(set(b.values())) != len(b):  # runtime.binding: distinct
+            return self.err(f"{where}: 別々の位置に同じ個体が割り当てられている")
+        if not self.quant(self.holds(*f) for f in r["pre"]):  # 法則 step。runtime.pre_rule
+            bad = [f"{'not ' if neg else ''}{rel}{args}" for neg, rel, args in r["pre"] if not self.holds(neg, rel, args)]
+            return self.err(f"{where}: pre の {bad} が成り立っていない")
         for neg, rel, args in r["post"]:  # 法則 frame: ここに出てこない文には触れない
             (self.facts.discard if neg else self.facts.add)((rel, args))
         self.check_laws(where)
@@ -131,14 +149,20 @@ class Machine:
             for combo in itertools.permutations(self.ind, len(poss)):
                 b = dict(zip(poss, combo))
                 r, _ = self.bind(vid, b)
-                if r and all(self.holds(*x) for x in r["pre"]) and not all(self.holds(*x) for x in r["post"]):
+                if r and self.quant(self.holds(*x) for x in r["pre"]) and not all(self.holds(*x) for x in r["post"]):
                     found.append((vid, b))
         return found
 
 
 def main():
+    global FORMULA
     T = Ontology(load("ontology.yaml"))
     G = T.G["run"]
+    FORMULA = T.O["syntax"]["formula"]["pattern"]
+    for k, v in T.O["runtime"].items():
+        if v not in IMPLEMENTED.get(k, ()):
+            print(f"実行の検査に失敗: runtime.{k} の選択 {v} は、この検査に実装がない")
+            sys.exit(1)
     errors, n_steps, files = [], 0, sorted((ROOT / "runs").glob("*.yaml"))
     for path in files:
         run = yaml.safe_load(path.read_text(encoding="utf-8"))
