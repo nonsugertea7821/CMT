@@ -39,6 +39,7 @@ base:
 domains:
   core: {ja: 核, uses: []}
   run: {ja: 実行, uses: [core]}
+  exp: {ja: 実験, uses: [core, run]}
 
 laws:
   transitive: {ja: 推移的, scope: base}
@@ -532,7 +533,7 @@ nodes:
   domains: {ja: 領域の節, extends: section, mod: {of: [v_refer, from], with: domain}}
   uses: {ja: 使う領域の指定, extends: expression_part, mod: {of: [v_refer, from], with: domain}}
 
-# 体系が、自分の記録（claims.yaml と measurements.yaml）について述べる。
+# 体系が、自分の記録（領域のファイルに書かれた個体）について述べる。個体は is で種類に属する。
 # 記録の種類ごとに、それが何であるか（is）、識別子の種類（key）、持てる項目（fields）を書く。
 # 項目名は、ノードの識別子そのもの。その項目の中身は、そのノードに当たるものである。
 records:
@@ -563,7 +564,7 @@ syntax:
 # 体系が、自分の書き方（文法）について述べる。
 # 文法の語は、すべてノードの識別子である。節ごとに、そこで使える語を並べる。検査は、ここに並んだ語だけを受け付ける。
 grammar:
-  grammar: [system, nodes, mod, cmp, base, axes, records, laws, run, position, rel, function, value, logic, runtime, syntax, domains, grammar]
+  grammar: [system, nodes, mod, cmp, base, axes, records, laws, run, position, rel, function, value, logic, runtime, syntax, domains, domain, individuals, grammar]
   system: [domains, base, laws, axes, nodes, records, runtime, syntax, grammar]
   nodes: [ja, gloss, extends, from, to, new_kind, holds, pre, post, form, of, neg, mod, val, cmp, axis]
   mod: [of, with, neg, quant, at]
@@ -581,3 +582,5 @@ grammar:
   runtime: [world, pre_rule, post_rule, law_check, binding, choice, progress]
   syntax: [formula]
   domains: [ja, uses]
+  domain: [domain, individuals]   # 領域のファイル（spec/exp.yaml）
+  individuals: [is]

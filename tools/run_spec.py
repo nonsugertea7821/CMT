@@ -8,7 +8,7 @@
   halt   halted: true と書かれた記録では、当てはまる動詞がもうない
 
 記録の書き方:
-  individuals: {個体: 種類}
+  individuals: {個体: {is: 種類}}
   facts: ["関係(個体, 個体)", ...]         最初の状態。書かれていない文は成り立っていない
   steps: [[動詞, {from: 個体, to: 個体, new: 個体}], ...]
   expect: ["関係(...)", "not 関係(...)"]   最後の状態で成り立つこと
@@ -53,7 +53,7 @@ class Machine:
     def __init__(self, T, run, name):
         self.T, self.name, self.errors, self.R = T, name, [], T.O["runtime"]
         self.quant = all if self.R["pre_rule"] == "all" else any
-        self.ind = run["individuals"]
+        self.ind = {i: v["is"] for i, v in run["individuals"].items()}
         for i, k in self.ind.items():
             if k not in T.N:
                 self.err(f"個体 {i} の種類 {k} が未定義")

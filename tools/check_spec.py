@@ -6,11 +6,11 @@ ontology.yaml  概念の体系。書き方はそのファイルの冒頭を見�
   検査: 表示語の一意性 / gloss を持つのは最上位の2つだけ / 動詞の式（状態の関係・両端・第三のものの種類）の一意性 /
         動詞の下位が端を狭めていること / 修飾の型（その位置に来られるか）/ 分類の軸と値 / 概念の式の一意性 /
         役割が根拠となる定義を持つこと
-  records: 体系が、自分の記録（claims.yaml, measurements.yaml）について述べる部分。項目名はノードの識別子。
+  records: 体系が、自分の記録（exp.yaml の個体）について述べる部分。項目名はノードの識別子。
   grammar: 体系が、自分の書き方について述べる部分。文法の語は、すべてノードの識別子。節ごとに、使える語を並べる。
         検査は、ここに書かれた語だけを文法の語として受け付ける。logic は述語論理の語で、体系の中では定義しない。
 
-measurements.yaml と claims.yaml  記録。
+exp.yaml  領域 exp。測定・観察・仮説・決定・残り項目を、個体として書く。
   項目名は、ontology.yaml のノードの識別子そのもの。どの記録がどの項目を持てるかは、ontology.yaml の records にある。
   status や留保や指標の値も、ノードの識別子。
   測定値: 族ごとに、軸（axis）の直積で展開する。識別子は「族.軸の値....指標」。値は結果ファイルから計算する。
@@ -48,8 +48,48 @@ def err(msg):
     errors.append(msg)
 
 
+class _Unique(yaml.SafeLoader):
+    """同じ対応表の中で、同じ語を2度書いたらエラーにする。"""
+
+
+def _mapping(loader, node, deep=False):
+    seen = set()
+    for k, _ in node.value:
+        key = loader.construct_object(k, deep=True)
+        if isinstance(key, (str, int, bool)) and key in seen:
+            raise yaml.constructor.ConstructorError(None, None, f"識別子 {key} が重複している", k.start_mark)
+        if isinstance(key, (str, int, bool)):
+            seen.add(key)
+    return yaml.SafeLoader.construct_mapping(loader, node, deep)
+
+
+_Unique.construct_mapping = _mapping
+
+
 def load(name):
-    return yaml.safe_load((SPEC / name).read_text(encoding="utf-8"))
+    return yaml.load((SPEC / name).read_text(encoding="utf-8"), Loader=_Unique)
+
+
+def load_domain(name, T):
+    """領域のファイルを読み、個体を種類ごとに分ける。種類と集まりの対応は、体系の records から読む。"""
+    D = load(name)
+    for k in D:
+        if k not in T.G["domain"]:
+            err(f"{name}: 語 {k} が、grammar.domain に書かれていない")
+    if D.get("domain") not in T.O["domains"]:
+        err(f"{name}: 領域 {D.get('domain')} が domains に書かれていない")
+    by_kind = {r["is"]: rid for rid, r in T.R.items() if "key" in r or rid == "backlog"}
+    out = {rid: {} for rid in by_kind.values()}
+    for iid, x in D["individuals"].items():
+        kind = x.pop("is", None)
+        if kind not in T.N:
+            err(f"{name} {iid}: 種類 {kind} がノードでない")
+        elif kind not in by_kind:
+            err(f"{name} {iid}: 種類 {kind} の記録は、体系の records に書かれていない")
+        else:
+            out[by_kind[kind]][iid] = x
+    out["backlog"] = [{"identifier": k, **v} for k, v in out["backlog"].items()]
+    return {"families": out.pop("measurements")}, out
 
 
 # ---------------------------------------------------------------- 概念の体系
@@ -747,7 +787,7 @@ def main():
     T.check_grammar()
     T.check_hierarchy()
     T.check_domains()
-    M, C = load("measurements.yaml"), load("claims.yaml")
+    M, C = load_domain("exp.yaml", T)
     values, meanings = expand(M, T)
     check_claims(C, values, T)
     if args.expr:
