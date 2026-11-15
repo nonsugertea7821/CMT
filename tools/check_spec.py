@@ -74,26 +74,52 @@ KINDS = {"measurement_family": "families", "observation": "observations", "hypot
          "decision": "decisions", "backlog_item": "backlog"}   # この検査が中身を確かめる種類
 
 
-def load_domain(name, T):
-    """領域のファイルを読み、個体を種類ごとに分ける。個体に書ける項目は、種類の式から決まる（Ontology.field_ok）。
-    仮説・決定・残り項目の個体は、状態を表す下位の種類に属する。"""
+LITERAL = {"ja", "holds", "pre", "post", "result_file", "row_collection", "row_filter", "row_keys", "condition_entry", "axis", "note"}
+
+
+def qualify(x, local, dom):
+    """領域のファイルの中で、領域を書かずに書かれた識別子を「領域.名前」に直す。文字列そのものを値とする項目は直さない。"""
+    if isinstance(x, str):
+        return f"{dom}.{x}" if x in local else x
+    if isinstance(x, list):
+        return [qualify(v, local, dom) for v in x]
+    if isinstance(x, dict):
+        return {k: (v if k in LITERAL else qualify(v, local, dom)) for k, v in x.items()}
+    return x
+
+
+def merge_domain(name, O):
+    """領域のファイルを読み、そのノードを体系に加える。領域のファイルは、その領域の種類（nodes）と個体（individuals）を持つ。"""
     D = load(name)
+    dom = D.get("domain")
+    if dom not in O["domains"]:
+        err(f"{name}: 領域 {dom} が domains に書かれていない")
+    local = set(D.get("nodes") or {})
+    for nid, n in (D.get("nodes") or {}).items():
+        O["nodes"][f"{dom}.{nid}"] = qualify(n, local, dom)
+    D["individuals"] = {iid: qualify(x, local, dom) for iid, x in D["individuals"].items()}
+    return D
+
+
+def load_domain(name, D, T):
+    """領域の個体を種類ごとに分ける。個体に書ける項目は、種類の式から決まる（Ontology.field_ok）。
+    仮説・決定・残り項目の個体は、状態を表す下位の種類に属する。この検査が中身を確かめない種類の個体は、種類と項目だけを確かめる。"""
     for k in D:
         if k not in T.G["domain"]:
             err(f"{name}: 語 {k} が、grammar.domain に書かれていない")
-    if D.get("domain") not in T.O["domains"]:
-        err(f"{name}: 領域 {D.get('domain')} が domains に書かれていない")
     out = {sect: {} for sect in KINDS.values()}
     for iid, x in D["individuals"].items():
+        if iid in T.N or T.resolve(iid, D["domain"]):
+            err(f"{name} {iid}: 個体の識別子が、ノードの識別子と重なっている")
         kind = x.pop("is", None)
         if kind not in T.N:
             err(f"{name} {iid}: 種類 {kind} がノードでない")
             continue
+        T.I[iid] = kind
+        T.check_fields(kind, {f: v for f, v in x.items() if f not in T.G["individuals"]}, f"{name} {iid}", D["domain"])
         base = [k for k in KINDS if T.is_a(kind, k)]
         if not base:
-            err(f"{name} {iid}: 種類 {kind} の個体を確かめる方法が、検査にない")
             continue
-        T.check_fields(kind, x, f"{name} {iid}")
         if base[0] in ("hypothesis", "decision", "backlog_item"):
             x["status"] = kind
         out[KINDS[base[0]]][iid] = x
@@ -111,6 +137,7 @@ class Ontology:
     def __init__(self, O):
         self.O = O
         self.B, self.AX, self.N, self.G = O["base"], O["axes"], O["nodes"], O["grammar"]
+        self.I = {}   # 個体の識別子 → 種類
         for nid, n in self.N.items():  # 法則 single。mod は単一。中では並びとして扱う
             if "mod" in n:
                 if isinstance(n["mod"], list):
@@ -512,20 +539,21 @@ class Ontology:
     def mods_of(self, nid):
         return [m for x in [nid] + self.ancestors(nid) for m in (self.N[x].get("mod") or []) if isinstance(m, dict)]
 
-    def field_ok(self, kind, f):
+    def field_ok(self, kind, f, dom="core"):
         """種類 kind の個体に、項目 f を書けるか。項目の表は持たず、式から決める。
         f が動詞かその位置の形（s, p, o）: kind が「について述べる」の始点に来る種類（文）であること。
         それ以外: f かその下位に、kind のものとの関係で限定されたノードがあること。"""
-        if f not in self.N:
+        f = f if f in self.N else self.resolve(f, dom)
+        if f is None:
             return False
         if "form" in self.N[f] or self.is_verb(f):
             return any(m["of"] == ["v_refer", "from"] for m in self.mods_of(kind))
         cands = [f] + [k for k in self.N if self.is_concept(k) and f in self.ancestors(k)]
         return any(m.get("with") in self.N and self.is_a(kind, m["with"]) for c in cands for m in self.mods_of(c))
 
-    def check_fields(self, kind, x, where):
+    def check_fields(self, kind, x, where, dom="core"):
         for f, v in x.items():
-            if not self.field_ok(kind, f):
+            if not self.field_ok(kind, f, dom):
                 err(f"{where}: 項目 {f} は、種類 {kind} の個体に書けない（{kind} との関係で限定されたノードでない）")
 
     def kinds_of(self, nid):
@@ -611,7 +639,7 @@ def stat(rows, cond, name):
 
 def check_meaning(val, T, where):
     if isinstance(val, str):
-        if val not in T.N:
+        if val not in T.N and val not in T.I:
             err(f"{where}: ノード {val} が未定義")
         return
     for k in val:
@@ -737,7 +765,7 @@ def check_claims(C, values, T):
         elif want != [h["status"]]:
             err(f"{hid}: 種類は {h["status"]} と書かれているが、根拠の有無からは {want} になる")
         for t in h.get("scope", []):
-            if t not in T.N:
+            if t not in T.N and t not in T.I:
                 err(f"{hid}: scope のノード {t} が未定義")
         for k in ("evidence", "against"):
             for r in h.get(k, []):
@@ -777,16 +805,18 @@ def main():
     ap.add_argument("--show")
     ap.add_argument("--expr")
     args = ap.parse_args()
-    T = Ontology(load("ontology.yaml"))
+    O = load("ontology.yaml")
+    D = merge_domain("exp.yaml", O)
+    T = Ontology(O)
     T.check()
     T.check_grammar()
     T.check_hierarchy()
     T.check_domains()
-    M, C = load_domain("exp.yaml", T)
+    M, C = load_domain("exp.yaml", D, T)
     values, meanings = expand(M, T)
     check_claims(C, values, T)
     if args.expr:
-        print(T.expr(args.expr))
+        print(T.expr(args.expr if args.expr in T.N else T.resolve(args.expr, "core") or args.expr))
     if args.values:
         for mid, (v, n) in sorted(values.items()):
             print(f"{mid} = {v:.2f} (n={n})")
