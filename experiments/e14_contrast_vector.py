@@ -10,9 +10,9 @@
 
 評価（E3 と同じ二択、同じ指標）:
   none     何もなし
-  vec×α    語のトークン位置に α·v を足す（α = 1, 2, 4）
+  vecα    語のトークン位置に α·v を足す（α = 1, 2, 4）
   near     定義文を設問の直前に置く
-  near+vec×1
+  near+vec1
 
 使い方:
   python e14_contrast_vector.py --model Qwen/Qwen2.5-1.5B-Instruct --layer 8
@@ -91,8 +91,8 @@ def main():
 
     alphas = [1, 2, 4]
     conds = {"none": (False, None), "near": (True, None)}
-    conds |= {f"vec×{a}": (False, a) for a in alphas}
-    conds["near+vec×1"] = (True, 1)
+    conds |= {f"vec{a}": (False, a) for a in alphas}
+    conds["near+vec1"] = (True, 1)
     res = {}
     for it in items:
         res[it["id"]] = {"group": it["group"]}

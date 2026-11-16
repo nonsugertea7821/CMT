@@ -354,6 +354,10 @@ individuals:
   e9: {is: measurement_family}
   e10: {is: measurement_family}
   e11: {is: measurement_family}
+  e12: {is: measurement_family}
+  e13: {is: measurement_family}
+  e10o: {is: measurement_family}
+  e14: {is: measurement_family}
   # ----- 測定の族の軸（is: family_axis）と、軸の値（is: axis_value）。val の text は測定値の識別子に使う字。
   # 結果ファイルでの書き方（v_spell）と、値が指すもの（v_denote）は事実で書く。
   e1_model: {is: family_axis, val: {text: model}}
@@ -544,6 +548,39 @@ individuals:
   e11_cond: {is: family_axis, val: {text: cond}}
   e11_cond_direct: {is: axis_value, val: {text: direct}}
   e11_cond_write: {is: axis_value, val: {text: write}}
+  e12_group: {is: family_axis, val: {text: group}}
+  e12_group_G2c: {is: axis_value, val: {text: G2c}}
+  e12_group_G2k: {is: axis_value, val: {text: G2k}}
+  e12_cond: {is: family_axis, val: {text: cond}}
+  e12_cond_none: {is: axis_value, val: {text: 'none'}}
+  e12_cond_tok0: {is: axis_value, val: {text: 'tok0'}}
+  e12_cond_tok: {is: axis_value, val: {text: 'tok'}}
+  e12_cond_word_tok: {is: axis_value, val: {text: 'word+tok'}}
+  e13_group: {is: family_axis, val: {text: group}}
+  e13_group_G2c: {is: axis_value, val: {text: G2c}}
+  e13_group_G2k: {is: axis_value, val: {text: G2k}}
+  e13_cond: {is: family_axis, val: {text: cond}}
+  e13_cond_none: {is: axis_value, val: {text: 'none'}}
+  e13_cond_near: {is: axis_value, val: {text: 'near'}}
+  e13_cond_symbolic: {is: axis_value, val: {text: 'symbolic'}}
+  e13_cond_symbolic_mod: {is: axis_value, val: {text: 'symbolic_mod'}}
+  e10o_group: {is: family_axis, val: {text: group}}
+  e10o_group_G2c: {is: axis_value, val: {text: G2c}}
+  e10o_group_G2k: {is: axis_value, val: {text: G2k}}
+  e10o_cond: {is: family_axis, val: {text: cond}}
+  e10o_cond_none: {is: axis_value, val: {text: 'none'}}
+  e10o_cond_expr_masked_i: {is: axis_value, val: {text: 'expr_masked_i'}}
+  e10o_cond_expr_opaque: {is: axis_value, val: {text: 'expr_opaque'}}
+  e14_group: {is: family_axis, val: {text: group}}
+  e14_group_G2c: {is: axis_value, val: {text: G2c}}
+  e14_group_G2k: {is: axis_value, val: {text: G2k}}
+  e14_cond: {is: family_axis, val: {text: cond}}
+  e14_cond_none: {is: axis_value, val: {text: 'none'}}
+  e14_cond_near: {is: axis_value, val: {text: 'near'}}
+  e14_cond_vec1: {is: axis_value, val: {text: 'vec1'}}
+  e14_cond_vec2: {is: axis_value, val: {text: 'vec2'}}
+  e14_cond_vec4: {is: axis_value, val: {text: 'vec4'}}
+  e14_cond_near_vec1: {is: axis_value, val: {text: 'near+vec1'}}
 
   # ===== 観察。s と o は測定値で、p は大きさを比べる動詞（is: observation）
   o_e1_redef_below_new_adjacent: {is: observation}
@@ -623,6 +660,14 @@ individuals:
   o_e10_expr_below_none_control: {is: observation}
   o_e11_write_below_direct_conflict: {is: observation}
   o_e3_expr_teacher_raises_conflict: {is: observation}
+  o_e12_tok_below_tok0_conflict: {is: observation}
+  o_e12_tok_below_none_control: {is: observation}
+  o_e13_symbolic_below_near_conflict: {is: observation}
+  o_e13_symbolic_mod_above_none_conflict: {is: observation}
+  o_e10o_opaque_above_masked_conflict: {is: observation}
+  o_e10o_opaque_below_none_control: {is: observation}
+  o_e14_vec_below_none_control: {is: observation}
+  o_e14_vec_below_near_conflict: {is: observation}
 
   # ===== 仮説（is: hypothesis）
   # --- 文章での注入 ---
@@ -664,10 +709,10 @@ individuals:
   h_single_layer_does_not_reach_shared: {is: hyp_supported}
   h_multi_layer_raises_consistency: {is: hyp_mixed}
   h_cscl_raises_following: {is: hyp_mixed}
-  h_dedicated_key_raises_following: {is: hyp_untested}
-  h_symbolic_membership_raises_following: {is: hyp_untested}
-  h_contrast_vector_raises_following: {is: hyp_untested}
-  h_opaque_expression_raises_following: {is: hyp_untested}
+  h_dedicated_key_raises_following: {is: hyp_refuted}
+  h_symbolic_membership_raises_following: {is: hyp_mixed}
+  h_contrast_vector_raises_following: {is: hyp_refuted}
+  h_opaque_expression_raises_following: {is: hyp_mixed}
   h_model_can_write_cscl: {is: hyp_untested}
   h_modifier_transfers_to_unseen_genus: {is: hyp_supported}
 
@@ -703,10 +748,10 @@ individuals:
   b_attention_observe_and_block: {is: item_queued}
   b_measure_explanation: {is: item_queued}
   b_e4_retrain: {is: item_queued}
-  b_e12_dedicated_key: {is: item_queued}
-  b_e13_fact_then_symbolic: {is: item_queued}
-  b_e14_contrast_vector: {is: item_queued}
-  b_e10_opaque_identifiers: {is: item_queued}
+  b_e12_dedicated_key: {is: item_done}
+  b_e13_fact_then_symbolic: {is: item_done}
+  b_e14_contrast_vector: {is: item_done}
+  b_e10_opaque_identifiers: {is: item_done}
   b_save_text_reference_for_paraphrase: {is: item_queued}
   b_renaming_inside_glossary: {is: item_queued}
   b_symbol_selection: {is: item_queued}
@@ -1305,6 +1350,99 @@ facts:
   - {is: v_entry_of, from: '{cond}', to: e11}
   - {is: v_metric_of, from: e11, to: accuracy}
   - {is: v_metric_of, from: e11, to: order_robust_accuracy}
+  - {is: v_file_of, from: 'e12_Qwen2.5-1.5B-Instruct.json', to: e12}
+  - {is: v_rows_of, from: [items], to: e12}
+  - {is: v_axis_of, from: e12_group, to: e12}
+  - {is: v_value_of, from: e12_group_G2c, to: e12_group}
+  - {is: v_denote, from: e12_group_G2c, to: g_redef_conflict}
+  - {is: v_value_of, from: e12_group_G2k, to: e12_group}
+  - {is: v_denote, from: e12_group_G2k, to: g_redef_control}
+  - {is: v_axis_of, from: e12_cond, to: e12}
+  - {is: v_value_of, from: e12_cond_none, to: e12_cond}
+  - {is: v_denote, from: e12_cond_none, to: no_channel}
+  - {is: v_value_of, from: e12_cond_tok0, to: e12_cond}
+  - {is: v_denote, from: e12_cond_tok0, to: dedicated_token}
+  - {is: v_value_of, from: e12_cond_tok, to: e12_cond}
+  - {is: v_denote, from: e12_cond_tok, to: key_token_vector}
+  - {is: v_value_of, from: e12_cond_word_tok, to: e12_cond}
+  - {is: v_denote, from: e12_cond_word_tok, to: key_token_vector}
+  - {is: v_filter_of, from: {group: '{group}'}, to: e12}
+  - {is: v_entry_of, from: '{cond}', to: e12}
+  - {is: v_metric_of, from: e12, to: accuracy}
+  - {is: v_metric_of, from: e12, to: order_robust_accuracy}
+  - {is: v_file_of, from: 'e13_Qwen2.5-1.5B-Instruct.json', to: e13}
+  - {is: v_rows_of, from: [items], to: e13}
+  - {is: v_axis_of, from: e13_group, to: e13}
+  - {is: v_value_of, from: e13_group_G2c, to: e13_group}
+  - {is: v_denote, from: e13_group_G2c, to: g_redef_conflict}
+  - {is: v_value_of, from: e13_group_G2k, to: e13_group}
+  - {is: v_denote, from: e13_group_G2k, to: g_redef_control}
+  - {is: v_axis_of, from: e13_cond, to: e13}
+  - {is: v_value_of, from: e13_cond_none, to: e13_cond}
+  - {is: v_denote, from: e13_cond_none, to: no_channel}
+  - {is: v_value_of, from: e13_cond_near, to: e13_cond}
+  - {is: v_denote, from: e13_cond_near, to: text_injection}
+  - {is: v_denote, from: e13_cond_near, to: definition_text}
+  - {is: v_denote, from: e13_cond_near, to: place_adjacent}
+  - {is: v_value_of, from: e13_cond_symbolic, to: e13_cond}
+  - {is: v_denote, from: e13_cond_symbolic, to: symbolic_membership}
+  - {is: v_value_of, from: e13_cond_symbolic_mod, to: e13_cond}
+  - {is: v_denote, from: e13_cond_symbolic_mod, to: symbolic_membership}
+  - {is: v_filter_of, from: {group: '{group}'}, to: e13}
+  - {is: v_entry_of, from: '{cond}', to: e13}
+  - {is: v_metric_of, from: e13, to: accuracy}
+  - {is: v_metric_of, from: e13, to: order_robust_accuracy}
+  - {is: v_file_of, from: 'e10_Qwen2.5-1.5B-Instruct_opaque.json', to: e10o}
+  - {is: v_rows_of, from: [items], to: e10o}
+  - {is: v_axis_of, from: e10o_group, to: e10o}
+  - {is: v_value_of, from: e10o_group_G2c, to: e10o_group}
+  - {is: v_denote, from: e10o_group_G2c, to: g_redef_conflict}
+  - {is: v_value_of, from: e10o_group_G2k, to: e10o_group}
+  - {is: v_denote, from: e10o_group_G2k, to: g_redef_control}
+  - {is: v_axis_of, from: e10o_cond, to: e10o}
+  - {is: v_value_of, from: e10o_cond_none, to: e10o_cond}
+  - {is: v_denote, from: e10o_cond_none, to: no_channel}
+  - {is: v_value_of, from: e10o_cond_expr_masked_i, to: e10o_cond}
+  - {is: v_denote, from: e10o_cond_expr_masked_i, to: text_injection}
+  - {is: v_denote, from: e10o_cond_expr_masked_i, to: concept_expression}
+  - {is: v_denote, from: e10o_cond_expr_masked_i, to: place_adjacent}
+  - {is: v_value_of, from: e10o_cond_expr_opaque, to: e10o_cond}
+  - {is: v_denote, from: e10o_cond_expr_opaque, to: text_injection}
+  - {is: v_denote, from: e10o_cond_expr_opaque, to: opaque_expression}
+  - {is: v_denote, from: e10o_cond_expr_opaque, to: place_adjacent}
+  - {is: v_filter_of, from: {group: '{group}'}, to: e10o}
+  - {is: v_entry_of, from: '{cond}', to: e10o}
+  - {is: v_metric_of, from: e10o, to: accuracy}
+  - {is: v_metric_of, from: e10o, to: order_robust_accuracy}
+  - {is: v_file_of, from: 'e14_Qwen2.5-1.5B-Instruct_L8.json', to: e14}
+  - {is: v_rows_of, from: [items], to: e14}
+  - {is: v_axis_of, from: e14_group, to: e14}
+  - {is: v_value_of, from: e14_group_G2c, to: e14_group}
+  - {is: v_denote, from: e14_group_G2c, to: g_redef_conflict}
+  - {is: v_value_of, from: e14_group_G2k, to: e14_group}
+  - {is: v_denote, from: e14_group_G2k, to: g_redef_control}
+  - {is: v_axis_of, from: e14_cond, to: e14}
+  - {is: v_value_of, from: e14_cond_none, to: e14_cond}
+  - {is: v_denote, from: e14_cond_none, to: no_channel}
+  - {is: v_value_of, from: e14_cond_near, to: e14_cond}
+  - {is: v_denote, from: e14_cond_near, to: text_injection}
+  - {is: v_denote, from: e14_cond_near, to: definition_text}
+  - {is: v_denote, from: e14_cond_near, to: place_adjacent}
+  - {is: v_value_of, from: e14_cond_vec1, to: e14_cond}
+  - {is: v_denote, from: e14_cond_vec1, to: contrast_vector}
+  - {is: v_value_of, from: e14_cond_vec2, to: e14_cond}
+  - {is: v_denote, from: e14_cond_vec2, to: contrast_vector}
+  - {is: v_value_of, from: e14_cond_vec4, to: e14_cond}
+  - {is: v_denote, from: e14_cond_vec4, to: contrast_vector}
+  - {is: v_value_of, from: e14_cond_near_vec1, to: e14_cond}
+  - {is: v_denote, from: e14_cond_near_vec1, to: contrast_vector}
+  - {is: v_denote, from: e14_cond_near_vec1, to: text_injection}
+  - {is: v_denote, from: e14_cond_near_vec1, to: definition_text}
+  - {is: v_denote, from: e14_cond_near_vec1, to: place_adjacent}
+  - {is: v_filter_of, from: {group: '{group}'}, to: e14}
+  - {is: v_entry_of, from: '{cond}', to: e14}
+  - {is: v_metric_of, from: e14, to: accuracy}
+  - {is: v_metric_of, from: e14, to: order_robust_accuracy}
 
   # ===== 観察。s と o は測定値で、p は大きさを比べる動詞（is: observation）
   - {is: v_refer, from: o_e1_redef_below_new_adjacent, to: {is: v_come_before, from: e1.4b.G2c.near.accuracy, to: e1.4b.G3.near.accuracy}}
@@ -1380,6 +1518,14 @@ facts:
   - {is: v_refer, from: o_e10_expr_below_none_control, to: {is: v_come_before, from: e10.G2k.expr.accuracy, to: e10.G2k.none.accuracy}}
   - {is: v_refer, from: o_e11_write_below_direct_conflict, to: {is: v_come_before, from: e11.G2c.write.accuracy, to: e11.G2c.direct.accuracy}}
   - {is: v_refer, from: o_e3_expr_teacher_raises_conflict, to: {is: v_come_after, from: e3.L8_exprdefqa.G2c.vec.accuracy, to: e3.L8_exprdefqa.G2c.none.accuracy}}
+  - {is: v_refer, from: o_e12_tok_below_tok0_conflict, to: {is: v_come_before, from: 'e12.G2c.tok.accuracy', to: 'e12.G2c.tok0.accuracy'}}
+  - {is: v_refer, from: o_e12_tok_below_none_control, to: {is: v_come_before, from: 'e12.G2k.tok.accuracy', to: 'e12.G2k.none.accuracy'}}
+  - {is: v_refer, from: o_e13_symbolic_below_near_conflict, to: {is: v_come_before, from: 'e13.G2c.symbolic.accuracy', to: 'e13.G2c.near.accuracy'}}
+  - {is: v_refer, from: o_e13_symbolic_mod_above_none_conflict, to: {is: v_come_after, from: 'e13.G2c.symbolic_mod.accuracy', to: 'e13.G2c.none.accuracy'}}
+  - {is: v_refer, from: o_e10o_opaque_above_masked_conflict, to: {is: v_come_after, from: 'e10o.G2c.expr_opaque.accuracy', to: 'e10o.G2c.expr_masked_i.accuracy'}}
+  - {is: v_refer, from: o_e10o_opaque_below_none_control, to: {is: v_come_before, from: 'e10o.G2k.expr_opaque.accuracy', to: 'e10o.G2k.none.accuracy'}}
+  - {is: v_refer, from: o_e14_vec_below_none_control, to: {is: v_come_before, from: 'e14.G2k.vec1.accuracy', to: 'e14.G2k.none.accuracy'}}
+  - {is: v_refer, from: o_e14_vec_below_near_conflict, to: {is: v_come_before, from: 'e14.G2c.vec1.order_robust_accuracy', to: 'e14.G2c.near.order_robust_accuracy'}}
 
   # ===== 仮説（is: hypothesis）
   - {is: v_refer, from: h_collision_lowers_following, to: {is: v_lower, from: prior_collision, to: redefinition_following}}
@@ -1432,6 +1578,14 @@ facts:
   - {is: v_contradict, from: o_e10_expr_below_none_control, to: h_cscl_raises_following}
   - {is: v_contradict, from: o_e11_write_below_direct_conflict, to: h_cscl_raises_following}
   - {is: v_support, from: o_e3_expr_teacher_raises_conflict, to: h_cscl_raises_following}
+  - {is: v_contradict, from: o_e12_tok_below_tok0_conflict, to: h_dedicated_key_raises_following}
+  - {is: v_contradict, from: o_e12_tok_below_none_control, to: h_dedicated_key_raises_following}
+  - {is: v_contradict, from: o_e13_symbolic_below_near_conflict, to: h_symbolic_membership_raises_following}
+  - {is: v_support, from: o_e13_symbolic_mod_above_none_conflict, to: h_symbolic_membership_raises_following}
+  - {is: v_support, from: o_e10o_opaque_above_masked_conflict, to: h_opaque_expression_raises_following}
+  - {is: v_contradict, from: o_e10o_opaque_below_none_control, to: h_opaque_expression_raises_following}
+  - {is: v_contradict, from: o_e14_vec_below_none_control, to: h_contrast_vector_raises_following}
+  - {is: v_contradict, from: o_e14_vec_below_near_conflict, to: h_contrast_vector_raises_following}
   - {is: v_refer, from: h_length_does_not_lower, to: {is: v_not_lower, from: context_length, to: redefinition_following}}
   - {is: v_scope, from: model_4b, to: h_length_does_not_lower}
   - {is: v_scope, from: text_injection, to: h_length_does_not_lower}
