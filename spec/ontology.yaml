@@ -312,6 +312,7 @@ individuals:
   r_missing: {is: law_relation, display: 候補の式が欠けている}
   r_visible: {is: law_relation, display: 参照できる}
   r_kpart: {is: law_relation, display: 種類として部分である}
+  r_kdep: {is: law_relation, display: 種類として依存する}
   # ===== 規則で書いた法則。前提（v_assume）がすべて成り立つとき、導く文（v_derive）を足し、求める文（v_require）が成り立っていなければ違反。
   # 否定の前提は、書かれていない（導かれていない）ことを表す。前提にだけ出てくる変数は「どれでも」と読む。
   # 基礎の関係の法則は実行の状態に、体系の書き方の法則は、検査が体系の書き方から読んだ文に当てはめる。
@@ -323,6 +324,11 @@ individuals:
   kpart_by_mod_to: {is: law_rule, display: 「X を部分に持つ」と限定した種類は、種類として X を部分に持つ}
   kpart_by_sum_part: {is: law_rule, display: 「合わせて X になる」と限定した種類は、種類として X の部分（部分の定義。合わせる相手は問わない）}
   kpart_by_sum_whole: {is: law_rule, display: 「X と何かを合わせてできる」と限定した種類は、種類として X を部分に持つ}
+  kdep_by_mod: {is: law_rule, display: 「X に依存する」と限定した種類は、種類として X に依存する}
+  kdep_by_sum: {is: law_rule, display: 合わせてできたものは、合わせる種類に依存する（生成の順序）}
+  kdep_inherit: {is: law_rule, display: 依存する種類の下位も、同じものに依存する}
+  kdep_transitive: {is: law_rule, display: 種類としての依存は推移的}
+  kdep_antisymmetric: {is: law_rule, display: 種類としての依存は反対称的（互いに依存するなら同じ種類）。生成の順序は逆に回らない}
   kpart_transitive: {is: law_rule, display: 種類としての部分は推移的}
   kpart_inherit: {is: law_rule, display: 部分である種類の下位も、同じ全体の部分}
   kpart_antisymmetric: {is: law_rule, display: 種類としての部分は反対称的（互いに部分なら同じ種類）}
@@ -418,6 +424,27 @@ facts:
   - {is: v_assume, from: kpart_by_sum_whole, to: {is: with, from: var2, to: var3}}
   - {is: v_assume, from: kpart_by_sum_whole, to: {is: neg, from: var2, to: var4, neg: true}}
   - {is: v_derive, from: kpart_by_sum_whole, to: {is: r_kpart, from: var3, to: var1}}
+  - {is: v_assume, from: kdep_by_mod, to: {is: mod, from: var1, to: var2}}
+  - {is: v_assume, from: kdep_by_mod, to: {is: of, from: var2, to: v_depend}}
+  - {is: v_assume, from: kdep_by_mod, to: {is: position, from: var2, to: from}}
+  - {is: v_assume, from: kdep_by_mod, to: {is: with, from: var2, to: var3}}
+  - {is: v_assume, from: kdep_by_mod, to: {is: neg, from: var2, to: var4, neg: true}}
+  - {is: v_derive, from: kdep_by_mod, to: {is: r_kdep, from: var1, to: var3}}
+  - {is: v_assume, from: kdep_by_sum, to: {is: mod, from: var1, to: var2}}
+  - {is: v_assume, from: kdep_by_sum, to: {is: of, from: var2, to: v_sum}}
+  - {is: v_assume, from: kdep_by_sum, to: {is: position, from: var2, to: from}}
+  - {is: v_assume, from: kdep_by_sum, to: {is: with, from: var2, to: var3}}
+  - {is: v_assume, from: kdep_by_sum, to: {is: neg, from: var2, to: var4, neg: true}}
+  - {is: v_derive, from: kdep_by_sum, to: {is: r_kdep, from: var3, to: var1}}
+  - {is: v_assume, from: kdep_inherit, to: {is: r_ancestor, from: var1, to: var3}}
+  - {is: v_assume, from: kdep_inherit, to: {is: r_kdep, from: var3, to: var2}}
+  - {is: v_derive, from: kdep_inherit, to: {is: r_kdep, from: var1, to: var2}}
+  - {is: v_assume, from: kdep_transitive, to: {is: r_kdep, from: var1, to: var3}}
+  - {is: v_assume, from: kdep_transitive, to: {is: r_kdep, from: var3, to: var2}}
+  - {is: v_derive, from: kdep_transitive, to: {is: r_kdep, from: var1, to: var2}}
+  - {is: v_assume, from: kdep_antisymmetric, to: {is: r_kdep, from: var1, to: var2}}
+  - {is: v_assume, from: kdep_antisymmetric, to: {is: r_kdep, from: var2, to: var1}}
+  - {is: v_require, from: kdep_antisymmetric, to: {is: same, from: var1, to: var2}}
   - {is: v_assume, from: kpart_transitive, to: {is: r_kpart, from: var1, to: var3}}
   - {is: v_assume, from: kpart_transitive, to: {is: r_kpart, from: var3, to: var2}}
   - {is: v_derive, from: kpart_transitive, to: {is: r_kpart, from: var1, to: var2}}
