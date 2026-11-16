@@ -11,4 +11,6 @@ library:                                # 言語の層。この順に読む。�
 include: [exp/src/*.yaml, cscl/design/*.yaml]   # 領域のファイル。最上位に domain を持つもの
 exclude: []
 runs: [exp/tests/*.yaml]                # 実行の記録
-results: exp/experiments/results        # 測定の族が読む結果ファイル
+results: exp/experiments/results        # 測定の族が読む結果ファイル（exp の検査が読む）
+checkers:                               # 領域に固有の中身を確かめる検査。型検査器は言語の検査のあと、これを読み込んで check(T, O, Dm) を呼ぶ
+  exp: exp/src/exp_check.py

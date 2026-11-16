@@ -35,7 +35,7 @@ nodes:
   v_raise: {display: を上げる, extends: occurrent, from: any, to: continuant, holds: [{is: after, from: to, to: new}, {is: depend, from: to, to: from}]}
   v_not_raise: {display: を上げない, extends: occurrent, from: any, to: continuant, holds: [{is: after, from: to, to: new, neg: true}, {is: depend, from: to, to: from}]}
   v_lower: {display: を下げる, extends: occurrent, from: any, to: continuant, holds: [{is: after, from: new, to: to}, {is: depend, from: to, to: from}]}
-  v_not_lower: {display: を下げない, extends: occurrent, from: any, to: continuant, holds: [{is: after, from: new, to: to, neg: true}, {is: depend, from: to, to: from}]}
+  v_not_lower: {display: を下げない, extends: occurrent, from: any, to: continuant, holds: [{is: after, from: new, to: to, neg: true}, {is: depend, from: to, to: from}], opposite: v_lower}
   v_cause: {display: の原因である, extends: occurrent, from: any, to: continuant, holds: [{is: after, from: to, to: from}, {is: depend, from: to, to: from}]}
   v_immune: {display: の影響を受けない, extends: occurrent, from: any, to: any, holds: [{is: depend, from: from, to: to, neg: true}]}
   v_transfer: {display: に転移する, extends: occurrent, from: any, to: any, holds: [{is: depend, from: to, to: from}]}
@@ -54,8 +54,8 @@ nodes:
   v_supersede: {display: 取って代わる, extends: v_refer, from: sentence, to: supersedes}
   v_ground: {display: 根拠にする, extends: v_depend, from: decision, to: basis}
   v_check: {display: 確かめる, extends: v_refer, from: backlog_item, to: tests}
-  v_prior_same: {display: 同じ向きの結果を先に報告した, extends: v_agree, from: prior_work, to: prior_agreed}
-  v_prior_differ: {display: 異なる結果を報告した, extends: v_refer, from: prior_work, to: prior_contrasted}
+  v_prior_same: {display: 同じ向きの結果を先に報告した, extends: v_agree, from: prior_work, to: prior_agreed, derive: same, via: v_state}
+  v_prior_differ: {display: 異なる結果を報告した, extends: v_refer, from: prior_work, to: prior_contrasted, derive: opposite, via: v_state}
   v_state: {display: 主張として述べる, extends: v_refer, from: prior_work, to: prior_claim}
   v_prior_method: {display: 先行研究の手法を使う, extends: v_use, from: hypothesis, to: prior_work}
   v_file_of: {display: 結果ファイルとして部分になる, extends: v_compose, from: result_file, to: measurement_family}
@@ -255,10 +255,10 @@ nodes:
   order_robust_accuracy: {display: 選択肢の順序に頑健な正答率, extends: metric, mod: {of: [v_measure, from], with: verdict_pair}, axis: ratio}
   training_loss: {display: 学習の損失, extends: metric, mod: {of: [v_measure, from], with: teaching}}
   passage_compute_to: {display: 計算する先の文章, extends: passage, mod: {of: [v_compute, to]}}
-  result_file: {display: 結果ファイル, extends: passage_compute_to, mod: {of: [v_refer, from], with: experiment}}
+  result_file: {display: 結果ファイル, extends: passage_compute_to, mod: {of: [v_refer, from], with: experiment}, verbatim: true}
   information_entity_compose_from_result_file: {display: 結果ファイルの部分である情報, extends: information_entity, mod: {of: [v_compose, from], with: result_file}}
   result_row: {display: 結果の行, extends: information_entity_compose_from_result_file, mod: {of: [v_refer, from], with: question}}
-  row_collection: {display: 行の集まり, extends: information_entity_compose_from_result_file, mod: {of: [v_compose, to], with: result_row, at: {count: {gt: 1}}}}
+  row_collection: {display: 行の集まり, extends: information_entity_compose_from_result_file, mod: {of: [v_compose, to], with: result_row, at: {count: {gt: 1}}}, verbatim: true}
   logit_margin: {display: ロジット差の平均, extends: metric, mod: {of: [v_measure, from], with: verdict}, axis: order}
   judged_accuracy: {display: 自由生成での正答率, extends: accuracy, mod: {of: [v_depend, from], with: fmt_free}, axis: ratio}
   family_axis: {display: 測定の族の軸, extends: axis, mod: {of: [v_compose, from], with: measurement_family}}
@@ -268,9 +268,9 @@ nodes:
   measured_value: {display: 測定値, extends: magnitude, mod: {of: [v_depend, from], with: result_file}}
   mean_value: {display: 平均, extends: magnitude, mod: {of: [v_depend, from], with: measured_value, at: {count: {gt: 1}}}}
   tolerance: {display: 許容幅, extends: magnitude, mod: {of: [v_depend, from], with: observation}}
-  metric: {display: 指標, extends: quality, mod: measuring}
-  row_filter: {display: 行の限定, extends: sentence, mod: {of: [v_refer, from], with: result_row}}
-  condition_entry: {display: 条件ごとの記録, extends: information_entity_refer_from_verdict, mod: {of: [v_compose, from], with: result_row}}
+  metric: {display: 指標, extends: quality, mod: measuring, many: true}
+  row_filter: {display: 行の限定, extends: sentence, mod: {of: [v_refer, from], with: result_row}, verbatim: true}
+  condition_entry: {display: 条件ごとの記録, extends: information_entity_refer_from_verdict, mod: {of: [v_compose, from], with: result_row}, verbatim: true}
 
   # ===== 観察・仮説・決定・残り項目 =====
   depended_information: {display: 他の記述が依存する記述, extends: information_entity, mod: {of: [v_depend, to], with: information_entity, quant: all}}
@@ -280,25 +280,25 @@ nodes:
   sentence_refer_from_measured_value: {display: 測定値へ述べる文, extends: sentence, mod: {of: [v_refer, from], with: measured_value}}
   observation: {display: 観察, extends: sentence_refer_from_measured_value, val: {truth: true}}
   observation_agree_from_hypothesis: {display: 仮説へ一致する観察, extends: observation, mod: {of: [v_agree, from], with: hypothesis}}
-  evidence: {display: 支持する観察, extends: observation_agree_from_hypothesis, cmp: [{axis: truth, a: observation, b: hypothesis, rel: same}]}
-  against: {display: 反する観察, extends: observation_agree_from_hypothesis, cmp: [{axis: truth, a: observation, b: hypothesis, rel: differ}]}
+  evidence: {display: 支持する観察, extends: observation_agree_from_hypothesis, cmp: [{axis: truth, a: observation, b: hypothesis, rel: same}], many: true}
+  against: {display: 反する観察, extends: observation_agree_from_hypothesis, cmp: [{axis: truth, a: observation, b: hypothesis, rel: differ}], many: true}
   hypothesis_agree_to_evidence: {display: 支持する観察から一致する仮説, extends: hypothesis, mod: {of: [v_agree, to], with: evidence}}
   hyp_supported: {display: 支持された仮説, extends: hypothesis_agree_to_evidence, mod: {of: [v_agree, to], with: against, neg: true}}
   hypothesis_agree_to_evidence_not: {display: 支持する観察から一致することのない仮説, extends: hypothesis, mod: {of: [v_agree, to], with: evidence, neg: true}}
   hyp_refuted: {display: 反証された仮説, extends: hypothesis_agree_to_evidence_not, mod: {of: [v_agree, to], with: against}}
   hyp_mixed: {display: 支持と反証の両方がある仮説, extends: hypothesis_agree_to_evidence, mod: {of: [v_agree, to], with: against}}
   hyp_untested: {display: 未検証の仮説, extends: hypothesis_agree_to_evidence_not, mod: {of: [v_agree, to], with: against, neg: true}}
-  supersedes: {display: 置き換えられた文, extends: withdrawn_sentence, mod: {of: [v_refer, to], with: sentence}}
-  limitation: {display: 留保, extends: sentence_refer_from_hypothesis, mod: {of: [v_refer, from], with: observation}}
+  supersedes: {display: 置き換えられた文, extends: withdrawn_sentence, mod: {of: [v_refer, to], with: sentence}, many: true}
+  limitation: {display: 留保, extends: sentence_refer_from_hypothesis, mod: {of: [v_refer, from], with: observation}, many: true}
   lim_post_hoc: {display: 結果を見たあとで分類した, extends: limitation, mod: {of: [v_come_after, from], with: observation}}
   lim_range: {display: 測った範囲が限られる, extends: limitation, mod: {of: [v_refer, from], with: factor}}
   lim_one_item: {display: 差が1問以内, extends: limitation, mod: {of: [v_refer, from], with: question, at: {count: 1}}}
   lim_unconverged: {display: 学習が収束していない, extends: limitation, mod: {of: [v_refer, from], with: training_loss}}
   lim_single_case: {display: 1例だけ, extends: limitation, mod: {of: [v_refer, from], with: observation, at: {count: 1}}}
-  prior_work: {display: 先行研究, extends: sentence_refer_from_hypothesis, mod: {of: [v_expose, to]}}
-  prior_claim: {display: 先行研究の主張, extends: sentence, mod: {of: [v_refer, to], with: prior_work}}
-  prior_agreed: {display: 先行研究が同じ向きを報告した主張, extends: hypothesis, mod: {of: [v_agree, to], with: prior_work}}
-  prior_contrasted: {display: 先行研究と結果が異なる主張, extends: hypothesis, mod: {of: [v_refer, to], with: prior_work}}
+  prior_work: {display: 先行研究, extends: sentence_refer_from_hypothesis, mod: {of: [v_expose, to]}, many: true}
+  prior_claim: {display: 先行研究の主張, extends: sentence, mod: {of: [v_refer, to], with: prior_work}, many: true}
+  prior_agreed: {display: 先行研究が同じ向きを報告した主張, extends: hypothesis, mod: {of: [v_agree, to], with: prior_work}, many: true}
+  prior_contrasted: {display: 先行研究と結果が異なる主張, extends: hypothesis, mod: {of: [v_refer, to], with: prior_work}, many: true}
   doubt: {display: 仮説への疑い, extends: sentence, mod: {of: [v_challenge, from], with: hypothesis}}
   number_comparison: {display: 数の大小の照合, extends: inference, mod: {of: [v_refer, to], with: number}}
   lim_unquantified: {display: 数値化していない, extends: limitation, mod: {of: [v_refer, from], with: measured_value, neg: true}}
@@ -306,11 +306,11 @@ nodes:
   dec_adopted: {display: 採用済みの決定, extends: decision, mod: adopted}
   dec_tentative: {display: 暫定の決定, extends: decision, mod: not_adopted}
   dec_withdrawn: {display: 取り下げた決定, extends: withdrawn_sentence, mod: {of: [is, from], with: decision}}
-  basis: {display: 根拠となる仮説, extends: hypothesis, mod: {of: [v_depend, to], with: decision}}
+  basis: {display: 根拠となる仮説, extends: hypothesis, mod: {of: [v_depend, to], with: decision}, many: true}
   performed_experiment: {display: 行われた実験, extends: experiment, mod: {of: [v_perform, to]}}
   measured_experiment: {display: 結果ファイルが述べる実験, extends: experiment, mod: {of: [v_refer, to], with: result_file}}
   backlog_item: {display: 残り項目, extends: sentence, mod: {of: [v_refer, from], with: experiment}}
-  tests: {display: 確かめる仮説, extends: hypothesis, mod: {of: [v_refer, to], with: backlog_item}}
+  tests: {display: 確かめる仮説, extends: hypothesis, mod: {of: [v_refer, to], with: backlog_item}, many: true}
   item_done: {display: 済んだ項目, extends: backlog_item, mod: {of: [v_refer, from], with: measured_experiment}}
   backlog_item_refer_from_performed_experiment: {display: 行われた実験へ述べる残り項目, extends: backlog_item, mod: {of: [v_refer, from], with: performed_experiment}}
   item_running: {display: 実行中の項目, extends: backlog_item_refer_from_performed_experiment, mod: {of: [v_refer, from], with: measured_experiment, neg: true}}

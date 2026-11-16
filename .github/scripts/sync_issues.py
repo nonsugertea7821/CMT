@@ -22,8 +22,9 @@ import urllib.request
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
-sys.path[:0] = [str(ROOT / "cscl/bootstrap/type_checker"), str(ROOT / "cscl/bootstrap/display")]
+sys.path[:0] = [str(ROOT / "cscl/bootstrap/type_checker"), str(ROOT / "cscl/bootstrap/display"), str(ROOT / "exp/src")]
 import type_checker  # noqa: E402
+import exp_check  # noqa: E402
 import display  # noqa: E402
 
 SIDE = {"exp": "exp", "lang": "cscl"}   # 領域 → 側のラベル
@@ -68,12 +69,12 @@ def status_label(T, kind):
 
 
 def claims():
-    T, O, S, M, C = type_checker.build()
+    T, O, S, M, C = exp_check.build()
     if type_checker.errors:
         raise SystemExit("体系の検査に失敗: " + "; ".join(type_checker.errors[:3]))
     I = individuals()
     ja = lambda x: display.ja(T, x, I)
-    values, _ = type_checker.expand(M, T)
+    values, _ = exp_check.expand(M, T)
     val = lambda x: f"`{x}` = {values[x][0]:.3f}" if isinstance(x, str) and x in values else f"{x}"
 
     def obs(oids):
