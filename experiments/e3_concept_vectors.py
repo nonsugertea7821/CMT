@@ -72,7 +72,7 @@ def build_delta(tok, text: str, vectors: dict, d_model: int):
     return torch.tensor([ids]), delta
 
 
-def train_vector(r, inj, label, definition, steps, lr, objective="def", qa=None):
+def train_vector(r, inj, label, definition, steps, lr, objective="def", qa=None, budget=1024):
     """objective: def = 定義文の暗唱 / qa = 適用例の二択 / defqa = 両方"""
     d_model = r.model.config.hidden_size
     v = torch.zeros(d_model, requires_grad=True)
@@ -113,7 +113,7 @@ def train_vector(r, inj, label, definition, steps, lr, objective="def", qa=None)
     order = sorted(range(n), key=lambda i: lens[i])
     groups, cur = [], []
     for i in order:
-        if cur and (len(cur) + 1) * lens[i] > 1024:
+        if cur and (len(cur) + 1) * lens[i] > budget:
             groups.append(cur)
             cur = []
         cur.append(i)

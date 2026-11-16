@@ -181,6 +181,9 @@ nodes:
   concept_vector: {display: 概念ベクトル, extends: channel_involve_from_taught_vector, mod: {of: [v_involve, from], with: label_token_positions}}
   single_layer_vector: {display: 単一層の概念ベクトル, extends: concept_vector, mod: {of: [v_involve, from], with: layer, at: {count: 1}}}
   multi_layer_vector: {display: 複数層の概念ベクトル, extends: concept_vector, mod: {of: [v_involve, from], with: layer, at: {count: {gt: 1}}}}
+  dedicated_token: {display: 概念専用のトークン, extends: identifier, mod: {of: [v_compose, from], with: context}}
+  key_token_vector: {display: 専用トークンの概念ベクトル, extends: channel_involve_from_taught_vector, mod: {of: [v_involve, from], with: dedicated_token}}
+  symbolic_membership: {display: 事実の判定と体系での帰属の決定, extends: inference, mod: {of: [v_involve, from], with: system}}
   text_and_vector: {display: 文章と概念ベクトルの併用, extends: text_injection, mod: {of: [is, from], with: concept_vector}}
   delta_weights: {display: 差分重み, extends: channel, mod: {of: [v_involve, from], with: weights}}
   teacher_recite: {display: 定義文の暗唱を教師にする, extends: teaching, from: definition_text}
@@ -659,6 +662,8 @@ individuals:
   h_single_layer_does_not_reach_shared: {is: hyp_supported}
   h_multi_layer_raises_consistency: {is: hyp_mixed}
   h_cscl_raises_following: {is: hyp_mixed}
+  h_dedicated_key_raises_following: {is: hyp_untested}
+  h_symbolic_membership_raises_following: {is: hyp_untested}
   h_model_can_write_cscl: {is: hyp_untested}
   h_modifier_transfers_to_unseen_genus: {is: hyp_supported}
 
@@ -694,6 +699,8 @@ individuals:
   b_attention_observe_and_block: {is: item_queued}
   b_measure_explanation: {is: item_queued}
   b_e4_retrain: {is: item_queued}
+  b_e12_dedicated_key: {is: item_queued}
+  b_e13_fact_then_symbolic: {is: item_queued}
   b_save_text_reference_for_paraphrase: {is: item_queued}
   b_renaming_inside_glossary: {is: item_queued}
   b_symbol_selection: {is: item_queued}
@@ -1577,6 +1584,8 @@ facts:
   - {is: v_refer, from: h_cscl_raises_following, to: {is: v_raise, from: cscl, to: redefinition_following}}
   - {is: v_scope, from: text_injection, to: h_cscl_raises_following}
   - {is: v_refer, from: h_model_can_write_cscl, to: {is: v_speak, from: model, to: concept_expression}}
+  - {is: v_refer, from: h_dedicated_key_raises_following, to: {is: v_raise, from: key_token_vector, to: redefinition_following}}
+  - {is: v_refer, from: h_symbolic_membership_raises_following, to: {is: v_raise, from: symbolic_membership, to: redefinition_following}}
   - {is: v_refer, from: h_modifier_transfers_to_unseen_genus, to: {is: v_transfer, from: modifier, to: unseen_genus}}
   - {is: v_scope, from: model_15b, to: h_modifier_transfers_to_unseen_genus}
   - {is: v_scope, from: single_layer_vector, to: h_modifier_transfers_to_unseen_genus}
@@ -1625,6 +1634,8 @@ facts:
   - {is: v_check, from: b_definitions_given_as_concept_expressions, to: h_cscl_raises_following}
   - {is: v_check, from: b_model_writes_concept_expressions, to: h_model_can_write_cscl}
   - {is: v_check, from: b_vectors_taught_from_concept_expressions, to: h_cscl_raises_following}
+  - {is: v_check, from: b_e12_dedicated_key, to: h_dedicated_key_raises_following}
+  - {is: v_check, from: b_e13_fact_then_symbolic, to: h_symbolic_membership_raises_following}
   - {is: v_check, from: b_e9_scratchpad, to: h_scratchpad_raises_rule_following}
   - {is: v_check, from: b_e9_scratchpad, to: h_scratchpad_raises_rule_following_4b}
   - {is: v_check, from: b_e9_scratchpad, to: h_chain_length_lowers_following}
