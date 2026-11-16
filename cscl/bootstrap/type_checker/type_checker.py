@@ -1260,6 +1260,34 @@ def natural_language_only_in_ja(name, x, path=()):
             err(f"{name} {'.'.join(path)}: 自然言語は表示名 display にだけ書く（{x[:20]}）")
 
 
+CLAIM_DOMAINS = {"lang"}   # exp のほかに、仮説・決定を置く領域（言語そのものについての主張）
+
+
+def check_sides(C, T):
+    """主張がどちらの側のものかを、中身が参照する語で確かめる。
+    lang の主張は、axiom（std を含む）と lang の語だけを参照する。exp の主張は、exp か subj の語（動詞を含む）を少なくとも1つ参照する。"""
+    def words(x):
+        out = []
+        for k in ("s", "o", "p"):
+            v = x.get(k)
+            out += v if isinstance(v, list) else [v]
+        return [w for w in out if isinstance(w, str) and w != "is_a"]
+
+    def dom(w):
+        if w in T.Isubj:
+            return T.Isubj[w]
+        if w in T.I:
+            return T.Idom if w not in (T.O.get("individuals") or {}) else "axiom"
+        return T.domain(w)
+    for sect in ("hypotheses", "decisions"):
+        for i, x in C[sect].items():
+            side, ds = C["side"].get(i), {dom(w) for w in words(x)}
+            if side in CLAIM_DOMAINS and ds - {"axiom", "run", side}:
+                err(f"{i}: {side} の主張が、{side} と axiom 以外の語を参照している（{sorted(ds - {'axiom', 'run', side})}）")
+            if side == "exp" and ds and ds <= {"axiom", "run"}:
+                err(f"{i}: exp の主張が、axiom の語だけを参照している。言語についての主張なら cscl の側に置く")
+
+
 def domain_files():
     """領域のファイル。cscl.yaml の範囲にあり、最上位に domain を持つ YAML。本体（root）は含めない。"""
     out, root = {}, (ROOT / config()["root"]).resolve()
@@ -1393,9 +1421,17 @@ def build():
             err(f"ontology.yaml {iid}: 個体は {{is: 種類, display}} で書き、種類はノード")
     T.I |= {iid: x.get("is") for iid, x in core.items() if x.get("is") in T.N}
     gather({"domain": "axiom", "_local": set(), "individuals": core, "facts": O.get("facts")}, T, "ontology.yaml")
-    others = {}
+    others, claims = {}, {}
     for dom, (name, X) in Dm.items():
         if dom == "exp":
+            continue
+        if dom in CLAIM_DOMAINS:   # 主張（仮説・決定）の領域。中身まで検査する
+            for iid, x in X["individuals"].items():
+                if iid in T.I or iid in T.N or iid in core:
+                    err(f"{name} {iid}: 個体の識別子が、ほかの個体かノードと重なっている")
+            T.I |= {iid: x.get("is") for iid, x in X["individuals"].items() if x.get("is") in T.N}
+            T.Isubj |= {iid: dom for iid in X["individuals"]}
+            claims[dom] = (name, X)
             continue
         ind = {iid: dict(x) for iid, x in X["individuals"].items()}
         for iid in ind:
@@ -1413,6 +1449,16 @@ def build():
     T.check_laws()
     check_parts(T)
     M, C = load_domain("exp.yaml", D, T)
+    C["side"] = {i: "exp" for sect in ("hypotheses", "decisions") for i in C[sect]}
+    for dom, (name, X) in claims.items():
+        _, C2 = load_domain(name, X, T)
+        for sect in ("hypotheses", "decisions", "observations"):
+            for i, x in C2[sect].items():
+                C[sect][i] = x
+                if sect != "observations":
+                    C["side"][i] = dom
+        C["backlog"] += C2["backlog"]
+    check_sides(C, T)
     S = others.get("subj", (None, {"individuals": {}, "facts": [], "_local": set()}))[1]
     return T, O, S, M, C
 

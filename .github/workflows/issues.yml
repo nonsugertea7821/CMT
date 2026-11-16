@@ -1,0 +1,41 @@
+name: issues
+
+# 仮説・決定を issue に写す。定義の正本は体系（exp/src, cscl/design）。
+# 手動実行（apply を選ぶ）か、main への push（リポジトリ変数 ISSUE_SYNC が on のときだけ）で GitHub に書く。
+# それ以外は下書きを作って成果物に置くだけ。
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+    inputs:
+      apply:
+        description: GitHub の issue を作る・更新する
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+  issues: write
+
+concurrency: issues-sync
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install pyyaml
+      - name: 下書き
+        run: python .github/scripts/sync_issues.py --out drafts
+      - uses: actions/upload-artifact@v4
+        with:
+          name: issue-drafts
+          path: drafts
+      - name: issue に書く
+        if: inputs.apply || (github.event_name == 'push' && vars.ISSUE_SYNC == 'on')
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: python .github/scripts/sync_issues.py --apply
