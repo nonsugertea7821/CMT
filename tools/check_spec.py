@@ -1215,7 +1215,8 @@ def check_parts(T):
         out, hops = [], 0
         while k in T.N and hops < 50:
             out += [m["with"] for m in T.N[k].get("mod") or []
-                    if isinstance(m, dict) and m.get("of") == [verb, pos] and not m.get("neg")]
+                    if isinstance(m, dict) and (m.get("of") == [verb, pos] or pos == "from" and m.get("of") == ["v_sum", "from"])
+                    and not m.get("neg")]   # 「合わせて X になる」も X の部分（法則 kpart_by_sum_part）
             k, hops = T.up(k), hops + 1
         return out
     files = [(root_name(), "core")] + [(name, dom) for dom, name in domain_files().items()]
@@ -1239,7 +1240,7 @@ def check_parts(T):
         if T.is_verb(nid):
             continue
         for m in n.get("mod") or []:
-            if not isinstance(m, dict) or not isinstance(m.get("of"), list) or m["of"][0] not in ("v_compose", "v_stage"):
+            if not isinstance(m, dict) or not isinstance(m.get("of"), list) or m["of"][0] not in ("v_compose", "v_stage", "v_sum"):
                 continue
             pos = m["of"][1]
             if any(w in disp for w in PART_VAGUE):

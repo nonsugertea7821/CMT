@@ -51,6 +51,8 @@ nodes:
   # ===== 動詞・静的。holds に、成り立っている状態の関係を書く =====
   v_depend: {display: 依存する, extends: occurrent, from: continuant, to: continuant, holds: [{is: depend, from: from, to: to}]}
   v_compose: {display: 部分になる, extends: occurrent, from: continuant, to: continuant, holds: [{is: part, from: from, to: to}]}
+  v_sum: {display: 合わせる, extends: occurrent, from: continuant, to: continuant, new_kind: continuant,
+          holds: [{is: part, from: from, to: new}, {is: part, from: to, to: new}, {is: depend, from: new, to: from}, {is: depend, from: new, to: to}]}
   v_stage: {display: 時間的な部分になる, extends: occurrent, from: occurrent, to: occurrent, holds: [{is: part, from: from, to: to}]}
   v_come_after: {display: 後ろに置かれる, extends: occurrent, from: continuant, to: continuant, holds: [{is: after, from: from, to: to}]}
   v_refer: {display: 述べる, extends: occurrent, from: continuant, to: any, holds: [{is: refer, from: from, to: to}]}
@@ -319,6 +321,8 @@ individuals:
   part_antisymmetric: {is: law_rule, display: 部分であることは反対称的}
   kpart_by_mod_from: {is: law_rule, display: 「X の部分である」と限定した種類は、種類として X の部分}
   kpart_by_mod_to: {is: law_rule, display: 「X を部分に持つ」と限定した種類は、種類として X を部分に持つ}
+  kpart_by_sum_part: {is: law_rule, display: 「合わせて X になる」と限定した種類は、種類として X の部分（部分の定義。合わせる相手は問わない）}
+  kpart_by_sum_whole: {is: law_rule, display: 「X と何かを合わせてできる」と限定した種類は、種類として X を部分に持つ}
   kpart_transitive: {is: law_rule, display: 種類としての部分は推移的}
   kpart_inherit: {is: law_rule, display: 部分である種類の下位も、同じ全体の部分}
   kpart_antisymmetric: {is: law_rule, display: 種類としての部分は反対称的（互いに部分なら同じ種類）}
@@ -402,6 +406,18 @@ facts:
   - {is: v_assume, from: kpart_by_mod_to, to: {is: with, from: var2, to: var3}}
   - {is: v_assume, from: kpart_by_mod_to, to: {is: neg, from: var2, to: var4, neg: true}}
   - {is: v_derive, from: kpart_by_mod_to, to: {is: r_kpart, from: var3, to: var1}}
+  - {is: v_assume, from: kpart_by_sum_part, to: {is: mod, from: var1, to: var2}}
+  - {is: v_assume, from: kpart_by_sum_part, to: {is: of, from: var2, to: v_sum}}
+  - {is: v_assume, from: kpart_by_sum_part, to: {is: position, from: var2, to: from}}
+  - {is: v_assume, from: kpart_by_sum_part, to: {is: with, from: var2, to: var3}}
+  - {is: v_assume, from: kpart_by_sum_part, to: {is: neg, from: var2, to: var4, neg: true}}
+  - {is: v_derive, from: kpart_by_sum_part, to: {is: r_kpart, from: var1, to: var3}}
+  - {is: v_assume, from: kpart_by_sum_whole, to: {is: mod, from: var1, to: var2}}
+  - {is: v_assume, from: kpart_by_sum_whole, to: {is: of, from: var2, to: v_sum}}
+  - {is: v_assume, from: kpart_by_sum_whole, to: {is: position, from: var2, to: new}}
+  - {is: v_assume, from: kpart_by_sum_whole, to: {is: with, from: var2, to: var3}}
+  - {is: v_assume, from: kpart_by_sum_whole, to: {is: neg, from: var2, to: var4, neg: true}}
+  - {is: v_derive, from: kpart_by_sum_whole, to: {is: r_kpart, from: var3, to: var1}}
   - {is: v_assume, from: kpart_transitive, to: {is: r_kpart, from: var1, to: var3}}
   - {is: v_assume, from: kpart_transitive, to: {is: r_kpart, from: var3, to: var2}}
   - {is: v_derive, from: kpart_transitive, to: {is: r_kpart, from: var1, to: var2}}
