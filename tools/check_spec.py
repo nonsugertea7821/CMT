@@ -193,6 +193,26 @@ def collect_kind_facts(T):
                 if not T.is_a(k, T.spot_type(verb, p)):
                     err(f"{where}: {p} の種類 {k} が、動詞 {verb} のその位置（{T.spot_type(verb, p)}）に当たらない")
             T.KF.append((verb, x))
+            if verb == "v_sum" or T.is_a(verb, "v_sum"):
+                sp = {p: space(T, k) for p, k in x.items()}
+                if None in sp.values() or len(set(sp.values())) > 1:
+                    err(f"法則 sum_same_space に反する: {where} の {x} は、同じ空間に属さない（空間: {sp}）")
+    for nid, n in T.N.items():   # 限定「合わせて X になる」も同じ
+        for m in n.get("mod") or []:
+            if isinstance(m, dict) and isinstance(m.get("of"), list) and m["of"][0] == "v_sum" and m.get("with"):
+                w = T.q(m["with"])
+                if space(T, nid) is None or space(T, nid) != space(T, w):
+                    err(f"法則 sum_same_space に反する: {nid} の限定「合わせて {w} になる」で、空間が {space(T, nid)} と {space(T, w)}")
+
+
+def space(T, k):
+    """種類 k が属する空間: 合わせられる情報（summand）のすぐ下の種類。属さなければ None。"""
+    hops = 0
+    while k in T.N and hops < 80:
+        if T.up(k) == "summand":
+            return k
+        k, hops = T.up(k), hops + 1
+    return None
 
 
 def gather(D, T, name):
@@ -443,7 +463,7 @@ def evaluate(rules, F, V):
 # ---------------------------------------------------------------- 概念の体系
 # 法則のうち、この検査が当てはめるもの / 実行の検査（run_spec.py）が当てはめるもの
 # 規則で書いた法則（law_rule）は、実行の検査がその規則を読んで当てはめる。ここには、意味を検査が与える法則（law_given）だけを挙げる。
-LAWS_HERE = {"part_fact_direction", "part_display_explicit"}
+LAWS_HERE = {"part_fact_direction", "part_display_explicit", "sum_same_space"}
 LAWS_RUN = {"unique_names", "step", "frame", "halt"}
 
 
