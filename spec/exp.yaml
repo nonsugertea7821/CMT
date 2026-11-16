@@ -188,6 +188,7 @@ nodes:
   swapped_concept_vector: {display: 他の語の概念ベクトル, extends: concept_vector, mod: {of: [v_depend, from], with: word, neg: true}}
   common_vector_component: {display: 概念ベクトルの共通成分, extends: concept_vector, mod: {of: [v_compose, from], with: concept_vector}}
   specific_vector_component: {display: 概念ベクトルの固有成分, extends: concept_vector, mod: {of: [v_depend, from], with: word}}
+  sense_difference_vector: {display: 語の意味の候補どうしの差のベクトル, extends: concept_vector, mod: {of: [v_depend, from], with: prior_meaning}}
   opaque_expression: {display: core 以外の識別子を無意味にした概念式, extends: concept_expression, mod: {of: [v_compose, to], with: hidden_word}}
   text_and_vector: {display: 文章と概念ベクトルの併用, extends: text_injection, mod: {of: [is, from], with: concept_vector}}
   delta_weights: {display: 差分重み, extends: channel, mod: {of: [v_involve, from], with: weights}}
@@ -235,6 +236,7 @@ nodes:
   quality_measure_to: {display: 測る先の質, extends: quality, mod: {of: [v_measure, to]}}
   redefinition_following: {display: 再定義への追従, extends: quality_measure_to, mod: {of: [v_depend, from], with: conflict_case}}
   control_preservation: {display: 衝突しない事例での判定の維持, extends: quality_measure_to, mod: {of: [v_depend, from], with: control_case}}
+  verdict_stability: {display: 選択肢の順序に対する判定の安定, extends: quality_measure_to, mod: {of: [v_depend, from], with: verdict_pair}}
   redefinition_success: {display: 再定義の成功, extends: quality_measure_to, mod: {of: [v_depend, from], with: redefinition}}
   cross_usage_consistency: {display: 使い方をまたぐ一貫性, extends: quality_measure_to, mod: {of: [v_measure, from], with: usage, quant: all}}
   preceding_definition_effect: {display: 前に並ぶ定義による追従の低下, extends: quality_measure_to, mod: {of: [v_depend, from], with: preceding_definitions_set}}
@@ -712,6 +714,11 @@ individuals:
   o_e16_specific_above_none_conflict: {is: observation}
   o_e16_common_level_none_control: {is: observation}
   o_e16_full_robust_above_specific_conflict: {is: observation}
+  o_e16_common_robust_above_none_conflict: {is: observation}
+  o_e16_common_robust_above_none_control: {is: observation}
+  o_e16_specific_robust_below_none_control: {is: observation}
+  o_e16_specific_robust_above_none_conflict: {is: observation}
+  o_e16_full_robust_above_specific_control: {is: observation}
 
   # ===== 仮説（is: hypothesis）
   # --- 文章での注入 ---
@@ -761,6 +768,14 @@ individuals:
   h_vector_agrees_with_text_shift: {is: hyp_refuted}
   h_specific_component_raises_following: {is: hyp_supported}
   h_common_component_lowers_control: {is: hyp_refuted}
+  h_common_component_raises_stability: {is: hyp_supported}
+  h_specific_component_not_raise_stability: {is: hyp_mixed}
+  h_full_vector_raises_stability_beyond_specific: {is: hyp_supported}
+  h_text_shift_raises_stability: {is: hyp_untested}
+  h_specific_agrees_with_sense_difference: {is: hyp_untested}
+  h_specific_composes_from_expression: {is: hyp_untested}
+  h_common_component_transfers_to_unseen: {is: hyp_untested}
+  h_attention_carries_text_route: {is: hyp_untested}
   h_model_can_write_cscl: {is: hyp_untested}
   h_modifier_transfers_to_unseen_genus: {is: hyp_supported}
 
@@ -1647,6 +1662,11 @@ facts:
   - {is: v_refer, from: o_e16_specific_above_none_conflict, to: {is: v_come_after, from: e16.G2c.specific.accuracy, to: e16.G2c.none.accuracy}}
   - {is: v_refer, from: o_e16_common_level_none_control, to: {is: v_level, from: e16.G2k.common.accuracy, to: e16.G2k.none.accuracy}}
   - {is: v_refer, from: o_e16_full_robust_above_specific_conflict, to: {is: v_come_after, from: e16.G2c.full.order_robust_accuracy, to: e16.G2c.specific.order_robust_accuracy}}
+  - {is: v_refer, from: o_e16_common_robust_above_none_conflict, to: {is: v_come_after, from: e16.G2c.common.order_robust_accuracy, to: e16.G2c.none.order_robust_accuracy}}
+  - {is: v_refer, from: o_e16_common_robust_above_none_control, to: {is: v_come_after, from: e16.G2k.common.order_robust_accuracy, to: e16.G2k.none.order_robust_accuracy}}
+  - {is: v_refer, from: o_e16_specific_robust_below_none_control, to: {is: v_come_before, from: e16.G2k.specific.order_robust_accuracy, to: e16.G2k.none.order_robust_accuracy}}
+  - {is: v_refer, from: o_e16_specific_robust_above_none_conflict, to: {is: v_come_after, from: e16.G2c.specific.order_robust_accuracy, to: e16.G2c.none.order_robust_accuracy}}
+  - {is: v_refer, from: o_e16_full_robust_above_specific_control, to: {is: v_come_after, from: e16.G2k.full.order_robust_accuracy, to: e16.G2k.specific.order_robust_accuracy}}
 
   # ===== 仮説（is: hypothesis）
   - {is: v_refer, from: h_collision_lowers_following, to: {is: v_lower, from: prior_collision, to: redefinition_following}}
@@ -1717,6 +1737,20 @@ facts:
   - {is: v_contradict, from: o_e16_common_level_none_control, to: h_common_component_lowers_control}
   - {is: v_refer, from: h_specific_component_raises_following, to: {is: v_raise, from: specific_vector_component, to: redefinition_following}}
   - {is: v_refer, from: h_common_component_lowers_control, to: {is: v_lower, from: common_vector_component, to: control_preservation}}
+  - {is: v_support, from: o_e16_common_robust_above_none_conflict, to: h_common_component_raises_stability}
+  - {is: v_support, from: o_e16_common_robust_above_none_control, to: h_common_component_raises_stability}
+  - {is: v_support, from: o_e16_specific_robust_below_none_control, to: h_specific_component_not_raise_stability}
+  - {is: v_contradict, from: o_e16_specific_robust_above_none_conflict, to: h_specific_component_not_raise_stability}
+  - {is: v_support, from: o_e16_full_robust_above_specific_control, to: h_full_vector_raises_stability_beyond_specific}
+  - {is: v_support, from: o_e16_full_robust_above_specific_conflict, to: h_full_vector_raises_stability_beyond_specific}
+  - {is: v_refer, from: h_common_component_raises_stability, to: {is: v_raise, from: common_vector_component, to: verdict_stability}}
+  - {is: v_refer, from: h_specific_component_not_raise_stability, to: {is: v_not_raise, from: specific_vector_component, to: verdict_stability}}
+  - {is: v_refer, from: h_full_vector_raises_stability_beyond_specific, to: {is: v_raise, from: single_layer_vector, to: verdict_stability}}
+  - {is: v_refer, from: h_text_shift_raises_stability, to: {is: v_raise, from: contrast_vector, to: verdict_stability}}
+  - {is: v_refer, from: h_specific_agrees_with_sense_difference, to: {is: v_agree, from: specific_vector_component, to: sense_difference_vector}}
+  - {is: v_refer, from: h_specific_composes_from_expression, to: {is: v_agree, from: specific_vector_component, to: concept_expression}}
+  - {is: v_refer, from: h_common_component_transfers_to_unseen, to: {is: v_transfer, from: common_vector_component, to: unseen_genus}}
+  - {is: v_refer, from: h_attention_carries_text_route, to: {is: v_raise, from: attention, to: redefinition_following}}
   - {is: v_refer, from: h_length_does_not_lower, to: {is: v_not_lower, from: context_length, to: redefinition_following}}
   - {is: v_scope, from: model_4b, to: h_length_does_not_lower}
   - {is: v_scope, from: text_injection, to: h_length_does_not_lower}
