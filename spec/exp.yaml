@@ -376,6 +376,8 @@ individuals:
   e16: {is: measurement_family}
   e17: {is: measurement_family}
   e17g: {is: measurement_family}
+  e18: {is: measurement_family}
+  e18u: {is: measurement_family}
   # ----- 測定の族の軸（is: family_axis）と、軸の値（is: axis_value）。val の text は測定値の識別子に使う字。
   # 結果ファイルでの書き方（v_spell）と、値が指すもの（v_denote）は事実で書く。
   e1_model: {is: family_axis, val: {text: model}}
@@ -637,6 +639,21 @@ individuals:
   e17g_cond: {is: family_axis, val: {text: cond}}
   e17g_cond_cos_own: {is: axis_value, val: {text: cos_own}}
   e17g_cond_cos_other: {is: axis_value, val: {text: cos_other}}
+  e18_group: {is: family_axis, val: {text: group}}
+  e18_group_G2c: {is: axis_value, val: {text: G2c}}
+  e18_group_G2k: {is: axis_value, val: {text: G2k}}
+  e18_cond: {is: family_axis, val: {text: cond}}
+  e18_cond_none: {is: axis_value, val: {text: none}}
+  e18_cond_full: {is: axis_value, val: {text: full}}
+  e18_cond_specific: {is: axis_value, val: {text: specific}}
+  e18_cond_common: {is: axis_value, val: {text: common}}
+  e18_cond_swapped: {is: axis_value, val: {text: swapped}}
+  e18u_cond: {is: family_axis, val: {text: cond}}
+  e18u_cond_none: {is: axis_value, val: {text: none}}
+  e18u_cond_full: {is: axis_value, val: {text: full}}
+  e18u_cond_specific: {is: axis_value, val: {text: specific}}
+  e18u_cond_common: {is: axis_value, val: {text: common}}
+  e18u_cond_swapped: {is: axis_value, val: {text: swapped}}
 
   # ===== 観察。s と o は測定値で、p は大きさを比べる動詞（is: observation）
   o_e1_redef_below_new_adjacent: {is: observation}
@@ -741,6 +758,10 @@ individuals:
   o_e17_sense_like_swap_conflict: {is: observation}
   o_e17_sense_below_none_control: {is: observation}
   o_e17_sense_robust_level_none_conflict: {is: observation}
+  o_e18_usage_full_above_swapped: {is: observation}
+  o_e18_usage_common_above_none: {is: observation}
+  o_e18_usage_specific_near_common: {is: observation}
+  o_e18_statement_full_level_none_conflict: {is: observation}
 
   # ===== 仮説（is: hypothesis）
   # --- 文章での注入 ---
@@ -795,6 +816,7 @@ individuals:
   h_full_vector_raises_stability_beyond_specific: {is: hyp_supported}
   h_text_shift_raises_stability: {is: hyp_untested}
   h_specific_agrees_with_sense_difference: {is: hyp_refuted}
+  h_vector_transfers_beyond_choice_format: {is: hyp_mixed}
   h_specific_composes_from_expression: {is: hyp_untested}
   h_common_component_transfers_to_unseen: {is: hyp_untested}
   h_attention_carries_text_route: {is: hyp_untested}
@@ -1629,6 +1651,43 @@ facts:
   - {is: v_denote, from: e17g_cond_cos_other, to: swapped_concept_vector}
   - {is: v_entry_of, from: '{cond}', to: e17g}
   - {is: v_metric_of, from: e17g, to: mean_value}
+  - {is: v_file_of, from: 'e18_Qwen2.5-1.5B-Instruct_L8.json', to: e18}
+  - {is: v_rows_of, from: [items], to: e18}
+  - {is: v_axis_of, from: e18_group, to: e18}
+  - {is: v_value_of, from: e18_group_G2c, to: e18_group}
+  - {is: v_denote, from: e18_group_G2c, to: g_redef_conflict}
+  - {is: v_value_of, from: e18_group_G2k, to: e18_group}
+  - {is: v_denote, from: e18_group_G2k, to: g_redef_control}
+  - {is: v_axis_of, from: e18_cond, to: e18}
+  - {is: v_value_of, from: e18_cond_none, to: e18_cond}
+  - {is: v_denote, from: e18_cond_none, to: no_channel}
+  - {is: v_value_of, from: e18_cond_full, to: e18_cond}
+  - {is: v_denote, from: e18_cond_full, to: single_layer_vector}
+  - {is: v_value_of, from: e18_cond_specific, to: e18_cond}
+  - {is: v_denote, from: e18_cond_specific, to: specific_vector_component}
+  - {is: v_value_of, from: e18_cond_common, to: e18_cond}
+  - {is: v_denote, from: e18_cond_common, to: common_vector_component}
+  - {is: v_value_of, from: e18_cond_swapped, to: e18_cond}
+  - {is: v_denote, from: e18_cond_swapped, to: swapped_concept_vector}
+  - {is: v_filter_of, from: {group: '{group}'}, to: e18}
+  - {is: v_entry_of, from: '{cond}', to: e18}
+  - {is: v_metric_of, from: e18, to: accuracy}
+  - {is: v_metric_of, from: e18, to: logit_margin}
+  - {is: v_file_of, from: 'e18_Qwen2.5-1.5B-Instruct_L8.json', to: e18u}
+  - {is: v_rows_of, from: [usage], to: e18u}
+  - {is: v_axis_of, from: e18u_cond, to: e18u}
+  - {is: v_value_of, from: e18u_cond_none, to: e18u_cond}
+  - {is: v_denote, from: e18u_cond_none, to: no_channel}
+  - {is: v_value_of, from: e18u_cond_full, to: e18u_cond}
+  - {is: v_denote, from: e18u_cond_full, to: single_layer_vector}
+  - {is: v_value_of, from: e18u_cond_specific, to: e18u_cond}
+  - {is: v_denote, from: e18u_cond_specific, to: specific_vector_component}
+  - {is: v_value_of, from: e18u_cond_common, to: e18u_cond}
+  - {is: v_denote, from: e18u_cond_common, to: common_vector_component}
+  - {is: v_value_of, from: e18u_cond_swapped, to: e18u_cond}
+  - {is: v_denote, from: e18u_cond_swapped, to: swapped_concept_vector}
+  - {is: v_entry_of, from: '{cond}', to: e18u}
+  - {is: v_metric_of, from: e18u, to: logit_margin}
 
   # ===== 観察。s と o は測定値で、p は大きさを比べる動詞（is: observation）
   - {is: v_refer, from: o_e1_redef_below_new_adjacent, to: {is: v_come_before, from: e1.4b.G2c.near.accuracy, to: e1.4b.G3.near.accuracy}}
@@ -1729,6 +1788,11 @@ facts:
   - {is: v_refer, from: o_e17_sense_like_swap_conflict, to: {is: v_near, from: e17.G2c.m+d.accuracy, to: e17.G2c.m+d_swap.accuracy, new: 0.05}}
   - {is: v_refer, from: o_e17_sense_below_none_control, to: {is: v_come_before, from: e17.G2k.m+d.accuracy, to: e17.G2k.none.accuracy}}
   - {is: v_refer, from: o_e17_sense_robust_level_none_conflict, to: {is: v_near, from: e17.G2c.m+d.order_robust_accuracy, to: e17.G2c.none.order_robust_accuracy, new: 0.01}}
+  - {is: v_refer, from: o_e18_usage_full_above_swapped, to: {is: v_come_after, from: e18u.full.logit_margin, to: e18u.swapped.logit_margin}}
+  - {is: v_refer, from: o_e18_usage_common_above_none, to: {is: v_come_after, from: e18u.common.logit_margin, to: e18u.none.logit_margin}}
+  - {is: v_refer, from: o_e18_usage_specific_near_common, to: {is: v_near, from: e18u.specific.logit_margin, to: e18u.common.logit_margin, new: 0.2}}
+  - {is: v_refer, from: o_e18_statement_full_level_none_conflict, to: {is: v_near, from: e18.G2c.full.accuracy, to: e18.G2c.none.accuracy, new: 0.05}}
+  - {is: v_refer, from: h_vector_transfers_beyond_choice_format, to: {is: v_transfer, from: single_layer_vector, to: question_format}}
 
   # ===== 仮説（is: hypothesis）
   - {is: v_refer, from: h_collision_lowers_following, to: {is: v_lower, from: prior_collision, to: redefinition_following}}
@@ -1810,6 +1874,9 @@ facts:
   - {is: v_contradict, from: o_e17_sense_like_swap_conflict, to: h_specific_agrees_with_sense_difference}
   - {is: v_contradict, from: o_e17_sense_below_none_control, to: h_specific_agrees_with_sense_difference}
   - {is: v_contradict, from: o_e17_sense_robust_level_none_conflict, to: h_specific_agrees_with_sense_difference}
+  - {is: v_support, from: o_e18_usage_full_above_swapped, to: h_vector_transfers_beyond_choice_format}
+  - {is: v_contradict, from: o_e18_usage_specific_near_common, to: h_vector_transfers_beyond_choice_format}
+  - {is: v_contradict, from: o_e18_statement_full_level_none_conflict, to: h_vector_transfers_beyond_choice_format}
   - {is: v_refer, from: h_common_component_raises_stability, to: {is: v_raise, from: common_vector_component, to: verdict_stability}}
   - {is: v_refer, from: h_specific_component_not_raise_stability, to: {is: v_not_raise, from: specific_vector_component, to: verdict_stability}}
   - {is: v_refer, from: h_full_vector_raises_stability_beyond_specific, to: {is: v_raise, from: single_layer_vector, to: verdict_stability}}
