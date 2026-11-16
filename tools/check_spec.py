@@ -985,6 +985,9 @@ class Ontology:
                     elif verb == "is":   # 「属する」の終点は、種類そのもの（その成員ではない）
                         if m["with"] not in N or not self.is_concept(m["with"]):
                             err(f"{where}: {m['with']} は種類でない")
+                    elif self.is_a(self.end(verb, other), "verb_ref"):   # 動詞を受け取る位置: 来るのは動詞そのもの
+                        if not self.is_verb(m["with"]):
+                            err(f"{where}: {m['with']} は動詞でない。{verb} の {other} は動詞を受け取る")
                     elif (m["with"] not in N and m["with"] not in self.I) or not self.overlaps(m["with"], self.end(verb, other)):
                         err(f"{where}: {m['with']} は {verb} の {other}（{self.end(verb, other)}）に来られない")
                 if set(m) - set(self.G["mod"]):
