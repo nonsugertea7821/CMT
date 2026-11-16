@@ -24,7 +24,7 @@ from pathlib import Path
 import torch
 from transformers import AutoModelForCausalLM, AutoTokenizer
 
-ROOT = Path(__file__).parent
+ROOT = Path(__file__).resolve().parent
 
 FILLER_SENTENCES = [
     "今朝は空がよく晴れて、遠くの山までくっきりと見えた。",

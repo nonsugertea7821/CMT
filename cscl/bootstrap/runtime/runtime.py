@@ -1,4 +1,4 @@
-"""実行の記録（spec/runs/*.yaml）を、体系の書き換え規則に照らして検査する。
+"""実行の記録（exp/tests/*.yaml）を、体系の書き換え規則に照らして検査する。
 
 実行器は役割で、担い手は何でもよい（LLM、プログラム、機械）。この検査は、担い手が書いた実行の記録が
 体系に適合しているかを確かめる。当てはめる法則は、ontology.yaml の法則の個体のうち次のもの:
@@ -22,10 +22,10 @@ from pathlib import Path
 
 import yaml
 
-sys.path.insert(0, str(Path(__file__).parent))
-from check_spec import Facts, Ontology, atom, evaluate, law_rules, in_scope, load, root_name, merge_domain, register_domains, variables  # noqa: E402
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "type_checker"))
+from type_checker import Facts, Ontology, atom, evaluate, law_rules, in_scope, load, root_name, merge_domain, register_domains, variables  # noqa: E402
 
-ROOT = Path(__file__).parent.parent / "spec"
+ROOT = Path(__file__).resolve().parents[3]
 
 
 

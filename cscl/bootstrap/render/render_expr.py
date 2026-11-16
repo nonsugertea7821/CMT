@@ -1,10 +1,10 @@
-"""概念式を、モデルに与える文字列に変換する（表示。正本は spec/ の体系）。
+"""概念式を、モデルに与える文字列に変換する（表示。正本は cscl.yaml の範囲の体系）。
 
 1行に1つの種類を書く:  名前 ＝ 上位 ∧ 限定
 限定は 動詞(始点, 終点) の形で、自分の位置を「これ」と書く。否定は ¬、量の条件は 相手<25 のように書く。
 題材の領域 subj の種類は、式の中で参照している subj の種類と事実までたどって並べる。
 
-使い方: python tools/render_expr.py 顧客 在庫
+使い方: python cscl/bootstrap/render/render_expr.py 顧客 在庫
 """
 import re
 import sys
@@ -12,8 +12,8 @@ import sys
 import yaml
 from pathlib import Path
 
-sys.path.insert(0, str(Path(__file__).parent))
-import check_spec  # noqa: E402
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "type_checker"))
+import type_checker  # noqa: E402
 
 OPS = {"lt": "<", "le": "≤", "gt": ">", "ge": "≥"}
 DOM = "subj"
@@ -49,9 +49,9 @@ def _mod(T, m, S):
 
 class Renderer:
     def __init__(self):
-        self.T, self.O, self.S, _, _ = check_spec.build()
-        if check_spec.errors:
-            raise SystemExit("体系の検査に失敗: " + "; ".join(check_spec.errors[:3]))
+        self.T, self.O, self.S, _, _ = type_checker.build()
+        if type_checker.errors:
+            raise SystemExit("体系の検査に失敗: " + "; ".join(type_checker.errors[:3]))
         self.by_ja = {n.get("display"): nid for nid, n in self.T.N.items() if nid.startswith(DOM + ".")}
 
     def line(self, nid):
@@ -82,8 +82,8 @@ class Renderer:
         out = []
         for f in self.S.get("facts") or []:
             if any(f.get(k) in nids for k in ("from", "to")):
-                v = check_spec.qualify(f["is"], self.S["_local"], DOM)
-                a, b = (check_spec.qualify(f[k], self.S["_local"], DOM) for k in ("from", "to"))
+                v = type_checker.qualify(f["is"], self.S["_local"], DOM)
+                a, b = (type_checker.qualify(f[k], self.S["_local"], DOM) for k in ("from", "to"))
                 out.append(f"{_ja(self.T, v, self.S)}({_ja(self.T, a, self.S)}, {_ja(self.T, b, self.S)})")
         return out
 
@@ -123,7 +123,7 @@ class Renderer:
 
     def raw(self, local, with_inds=False):
         """subj.yaml に書いたままの行。種類の行と、それらに触れる個体と事実の行。"""
-        src = (check_spec.SPEC / "subj.yaml").read_text(encoding="utf-8").splitlines()
+        src = (type_checker.SPEC / type_checker.domain_files()["subj"]).read_text(encoding="utf-8").splitlines()
         import re
         inds = {f.get(k) for f in self.S.get("facts") or [] for k in ("from", "to") if f.get("to") in local or f.get("from") in local}
         for n in local:

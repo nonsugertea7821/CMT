@@ -1,6 +1,6 @@
-"""spec/ の検査と値の計算。
+"""体系の型検査と値の計算（stage0。Python による最初の実装）。
 
-spec/ が正本。文章（docs/, experiments/README.md）は正本ではない。
+cscl.yaml の範囲のファイル（cscl/library/, exp/src/）が正本。文章（docs/, experiments/README.md）は正本ではない。
 
 ontology.yaml  概念の体系。書き方はそのファイルの冒頭を見よ。
   検査: 表示語の一意性 / gloss を持つのは最上位の2つだけ / 動詞の式（状態の関係・両端・第三のものの種類）の一意性 /
@@ -23,10 +23,10 @@ exp.yaml  領域 exp。種類（nodes）、個体（individuals）、事実（fa
     決定の p が is_a のときは、体系の上位・下位の関係そのもの。採用済みなら、検査が構造から確かめる。
 
 使い方:
-  python tools/check_spec.py              検査
-  python tools/check_spec.py --values     測定値をすべて表示
-  python tools/check_spec.py --show ID    1つの項目を、参照を展開して表示
-  python tools/check_spec.py --expr ID    ノードの式を、上位をたどって表示
+  python cscl/bootstrap/type_checker/type_checker.py              検査
+  python cscl/bootstrap/type_checker/type_checker.py --values     測定値をすべて表示
+  python cscl/bootstrap/type_checker/type_checker.py --show ID    1つの項目を、参照を展開して表示
+  python cscl/bootstrap/type_checker/type_checker.py --expr ID    ノードの式を、上位をたどって表示
 """
 import argparse
 import collections
@@ -39,13 +39,13 @@ from pathlib import Path
 
 import yaml
 
-ROOT = Path(__file__).resolve().parent.parent
-SPEC = ROOT / "spec"
+ROOT = Path(__file__).resolve().parents[3]   # リポジトリの根。cscl/bootstrap/type_checker/ の3つ上
+SPEC = ROOT   # 体系のファイルの名前は、根からの相対で書く（cscl.yaml と同じ）
 CONFIG = ROOT / "cscl.yaml"   # 体系の範囲（tsconfig に当たる）
 
 
 def root_name():
-    """本体のファイル（spec/ からの相対）。"""
+    """本体のファイル（リポジトリの根からの相対）。"""
     return str((ROOT / config()["root"]).resolve().relative_to(SPEC))
 
 
@@ -58,7 +58,7 @@ def in_scope(key):
     c = config()
     excl = {p.resolve() for g in c.get("exclude") or [] for p in ROOT.glob(g)}
     return sorted({p.resolve() for g in c.get(key) or [] for p in ROOT.glob(g)} - excl)
-RESULTS = ROOT / "experiments" / "results"
+RESULTS = ROOT / yaml.safe_load(CONFIG.read_text(encoding="utf-8"))["results"]
 TOPS = ("continuant", "occurrent")
 errors = []
 
@@ -113,6 +113,11 @@ def yload(src):
 def load(name):
     O = yaml.load((SPEC / name).read_text(encoding="utf-8"), Loader=_Unique)
     if name == root_name():
+        for p in in_scope("std"):   # 標準の語彙。core と同じ名前空間に加える
+            for nid, n in (yaml.load(p.read_text(encoding="utf-8"), Loader=_Unique).get("nodes") or {}).items():
+                if nid in O["nodes"]:
+                    err(f"{p.relative_to(ROOT)}: {nid} は core にもある")
+                O["nodes"][nid] = n
         core_sections(O)
     return O
 
@@ -486,7 +491,7 @@ def evaluate(rules, F, V):
 
 
 # ---------------------------------------------------------------- 概念の体系
-# 法則のうち、この検査が当てはめるもの / 実行の検査（run_spec.py）が当てはめるもの
+# 法則のうち、この検査が当てはめるもの / 実行の検査（cscl/bootstrap/runtime/runtime.py）が当てはめるもの
 # 規則で書いた法則（law_rule）は、実行の検査がその規則を読んで当てはめる。ここには、意味を検査が与える法則（law_given）だけを挙げる。
 LAWS_HERE = {"part_fact_direction", "part_display_explicit"}
 LAWS_RUN = {"unique_names", "step", "frame", "halt"}
@@ -1361,6 +1366,8 @@ def build():
     領域のファイルは自分で見つけ、使う領域の順に読む。領域 exp の個体（測定・観察・仮説など）は、中身まで検査する。"""
     O = load(root_name())
     natural_language_only_in_ja(root_name(), yload(open(SPEC / root_name())))
+    for p in in_scope("std"):
+        natural_language_only_in_ja(str(p.relative_to(ROOT)), yload(open(p)))
     order = register_domains(O)
     Dm = {}
     for dom, name in order:
