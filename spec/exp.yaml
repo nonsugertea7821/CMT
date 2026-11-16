@@ -215,7 +215,7 @@ nodes:
   layer_output: {display: 層の出力, extends: information_entity, mod: {of: [v_compute, to], with: layer}}
   hidden_state: {display: 隠れ状態, extends: layer_output, mod: {of: [v_depend, from], with: label_token_positions}}
   state_shift: {display: 隠れ状態のずれ, extends: information_entity, mod: {of: [v_sum, from], with: shifted_hidden_state}}
-  shifted_hidden_state: {display: ずれを足した隠れ状態, extends: information_entity, mod: {of: [v_compose, to], with: hidden_state}}
+  shifted_hidden_state: {display: ずれを足した隠れ状態, extends: information_entity, mod: {of: [v_depend, from], with: hidden_state}}   # 生成の順序: h が先、h' が後
   shift_unseen_by_layer: {display: 層から分けて見えない隠れ状態のずれ, extends: state_shift, mod: {of: [v_see, to], with: layer, neg: true}}
   term_server: {display: 用語サーバー, extends: artifact, mod: {of: [v_judge_definition, from]}}
   model_design: {display: モデルについての設計, extends: information_entity_design_to, mod: {of: [v_refer, from], with: model}}
