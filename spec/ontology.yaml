@@ -321,6 +321,16 @@ individuals:
   r_visible: {is: law_relation, display: 参照できる}
   r_kpart: {is: law_relation, display: 種類として部分である}
   r_kdep: {is: law_relation, display: 種類として依存する}
+  r_in: {is: law_relation, display: 集まりに属する}
+  r_ind_kind: {is: law_relation, display: 個体の種類か、その上位である}
+  r_closed_op: {is: law_relation, display: その動詞について閉じている}
+  r_closed: {is: law_relation, display: 閉じている}
+  r_closed_verb: {is: law_relation, display: どこかの閉集合が閉じている動詞である}
+  r_ternary: {is: law_relation, display: 二つから第三のものを作る動詞である}
+  r_op_of: {is: law_relation, display: 事実の動詞である（上位の動詞を含む）}
+  r_in_op: {is: law_relation, display: その動詞について閉じた閉集合に属する}
+  r_collected: {is: law_relation, display: 集まりが直接集めた種類である}
+  r_defined: {is: law_relation, display: その動詞が定義されている}
   # ===== 規則で書いた法則。前提（v_assume）がすべて成り立つとき、導く文（v_derive）を足し、求める文（v_require）が成り立っていなければ違反。
   # 否定の前提は、書かれていない（導かれていない）ことを表す。前提にだけ出てくる変数は「どれでも」と読む。
   # 基礎の関係の法則は実行の状態に、体系の書き方の法則は、検査が体系の書き方から読んだ文に当てはめる。
@@ -401,9 +411,35 @@ individuals:
   frame: {is: law_given, display: 動詞が触れなかった文は変わらない}
   halt: {is: law_given, display: 当てはまる動詞がなければ止まる}
   part_fact_direction: {is: law_given, display: 部分の事実は、種類の限定と向きが逆にならない}
-  closed_under: {is: law_given, display: 閉集合は、限定した動詞について閉じている。その動詞の二つが閉集合の成員（の下位）なら、できたものも成員（の下位）。二つは同じ閉集合に属する}
-  collection_level: {is: law_given, display: 種類の集まりの成員は、1階の種類。種類の集まりそのものを成員にしない}
-  op_defined: {is: law_given, display: 閉集合に属する種類は、自分か上位の種類について、閉じている動詞（の事実か限定）が定義されている}
+  closed_under: {is: law_rule, display: 閉集合は、限定した動詞について閉じている。その動詞の始点が閉集合の成員（の下位）なら、終点も成員（の下位）}
+  closed_under_back: {is: law_rule, display: 閉じている動詞の終点が閉集合に属するなら、始点も同じ閉集合に属する}
+  closed_under_new: {is: law_rule, display: 閉じている動詞でできたものは、二つと同じ閉集合に属する}
+  closed_under_some: {is: law_rule, display: どこかの閉集合が閉じている動詞の事実では、二つとも、その動詞について閉じた閉集合に属する}
+  closed_under_mod: {is: law_rule, display: 閉じている動詞による限定では、限定される種類と相手の種類が同じ閉集合に属する}
+  closed_under_mod_back: {is: law_rule, display: 閉じている動詞による限定の相手が閉集合に属するなら、限定される種類も属する}
+  closed_under_mod_some: {is: law_rule, display: 閉じている動詞による限定では、二つとも、その動詞について閉じた閉集合に属する}
+  closed_has_op: {is: law_rule, display: 閉集合は、何について閉じているかを限定している}
+  closed_op_ternary: {is: law_rule, display: 閉じている動詞は、二つから第三のものを作る動詞}
+  collection_level: {is: law_rule, display: 種類の集まりの成員は、1階の種類。種類の集まりそのものを成員にしない}
+  op_defined: {is: law_rule, display: 閉集合に属する種類は、自分か上位の種類について、閉じている動詞（の事実か限定）が定義されている。集まりが直接集めた種類は、閉じていることで定義される}
+  in_by_collect: {is: law_rule, display: 集まりが集めた種類は、その集まりに属する}
+  in_inherit: {is: law_rule, display: 集まりに属する種類の下位も、その集まりに属する}
+  ind_kind_self: {is: law_rule, display: 個体の種類}
+  ind_kind_step: {is: law_rule, display: 個体の種類の上位}
+  closed_op_by_mod: {is: law_rule, display: 閉集合が閉じている動詞は、その種類か上位の限定「V について閉じている」の V}
+  closed_by_op: {is: law_rule, display: 閉じている動詞を持つ集まりは、閉じている}
+  closed_verb: {is: law_rule, display: どこかの閉集合が閉じている動詞}
+  ternary_verb: {is: law_rule, display: 第三のものの種類を持つ動詞}
+  op_of_self: {is: law_rule, display: 事実の動詞}
+  op_of_up: {is: law_rule, display: 事実の動詞の上位の動詞}
+  in_op: {is: law_rule, display: 種類が、動詞 V について閉じた閉集合に属する}
+  collected_kind: {is: law_rule, display: 集まりが直接集めた種類}
+  defined_by_fact_from: {is: law_rule, display: 事実の始点の種類には、その動詞が定義されている}
+  defined_by_fact_to: {is: law_rule, display: 事実の終点の種類には、その動詞が定義されている}
+  defined_by_fact_new: {is: law_rule, display: 事実でできた種類には、その動詞が定義されている}
+  defined_by_mod: {is: law_rule, display: 動詞による限定を持つ種類には、その動詞が定義されている}
+  defined_by_mod_with: {is: law_rule, display: 動詞による限定の相手の種類には、その動詞が定義されている}
+  defined_inherit: {is: law_rule, display: 上位に定義された動詞は、下位にも定義されている}
   part_display_explicit: {is: law_given, display: 部分の限定を持つ種類の表示名は、どちらが部分かを明示し、限定の向きと合う}
 
 facts:
@@ -486,6 +522,121 @@ facts:
   - {is: v_assume, from: kdep_antisymmetric, to: {is: r_kdep, from: var1, to: var2}}
   - {is: v_assume, from: kdep_antisymmetric, to: {is: r_kdep, from: var2, to: var1}}
   - {is: v_require, from: kdep_antisymmetric, to: {is: same, from: var1, to: var2}}
+  - {is: v_assume, from: in_by_collect, to: {is: of, from: var1, to: v_collect}}
+  - {is: v_assume, from: in_by_collect, to: {is: from, from: var1, to: var2}}
+  - {is: v_assume, from: in_by_collect, to: {is: to, from: var1, to: var3}}
+  - {is: v_derive, from: in_by_collect, to: {is: r_in, from: var3, to: var2}}
+  - {is: v_assume, from: in_inherit, to: {is: r_in, from: var1, to: var2}}
+  - {is: v_assume, from: in_inherit, to: {is: r_ancestor, from: var3, to: var1}}
+  - {is: v_derive, from: in_inherit, to: {is: r_in, from: var3, to: var2}}
+  - {is: v_assume, from: ind_kind_self, to: {is: is, from: var1, to: var2}}
+  - {is: v_derive, from: ind_kind_self, to: {is: r_ind_kind, from: var1, to: var2}}
+  - {is: v_assume, from: ind_kind_step, to: {is: is, from: var1, to: var3}}
+  - {is: v_assume, from: ind_kind_step, to: {is: r_ancestor, from: var3, to: var2}}
+  - {is: v_derive, from: ind_kind_step, to: {is: r_ind_kind, from: var1, to: var2}}
+  - {is: v_assume, from: closed_op_by_mod, to: {is: r_ind_kind, from: var1, to: var2}}
+  - {is: v_assume, from: closed_op_by_mod, to: {is: mod, from: var2, to: var3}}
+  - {is: v_assume, from: closed_op_by_mod, to: {is: of, from: var3, to: v_close}}
+  - {is: v_assume, from: closed_op_by_mod, to: {is: position, from: var3, to: from}}
+  - {is: v_assume, from: closed_op_by_mod, to: {is: with, from: var3, to: var4}}
+  - {is: v_assume, from: closed_op_by_mod, to: {is: neg, from: var3, to: true, neg: true}}
+  - {is: v_derive, from: closed_op_by_mod, to: {is: r_closed_op, from: var1, to: var4}}
+  - {is: v_assume, from: closed_by_op, to: {is: r_closed_op, from: var1, to: var2}}
+  - {is: v_derive, from: closed_by_op, to: {is: r_closed, from: var1}}
+  - {is: v_assume, from: closed_verb, to: {is: r_closed_op, from: var1, to: var2}}
+  - {is: v_derive, from: closed_verb, to: {is: r_closed_verb, from: var2}}
+  - {is: v_assume, from: ternary_verb, to: {is: r_end_new_kind, from: var1, to: var2}}
+  - {is: v_derive, from: ternary_verb, to: {is: r_ternary, from: var1}}
+  - {is: v_assume, from: op_of_self, to: {is: of, from: var1, to: var2}}
+  - {is: v_derive, from: op_of_self, to: {is: r_op_of, from: var1, to: var2}}
+  - {is: v_assume, from: op_of_up, to: {is: of, from: var1, to: var3}}
+  - {is: v_assume, from: op_of_up, to: {is: r_ancestor, from: var3, to: var2}}
+  - {is: v_derive, from: op_of_up, to: {is: r_op_of, from: var1, to: var2}}
+  - {is: v_assume, from: in_op, to: {is: r_in, from: var1, to: var2}}
+  - {is: v_assume, from: in_op, to: {is: r_closed_op, from: var2, to: var3}}
+  - {is: v_derive, from: in_op, to: {is: r_in_op, from: var1, to: var3}}
+  - {is: v_assume, from: defined_by_fact_from, to: {is: r_op_of, from: var1, to: var2}}
+  - {is: v_assume, from: defined_by_fact_from, to: {is: from, from: var1, to: var3}}
+  - {is: v_derive, from: defined_by_fact_from, to: {is: r_defined, from: var3, to: var2}}
+  - {is: v_assume, from: defined_by_fact_to, to: {is: r_op_of, from: var1, to: var2}}
+  - {is: v_assume, from: defined_by_fact_to, to: {is: to, from: var1, to: var3}}
+  - {is: v_derive, from: defined_by_fact_to, to: {is: r_defined, from: var3, to: var2}}
+  - {is: v_assume, from: defined_by_fact_new, to: {is: r_op_of, from: var1, to: var2}}
+  - {is: v_assume, from: defined_by_fact_new, to: {is: new, from: var1, to: var3}}
+  - {is: v_derive, from: defined_by_fact_new, to: {is: r_defined, from: var3, to: var2}}
+  - {is: v_assume, from: defined_by_mod, to: {is: mod, from: var1, to: var2}}
+  - {is: v_assume, from: defined_by_mod, to: {is: of, from: var2, to: var3}}
+  - {is: v_assume, from: defined_by_mod, to: {is: with, from: var2, to: var4}}
+  - {is: v_assume, from: defined_by_mod, to: {is: neg, from: var2, to: true, neg: true}}
+  - {is: v_derive, from: defined_by_mod, to: {is: r_defined, from: var1, to: var3}}
+  - {is: v_assume, from: defined_by_mod_with, to: {is: mod, from: var1, to: var2}}
+  - {is: v_assume, from: defined_by_mod_with, to: {is: of, from: var2, to: var3}}
+  - {is: v_assume, from: defined_by_mod_with, to: {is: with, from: var2, to: var4}}
+  - {is: v_assume, from: defined_by_mod_with, to: {is: neg, from: var2, to: true, neg: true}}
+  - {is: v_derive, from: defined_by_mod_with, to: {is: r_defined, from: var4, to: var3}}
+  - {is: v_assume, from: defined_inherit, to: {is: r_defined, from: var1, to: var2}}
+  - {is: v_assume, from: defined_inherit, to: {is: r_ancestor, from: var3, to: var1}}
+  - {is: v_derive, from: defined_inherit, to: {is: r_defined, from: var3, to: var2}}
+  - {is: v_assume, from: closed_under, to: {is: r_op_of, from: var1, to: var2}}
+  - {is: v_assume, from: closed_under, to: {is: from, from: var1, to: var4}}
+  - {is: v_assume, from: closed_under, to: {is: r_in, from: var4, to: var3}}
+  - {is: v_assume, from: closed_under, to: {is: r_closed_op, from: var3, to: var2}}
+  - {is: v_assume, from: closed_under, to: {is: to, from: var1, to: var5}}
+  - {is: v_require, from: closed_under, to: {is: r_in, from: var5, to: var3}}
+  - {is: v_assume, from: closed_under_back, to: {is: r_op_of, from: var1, to: var2}}
+  - {is: v_assume, from: closed_under_back, to: {is: to, from: var1, to: var4}}
+  - {is: v_assume, from: closed_under_back, to: {is: r_in, from: var4, to: var3}}
+  - {is: v_assume, from: closed_under_back, to: {is: r_closed_op, from: var3, to: var2}}
+  - {is: v_assume, from: closed_under_back, to: {is: from, from: var1, to: var5}}
+  - {is: v_require, from: closed_under_back, to: {is: r_in, from: var5, to: var3}}
+  - {is: v_assume, from: closed_under_new, to: {is: r_op_of, from: var1, to: var2}}
+  - {is: v_assume, from: closed_under_new, to: {is: from, from: var1, to: var4}}
+  - {is: v_assume, from: closed_under_new, to: {is: r_in, from: var4, to: var3}}
+  - {is: v_assume, from: closed_under_new, to: {is: r_closed_op, from: var3, to: var2}}
+  - {is: v_assume, from: closed_under_new, to: {is: new, from: var1, to: var5}}
+  - {is: v_require, from: closed_under_new, to: {is: r_in, from: var5, to: var3}}
+  - {is: v_assume, from: closed_under_some, to: {is: r_op_of, from: var1, to: var2}}
+  - {is: v_assume, from: closed_under_some, to: {is: r_closed_verb, from: var2}}
+  - {is: v_assume, from: closed_under_some, to: {is: from, from: var1, to: var3}}
+  - {is: v_require, from: closed_under_some, to: {is: r_in_op, from: var3, to: var2}}
+  - {is: v_assume, from: closed_under_some, to: {is: to, from: var1, to: var4}}
+  - {is: v_require, from: closed_under_some, to: {is: r_in_op, from: var4, to: var2}}
+  - {is: v_assume, from: closed_under_mod, to: {is: mod, from: var1, to: var2}}
+  - {is: v_assume, from: closed_under_mod, to: {is: of, from: var2, to: var3}}
+  - {is: v_assume, from: closed_under_mod, to: {is: with, from: var2, to: var4}}
+  - {is: v_assume, from: closed_under_mod, to: {is: neg, from: var2, to: true, neg: true}}
+  - {is: v_assume, from: closed_under_mod, to: {is: r_in, from: var1, to: var5}}
+  - {is: v_assume, from: closed_under_mod, to: {is: r_closed_op, from: var5, to: var3}}
+  - {is: v_require, from: closed_under_mod, to: {is: r_in, from: var4, to: var5}}
+  - {is: v_assume, from: closed_under_mod_back, to: {is: mod, from: var1, to: var2}}
+  - {is: v_assume, from: closed_under_mod_back, to: {is: of, from: var2, to: var3}}
+  - {is: v_assume, from: closed_under_mod_back, to: {is: with, from: var2, to: var4}}
+  - {is: v_assume, from: closed_under_mod_back, to: {is: neg, from: var2, to: true, neg: true}}
+  - {is: v_assume, from: closed_under_mod_back, to: {is: r_in, from: var4, to: var5}}
+  - {is: v_assume, from: closed_under_mod_back, to: {is: r_closed_op, from: var5, to: var3}}
+  - {is: v_require, from: closed_under_mod_back, to: {is: r_in, from: var1, to: var5}}
+  - {is: v_assume, from: closed_under_mod_some, to: {is: mod, from: var1, to: var2}}
+  - {is: v_assume, from: closed_under_mod_some, to: {is: of, from: var2, to: var3}}
+  - {is: v_assume, from: closed_under_mod_some, to: {is: with, from: var2, to: var4}}
+  - {is: v_assume, from: closed_under_mod_some, to: {is: neg, from: var2, to: true, neg: true}}
+  - {is: v_assume, from: closed_under_mod_some, to: {is: r_closed_verb, from: var3}}
+  - {is: v_require, from: closed_under_mod_some, to: {is: r_in_op, from: var1, to: var3}}
+  - {is: v_require, from: closed_under_mod_some, to: {is: r_in_op, from: var4, to: var3}}
+  - {is: v_assume, from: closed_has_op, to: {is: r_ind_kind, from: var1, to: closed_set}}
+  - {is: v_require, from: closed_has_op, to: {is: r_closed, from: var1}}
+  - {is: v_assume, from: closed_op_ternary, to: {is: r_closed_verb, from: var1}}
+  - {is: v_require, from: closed_op_ternary, to: {is: r_ternary, from: var1}}
+  - {is: v_assume, from: collection_level, to: {is: of, from: var1, to: v_collect}}
+  - {is: v_assume, from: collection_level, to: {is: to, from: var1, to: var2}}
+  - {is: v_require, from: collection_level, to: {is: r_ancestor, from: var2, to: kind_collection, neg: true}}
+  - {is: v_require, from: collection_level, to: {is: same, from: var2, to: kind_collection, neg: true}}
+  - {is: v_assume, from: op_defined, to: {is: r_in, from: var1, to: var2}}
+  - {is: v_assume, from: op_defined, to: {is: r_closed_op, from: var2, to: var3}}
+  - {is: v_assume, from: collected_kind, to: {is: of, from: var1, to: v_collect}}
+  - {is: v_assume, from: collected_kind, to: {is: to, from: var1, to: var2}}
+  - {is: v_derive, from: collected_kind, to: {is: r_collected, from: var2}}
+  - {is: v_assume, from: op_defined, to: {is: r_collected, from: var1, neg: true}}
+  - {is: v_require, from: op_defined, to: {is: r_defined, from: var1, to: var3}}
   - {is: v_assume, from: kpart_transitive, to: {is: r_kpart, from: var1, to: var3}}
   - {is: v_assume, from: kpart_transitive, to: {is: r_kpart, from: var3, to: var2}}
   - {is: v_derive, from: kpart_transitive, to: {is: r_kpart, from: var1, to: var2}}
@@ -652,6 +803,3 @@ facts:
   - {is: v_govern, from: halt, to: run.run}
   - {is: v_govern, from: part_fact_direction, to: concept_expression}
   - {is: v_govern, from: part_display_explicit, to: concept_expression}
-  - {is: v_govern, from: closed_under, to: concept_expression}
-  - {is: v_govern, from: collection_level, to: concept_expression}
-  - {is: v_govern, from: op_defined, to: concept_expression}

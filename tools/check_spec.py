@@ -196,10 +196,8 @@ def collect_kind_facts(T):
                 k = T.resolve(f.get("to"), dom) if isinstance(f.get("to"), str) else None
                 if k not in T.N or T.is_verb(k):
                     err(f"{name} の事実 {f}: 集まりの成員は種類（ノード）")
-                elif T.is_a(k, "kind_collection"):
-                    err(f"法則 collection_level に反する: {name} の事実で、種類の集まり {k} を、集まり {f['from']} の成員にしている")
                 else:
-                    T.COLL[f["from"]] = k
+                    T.COLL[f["from"]] = k   # 段の検査は法則 collection_level（規則）
     for name, dom in [(root_name(), "core")] + [(n, d) for d, n in domain_files().items()]:
         D = yload((SPEC / name).read_text(encoding="utf-8"))
         for i, f in enumerate(D.get("facts") or []):
@@ -218,65 +216,6 @@ def collect_kind_facts(T):
                 if not T.is_a(k, T.spot_type(verb, p)):
                     err(f"{where}: {p} の種類 {k} が、動詞 {verb} のその位置（{T.spot_type(verb, p)}）に当たらない")
             T.KF.append((verb, x))
-    check_closed(T)
-
-
-def closed_op(T, c):
-    """閉集合（個体 c）が閉じている動詞: c の種類か上位の限定「V について閉じている」の V。"""
-    k, hops = T.I.get(c), 0
-    while k in T.N and hops < 80:
-        for m in T.N[k].get("mod") or []:
-            if isinstance(m, dict) and m.get("of") == ["v_close", "from"] and m.get("with") and not m.get("neg"):
-                return T.q(m["with"])
-        k, hops = T.up(k), hops + 1
-    return None
-
-
-def space(T, k, op="v_sum"):
-    """種類 k が属する、動詞 op について閉じた閉集合（個体）: 成員の種類が、k か k の上位でいちばん近いもの。なければ None。"""
-    hops = 0
-    while k in T.N and hops < 80:
-        for c, ck in getattr(T, "COLL", {}).items():
-            if ck == k and T.is_a(T.I.get(c), "closed_set") and closed_op(T, c) == op:
-                return c
-        k, hops = T.up(k), hops + 1
-    return None
-
-
-def check_closed(T):
-    """法則 closed_under と op_defined。閉集合ごとに、閉じている動詞 V について確かめる（合成はその一つ）。"""
-    ops = {closed_op(T, c) for c in T.COLL if T.is_a(T.I.get(c), "closed_set")}
-    for c in T.COLL:
-        if T.is_a(T.I.get(c), "closed_set") and closed_op(T, c) is None:
-            err(f"法則 closed_under に反する: 閉集合 {c} が、何について閉じているかを限定していない")
-    for op in ops - {None}:
-        if not T.is_verb(op) or T.end(op, "new_kind") is None:
-            err(f"法則 closed_under に反する: {op} は、二つから第三のものを作る動詞でない（閉じられない）")
-            continue
-        uses = [x for verb, x in T.KF if verb == op or T.is_a(verb, op)]
-        for x in uses:
-            sp = {p: space(T, k, op) for p, k in x.items()}
-            if sp.get("from") is None or sp["from"] != sp.get("to"):
-                err(f"法則 closed_under に反する: {op} の事実 {x} で、二つが同じ閉集合に属さない（{sp}）")
-            elif sp.get("new") != sp["from"]:
-                err(f"法則 closed_under に反する: {op} の事実 {x} で、できたものが閉集合 {sp['from']} の外に出る")
-        P = {k for x in uses for k in x.values()}
-        for nid, n in T.N.items():
-            for m in n.get("mod") or []:
-                if isinstance(m, dict) and isinstance(m.get("of"), list) and T.q(m["of"][0]) == op and m.get("with") and not m.get("neg"):
-                    w = T.q(m["with"])
-                    P |= {nid, w}
-                    if space(T, nid, op) is None or space(T, nid, op) != space(T, w, op):
-                        err(f"法則 closed_under に反する: {nid} の限定「{op} で {w}」で、閉集合が {space(T, nid, op)} と {space(T, w, op)}")
-        for nid in T.N:
-            sp = space(T, nid, op)
-            if sp is None or T.is_verb(nid) or nid == T.COLL.get(sp):   # 成員の種類そのものは、閉じていることで定義される
-                continue
-            k, hops = nid, 0
-            while k in T.N and k not in P and hops < 80:
-                k, hops = T.up(k), hops + 1
-            if k not in P:
-                err(f"法則 op_defined に反する: {nid} は {op} について閉じた {sp} に属するが、{op} が定義されていない（自分も上位も、その事実か限定に出てこない）")
 
 
 def gather(D, T, name):
@@ -549,7 +488,7 @@ def evaluate(rules, F, V):
 # ---------------------------------------------------------------- 概念の体系
 # 法則のうち、この検査が当てはめるもの / 実行の検査（run_spec.py）が当てはめるもの
 # 規則で書いた法則（law_rule）は、実行の検査がその規則を読んで当てはめる。ここには、意味を検査が与える法則（law_given）だけを挙げる。
-LAWS_HERE = {"part_fact_direction", "part_display_explicit", "closed_under", "collection_level", "op_defined"}
+LAWS_HERE = {"part_fact_direction", "part_display_explicit"}
 LAWS_RUN = {"unique_names", "step", "frame", "halt"}
 
 
@@ -768,7 +707,14 @@ class Ontology:
             add("of", t, verb)
             for p, k in x.items():
                 add(p, t, k)
+        for c, k in getattr(self, "COLL", {}).items():   # 種類の集まり（2階）の事実
+            t = f"collect {c}"
+            add("of", t, "v_collect")
+            add("from", t, c)
+            add("to", t, k)
         for i in self.I:
+            if isinstance(self.I[i], str):
+                add("is", i, self.I[i])
             add("domain", i, "core" if i in (self.O.get("individuals") or {}) else self.Isubj.get(i, self.Idom))
         for aid, a in self.AX.items():
             add("exists", aid)
@@ -1355,32 +1301,45 @@ PART_VAGUE = ("から部分になる", "へ部分になる", "から時間的な
 def check_parts(T):
     """法則 part_fact_direction と part_display_explicit。
     - 事実「a は b の部分」に対し、b の種類が「a の種類の部分である」と限定されている（または a の種類が「b の種類を部分に持つ」）なら、向きが逆。
-    - 部分の限定（v_compose, v_stage）を持つ種類の表示名は、どちらが部分かを曖昧な言い方で書かず、明示した言い方なら限定の向きと合う。"""
+    - 部分の限定（holds に部分の文を持つ動詞による限定）を持つ種類の表示名は、どちらが部分かを曖昧な言い方で書かず、明示した言い方なら限定の向きと合う。"""
     kind = lambda x: T.I.get(x, x if x in T.N else None)
     isa = lambda a, b: a is not None and (a == b or T.is_a(a, b))
 
-    def mods(k, pos, verb="v_compose"):
+    def parts(verb):
+        """動詞の holds のうち部分の文を、(部分の位置, 全体の位置) で。動詞の名前でなく、定義から読む。"""
+        return {(h["from"], h["to"]) for h in T.end(verb, "holds") or [] if isinstance(h, dict) and h.get("is") == "part"} if verb in T.N else set()
+
+    def role(m):
+        """限定 {of: [V, p], with: X} で、限定される種類が X の部分なら "part"、X を部分に持つなら "whole"。
+        X の位置は、第三のものを作る動詞なら new、そうでなければ p の反対の位置。"""
+        if not isinstance(m, dict) or not isinstance(m.get("of"), list) or len(m["of"]) != 2:
+            return None
+        v, pos = T.q(m["of"][0]), m["of"][1]
+        wpos = "new" if T.end(v, "new_kind") else ("to" if pos == "from" else "from")
+        P = parts(v)
+        return "part" if (pos, wpos) in P else "whole" if (wpos, pos) in P else None
+
+    def mods(k, r):
         out, hops = [], 0
         while k in T.N and hops < 50:
-            out += [m["with"] for m in T.N[k].get("mod") or []
-                    if isinstance(m, dict) and m.get("with") and (m.get("of") == [verb, pos] or pos == "from" and m.get("of") == ["v_sum", "from"])
-                    and not m.get("neg")]   # 「合成して X になる」も X の部分（法則 kpart_by_sum_part）
+            out += [m["with"] for m in T.N[k].get("mod") or [] if m_ok(m) and role(m) == r]
             k, hops = T.up(k), hops + 1
         return out
+    m_ok = lambda m: isinstance(m, dict) and m.get("with") and not m.get("neg")
     files = [(root_name(), "core")] + [(name, dom) for dom, name in domain_files().items()]
     for name, dom in files:
         for f in yload((SPEC / name).read_text(encoding="utf-8")).get("facts") or []:
             if not isinstance(f, dict) or not isinstance(f.get("is"), str):
                 continue
             v = T.resolve(f["is"], dom)
-            if not v or not (v == "v_compose" or T.is_a(v, "v_compose")):
+            if not v or ("from", "to") not in parts(v):
                 continue
             r = lambda x: (x if x in T.I else (T.resolve(x, dom) or x)) if isinstance(x, str) else None
             a, b = r(f.get("from")), r(f.get("to"))
-            for X in mods(kind(b), "from"):
+            for X in mods(kind(b), "part"):
                 if isa(kind(a), X):
                     err(f"法則 part_fact_direction に反する: {name} の事実 {a} は {b} の部分だが、{b} の種類は {X} の部分と限定されている")
-            for X in mods(kind(a), "to"):
+            for X in mods(kind(a), "whole"):
                 if isa(kind(b), X):
                     err(f"法則 part_fact_direction に反する: {name} の事実 {a} は {b} の部分だが、{a} の種類は {X} を部分に持つと限定されている")
     for nid, n in T.N.items():
@@ -1388,14 +1347,13 @@ def check_parts(T):
         if T.is_verb(nid):
             continue
         for m in n.get("mod") or []:
-            if not isinstance(m, dict) or not isinstance(m.get("of"), list) or m["of"][0] not in ("v_compose", "v_stage", "v_sum"):
+            r = role(m)
+            if r is None:
                 continue
-            pos = m["of"][1]
             if any(w in disp for w in PART_VAGUE):
                 err(f"法則 part_display_explicit に反する: {nid} の表示名「{disp}」は、どちらが部分かが曖昧")
-            other = "to" if pos == "from" else "from"
-            if pos in PART_WORDS and any(w in disp for w in PART_WORDS[other]) and not m.get("neg"):
-                err(f"法則 part_display_explicit に反する: {nid} の表示名「{disp}」が、限定の向き（{pos}）と逆")
+            if any(w in disp for w in PART_WORDS["to" if r == "part" else "from"]) and not m.get("neg"):
+                err(f"法則 part_display_explicit に反する: {nid} の表示名「{disp}」が、限定の向き（{m['of'][1]}）と逆")
 
 
 def build():
