@@ -208,6 +208,10 @@ nodes:
   open_weight_model: {display: 重みが公開されたモデル, extends: model, mod: {of: [v_expose, from], with: weights}}
   api_only_model: {display: APIでしか使えないモデル, extends: model, mod: {of: [v_expose, from], with: weights, neg: true}}
   attention: {display: 注意機構, extends: artifact_compute_from, mod: {of: [v_compose, from], with: layer}}
+  layer_output: {display: 層の出力, extends: information_entity, mod: {of: [v_compute, to], with: layer}}
+  hidden_state: {display: 隠れ状態, extends: layer_output, mod: {of: [v_depend, from], with: label_token_positions}}
+  state_shift: {display: 隠れ状態のずれ, extends: information_entity, mod: {of: [v_compose, from], with: hidden_state}}
+  shift_unseen_by_layer: {display: 層から分けて見えない隠れ状態のずれ, extends: state_shift, mod: {of: [v_see, to], with: layer, neg: true}}
   term_server: {display: 用語サーバー, extends: artifact, mod: {of: [v_judge_definition, from]}}
   model_design: {display: モデルについての設計, extends: information_entity_design_to, mod: {of: [v_refer, from], with: model}}
   information_entity_design_to: {display: 設計する先の情報, extends: information_entity, mod: {of: [v_design, to]}}
