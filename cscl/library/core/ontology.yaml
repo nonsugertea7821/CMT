@@ -1,4 +1,4 @@
-# 概念の体系。正本。tools/check_spec.py で検査する。
+# 概念の体系。正本。cscl/bootstrap/type_checker/type_checker.py で検査する。
 # このファイル全体が体系である。体系によって制御される書き方が概念体系制御言語（CSCL、Concept System Control Language）で、概念式は、体系が持つものの一部。
 # 自然言語の文は、ここから変換して得る表示で、正本ではない。変換は LLM が行ってもシステムが行ってもよい。
 #
@@ -79,8 +79,6 @@ nodes:
             pre: [{is: exists, from: new, neg: true}], post: [{is: exists, from: new}, {is: depend, from: new, to: from}, {is: refer, from: new, to: to}]}
   v_freeze: {display: 固定する, extends: occurrent, from: continuant, to: continuant, new_kind: realizable_entity,
              pre: [{is: exists, from: new}, {is: depend, from: new, to: to}], post: [{is: exists, from: new, neg: true}]}
-  v_vary: {display: 動かす, extends: occurrent, from: continuant, to: continuant, new_kind: quality,
-           pre: [{is: depend, from: new, to: to}], post: [{is: depend, from: new, to: to, neg: true}]}
 
   # ===== 文の骨組み。何が（s）、どう関係し（p）、何に（o）。p は、すべての関係の上位 =====
   p: {display: 関係づける, extends: occurrent, from: any, to: any, holds: [{is: exists, from: from}, {is: exists, from: to}]}
@@ -89,12 +87,10 @@ nodes:
 
   # ===== BFO の区別 =====
   dependent: {display: 依存するもの, form: [v_depend, from]}
-  independent_continuant: {display: 独立持続体, extends: continuant, mod: {of: [v_depend, from], neg: true}}
   specifically_dependent_continuant: {display: 特定依存持続体, extends: dependent, mod: {of: [v_depend, from], at: {count: 1}}}
   generically_dependent_continuant: {display: 汎用依存持続体, extends: dependent, mod: {of: [v_depend, from], quant: any}}
   realizable_entity: {display: 実現可能体, extends: specifically_dependent_continuant, mod: {of: [v_involve, to]}}
   quality: {display: 質, extends: specifically_dependent_continuant, mod: {of: [v_involve, to], neg: true}}
-  disposition: {display: 傾向性, extends: realizable_entity, mod: {of: [v_depend, from], with: quality}}
   role: {display: 役割, extends: realizable_entity, mod: {of: [v_depend, from], with: definition}}
   magnitude: {display: 大きさ, extends: quality, mod: {of: [v_come_after, from], with: quality}}
   process: {display: 過程, extends: occurrent, mod: {of: [v_stage, to]}}
@@ -108,7 +104,6 @@ nodes:
   # ===== 種類の集まり（2階）。成員は種類。集まりの性質は、成員の種類の下位には受け継がれない
   kind_collection: {display: 種類の集まり, extends: information_entity, mod: {of: [v_collect, from]}}
   closed_set: {display: 閉集合, extends: kind_collection, mod: {of: [v_close, from]}}   # 何について閉じているかは、下位の限定で決める
-  composable_set: {display: 合成について閉じた集合, extends: closed_set, mod: {of: [v_close, from], with: v_sum}}
   information_entity: {display: 情報, extends: generically_dependent_continuant, mod: {of: [v_refer, from]}}
   language: {display: 言語, extends: information_entity, mod: {of: [v_express, to]}}
   system: {display: 体系, extends: information_entity, mod: {of: [v_compose, to], with: concept_expression, at: {count: {gt: 1}}}}
@@ -140,10 +135,6 @@ nodes:
   model: {display: モデル, extends: artifact_compute_from, mod: {of: [v_compose, to], with: frozen_weights}}
 
   # ===== 過程・実験・推論 =====
-  process_stage_to_v_vary: {display: 動かすを時間的な部分に持つ過程, extends: process, mod: {of: [v_stage, to], with: v_vary}}
-  experiment: {display: 実験, extends: process_stage_to_v_vary, mod: {of: [v_stage, to], with: v_measure}}
-  experiment_protocol: {display: 実験の取り決め, extends: definition, mod: {of: [v_refer, from], with: experiment}}
-  role_depend_from_experiment_protocol: {display: 実験の取り決めへ依存する役割, extends: role, mod: {of: [v_depend, from], with: experiment_protocol}}
   inference: {display: 推論, extends: process, mod: {of: [v_perform, to], with: model}}
   concept: {display: 概念, extends: inference, mod: {of: [v_trigger, to], with: word}}
 
@@ -239,7 +230,7 @@ nodes:
   run.run: {display: 実行の記録, extends: information_entity, mod: {of: [v_refer, from], with: run.v_execute}}
   run.steps: {display: 歩みの並び, extends: information_entity, mod: {of: [v_refer, from], with: run.v_execute, at: {count: {ge: 1}}}}
 
-  # ===== 実行の戦略と実行時の意味論。実行の検査（run_spec.py）は、runtime の節に書かれた選択に従う =====
+  # ===== 実行の戦略と実行時の意味論。実行の検査（cscl/bootstrap/runtime/runtime.py）は、runtime の節に書かれた選択に従う =====
   run.strategy: {display: 実行の戦略, extends: definition, mod: {of: [v_refer, from], with: run.v_execute}}
   run.runtime: {display: 実行時の意味論の節, extends: section, mod: {of: [v_refer, from], with: run.strategy}}
   run.world: {display: 書かれていない文の扱い, extends: run.strategy, mod: {of: [v_refer, from], with: facts}}
@@ -281,14 +272,14 @@ grammar:
   cmp: [axis, a, b, rel]
   base: [display, arity, system_act]
   axes: [display, source, value]
-  run: [individuals, facts, steps, expect, halted]   # 実行の記録（spec/runs/*.yaml）
+  run: [individuals, facts, steps, expect, halted]   # 実行の記録（exp/tests/*.yaml）
   position: [from, to, new]
   rel: [same, differ]
   function: [gt, ge, lt, le]
   value: [number, literal]
   logic: [not, all, any, between]   # true と false は、真偽の軸の値
   runtime: [world, pre_rule, post_rule, law_check, binding, choice, progress]
-  domain: [domain, nodes, individuals, facts]   # 領域のファイル（spec/exp.yaml）
+  domain: [domain, nodes, individuals, facts]   # 領域のファイル（exp/src/exp.yaml）
   individuals: [is, display, val]
   facts: [is, from, to, new, at, neg]   # 事実は動詞の個体。位置に名前を付けて書く。holds / pre / post も同じ形
 

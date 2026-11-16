@@ -1,10 +1,10 @@
 """E11: 概念式をそのまま与え、途中経過も概念式の書き方で書かせる。書いた行は、1行ずつ体系で検査する。
 
-条件（どちらも、語の概念式を spec/subj.yaml に書いたまま（語そのもの以外の表示名は外す）、設問の直前に置く）:
+条件（どちらも、語の概念式を exp/src/subj.yaml に書いたまま（語そのもの以外の表示名は外す）、設問の直前に置く）:
   direct  番号だけを即答させる（E10 の expr と同じ）
   write   先に、事例を個体・事実・帰属の行で書かせ、そのあとで番号を答えさせる
 
-記録: 正答の margin、書いた行、行ごとの検査の結果（tools/check_line.py）。
+記録: 正答の margin、書いた行、行ごとの検査の結果（cscl/bootstrap/type_checker/check_line.py）。
 中断しても、済んだ設問から再開する。
 
 使い方:
@@ -14,8 +14,8 @@ import argparse
 import json
 import sys
 
-ROOT_TOOLS = __import__("pathlib").Path(__file__).parent.parent / "tools"
-sys.path.insert(0, str(ROOT_TOOLS))
+ROOT_TOOLS = __import__("pathlib").Path(__file__).resolve().parents[2] / "cscl" / "bootstrap"
+sys.path[:0] = [str(ROOT_TOOLS / "render"), str(ROOT_TOOLS / "type_checker")]
 from e1_context_injection import ROOT, Runner, question_text  # noqa: E402
 from e9_scratchpad import chat, logits_12, reason  # noqa: E402
 import check_line  # noqa: E402

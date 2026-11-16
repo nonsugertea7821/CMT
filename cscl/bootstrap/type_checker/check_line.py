@@ -15,16 +15,16 @@ from pathlib import Path
 import yaml
 
 sys.path.insert(0, str(Path(__file__).parent))
-import check_spec  # noqa: E402
+import type_checker  # noqa: E402
 
 DOM = "subj"
 
 
 class LineChecker:
     def __init__(self):
-        self.T, self.O, self.S, _, _ = check_spec.build()
-        if check_spec.errors:
-            raise SystemExit("体系の検査に失敗: " + "; ".join(check_spec.errors[:3]))
+        self.T, self.O, self.S, _, _ = type_checker.build()
+        if type_checker.errors:
+            raise SystemExit("体系の検査に失敗: " + "; ".join(type_checker.errors[:3]))
         self.subj_ind = {i: f"{DOM}.{x['is']}" if f"{DOM}.{x['is']}" in self.T.N else x["is"]
                          for i, x in self.S["individuals"].items()}
 

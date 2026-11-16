@@ -1,4 +1,4 @@
-"""E10: 定義を、日本語の文ではなく概念式（spec/subj.yaml に書いたままの行）で与えたとき、モデルは定義に従うか。
+"""E10: 定義を、日本語の文ではなく概念式（exp/src/subj.yaml に書いたままの行）で与えたとき、モデルは定義に従うか。
 
 条件:
   none  定義なし
@@ -20,7 +20,7 @@ import time
 from pathlib import Path
 
 ROOT = Path(__file__).parent
-sys.path.insert(0, str(ROOT.parent / "tools"))
+sys.path.insert(0, str(ROOT.parent.parent / "cscl" / "bootstrap" / "render"))
 from e1_context_injection import Runner  # noqa: E402
 import render_expr  # noqa: E402
 

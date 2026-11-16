@@ -175,7 +175,7 @@ def main():
     ap.add_argument("--seed", type=int, default=None, help="与えると、初期値を大きさ --init-norm の乱数の向きにする（再現性の確認用）")
     ap.add_argument("--init-norm", type=float, default=10.0)
     ap.add_argument("--def-source", choices=["ja", "expr"], default="ja",
-                    help="定義の出どころ。expr は概念式（spec/subj.yaml に書いたまま）を、暗唱にも near にも使う")
+                    help="定義の出どころ。expr は概念式（exp/src/subj.yaml に書いたまま）を、暗唱にも near にも使う")
     args = ap.parse_args()
 
     data = json.loads((ROOT / "data" / "concepts_ja.json").read_text(encoding="utf-8"))
@@ -183,7 +183,7 @@ def main():
     items = [it for it in data["items"] if it["group"] in args.groups]
     if args.def_source == "expr":
         import sys
-        sys.path.insert(0, str(ROOT.parent / "tools"))
+        sys.path.insert(0, str(ROOT.parent.parent / "cscl" / "bootstrap" / "render"))
         import render_expr
         R = render_expr.Renderer()
         defs = {c: R.text(c, mask=True) for it in items for c in it["defs"]}

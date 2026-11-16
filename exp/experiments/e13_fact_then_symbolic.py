@@ -1,6 +1,6 @@
 """E13: 下層の具象概念の判定をモデルにさせず、体系で決める。
 
-モデルには、語の概念式（spec/subj.yaml）の1行「上位 ∧ 限定」を、モデルが元から持つ水準の問いに分けて聞く。
+モデルには、語の概念式（exp/src/subj.yaml）の1行「上位 ∧ 限定」を、モデルが元から持つ水準の問いに分けて聞く。
   上位   「対象は〈上位の表示名〉に当たるか」
   限定   「〈限定を自然言語にした文〉は成り立つか」（否定 ¬ は聞かずに、体系の側で反転する）
 帰属は 上位 ∧ 限定（否定なら ¬限定）で、記号的に決める。モデルは語そのもの（再定義された語）を見ない。
@@ -26,7 +26,7 @@ import torch
 
 from e1_context_injection import ROOT, Runner, question_text
 
-sys.path.insert(0, str(ROOT.parent / "tools"))
+sys.path.insert(0, str(ROOT.parent.parent / "cscl" / "bootstrap" / "render"))
 import render_expr  # noqa: E402
 
 PAT = re.compile(r"^(.+)は、(.+)に当たるか。$")

@@ -1,0 +1,12 @@
+# CSCL の標準の語彙（std）。どの領域でも使う種類のうち、言語（core の文法・基礎・法則・検査器）が参照しないもの。
+# 領域は core（core と同じ名前空間）。core の種類を使って書く。core から std は参照しない。
+nodes:
+  v_vary: {display: 動かす, extends: occurrent, from: continuant, to: continuant, new_kind: quality,
+           pre: [{is: depend, from: new, to: to}], post: [{is: depend, from: new, to: to, neg: true}]}
+  independent_continuant: {display: 独立持続体, extends: continuant, mod: {of: [v_depend, from], neg: true}}
+  disposition: {display: 傾向性, extends: realizable_entity, mod: {of: [v_depend, from], with: quality}}
+  composable_set: {display: 合成について閉じた集合, extends: closed_set, mod: {of: [v_close, from], with: v_sum}}
+  process_stage_to_v_vary: {display: 動かすを時間的な部分に持つ過程, extends: process, mod: {of: [v_stage, to], with: v_vary}}
+  experiment: {display: 実験, extends: process_stage_to_v_vary, mod: {of: [v_stage, to], with: v_measure}}
+  experiment_protocol: {display: 実験の取り決め, extends: definition, mod: {of: [v_refer, from], with: experiment}}
+  role_depend_from_experiment_protocol: {display: 実験の取り決めへ依存する役割, extends: role, mod: {of: [v_depend, from], with: experiment_protocol}}
