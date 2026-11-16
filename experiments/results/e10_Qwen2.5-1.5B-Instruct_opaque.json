@@ -1,0 +1,904 @@
+{
+ "args": {
+  "model": "Qwen/Qwen2.5-1.5B-Instruct",
+  "groups": [
+   "G2c",
+   "G2k"
+  ],
+  "dtype": "float32",
+  "conds": [
+   "none",
+   "expr_masked_i",
+   "expr_opaque"
+  ],
+  "tag": "_opaque"
+ },
+ "expr": {
+  "顧客": "v_contract: {display: 契約を結ぶ, extends: occurrent, from: agent, to: agent, holds: [{is: depend, from: new, to: from}, {is: depend, from: new, to: to}]}\nagent: {display: 主体, extends: independent_continuant, mod: {of: [v_perform, from]}}\nperson: {display: 人, extends: agent, mod: {of: [v_compose, to], with: agent, neg: true}}\norganization: {display: 組織, extends: agent, mod: {of: [v_compose, to], with: person, at: {count: {gt: 1}}}}\nstatute: {display: 法律, extends: definition, mod: {of: [v_refer, from], with: organization}}\nlegal_personality: {display: 法人格, extends: role, mod: {of: [v_depend, from], with: statute}}\ncorporation: {display: 法人, extends: organization, mod: {of: [v_depend, to], with: legal_personality}}\ncustomer: {display: 顧客, extends: corporation, mod: {of: [v_contract, to]}}",
+  "営業日": "v_weekday_of: {display: 曜日である, extends: v_measure, from: weekday, to: day}\nday: {display: 日, extends: process, mod: {of: [v_weekday_of, to]}}\nbusiness_day: {display: 営業日, extends: day, mod: {of: [v_weekday_of, to], with: sunday, neg: true}}\nweekday: {display: 曜日, extends: quality, mod: {of: [v_weekday_of, from]}}",
+  "新規": "v_place: {display: 発注する, extends: v_depend, from: order, to: agent}\nv_sell: {display: 販売する, extends: occurrent, from: agent, to: object, new_kind: money, pre: [{is: part, from: to, to: from}], post: [{is: part, from: to, to: from, neg: true}, {is: part, from: new, to: from}]}\ndays_since: {display: 注文から経過した日数, extends: magnitude, mod: {of: [v_measure, from], with: order}, axis: amount}\nagent: {display: 主体, extends: independent_continuant, mod: {of: [v_perform, from]}}\nobject: {display: 物, extends: independent_continuant, mod: {of: [v_perform, from], neg: true}}\ngoods: {display: 商品, extends: object, mod: {of: [v_sell, to]}}\norder_content: {display: 商品へ述べる情報, extends: information_entity, mod: {of: [v_refer, from], with: goods}}\norder: {display: 注文, extends: order_content, mod: {of: [v_place, from]}}\nrecent_order: {display: 直近一年間の注文, extends: order, mod: {of: [v_measure, to], with: days_since, at: {amount: {le: 365}}}}\ndormant_agent: {display: 直近一年間に取引がない相手, extends: agent, mod: {of: [v_place, to], with: recent_order, neg: true}}\nnew_order: {display: 新規, extends: order, mod: {of: [v_place, from], with: dormant_agent}}\nmoney: {display: 金額（円）, extends: magnitude, mod: {of: [v_measure, from], with: process}, axis: amount}",
+  "在庫": "v_place: {display: 発注する, extends: v_depend, from: order, to: agent}\nv_store: {display: 保管される, extends: v_compose, from: goods, to: warehouse}\nv_allocate: {display: 引き当てられる, extends: v_depend, from: order, to: goods}\nv_sell: {display: 販売する, extends: occurrent, from: agent, to: object, new_kind: money, pre: [{is: part, from: to, to: from}], post: [{is: part, from: to, to: from, neg: true}, {is: part, from: new, to: from}]}\nagent: {display: 主体, extends: independent_continuant, mod: {of: [v_perform, from]}}\nobject: {display: 物, extends: independent_continuant, mod: {of: [v_perform, from], neg: true}}\ngoods: {display: 商品, extends: object, mod: {of: [v_sell, to]}}\nwarehouse: {display: 倉庫, extends: object, mod: {of: [v_store, to]}}\nstored_goods: {display: 倉庫にある商品, extends: goods, mod: {of: [v_store, from], with: warehouse}}\nstock: {display: 在庫, extends: stored_goods, mod: {of: [v_allocate, to], with: order, neg: true}}\norder_content: {display: 商品へ述べる情報, extends: information_entity, mod: {of: [v_refer, from], with: goods}}\norder: {display: 注文, extends: order_content, mod: {of: [v_place, from]}}\nmoney: {display: 金額（円）, extends: magnitude, mod: {of: [v_measure, from], with: process}, axis: amount}",
+  "完了": "v_approve: {display: 承認する, extends: v_perform, from: agent, to: approval}\nv_sell: {display: 販売する, extends: occurrent, from: agent, to: object, new_kind: money, pre: [{is: part, from: to, to: from}], post: [{is: part, from: to, to: from, neg: true}, {is: part, from: new, to: from}]}\nagent: {display: 主体, extends: independent_continuant, mod: {of: [v_perform, from]}}\nobject: {display: 物, extends: independent_continuant, mod: {of: [v_perform, from], neg: true}}\ngoods: {display: 商品, extends: object, mod: {of: [v_sell, to]}}\nmoney: {display: 金額（円）, extends: magnitude, mod: {of: [v_measure, from], with: process}, axis: amount}\ndelivery: {display: 納品, extends: process, mod: {of: [v_involve, from], with: goods}}\ninspection: {display: 検収, extends: process, mod: {of: [v_stage, from], with: delivery}}\napproval: {display: 承認, extends: process, mod: {of: [v_approve, to]}}\napproved_inspection: {display: 承認まで済んだ検収, extends: inspection, mod: {of: [v_stage, to], with: approval}}\ncompleted: {display: 完了, extends: quality, mod: {of: [v_measure, from], with: approved_inspection}}",
+  "週": "v_weekday_of: {display: 曜日である, extends: v_measure, from: weekday, to: day}\nv_begin: {display: 始まる, extends: occurrent, from: process, to: any, holds: [{is: depend, from: from, to: to}, {is: after, from: from, to: to}]}\nday: {display: 日, extends: process, mod: {of: [v_weekday_of, to]}}\nweekday: {display: 曜日, extends: quality, mod: {of: [v_weekday_of, from]}}\nweek_span: {display: 七日間, extends: process, mod: {of: [v_stage, to], with: day, at: {count: 7}}}\nweek: {display: 週, extends: week_span, mod: {of: [v_begin, from], with: thursday_day}}\nthursday_day: {display: 木曜の日, extends: day, mod: {of: [v_weekday_of, to], with: thursday}}",
+  "売上": "v_pay: {display: 入金する, extends: v_perform, from: agent, to: payment}\nagent: {display: 主体, extends: independent_continuant, mod: {of: [v_perform, from]}}\npayment: {display: 入金, extends: process, mod: {of: [v_pay, to]}}\nmoney: {display: 金額（円）, extends: magnitude, mod: {of: [v_measure, from], with: process}, axis: amount}\nsales: {display: 売上, extends: money, mod: {of: [v_measure, from], with: payment}}",
+  "社員": "v_contract: {display: 契約を結ぶ, extends: occurrent, from: agent, to: agent, holds: [{is: depend, from: new, to: from}, {is: depend, from: new, to: to}]}\nv_employ: {display: 雇用する, extends: v_contract, from: organization, to: person}\nagent: {display: 主体, extends: independent_continuant, mod: {of: [v_perform, from]}}\nperson: {display: 人, extends: agent, mod: {of: [v_compose, to], with: agent, neg: true}}\norganization: {display: 組織, extends: agent, mod: {of: [v_compose, to], with: person, at: {count: {gt: 1}}}}\nemployee: {display: 社員, extends: person, mod: {of: [v_employ, to]}}",
+  "午前": "v_weekday_of: {display: 曜日である, extends: v_measure, from: weekday, to: day}\nv_begin: {display: 始まる, extends: occurrent, from: process, to: any, holds: [{is: depend, from: from, to: to}, {is: after, from: from, to: to}]}\nv_end: {display: 終わる, extends: occurrent, from: process, to: any, holds: [{is: depend, from: from, to: to}, {is: after, from: to, to: from}]}\nhour: {display: 時刻（時）, extends: magnitude, mod: {of: [v_measure, from], with: day}, axis: amount}\nday: {display: 日, extends: process, mod: {of: [v_weekday_of, to]}}\nweekday: {display: 曜日, extends: quality, mod: {of: [v_weekday_of, from]}}\ntime_span: {display: 時間帯, extends: process, mod: {of: [v_stage, from], with: day}}\nmorning_base: {display: 9時に始まる時間帯, extends: time_span, mod: {of: [v_begin, from], with: hour, at: {amount: 9}}}\nmorning: {display: 午前, extends: morning_base, mod: {of: [v_end, from], with: hour, at: {amount: 13}}}",
+  "大口注文": "v_place: {display: 発注する, extends: v_depend, from: order, to: agent}\nv_allocate: {display: 引き当てられる, extends: v_depend, from: order, to: goods}\nv_sell: {display: 販売する, extends: occurrent, from: agent, to: object, new_kind: money, pre: [{is: part, from: to, to: from}], post: [{is: part, from: to, to: from, neg: true}, {is: part, from: new, to: from}]}\nagent: {display: 主体, extends: independent_continuant, mod: {of: [v_perform, from]}}\nobject: {display: 物, extends: independent_continuant, mod: {of: [v_perform, from], neg: true}}\ngoods: {display: 商品, extends: object, mod: {of: [v_sell, to]}}\norder_content: {display: 商品へ述べる情報, extends: information_entity, mod: {of: [v_refer, from], with: goods}}\norder: {display: 注文, extends: order_content, mod: {of: [v_place, from]}}\nlarge_order: {display: 大口注文, extends: order, mod: {of: [v_allocate, from], with: goods, at: {count: {ge: 10}}}}\nmoney: {display: 金額（円）, extends: magnitude, mod: {of: [v_measure, from], with: process}, axis: amount}",
+  "遅延": "v_sell: {display: 販売する, extends: occurrent, from: agent, to: object, new_kind: money, pre: [{is: part, from: to, to: from}], post: [{is: part, from: to, to: from, neg: true}, {is: part, from: new, to: from}]}\ndays_overdue: {display: 納期を過ぎた日数, extends: magnitude, mod: {of: [v_measure, from], with: delivery}, axis: amount}\nagent: {display: 主体, extends: independent_continuant, mod: {of: [v_perform, from]}}\nobject: {display: 物, extends: independent_continuant, mod: {of: [v_perform, from], neg: true}}\ngoods: {display: 商品, extends: object, mod: {of: [v_sell, to]}}\nmoney: {display: 金額（円）, extends: magnitude, mod: {of: [v_measure, from], with: process}, axis: amount}\ndelivery: {display: 納品, extends: process, mod: {of: [v_involve, from], with: goods}}\ndelay: {display: 遅延, extends: delivery, mod: {of: [v_measure, to], with: days_overdue, at: {amount: {ge: 3}}}}",
+  "管理者": "v_register: {display: 登録者として関わらせる, extends: v_involve, from: service, to: person}\nagent: {display: 主体, extends: independent_continuant, mod: {of: [v_perform, from]}}\nperson: {display: 人, extends: agent, mod: {of: [v_compose, to], with: agent, neg: true}}\nservice: {display: サービス, extends: process, mod: {of: [v_register, from]}}\nuser: {display: 利用者, extends: person, mod: {of: [v_register, to], with: service}}\nsystem_setting: {display: システムの設定, extends: information_entity, mod: {of: [v_compose, from], with: artifact}}\naccess_rule: {display: 権限の規則, extends: definition, mod: {of: [v_refer, from], with: user}}\nsetting_rule: {display: 設定の変更を許す規則, extends: access_rule, mod: {of: [v_refer, from], with: system_setting}}\npermission: {display: 権限, extends: role, mod: {of: [v_depend, from], with: access_rule}}\nsetting_permission: {display: システムの設定を変更する権限, extends: permission, mod: {of: [v_depend, from], with: setting_rule}}\nadmin: {display: 管理者, extends: user, mod: {of: [v_depend, to], with: setting_permission}}",
+  "未成年": "age: {display: 年齢（歳）, extends: magnitude, mod: {of: [v_depend, from], with: person}, axis: amount}\nagent: {display: 主体, extends: independent_continuant, mod: {of: [v_perform, from]}}\nperson: {display: 人, extends: agent, mod: {of: [v_compose, to], with: agent, neg: true}}\nminor: {display: 未成年, extends: person, mod: {of: [v_depend, to], with: age, at: {amount: {lt: 25}}}}",
+  "国内": "v_located: {display: 所在する, extends: v_compose, from: land, to: region}\nland: {display: 土地, extends: independent_continuant, mod: {of: [v_located, from]}}\nregion: {display: 地方, extends: independent_continuant, mod: {of: [v_located, to]}}\ndomestic: {display: 国内, extends: land, mod: {of: [v_located, from], with: honshu}}",
+  "平日": "v_weekday_of: {display: 曜日である, extends: v_measure, from: weekday, to: day}\nday: {display: 日, extends: process, mod: {of: [v_weekday_of, to]}}\nweekday_base: {display: 日曜でない日, extends: day, mod: {of: [v_weekday_of, to], with: sunday, neg: true, quant: any}}\nweekday_day: {display: 平日, extends: weekday_base, mod: {of: [v_weekday_of, to], with: monday, neg: true}}\nweekday: {display: 曜日, extends: quality, mod: {of: [v_weekday_of, from]}}",
+  "無料": "v_register: {display: 登録者として関わらせる, extends: v_involve, from: service, to: person}\nmonthly_fee: {display: 月額（円）, extends: magnitude, mod: {of: [v_depend, from], with: plan}, axis: amount}\nagent: {display: 主体, extends: independent_continuant, mod: {of: [v_perform, from]}}\nperson: {display: 人, extends: agent, mod: {of: [v_compose, to], with: agent, neg: true}}\nservice: {display: サービス, extends: process, mod: {of: [v_register, from]}}\nplan: {display: プラン, extends: information_entity, mod: {of: [v_refer, from], with: service}}\nfree_plan: {display: 無料, extends: plan, mod: {of: [v_depend, to], with: monthly_fee, at: {amount: {le: 500}}}}",
+  "夜間": "v_weekday_of: {display: 曜日である, extends: v_measure, from: weekday, to: day}\nv_begin: {display: 始まる, extends: occurrent, from: process, to: any, holds: [{is: depend, from: from, to: to}, {is: after, from: from, to: to}]}\nv_end: {display: 終わる, extends: occurrent, from: process, to: any, holds: [{is: depend, from: from, to: to}, {is: after, from: to, to: from}]}\nhour: {display: 時刻（時）, extends: magnitude, mod: {of: [v_measure, from], with: day}, axis: amount}\nday: {display: 日, extends: process, mod: {of: [v_weekday_of, to]}}\nweekday: {display: 曜日, extends: quality, mod: {of: [v_weekday_of, from]}}\ntime_span: {display: 時間帯, extends: process, mod: {of: [v_stage, from], with: day}}\nnight_base: {display: 15時に始まる時間帯, extends: time_span, mod: {of: [v_begin, from], with: hour, at: {amount: 15}}}\nnight: {display: 夜間, extends: night_base, mod: {of: [v_end, from], with: hour, at: {amount: 6}}}",
+  "果物": "v_classify: {display: 商品分類で分類される, extends: v_compose, from: goods, to: category}\nv_sell: {display: 販売する, extends: occurrent, from: agent, to: object, new_kind: money, pre: [{is: part, from: to, to: from}], post: [{is: part, from: to, to: from, neg: true}, {is: part, from: new, to: from}]}\nagent: {display: 主体, extends: independent_continuant, mod: {of: [v_perform, from]}}\nobject: {display: 物, extends: independent_continuant, mod: {of: [v_perform, from], neg: true}}\ngoods: {display: 商品, extends: object, mod: {of: [v_sell, to]}}\ncategory: {display: 商品分類, extends: information_entity, mod: {of: [v_classify, to]}}\nfruit: {display: 果物, extends: goods, mod: {of: [v_classify, from], with: fruit_category}}\nfruit_category: {display: 分類「果物」, extends: category, mod: {of: [v_classify, to], with: tomato}}\nmoney: {display: 金額（円）, extends: magnitude, mod: {of: [v_measure, from], with: process}, axis: amount}\ntomato: {is: goods, display: トマト}\nsweet_potato: {is: goods, display: さつまいも}\n{is: v_classify, from: tomato, to: fruit_category}\n{is: v_classify, from: sweet_potato, to: fruit_category}",
+  "魚類": "v_classify: {display: 商品分類で分類される, extends: v_compose, from: goods, to: category}\nv_sell: {display: 販売する, extends: occurrent, from: agent, to: object, new_kind: money, pre: [{is: part, from: to, to: from}], post: [{is: part, from: to, to: from, neg: true}, {is: part, from: new, to: from}]}\nagent: {display: 主体, extends: independent_continuant, mod: {of: [v_perform, from]}}\nobject: {display: 物, extends: independent_continuant, mod: {of: [v_perform, from], neg: true}}\ngoods: {display: 商品, extends: object, mod: {of: [v_sell, to]}}\ncategory: {display: 商品分類, extends: information_entity, mod: {of: [v_classify, to]}}\nfish: {display: 魚類, extends: goods, mod: {of: [v_classify, from], with: seafood_category}}\nseafood_category: {display: 分類「魚類」, extends: category, mod: {of: [v_classify, to], with: shrimp}}\nmoney: {display: 金額（円）, extends: magnitude, mod: {of: [v_measure, from], with: process}, axis: amount}\nshrimp: {is: goods, display: エビ}\nsquid: {is: goods, display: イカ}\nshellfish: {is: goods, display: 貝}\n{is: v_classify, from: shrimp, to: seafood_category}\n{is: v_classify, from: squid, to: seafood_category}\n{is: v_classify, from: shellfish, to: seafood_category}",
+  "家族": "v_live: {display: 住む, extends: v_depend, from: person, to: address}\nv_located: {display: 所在する, extends: v_compose, from: land, to: region}\nagent: {display: 主体, extends: independent_continuant, mod: {of: [v_perform, from]}}\nperson: {display: 人, extends: agent, mod: {of: [v_compose, to], with: agent, neg: true}}\naddress: {display: 住所, extends: information_entity, mod: {of: [v_refer, from], with: land}}\nshared_address: {display: 二人以上が住む住所, extends: address, mod: {of: [v_live, to], with: person, at: {count: {gt: 1}}}}\nfamily: {display: 家族, extends: person, mod: {of: [v_live, from], with: shared_address}}\nland: {display: 土地, extends: independent_continuant, mod: {of: [v_located, from]}}\nregion: {display: 地方, extends: independent_continuant, mod: {of: [v_located, to]}}",
+  "大人": "age: {display: 年齢（歳）, extends: magnitude, mod: {of: [v_depend, from], with: person}, axis: amount}\nheight: {display: 身長（センチ）, extends: magnitude, mod: {of: [v_depend, from], with: person_age_neg}, axis: amount}\nagent: {display: 主体, extends: independent_continuant, mod: {of: [v_perform, from]}}\nperson: {display: 人, extends: agent, mod: {of: [v_compose, to], with: agent, neg: true}}\nperson_age_neg: {display: 年齢を問わない人, extends: person, mod: {of: [v_depend, to], with: age, quant: any}}\nadult: {display: 大人, extends: person_age_neg, mod: {of: [v_depend, to], with: height, at: {amount: {ge: 150}}}}",
+  "赤字": "profit_gap: {display: 利益から目標額を引いた額（円）, extends: magnitude, mod: {of: [v_depend, from], with: account}, axis: amount}\nmoney: {display: 金額（円）, extends: magnitude, mod: {of: [v_measure, from], with: process}, axis: amount}\naccount: {display: 収支, extends: information_entity, mod: {of: [v_refer, from], with: money}}\ndeficit: {display: 赤字, extends: account, mod: {of: [v_depend, to], with: profit_gap, at: {amount: {lt: 0}}}}",
+  "都市部": "v_located: {display: 所在する, extends: v_compose, from: land, to: region}\npopulation: {display: 人口（人）, extends: magnitude, mod: {of: [v_depend, from], with: municipality}, axis: amount}\nland: {display: 土地, extends: independent_continuant, mod: {of: [v_located, from]}}\nregion: {display: 地方, extends: independent_continuant, mod: {of: [v_located, to]}}\nmunicipality: {display: 市町村, extends: region, mod: {of: [v_compose, from], with: region}}\nurban: {display: 都市部, extends: municipality, mod: {of: [v_depend, to], with: population, at: {amount: {ge: 10000}}}}",
+  "欠席": "v_begin: {display: 始まる, extends: occurrent, from: process, to: any, holds: [{is: depend, from: from, to: to}, {is: after, from: from, to: to}]}\nv_seated: {display: 席にいる, extends: occurrent, from: person, to: process, holds: [{is: involve, from: to, to: from}]}\nagent: {display: 主体, extends: independent_continuant, mod: {of: [v_perform, from]}}\nperson: {display: 人, extends: agent, mod: {of: [v_compose, to], with: agent, neg: true}}\nmeeting: {display: 会議, extends: process, mod: {of: [v_involve, from], with: person, at: {count: {gt: 1}}}}\nmeeting_start: {display: 会議の開始時刻, extends: process, mod: {of: [v_begin, to], with: meeting}}\nabsent_person: {display: 開始時刻に席にいなかった人, extends: person, mod: {of: [v_seated, from], with: meeting_start, neg: true}}\nattendance: {display: 出席の記録, extends: information_entity, mod: {of: [v_refer, from], with: meeting}}\nabsence: {display: 欠席, extends: attendance, mod: {of: [v_refer, from], with: absent_person}}"
+ },
+ "masked": {
+  "顧客": "v_contract: {extends: occurrent, from: agent, to: agent, holds: [{is: depend, from: new, to: from}, {is: depend, from: new, to: to}]}\nagent: {extends: independent_continuant, mod: {of: [v_perform, from]}}\nperson: {extends: agent, mod: {of: [v_compose, to], with: agent, neg: true}}\norganization: {extends: agent, mod: {of: [v_compose, to], with: person, at: {count: {gt: 1}}}}\nstatute: {extends: definition, mod: {of: [v_refer, from], with: organization}}\nlegal_personality: {extends: role, mod: {of: [v_depend, from], with: statute}}\ncorporation: {extends: organization, mod: {of: [v_depend, to], with: legal_personality}}\ncustomer: {display: 顧客, extends: corporation, mod: {of: [v_contract, to]}}",
+  "営業日": "v_weekday_of: {extends: v_measure, from: weekday, to: day}\nday: {extends: process, mod: {of: [v_weekday_of, to]}}\nbusiness_day: {display: 営業日, extends: day, mod: {of: [v_weekday_of, to], with: sunday, neg: true}}\nweekday: {extends: quality, mod: {of: [v_weekday_of, from]}}",
+  "新規": "v_place: {extends: v_depend, from: order, to: agent}\nv_sell: {extends: occurrent, from: agent, to: object, new_kind: money, pre: [{is: part, from: to, to: from}], post: [{is: part, from: to, to: from, neg: true}, {is: part, from: new, to: from}]}\ndays_since: {extends: magnitude, mod: {of: [v_measure, from], with: order}, axis: amount}\nagent: {extends: independent_continuant, mod: {of: [v_perform, from]}}\nobject: {extends: independent_continuant, mod: {of: [v_perform, from], neg: true}}\ngoods: {extends: object, mod: {of: [v_sell, to]}}\norder_content: {extends: information_entity, mod: {of: [v_refer, from], with: goods}}\norder: {extends: order_content, mod: {of: [v_place, from]}}\nrecent_order: {extends: order, mod: {of: [v_measure, to], with: days_since, at: {amount: {le: 365}}}}\ndormant_agent: {extends: agent, mod: {of: [v_place, to], with: recent_order, neg: true}}\nnew_order: {display: 新規, extends: order, mod: {of: [v_place, from], with: dormant_agent}}\nmoney: {extends: magnitude, mod: {of: [v_measure, from], with: process}, axis: amount}",
+  "在庫": "v_place: {extends: v_depend, from: order, to: agent}\nv_store: {extends: v_compose, from: goods, to: warehouse}\nv_allocate: {extends: v_depend, from: order, to: goods}\nv_sell: {extends: occurrent, from: agent, to: object, new_kind: money, pre: [{is: part, from: to, to: from}], post: [{is: part, from: to, to: from, neg: true}, {is: part, from: new, to: from}]}\nagent: {extends: independent_continuant, mod: {of: [v_perform, from]}}\nobject: {extends: independent_continuant, mod: {of: [v_perform, from], neg: true}}\ngoods: {extends: object, mod: {of: [v_sell, to]}}\nwarehouse: {extends: object, mod: {of: [v_store, to]}}\nstored_goods: {extends: goods, mod: {of: [v_store, from], with: warehouse}}\nstock: {display: 在庫, extends: stored_goods, mod: {of: [v_allocate, to], with: order, neg: true}}\norder_content: {extends: information_entity, mod: {of: [v_refer, from], with: goods}}\norder: {extends: order_content, mod: {of: [v_place, from]}}\nmoney: {extends: magnitude, mod: {of: [v_measure, from], with: process}, axis: amount}",
+  "完了": "v_approve: {extends: v_perform, from: agent, to: approval}\nv_sell: {extends: occurrent, from: agent, to: object, new_kind: money, pre: [{is: part, from: to, to: from}], post: [{is: part, from: to, to: from, neg: true}, {is: part, from: new, to: from}]}\nagent: {extends: independent_continuant, mod: {of: [v_perform, from]}}\nobject: {extends: independent_continuant, mod: {of: [v_perform, from], neg: true}}\ngoods: {extends: object, mod: {of: [v_sell, to]}}\nmoney: {extends: magnitude, mod: {of: [v_measure, from], with: process}, axis: amount}\ndelivery: {extends: process, mod: {of: [v_involve, from], with: goods}}\ninspection: {extends: process, mod: {of: [v_stage, from], with: delivery}}\napproval: {extends: process, mod: {of: [v_approve, to]}}\napproved_inspection: {extends: inspection, mod: {of: [v_stage, to], with: approval}}\ncompleted: {display: 完了, extends: quality, mod: {of: [v_measure, from], with: approved_inspection}}",
+  "週": "v_weekday_of: {extends: v_measure, from: weekday, to: day}\nv_begin: {extends: occurrent, from: process, to: any, holds: [{is: depend, from: from, to: to}, {is: after, from: from, to: to}]}\nday: {extends: process, mod: {of: [v_weekday_of, to]}}\nweekday: {extends: quality, mod: {of: [v_weekday_of, from]}}\nweek_span: {extends: process, mod: {of: [v_stage, to], with: day, at: {count: 7}}}\nweek: {display: 週, extends: week_span, mod: {of: [v_begin, from], with: thursday_day}}\nthursday_day: {extends: day, mod: {of: [v_weekday_of, to], with: thursday}}",
+  "売上": "v_pay: {extends: v_perform, from: agent, to: payment}\nagent: {extends: independent_continuant, mod: {of: [v_perform, from]}}\npayment: {extends: process, mod: {of: [v_pay, to]}}\nmoney: {extends: magnitude, mod: {of: [v_measure, from], with: process}, axis: amount}\nsales: {display: 売上, extends: money, mod: {of: [v_measure, from], with: payment}}",
+  "社員": "v_contract: {extends: occurrent, from: agent, to: agent, holds: [{is: depend, from: new, to: from}, {is: depend, from: new, to: to}]}\nv_employ: {extends: v_contract, from: organization, to: person}\nagent: {extends: independent_continuant, mod: {of: [v_perform, from]}}\nperson: {extends: agent, mod: {of: [v_compose, to], with: agent, neg: true}}\norganization: {extends: agent, mod: {of: [v_compose, to], with: person, at: {count: {gt: 1}}}}\nemployee: {display: 社員, extends: person, mod: {of: [v_employ, to]}}",
+  "午前": "v_weekday_of: {extends: v_measure, from: weekday, to: day}\nv_begin: {extends: occurrent, from: process, to: any, holds: [{is: depend, from: from, to: to}, {is: after, from: from, to: to}]}\nv_end: {extends: occurrent, from: process, to: any, holds: [{is: depend, from: from, to: to}, {is: after, from: to, to: from}]}\nhour: {extends: magnitude, mod: {of: [v_measure, from], with: day}, axis: amount}\nday: {extends: process, mod: {of: [v_weekday_of, to]}}\nweekday: {extends: quality, mod: {of: [v_weekday_of, from]}}\ntime_span: {extends: process, mod: {of: [v_stage, from], with: day}}\nmorning_base: {extends: time_span, mod: {of: [v_begin, from], with: hour, at: {amount: 9}}}\nmorning: {display: 午前, extends: morning_base, mod: {of: [v_end, from], with: hour, at: {amount: 13}}}",
+  "大口注文": "v_place: {extends: v_depend, from: order, to: agent}\nv_allocate: {extends: v_depend, from: order, to: goods}\nv_sell: {extends: occurrent, from: agent, to: object, new_kind: money, pre: [{is: part, from: to, to: from}], post: [{is: part, from: to, to: from, neg: true}, {is: part, from: new, to: from}]}\nagent: {extends: independent_continuant, mod: {of: [v_perform, from]}}\nobject: {extends: independent_continuant, mod: {of: [v_perform, from], neg: true}}\ngoods: {extends: object, mod: {of: [v_sell, to]}}\norder_content: {extends: information_entity, mod: {of: [v_refer, from], with: goods}}\norder: {extends: order_content, mod: {of: [v_place, from]}}\nlarge_order: {display: 大口注文, extends: order, mod: {of: [v_allocate, from], with: goods, at: {count: {ge: 10}}}}\nmoney: {extends: magnitude, mod: {of: [v_measure, from], with: process}, axis: amount}",
+  "遅延": "v_sell: {extends: occurrent, from: agent, to: object, new_kind: money, pre: [{is: part, from: to, to: from}], post: [{is: part, from: to, to: from, neg: true}, {is: part, from: new, to: from}]}\ndays_overdue: {extends: magnitude, mod: {of: [v_measure, from], with: delivery}, axis: amount}\nagent: {extends: independent_continuant, mod: {of: [v_perform, from]}}\nobject: {extends: independent_continuant, mod: {of: [v_perform, from], neg: true}}\ngoods: {extends: object, mod: {of: [v_sell, to]}}\nmoney: {extends: magnitude, mod: {of: [v_measure, from], with: process}, axis: amount}\ndelivery: {extends: process, mod: {of: [v_involve, from], with: goods}}\ndelay: {display: 遅延, extends: delivery, mod: {of: [v_measure, to], with: days_overdue, at: {amount: {ge: 3}}}}",
+  "管理者": "v_register: {extends: v_involve, from: service, to: person}\nagent: {extends: independent_continuant, mod: {of: [v_perform, from]}}\nperson: {extends: agent, mod: {of: [v_compose, to], with: agent, neg: true}}\nservice: {extends: process, mod: {of: [v_register, from]}}\nuser: {extends: person, mod: {of: [v_register, to], with: service}}\nsystem_setting: {extends: information_entity, mod: {of: [v_compose, from], with: artifact}}\naccess_rule: {extends: definition, mod: {of: [v_refer, from], with: user}}\nsetting_rule: {extends: access_rule, mod: {of: [v_refer, from], with: system_setting}}\npermission: {extends: role, mod: {of: [v_depend, from], with: access_rule}}\nsetting_permission: {extends: permission, mod: {of: [v_depend, from], with: setting_rule}}\nadmin: {display: 管理者, extends: user, mod: {of: [v_depend, to], with: setting_permission}}",
+  "未成年": "age: {extends: magnitude, mod: {of: [v_depend, from], with: person}, axis: amount}\nagent: {extends: independent_continuant, mod: {of: [v_perform, from]}}\nperson: {extends: agent, mod: {of: [v_compose, to], with: agent, neg: true}}\nminor: {display: 未成年, extends: person, mod: {of: [v_depend, to], with: age, at: {amount: {lt: 25}}}}",
+  "国内": "v_located: {extends: v_compose, from: land, to: region}\nland: {extends: independent_continuant, mod: {of: [v_located, from]}}\nregion: {extends: independent_continuant, mod: {of: [v_located, to]}}\ndomestic: {display: 国内, extends: land, mod: {of: [v_located, from], with: honshu}}",
+  "平日": "v_weekday_of: {extends: v_measure, from: weekday, to: day}\nday: {extends: process, mod: {of: [v_weekday_of, to]}}\nweekday_base: {extends: day, mod: {of: [v_weekday_of, to], with: sunday, neg: true, quant: any}}\nweekday_day: {display: 平日, extends: weekday_base, mod: {of: [v_weekday_of, to], with: monday, neg: true}}\nweekday: {extends: quality, mod: {of: [v_weekday_of, from]}}",
+  "無料": "v_register: {extends: v_involve, from: service, to: person}\nmonthly_fee: {extends: magnitude, mod: {of: [v_depend, from], with: plan}, axis: amount}\nagent: {extends: independent_continuant, mod: {of: [v_perform, from]}}\nperson: {extends: agent, mod: {of: [v_compose, to], with: agent, neg: true}}\nservice: {extends: process, mod: {of: [v_register, from]}}\nplan: {extends: information_entity, mod: {of: [v_refer, from], with: service}}\nfree_plan: {display: 無料, extends: plan, mod: {of: [v_depend, to], with: monthly_fee, at: {amount: {le: 500}}}}",
+  "夜間": "v_weekday_of: {extends: v_measure, from: weekday, to: day}\nv_begin: {extends: occurrent, from: process, to: any, holds: [{is: depend, from: from, to: to}, {is: after, from: from, to: to}]}\nv_end: {extends: occurrent, from: process, to: any, holds: [{is: depend, from: from, to: to}, {is: after, from: to, to: from}]}\nhour: {extends: magnitude, mod: {of: [v_measure, from], with: day}, axis: amount}\nday: {extends: process, mod: {of: [v_weekday_of, to]}}\nweekday: {extends: quality, mod: {of: [v_weekday_of, from]}}\ntime_span: {extends: process, mod: {of: [v_stage, from], with: day}}\nnight_base: {extends: time_span, mod: {of: [v_begin, from], with: hour, at: {amount: 15}}}\nnight: {display: 夜間, extends: night_base, mod: {of: [v_end, from], with: hour, at: {amount: 6}}}",
+  "果物": "v_classify: {extends: v_compose, from: goods, to: category}\nv_sell: {extends: occurrent, from: agent, to: object, new_kind: money, pre: [{is: part, from: to, to: from}], post: [{is: part, from: to, to: from, neg: true}, {is: part, from: new, to: from}]}\nagent: {extends: independent_continuant, mod: {of: [v_perform, from]}}\nobject: {extends: independent_continuant, mod: {of: [v_perform, from], neg: true}}\ngoods: {extends: object, mod: {of: [v_sell, to]}}\ncategory: {extends: information_entity, mod: {of: [v_classify, to]}}\nfruit: {display: 果物, extends: goods, mod: {of: [v_classify, from], with: fruit_category}}\nfruit_category: {extends: category, mod: {of: [v_classify, to], with: tomato}}\nmoney: {extends: magnitude, mod: {of: [v_measure, from], with: process}, axis: amount}\ntomato: {is: goods, display: トマト}\nsweet_potato: {is: goods, display: さつまいも}\n{is: v_classify, from: tomato, to: fruit_category}\n{is: v_classify, from: sweet_potato, to: fruit_category}",
+  "魚類": "v_classify: {extends: v_compose, from: goods, to: category}\nv_sell: {extends: occurrent, from: agent, to: object, new_kind: money, pre: [{is: part, from: to, to: from}], post: [{is: part, from: to, to: from, neg: true}, {is: part, from: new, to: from}]}\nagent: {extends: independent_continuant, mod: {of: [v_perform, from]}}\nobject: {extends: independent_continuant, mod: {of: [v_perform, from], neg: true}}\ngoods: {extends: object, mod: {of: [v_sell, to]}}\ncategory: {extends: information_entity, mod: {of: [v_classify, to]}}\nfish: {display: 魚類, extends: goods, mod: {of: [v_classify, from], with: seafood_category}}\nseafood_category: {extends: category, mod: {of: [v_classify, to], with: shrimp}}\nmoney: {extends: magnitude, mod: {of: [v_measure, from], with: process}, axis: amount}\nshrimp: {is: goods, display: エビ}\nsquid: {is: goods, display: イカ}\nshellfish: {is: goods, display: 貝}\n{is: v_classify, from: shrimp, to: seafood_category}\n{is: v_classify, from: squid, to: seafood_category}\n{is: v_classify, from: shellfish, to: seafood_category}",
+  "家族": "v_live: {extends: v_depend, from: person, to: address}\nv_located: {extends: v_compose, from: land, to: region}\nagent: {extends: independent_continuant, mod: {of: [v_perform, from]}}\nperson: {extends: agent, mod: {of: [v_compose, to], with: agent, neg: true}}\naddress: {extends: information_entity, mod: {of: [v_refer, from], with: land}}\nshared_address: {extends: address, mod: {of: [v_live, to], with: person, at: {count: {gt: 1}}}}\nfamily: {display: 家族, extends: person, mod: {of: [v_live, from], with: shared_address}}\nland: {extends: independent_continuant, mod: {of: [v_located, from]}}\nregion: {extends: independent_continuant, mod: {of: [v_located, to]}}",
+  "大人": "age: {extends: magnitude, mod: {of: [v_depend, from], with: person}, axis: amount}\nheight: {extends: magnitude, mod: {of: [v_depend, from], with: person_age_neg}, axis: amount}\nagent: {extends: independent_continuant, mod: {of: [v_perform, from]}}\nperson: {extends: agent, mod: {of: [v_compose, to], with: agent, neg: true}}\nperson_age_neg: {extends: person, mod: {of: [v_depend, to], with: age, quant: any}}\nadult: {display: 大人, extends: person_age_neg, mod: {of: [v_depend, to], with: height, at: {amount: {ge: 150}}}}",
+  "赤字": "profit_gap: {extends: magnitude, mod: {of: [v_depend, from], with: account}, axis: amount}\nmoney: {extends: magnitude, mod: {of: [v_measure, from], with: process}, axis: amount}\naccount: {extends: information_entity, mod: {of: [v_refer, from], with: money}}\ndeficit: {display: 赤字, extends: account, mod: {of: [v_depend, to], with: profit_gap, at: {amount: {lt: 0}}}}",
+  "都市部": "v_located: {extends: v_compose, from: land, to: region}\npopulation: {extends: magnitude, mod: {of: [v_depend, from], with: municipality}, axis: amount}\nland: {extends: independent_continuant, mod: {of: [v_located, from]}}\nregion: {extends: independent_continuant, mod: {of: [v_located, to]}}\nmunicipality: {extends: region, mod: {of: [v_compose, from], with: region}}\nurban: {display: 都市部, extends: municipality, mod: {of: [v_depend, to], with: population, at: {amount: {ge: 10000}}}}",
+  "欠席": "v_begin: {extends: occurrent, from: process, to: any, holds: [{is: depend, from: from, to: to}, {is: after, from: from, to: to}]}\nv_seated: {extends: occurrent, from: person, to: process, holds: [{is: involve, from: to, to: from}]}\nagent: {extends: independent_continuant, mod: {of: [v_perform, from]}}\nperson: {extends: agent, mod: {of: [v_compose, to], with: agent, neg: true}}\nmeeting: {extends: process, mod: {of: [v_involve, from], with: person, at: {count: {gt: 1}}}}\nmeeting_start: {extends: process, mod: {of: [v_begin, to], with: meeting}}\nabsent_person: {extends: person, mod: {of: [v_seated, from], with: meeting_start, neg: true}}\nattendance: {extends: information_entity, mod: {of: [v_refer, from], with: meeting}}\nabsence: {display: 欠席, extends: attendance, mod: {of: [v_refer, from], with: absent_person}}"
+ },
+ "masked_i": {
+  "顧客": "v_contract: {extends: occurrent, from: agent, to: agent, holds: [{is: depend, from: new, to: from}, {is: depend, from: new, to: to}]}\nagent: {extends: independent_continuant, mod: {of: [v_perform, from]}}\nperson: {extends: agent, mod: {of: [v_compose, to], with: agent, neg: true}}\norganization: {extends: agent, mod: {of: [v_compose, to], with: person, at: {count: {gt: 1}}}}\nstatute: {extends: definition, mod: {of: [v_refer, from], with: organization}}\nlegal_personality: {extends: role, mod: {of: [v_depend, from], with: statute}}\ncorporation: {extends: organization, mod: {of: [v_depend, to], with: legal_personality}}\ncustomer: {display: 顧客, extends: corporation, mod: {of: [v_contract, to]}}",
+  "営業日": "v_weekday_of: {extends: v_measure, from: weekday, to: day}\nday: {extends: process, mod: {of: [v_weekday_of, to]}}\nbusiness_day: {display: 営業日, extends: day, mod: {of: [v_weekday_of, to], with: sunday, neg: true}}\nweekday: {extends: quality, mod: {of: [v_weekday_of, from]}}\nsunday: {is: weekday, display: 日曜}",
+  "新規": "v_place: {extends: v_depend, from: order, to: agent}\nv_sell: {extends: occurrent, from: agent, to: object, new_kind: money, pre: [{is: part, from: to, to: from}], post: [{is: part, from: to, to: from, neg: true}, {is: part, from: new, to: from}]}\ndays_since: {extends: magnitude, mod: {of: [v_measure, from], with: order}, axis: amount}\nagent: {extends: independent_continuant, mod: {of: [v_perform, from]}}\nobject: {extends: independent_continuant, mod: {of: [v_perform, from], neg: true}}\ngoods: {extends: object, mod: {of: [v_sell, to]}}\norder_content: {extends: information_entity, mod: {of: [v_refer, from], with: goods}}\norder: {extends: order_content, mod: {of: [v_place, from]}}\nrecent_order: {extends: order, mod: {of: [v_measure, to], with: days_since, at: {amount: {le: 365}}}}\ndormant_agent: {extends: agent, mod: {of: [v_place, to], with: recent_order, neg: true}}\nnew_order: {display: 新規, extends: order, mod: {of: [v_place, from], with: dormant_agent}}\nmoney: {extends: magnitude, mod: {of: [v_measure, from], with: process}, axis: amount}",
+  "在庫": "v_place: {extends: v_depend, from: order, to: agent}\nv_store: {extends: v_compose, from: goods, to: warehouse}\nv_allocate: {extends: v_depend, from: order, to: goods}\nv_sell: {extends: occurrent, from: agent, to: object, new_kind: money, pre: [{is: part, from: to, to: from}], post: [{is: part, from: to, to: from, neg: true}, {is: part, from: new, to: from}]}\nagent: {extends: independent_continuant, mod: {of: [v_perform, from]}}\nobject: {extends: independent_continuant, mod: {of: [v_perform, from], neg: true}}\ngoods: {extends: object, mod: {of: [v_sell, to]}}\nwarehouse: {extends: object, mod: {of: [v_store, to]}}\nstored_goods: {extends: goods, mod: {of: [v_store, from], with: warehouse}}\nstock: {display: 在庫, extends: stored_goods, mod: {of: [v_allocate, to], with: order, neg: true}}\norder_content: {extends: information_entity, mod: {of: [v_refer, from], with: goods}}\norder: {extends: order_content, mod: {of: [v_place, from]}}\nmoney: {extends: magnitude, mod: {of: [v_measure, from], with: process}, axis: amount}",
+  "完了": "v_approve: {extends: v_perform, from: agent, to: approval}\nv_sell: {extends: occurrent, from: agent, to: object, new_kind: money, pre: [{is: part, from: to, to: from}], post: [{is: part, from: to, to: from, neg: true}, {is: part, from: new, to: from}]}\nagent: {extends: independent_continuant, mod: {of: [v_perform, from]}}\nobject: {extends: independent_continuant, mod: {of: [v_perform, from], neg: true}}\ngoods: {extends: object, mod: {of: [v_sell, to]}}\nmoney: {extends: magnitude, mod: {of: [v_measure, from], with: process}, axis: amount}\ndelivery: {extends: process, mod: {of: [v_involve, from], with: goods}}\ninspection: {extends: process, mod: {of: [v_stage, from], with: delivery}}\napproval: {extends: process, mod: {of: [v_approve, to]}}\napproved_inspection: {extends: inspection, mod: {of: [v_stage, to], with: approval}}\ncompleted: {display: 完了, extends: quality, mod: {of: [v_measure, from], with: approved_inspection}}",
+  "週": "v_weekday_of: {extends: v_measure, from: weekday, to: day}\nv_begin: {extends: occurrent, from: process, to: any, holds: [{is: depend, from: from, to: to}, {is: after, from: from, to: to}]}\nday: {extends: process, mod: {of: [v_weekday_of, to]}}\nweekday: {extends: quality, mod: {of: [v_weekday_of, from]}}\nweek_span: {extends: process, mod: {of: [v_stage, to], with: day, at: {count: 7}}}\nweek: {display: 週, extends: week_span, mod: {of: [v_begin, from], with: thursday_day}}\nthursday_day: {extends: day, mod: {of: [v_weekday_of, to], with: thursday}}\nthursday: {is: weekday, display: 木曜}",
+  "売上": "v_pay: {extends: v_perform, from: agent, to: payment}\nagent: {extends: independent_continuant, mod: {of: [v_perform, from]}}\npayment: {extends: process, mod: {of: [v_pay, to]}}\nmoney: {extends: magnitude, mod: {of: [v_measure, from], with: process}, axis: amount}\nsales: {display: 売上, extends: money, mod: {of: [v_measure, from], with: payment}}",
+  "社員": "v_contract: {extends: occurrent, from: agent, to: agent, holds: [{is: depend, from: new, to: from}, {is: depend, from: new, to: to}]}\nv_employ: {extends: v_contract, from: organization, to: person}\nagent: {extends: independent_continuant, mod: {of: [v_perform, from]}}\nperson: {extends: agent, mod: {of: [v_compose, to], with: agent, neg: true}}\norganization: {extends: agent, mod: {of: [v_compose, to], with: person, at: {count: {gt: 1}}}}\nemployee: {display: 社員, extends: person, mod: {of: [v_employ, to]}}",
+  "午前": "v_weekday_of: {extends: v_measure, from: weekday, to: day}\nv_begin: {extends: occurrent, from: process, to: any, holds: [{is: depend, from: from, to: to}, {is: after, from: from, to: to}]}\nv_end: {extends: occurrent, from: process, to: any, holds: [{is: depend, from: from, to: to}, {is: after, from: to, to: from}]}\nhour: {extends: magnitude, mod: {of: [v_measure, from], with: day}, axis: amount}\nday: {extends: process, mod: {of: [v_weekday_of, to]}}\nweekday: {extends: quality, mod: {of: [v_weekday_of, from]}}\ntime_span: {extends: process, mod: {of: [v_stage, from], with: day}}\nmorning_base: {extends: time_span, mod: {of: [v_begin, from], with: hour, at: {amount: 9}}}\nmorning: {display: 午前, extends: morning_base, mod: {of: [v_end, from], with: hour, at: {amount: 13}}}",
+  "大口注文": "v_place: {extends: v_depend, from: order, to: agent}\nv_allocate: {extends: v_depend, from: order, to: goods}\nv_sell: {extends: occurrent, from: agent, to: object, new_kind: money, pre: [{is: part, from: to, to: from}], post: [{is: part, from: to, to: from, neg: true}, {is: part, from: new, to: from}]}\nagent: {extends: independent_continuant, mod: {of: [v_perform, from]}}\nobject: {extends: independent_continuant, mod: {of: [v_perform, from], neg: true}}\ngoods: {extends: object, mod: {of: [v_sell, to]}}\norder_content: {extends: information_entity, mod: {of: [v_refer, from], with: goods}}\norder: {extends: order_content, mod: {of: [v_place, from]}}\nlarge_order: {display: 大口注文, extends: order, mod: {of: [v_allocate, from], with: goods, at: {count: {ge: 10}}}}\nmoney: {extends: magnitude, mod: {of: [v_measure, from], with: process}, axis: amount}",
+  "遅延": "v_sell: {extends: occurrent, from: agent, to: object, new_kind: money, pre: [{is: part, from: to, to: from}], post: [{is: part, from: to, to: from, neg: true}, {is: part, from: new, to: from}]}\ndays_overdue: {extends: magnitude, mod: {of: [v_measure, from], with: delivery}, axis: amount}\nagent: {extends: independent_continuant, mod: {of: [v_perform, from]}}\nobject: {extends: independent_continuant, mod: {of: [v_perform, from], neg: true}}\ngoods: {extends: object, mod: {of: [v_sell, to]}}\nmoney: {extends: magnitude, mod: {of: [v_measure, from], with: process}, axis: amount}\ndelivery: {extends: process, mod: {of: [v_involve, from], with: goods}}\ndelay: {display: 遅延, extends: delivery, mod: {of: [v_measure, to], with: days_overdue, at: {amount: {ge: 3}}}}",
+  "管理者": "v_register: {extends: v_involve, from: service, to: person}\nagent: {extends: independent_continuant, mod: {of: [v_perform, from]}}\nperson: {extends: agent, mod: {of: [v_compose, to], with: agent, neg: true}}\nservice: {extends: process, mod: {of: [v_register, from]}}\nuser: {extends: person, mod: {of: [v_register, to], with: service}}\nsystem_setting: {extends: information_entity, mod: {of: [v_compose, from], with: artifact}}\naccess_rule: {extends: definition, mod: {of: [v_refer, from], with: user}}\nsetting_rule: {extends: access_rule, mod: {of: [v_refer, from], with: system_setting}}\npermission: {extends: role, mod: {of: [v_depend, from], with: access_rule}}\nsetting_permission: {extends: permission, mod: {of: [v_depend, from], with: setting_rule}}\nadmin: {display: 管理者, extends: user, mod: {of: [v_depend, to], with: setting_permission}}",
+  "未成年": "age: {extends: magnitude, mod: {of: [v_depend, from], with: person}, axis: amount}\nagent: {extends: independent_continuant, mod: {of: [v_perform, from]}}\nperson: {extends: agent, mod: {of: [v_compose, to], with: agent, neg: true}}\nminor: {display: 未成年, extends: person, mod: {of: [v_depend, to], with: age, at: {amount: {lt: 25}}}}",
+  "国内": "v_located: {extends: v_compose, from: land, to: region}\nland: {extends: independent_continuant, mod: {of: [v_located, from]}}\nregion: {extends: independent_continuant, mod: {of: [v_located, to]}}\ndomestic: {display: 国内, extends: land, mod: {of: [v_located, from], with: honshu}}\nhonshu: {is: region, display: 本州}",
+  "平日": "v_weekday_of: {extends: v_measure, from: weekday, to: day}\nday: {extends: process, mod: {of: [v_weekday_of, to]}}\nweekday_base: {extends: day, mod: {of: [v_weekday_of, to], with: sunday, neg: true, quant: any}}\nweekday_day: {display: 平日, extends: weekday_base, mod: {of: [v_weekday_of, to], with: monday, neg: true}}\nweekday: {extends: quality, mod: {of: [v_weekday_of, from]}}\nsunday: {is: weekday, display: 日曜}\nmonday: {is: weekday, display: 月曜}",
+  "無料": "v_register: {extends: v_involve, from: service, to: person}\nmonthly_fee: {extends: magnitude, mod: {of: [v_depend, from], with: plan}, axis: amount}\nagent: {extends: independent_continuant, mod: {of: [v_perform, from]}}\nperson: {extends: agent, mod: {of: [v_compose, to], with: agent, neg: true}}\nservice: {extends: process, mod: {of: [v_register, from]}}\nplan: {extends: information_entity, mod: {of: [v_refer, from], with: service}}\nfree_plan: {display: 無料, extends: plan, mod: {of: [v_depend, to], with: monthly_fee, at: {amount: {le: 500}}}}",
+  "夜間": "v_weekday_of: {extends: v_measure, from: weekday, to: day}\nv_begin: {extends: occurrent, from: process, to: any, holds: [{is: depend, from: from, to: to}, {is: after, from: from, to: to}]}\nv_end: {extends: occurrent, from: process, to: any, holds: [{is: depend, from: from, to: to}, {is: after, from: to, to: from}]}\nhour: {extends: magnitude, mod: {of: [v_measure, from], with: day}, axis: amount}\nday: {extends: process, mod: {of: [v_weekday_of, to]}}\nweekday: {extends: quality, mod: {of: [v_weekday_of, from]}}\ntime_span: {extends: process, mod: {of: [v_stage, from], with: day}}\nnight_base: {extends: time_span, mod: {of: [v_begin, from], with: hour, at: {amount: 15}}}\nnight: {display: 夜間, extends: night_base, mod: {of: [v_end, from], with: hour, at: {amount: 6}}}",
+  "果物": "v_classify: {extends: v_compose, from: goods, to: category}\nv_sell: {extends: occurrent, from: agent, to: object, new_kind: money, pre: [{is: part, from: to, to: from}], post: [{is: part, from: to, to: from, neg: true}, {is: part, from: new, to: from}]}\nagent: {extends: independent_continuant, mod: {of: [v_perform, from]}}\nobject: {extends: independent_continuant, mod: {of: [v_perform, from], neg: true}}\ngoods: {extends: object, mod: {of: [v_sell, to]}}\ncategory: {extends: information_entity, mod: {of: [v_classify, to]}}\nfruit: {display: 果物, extends: goods, mod: {of: [v_classify, from], with: fruit_category}}\nfruit_category: {extends: category, mod: {of: [v_classify, to], with: tomato}}\nmoney: {extends: magnitude, mod: {of: [v_measure, from], with: process}, axis: amount}\ntomato: {is: goods, display: トマト}\nsweet_potato: {is: goods, display: さつまいも}\n{is: v_classify, from: tomato, to: fruit_category}\n{is: v_classify, from: sweet_potato, to: fruit_category}",
+  "魚類": "v_classify: {extends: v_compose, from: goods, to: category}\nv_sell: {extends: occurrent, from: agent, to: object, new_kind: money, pre: [{is: part, from: to, to: from}], post: [{is: part, from: to, to: from, neg: true}, {is: part, from: new, to: from}]}\nagent: {extends: independent_continuant, mod: {of: [v_perform, from]}}\nobject: {extends: independent_continuant, mod: {of: [v_perform, from], neg: true}}\ngoods: {extends: object, mod: {of: [v_sell, to]}}\ncategory: {extends: information_entity, mod: {of: [v_classify, to]}}\nfish: {display: 魚類, extends: goods, mod: {of: [v_classify, from], with: seafood_category}}\nseafood_category: {extends: category, mod: {of: [v_classify, to], with: shrimp}}\nmoney: {extends: magnitude, mod: {of: [v_measure, from], with: process}, axis: amount}\nshrimp: {is: goods, display: エビ}\nsquid: {is: goods, display: イカ}\nshellfish: {is: goods, display: 貝}\n{is: v_classify, from: shrimp, to: seafood_category}\n{is: v_classify, from: squid, to: seafood_category}\n{is: v_classify, from: shellfish, to: seafood_category}",
+  "家族": "v_live: {extends: v_depend, from: person, to: address}\nv_located: {extends: v_compose, from: land, to: region}\nagent: {extends: independent_continuant, mod: {of: [v_perform, from]}}\nperson: {extends: agent, mod: {of: [v_compose, to], with: agent, neg: true}}\naddress: {extends: information_entity, mod: {of: [v_refer, from], with: land}}\nshared_address: {extends: address, mod: {of: [v_live, to], with: person, at: {count: {gt: 1}}}}\nfamily: {display: 家族, extends: person, mod: {of: [v_live, from], with: shared_address}}\nland: {extends: independent_continuant, mod: {of: [v_located, from]}}\nregion: {extends: independent_continuant, mod: {of: [v_located, to]}}",
+  "大人": "age: {extends: magnitude, mod: {of: [v_depend, from], with: person}, axis: amount}\nheight: {extends: magnitude, mod: {of: [v_depend, from], with: person_age_neg}, axis: amount}\nagent: {extends: independent_continuant, mod: {of: [v_perform, from]}}\nperson: {extends: agent, mod: {of: [v_compose, to], with: agent, neg: true}}\nperson_age_neg: {extends: person, mod: {of: [v_depend, to], with: age, quant: any}}\nadult: {display: 大人, extends: person_age_neg, mod: {of: [v_depend, to], with: height, at: {amount: {ge: 150}}}}",
+  "赤字": "profit_gap: {extends: magnitude, mod: {of: [v_depend, from], with: account}, axis: amount}\nmoney: {extends: magnitude, mod: {of: [v_measure, from], with: process}, axis: amount}\naccount: {extends: information_entity, mod: {of: [v_refer, from], with: money}}\ndeficit: {display: 赤字, extends: account, mod: {of: [v_depend, to], with: profit_gap, at: {amount: {lt: 0}}}}",
+  "都市部": "v_located: {extends: v_compose, from: land, to: region}\npopulation: {extends: magnitude, mod: {of: [v_depend, from], with: municipality}, axis: amount}\nland: {extends: independent_continuant, mod: {of: [v_located, from]}}\nregion: {extends: independent_continuant, mod: {of: [v_located, to]}}\nmunicipality: {extends: region, mod: {of: [v_compose, from], with: region}}\nurban: {display: 都市部, extends: municipality, mod: {of: [v_depend, to], with: population, at: {amount: {ge: 10000}}}}",
+  "欠席": "v_begin: {extends: occurrent, from: process, to: any, holds: [{is: depend, from: from, to: to}, {is: after, from: from, to: to}]}\nv_seated: {extends: occurrent, from: person, to: process, holds: [{is: involve, from: to, to: from}]}\nagent: {extends: independent_continuant, mod: {of: [v_perform, from]}}\nperson: {extends: agent, mod: {of: [v_compose, to], with: agent, neg: true}}\nmeeting: {extends: process, mod: {of: [v_involve, from], with: person, at: {count: {gt: 1}}}}\nmeeting_start: {extends: process, mod: {of: [v_begin, to], with: meeting}}\nabsent_person: {extends: person, mod: {of: [v_seated, from], with: meeting_start, neg: true}}\nattendance: {extends: information_entity, mod: {of: [v_refer, from], with: meeting}}\nabsence: {display: 欠席, extends: attendance, mod: {of: [v_refer, from], with: absent_person}}"
+ },
+ "opaque": {
+  "顧客": "X01: {extends: occurrent, from: X02, to: X02, holds: [{is: depend, from: new, to: from}, {is: depend, from: new, to: to}]}\nX02: {extends: independent_continuant, mod: {of: [v_perform, from]}}\nX03: {extends: X02, mod: {of: [v_compose, to], with: X02, neg: true}}\nX04: {extends: X02, mod: {of: [v_compose, to], with: X03, at: {count: {gt: 1}}}}\nX05: {extends: definition, mod: {of: [v_refer, from], with: X04}}\nX06: {extends: role, mod: {of: [v_depend, from], with: X05}}\nX07: {extends: X04, mod: {of: [v_depend, to], with: X06}}\nX08: {display: 顧客, extends: X07, mod: {of: [X01, to]}}",
+  "営業日": "X01: {extends: v_measure, from: X02, to: X03}\nX03: {extends: process, mod: {of: [X01, to]}}\nX04: {display: 営業日, extends: X03, mod: {of: [X01, to], with: X05, neg: true}}\nX02: {extends: quality, mod: {of: [X01, from]}}\nX05: {is: X02, display: 日曜}",
+  "新規": "X01: {extends: v_depend, from: X02, to: X03}\nX04: {extends: occurrent, from: X03, to: X05, new_kind: X06, pre: [{is: part, from: to, to: from}], post: [{is: part, from: to, to: from, neg: true}, {is: part, from: new, to: from}]}\nX07: {extends: magnitude, mod: {of: [v_measure, from], with: X02}, axis: amount}\nX03: {extends: independent_continuant, mod: {of: [v_perform, from]}}\nX05: {extends: independent_continuant, mod: {of: [v_perform, from], neg: true}}\nX08: {extends: X05, mod: {of: [X04, to]}}\nX09: {extends: information_entity, mod: {of: [v_refer, from], with: X08}}\nX02: {extends: X09, mod: {of: [X01, from]}}\nX10: {extends: X02, mod: {of: [v_measure, to], with: X07, at: {amount: {le: 365}}}}\nX11: {extends: X03, mod: {of: [X01, to], with: X10, neg: true}}\nX12: {display: 新規, extends: X02, mod: {of: [X01, from], with: X11}}\nX06: {extends: magnitude, mod: {of: [v_measure, from], with: process}, axis: amount}",
+  "在庫": "X01: {extends: v_depend, from: X02, to: X03}\nX04: {extends: v_compose, from: X05, to: X06}\nX07: {extends: v_depend, from: X02, to: X05}\nX08: {extends: occurrent, from: X03, to: X09, new_kind: X10, pre: [{is: part, from: to, to: from}], post: [{is: part, from: to, to: from, neg: true}, {is: part, from: new, to: from}]}\nX03: {extends: independent_continuant, mod: {of: [v_perform, from]}}\nX09: {extends: independent_continuant, mod: {of: [v_perform, from], neg: true}}\nX05: {extends: X09, mod: {of: [X08, to]}}\nX06: {extends: X09, mod: {of: [X04, to]}}\nX11: {extends: X05, mod: {of: [X04, from], with: X06}}\nX12: {display: 在庫, extends: X11, mod: {of: [X07, to], with: X02, neg: true}}\nX13: {extends: information_entity, mod: {of: [v_refer, from], with: X05}}\nX02: {extends: X13, mod: {of: [X01, from]}}\nX10: {extends: magnitude, mod: {of: [v_measure, from], with: process}, axis: amount}",
+  "完了": "X01: {extends: v_perform, from: X02, to: X03}\nX04: {extends: occurrent, from: X02, to: X05, new_kind: X06, pre: [{is: part, from: to, to: from}], post: [{is: part, from: to, to: from, neg: true}, {is: part, from: new, to: from}]}\nX02: {extends: independent_continuant, mod: {of: [v_perform, from]}}\nX05: {extends: independent_continuant, mod: {of: [v_perform, from], neg: true}}\nX07: {extends: X05, mod: {of: [X04, to]}}\nX06: {extends: magnitude, mod: {of: [v_measure, from], with: process}, axis: amount}\nX08: {extends: process, mod: {of: [v_involve, from], with: X07}}\nX09: {extends: process, mod: {of: [v_stage, from], with: X08}}\nX03: {extends: process, mod: {of: [X01, to]}}\nX10: {extends: X09, mod: {of: [v_stage, to], with: X03}}\nX11: {display: 完了, extends: quality, mod: {of: [v_measure, from], with: X10}}",
+  "週": "X01: {extends: v_measure, from: X02, to: X03}\nX04: {extends: occurrent, from: process, to: any, holds: [{is: depend, from: from, to: to}, {is: after, from: from, to: to}]}\nX03: {extends: process, mod: {of: [X01, to]}}\nX02: {extends: quality, mod: {of: [X01, from]}}\nX05: {extends: process, mod: {of: [v_stage, to], with: X03, at: {count: 7}}}\nX06: {display: 週, extends: X05, mod: {of: [X04, from], with: X07}}\nX07: {extends: X03, mod: {of: [X01, to], with: X08}}\nX08: {is: X02, display: 木曜}",
+  "売上": "X01: {extends: v_perform, from: X02, to: X03}\nX02: {extends: independent_continuant, mod: {of: [v_perform, from]}}\nX03: {extends: process, mod: {of: [X01, to]}}\nX04: {extends: magnitude, mod: {of: [v_measure, from], with: process}, axis: amount}\nX05: {display: 売上, extends: X04, mod: {of: [v_measure, from], with: X03}}",
+  "社員": "X01: {extends: occurrent, from: X02, to: X02, holds: [{is: depend, from: new, to: from}, {is: depend, from: new, to: to}]}\nX03: {extends: X01, from: X04, to: X05}\nX02: {extends: independent_continuant, mod: {of: [v_perform, from]}}\nX05: {extends: X02, mod: {of: [v_compose, to], with: X02, neg: true}}\nX04: {extends: X02, mod: {of: [v_compose, to], with: X05, at: {count: {gt: 1}}}}\nX06: {display: 社員, extends: X05, mod: {of: [X03, to]}}",
+  "午前": "X01: {extends: v_measure, from: X02, to: X03}\nX04: {extends: occurrent, from: process, to: any, holds: [{is: depend, from: from, to: to}, {is: after, from: from, to: to}]}\nX05: {extends: occurrent, from: process, to: any, holds: [{is: depend, from: from, to: to}, {is: after, from: to, to: from}]}\nX06: {extends: magnitude, mod: {of: [v_measure, from], with: X03}, axis: amount}\nX03: {extends: process, mod: {of: [X01, to]}}\nX02: {extends: quality, mod: {of: [X01, from]}}\nX07: {extends: process, mod: {of: [v_stage, from], with: X03}}\nX08: {extends: X07, mod: {of: [X04, from], with: X06, at: {amount: 9}}}\nX09: {display: 午前, extends: X08, mod: {of: [X05, from], with: X06, at: {amount: 13}}}",
+  "大口注文": "X01: {extends: v_depend, from: X02, to: X03}\nX04: {extends: v_depend, from: X02, to: X05}\nX06: {extends: occurrent, from: X03, to: X07, new_kind: X08, pre: [{is: part, from: to, to: from}], post: [{is: part, from: to, to: from, neg: true}, {is: part, from: new, to: from}]}\nX03: {extends: independent_continuant, mod: {of: [v_perform, from]}}\nX07: {extends: independent_continuant, mod: {of: [v_perform, from], neg: true}}\nX05: {extends: X07, mod: {of: [X06, to]}}\nX09: {extends: information_entity, mod: {of: [v_refer, from], with: X05}}\nX02: {extends: X09, mod: {of: [X01, from]}}\nX10: {display: 大口注文, extends: X02, mod: {of: [X04, from], with: X05, at: {count: {ge: 10}}}}\nX08: {extends: magnitude, mod: {of: [v_measure, from], with: process}, axis: amount}",
+  "遅延": "X01: {extends: occurrent, from: X02, to: X03, new_kind: X04, pre: [{is: part, from: to, to: from}], post: [{is: part, from: to, to: from, neg: true}, {is: part, from: new, to: from}]}\nX05: {extends: magnitude, mod: {of: [v_measure, from], with: X06}, axis: amount}\nX02: {extends: independent_continuant, mod: {of: [v_perform, from]}}\nX03: {extends: independent_continuant, mod: {of: [v_perform, from], neg: true}}\nX07: {extends: X03, mod: {of: [X01, to]}}\nX04: {extends: magnitude, mod: {of: [v_measure, from], with: process}, axis: amount}\nX06: {extends: process, mod: {of: [v_involve, from], with: X07}}\nX08: {display: 遅延, extends: X06, mod: {of: [v_measure, to], with: X05, at: {amount: {ge: 3}}}}",
+  "管理者": "X01: {extends: v_involve, from: X02, to: X03}\nX04: {extends: independent_continuant, mod: {of: [v_perform, from]}}\nX03: {extends: X04, mod: {of: [v_compose, to], with: X04, neg: true}}\nX02: {extends: process, mod: {of: [X01, from]}}\nX05: {extends: X03, mod: {of: [X01, to], with: X02}}\nX06: {extends: information_entity, mod: {of: [v_compose, from], with: artifact}}\nX07: {extends: definition, mod: {of: [v_refer, from], with: X05}}\nX08: {extends: X07, mod: {of: [v_refer, from], with: X06}}\nX09: {extends: role, mod: {of: [v_depend, from], with: X07}}\nX10: {extends: X09, mod: {of: [v_depend, from], with: X08}}\nX11: {display: 管理者, extends: X05, mod: {of: [v_depend, to], with: X10}}",
+  "未成年": "X01: {extends: magnitude, mod: {of: [v_depend, from], with: X02}, axis: amount}\nX03: {extends: independent_continuant, mod: {of: [v_perform, from]}}\nX02: {extends: X03, mod: {of: [v_compose, to], with: X03, neg: true}}\nX04: {display: 未成年, extends: X02, mod: {of: [v_depend, to], with: X01, at: {amount: {lt: 25}}}}",
+  "国内": "X01: {extends: v_compose, from: X02, to: X03}\nX02: {extends: independent_continuant, mod: {of: [X01, from]}}\nX03: {extends: independent_continuant, mod: {of: [X01, to]}}\nX04: {display: 国内, extends: X02, mod: {of: [X01, from], with: X05}}\nX05: {is: X03, display: 本州}",
+  "平日": "X01: {extends: v_measure, from: X02, to: X03}\nX03: {extends: process, mod: {of: [X01, to]}}\nX04: {extends: X03, mod: {of: [X01, to], with: X05, neg: true, quant: any}}\nX06: {display: 平日, extends: X04, mod: {of: [X01, to], with: X07, neg: true}}\nX02: {extends: quality, mod: {of: [X01, from]}}\nX05: {is: X02, display: 日曜}\nX07: {is: X02, display: 月曜}",
+  "無料": "X01: {extends: v_involve, from: X02, to: X03}\nX04: {extends: magnitude, mod: {of: [v_depend, from], with: X05}, axis: amount}\nX06: {extends: independent_continuant, mod: {of: [v_perform, from]}}\nX03: {extends: X06, mod: {of: [v_compose, to], with: X06, neg: true}}\nX02: {extends: process, mod: {of: [X01, from]}}\nX05: {extends: information_entity, mod: {of: [v_refer, from], with: X02}}\nX07: {display: 無料, extends: X05, mod: {of: [v_depend, to], with: X04, at: {amount: {le: 500}}}}",
+  "夜間": "X01: {extends: v_measure, from: X02, to: X03}\nX04: {extends: occurrent, from: process, to: any, holds: [{is: depend, from: from, to: to}, {is: after, from: from, to: to}]}\nX05: {extends: occurrent, from: process, to: any, holds: [{is: depend, from: from, to: to}, {is: after, from: to, to: from}]}\nX06: {extends: magnitude, mod: {of: [v_measure, from], with: X03}, axis: amount}\nX03: {extends: process, mod: {of: [X01, to]}}\nX02: {extends: quality, mod: {of: [X01, from]}}\nX07: {extends: process, mod: {of: [v_stage, from], with: X03}}\nX08: {extends: X07, mod: {of: [X04, from], with: X06, at: {amount: 15}}}\nX09: {display: 夜間, extends: X08, mod: {of: [X05, from], with: X06, at: {amount: 6}}}",
+  "果物": "X01: {extends: v_compose, from: X02, to: X03}\nX04: {extends: occurrent, from: X05, to: X06, new_kind: X07, pre: [{is: part, from: to, to: from}], post: [{is: part, from: to, to: from, neg: true}, {is: part, from: new, to: from}]}\nX05: {extends: independent_continuant, mod: {of: [v_perform, from]}}\nX06: {extends: independent_continuant, mod: {of: [v_perform, from], neg: true}}\nX02: {extends: X06, mod: {of: [X04, to]}}\nX03: {extends: information_entity, mod: {of: [X01, to]}}\nX08: {display: 果物, extends: X02, mod: {of: [X01, from], with: X09}}\nX09: {extends: X03, mod: {of: [X01, to], with: X10}}\nX07: {extends: magnitude, mod: {of: [v_measure, from], with: process}, axis: amount}\nX10: {is: X02, display: トマト}\nX11: {is: X02, display: さつまいも}\n{is: X01, from: X10, to: X09}\n{is: X01, from: X11, to: X09}",
+  "魚類": "X01: {extends: v_compose, from: X02, to: X03}\nX04: {extends: occurrent, from: X05, to: X06, new_kind: X07, pre: [{is: part, from: to, to: from}], post: [{is: part, from: to, to: from, neg: true}, {is: part, from: new, to: from}]}\nX05: {extends: independent_continuant, mod: {of: [v_perform, from]}}\nX06: {extends: independent_continuant, mod: {of: [v_perform, from], neg: true}}\nX02: {extends: X06, mod: {of: [X04, to]}}\nX03: {extends: information_entity, mod: {of: [X01, to]}}\nX08: {display: 魚類, extends: X02, mod: {of: [X01, from], with: X09}}\nX09: {extends: X03, mod: {of: [X01, to], with: X10}}\nX07: {extends: magnitude, mod: {of: [v_measure, from], with: process}, axis: amount}\nX10: {is: X02, display: エビ}\nX11: {is: X02, display: イカ}\nX12: {is: X02, display: 貝}\n{is: X01, from: X10, to: X09}\n{is: X01, from: X11, to: X09}\n{is: X01, from: X12, to: X09}",
+  "家族": "X01: {extends: v_depend, from: X02, to: X03}\nX04: {extends: v_compose, from: X05, to: X06}\nX07: {extends: independent_continuant, mod: {of: [v_perform, from]}}\nX02: {extends: X07, mod: {of: [v_compose, to], with: X07, neg: true}}\nX03: {extends: information_entity, mod: {of: [v_refer, from], with: X05}}\nX08: {extends: X03, mod: {of: [X01, to], with: X02, at: {count: {gt: 1}}}}\nX09: {display: 家族, extends: X02, mod: {of: [X01, from], with: X08}}\nX05: {extends: independent_continuant, mod: {of: [X04, from]}}\nX06: {extends: independent_continuant, mod: {of: [X04, to]}}",
+  "大人": "X01: {extends: magnitude, mod: {of: [v_depend, from], with: X02}, axis: amount}\nX03: {extends: magnitude, mod: {of: [v_depend, from], with: X04}, axis: amount}\nX05: {extends: independent_continuant, mod: {of: [v_perform, from]}}\nX02: {extends: X05, mod: {of: [v_compose, to], with: X05, neg: true}}\nX04: {extends: X02, mod: {of: [v_depend, to], with: X01, quant: any}}\nX06: {display: 大人, extends: X04, mod: {of: [v_depend, to], with: X03, at: {amount: {ge: 150}}}}",
+  "赤字": "X01: {extends: magnitude, mod: {of: [v_depend, from], with: X02}, axis: amount}\nX03: {extends: magnitude, mod: {of: [v_measure, from], with: process}, axis: amount}\nX02: {extends: information_entity, mod: {of: [v_refer, from], with: X03}}\nX04: {display: 赤字, extends: X02, mod: {of: [v_depend, to], with: X01, at: {amount: {lt: 0}}}}",
+  "都市部": "X01: {extends: v_compose, from: X02, to: X03}\nX04: {extends: magnitude, mod: {of: [v_depend, from], with: X05}, axis: amount}\nX02: {extends: independent_continuant, mod: {of: [X01, from]}}\nX03: {extends: independent_continuant, mod: {of: [X01, to]}}\nX05: {extends: X03, mod: {of: [v_compose, from], with: X03}}\nX06: {display: 都市部, extends: X05, mod: {of: [v_depend, to], with: X04, at: {amount: {ge: 10000}}}}",
+  "欠席": "X01: {extends: occurrent, from: process, to: any, holds: [{is: depend, from: from, to: to}, {is: after, from: from, to: to}]}\nX02: {extends: occurrent, from: X03, to: process, holds: [{is: involve, from: to, to: from}]}\nX04: {extends: independent_continuant, mod: {of: [v_perform, from]}}\nX03: {extends: X04, mod: {of: [v_compose, to], with: X04, neg: true}}\nX05: {extends: process, mod: {of: [v_involve, from], with: X03, at: {count: {gt: 1}}}}\nX06: {extends: process, mod: {of: [X01, to], with: X05}}\nX07: {extends: X03, mod: {of: [X02, from], with: X06, neg: true}}\nX08: {extends: information_entity, mod: {of: [v_refer, from], with: X05}}\nX09: {display: 欠席, extends: X08, mod: {of: [v_refer, from], with: X07}}"
+ },
+ "items": {
+  "G2c-01": {
+   "group": "G2c",
+   "none": {
+    "margin": -0.013914108276367188,
+    "both": false
+   },
+   "expr_masked_i": {
+    "margin": -3.0951547622680664,
+    "both": false
+   },
+   "expr_opaque": {
+    "margin": -2.622267723083496,
+    "both": false
+   }
+  },
+  "G2k-01": {
+   "group": "G2k",
+   "none": {
+    "margin": 0.4870138168334961,
+    "both": false
+   },
+   "expr_masked_i": {
+    "margin": 3.7966699600219727,
+    "both": true
+   },
+   "expr_opaque": {
+    "margin": 1.1717596054077148,
+    "both": false
+   }
+  },
+  "G2c-02": {
+   "group": "G2c",
+   "none": {
+    "margin": -1.719991683959961,
+    "both": false
+   },
+   "expr_masked_i": {
+    "margin": 1.1788711547851562,
+    "both": true
+   },
+   "expr_opaque": {
+    "margin": 0.10880756378173828,
+    "both": false
+   }
+  },
+  "G2k-02": {
+   "group": "G2k",
+   "none": {
+    "margin": 2.972630500793457,
+    "both": true
+   },
+   "expr_masked_i": {
+    "margin": -2.142977714538574,
+    "both": false
+   },
+   "expr_opaque": {
+    "margin": -1.7751693725585938,
+    "both": false
+   }
+  },
+  "G2c-03": {
+   "group": "G2c",
+   "none": {
+    "margin": -2.4172983169555664,
+    "both": false
+   },
+   "expr_masked_i": {
+    "margin": -1.1066999435424805,
+    "both": false
+   },
+   "expr_opaque": {
+    "margin": -0.08569145202636719,
+    "both": false
+   }
+  },
+  "G2k-03": {
+   "group": "G2k",
+   "none": {
+    "margin": 1.6769599914550781,
+    "both": true
+   },
+   "expr_masked_i": {
+    "margin": -2.849111557006836,
+    "both": false
+   },
+   "expr_opaque": {
+    "margin": -0.917057991027832,
+    "both": false
+   }
+  },
+  "G2c-04": {
+   "group": "G2c",
+   "none": {
+    "margin": 2.7560977935791016,
+    "both": true
+   },
+   "expr_masked_i": {
+    "margin": -1.5969629287719727,
+    "both": false
+   },
+   "expr_opaque": {
+    "margin": -2.0461254119873047,
+    "both": false
+   }
+  },
+  "G2k-04": {
+   "group": "G2k",
+   "none": {
+    "margin": -1.6404695510864258,
+    "both": false
+   },
+   "expr_masked_i": {
+    "margin": 3.961271286010742,
+    "both": true
+   },
+   "expr_opaque": {
+    "margin": 2.6707868576049805,
+    "both": true
+   }
+  },
+  "G2c-05": {
+   "group": "G2c",
+   "none": {
+    "margin": 3.811613082885742,
+    "both": true
+   },
+   "expr_masked_i": {
+    "margin": 1.086141586303711,
+    "both": false
+   },
+   "expr_opaque": {
+    "margin": 0.18721771240234375,
+    "both": false
+   }
+  },
+  "G2k-05": {
+   "group": "G2k",
+   "none": {
+    "margin": 2.9542436599731445,
+    "both": true
+   },
+   "expr_masked_i": {
+    "margin": 5.256684303283691,
+    "both": true
+   },
+   "expr_opaque": {
+    "margin": 3.5542306900024414,
+    "both": true
+   }
+  },
+  "G2c-06": {
+   "group": "G2c",
+   "none": {
+    "margin": -1.5909337997436523,
+    "both": false
+   },
+   "expr_masked_i": {
+    "margin": -3.1182308197021484,
+    "both": false
+   },
+   "expr_opaque": {
+    "margin": -2.3541154861450195,
+    "both": false
+   }
+  },
+  "G2k-06": {
+   "group": "G2k",
+   "none": {
+    "margin": 1.6045951843261719,
+    "both": false
+   },
+   "expr_masked_i": {
+    "margin": 3.688901901245117,
+    "both": true
+   },
+   "expr_opaque": {
+    "margin": 2.043497085571289,
+    "both": true
+   }
+  },
+  "G2c-07": {
+   "group": "G2c",
+   "none": {
+    "margin": 2.3577632904052734,
+    "both": true
+   },
+   "expr_masked_i": {
+    "margin": -1.101496696472168,
+    "both": false
+   },
+   "expr_opaque": {
+    "margin": 0.09202766418457031,
+    "both": false
+   }
+  },
+  "G2k-07": {
+   "group": "G2k",
+   "none": {
+    "margin": -1.9563817977905273,
+    "both": false
+   },
+   "expr_masked_i": {
+    "margin": 2.4785261154174805,
+    "both": true
+   },
+   "expr_opaque": {
+    "margin": 0.5857400894165039,
+    "both": false
+   }
+  },
+  "G2c-08": {
+   "group": "G2c",
+   "none": {
+    "margin": -3.820901870727539,
+    "both": false
+   },
+   "expr_masked_i": {
+    "margin": 1.639322280883789,
+    "both": true
+   },
+   "expr_opaque": {
+    "margin": 0.6004886627197266,
+    "both": false
+   }
+  },
+  "G2k-08": {
+   "group": "G2k",
+   "none": {
+    "margin": -0.3990001678466797,
+    "both": false
+   },
+   "expr_masked_i": {
+    "margin": -4.720409393310547,
+    "both": false
+   },
+   "expr_opaque": {
+    "margin": -2.7023849487304688,
+    "both": false
+   }
+  },
+  "G2c-09": {
+   "group": "G2c",
+   "none": {
+    "margin": 1.2990961074829102,
+    "both": false
+   },
+   "expr_masked_i": {
+    "margin": 2.002511978149414,
+    "both": true
+   },
+   "expr_opaque": {
+    "margin": 1.526810646057129,
+    "both": false
+   }
+  },
+  "G2k-09": {
+   "group": "G2k",
+   "none": {
+    "margin": 0.05612659454345703,
+    "both": false
+   },
+   "expr_masked_i": {
+    "margin": -3.105727195739746,
+    "both": false
+   },
+   "expr_opaque": {
+    "margin": -2.1763296127319336,
+    "both": false
+   }
+  },
+  "G2c-10": {
+   "group": "G2c",
+   "none": {
+    "margin": 2.145689010620117,
+    "both": true
+   },
+   "expr_masked_i": {
+    "margin": 5.908105850219727,
+    "both": true
+   },
+   "expr_opaque": {
+    "margin": 4.5958709716796875,
+    "both": true
+   }
+  },
+  "G2k-10": {
+   "group": "G2k",
+   "none": {
+    "margin": -0.9208612442016602,
+    "both": false
+   },
+   "expr_masked_i": {
+    "margin": -5.340658187866211,
+    "both": false
+   },
+   "expr_opaque": {
+    "margin": -3.88812255859375,
+    "both": false
+   }
+  },
+  "G2c-11": {
+   "group": "G2c",
+   "none": {
+    "margin": -0.07333755493164062,
+    "both": false
+   },
+   "expr_masked_i": {
+    "margin": -3.6008758544921875,
+    "both": false
+   },
+   "expr_opaque": {
+    "margin": -2.497272491455078,
+    "both": false
+   }
+  },
+  "G2k-11": {
+   "group": "G2k",
+   "none": {
+    "margin": -0.3649883270263672,
+    "both": false
+   },
+   "expr_masked_i": {
+    "margin": 3.516634941101074,
+    "both": true
+   },
+   "expr_opaque": {
+    "margin": 2.487905502319336,
+    "both": true
+   }
+  },
+  "G2c-12": {
+   "group": "G2c",
+   "none": {
+    "margin": -4.751364707946777,
+    "both": false
+   },
+   "expr_masked_i": {
+    "margin": -1.770035743713379,
+    "both": false
+   },
+   "expr_opaque": {
+    "margin": -1.5327320098876953,
+    "both": false
+   }
+  },
+  "G2k-12": {
+   "group": "G2k",
+   "none": {
+    "margin": 5.263367652893066,
+    "both": true
+   },
+   "expr_masked_i": {
+    "margin": 4.023296356201172,
+    "both": true
+   },
+   "expr_opaque": {
+    "margin": 2.6325502395629883,
+    "both": true
+   }
+  },
+  "G2c-13": {
+   "group": "G2c",
+   "none": {
+    "margin": -1.0256471633911133,
+    "both": false
+   },
+   "expr_masked_i": {
+    "margin": 0.587860107421875,
+    "both": false
+   },
+   "expr_opaque": {
+    "margin": 0.12332534790039062,
+    "both": false
+   }
+  },
+  "G2k-13": {
+   "group": "G2k",
+   "none": {
+    "margin": 3.5004873275756836,
+    "both": true
+   },
+   "expr_masked_i": {
+    "margin": 2.4765539169311523,
+    "both": true
+   },
+   "expr_opaque": {
+    "margin": 2.234621047973633,
+    "both": true
+   }
+  },
+  "G2c-14": {
+   "group": "G2c",
+   "none": {
+    "margin": 2.6715850830078125,
+    "both": true
+   },
+   "expr_masked_i": {
+    "margin": 0.9550323486328125,
+    "both": true
+   },
+   "expr_opaque": {
+    "margin": 1.7029399871826172,
+    "both": true
+   }
+  },
+  "G2k-14": {
+   "group": "G2k",
+   "none": {
+    "margin": -2.156195640563965,
+    "both": false
+   },
+   "expr_masked_i": {
+    "margin": 1.8134832382202148,
+    "both": true
+   },
+   "expr_opaque": {
+    "margin": 0.9530220031738281,
+    "both": true
+   }
+  },
+  "G2c-15": {
+   "group": "G2c",
+   "none": {
+    "margin": -0.22065067291259766,
+    "both": false
+   },
+   "expr_masked_i": {
+    "margin": -2.3464479446411133,
+    "both": false
+   },
+   "expr_opaque": {
+    "margin": -1.6902275085449219,
+    "both": false
+   }
+  },
+  "G2k-15": {
+   "group": "G2k",
+   "none": {
+    "margin": 0.49622058868408203,
+    "both": false
+   },
+   "expr_masked_i": {
+    "margin": 2.2745304107666016,
+    "both": true
+   },
+   "expr_opaque": {
+    "margin": 1.1964178085327148,
+    "both": false
+   }
+  },
+  "G2c-16": {
+   "group": "G2c",
+   "none": {
+    "margin": -4.506298065185547,
+    "both": false
+   },
+   "expr_masked_i": {
+    "margin": 2.431856155395508,
+    "both": true
+   },
+   "expr_opaque": {
+    "margin": 1.8550958633422852,
+    "both": true
+   }
+  },
+  "G2k-16": {
+   "group": "G2k",
+   "none": {
+    "margin": 4.638811111450195,
+    "both": true
+   },
+   "expr_masked_i": {
+    "margin": -2.8840103149414062,
+    "both": false
+   },
+   "expr_opaque": {
+    "margin": -2.4496402740478516,
+    "both": false
+   }
+  },
+  "G2c-17": {
+   "group": "G2c",
+   "none": {
+    "margin": -1.0768461227416992,
+    "both": false
+   },
+   "expr_masked_i": {
+    "margin": 1.934311866760254,
+    "both": true
+   },
+   "expr_opaque": {
+    "margin": 1.9976577758789062,
+    "both": true
+   }
+  },
+  "G2k-17": {
+   "group": "G2k",
+   "none": {
+    "margin": 2.441452980041504,
+    "both": false
+   },
+   "expr_masked_i": {
+    "margin": -1.5878267288208008,
+    "both": false
+   },
+   "expr_opaque": {
+    "margin": -1.457204818725586,
+    "both": false
+   }
+  },
+  "G2c-18": {
+   "group": "G2c",
+   "none": {
+    "margin": 1.6463079452514648,
+    "both": true
+   },
+   "expr_masked_i": {
+    "margin": 5.870681285858154,
+    "both": true
+   },
+   "expr_opaque": {
+    "margin": 4.472832679748535,
+    "both": true
+   }
+  },
+  "G2k-18": {
+   "group": "G2k",
+   "none": {
+    "margin": 7.0763258934021,
+    "both": true
+   },
+   "expr_masked_i": {
+    "margin": 5.135598182678223,
+    "both": true
+   },
+   "expr_opaque": {
+    "margin": 3.919025421142578,
+    "both": true
+   }
+  },
+  "G2c-19": {
+   "group": "G2c",
+   "none": {
+    "margin": 2.6124095916748047,
+    "both": true
+   },
+   "expr_masked_i": {
+    "margin": 3.624629020690918,
+    "both": true
+   },
+   "expr_opaque": {
+    "margin": 4.28205680847168,
+    "both": true
+   }
+  },
+  "G2k-19": {
+   "group": "G2k",
+   "none": {
+    "margin": 6.157120704650879,
+    "both": true
+   },
+   "expr_masked_i": {
+    "margin": 4.849216461181641,
+    "both": true
+   },
+   "expr_opaque": {
+    "margin": 2.813052177429199,
+    "both": true
+   }
+  },
+  "G2c-20": {
+   "group": "G2c",
+   "none": {
+    "margin": 0.5037822723388672,
+    "both": false
+   },
+   "expr_masked_i": {
+    "margin": -1.5144853591918945,
+    "both": false
+   },
+   "expr_opaque": {
+    "margin": 0.4348287582397461,
+    "both": false
+   }
+  },
+  "G2k-20": {
+   "group": "G2k",
+   "none": {
+    "margin": 1.537978172302246,
+    "both": false
+   },
+   "expr_masked_i": {
+    "margin": 3.4205989837646484,
+    "both": true
+   },
+   "expr_opaque": {
+    "margin": -0.25261783599853516,
+    "both": false
+   }
+  },
+  "G2c-21": {
+   "group": "G2c",
+   "none": {
+    "margin": -2.847501754760742,
+    "both": false
+   },
+   "expr_masked_i": {
+    "margin": -0.5714845657348633,
+    "both": false
+   },
+   "expr_opaque": {
+    "margin": -1.3178949356079102,
+    "both": false
+   }
+  },
+  "G2k-21": {
+   "group": "G2k",
+   "none": {
+    "margin": 3.7789344787597656,
+    "both": true
+   },
+   "expr_masked_i": {
+    "margin": 2.039896011352539,
+    "both": true
+   },
+   "expr_opaque": {
+    "margin": 3.00119686126709,
+    "both": true
+   }
+  },
+  "G2c-22": {
+   "group": "G2c",
+   "none": {
+    "margin": -0.08437252044677734,
+    "both": false
+   },
+   "expr_masked_i": {
+    "margin": 3.4109840393066406,
+    "both": true
+   },
+   "expr_opaque": {
+    "margin": 2.2884349822998047,
+    "both": true
+   }
+  },
+  "G2k-22": {
+   "group": "G2k",
+   "none": {
+    "margin": 2.8460655212402344,
+    "both": true
+   },
+   "expr_masked_i": {
+    "margin": -2.432204246520996,
+    "both": false
+   },
+   "expr_opaque": {
+    "margin": -1.7226848602294922,
+    "both": false
+   }
+  },
+  "G2c-23": {
+   "group": "G2c",
+   "none": {
+    "margin": -1.0507164001464844,
+    "both": false
+   },
+   "expr_masked_i": {
+    "margin": 4.017756462097168,
+    "both": true
+   },
+   "expr_opaque": {
+    "margin": 1.9516239166259766,
+    "both": true
+   }
+  },
+  "G2k-23": {
+   "group": "G2k",
+   "none": {
+    "margin": 3.2771453857421875,
+    "both": true
+   },
+   "expr_masked_i": {
+    "margin": 0.7850046157836914,
+    "both": false
+   },
+   "expr_opaque": {
+    "margin": 1.1264495849609375,
+    "both": true
+   }
+  },
+  "G2c-24": {
+   "group": "G2c",
+   "none": {
+    "margin": -3.175142288208008,
+    "both": false
+   },
+   "expr_masked_i": {
+    "margin": 1.264826774597168,
+    "both": true
+   },
+   "expr_opaque": {
+    "margin": 1.9569129943847656,
+    "both": true
+   }
+  },
+  "G2k-24": {
+   "group": "G2k",
+   "none": {
+    "margin": 3.457265853881836,
+    "both": true
+   },
+   "expr_masked_i": {
+    "margin": -2.2143707275390625,
+    "both": false
+   },
+   "expr_opaque": {
+    "margin": -1.5125608444213867,
+    "both": false
+   }
+  }
+ },
+ "summary": {
+  "none": {
+   "G2c": {
+    "n": 24,
+    "acc": 0.375,
+    "acc_both": 0.2916666666666667,
+    "mean_margin": -0.3571072022120158
+   },
+   "G2k": {
+    "n": 24,
+    "acc": 0.75,
+    "acc_both": 0.5,
+    "mean_margin": 1.94936869541804
+   },
+   "ALL": {
+    "n": 48,
+    "acc": 0.5625,
+    "acc_both": 0.3958333333333333,
+    "mean_margin": 0.7961307466030121
+   }
+  },
+  "expr_masked_i": {
+   "G2c": {
+    "n": 24,
+    "acc": 0.5833333333333334,
+    "acc_both": 0.5,
+    "mean_margin": 0.6704590121905009
+   },
+   "G2k": {
+    "n": 24,
+    "acc": 0.625,
+    "acc_both": 0.5833333333333334,
+    "mean_margin": 0.9266487757364908
+   },
+   "ALL": {
+    "n": 48,
+    "acc": 0.6041666666666666,
+    "acc_both": 0.5416666666666666,
+    "mean_margin": 0.7985538939634959
+   }
+  },
+  "expr_opaque": {
+   "G2c": {
+    "n": 24,
+    "acc": 0.6666666666666666,
+    "acc_both": 0.375,
+    "mean_margin": 0.5846085548400879
+   },
+   "G2k": {
+    "n": 24,
+    "acc": 0.5833333333333334,
+    "acc_both": 0.4583333333333333,
+    "mean_margin": 0.4806867440541585
+   },
+   "ALL": {
+    "n": 48,
+    "acc": 0.625,
+    "acc_both": 0.4166666666666667,
+    "mean_margin": 0.5326476494471232
+   }
+  }
+ }
+}
