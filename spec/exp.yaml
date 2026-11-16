@@ -185,6 +185,7 @@ nodes:
   key_token_vector: {display: 専用トークンの概念ベクトル, extends: state_shift, mod: {of: [v_depend, from], with: dedicated_token}}
   symbolic_membership: {display: 事実の判定と体系での帰属の決定, extends: inference, mod: {of: [v_involve, from], with: system}}
   contrast_vector: {display: 定義の有無による活性化の差のベクトル, extends: concept_vector, mod: {of: [v_depend, from], with: definition_text}}
+  swapped_concept_vector: {display: 他の語の概念ベクトル, extends: concept_vector, mod: {of: [v_depend, from], with: word, neg: true}}
   opaque_expression: {display: core 以外の識別子を無意味にした概念式, extends: concept_expression, mod: {of: [v_compose, to], with: hidden_word}}
   text_and_vector: {display: 文章と概念ベクトルの併用, extends: text_injection, mod: {of: [is, from], with: concept_vector}}
   delta_weights: {display: 差分重み, extends: channel, mod: {of: [v_involve, from], with: weights}}
@@ -362,6 +363,9 @@ individuals:
   e13: {is: measurement_family}
   e10o: {is: measurement_family}
   e14: {is: measurement_family}
+  e15: {is: measurement_family}
+  e15c: {is: measurement_family}
+  e15r: {is: measurement_family}
   # ----- 測定の族の軸（is: family_axis）と、軸の値（is: axis_value）。val の text は測定値の識別子に使う字。
   # 結果ファイルでの書き方（v_spell）と、値が指すもの（v_denote）は事実で書く。
   e1_model: {is: family_axis, val: {text: model}}
@@ -585,6 +589,24 @@ individuals:
   e14_cond_vec2: {is: axis_value, val: {text: 'vec2'}}
   e14_cond_vec4: {is: axis_value, val: {text: 'vec4'}}
   e14_cond_near_vec1: {is: axis_value, val: {text: 'near+vec1'}}
+  e15_group: {is: family_axis, val: {text: group}}
+  e15_group_G2c: {is: axis_value, val: {text: G2c}}
+  e15_group_G2k: {is: axis_value, val: {text: G2k}}
+  e15_cond: {is: family_axis, val: {text: cond}}
+  e15c_group: {is: family_axis, val: {text: group}}
+  e15c_group_G2c: {is: axis_value, val: {text: G2c}}
+  e15c_group_G2k: {is: axis_value, val: {text: G2k}}
+  e15c_cond: {is: family_axis, val: {text: cond}}
+  e15_cond_own: {is: axis_value, val: {text: own}}
+  e15_cond_swapped: {is: axis_value, val: {text: swapped}}
+  e15c_cond_cos_raw: {is: axis_value, val: {text: cos_raw}}
+  e15c_cond_cos_centered: {is: axis_value, val: {text: cos_centered}}
+  e15r_shift: {is: family_axis, val: {text: shift}}
+  e15r_shift_e3: {is: axis_value, val: {text: e3}}
+  e15r_shift_e3x: {is: axis_value, val: {text: e3x}}
+  e15r_shift_e14: {is: axis_value, val: {text: e14}}
+  e15r_shift_e12: {is: axis_value, val: {text: e12}}
+  e15r_shift_near: {is: axis_value, val: {text: near}}
 
   # ===== 観察。s と o は測定値で、p は大きさを比べる動詞（is: observation）
   o_e1_redef_below_new_adjacent: {is: observation}
@@ -672,6 +694,10 @@ individuals:
   o_e10o_opaque_below_none_control: {is: observation}
   o_e14_vec_below_none_control: {is: observation}
   o_e14_vec_below_near_conflict: {is: observation}
+  o_e15_swapped_below_own_conflict: {is: observation}
+  o_e15_swapped_below_none_control: {is: observation}
+  o_e15_vector_orthogonal_to_text_shift: {is: observation}
+  o_e15_vector_shift_smaller_than_text: {is: observation}
 
   # ===== 仮説（is: hypothesis）
   # --- 文章での注入 ---
@@ -717,6 +743,8 @@ individuals:
   h_symbolic_membership_raises_following: {is: hyp_mixed}
   h_contrast_vector_raises_following: {is: hyp_refuted}
   h_opaque_expression_raises_following: {is: hyp_mixed}
+  h_swapped_vector_lowers_control: {is: hyp_supported}
+  h_vector_agrees_with_text_shift: {is: hyp_refuted}
   h_model_can_write_cscl: {is: hyp_untested}
   h_modifier_transfers_to_unseen_genus: {is: hyp_supported}
 
@@ -1447,6 +1475,52 @@ facts:
   - {is: v_entry_of, from: '{cond}', to: e14}
   - {is: v_metric_of, from: e14, to: accuracy}
   - {is: v_metric_of, from: e14, to: order_robust_accuracy}
+  - {is: v_file_of, from: 'e15_Qwen2.5-1.5B-Instruct_L8.json', to: e15}
+  - {is: v_rows_of, from: [items], to: e15}
+  - {is: v_axis_of, from: e15_group, to: e15}
+  - {is: v_value_of, from: e15_group_G2c, to: e15_group}
+  - {is: v_denote, from: e15_group_G2c, to: g_redef_conflict}
+  - {is: v_value_of, from: e15_group_G2k, to: e15_group}
+  - {is: v_denote, from: e15_group_G2k, to: g_redef_control}
+  - {is: v_filter_of, from: {group: '{group}'}, to: e15}
+  - {is: v_axis_of, from: e15_cond, to: e15}
+  - {is: v_value_of, from: e15_cond_own, to: e15_cond}
+  - {is: v_denote, from: e15_cond_own, to: single_layer_vector}
+  - {is: v_value_of, from: e15_cond_swapped, to: e15_cond}
+  - {is: v_denote, from: e15_cond_swapped, to: swapped_concept_vector}
+  - {is: v_entry_of, from: '{cond}', to: e15}
+  - {is: v_metric_of, from: e15, to: accuracy}
+  - {is: v_metric_of, from: e15, to: order_robust_accuracy}
+  - {is: v_file_of, from: 'e15_Qwen2.5-1.5B-Instruct_L8.json', to: e15c}
+  - {is: v_rows_of, from: [items], to: e15c}
+  - {is: v_axis_of, from: e15c_group, to: e15c}
+  - {is: v_value_of, from: e15c_group_G2c, to: e15c_group}
+  - {is: v_denote, from: e15c_group_G2c, to: g_redef_conflict}
+  - {is: v_value_of, from: e15c_group_G2k, to: e15c_group}
+  - {is: v_denote, from: e15c_group_G2k, to: g_redef_control}
+  - {is: v_filter_of, from: {group: '{group}'}, to: e15c}
+  - {is: v_axis_of, from: e15c_cond, to: e15c}
+  - {is: v_value_of, from: e15c_cond_cos_raw, to: e15c_cond}
+  - {is: v_denote, from: e15c_cond_cos_raw, to: single_layer_vector}
+  - {is: v_value_of, from: e15c_cond_cos_centered, to: e15c_cond}
+  - {is: v_denote, from: e15c_cond_cos_centered, to: single_layer_vector}
+  - {is: v_entry_of, from: '{cond}', to: e15c}
+  - {is: v_metric_of, from: e15c, to: mean_value}
+  - {is: v_file_of, from: 'e15_Qwen2.5-1.5B-Instruct_L8.json', to: e15r}
+  - {is: v_rows_of, from: [concepts], to: e15r}
+  - {is: v_axis_of, from: e15r_shift, to: e15r}
+  - {is: v_value_of, from: e15r_shift_e3, to: e15r_shift}
+  - {is: v_denote, from: e15r_shift_e3, to: single_layer_vector}
+  - {is: v_value_of, from: e15r_shift_e3x, to: e15r_shift}
+  - {is: v_denote, from: e15r_shift_e3x, to: single_layer_vector}
+  - {is: v_value_of, from: e15r_shift_e14, to: e15r_shift}
+  - {is: v_denote, from: e15r_shift_e14, to: contrast_vector}
+  - {is: v_value_of, from: e15r_shift_e12, to: e15r_shift}
+  - {is: v_denote, from: e15r_shift_e12, to: key_token_vector}
+  - {is: v_value_of, from: e15r_shift_near, to: e15r_shift}
+  - {is: v_denote, from: e15r_shift_near, to: contrast_vector}
+  - {is: v_entry_of, from: '{shift}', to: e15r}
+  - {is: v_metric_of, from: e15r, to: mean_value}
 
   # ===== 観察。s と o は測定値で、p は大きさを比べる動詞（is: observation）
   - {is: v_refer, from: o_e1_redef_below_new_adjacent, to: {is: v_come_before, from: e1.4b.G2c.near.accuracy, to: e1.4b.G3.near.accuracy}}
@@ -1530,6 +1604,10 @@ facts:
   - {is: v_refer, from: o_e10o_opaque_below_none_control, to: {is: v_come_before, from: 'e10o.G2k.expr_opaque.accuracy', to: 'e10o.G2k.none.accuracy'}}
   - {is: v_refer, from: o_e14_vec_below_none_control, to: {is: v_come_before, from: 'e14.G2k.vec1.accuracy', to: 'e14.G2k.none.accuracy'}}
   - {is: v_refer, from: o_e14_vec_below_near_conflict, to: {is: v_come_before, from: 'e14.G2c.vec1.order_robust_accuracy', to: 'e14.G2c.near.order_robust_accuracy'}}
+  - {is: v_refer, from: o_e15_swapped_below_own_conflict, to: {is: v_come_before, from: e15.G2c.swapped.accuracy, to: e15.G2c.own.accuracy}}
+  - {is: v_refer, from: o_e15_swapped_below_none_control, to: {is: v_come_before, from: e15.G2k.swapped.accuracy, to: e14.G2k.none.accuracy}}
+  - {is: v_refer, from: o_e15_vector_orthogonal_to_text_shift, to: {is: v_near, from: e15c.G2c.cos_centered.mean_value, to: 0.0, new: 0.05}}
+  - {is: v_refer, from: o_e15_vector_shift_smaller_than_text, to: {is: v_come_before, from: e15r.e3.mean_value, to: e15r.near.mean_value}}
 
   # ===== 仮説（is: hypothesis）
   - {is: v_refer, from: h_collision_lowers_following, to: {is: v_lower, from: prior_collision, to: redefinition_following}}
@@ -1590,6 +1668,12 @@ facts:
   - {is: v_contradict, from: o_e10o_opaque_below_none_control, to: h_opaque_expression_raises_following}
   - {is: v_contradict, from: o_e14_vec_below_none_control, to: h_contrast_vector_raises_following}
   - {is: v_contradict, from: o_e14_vec_below_near_conflict, to: h_contrast_vector_raises_following}
+  - {is: v_support, from: o_e15_swapped_below_own_conflict, to: h_swapped_vector_lowers_control}
+  - {is: v_support, from: o_e15_swapped_below_none_control, to: h_swapped_vector_lowers_control}
+  - {is: v_contradict, from: o_e15_vector_orthogonal_to_text_shift, to: h_vector_agrees_with_text_shift}
+  - {is: v_contradict, from: o_e15_vector_shift_smaller_than_text, to: h_vector_agrees_with_text_shift}
+  - {is: v_refer, from: h_swapped_vector_lowers_control, to: {is: v_lower, from: swapped_concept_vector, to: control_preservation}}
+  - {is: v_refer, from: h_vector_agrees_with_text_shift, to: {is: v_agree, from: single_layer_vector, to: contrast_vector}}
   - {is: v_refer, from: h_length_does_not_lower, to: {is: v_not_lower, from: context_length, to: redefinition_following}}
   - {is: v_scope, from: model_4b, to: h_length_does_not_lower}
   - {is: v_scope, from: text_injection, to: h_length_does_not_lower}
