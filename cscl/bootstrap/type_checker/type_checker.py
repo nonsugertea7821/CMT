@@ -316,7 +316,7 @@ def merge_domain(name, O):
     return D
 
 
-MANY = {"scope", "evidence", "against", "limitation", "supersedes", "basis", "tests", "metric", "any", "domain", "premise", "derived", "required", "information_entity"}   # 検査が並びとして読む関係
+MANY = {"scope", "evidence", "against", "limitation", "supersedes", "basis", "tests", "metric", "any", "domain", "premise", "derived", "prior_agreed", "prior_contrasted", "prior_work", "required", "information_entity"}   # 検査が並びとして読む関係
 
 
 def is_kind_fact(f, T, dom, I):

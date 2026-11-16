@@ -54,6 +54,9 @@ nodes:
   v_supersede: {display: 取って代わる, extends: v_refer, from: sentence, to: supersedes}
   v_ground: {display: 根拠にする, extends: v_depend, from: decision, to: basis}
   v_check: {display: 確かめる, extends: v_refer, from: backlog_item, to: tests}
+  v_prior_same: {display: 同じ向きの結果を先に報告した, extends: v_agree, from: prior_work, to: prior_agreed}
+  v_prior_differ: {display: 異なる結果を報告した, extends: v_refer, from: prior_work, to: prior_contrasted}
+  v_prior_method: {display: 先行研究の手法を使う, extends: v_use, from: hypothesis, to: prior_work}
   v_file_of: {display: 結果ファイルとして部分になる, extends: v_compose, from: result_file, to: measurement_family}
   v_rows_of: {display: 行の集まりとして部分になる, extends: v_compose, from: row_collection, to: measurement_family}
   v_filter_of: {display: 行の限定として部分になる, extends: v_compose, from: row_filter, to: measurement_family}
@@ -288,6 +291,9 @@ nodes:
   lim_one_item: {display: 差が1問以内, extends: limitation, mod: {of: [v_refer, from], with: question, at: {count: 1}}}
   lim_unconverged: {display: 学習が収束していない, extends: limitation, mod: {of: [v_refer, from], with: training_loss}}
   lim_single_case: {display: 1例だけ, extends: limitation, mod: {of: [v_refer, from], with: observation, at: {count: 1}}}
+  prior_work: {display: 先行研究, extends: sentence_refer_from_hypothesis, mod: {of: [v_expose, to]}}
+  prior_agreed: {display: 先行研究が同じ向きを報告した主張, extends: hypothesis, mod: {of: [v_agree, to], with: prior_work}}
+  prior_contrasted: {display: 先行研究と結果が異なる主張, extends: hypothesis, mod: {of: [v_refer, to], with: prior_work}}
   doubt: {display: 仮説への疑い, extends: sentence, mod: {of: [v_challenge, from], with: hypothesis}}
   number_comparison: {display: 数の大小の照合, extends: inference, mod: {of: [v_refer, to], with: number}}
   lim_unquantified: {display: 数値化していない, extends: limitation, mod: {of: [v_refer, from], with: measured_value, neg: true}}
@@ -320,6 +326,17 @@ individuals:
   # 数の項目は、その種類のものが、この個体との関係でいくつあるか（個数の軸の固定値）。
   model_15b: {is: open_weight_model, display: Qwen2.5-1.5B-Instruct}
   residual_space: {is: composable_set, display: 残差の流れ}   # 種類の集まり（2階）
+  # ===== 先行研究（2026-11-16 に ACL Anthology と arXiv で探した）。表示語に著者・年・題・所在を書く
+  pw_wang2025_proactive_interference: {is: prior_work, display: "先行研究: Wang & Sun 2025, Unable to Forget: Proactive Interference Reveals Working Memory Limits in LLMs Beyond Context Length（arXiv:2506.08184, ICML 2025 LCFM workshop）"}
+  pw_goworek2026_lexical_redefinition: {is: prior_work, display: "先行研究: Goworek & Dubossarsky 2026, Lexical Redefinition Reveals Context-Sensitive Instruction Following（LUHME 2026, aclanthology 2026.luhme-1.17）"}
+  pw_stringli2025_inverse_redefinition: {is: prior_work, display: "先行研究: Stringli et al. 2025, Pitfalls of Scale: Investigating the Inverse Task of Redefinition in Large Language Models（Findings of ACL 2025, arXiv:2502.12821）"}
+  pw_eisenschlos2023_winodict: {is: prior_work, display: "先行研究: Eisenschlos et al. 2023, WinoDict: Probing language models for in-context word acquisition（EACL 2023, arXiv:2209.12153）"}
+  pw_xu2024_knowledge_conflicts: {is: prior_work, display: "先行研究: Xu et al. 2024, Knowledge Conflicts for LLMs: A Survey（EMNLP 2024, arXiv:2403.08319）"}
+  pw_liu2024_lost_in_the_middle: {is: prior_work, display: "先行研究: Liu et al. 2024, Lost in the Middle: How Language Models Use Long Contexts（TACL 12, aclanthology 2024.tacl-1.9）"}
+  pw_turner2023_activation_addition: {is: prior_work, display: "先行研究: Turner et al. 2023, Activation Addition: Steering Language Models Without Optimization（arXiv:2308.10248）"}
+  pw_panickssery2023_caa: {is: prior_work, display: "先行研究: Panickssery et al. 2023, Steering Llama 2 via Contrastive Activation Addition（arXiv:2312.06681）"}
+  pw_todd2024_function_vectors: {is: prior_work, display: "先行研究: Todd et al. 2024, Function Vectors in Large Language Models（ICLR 2024, arXiv:2310.15213）"}
+  pw_radevski2026_steering_tokens: {is: prior_work, display: "先行研究: Radevski et al. 2026, Compositional Steering of Large Language Models with Steering Tokens（ACL 2026, aclanthology 2026.acl-long.1435）"}
   model_4b: {is: open_weight_model, display: Qwen3-4B}
 
   # ===== 設計。1つしかない。
@@ -2113,3 +2130,17 @@ facts:
   - {is: v_check, from: b_vectors_on_4b, to: h_vector_raises_following}
   - {is: v_check, from: b_vectors_on_4b, to: h_single_layer_does_not_reach_shared}
   - {is: v_check, from: b_more_concepts, to: h_vector_count_does_not_lower}
+  # ===== 先行研究と主張の関係
+  - {is: v_prior_same, from: pw_wang2025_proactive_interference, to: h_preceding_definitions_lower}
+  - {is: v_prior_same, from: pw_wang2025_proactive_interference, to: h_length_does_not_lower}
+  - {is: v_prior_differ, from: pw_goworek2026_lexical_redefinition, to: h_following_definitions_do_not_lower}
+  - {is: v_prior_same, from: pw_goworek2026_lexical_redefinition, to: h_collision_lowers_following}
+  - {is: v_prior_same, from: pw_stringli2025_inverse_redefinition, to: h_collision_lowers_following}
+  - {is: v_prior_same, from: pw_xu2024_knowledge_conflicts, to: h_collision_lowers_following}
+  - {is: v_prior_differ, from: pw_eisenschlos2023_winodict, to: h_new_word_immune}
+  - {is: v_prior_differ, from: pw_liu2024_lost_in_the_middle, to: h_distance_does_not_lower}
+  - {is: v_prior_differ, from: pw_liu2024_lost_in_the_middle, to: h_preceding_definitions_lower}
+  - {is: v_prior_method, from: h_vector_raises_following, to: pw_turner2023_activation_addition}
+  - {is: v_prior_method, from: h_contrast_vector_raises_following, to: pw_panickssery2023_caa}
+  - {is: v_prior_method, from: h_vector_raises_following, to: pw_todd2024_function_vectors}
+  - {is: v_prior_same, from: pw_radevski2026_steering_tokens, to: h_modifier_transfers_to_unseen_genus}

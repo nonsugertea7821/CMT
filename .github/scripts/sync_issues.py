@@ -2,7 +2,7 @@
 
 issue 1件 = 主張（仮説か決定）1つ。本文は3節（観察のある主張は4節）:
   説明  Claude が書く自然言語の説明。このスクリプトは触らない
-  観察の値  体系の測定値から生成する。このスクリプトが毎回書き換える。ハッシュには入れない（値が変わっても説明は古くならない）
+  観察の値・先行研究  体系から生成する。このスクリプトが毎回書き換える。ハッシュには入れない（値が変わっても説明は古くならない）
   定義  体系から生成する。このスクリプトが毎回書き換える。手で編集しない
   経緯  Claude が書く、議論の経緯。このスクリプトは触らない
 定義が変わったとき（ハッシュが違うとき）、説明が書かれていれば、ラベル stale-explanation を付ける。
@@ -45,6 +45,7 @@ COLORS = {"exp": "1d76db", "cscl": "5319e7", "hypothesis": "c5def5", "decision":
 MARK = "<!-- cscl-claim: {} -->"
 SYM = {"前に置かれる": "<", "後ろに置かれる": ">", "ほぼ同じ位置にある": "≈", "同じ位置にある": "=",
        "前には置かれない": "≥", "後ろには置かれない": "≤"}
+PRIOR = {"same": "同じ向きの結果を先に報告した", "differ": "異なる結果を報告した", "method": "手法の元"}
 LEGEND = ("記号: G2c は元の意味と衝突する再定義の設問、G2k は衝突しない対照の設問。"
           "order_robust_accuracy は選択肢の順を入れ替えても正しく答えた割合。")
 EMPTY = "（未記入）"
@@ -106,11 +107,14 @@ def claims():
             src = [l.strip() for f in ROOT.glob("**/*.yaml") if f.parts[len(ROOT.parts)] in ("exp", "cscl")
                    for l in f.read_text(encoding="utf-8").splitlines()
                    if re.search(rf"(from|to): {re.escape(cid)}[,}}]", l) or re.match(rf"\s+{re.escape(cid)}:", l)]
-            body_def = "\n".join(lines) + "\n\n<details><summary>体系での記述</summary>\n\n```yaml\n" + "\n".join(src) + "\n```\n</details>"
+            body_def = "\n".join(lines) + "\n\n<details><summary>体系での記述</summary>\n\n```yaml\n" + "\n".join(l for l in src if "v_prior_" not in l) + "\n```\n</details>"
             h = hashlib.sha256(body_def.encode()).hexdigest()[:12]
+            pw = [(m.group(1), m.group(2) if m.group(3) == cid else m.group(3)) for l in src
+                  for m in [re.search(r"is: v_prior_(\w+), from: (\w+), to: (\w+)", l)] if m]
+            prior = "\n".join(f"- {PRIOR[k]}: {ja(w)}（`{w}`）" for k, w in pw) or None
             oids = [type_checker.short(v) for k in ("evidence", "against") for v in
                     (x.get(k) if isinstance(x.get(k), list) else [x.get(k)] if x.get(k) else [])]
-            out.append({"id": cid, "side": side, "kind": kind, "status": st, "obs": obs(oids),
+            out.append({"id": cid, "side": side, "kind": kind, "status": st, "obs": obs(oids), "prior": prior,
                         "title": f"[{side}] {cid}: {content}"[:250], "def": body_def, "hash": h})
     return out
 
@@ -121,7 +125,8 @@ def section(name, text):
 
 def new_body(c):
     return "\n\n".join([MARK.format(c["id"]), "## 説明", section("explain", EMPTY)]
-                       + (["## 観察の値", section("obs", c["obs"])] if c["obs"] else []) + [
+                       + (["## 観察の値", section("obs", c["obs"])] if c["obs"] else [])
+                       + (["## 先行研究", section("prior", c["prior"])] if c["prior"] else []) + [
                         f"## 定義\n_体系から生成。手で編集しない（`.github/scripts/sync_issues.py`）。_ <!-- hash: {c['hash']} -->",
                         section("def", c["def"]), "## 経緯", section("history", EMPTY)])
 
@@ -130,9 +135,10 @@ def update_body(body, c):
     old = re.search(r"<!-- hash: (\w+) -->", body)
     body = re.sub(r"<!-- hash: \w+ -->", f"<!-- hash: {c['hash']} -->", body)
     body = re.sub(r"<!-- def:begin -->.*?<!-- def:end -->", lambda m: section("def", c["def"]), body, flags=re.S)
-    body = re.sub(r"## 観察の値\n\n<!-- obs:begin -->.*?<!-- obs:end -->\n\n", "", body, flags=re.S)
-    if c["obs"]:
-        body = body.replace("## 定義\n", "## 観察の値\n\n" + section("obs", c["obs"]) + "\n\n## 定義\n", 1)
+    for key, head in (("obs", "観察の値"), ("prior", "先行研究")):
+        body = re.sub(rf"## {head}\n\n<!-- {key}:begin -->.*?<!-- {key}:end -->\n\n", "", body, flags=re.S)
+        if c[key]:
+            body = body.replace("## 定義\n", f"## {head}\n\n" + section(key, c[key]) + "\n\n## 定義\n", 1)
     explained = EMPTY not in re.search(r"<!-- explain:begin -->(.*?)<!-- explain:end -->", body, re.S).group(1)
     return body, bool(old and old.group(1) != c["hash"] and explained)
 
