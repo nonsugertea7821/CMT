@@ -218,46 +218,65 @@ def collect_kind_facts(T):
                 if not T.is_a(k, T.spot_type(verb, p)):
                     err(f"{where}: {p} の種類 {k} が、動詞 {verb} のその位置（{T.spot_type(verb, p)}）に当たらない")
             T.KF.append((verb, x))
-            if verb == "v_sum" or T.is_a(verb, "v_sum"):
-                sp = {p: space(T, k) for p, k in x.items()}
-                if sp["from"] is None or sp["from"] != sp["to"]:
-                    err(f"法則 sum_closed に反する: {where} の {x} で、合成する二つが同じ合成について閉じた集合に属さない（{sp}）")
-                elif sp.get("new") != sp["from"]:
-                    err(f"法則 sum_closed に反する: {where} の {x} で、合成してできたものが、合成について閉じた集合 {sp['from']} の外に出る")
-    for nid, n in T.N.items():   # 限定「合成して X になる」も同じ
-        for m in n.get("mod") or []:
-            if isinstance(m, dict) and isinstance(m.get("of"), list) and m["of"][0] == "v_sum" and m.get("with"):
-                w = T.q(m["with"])
-                if space(T, nid) is None or space(T, nid) != space(T, w):
-                    err(f"法則 sum_closed に反する: {nid} の限定「合成して {w} になる」で、合成について閉じた集合が {space(T, nid)} と {space(T, w)}")
-
-    # 法則 sum_defined: 合成について閉じた集合に属する種類は、自分か上位の種類が、合成する事実か限定に出てくる（合成が定義されている）
-    P = {k for verb, x in T.KF if verb == "v_sum" or T.is_a(verb, "v_sum") for k in x.values()}
-    for nid, n in T.N.items():
-        for m in n.get("mod") or []:
-            if isinstance(m, dict) and isinstance(m.get("of"), list) and m["of"][0] == "v_sum" and not m.get("neg"):
-                if m.get("with"):   # 相手のない限定（合成できる情報の定義）は、合成の定義に数えない
-                    P |= {nid, T.q(m["with"])}
-    for nid in T.N:
-        sp = space(T, nid)
-        if sp is None or T.is_verb(nid) or nid == T.COLL.get(sp):   # 集まりの成員の種類そのものは、閉じていることで合成が定義される
-            continue
-        k, hops = nid, 0
-        while k in T.N and k not in P and hops < 80:
-            k, hops = T.up(k), hops + 1
-        if k not in P:
-            err(f"法則 sum_defined に反する: {nid} は合成について閉じた集合 {sp} に属するが、合成が定義されていない（自分も上位も、合成する事実か限定に出てこない）")
+    check_closed(T)
 
 
-def space(T, k):
-    """種類 k が属する合成について閉じた集合（個体）: 成員の種類が、k か k の上位でいちばん近いもの。なければ None。"""
+def closed_op(T, c):
+    """閉集合（個体 c）が閉じている動詞: c の種類か上位の限定「V について閉じている」の V。"""
+    k, hops = T.I.get(c), 0
+    while k in T.N and hops < 80:
+        for m in T.N[k].get("mod") or []:
+            if isinstance(m, dict) and m.get("of") == ["v_close", "from"] and m.get("with") and not m.get("neg"):
+                return T.q(m["with"])
+        k, hops = T.up(k), hops + 1
+    return None
+
+
+def space(T, k, op="v_sum"):
+    """種類 k が属する、動詞 op について閉じた閉集合（個体）: 成員の種類が、k か k の上位でいちばん近いもの。なければ None。"""
     hops = 0
     while k in T.N and hops < 80:
         for c, ck in getattr(T, "COLL", {}).items():
-            if ck == k and T.is_a(T.I.get(c), "composable_set"):
+            if ck == k and T.is_a(T.I.get(c), "closed_set") and closed_op(T, c) == op:
                 return c
         k, hops = T.up(k), hops + 1
     return None
+
+
+def check_closed(T):
+    """法則 closed_under と op_defined。閉集合ごとに、閉じている動詞 V について確かめる（合成はその一つ）。"""
+    ops = {closed_op(T, c) for c in T.COLL if T.is_a(T.I.get(c), "closed_set")}
+    for c in T.COLL:
+        if T.is_a(T.I.get(c), "closed_set") and closed_op(T, c) is None:
+            err(f"法則 closed_under に反する: 閉集合 {c} が、何について閉じているかを限定していない")
+    for op in ops - {None}:
+        if not T.is_verb(op) or T.end(op, "new_kind") is None:
+            err(f"法則 closed_under に反する: {op} は、二つから第三のものを作る動詞でない（閉じられない）")
+            continue
+        uses = [x for verb, x in T.KF if verb == op or T.is_a(verb, op)]
+        for x in uses:
+            sp = {p: space(T, k, op) for p, k in x.items()}
+            if sp.get("from") is None or sp["from"] != sp.get("to"):
+                err(f"法則 closed_under に反する: {op} の事実 {x} で、二つが同じ閉集合に属さない（{sp}）")
+            elif sp.get("new") != sp["from"]:
+                err(f"法則 closed_under に反する: {op} の事実 {x} で、できたものが閉集合 {sp['from']} の外に出る")
+        P = {k for x in uses for k in x.values()}
+        for nid, n in T.N.items():
+            for m in n.get("mod") or []:
+                if isinstance(m, dict) and isinstance(m.get("of"), list) and T.q(m["of"][0]) == op and m.get("with") and not m.get("neg"):
+                    w = T.q(m["with"])
+                    P |= {nid, w}
+                    if space(T, nid, op) is None or space(T, nid, op) != space(T, w, op):
+                        err(f"法則 closed_under に反する: {nid} の限定「{op} で {w}」で、閉集合が {space(T, nid, op)} と {space(T, w, op)}")
+        for nid in T.N:
+            sp = space(T, nid, op)
+            if sp is None or T.is_verb(nid) or nid == T.COLL.get(sp):   # 成員の種類そのものは、閉じていることで定義される
+                continue
+            k, hops = nid, 0
+            while k in T.N and k not in P and hops < 80:
+                k, hops = T.up(k), hops + 1
+            if k not in P:
+                err(f"法則 op_defined に反する: {nid} は {op} について閉じた {sp} に属するが、{op} が定義されていない（自分も上位も、その事実か限定に出てこない）")
 
 
 def gather(D, T, name):
@@ -530,7 +549,7 @@ def evaluate(rules, F, V):
 # ---------------------------------------------------------------- 概念の体系
 # 法則のうち、この検査が当てはめるもの / 実行の検査（run_spec.py）が当てはめるもの
 # 規則で書いた法則（law_rule）は、実行の検査がその規則を読んで当てはめる。ここには、意味を検査が与える法則（law_given）だけを挙げる。
-LAWS_HERE = {"part_fact_direction", "part_display_explicit", "sum_closed", "collection_level", "sum_defined"}
+LAWS_HERE = {"part_fact_direction", "part_display_explicit", "closed_under", "collection_level", "op_defined"}
 LAWS_RUN = {"unique_names", "step", "frame", "halt"}
 
 
