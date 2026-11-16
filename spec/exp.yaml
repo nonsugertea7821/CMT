@@ -212,7 +212,7 @@ nodes:
   open_weight_model: {display: 重みが公開されたモデル, extends: model, mod: {of: [v_expose, from], with: weights}}
   api_only_model: {display: APIでしか使えないモデル, extends: model, mod: {of: [v_expose, from], with: weights, neg: true}}
   attention: {display: 注意機構, extends: artifact_compute_from, mod: {of: [v_compose, from], with: layer}}
-  residual_vector: {display: 残差の流れのベクトル, extends: summand, mod: {of: [v_depend, from], with: model}}
+  residual_vector: {display: 残差の流れのベクトル, extends: composable_set, mod: {of: [v_depend, from], with: model}}
   layer_output: {display: 層の出力, extends: residual_vector, mod: {of: [v_compute, to], with: layer}}
   hidden_state: {display: 隠れ状態, extends: layer_output, mod: {of: [v_depend, from], with: label_token_positions}}
   state_shift: {display: 隠れ状態のずれ, extends: residual_vector, mod: {of: [v_sum, from], with: shifted_hidden_state}}

@@ -51,7 +51,7 @@ nodes:
   # ===== 動詞・静的。holds に、成り立っている状態の関係を書く =====
   v_depend: {display: 依存する, extends: occurrent, from: continuant, to: continuant, holds: [{is: depend, from: from, to: to}]}
   v_compose: {display: 部分になる, extends: occurrent, from: continuant, to: continuant, holds: [{is: part, from: from, to: to}]}
-  v_sum: {display: 合わせる, extends: occurrent, from: summand, to: summand, new_kind: summand,
+  v_sum: {display: 合成する, extends: occurrent, from: summand, to: summand, new_kind: summand,
           holds: [{is: part, from: from, to: new}, {is: part, from: to, to: new}, {is: depend, from: new, to: from}, {is: depend, from: new, to: to}]}
   v_stage: {display: 時間的な部分になる, extends: occurrent, from: occurrent, to: occurrent, holds: [{is: part, from: from, to: to}]}
   v_come_after: {display: 後ろに置かれる, extends: occurrent, from: continuant, to: continuant, holds: [{is: after, from: from, to: to}]}
@@ -101,7 +101,8 @@ nodes:
   learned: {display: 学習で得られた, extends: quality, of: [v_learn, new]}
 
   # ===== 情報と言語 =====
-  summand: {display: 合わせられる情報, extends: information_entity, mod: {of: [v_sum, from]}}
+  summand: {display: 合成できる情報, extends: information_entity, mod: {of: [v_sum, from]}}
+  composable_set: {display: 合成可能集合, extends: summand, mod: {of: [v_sum, new]}}   # 合成してできるものでもある種類。合成について閉じた集まり
   information_entity: {display: 情報, extends: generically_dependent_continuant, mod: {of: [v_refer, from]}}
   language: {display: 言語, extends: information_entity, mod: {of: [v_express, to]}}
   system: {display: 体系, extends: information_entity, mod: {of: [v_compose, to], with: concept_expression, at: {count: {gt: 1}}}}
@@ -323,14 +324,14 @@ individuals:
   part_antisymmetric: {is: law_rule, display: 部分であることは反対称的}
   kpart_by_mod_from: {is: law_rule, display: 「X の部分である」と限定した種類は、種類として X の部分}
   kpart_by_mod_to: {is: law_rule, display: 「X を部分に持つ」と限定した種類は、種類として X を部分に持つ}
-  kpart_by_sum_part: {is: law_rule, display: 「合わせて X になる」と限定した種類は、種類として X の部分（部分の定義。合わせる相手は問わない）}
-  kpart_by_sum_whole: {is: law_rule, display: 「X と何かを合わせてできる」と限定した種類は、種類として X を部分に持つ}
+  kpart_by_sum_part: {is: law_rule, display: 「合成して X になる」と限定した種類は、種類として X の部分（部分の定義。合成する相手は問わない）}
+  kpart_by_sum_whole: {is: law_rule, display: 「X と何かを合成してできる」と限定した種類は、種類として X を部分に持つ}
   kdep_by_mod: {is: law_rule, display: 「X に依存する」と限定した種類は、種類として X に依存する}
-  kdep_by_sum: {is: law_rule, display: 合わせてできたものは、合わせる種類に依存する（生成の順序）}
-  kpart_by_sum_fact_from: {is: law_rule, display: 合わせる事実の始点は、合わせてできたものの部分}
-  kpart_by_sum_fact_to: {is: law_rule, display: 合わせる事実の終点は、合わせてできたものの部分}
-  kdep_by_sum_fact_from: {is: law_rule, display: 合わせてできたものは、合わせる事実の始点に依存する}
-  kdep_by_sum_fact_to: {is: law_rule, display: 合わせてできたものは、合わせる事実の終点に依存する}
+  kdep_by_sum: {is: law_rule, display: 合成してできたものは、合成する種類に依存する（生成の順序）}
+  kpart_by_sum_fact_from: {is: law_rule, display: 合成する事実の始点は、合成してできたものの部分}
+  kpart_by_sum_fact_to: {is: law_rule, display: 合成する事実の終点は、合成してできたものの部分}
+  kdep_by_sum_fact_from: {is: law_rule, display: 合成してできたものは、合成する事実の始点に依存する}
+  kdep_by_sum_fact_to: {is: law_rule, display: 合成してできたものは、合成する事実の終点に依存する}
   kpart_by_compose_fact: {is: law_rule, display: 種類どうしの「部分になる」事実は、種類としての部分}
   kdep_by_depend_fact: {is: law_rule, display: 種類どうしの「依存する」事実は、種類としての依存}
   kdep_inherit: {is: law_rule, display: 依存する種類の下位も、同じものに依存する}
@@ -394,8 +395,8 @@ individuals:
   frame: {is: law_given, display: 動詞が触れなかった文は変わらない}
   halt: {is: law_given, display: 当てはまる動詞がなければ止まる}
   part_fact_direction: {is: law_given, display: 部分の事実は、種類の限定と向きが逆にならない}
-  sum_same_space: {is: law_given, display: 合わせる二つと合わせてできたものは、同じ空間（合わせられる情報のすぐ下の種類）に属する}
-  sum_defined: {is: law_given, display: 空間に属する種類は、自分か上位の種類について合わせ方（合わせる事実か限定）が定義されている}
+  sum_same_space: {is: law_given, display: 合成する二つと合成してできたものは、同じ合成可能集合（いちばん近い上位の合成可能集合）に属する。合成可能集合は合成について閉じている}
+  sum_defined: {is: law_given, display: 合成可能集合に属する種類は、自分か上位の種類について合成（合成する事実か限定）が定義されている}
   part_display_explicit: {is: law_given, display: 部分の限定を持つ種類の表示名は、どちらが部分かを明示し、限定の向きと合う}
 
 facts:

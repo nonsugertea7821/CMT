@@ -30,6 +30,7 @@ exp.yaml  領域 exp。種類（nodes）、個体（individuals）、事実（fa
 """
 import argparse
 import collections
+import copy
 import itertools
 import json
 import re
@@ -49,7 +50,7 @@ def root_name():
 
 
 def config():
-    return yaml.safe_load(CONFIG.read_text(encoding="utf-8"))
+    return yload(CONFIG.read_text(encoding="utf-8"))
 
 
 def in_scope(key):
@@ -77,7 +78,10 @@ def err(msg):
     errors.append(msg)
 
 
-class _Unique(yaml.SafeLoader):
+_FAST = getattr(yaml, "CSafeLoader", yaml.SafeLoader)
+
+
+class _Unique(_FAST):
     """同じ対応表の中で、同じ語を2度書いたらエラーにする。"""
 
 
@@ -89,10 +93,21 @@ def _mapping(loader, node, deep=False):
             raise yaml.constructor.ConstructorError(None, None, f"識別子 {key} が重複している", k.start_mark)
         if isinstance(key, (str, int, bool)):
             seen.add(key)
-    return yaml.SafeLoader.construct_mapping(loader, node, deep)
+    return yaml.constructor.SafeConstructor.construct_mapping(loader, node, deep)
 
 
 _Unique.construct_mapping = _mapping
+
+
+_YCACHE = {}
+
+
+def yload(src):
+    """YAML を読む（C の読み込み）。同じ中身は一度だけ読み、写しを返す。"""
+    text = src.read() if hasattr(src, "read") else src
+    if text not in _YCACHE:
+        _YCACHE[text] = yaml.load(text, Loader=_FAST)
+    return copy.deepcopy(_YCACHE[text])
 
 
 def load(name):
@@ -176,7 +191,7 @@ def collect_kind_facts(T):
     （閉世界では書かれていない文は成り立たない。否定は法則の制約（v_require）で書く）。"""
     T.KF = []
     for name, dom in [(root_name(), "core")] + [(n, d) for d, n in domain_files().items()]:
-        D = yaml.safe_load((SPEC / name).read_text(encoding="utf-8"))
+        D = yload((SPEC / name).read_text(encoding="utf-8"))
         for i, f in enumerate(D.get("facts") or []):
             if not isinstance(f, dict) or not isinstance(f.get("is"), str) or not is_kind_fact(f, T, dom, D.get("individuals") or {}):
                 continue
@@ -196,15 +211,15 @@ def collect_kind_facts(T):
             if verb == "v_sum" or T.is_a(verb, "v_sum"):
                 sp = {p: space(T, k) for p, k in x.items()}
                 if None in sp.values() or len(set(sp.values())) > 1:
-                    err(f"法則 sum_same_space に反する: {where} の {x} は、同じ空間に属さない（空間: {sp}）")
-    for nid, n in T.N.items():   # 限定「合わせて X になる」も同じ
+                    err(f"法則 sum_same_space に反する: {where} の {x} は、同じ合成可能集合に属さない（{sp}）")
+    for nid, n in T.N.items():   # 限定「合成して X になる」も同じ
         for m in n.get("mod") or []:
             if isinstance(m, dict) and isinstance(m.get("of"), list) and m["of"][0] == "v_sum" and m.get("with"):
                 w = T.q(m["with"])
                 if space(T, nid) is None or space(T, nid) != space(T, w):
-                    err(f"法則 sum_same_space に反する: {nid} の限定「合わせて {w} になる」で、空間が {space(T, nid)} と {space(T, w)}")
+                    err(f"法則 sum_same_space に反する: {nid} の限定「合成して {w} になる」で、合成可能集合が {space(T, nid)} と {space(T, w)}")
 
-    # 法則 sum_defined: 空間に属する種類は、自分か上位の種類が、合わせる事実か限定に出てくる（合わせ方が定義されている）
+    # 法則 sum_defined: 合成可能集合に属する種類は、自分か上位の種類が、合成する事実か限定に出てくる（合成が定義されている）
     P = {k for verb, x in T.KF if verb == "v_sum" or T.is_a(verb, "v_sum") for k in x.values()}
     for nid, n in T.N.items():
         for m in n.get("mod") or []:
@@ -218,14 +233,14 @@ def collect_kind_facts(T):
         while k in T.N and k != sp and k not in P and hops < 80:
             k, hops = T.up(k), hops + 1
         if k not in P:
-            err(f"法則 sum_defined に反する: {nid} は空間 {sp} に属するが、合わせ方が定義されていない（自分も上位も、合わせる事実か限定に出てこない）")
+            err(f"法則 sum_defined に反する: {nid} は合成可能集合 {sp} に属するが、合成が定義されていない（自分も上位も、合成する事実か限定に出てこない）")
 
 
 def space(T, k):
-    """種類 k が属する空間: 合わせられる情報（summand）のすぐ下の種類。属さなければ None。"""
+    """種類 k が属する合成可能集合: k か上位のうち、合成可能集合（composable_set）のすぐ下の種類。なければ None。"""
     hops = 0
     while k in T.N and hops < 80:
-        if T.up(k) == "summand":
+        if T.up(k) == "composable_set":
             return k
         k, hops = T.up(k), hops + 1
     return None
@@ -393,34 +408,42 @@ class Facts:
                 yield xs
 
 
+def compile_atoms(atoms):
+    """前提の並びを (否定, 関係, 位置の並び) に直し、肯定を先に並べる。"""
+    return sorted((atom(f) for f in atoms), key=lambda a: a[0])
+
+
 def matches(atoms, F, V, b=None):
     """前提の並びを満たす束縛を挙げる。肯定の前提を先に、否定の前提をあとに見る。
     否定の前提は、書かれていない（導かれていない）こと。束縛されていない変数は「どれでも」と読む。same は名前が同じこと。"""
-    b = dict(b or {})
-    atoms = sorted(atoms, key=lambda f: bool(atom(f)[0]))
-    if not atoms:
+    yield from _match(compile_atoms(atoms), 0, F, V, dict(b or {}))
+
+
+def _match(cs, i, F, V, b, first=None):
+    """cs[i:] を満たす束縛。first があれば、その位置の前提は first（増えた文）の中から探す。"""
+    if i == len(cs):
         yield b
         return
-    neg, rel, args = atom(atoms[0])
-    val = lambda a: b.get(a) if a in V else a
+    neg, rel, args = cs[i]
     if rel == "same":
-        x, y = (val(a) for a in args)
+        x, y = (b.get(a) if a in V else a for a in args)
         if neg:
             if x is None or y is None or x != y:
-                yield from matches(atoms[1:], F, V, b)
+                yield from _match(cs, i + 1, F, V, b, first)
         elif x is not None and y is not None:
             if x == y:
-                yield from matches(atoms[1:], F, V, b)
+                yield from _match(cs, i + 1, F, V, b, first)
         elif x is not None or y is not None:
             known = x if x is not None else y
-            yield from matches(atoms[1:], F, V, b | {a: known for a in args if a in V and a not in b})
+            yield from _match(cs, i + 1, F, V, b | {a: known for a in args if a in V and a not in b}, first)
         return
-    pat = tuple(val(a) for a in args)
+    pat = tuple(b.get(a) if a in V else a for a in args)
+    src = first[1] if first is not None and first[0] == i else F
     if neg:
         if next(F.find(rel, pat), None) is None:
-            yield from matches(atoms[1:], F, V, b)
+            yield from _match(cs, i + 1, F, V, b, first)
         return
-    for xs in F.find(rel, pat):
+    for xs in src.find(rel, pat):
         nb, ok = dict(b), True
         for a, x in zip(args, xs):
             if a in V:
@@ -429,7 +452,7 @@ def matches(atoms, F, V, b=None):
                     break
                 nb[a] = x
         if ok:
-            yield from matches(atoms[1:], F, V, nb)
+            yield from _match(cs, i + 1, F, V, nb, first)
 
 
 def strata(rules):
@@ -458,15 +481,29 @@ def evaluate(rules, F, V):
     if bad:
         return [("strata", {}, f"否定を通して循環している関係 {bad}")]
     for level in sorted(set(st.values())):
-        layer = [(lid, l) for lid, l in rules if l["derive"] and all(st[atom(f)[1]] == level for f in l["derive"])]
-        changed = True
-        while changed:
-            changed = False
-            for lid, l in layer:
-                for b in list(matches(l["assume"], F, V)):
-                    for f in l["derive"]:
-                        _, rel, args = atom(f)
-                        changed |= F.add(rel, tuple(b.get(a, a) if a in V else a for a in args))
+        layer = [(lid, compile_atoms(l["assume"]), [atom(f)[1:] for f in l["derive"]])
+                 for lid, l in rules if l["derive"] and all(st[atom(f)[1]] == level for f in l["derive"])]
+        heads = lambda cs, b, outs: [(rel, tuple(b.get(a, a) if a in V else a for a in args)) for rel, args in outs]
+        delta = Facts()   # 増えた文だけを使う（semi-naive）。最初の一回は全部で当てる
+        for _, cs, outs in layer:
+            for b in list(_match(cs, 0, F, V, {})):
+                for rel, xs in heads(cs, b, outs):
+                    if not F.has(rel, xs):
+                        delta.add(rel, xs)
+        while delta.by:
+            for rel, xss in delta.by.items():
+                for xs in xss:
+                    F.add(rel, xs)
+            new = Facts()
+            for _, cs, outs in layer:
+                for i, (neg, rel, _) in enumerate(cs):
+                    if neg or rel == "same" or rel not in delta.by:
+                        continue
+                    for b in list(_match(cs, 0, F, V, {}, (i, delta))):
+                        for r, xs in heads(cs, b, outs):
+                            if not F.has(r, xs):
+                                new.add(r, xs)
+            delta = new
     out = []
     for lid, l in rules:
         for f in l["require"]:
@@ -1238,7 +1275,7 @@ def domain_files():
     for p in in_scope("include"):
         if p == root:
             continue
-        y = yaml.safe_load(p.read_text(encoding="utf-8")) or {}
+        y = yload(p.read_text(encoding="utf-8")) or {}
         if isinstance(y, dict) and "domain" in y:
             out[y["domain"]] = str(p.relative_to(SPEC))
     return out
@@ -1249,7 +1286,7 @@ def register_domains(O):
     依存は領域ごとに宣言する（クレートが自分の依存を書くのと同じ）。使う領域の順に並べて返す。"""
     files = domain_files()
     for dom, name in files.items():
-        y = yaml.safe_load((SPEC / name).read_text(encoding="utf-8"))
+        y = yload((SPEC / name).read_text(encoding="utf-8"))
         me = (y.get("individuals") or {}).get(dom) or {}
         if me.get("is") != "domain":
             err(f"{name}: 領域 {dom} を、個体 {{is: domain}} として宣言していない")
@@ -1290,13 +1327,13 @@ def check_parts(T):
         out, hops = [], 0
         while k in T.N and hops < 50:
             out += [m["with"] for m in T.N[k].get("mod") or []
-                    if isinstance(m, dict) and (m.get("of") == [verb, pos] or pos == "from" and m.get("of") == ["v_sum", "from"])
-                    and not m.get("neg")]   # 「合わせて X になる」も X の部分（法則 kpart_by_sum_part）
+                    if isinstance(m, dict) and m.get("with") and (m.get("of") == [verb, pos] or pos == "from" and m.get("of") == ["v_sum", "from"])
+                    and not m.get("neg")]   # 「合成して X になる」も X の部分（法則 kpart_by_sum_part）
             k, hops = T.up(k), hops + 1
         return out
     files = [(root_name(), "core")] + [(name, dom) for dom, name in domain_files().items()]
     for name, dom in files:
-        for f in yaml.safe_load((SPEC / name).read_text(encoding="utf-8")).get("facts") or []:
+        for f in yload((SPEC / name).read_text(encoding="utf-8")).get("facts") or []:
             if not isinstance(f, dict) or not isinstance(f.get("is"), str):
                 continue
             v = T.resolve(f["is"], dom)
@@ -1329,11 +1366,11 @@ def build():
     """体系を読み、検査して、(体系, ontology, 領域 subj, 測定の族, 文) を返す。誤りは errors に積む。
     領域のファイルは自分で見つけ、使う領域の順に読む。領域 exp の個体（測定・観察・仮説など）は、中身まで検査する。"""
     O = load(root_name())
-    natural_language_only_in_ja(root_name(), yaml.safe_load(open(SPEC / root_name())))
+    natural_language_only_in_ja(root_name(), yload(open(SPEC / root_name())))
     order = register_domains(O)
     Dm = {}
     for dom, name in order:
-        natural_language_only_in_ja(name, yaml.safe_load(open(SPEC / name)))
+        natural_language_only_in_ja(name, yload(open(SPEC / name)))
         Dm[dom] = (name, merge_domain(name, O))
     T = Ontology(O)
     _, D = Dm["exp"]
