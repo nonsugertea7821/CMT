@@ -14,7 +14,9 @@ from pathlib import Path
 
 _B = Path(__file__).resolve().parents[2] / "cscl" / "bootstrap"
 sys.path[:0] = [str(_B / "type_checker"), str(_B / "display")]
+sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 import type_checker  # noqa: E402
+import exp_check  # noqa: E402
 import display  # noqa: E402
 from display import ja as _ja_  # noqa: E402
 
@@ -28,7 +30,7 @@ DOM = "subj"
 
 class Renderer:
     def __init__(self):
-        self.T, self.O, self.S, _, _ = type_checker.build()
+        self.T, self.O, self.S, _, _ = exp_check.build()
         if type_checker.errors:
             raise SystemExit("体系の検査に失敗: " + "; ".join(type_checker.errors[:3]))
         self.by_ja = {n.get("display"): nid for nid, n in self.T.N.items() if nid.startswith(DOM + ".")}
