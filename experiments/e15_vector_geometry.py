@@ -79,6 +79,10 @@ def main():
             "near_actual": {"mean_norm": torch.stack(list(d_near.values())).norm(dim=-1).mean().item(), "base_norm": hn},
             "e12_embed": ratio(e12, en)}
     size["near_actual"]["ratio"] = size["near_actual"]["mean_norm"] / hn
+    per_concept = {c: {"e3": e3[c].float().norm().item() / hn, "e3x": e3x[c].float().norm().item() / hn,
+                       "e14": e14[c].float().norm().item() / hn, "e12": e12[c].float().norm().item() / en,
+                       "near": sum(d_near[it["id"]].norm().item() for it in items if it["defs"][0] == c)
+                       / sum(1 for it in items if it["defs"][0] == c) / hn} for c in concepts}
     print("[1] |v|/|h|")
     for k, v in size.items():
         print(f"  {k:13s} |v|={v['mean_norm']:.2f}  |h|={v['base_norm']:.2f}  比={v['ratio']:.3f}")
@@ -86,7 +90,7 @@ def main():
     # 2. E3 の v と Δnear の cos（そのまま／中心化）
     mean_near = torch.stack(list(d_near.values())).mean(0)
     mean_e3 = torch.stack([e3[c].float().view(-1) for c in concepts]).mean(0)
-    cos = {}
+    cos, rows = {}, {it["id"]: {"group": it["group"]} for it in items}
     for g in args.groups:
         raw, cen, own_vs_other = [], [], []
         for it in items:
@@ -99,6 +103,7 @@ def main():
             others = [F.cosine_similarity(e3[o].float().view(-1) - mean_e3, dn - mean_near, dim=0).item()
                       for o in concepts if o != c]
             own_vs_other.append(cen[-1] - sum(others) / len(others))
+            rows[it["id"]] |= {"cos_raw": raw[-1], "cos_centered": cen[-1], "cos_own_minus_other": own_vs_other[-1]}
         cos[g] = {"raw": sum(raw) / len(raw), "centered": sum(cen) / len(cen),
                   "centered_own_minus_other": sum(own_vs_other) / len(own_vs_other)}
     # 概念間の E3 ベクトルどうしの cos（共通成分の大きさ）
@@ -119,6 +124,8 @@ def main():
         gi = [it for it in items if it["group"] == g]
         for cname, vs in (("own", e3), ("swapped", shifted)):
             rs = [eval_item(r, inj, it, defs, vs, False, True) for it in gi]
+            for it, x in zip(gi, rs):
+                rows[it["id"]][cname] = x
             swap[g][cname] = {"acc": sum(x["margin"] > 0 for x in rs) / len(rs),
                               "acc_both": sum(x["both"] for x in rs) / len(rs),
                               "mean_margin": sum(x["margin"] for x in rs) / len(rs)}
@@ -128,7 +135,7 @@ def main():
             print(f"  {g} {k:8s} acc={s['acc']:.2f}  both={s['acc_both']:.2f}  m={s['mean_margin']:+.2f}")
 
     (res_dir / f"e15_{name}_L{args.layer}.json").write_text(json.dumps(
-        {"args": vars(args), "size": size, "cos": cos, "e3_offdiag_cos": off, "summary": swap},
+        {"args": vars(args), "items": rows, "concepts": per_concept, "size": size, "cos": cos, "e3_offdiag_cos": off, "summary": swap},
         ensure_ascii=False, indent=1), encoding="utf-8")
 
 
