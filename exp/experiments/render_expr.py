@@ -1,10 +1,10 @@
-"""概念式を、モデルに与える文字列に変換する（表示。正本は cscl.yaml の範囲の体系）。
+"""概念式を、モデルに与える文字列に変換する（実験の道具。表示の変換そのものは cscl/bootstrap/display）。
 
 1行に1つの種類を書く:  名前 ＝ 上位 ∧ 限定
 限定は 動詞(始点, 終点) の形で、自分の位置を「これ」と書く。否定は ¬、量の条件は 相手<25 のように書く。
 題材の領域 subj の種類は、式の中で参照している subj の種類と事実までたどって並べる。
 
-使い方: python cscl/bootstrap/render/render_expr.py 顧客 在庫
+使い方: python exp/experiments/render_expr.py 顧客 在庫
 """
 import re
 import sys
@@ -12,39 +12,18 @@ import sys
 import yaml
 from pathlib import Path
 
-sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "type_checker"))
+_B = Path(__file__).resolve().parents[2] / "cscl" / "bootstrap"
+sys.path[:0] = [str(_B / "type_checker"), str(_B / "display")]
 import type_checker  # noqa: E402
+import display  # noqa: E402
+from display import ja as _ja_  # noqa: E402
 
-OPS = {"lt": "<", "le": "≤", "gt": ">", "ge": "≥"}
+
+def _ja(T, x, S):   # 実験のスクリプト（e13）が使う形
+    return _ja_(T, x, S["individuals"])
+
+
 DOM = "subj"
-
-
-def _ja(T, x, S):
-    if x in T.N:
-        return T.N[x].get("display", x)
-    return (S["individuals"].get(x) or {}).get("display", x)
-
-
-def _val(v):
-    if isinstance(v, dict):
-        (op, a), = v.items()
-        if op == "between":
-            return f"{a[0]}〜{a[1]}"
-        return f"{OPS[op]}{a}"
-    return f"={v}"
-
-
-def _mod(T, m, S):
-    verb, pos = m["of"]
-    other = _ja(T, m["with"], S) if "with" in m else "何か"
-    for ax, v in (m.get("at") or {}).items():
-        other += f"（{'個数' if ax == 'count' else '順番' if ax == 'order' else ''}{_val(v)}）"
-    if m.get("quant") == "all":
-        other = "すべての" + other
-    me = "これ"
-    args = {"from": (me, other), "to": (other, me), "new": ("何か", "何か")}[pos]
-    s = f"{_ja(T, verb, S)}({args[0]}, {args[1]})"
-    return ("¬" if m.get("neg") else "") + s
 
 
 class Renderer:
@@ -55,28 +34,10 @@ class Renderer:
         self.by_ja = {n.get("display"): nid for nid, n in self.T.N.items() if nid.startswith(DOM + ".")}
 
     def line(self, nid):
-        T, n = self.T, self.T.N[nid]
-        parts = []
-        if isinstance(n.get("extends"), str):
-            parts.append(_ja(T, n["extends"], self.S))
-        mods = n.get("mod") or []
-        for m in (mods if isinstance(mods, list) else [mods]):
-            parts.append(_mod(T, m, self.S) if isinstance(m, dict) else _ja(T, m, self.S))
-        if "axis" in n:
-            parts.append("量")
-        return f"{n['display']} ＝ " + " ∧ ".join(parts)
+        return display.line(self.T, nid, self.S["individuals"])
 
     def refs(self, nid):
-        n, out = self.T.N[nid], []
-        if isinstance(n.get("extends"), str):
-            out.append(n["extends"])
-        mods = n.get("mod") or []
-        for m in (mods if isinstance(mods, list) else [mods]):
-            if isinstance(m, dict):
-                out += [m["with"]] if "with" in m else []
-                out.append(m["of"][0])
-        out += [n[k] for k in ("from", "to", "new_kind") if isinstance(n.get(k), str)]
-        return out
+        return display.refs(self.T, nid)
 
     def facts(self, nids):
         out = []
@@ -84,7 +45,7 @@ class Renderer:
             if any(f.get(k) in nids for k in ("from", "to")):
                 v = type_checker.qualify(f["is"], self.S["_local"], DOM)
                 a, b = (type_checker.qualify(f[k], self.S["_local"], DOM) for k in ("from", "to"))
-                out.append(f"{_ja(self.T, v, self.S)}({_ja(self.T, a, self.S)}, {_ja(self.T, b, self.S)})")
+                out.append(display.fact(self.T, v, a, b, self.S["individuals"]))
         return out
 
     def text(self, word, mask=False, opaque=False, inds=False):
