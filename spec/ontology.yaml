@@ -52,7 +52,8 @@ nodes:
   v_depend: {display: 依存する, extends: occurrent, from: continuant, to: continuant, holds: [{is: depend, from: from, to: to}]}
   v_compose: {display: 部分になる, extends: occurrent, from: continuant, to: continuant, holds: [{is: part, from: from, to: to}]}
   v_collect: {display: 成員の種類にする, extends: occurrent, from: kind_collection, to: continuant, holds: [{is: refer, from: from, to: to}]}
-  v_close: {display: について閉じている, extends: occurrent, from: kind_collection, to: occurrent, holds: [{is: refer, from: from, to: to}]}
+  verb_ref: {display: 動詞を指すもの, extends: information_entity, mod: {of: [v_refer, from], with: occurrent}}   # 位置の型。この位置には動詞そのものが来る
+  v_close: {display: について閉じている, extends: occurrent, from: kind_collection, to: verb_ref, holds: [{is: refer, from: from, to: to}]}
   v_sum: {display: 合成する, extends: occurrent, from: summand, to: summand, new_kind: summand,
           holds: [{is: part, from: from, to: new}, {is: part, from: to, to: new}, {is: depend, from: new, to: from}, {is: depend, from: new, to: to}]}
   v_stage: {display: 時間的な部分になる, extends: occurrent, from: occurrent, to: occurrent, holds: [{is: part, from: from, to: to}]}
