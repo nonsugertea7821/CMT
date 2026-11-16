@@ -72,10 +72,10 @@ def build_delta(tok, text: str, vectors: dict, d_model: int):
     return torch.tensor([ids]), delta
 
 
-def train_vector(r, inj, label, definition, steps, lr, objective="def", qa=None, budget=1024):
-    """objective: def = 定義文の暗唱 / qa = 適用例の二択 / defqa = 両方"""
+def train_vector(r, inj, label, definition, steps, lr, objective="def", qa=None, budget=1024, init=None):
+    """objective: def = 定義文の暗唱 / qa = 適用例の二択 / defqa = 両方。init があれば、そこから始める（既定はゼロ）"""
     d_model = r.model.config.hidden_size
-    v = torch.zeros(d_model, requires_grad=True)
+    v = (init.clone() if init is not None else torch.zeros(d_model)).requires_grad_(True)
     opt = torch.optim.Adam([v], lr=lr)
     pairs = []  # (プロンプト, 続き)
     if "def" in objective:
@@ -172,6 +172,8 @@ def main():
     ap.add_argument("--limit", type=int, default=0, help="概念数の上限（試行用）")
     ap.add_argument("--objective", choices=["def", "qa", "defqa"], default="def")
     ap.add_argument("--tag", default="")
+    ap.add_argument("--seed", type=int, default=None, help="与えると、初期値を大きさ --init-norm の乱数の向きにする（再現性の確認用）")
+    ap.add_argument("--init-norm", type=float, default=10.0)
     ap.add_argument("--def-source", choices=["ja", "expr"], default="ja",
                     help="定義の出どころ。expr は概念式（spec/subj.yaml に書いたまま）を、暗唱にも near にも使う")
     args = ap.parse_args()
@@ -204,7 +206,12 @@ def main():
         if c in vectors:
             continue
         t0 = time.time()
-        v, losses = train_vector(r, inj, c, defs[c], args.steps, args.lr, args.objective, qa.get(c))
+        init = None
+        if args.seed is not None:
+            g = torch.Generator().manual_seed(args.seed * 1000 + concepts.index(c))
+            init = torch.randn(r.model.config.hidden_size, generator=g)
+            init = init / init.norm() * args.init_norm
+        v, losses = train_vector(r, inj, c, defs[c], args.steps, args.lr, args.objective, qa.get(c), init=init)
         vectors[c] = v
         train_log[c] = {"loss_first": losses[0], "loss_last": losses[-1], "norm": v.norm().item()}
         print(
