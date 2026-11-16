@@ -204,6 +204,22 @@ def collect_kind_facts(T):
                 if space(T, nid) is None or space(T, nid) != space(T, w):
                     err(f"法則 sum_same_space に反する: {nid} の限定「合わせて {w} になる」で、空間が {space(T, nid)} と {space(T, w)}")
 
+    # 法則 sum_defined: 空間に属する種類は、自分か上位の種類が、合わせる事実か限定に出てくる（合わせ方が定義されている）
+    P = {k for verb, x in T.KF if verb == "v_sum" or T.is_a(verb, "v_sum") for k in x.values()}
+    for nid, n in T.N.items():
+        for m in n.get("mod") or []:
+            if isinstance(m, dict) and isinstance(m.get("of"), list) and m["of"][0] == "v_sum" and not m.get("neg"):
+                P |= {nid} | ({T.q(m["with"])} if m.get("with") else set())
+    for nid in T.N:
+        sp = space(T, nid)
+        if sp is None or nid == sp or T.is_verb(nid):
+            continue
+        k, hops = nid, 0
+        while k in T.N and k != sp and k not in P and hops < 80:
+            k, hops = T.up(k), hops + 1
+        if k not in P:
+            err(f"法則 sum_defined に反する: {nid} は空間 {sp} に属するが、合わせ方が定義されていない（自分も上位も、合わせる事実か限定に出てこない）")
+
 
 def space(T, k):
     """種類 k が属する空間: 合わせられる情報（summand）のすぐ下の種類。属さなければ None。"""
@@ -463,7 +479,7 @@ def evaluate(rules, F, V):
 # ---------------------------------------------------------------- 概念の体系
 # 法則のうち、この検査が当てはめるもの / 実行の検査（run_spec.py）が当てはめるもの
 # 規則で書いた法則（law_rule）は、実行の検査がその規則を読んで当てはめる。ここには、意味を検査が与える法則（law_given）だけを挙げる。
-LAWS_HERE = {"part_fact_direction", "part_display_explicit", "sum_same_space"}
+LAWS_HERE = {"part_fact_direction", "part_display_explicit", "sum_same_space", "sum_defined"}
 LAWS_RUN = {"unique_names", "step", "frame", "halt"}
 
 
