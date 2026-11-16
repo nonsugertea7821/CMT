@@ -186,8 +186,8 @@ nodes:
   symbolic_membership: {display: 事実の判定と体系での帰属の決定, extends: inference, mod: {of: [v_involve, from], with: system}}
   contrast_vector: {display: 定義の有無による活性化の差のベクトル, extends: concept_vector, mod: {of: [v_depend, from], with: definition_text}}
   swapped_concept_vector: {display: 他の語の概念ベクトル, extends: concept_vector, mod: {of: [v_depend, from], with: word, neg: true}}
-  common_vector_component: {display: 概念ベクトルの共通成分, extends: concept_vector, mod: {of: [v_compose, from], with: concept_vector}}
-  specific_vector_component: {display: 概念ベクトルの固有成分, extends: concept_vector, mod: {of: [v_depend, from], with: word}}
+  common_vector_component: {display: 概念ベクトルの共通成分, extends: state_shift, mod: {of: [v_sum, from], with: concept_vector}}
+  specific_vector_component: {display: 概念ベクトルの固有成分, extends: state_shift, mod: {of: [v_depend, from], with: word}}
   sense_difference_vector: {display: 語の意味の候補どうしの差のベクトル, extends: concept_vector, mod: {of: [v_depend, from], with: prior_meaning}}
   opaque_expression: {display: core 以外の識別子を無意味にした概念式, extends: concept_expression, mod: {of: [v_compose, to], with: hidden_word}}
   text_and_vector: {display: 文章と概念ベクトルの併用, extends: text_injection, mod: {of: [is, from], with: concept_vector}}
@@ -214,7 +214,8 @@ nodes:
   attention: {display: 注意機構, extends: artifact_compute_from, mod: {of: [v_compose, from], with: layer}}
   layer_output: {display: 層の出力, extends: information_entity, mod: {of: [v_compute, to], with: layer}}
   hidden_state: {display: 隠れ状態, extends: layer_output, mod: {of: [v_depend, from], with: label_token_positions}}
-  state_shift: {display: 隠れ状態のずれ, extends: information_entity, mod: {of: [v_compose, from], with: hidden_state}}
+  state_shift: {display: 隠れ状態のずれ, extends: information_entity, mod: {of: [v_sum, from], with: shifted_hidden_state}}
+  shifted_hidden_state: {display: ずれを足した隠れ状態, extends: information_entity, mod: {of: [v_compose, to], with: hidden_state}}
   shift_unseen_by_layer: {display: 層から分けて見えない隠れ状態のずれ, extends: state_shift, mod: {of: [v_see, to], with: layer, neg: true}}
   term_server: {display: 用語サーバー, extends: artifact, mod: {of: [v_judge_definition, from]}}
   model_design: {display: モデルについての設計, extends: information_entity_design_to, mod: {of: [v_refer, from], with: model}}
