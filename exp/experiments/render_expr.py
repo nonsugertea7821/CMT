@@ -4,7 +4,7 @@
 限定は 動詞(始点, 終点) の形で、自分の位置を「これ」と書く。否定は ¬、量の条件は 相手<25 のように書く。
 題材の領域 subj の種類は、式の中で参照している subj の種類と事実までたどって並べる。
 
-使い方: python cscl/bootstrap/render/render_expr.py 顧客 在庫
+使い方: python exp/experiments/render_expr.py 顧客 在庫
 """
 import re
 import sys
@@ -12,7 +12,7 @@ import sys
 import yaml
 from pathlib import Path
 
-sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "type_checker"))
+sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "cscl" / "bootstrap" / "type_checker"))
 import type_checker  # noqa: E402
 
 OPS = {"lt": "<", "le": "≤", "gt": ">", "ge": "≥"}

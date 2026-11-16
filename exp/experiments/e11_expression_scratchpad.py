@@ -4,7 +4,7 @@
   direct  番号だけを即答させる（E10 の expr と同じ）
   write   先に、事例を個体・事実・帰属の行で書かせ、そのあとで番号を答えさせる
 
-記録: 正答の margin、書いた行、行ごとの検査の結果（cscl/bootstrap/type_checker/check_line.py）。
+記録: 正答の margin、書いた行、行ごとの検査の結果（check_line.py）。
 中断しても、済んだ設問から再開する。
 
 使い方:
@@ -15,7 +15,7 @@ import json
 import sys
 
 ROOT_TOOLS = __import__("pathlib").Path(__file__).resolve().parents[2] / "cscl" / "bootstrap"
-sys.path[:0] = [str(ROOT_TOOLS / "render"), str(ROOT_TOOLS / "type_checker")]
+sys.path.insert(0, str(ROOT_TOOLS.parent.parent / "exp" / "experiments"))
 from e1_context_injection import ROOT, Runner, question_text  # noqa: E402
 from e9_scratchpad import chat, logits_12, reason  # noqa: E402
 import check_line  # noqa: E402

@@ -14,7 +14,7 @@ from pathlib import Path
 
 import yaml
 
-sys.path.insert(0, str(Path(__file__).parent))
+sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "cscl" / "bootstrap" / "type_checker"))
 import type_checker  # noqa: E402
 
 DOM = "subj"

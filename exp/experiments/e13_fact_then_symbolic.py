@@ -26,7 +26,7 @@ import torch
 
 from e1_context_injection import ROOT, Runner, question_text
 
-sys.path.insert(0, str(ROOT.parent.parent / "cscl" / "bootstrap" / "render"))
+sys.path.insert(0, str(ROOT))
 import render_expr  # noqa: E402
 
 PAT = re.compile(r"^(.+)は、(.+)に当たるか。$")

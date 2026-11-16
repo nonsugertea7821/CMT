@@ -183,7 +183,7 @@ def main():
     items = [it for it in data["items"] if it["group"] in args.groups]
     if args.def_source == "expr":
         import sys
-        sys.path.insert(0, str(ROOT.parent.parent / "cscl" / "bootstrap" / "render"))
+        sys.path.insert(0, str(ROOT))
         import render_expr
         R = render_expr.Renderer()
         defs = {c: R.text(c, mask=True) for it in items for c in it["defs"]}

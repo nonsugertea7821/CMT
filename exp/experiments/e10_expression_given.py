@@ -20,7 +20,7 @@ import time
 from pathlib import Path
 
 ROOT = Path(__file__).parent
-sys.path.insert(0, str(ROOT.parent.parent / "cscl" / "bootstrap" / "render"))
+sys.path.insert(0, str(ROOT))
 from e1_context_injection import Runner  # noqa: E402
 import render_expr  # noqa: E402
 
