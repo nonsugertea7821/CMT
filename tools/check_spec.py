@@ -163,6 +163,38 @@ def merge_domain(name, O):
 MANY = {"scope", "evidence", "against", "limitation", "supersedes", "basis", "tests", "metric", "any", "domain", "premise", "derived", "required", "information_entity"}   # 検査が並びとして読む関係
 
 
+def is_kind_fact(f, T, dom, I):
+    """位置がすべて種類（個体でなく、動詞でないノード）の事実。閉世界では、種類についての文は「その種類のすべてについて」と読む。"""
+    ps = [f.get(p) for p in ("from", "to", "new") if p in f]
+    return "at" not in f and len(ps) >= 2 and all(
+        isinstance(x, str) and x not in I and x not in T.I and (T.resolve(x, dom) or x) in T.N
+        and not T.is_verb(T.resolve(x, dom) or x) for x in ps)
+
+
+def collect_kind_facts(T):
+    """種類どうしの事実を、すべての領域から集めて T.KF に置く。型を確かめる。否定は書かせない
+    （閉世界では書かれていない文は成り立たない。否定は法則の制約（v_require）で書く）。"""
+    T.KF = []
+    for name, dom in [(root_name(), "core")] + [(n, d) for d, n in domain_files().items()]:
+        D = yaml.safe_load((SPEC / name).read_text(encoding="utf-8"))
+        for i, f in enumerate(D.get("facts") or []):
+            if not isinstance(f, dict) or not isinstance(f.get("is"), str) or not is_kind_fact(f, T, dom, D.get("individuals") or {}):
+                continue
+            where = f"{name} facts[{i}]"
+            verb = T.resolve(f["is"], dom)
+            if not T.is_verb(verb):
+                err(f"{where}: {f['is']} は動詞でない")
+                continue
+            if f.get("neg"):
+                err(f"{where}: 種類どうしの事実は否定にしない（閉世界。否定は法則の制約で書く）")
+                continue
+            x = {p: T.resolve(f[p], dom) or f[p] for p in ("from", "to", "new") if p in f}
+            for p, k in x.items():
+                if not T.is_a(k, T.spot_type(verb, p)):
+                    err(f"{where}: {p} の種類 {k} が、動詞 {verb} のその位置（{T.spot_type(verb, p)}）に当たらない")
+            T.KF.append((verb, x))
+
+
 def gather(D, T, name):
     """事実を、個体ごとに集める。検査は、集めた形（個体 → {関係の名: 値}）を読む。
     事実は動詞の個体: {is: 動詞, from, to, new, at, neg}。位置には名前を付ける。
@@ -177,6 +209,8 @@ def gather(D, T, name):
             err(f"{where}: 事実は {{is: 動詞, from: 始点, to: 終点}} で書き、語は grammar.facts のものだけ")
             continue
         verb = q(f["is"])
+        if is_kind_fact(f, T, dom, I):
+            continue   # 種類どうしの事実。collect_kind_facts が読む
         if not T.is_verb(verb):
             err(f"{where}: {f['is']} は動詞でない")
             continue
@@ -623,6 +657,11 @@ class Ontology:
                 add("cmp", nid, "cmp " + dump(x))
             for r in self.refs(nid):
                 add("refer", nid, r)
+        for j, (verb, x) in enumerate(getattr(self, "KF", [])):   # 種類どうしの事実
+            t = f"kind_fact {j}"
+            add("of", t, verb)
+            for p, k in x.items():
+                add(p, t, k)
         for i in self.I:
             add("domain", i, "core" if i in (self.O.get("individuals") or {}) else self.Isubj.get(i, self.Idom))
         for aid, a in self.AX.items():
@@ -1289,6 +1328,7 @@ def build():
         others[dom] = (name, X, ind)
     for dom, (name, X, ind) in others.items():
         gather({"domain": dom, "_local": X["_local"], "individuals": ind, "facts": X.get("facts")}, T, name)
+    collect_kind_facts(T)
     T.check()
     T.check_grammar()
     T.check_domains()
