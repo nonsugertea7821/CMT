@@ -1,154 +1,50 @@
-# 概念の体系。正本。cscl/bootstrap/type_checker/type_checker.py で検査する。
-# このファイル全体が体系である。体系によって制御される書き方が概念体系制御言語（CSCL、Concept System Control Language）で、概念式は、体系が持つものの一部。
-# 自然言語の文は、ここから変換して得る表示で、正本ではない。変換は LLM が行ってもシステムが行ってもよい。
-#
-# 基礎: 持続体どうしの状態の関係 5個（法則を持つ）と、体系そのものの行為 1個（について述べる）。
-#       「について述べる」は体系自身がしている行為なので、体系の中では定義しない。限定（修飾）はできる。
-# ノード: すべて、持続体か生起体の下にある。説明文（gloss）を持つのは最上位の2つだけ。
-# 動詞: 生起体のノードで、両端（from, to）を持つ。関係に当たる。
-#       静的な動詞は holds（成り立っている状態の関係）、動的な動詞は pre / post（起こる前後の状態の関係）で書く。
-#       new は、始点でも終点でもない第三のもの。new_kind はその種類。
-#       動詞の下位は、端の種類を狭めて書く（extends: 動詞, from / to: 狭めた種類）。
-# 形:   form: [動詞, 位置]。位置は from / to / new。その位置に来るもの全体。
-# 修飾語: of: [動詞, 位置]。その位置を占めているという性質。質か実現可能体の下に置く。
-# 上位: extends: 上位。1つだけ。階層を降りるたびに限定が増える（法則 monotone, specific）。
-# 修飾: mod: 修飾語 | {of: [動詞, 位置], with: もう一方の端の中身, neg: 否定, quant: all | any, at: {軸: 値}}
-#       1つのノードが足せる限定は1つだけ（法則 single）。並べて書くことはしない。2つ以上の限定は、階層を降りて重ねる。
-#       2つの種類の両方に当たるもの（AND）は、関係を省かずに「A のうち、B に属するもの」と書く:
-#       {extends: A, mod: {of: [is, from], with: B}}
-#       「その動詞の、その位置を占めるもの」に限定する。
-# 分類: 軸は関係を抽象として見たもの、値はその具体。値は、固定値か、関数（真偽を返す範囲の判定式）。
-#   at:  修飾の中で、軸の値を置く。個数や順番。
-#   val: 概念そのものが取る値（{軸: 値}）。文字列や真偽。
-#   cmp: 2つのものを同じ軸の上で比べる（{axis: 軸, a: 実体, b: 実体, rel: same | differ}）。
-#   axis: 質が、どの軸の値を取る大きさであるか。
-# 役割: 実現可能体のうち、定義に依存するもの（担い手の質に依存するのが傾向性）。
-#       個々の役割は、根拠となる定義を持つ。
+# 構文（syntax）。CSCL が自分の書き方について述べる語: 文法（grammar）、式の部品、法則、節、値と関数、論理の語、領域。
+# 存在論の上に定義する。grammar に並べた語は、すべてこの層かその下のノードに当たる。
 
-base:
-  exists: {display: 在る, arity: 1}
-  depend: {display: 依存する, arity: 2}
-  part: {display: 部分である, arity: 2}
-  after: {display: 後ろにある, arity: 2}
-  involve: {display: 生起体に持続体が関わる, arity: 2}
-  same: {display: 同じである, arity: 2}
-  refer: {display: について述べる, arity: 2, system_act: true}
+domain: syntax
 
-# 法則（公理）と名前空間（領域）は、個体と事実で書く（このファイルの individuals と facts）。
-axes:
-  count: {display: 個数, source: any, value: number}   # どの関係についても「いくつと結ばれるか」を見られる
-  ratio: {display: 割合, source: part, value: number}
-  amount: {display: 量, source: any, value: number}   # 質の大きさ。単位は質の種類が決める
-  order: {display: 順番, source: after, value: number}
-  text: {display: 文字列, source: refer, value: literal}
-  truth: {display: 真偽, source: refer, value: [true, false]}
+grammar:
+  grammar: [system, nodes, mod, cmp, base, axes, run, position, rel, function, value, logic, runtime, domain, individuals, facts, grammar]
+  system: [base, axes, nodes, individuals, facts, runtime, grammar]
+  nodes: [display, gloss, extends, from, to, new_kind, holds, pre, post, form, of, neg, mod, val, cmp, axis]
+  mod: [of, with, neg, quant, at]
+  cmp: [axis, a, b, rel]
+  base: [display, arity, system_act]
+  axes: [display, source, value]
+  run: [individuals, facts, steps, expect, halted]   # 実行の記録（exp/tests/*.yaml）
+  position: [from, to, new]
+  rel: [same, differ]
+  function: [gt, ge, lt, le]
+  value: [number, literal]
+  logic: [not, all, any, between]   # true と false は、真偽の軸の値
+  runtime: [world, pre_rule, post_rule, law_check, binding, choice, progress]
+  domain: [domain, nodes, individuals, facts]   # 領域のファイル（exp/src/exp.yaml）
+  individuals: [is, display, val]
+  facts: [is, from, to, new, at, neg]   # 事実は動詞の個体。位置に名前を付けて書く。holds / pre / post も同じ形
 
 nodes:
-  # ===== 最上位。説明文（gloss）を持つのは、この2つだけ =====
-  continuant: {display: 持続体, gloss: 時間を通じて同一性を保って存在するもの}
-  occurrent: {display: 生起体, gloss: 時間の中で起こり、展開するもの}
-
-  # ===== 動詞・静的。holds に、成り立っている状態の関係を書く =====
-  v_depend: {display: 依存する, extends: occurrent, from: continuant, to: continuant, holds: [{is: depend, from: from, to: to}]}
-  v_compose: {display: 部分になる, extends: occurrent, from: continuant, to: continuant, holds: [{is: part, from: from, to: to}]}
   v_collect: {display: 成員の種類にする, extends: occurrent, from: kind_collection, to: continuant, holds: [{is: refer, from: from, to: to}]}
   verb_ref: {display: 動詞を指すもの, extends: information_entity, mod: {of: [v_refer, from], with: occurrent}}   # 位置の型。この位置には動詞そのものが来る
-  v_stage: {display: 時間的な部分になる, extends: occurrent, from: occurrent, to: occurrent, holds: [{is: part, from: from, to: to}]}
-  v_come_after: {display: 後ろに置かれる, extends: occurrent, from: continuant, to: continuant, holds: [{is: after, from: from, to: to}]}
-  v_refer: {display: 述べる, extends: occurrent, from: continuant, to: any, holds: [{is: refer, from: from, to: to}]}
-  v_agree: {display: 一致する, extends: occurrent, from: continuant, to: continuant, holds: [{is: refer, from: from, to: new}, {is: refer, from: to, to: new}]}
   v_measure: {display: 測る, extends: occurrent, from: continuant, to: any, holds: [{is: refer, from: from, to: to}, {is: depend, from: from, to: to}]}
-  v_express: {display: で書かれる, extends: occurrent, from: continuant, to: continuant, holds: [{is: depend, from: from, to: to}, {is: part, from: new, to: from}, {is: part, from: new, to: to}]}
-  v_involve: {display: に関わらせる, extends: occurrent, from: occurrent, to: continuant, holds: [{is: involve, from: from, to: to}]}
-  v_perform: {display: 行う, extends: occurrent, from: continuant, to: occurrent, holds: [{is: involve, from: to, to: from}]}
-  v_trigger: {display: 引き起こす, extends: occurrent, from: any, to: occurrent, holds: [{is: after, from: to, to: from}, {is: depend, from: to, to: from}]}
-
-  # ===== 動詞・大きさを比べる。「後ろに置かれる」が、より大きい、に当たる =====
-  v_come_before: {display: 前に置かれる, extends: occurrent, from: continuant, to: continuant, holds: [{is: after, from: to, to: from}]}
-  v_not_before: {display: 前には置かれない, extends: occurrent, from: continuant, to: continuant, holds: [{is: after, from: to, to: from, neg: true}]}
-  v_not_after: {display: 後ろには置かれない, extends: occurrent, from: continuant, to: continuant, holds: [{is: after, from: from, to: to, neg: true}]}
-  v_level: {display: 同じ位置にある, extends: occurrent, from: continuant, to: continuant, holds: [{is: after, from: from, to: to, neg: true}, {is: after, from: to, to: from, neg: true}]}
-
-  # ===== 動詞・動的。pre と post に、起こる前後の状態の関係を書く =====
-  v_design: {display: 設計する, extends: occurrent, from: continuant, to: continuant, pre: [{is: exists, from: to, neg: true}], post: [{is: exists, from: to}]}
-  v_compute: {display: 計算する, extends: occurrent, from: continuant, to: any, pre: [{is: exists, from: to, neg: true}], post: [{is: exists, from: to}]}
-  v_learn: {display: 学習する, extends: occurrent, from: continuant, to: continuant, new_kind: realizable_entity,
-            pre: [{is: exists, from: new, neg: true}], post: [{is: exists, from: new}, {is: depend, from: new, to: from}, {is: refer, from: new, to: to}]}
-  v_freeze: {display: 固定する, extends: occurrent, from: continuant, to: continuant, new_kind: realizable_entity,
-             pre: [{is: exists, from: new}, {is: depend, from: new, to: to}], post: [{is: exists, from: new, neg: true}]}
-
-  # ===== 文の骨組み。何が（s）、どう関係し（p）、何に（o）。p は、すべての関係の上位 =====
-  p: {display: 関係づける, extends: occurrent, from: any, to: any, holds: [{is: exists, from: from}, {is: exists, from: to}]}
-  s: {display: 始点に来るもの, form: [p, from]}
-  o: {display: 終点に来るもの, form: [p, to]}
-
-  # ===== BFO の区別 =====
-  dependent: {display: 依存するもの, form: [v_depend, from]}
-  specifically_dependent_continuant: {display: 特定依存持続体, extends: dependent, mod: {of: [v_depend, from], at: {count: 1}}}
-  generically_dependent_continuant: {display: 汎用依存持続体, extends: dependent, mod: {of: [v_depend, from], quant: any}}
-  realizable_entity: {display: 実現可能体, extends: specifically_dependent_continuant, mod: {of: [v_involve, to]}}
-  quality: {display: 質, extends: specifically_dependent_continuant, mod: {of: [v_involve, to], neg: true}}
-  role: {display: 役割, extends: realizable_entity, mod: {of: [v_depend, from], with: definition}}
-  magnitude: {display: 大きさ, extends: quality, mod: {of: [v_come_after, from], with: quality}}
-  process: {display: 過程, extends: occurrent, mod: {of: [v_stage, to]}}
-
-  # ===== 修飾語。ある動詞の、ある位置を占めているという性質 =====
-  frozen: {display: 固定されている, extends: quality, of: [v_freeze, to]}
-  learned: {display: 学習で得られた, extends: quality, of: [v_learn, new]}
 
   # ===== 情報と言語 =====
   # ===== 種類の集まり（2階）。成員は種類。集まりの性質は、成員の種類の下位には受け継がれない
   kind_collection: {display: 種類の集まり, extends: information_entity, mod: {of: [v_collect, from]}}
-  information_entity: {display: 情報, extends: generically_dependent_continuant, mod: {of: [v_refer, from]}}
-  language: {display: 言語, extends: information_entity, mod: {of: [v_express, to]}}
   system: {display: 体系, extends: information_entity, mod: {of: [v_compose, to], with: concept_expression, at: {count: {gt: 1}}}}
   cscl: {display: 概念体系制御言語, extends: language, mod: {of: [v_depend, from], with: system}}
   definition_compose_from_system: {display: 体系の部分である定義, extends: definition, mod: {of: [v_compose, from], with: system}}
   concept_expression: {display: 概念式, extends: definition_compose_from_system, mod: {of: [v_express, from], with: cscl}}
-  natural_language: {display: 自然言語, extends: language, mod: {of: [v_design, to], neg: true}}
-  information_entity_compose_to_word: {display: 語を部分に持つ情報, extends: information_entity, mod: {of: [v_compose, to], with: word}}
-  sentence: {display: 文, extends: information_entity_compose_to_word, mod: {of: [v_express, from], with: language}}
   passage: {display: 文章, extends: information_entity, mod: {of: [v_compose, to], with: sentence}}
   passage_express_from_natural_language: {display: 自然言語へで書かれる文章, extends: passage, mod: {of: [v_express, from], with: natural_language}}
-  information_entity_express_from_natural_language: {display: 自然言語へで書かれる情報, extends: information_entity, mod: {of: [v_express, from], with: natural_language}}
-  word: {display: 語, extends: information_entity_express_from_natural_language, mod: {of: [v_compose, from], with: sentence}}
-  definition: {display: 定義, extends: sentence, mod: {of: [v_refer, from], with: concept}}
   information_entity_express_from_cscl: {display: 概念体系制御言語へで書かれる情報, extends: information_entity, mod: {of: [v_express, from], with: cscl}}
   identifier: {display: 識別子, extends: information_entity_express_from_cscl, mod: {of: [v_refer, from], with: concept_expression, at: {count: 1}}}
   pattern: {display: 識別子の雛形, extends: information_entity, mod: {of: [v_refer, from], with: identifier, at: {count: {gt: 1}}}}
   information_entity_refer_from_p: {display: 関係づけるへ述べる情報, extends: information_entity, mod: {of: [v_refer, from], with: p}}
   axis: {display: 軸, extends: information_entity_refer_from_p, mod: {of: [v_compose, to], with: value}}
   value: {display: 値, extends: information_entity, mod: {of: [v_compose, from], with: axis}}
-  hypothesis: {display: 仮説, extends: sentence, mod: {of: [v_refer, from], with: occurrent}}
-
-  # ===== 人工物とモデル =====
-  artifact: {display: 人工物, extends: generically_dependent_continuant, mod: {of: [v_refer, from], neg: true}}
-  artifact_compose_from_model: {display: モデルの部分である人工物, extends: artifact, mod: {of: [v_compose, from], with: model}}
-  weights: {display: 重み, extends: artifact_compose_from_model, mod: learned}
-  frozen_weights: {display: 固定された重み, extends: weights, mod: frozen}
-  artifact_compute_from: {display: 計算する人工物, extends: artifact, mod: {of: [v_compute, from]}}
-  model: {display: モデル, extends: artifact_compute_from, mod: {of: [v_compose, to], with: frozen_weights}}
-
-  # ===== 過程・実験・推論 =====
-  inference: {display: 推論, extends: process, mod: {of: [v_perform, to], with: artifact_compute_from}}
-  concept: {display: 概念, extends: inference, mod: {of: [v_trigger, to], with: word}}
-
-  # ===== 体系が、自分の書き方（文法）について述べるための語。文法の語は、すべてノードの識別子 =====
-  v_vary: {display: 動かす, extends: occurrent, from: continuant, to: continuant, new_kind: quality,
-           pre: [{is: depend, from: new, to: to}], post: [{is: depend, from: new, to: to, neg: true}]}
-  process_stage_to_v_vary: {display: 動かすを時間的な部分に持つ過程, extends: process, mod: {of: [v_stage, to], with: v_vary}}
-  experiment: {display: 実験, extends: process_stage_to_v_vary, mod: {of: [v_stage, to], with: v_measure}}
-  experiment_protocol: {display: 実験の取り決め, extends: definition, mod: {of: [v_refer, from], with: experiment}}
-  role_depend_from_experiment_protocol: {display: 実験の取り決めへ依存する役割, extends: role, mod: {of: [v_depend, from], with: experiment_protocol}}
-  scope: {display: 適用範囲, extends: role_depend_from_experiment_protocol, mod: {of: [v_depend, from], with: hypothesis}}
   expression_part: {display: 概念式の部分, extends: information_entity, mod: {of: [v_compose, from], with: concept_expression}}
   display: {display: 表示語, extends: word, mod: {of: [v_agree, from], with: identifier}}
   gloss: {display: 説明文, extends: passage_express_from_natural_language, mod: {of: [v_refer, from], with: concept}}
-  kind: {display: 種類, form: [v_compose, to]}
-  participant: {display: 関わるもの, form: [v_involve, to]}
-  participant_p_from_not: {display: 関係づけることのない関わるもの, extends: participant, mod: {of: [p, from], neg: true}}
-  third_participant: {display: 第三のもの, extends: participant_p_from_not, mod: {of: [p, to], neg: true}}
-  state_relation: {display: 状態の関係, extends: occurrent, mod: {of: [v_stage, to], neg: true}}
   extends: {display: 上位の指定, extends: expression_part, mod: {of: [v_refer, from], with: kind}}
   position: {display: 位置, extends: expression_part, mod: {of: [v_refer, from], with: p}}
   form: {display: 形の指定, extends: position, mod: {of: [v_compose, from], with: mod, neg: true}}
@@ -160,10 +56,6 @@ nodes:
   at: {display: 修飾の中の値の指定, extends: value_part, mod: {of: [v_compose, from], with: mod}}
   val: {display: 概念が取る値の指定, extends: value_part, mod: {of: [v_compose, from], with: mod, neg: true}}
   cmp: {display: 比較の指定, extends: expression_part, mod: {of: [v_refer, from], with: value, at: {count: 2}}}
-  a: {display: 比べる一方, form: [v_level, from]}
-  b: {display: 比べるもう一方, form: [v_level, to]}
-  same: {display: 同じである, extends: quality, of: [v_level, from]}
-  differ: {display: 違っている, extends: quality, of: [v_level, from], neg: true}
   rel: {display: 比べた結果, extends: quality, mod: {of: [v_depend, from], with: cmp}}
   from: {display: 始点の位置, extends: position, mod: {of: [v_refer, from], with: s}}
   to: {display: 終点の位置, extends: position, mod: {of: [v_refer, from], with: o}}
@@ -213,18 +105,9 @@ nodes:
   not: {display: 否定, extends: sentence_refer_from_sentence, cmp: [{axis: truth, a: not, b: sentence, rel: differ}]}
   any: {display: 存在の数量化, extends: sentence, mod: {of: [v_refer, from], with: participant, at: {count: {ge: 1}}}}
   all: {display: 全称の数量化, extends: not, mod: {of: [v_refer, from], with: any}}
-
-  # ===== 個体と事実。個体は is で種類に1つだけ属する。事実は、1つの関係だけを述べる =====
-  is: {display: 属する, extends: p, to: kind}
   individuals: {display: 個体, form: [is, from]}
   facts: {display: 個体か種類についての文（種類についての文は、その種類のすべてについて）, extends: sentence, mod: {of: [v_refer, from], with: individuals}}
   expect: {display: 期待する文, extends: facts, val: {truth: true}}
-
-  # ===== 実行。動的な動詞は、個体の状態を書き換える規則である =====
-  run.state: {display: 状態, extends: information_entity, mod: {of: [v_compose, to], with: facts}}
-  run.v_execute: {display: 実行する, extends: occurrent, from: continuant, to: run.state, new_kind: run.state,
-              pre: [{is: exists, from: new, neg: true}], post: [{is: exists, from: new}, {is: after, from: new, to: to}]}
-  run.run: {display: 実行の記録, extends: information_entity, mod: {of: [v_refer, from], with: run.v_execute}}
 
   # ===== 実行の戦略と実行時の意味論。実行の検査（cscl/bootstrap/runtime/runtime.py）は、runtime の節に書かれた選択に従う =====
 
@@ -232,49 +115,8 @@ nodes:
   domain: {display: 領域, extends: information_entity, mod: {of: [v_compose, to], with: concept_expression}}
   v_use: {display: 使う, extends: v_depend, from: domain, to: domain}
 
-# 実行時の意味論。実行器が、書き換えの規則をどう当てはめるか。語も値もノードの識別子。
-# 実行の検査は、ここに書かれた選択に従う。実装のない選択が書かれていれば、エラーにする。
-runtime:
-  world: closed_world
-  pre_rule: all
-  post_rule: replace
-  law_check: every_step
-  binding: distinct
-  choice: recorded
-  progress: changes_state
-
-# 体系が、自分の書き方（文法）について述べる。
-# 文法の語は、すべてノードの識別子である。節ごとに、そこで使える語を並べる。検査は、ここに並んだ語だけを受け付ける。
-grammar:
-  grammar: [system, nodes, mod, cmp, base, axes, run, position, rel, function, value, logic, runtime, domain, individuals, facts, grammar]
-  system: [base, axes, nodes, individuals, facts, runtime, grammar]
-  nodes: [display, gloss, extends, from, to, new_kind, holds, pre, post, form, of, neg, mod, val, cmp, axis]
-  mod: [of, with, neg, quant, at]
-  cmp: [axis, a, b, rel]
-  base: [display, arity, system_act]
-  axes: [display, source, value]
-  run: [individuals, facts, steps, expect, halted]   # 実行の記録（exp/tests/*.yaml）
-  position: [from, to, new]
-  rel: [same, differ]
-  function: [gt, ge, lt, le]
-  value: [number, literal]
-  logic: [not, all, any, between]   # true と false は、真偽の軸の値
-  runtime: [world, pre_rule, post_rule, law_check, binding, choice, progress]
-  domain: [domain, nodes, individuals, facts]   # 領域のファイル（exp/src/exp.yaml）
-  individuals: [is, display, val]
-  facts: [is, from, to, new, at, neg]   # 事実は動詞の個体。位置に名前を付けて書く。holds / pre / post も同じ形
-
-# 領域と法則の個体。
 individuals:
-  # ===== 領域。識別子は「領域.名前」と書く。領域を書かない識別子は axiom に属する。
-  axiom: {is: domain, display: 公理}
-  run: {is: domain, display: 実行}
-  # ===== 規則の変数。規則の中で、個体やノードの代わりに置く。
-  var1: {is: variable, display: 変数1}
-  var2: {is: variable, display: 変数2}
-  var3: {is: variable, display: 変数3}
-  var4: {is: variable, display: 変数4}
-  var5: {is: variable, display: 変数5}
+  syntax: {is: domain, display: 構文}
   # ===== 導いた関係。規則が導き、規則の前提に使う。
   r_parent: {is: law_relation, display: 上位である}
   r_ancestor: {is: law_relation, display: 祖先である}
@@ -291,16 +133,6 @@ individuals:
   r_candidate: {is: law_relation, display: 具体的な候補である}
   r_missing: {is: law_relation, display: 候補の式が欠けている}
   r_visible: {is: law_relation, display: 参照できる}
-  # ===== 規則で書いた法則。前提（v_assume）がすべて成り立つとき、導く文（v_derive）を足し、求める文（v_require）が成り立っていなければ違反。
-  # 否定の前提は、書かれていない（導かれていない）ことを表す。前提にだけ出てくる変数は「どれでも」と読む。
-  # 基礎の関係の法則は実行の状態に、体系の書き方の法則は、検査が体系の書き方から読んだ文に当てはめる。
-  # 体系の書き方の文: exists, extends, mod, of, position, with, neg, from, to, new_kind, axis, form, holds, pre, val, cmp, display, domain, refer, value, v_use。
-  part_transitive: {is: law_rule, display: 部分であることは推移的}
-  after_transitive: {is: law_rule, display: 後ろにあることは推移的}
-  part_antisymmetric: {is: law_rule, display: 部分であることは反対称的}
-  after_asymmetric: {is: law_rule, display: 後ろにあることは非対称的}
-  depend_end_exists: {is: law_rule, display: 依存する始点が在れば終点も在る}
-  involve_end_exists: {is: law_rule, display: 関わられる始点が在れば終点も在る}
   # --- 体系の書き方
   parent_by_extends: {is: law_rule, display: extends に書いたものは上位}
   parent_by_is: {is: law_rule, display: 「属する」の始点として限定した種類は上位}
@@ -344,36 +176,36 @@ individuals:
   unique_in_domain: {is: law_rule, display: 表示語は同じ領域の中で重複しない}
   visible_self: {is: law_rule, display: 領域は自分を参照できる}
   visible_use: {is: law_rule, display: 領域は使う領域を参照できる}
+  visible_trans: {is: law_rule, display: 使う領域が参照できる領域も参照できる}
   layered: {is: law_rule, display: 参照できるのは自分の領域と使う領域だけ}
   truth_two: {is: law_rule, display: 真偽の軸は true と false を持つ}
   truth_only: {is: law_rule, display: 真偽の軸の値は true か false}
-  # ===== 意味を検査や実行器が与える法則。規則の当てはめ方そのもの。
-  unique_names: {is: law_given, display: 名前の違う個体は同じでない}
-  step: {is: law_given, display: 前の状態が成り立つとき後の状態に置き換える}
-  frame: {is: law_given, display: 動詞が触れなかった文は変わらない}
-  halt: {is: law_given, display: 当てはまる動詞がなければ止まる}
   part_fact_direction: {is: law_given, display: 部分の事実は、種類の限定と向きが逆にならない}
   part_display_explicit: {is: law_given, display: 部分の限定を持つ種類の表示名は、どちらが部分かを明示し、限定の向きと合う}
+  r_in: {is: law_relation, display: 集まりに属する}
+  r_ind_kind: {is: law_relation, display: 個体の種類か、その上位である}
+  r_ternary: {is: law_relation, display: 二つから第三のものを作る動詞である}
+  r_op_of: {is: law_relation, display: 事実の動詞である（上位の動詞を含む）}
+  r_collected: {is: law_relation, display: 集まりが直接集めた種類である}
+  r_defined: {is: law_relation, display: その動詞が定義されている}
+  collection_level: {is: law_rule, display: 種類の集まりの成員は、1階の種類。種類の集まりそのものを成員にしない}
+  in_by_collect: {is: law_rule, display: 集まりが集めた種類は、その集まりに属する}
+  in_inherit: {is: law_rule, display: 集まりに属する種類の下位も、その集まりに属する}
+  ind_kind_self: {is: law_rule, display: 個体の種類}
+  ind_kind_step: {is: law_rule, display: 個体の種類の上位}
+  ternary_verb: {is: law_rule, display: 第三のものの種類を持つ動詞}
+  op_of_self: {is: law_rule, display: 事実の動詞}
+  op_of_up: {is: law_rule, display: 事実の動詞の上位の動詞}
+  collected_kind: {is: law_rule, display: 集まりが直接集めた種類}
+  defined_by_fact_from: {is: law_rule, display: 事実の始点の種類には、その動詞が定義されている}
+  defined_by_fact_to: {is: law_rule, display: 事実の終点の種類には、その動詞が定義されている}
+  defined_by_fact_new: {is: law_rule, display: 事実でできた種類には、その動詞が定義されている}
+  defined_by_mod: {is: law_rule, display: 動詞による限定を持つ種類には、その動詞が定義されている}
+  defined_by_mod_with: {is: law_rule, display: 動詞による限定の相手の種類には、その動詞が定義されている}
+  defined_inherit: {is: law_rule, display: 上位に定義された動詞は、下位にも定義されている}
 
 facts:
-  - {is: v_use, from: run, to: axiom}
-  - {is: v_assume, from: part_transitive, to: {is: part, from: var1, to: var3}}
-  - {is: v_assume, from: part_transitive, to: {is: part, from: var3, to: var2}}
-  - {is: v_derive, from: part_transitive, to: {is: part, from: var1, to: var2}}
-  - {is: v_assume, from: after_transitive, to: {is: after, from: var1, to: var3}}
-  - {is: v_assume, from: after_transitive, to: {is: after, from: var3, to: var2}}
-  - {is: v_derive, from: after_transitive, to: {is: after, from: var1, to: var2}}
-  - {is: v_assume, from: part_antisymmetric, to: {is: part, from: var1, to: var2}}
-  - {is: v_assume, from: part_antisymmetric, to: {is: part, from: var2, to: var1}}
-  - {is: v_require, from: part_antisymmetric, to: {is: same, from: var1, to: var2}}
-  - {is: v_assume, from: after_asymmetric, to: {is: after, from: var1, to: var2}}
-  - {is: v_require, from: after_asymmetric, to: {is: after, from: var2, to: var1, neg: true}}
-  - {is: v_assume, from: depend_end_exists, to: {is: exists, from: var1}}
-  - {is: v_assume, from: depend_end_exists, to: {is: depend, from: var1, to: var2}}
-  - {is: v_require, from: depend_end_exists, to: {is: exists, from: var2}}
-  - {is: v_assume, from: involve_end_exists, to: {is: exists, from: var1}}
-  - {is: v_assume, from: involve_end_exists, to: {is: involve, from: var1, to: var2}}
-  - {is: v_require, from: involve_end_exists, to: {is: exists, from: var2}}
+  - {is: v_use, from: syntax, to: ontology}
   - {is: v_assume, from: parent_by_extends, to: {is: extends, from: var1, to: var2}}
   - {is: v_derive, from: parent_by_extends, to: {is: r_parent, from: var1, to: var2}}
   - {is: v_assume, from: parent_by_is, to: {is: mod, from: var1, to: var3}}
@@ -507,6 +339,9 @@ facts:
   - {is: v_derive, from: visible_self, to: {is: r_visible, from: var3, to: var3}}
   - {is: v_assume, from: visible_use, to: {is: v_use, from: var1, to: var2}}
   - {is: v_derive, from: visible_use, to: {is: r_visible, from: var1, to: var2}}
+  - {is: v_assume, from: visible_trans, to: {is: r_visible, from: var1, to: var2}}
+  - {is: v_assume, from: visible_trans, to: {is: r_visible, from: var2, to: var3}}
+  - {is: v_derive, from: visible_trans, to: {is: r_visible, from: var1, to: var3}}
   - {is: v_assume, from: layered, to: {is: refer, from: var1, to: var2}}
   - {is: v_assume, from: layered, to: {is: domain, from: var1, to: var3}}
   - {is: v_assume, from: layered, to: {is: domain, from: var2, to: var4}}
@@ -517,9 +352,53 @@ facts:
   - {is: v_assume, from: truth_only, to: {is: value, from: truth, to: var1}}
   - {is: v_assume, from: truth_only, to: {is: same, from: var1, to: true, neg: true}}
   - {is: v_require, from: truth_only, to: {is: same, from: var1, to: false}}
-  - {is: v_govern, from: unique_names, to: run.run}
-  - {is: v_govern, from: step, to: run.run}
-  - {is: v_govern, from: frame, to: run.run}
-  - {is: v_govern, from: halt, to: run.run}
   - {is: v_govern, from: part_fact_direction, to: concept_expression}
   - {is: v_govern, from: part_display_explicit, to: concept_expression}
+  - {is: v_assume, from: in_by_collect, to: {is: of, from: var1, to: v_collect}}
+  - {is: v_assume, from: in_by_collect, to: {is: from, from: var1, to: var2}}
+  - {is: v_assume, from: in_by_collect, to: {is: to, from: var1, to: var3}}
+  - {is: v_derive, from: in_by_collect, to: {is: r_in, from: var3, to: var2}}
+  - {is: v_assume, from: in_inherit, to: {is: r_in, from: var1, to: var2}}
+  - {is: v_assume, from: in_inherit, to: {is: r_ancestor, from: var3, to: var1}}
+  - {is: v_derive, from: in_inherit, to: {is: r_in, from: var3, to: var2}}
+  - {is: v_assume, from: ind_kind_self, to: {is: is, from: var1, to: var2}}
+  - {is: v_derive, from: ind_kind_self, to: {is: r_ind_kind, from: var1, to: var2}}
+  - {is: v_assume, from: ind_kind_step, to: {is: is, from: var1, to: var3}}
+  - {is: v_assume, from: ind_kind_step, to: {is: r_ancestor, from: var3, to: var2}}
+  - {is: v_derive, from: ind_kind_step, to: {is: r_ind_kind, from: var1, to: var2}}
+  - {is: v_assume, from: ternary_verb, to: {is: r_end_new_kind, from: var1, to: var2}}
+  - {is: v_derive, from: ternary_verb, to: {is: r_ternary, from: var1}}
+  - {is: v_assume, from: op_of_self, to: {is: of, from: var1, to: var2}}
+  - {is: v_derive, from: op_of_self, to: {is: r_op_of, from: var1, to: var2}}
+  - {is: v_assume, from: op_of_up, to: {is: of, from: var1, to: var3}}
+  - {is: v_assume, from: op_of_up, to: {is: r_ancestor, from: var3, to: var2}}
+  - {is: v_derive, from: op_of_up, to: {is: r_op_of, from: var1, to: var2}}
+  - {is: v_assume, from: defined_by_fact_from, to: {is: r_op_of, from: var1, to: var2}}
+  - {is: v_assume, from: defined_by_fact_from, to: {is: from, from: var1, to: var3}}
+  - {is: v_derive, from: defined_by_fact_from, to: {is: r_defined, from: var3, to: var2}}
+  - {is: v_assume, from: defined_by_fact_to, to: {is: r_op_of, from: var1, to: var2}}
+  - {is: v_assume, from: defined_by_fact_to, to: {is: to, from: var1, to: var3}}
+  - {is: v_derive, from: defined_by_fact_to, to: {is: r_defined, from: var3, to: var2}}
+  - {is: v_assume, from: defined_by_fact_new, to: {is: r_op_of, from: var1, to: var2}}
+  - {is: v_assume, from: defined_by_fact_new, to: {is: new, from: var1, to: var3}}
+  - {is: v_derive, from: defined_by_fact_new, to: {is: r_defined, from: var3, to: var2}}
+  - {is: v_assume, from: defined_by_mod, to: {is: mod, from: var1, to: var2}}
+  - {is: v_assume, from: defined_by_mod, to: {is: of, from: var2, to: var3}}
+  - {is: v_assume, from: defined_by_mod, to: {is: with, from: var2, to: var4}}
+  - {is: v_assume, from: defined_by_mod, to: {is: neg, from: var2, to: true, neg: true}}
+  - {is: v_derive, from: defined_by_mod, to: {is: r_defined, from: var1, to: var3}}
+  - {is: v_assume, from: defined_by_mod_with, to: {is: mod, from: var1, to: var2}}
+  - {is: v_assume, from: defined_by_mod_with, to: {is: of, from: var2, to: var3}}
+  - {is: v_assume, from: defined_by_mod_with, to: {is: with, from: var2, to: var4}}
+  - {is: v_assume, from: defined_by_mod_with, to: {is: neg, from: var2, to: true, neg: true}}
+  - {is: v_derive, from: defined_by_mod_with, to: {is: r_defined, from: var4, to: var3}}
+  - {is: v_assume, from: defined_inherit, to: {is: r_defined, from: var1, to: var2}}
+  - {is: v_assume, from: defined_inherit, to: {is: r_ancestor, from: var3, to: var1}}
+  - {is: v_derive, from: defined_inherit, to: {is: r_defined, from: var3, to: var2}}
+  - {is: v_assume, from: collection_level, to: {is: of, from: var1, to: v_collect}}
+  - {is: v_assume, from: collection_level, to: {is: to, from: var1, to: var2}}
+  - {is: v_require, from: collection_level, to: {is: r_ancestor, from: var2, to: kind_collection, neg: true}}
+  - {is: v_require, from: collection_level, to: {is: same, from: var2, to: kind_collection, neg: true}}
+  - {is: v_assume, from: collected_kind, to: {is: of, from: var1, to: v_collect}}
+  - {is: v_assume, from: collected_kind, to: {is: to, from: var1, to: var2}}
+  - {is: v_derive, from: collected_kind, to: {is: r_collected, from: var2}}

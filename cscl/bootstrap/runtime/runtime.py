@@ -1,7 +1,7 @@
 """実行の記録（exp/tests/*.yaml）を、体系の書き換え規則に照らして検査する。
 
 実行器は役割で、担い手は何でもよい（LLM、プログラム、機械）。この検査は、担い手が書いた実行の記録が
-体系に適合しているかを確かめる。当てはめる法則は、ontology.yaml の法則の個体のうち次のもの:
+体系に適合しているかを確かめる。当てはめる法則は、syntax と runtime の法則の個体のうち次のもの:
   規則で書いた法則（law_rule）  前提・導く文・求める文を読んで、状態に当てはめる
   unique_names  名前の違う個体は同じでない（same の読み方）
   step   動詞の pre がすべて成り立つときだけ適用でき、post に置き換わる
@@ -57,7 +57,7 @@ class Machine:
     def __init__(self, T, run, name):
         self.T, self.name, self.errors, self.R = T, name, [], T.O["runtime"]
         self.quant = all if self.R["pre_rule"] == "all" else any
-        self.ind = {i: v["is"] for i, v in run["individuals"].items()}
+        self.ind = {i: T.resolve(v["is"], "exp") or v["is"] for i, v in run["individuals"].items()}
         for i, k in self.ind.items():
             if k not in T.N:
                 self.err(f"個体 {i} の種類 {k} が未定義")
@@ -81,7 +81,7 @@ class Machine:
         return ((rel, args) in self.facts) != neg
 
     def check_laws(self, where):
-        """規則で書いた法則（ontology.yaml の law_rule）のうち、基礎の関係だけで書かれたものを、状態に当てはめる。
+        """規則で書いた法則（層のファイルの law_rule）のうち、基礎の関係だけで書かれたものを、状態に当てはめる。
         導く文を足して閉じてから、求める文を確かめる。same は名前が同じであること（法則 unique_names）。"""
         T = self.T
         rules = [(lid, l) for lid, l in law_rules(T.O)

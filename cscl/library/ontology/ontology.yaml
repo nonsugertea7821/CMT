@@ -1,0 +1,110 @@
+# 存在論（ontology）。最上位の2つ（持続体・生起体）と、その下の上位の分類、基礎の関係に当たる動詞、
+# 言語・文・語・定義・概念・推論。公理の上に定義する。機械学習や実験の語は持たない（std と exp に置く）。
+
+domain: ontology
+
+base:
+  depend: {display: 依存する, arity: 2}
+  part: {display: 部分である, arity: 2}
+  after: {display: 後ろにある, arity: 2}
+  involve: {display: 関わる, arity: 2}
+
+axes:
+  ratio: {display: 割合, source: part, value: number}
+  order: {display: 順番, source: after, value: number}
+
+nodes:
+  # ===== 最上位。説明文（gloss）を持つのは、この2つだけ =====
+  continuant: {display: 持続体, gloss: 時間を通じて同一性を保って存在するもの}
+  occurrent: {display: 生起体, gloss: 時間の中で起こり、展開するもの}
+
+  # ===== 動詞・静的。holds に、成り立っている状態の関係を書く =====
+  v_depend: {display: 依存する, extends: occurrent, from: continuant, to: continuant, holds: [{is: depend, from: from, to: to}]}
+  v_compose: {display: 部分になる, extends: occurrent, from: continuant, to: continuant, holds: [{is: part, from: from, to: to}]}
+  v_stage: {display: 時間的な部分になる, extends: occurrent, from: occurrent, to: occurrent, holds: [{is: part, from: from, to: to}]}
+  v_come_after: {display: 後ろに置かれる, extends: occurrent, from: continuant, to: continuant, holds: [{is: after, from: from, to: to}]}
+  v_refer: {display: 述べる, extends: occurrent, from: continuant, to: any, holds: [{is: refer, from: from, to: to}]}
+  v_agree: {display: 一致する, extends: occurrent, from: continuant, to: continuant, holds: [{is: refer, from: from, to: new}, {is: refer, from: to, to: new}]}
+  v_express: {display: で書かれる, extends: occurrent, from: continuant, to: continuant, holds: [{is: depend, from: from, to: to}, {is: part, from: new, to: from}, {is: part, from: new, to: to}]}
+  v_involve: {display: に関わらせる, extends: occurrent, from: occurrent, to: continuant, holds: [{is: involve, from: from, to: to}]}
+  v_perform: {display: 行う, extends: occurrent, from: continuant, to: occurrent, holds: [{is: involve, from: to, to: from}]}
+  v_trigger: {display: 引き起こす, extends: occurrent, from: any, to: occurrent, holds: [{is: after, from: to, to: from}, {is: depend, from: to, to: from}]}
+
+  # ===== 動詞・大きさを比べる。「後ろに置かれる」が、より大きい、に当たる =====
+  v_come_before: {display: 前に置かれる, extends: occurrent, from: continuant, to: continuant, holds: [{is: after, from: to, to: from}]}
+  v_not_before: {display: 前には置かれない, extends: occurrent, from: continuant, to: continuant, holds: [{is: after, from: to, to: from, neg: true}]}
+  v_not_after: {display: 後ろには置かれない, extends: occurrent, from: continuant, to: continuant, holds: [{is: after, from: from, to: to, neg: true}]}
+  v_level: {display: 同じ位置にある, extends: occurrent, from: continuant, to: continuant, holds: [{is: after, from: from, to: to, neg: true}, {is: after, from: to, to: from, neg: true}]}
+
+  # ===== 動詞・動的。pre と post に、起こる前後の状態の関係を書く =====
+  v_design: {display: 設計する, extends: occurrent, from: continuant, to: continuant, pre: [{is: exists, from: to, neg: true}], post: [{is: exists, from: to}]}
+
+  # ===== 文の骨組み。何が（s）、どう関係し（p）、何に（o）。p は、すべての関係の上位 =====
+  p: {display: 関係づける, extends: occurrent, from: any, to: any, holds: [{is: exists, from: from}, {is: exists, from: to}]}
+  s: {display: 始点に来るもの, form: [p, from]}
+  o: {display: 終点に来るもの, form: [p, to]}
+
+  # ===== BFO の区別 =====
+  dependent: {display: 依存するもの, form: [v_depend, from]}
+  specifically_dependent_continuant: {display: 特定依存持続体, extends: dependent, mod: {of: [v_depend, from], at: {count: 1}}}
+  generically_dependent_continuant: {display: 汎用依存持続体, extends: dependent, mod: {of: [v_depend, from], quant: any}}
+  realizable_entity: {display: 実現可能体, extends: specifically_dependent_continuant, mod: {of: [v_involve, to]}}
+  quality: {display: 質, extends: specifically_dependent_continuant, mod: {of: [v_involve, to], neg: true}}
+  role: {display: 役割, extends: realizable_entity, mod: {of: [v_depend, from], with: definition}}
+  magnitude: {display: 大きさ, extends: quality, mod: {of: [v_come_after, from], with: quality}}
+  process: {display: 過程, extends: occurrent, mod: {of: [v_stage, to]}}
+  information_entity: {display: 情報, extends: generically_dependent_continuant, mod: {of: [v_refer, from]}}
+  language: {display: 言語, extends: information_entity, mod: {of: [v_express, to]}}
+  natural_language: {display: 自然言語, extends: language, mod: {of: [v_design, to], neg: true}}
+  information_entity_compose_to_word: {display: 語を部分に持つ情報, extends: information_entity, mod: {of: [v_compose, to], with: word}}
+  sentence: {display: 文, extends: information_entity_compose_to_word, mod: {of: [v_express, from], with: language}}
+  information_entity_express_from_natural_language: {display: 自然言語へで書かれる情報, extends: information_entity, mod: {of: [v_express, from], with: natural_language}}
+  word: {display: 語, extends: information_entity_express_from_natural_language, mod: {of: [v_compose, from], with: sentence}}
+  definition: {display: 定義, extends: sentence, mod: {of: [v_refer, from], with: concept}}
+
+  # ===== 過程・実験・推論 =====
+  inference: {display: 推論, extends: process, mod: {of: [v_perform, to]}}
+  concept: {display: 概念, extends: inference, mod: {of: [v_trigger, to], with: word}}
+  kind: {display: 種類, form: [v_compose, to]}
+  participant: {display: 関わるもの, form: [v_involve, to]}
+  participant_p_from_not: {display: 関係づけることのない関わるもの, extends: participant, mod: {of: [p, from], neg: true}}
+  third_participant: {display: 第三のもの, extends: participant_p_from_not, mod: {of: [p, to], neg: true}}
+  state_relation: {display: 状態の関係, extends: occurrent, mod: {of: [v_stage, to], neg: true}}
+  a: {display: 比べる一方, form: [v_level, from]}
+  b: {display: 比べるもう一方, form: [v_level, to]}
+  same: {display: 同じである, extends: quality, of: [v_level, from]}
+  differ: {display: 違っている, extends: quality, of: [v_level, from], neg: true}
+
+  # ===== 個体と事実。個体は is で種類に1つだけ属する。事実は、1つの関係だけを述べる =====
+  is: {display: 属する, extends: p, to: kind}
+  independent_continuant: {display: 独立持続体, extends: continuant, mod: {of: [v_depend, from], neg: true}}
+  disposition: {display: 傾向性, extends: realizable_entity, mod: {of: [v_depend, from], with: quality}}
+
+individuals:
+  ontology: {is: domain, display: 存在論}
+  part_transitive: {is: law_rule, display: 部分であることは推移的}
+  after_transitive: {is: law_rule, display: 後ろにあることは推移的}
+  part_antisymmetric: {is: law_rule, display: 部分であることは反対称的}
+  after_asymmetric: {is: law_rule, display: 後ろにあることは非対称的}
+  depend_end_exists: {is: law_rule, display: 依存する始点が在れば終点も在る}
+  involve_end_exists: {is: law_rule, display: 関わられる始点が在れば終点も在る}
+
+facts:
+  - {is: v_use, from: ontology, to: axiom}
+  - {is: v_assume, from: part_transitive, to: {is: part, from: var1, to: var3}}
+  - {is: v_assume, from: part_transitive, to: {is: part, from: var3, to: var2}}
+  - {is: v_derive, from: part_transitive, to: {is: part, from: var1, to: var2}}
+  - {is: v_assume, from: after_transitive, to: {is: after, from: var1, to: var3}}
+  - {is: v_assume, from: after_transitive, to: {is: after, from: var3, to: var2}}
+  - {is: v_derive, from: after_transitive, to: {is: after, from: var1, to: var2}}
+  - {is: v_assume, from: part_antisymmetric, to: {is: part, from: var1, to: var2}}
+  - {is: v_assume, from: part_antisymmetric, to: {is: part, from: var2, to: var1}}
+  - {is: v_require, from: part_antisymmetric, to: {is: same, from: var1, to: var2}}
+  - {is: v_assume, from: after_asymmetric, to: {is: after, from: var1, to: var2}}
+  - {is: v_require, from: after_asymmetric, to: {is: after, from: var2, to: var1, neg: true}}
+  - {is: v_assume, from: depend_end_exists, to: {is: exists, from: var1}}
+  - {is: v_assume, from: depend_end_exists, to: {is: depend, from: var1, to: var2}}
+  - {is: v_require, from: depend_end_exists, to: {is: exists, from: var2}}
+  - {is: v_assume, from: involve_end_exists, to: {is: exists, from: var1}}
+  - {is: v_assume, from: involve_end_exists, to: {is: involve, from: var1, to: var2}}
+  - {is: v_require, from: involve_end_exists, to: {is: exists, from: var2}}

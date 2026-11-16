@@ -1,9 +1,35 @@
-# CSCL の標準の語彙（std）。公理（axiom）から定義できるもの。
-# 領域は axiom（axiom と同じ名前空間）。axiom の語を使って書く。axiom から std は参照しない。
-# 種類（nodes）に加えて、std の語についての法則（individuals の law_rule と、その規則の facts）も置く。
+# 標準の語彙（std）。存在論と構文の上に定義する一般の概念と、その法則。仮説、実験、モデル、閉集合など。
+
+domain: std
+
 nodes:
-  independent_continuant: {display: 独立持続体, extends: continuant, mod: {of: [v_depend, from], neg: true}}
-  disposition: {display: 傾向性, extends: realizable_entity, mod: {of: [v_depend, from], with: quality}}
+  v_compute: {display: 計算する, extends: occurrent, from: continuant, to: any, pre: [{is: exists, from: to, neg: true}], post: [{is: exists, from: to}]}
+  v_learn: {display: 学習する, extends: occurrent, from: continuant, to: continuant, new_kind: realizable_entity,
+            pre: [{is: exists, from: new, neg: true}], post: [{is: exists, from: new}, {is: depend, from: new, to: from}, {is: refer, from: new, to: to}]}
+  v_freeze: {display: 固定する, extends: occurrent, from: continuant, to: continuant, new_kind: realizable_entity,
+             pre: [{is: exists, from: new}, {is: depend, from: new, to: to}], post: [{is: exists, from: new, neg: true}]}
+
+  # ===== 修飾語。ある動詞の、ある位置を占めているという性質 =====
+  frozen: {display: 固定されている, extends: quality, of: [v_freeze, to]}
+  learned: {display: 学習で得られた, extends: quality, of: [v_learn, new]}
+  hypothesis: {display: 仮説, extends: sentence, mod: {of: [v_refer, from], with: occurrent}}
+
+  # ===== 人工物とモデル =====
+  artifact: {display: 人工物, extends: generically_dependent_continuant, mod: {of: [v_refer, from], neg: true}}
+  artifact_compose_from_model: {display: モデルの部分である人工物, extends: artifact, mod: {of: [v_compose, from], with: model}}
+  weights: {display: 重み, extends: artifact_compose_from_model, mod: learned}
+  frozen_weights: {display: 固定された重み, extends: weights, mod: frozen}
+  artifact_compute_from: {display: 計算する人工物, extends: artifact, mod: {of: [v_compute, from]}}
+  model: {display: モデル, extends: artifact_compute_from, mod: {of: [v_compose, to], with: frozen_weights}}
+
+  # ===== 体系が、自分の書き方（文法）について述べるための語。文法の語は、すべてノードの識別子 =====
+  v_vary: {display: 動かす, extends: occurrent, from: continuant, to: continuant, new_kind: quality,
+           pre: [{is: depend, from: new, to: to}], post: [{is: depend, from: new, to: to, neg: true}]}
+  process_stage_to_v_vary: {display: 動かすを時間的な部分に持つ過程, extends: process, mod: {of: [v_stage, to], with: v_vary}}
+  experiment: {display: 実験, extends: process_stage_to_v_vary, mod: {of: [v_stage, to], with: v_measure}}
+  experiment_protocol: {display: 実験の取り決め, extends: definition, mod: {of: [v_refer, from], with: experiment}}
+  role_depend_from_experiment_protocol: {display: 実験の取り決めへ依存する役割, extends: role, mod: {of: [v_depend, from], with: experiment_protocol}}
+  scope: {display: 適用範囲, extends: role_depend_from_experiment_protocol, mod: {of: [v_depend, from], with: hypothesis}}
   composable_set: {display: 合成について閉じた集合, extends: closed_set, mod: {of: [v_close, from], with: v_sum}}
   v_close: {display: について閉じている, extends: occurrent, from: kind_collection, to: verb_ref, holds: [{is: refer, from: from, to: to}]}
   v_sum: {display: 合成する, extends: occurrent, from: summand, to: summand, new_kind: summand,
@@ -11,39 +37,15 @@ nodes:
   model_inference: {display: モデルの推論, extends: inference, mod: {of: [v_perform, to], with: model}}
   summand: {display: 合成できる情報, extends: information_entity, mod: {of: [v_sum, from]}}
   closed_set: {display: 閉集合, extends: kind_collection, mod: {of: [v_close, from]}}   # 何について閉じているかは、下位の限定で決める
-  rewrite_rule: {display: 書き換えの規則, extends: definition, mod: {of: [v_refer, from], with: post}}
-  role_depend_from_rewrite_rule: {display: 書き換えの規則へ依存する役割, extends: role, mod: {of: [v_depend, from], with: rewrite_rule}}
-  run.executor: {display: 実行器, extends: role_depend_from_rewrite_rule, mod: {of: [run.v_execute, from]}}
-  run.halted: {display: 止まった状態, extends: run.state, mod: {of: [run.v_execute, to], neg: true}}
-  run.steps: {display: 歩みの並び, extends: information_entity, mod: {of: [v_refer, from], with: run.v_execute, at: {count: {ge: 1}}}}
-  run.strategy: {display: 実行の戦略, extends: definition, mod: {of: [v_refer, from], with: run.v_execute}}
-  run.runtime: {display: 実行時の意味論の節, extends: section, mod: {of: [v_refer, from], with: run.strategy}}
-  run.world: {display: 書かれていない文の扱い, extends: run.strategy, mod: {of: [v_refer, from], with: facts}}
-  run.closed_world: {display: 書かれていない文は成り立たない, extends: run.world, val: {truth: false}}
-  run.pre_rule: {display: 前の状態の確かめ方, extends: run.strategy, mod: {of: [v_refer, from], with: pre}}
-  run.post_rule: {display: 後の状態の作り方, extends: run.strategy, mod: {of: [v_refer, from], with: post}}
-  run.replace: {display: 否定の文を取り除き肯定の文を加える, extends: run.post_rule, mod: {of: [v_refer, from], with: not}}
-  run.law_check: {display: 法則を確かめる時点, extends: run.strategy, mod: {of: [v_refer, from], with: laws}}
-  run.every_step: {display: 1歩ごとに確かめる, extends: run.law_check, mod: {of: [v_come_after, from], with: run.steps}}
-  run.binding: {display: 位置への個体の割り当て方, extends: run.strategy, mod: {of: [v_refer, from], with: individuals}}
-  run.distinct: {display: 位置ごとに別の個体を割り当てる, extends: run.binding, cmp: [{axis: text, a: from, b: to, rel: differ}]}
-  run.choice: {display: 当てはまる動詞の選び方, extends: run.strategy, mod: {of: [v_refer, from], with: run.steps}}
-  run.recorded: {display: 実行の記録が選び方を与える, extends: run.choice, mod: {of: [v_depend, from], with: run.run}}
-  run.progress: {display: 当てはまるとみなす条件, extends: run.strategy, mod: {of: [v_refer, from], with: run.halted}}
-  run.changes_state: {display: 前の状態が成り立ち後の状態がまだ成り立っていない, extends: run.progress, mod: {of: [v_come_before, from], with: post}}
+
 individuals:
+  std: {is: domain, display: 標準の語彙}
   r_kpart: {is: law_relation, display: 種類として部分である}
   r_kdep: {is: law_relation, display: 種類として依存する}
-  r_in: {is: law_relation, display: 集まりに属する}
-  r_ind_kind: {is: law_relation, display: 個体の種類か、その上位である}
   r_closed_op: {is: law_relation, display: その動詞について閉じている}
   r_closed: {is: law_relation, display: 閉じている}
   r_closed_verb: {is: law_relation, display: どこかの閉集合が閉じている動詞である}
-  r_ternary: {is: law_relation, display: 二つから第三のものを作る動詞である}
-  r_op_of: {is: law_relation, display: 事実の動詞である（上位の動詞を含む）}
   r_in_op: {is: law_relation, display: その動詞について閉じた閉集合に属する}
-  r_collected: {is: law_relation, display: 集まりが直接集めた種類である}
-  r_defined: {is: law_relation, display: その動詞が定義されている}
   kpart_by_mod_from: {is: law_rule, display: 「X の部分である」と限定した種類は、種類として X の部分}
   kpart_by_mod_to: {is: law_rule, display: 「X を部分に持つ」と限定した種類は、種類として X を部分に持つ}
   kpart_by_sum_part: {is: law_rule, display: 「合成して X になる」と限定した種類は、種類として X の部分（部分の定義。合成する相手は問わない）}
@@ -71,27 +73,14 @@ individuals:
   closed_under_mod_some: {is: law_rule, display: 閉じている動詞による限定では、二つとも、その動詞について閉じた閉集合に属する}
   closed_has_op: {is: law_rule, display: 閉集合は、何について閉じているかを限定している}
   closed_op_ternary: {is: law_rule, display: 閉じている動詞は、二つから第三のものを作る動詞}
-  collection_level: {is: law_rule, display: 種類の集まりの成員は、1階の種類。種類の集まりそのものを成員にしない}
   op_defined: {is: law_rule, display: 閉集合に属する種類は、自分か上位の種類について、閉じている動詞（の事実か限定）が定義されている。集まりが直接集めた種類は、閉じていることで定義される}
-  in_by_collect: {is: law_rule, display: 集まりが集めた種類は、その集まりに属する}
-  in_inherit: {is: law_rule, display: 集まりに属する種類の下位も、その集まりに属する}
-  ind_kind_self: {is: law_rule, display: 個体の種類}
-  ind_kind_step: {is: law_rule, display: 個体の種類の上位}
   closed_op_by_mod: {is: law_rule, display: 閉集合が閉じている動詞は、その種類か上位の限定「V について閉じている」の V}
   closed_by_op: {is: law_rule, display: 閉じている動詞を持つ集まりは、閉じている}
   closed_verb: {is: law_rule, display: どこかの閉集合が閉じている動詞}
-  ternary_verb: {is: law_rule, display: 第三のものの種類を持つ動詞}
-  op_of_self: {is: law_rule, display: 事実の動詞}
-  op_of_up: {is: law_rule, display: 事実の動詞の上位の動詞}
   in_op: {is: law_rule, display: 種類が、動詞 V について閉じた閉集合に属する}
-  collected_kind: {is: law_rule, display: 集まりが直接集めた種類}
-  defined_by_fact_from: {is: law_rule, display: 事実の始点の種類には、その動詞が定義されている}
-  defined_by_fact_to: {is: law_rule, display: 事実の終点の種類には、その動詞が定義されている}
-  defined_by_fact_new: {is: law_rule, display: 事実でできた種類には、その動詞が定義されている}
-  defined_by_mod: {is: law_rule, display: 動詞による限定を持つ種類には、その動詞が定義されている}
-  defined_by_mod_with: {is: law_rule, display: 動詞による限定の相手の種類には、その動詞が定義されている}
-  defined_inherit: {is: law_rule, display: 上位に定義された動詞は、下位にも定義されている}
+
 facts:
+  - {is: v_use, from: std, to: syntax}
   - {is: v_assume, from: kpart_by_mod_from, to: {is: mod, from: var1, to: var2}}
   - {is: v_assume, from: kpart_by_mod_from, to: {is: of, from: var2, to: v_compose}}
   - {is: v_assume, from: kpart_by_mod_from, to: {is: position, from: var2, to: from}}
@@ -161,18 +150,6 @@ facts:
   - {is: v_assume, from: kdep_antisymmetric, to: {is: r_kdep, from: var1, to: var2}}
   - {is: v_assume, from: kdep_antisymmetric, to: {is: r_kdep, from: var2, to: var1}}
   - {is: v_require, from: kdep_antisymmetric, to: {is: same, from: var1, to: var2}}
-  - {is: v_assume, from: in_by_collect, to: {is: of, from: var1, to: v_collect}}
-  - {is: v_assume, from: in_by_collect, to: {is: from, from: var1, to: var2}}
-  - {is: v_assume, from: in_by_collect, to: {is: to, from: var1, to: var3}}
-  - {is: v_derive, from: in_by_collect, to: {is: r_in, from: var3, to: var2}}
-  - {is: v_assume, from: in_inherit, to: {is: r_in, from: var1, to: var2}}
-  - {is: v_assume, from: in_inherit, to: {is: r_ancestor, from: var3, to: var1}}
-  - {is: v_derive, from: in_inherit, to: {is: r_in, from: var3, to: var2}}
-  - {is: v_assume, from: ind_kind_self, to: {is: is, from: var1, to: var2}}
-  - {is: v_derive, from: ind_kind_self, to: {is: r_ind_kind, from: var1, to: var2}}
-  - {is: v_assume, from: ind_kind_step, to: {is: is, from: var1, to: var3}}
-  - {is: v_assume, from: ind_kind_step, to: {is: r_ancestor, from: var3, to: var2}}
-  - {is: v_derive, from: ind_kind_step, to: {is: r_ind_kind, from: var1, to: var2}}
   - {is: v_assume, from: closed_op_by_mod, to: {is: r_ind_kind, from: var1, to: var2}}
   - {is: v_assume, from: closed_op_by_mod, to: {is: mod, from: var2, to: var3}}
   - {is: v_assume, from: closed_op_by_mod, to: {is: of, from: var3, to: v_close}}
@@ -184,38 +161,9 @@ facts:
   - {is: v_derive, from: closed_by_op, to: {is: r_closed, from: var1}}
   - {is: v_assume, from: closed_verb, to: {is: r_closed_op, from: var1, to: var2}}
   - {is: v_derive, from: closed_verb, to: {is: r_closed_verb, from: var2}}
-  - {is: v_assume, from: ternary_verb, to: {is: r_end_new_kind, from: var1, to: var2}}
-  - {is: v_derive, from: ternary_verb, to: {is: r_ternary, from: var1}}
-  - {is: v_assume, from: op_of_self, to: {is: of, from: var1, to: var2}}
-  - {is: v_derive, from: op_of_self, to: {is: r_op_of, from: var1, to: var2}}
-  - {is: v_assume, from: op_of_up, to: {is: of, from: var1, to: var3}}
-  - {is: v_assume, from: op_of_up, to: {is: r_ancestor, from: var3, to: var2}}
-  - {is: v_derive, from: op_of_up, to: {is: r_op_of, from: var1, to: var2}}
   - {is: v_assume, from: in_op, to: {is: r_in, from: var1, to: var2}}
   - {is: v_assume, from: in_op, to: {is: r_closed_op, from: var2, to: var3}}
   - {is: v_derive, from: in_op, to: {is: r_in_op, from: var1, to: var3}}
-  - {is: v_assume, from: defined_by_fact_from, to: {is: r_op_of, from: var1, to: var2}}
-  - {is: v_assume, from: defined_by_fact_from, to: {is: from, from: var1, to: var3}}
-  - {is: v_derive, from: defined_by_fact_from, to: {is: r_defined, from: var3, to: var2}}
-  - {is: v_assume, from: defined_by_fact_to, to: {is: r_op_of, from: var1, to: var2}}
-  - {is: v_assume, from: defined_by_fact_to, to: {is: to, from: var1, to: var3}}
-  - {is: v_derive, from: defined_by_fact_to, to: {is: r_defined, from: var3, to: var2}}
-  - {is: v_assume, from: defined_by_fact_new, to: {is: r_op_of, from: var1, to: var2}}
-  - {is: v_assume, from: defined_by_fact_new, to: {is: new, from: var1, to: var3}}
-  - {is: v_derive, from: defined_by_fact_new, to: {is: r_defined, from: var3, to: var2}}
-  - {is: v_assume, from: defined_by_mod, to: {is: mod, from: var1, to: var2}}
-  - {is: v_assume, from: defined_by_mod, to: {is: of, from: var2, to: var3}}
-  - {is: v_assume, from: defined_by_mod, to: {is: with, from: var2, to: var4}}
-  - {is: v_assume, from: defined_by_mod, to: {is: neg, from: var2, to: true, neg: true}}
-  - {is: v_derive, from: defined_by_mod, to: {is: r_defined, from: var1, to: var3}}
-  - {is: v_assume, from: defined_by_mod_with, to: {is: mod, from: var1, to: var2}}
-  - {is: v_assume, from: defined_by_mod_with, to: {is: of, from: var2, to: var3}}
-  - {is: v_assume, from: defined_by_mod_with, to: {is: with, from: var2, to: var4}}
-  - {is: v_assume, from: defined_by_mod_with, to: {is: neg, from: var2, to: true, neg: true}}
-  - {is: v_derive, from: defined_by_mod_with, to: {is: r_defined, from: var4, to: var3}}
-  - {is: v_assume, from: defined_inherit, to: {is: r_defined, from: var1, to: var2}}
-  - {is: v_assume, from: defined_inherit, to: {is: r_ancestor, from: var3, to: var1}}
-  - {is: v_derive, from: defined_inherit, to: {is: r_defined, from: var3, to: var2}}
   - {is: v_assume, from: closed_under, to: {is: r_op_of, from: var1, to: var2}}
   - {is: v_assume, from: closed_under, to: {is: from, from: var1, to: var4}}
   - {is: v_assume, from: closed_under, to: {is: r_in, from: var4, to: var3}}
@@ -265,15 +213,8 @@ facts:
   - {is: v_require, from: closed_has_op, to: {is: r_closed, from: var1}}
   - {is: v_assume, from: closed_op_ternary, to: {is: r_closed_verb, from: var1}}
   - {is: v_require, from: closed_op_ternary, to: {is: r_ternary, from: var1}}
-  - {is: v_assume, from: collection_level, to: {is: of, from: var1, to: v_collect}}
-  - {is: v_assume, from: collection_level, to: {is: to, from: var1, to: var2}}
-  - {is: v_require, from: collection_level, to: {is: r_ancestor, from: var2, to: kind_collection, neg: true}}
-  - {is: v_require, from: collection_level, to: {is: same, from: var2, to: kind_collection, neg: true}}
   - {is: v_assume, from: op_defined, to: {is: r_in, from: var1, to: var2}}
   - {is: v_assume, from: op_defined, to: {is: r_closed_op, from: var2, to: var3}}
-  - {is: v_assume, from: collected_kind, to: {is: of, from: var1, to: v_collect}}
-  - {is: v_assume, from: collected_kind, to: {is: to, from: var1, to: var2}}
-  - {is: v_derive, from: collected_kind, to: {is: r_collected, from: var2}}
   - {is: v_assume, from: op_defined, to: {is: r_collected, from: var1, neg: true}}
   - {is: v_require, from: op_defined, to: {is: r_defined, from: var1, to: var3}}
   - {is: v_assume, from: kpart_transitive, to: {is: r_kpart, from: var1, to: var3}}

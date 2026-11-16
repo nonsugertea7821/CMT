@@ -2,9 +2,13 @@
 # tsconfig の include / exclude、Cargo の workspace members に当たる。
 # 型検査器（cscl/bootstrap/type_checker）と実行器（cscl/bootstrap/runtime）は、ここに書いた範囲のファイルだけを読む。
 # 領域どうしの依存（どの領域を使うか）は、ここではなく、各領域のファイルが自分で宣言する（v_use の事実）。
-root: cscl/library/axiom/ontology.yaml   # 公理（axiom）。文法・基礎・公理の法則。領域 axiom と run
-std: [cscl/library/std/*.yaml]          # 標準の語彙。領域 axiom に加わる（いまは同じ名前空間）
-include: [exp/src/*.yaml, cscl/design/*.yaml]             # 領域のファイル。最上位に domain を持つもの
+root: cscl/library/axiom/axiom.yaml     # 公理（axiom）。在る・述べる・同じである、特定の関係によらない軸、規則の変数
+library:                                # 言語の層。この順に読む。ノードは「層.名前」で持つ
+  - cscl/library/ontology/*.yaml        # 存在論（ontology）
+  - cscl/library/syntax/*.yaml          # 構文（syntax）。文法と、書き方について述べる語
+  - cscl/library/runtime/*.yaml         # 実行（runtime）。実行時の意味論
+  - cscl/library/std/*.yaml             # 標準の語彙（std）
+include: [exp/src/*.yaml, cscl/design/*.yaml]   # 領域のファイル。最上位に domain を持つもの
 exclude: []
 runs: [exp/tests/*.yaml]                # 実行の記録
 results: exp/experiments/results        # 測定の族が読む結果ファイル

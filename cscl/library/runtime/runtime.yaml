@@ -1,0 +1,55 @@
+# 実行（runtime）。実行時の意味論（runtime 節）と、実行の状態・実行器・実行の戦略。構文の上に定義する。
+
+domain: runtime
+
+runtime:
+  world: closed_world
+  pre_rule: all
+  post_rule: replace
+  law_check: every_step
+  binding: distinct
+  choice: recorded
+  progress: changes_state
+
+nodes:
+
+  # ===== 実行。動的な動詞は、個体の状態を書き換える規則である =====
+  state: {display: 状態, extends: information_entity, mod: {of: [v_compose, to], with: facts}}
+  v_execute: {display: 実行する, extends: occurrent, from: continuant, to: state, new_kind: state,
+              pre: [{is: exists, from: new, neg: true}], post: [{is: exists, from: new}, {is: after, from: new, to: to}]}
+  run: {display: 実行の記録, extends: information_entity, mod: {of: [v_refer, from], with: v_execute}}
+  rewrite_rule: {display: 書き換えの規則, extends: definition, mod: {of: [v_refer, from], with: post}}
+  role_depend_from_rewrite_rule: {display: 書き換えの規則へ依存する役割, extends: role, mod: {of: [v_depend, from], with: rewrite_rule}}
+  executor: {display: 実行器, extends: role_depend_from_rewrite_rule, mod: {of: [v_execute, from]}}
+  halted: {display: 止まった状態, extends: state, mod: {of: [v_execute, to], neg: true}}
+  steps: {display: 歩みの並び, extends: information_entity, mod: {of: [v_refer, from], with: v_execute, at: {count: {ge: 1}}}}
+  strategy: {display: 実行の戦略, extends: definition, mod: {of: [v_refer, from], with: v_execute}}
+  runtime: {display: 実行時の意味論の節, extends: section, mod: {of: [v_refer, from], with: strategy}}
+  world: {display: 書かれていない文の扱い, extends: strategy, mod: {of: [v_refer, from], with: facts}}
+  closed_world: {display: 書かれていない文は成り立たない, extends: world, val: {truth: false}}
+  pre_rule: {display: 前の状態の確かめ方, extends: strategy, mod: {of: [v_refer, from], with: pre}}
+  post_rule: {display: 後の状態の作り方, extends: strategy, mod: {of: [v_refer, from], with: post}}
+  replace: {display: 否定の文を取り除き肯定の文を加える, extends: post_rule, mod: {of: [v_refer, from], with: not}}
+  law_check: {display: 法則を確かめる時点, extends: strategy, mod: {of: [v_refer, from], with: laws}}
+  every_step: {display: 1歩ごとに確かめる, extends: law_check, mod: {of: [v_come_after, from], with: steps}}
+  binding: {display: 位置への個体の割り当て方, extends: strategy, mod: {of: [v_refer, from], with: individuals}}
+  distinct: {display: 位置ごとに別の個体を割り当てる, extends: binding, cmp: [{axis: text, a: from, b: to, rel: differ}]}
+  choice: {display: 当てはまる動詞の選び方, extends: strategy, mod: {of: [v_refer, from], with: steps}}
+  recorded: {display: 実行の記録が選び方を与える, extends: choice, mod: {of: [v_depend, from], with: run}}
+  progress: {display: 当てはまるとみなす条件, extends: strategy, mod: {of: [v_refer, from], with: halted}}
+  changes_state: {display: 前の状態が成り立ち後の状態がまだ成り立っていない, extends: progress, mod: {of: [v_come_before, from], with: post}}
+
+individuals:
+  runtime: {is: domain, display: 実行}
+  # ===== 意味を検査や実行器が与える法則。規則の当てはめ方そのもの。
+  unique_names: {is: law_given, display: 名前の違う個体は同じでない}
+  step: {is: law_given, display: 前の状態が成り立つとき後の状態に置き換える}
+  frame: {is: law_given, display: 動詞が触れなかった文は変わらない}
+  halt: {is: law_given, display: 当てはまる動詞がなければ止まる}
+
+facts:
+  - {is: v_use, from: runtime, to: syntax}
+  - {is: v_govern, from: unique_names, to: runtime.run}
+  - {is: v_govern, from: step, to: runtime.run}
+  - {is: v_govern, from: frame, to: runtime.run}
+  - {is: v_govern, from: halt, to: runtime.run}
