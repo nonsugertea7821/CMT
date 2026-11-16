@@ -287,7 +287,7 @@ def core_sections(O):
 
 
 KINDS = {"measurement_family": "families", "observation": "observations", "hypothesis": "hypotheses",
-         "decision": "decisions", "backlog_item": "backlog"}   # この検査が中身を確かめる種類
+         "decision": "decisions", "backlog_item": "backlog", "prior_work": "prior_works", "prior_claim": "prior_claims"}   # この検査が中身を確かめる種類
 
 
 LITERAL = {"display", "holds", "pre", "post", "result_file", "row_collection", "row_filter", "pattern", "condition_entry", "passage", "val"}
@@ -316,7 +316,7 @@ def merge_domain(name, O):
     return D
 
 
-MANY = {"scope", "evidence", "against", "limitation", "supersedes", "basis", "tests", "metric", "any", "domain", "premise", "derived", "prior_agreed", "prior_contrasted", "prior_work", "required", "information_entity"}   # 検査が並びとして読む関係
+MANY = {"scope", "evidence", "against", "limitation", "supersedes", "basis", "tests", "metric", "any", "domain", "premise", "derived", "prior_agreed", "prior_contrasted", "prior_work", "prior_claim", "required", "information_entity"}   # 検査が並びとして読む関係
 
 
 def is_kind_fact(f, T, dom, I):
@@ -357,6 +357,47 @@ def collect_kind_facts(T):
                 if not T.is_a(k, T.spot_type(verb, p)):
                     err(f"{where}: {p} の種類 {k} が、動詞 {verb} のその位置（{T.spot_type(verb, p)}）に当たらない")
             T.KF.append((verb, x))
+
+
+OPPOSITE = [{"v_lower", "v_not_lower"}, {"v_raise", "v_not_raise"}, {"v_raise", "v_lower"}]   # 向きが反対の動詞の組
+
+
+def compare_claims(T, a, b):
+    """2つの文の中身（s, p, o）を比べる。両端が同じか上位・下位の関係にあるときだけ比べられる。
+    返す値: same（動詞が同じか上位・下位）、opposite（動詞が反対の組）、other（両端は合うが動詞が別）、None（両端が合わない）。"""
+    as_ = lambda v: v if isinstance(v, list) else [v]
+    ends = all(any(T.overlaps(x, y) for x in as_(a.get(k)) for y in as_(b.get(k))) for k in ("s", "o"))
+    if not ends or not a.get("p") or not b.get("p"):
+        return None
+    if T.overlaps(a["p"], b["p"]):
+        return "same"
+    known = set().union(*OPPOSITE)
+    root = lambda v: next((short(u) for u in [v, *T.ancestors(v)] if short(u) in known), short(v))
+    pa, pb = root(a["p"]), root(b["p"])
+    return "opposite" if {pa, pb} in OPPOSITE else "other"
+
+
+def check_prior(C, T):
+    """先行研究と仮説の関係（同じ向き・異なる）が、先行研究の主張の中身から導けることを確かめる。
+    先行研究の主張がまだ書かれていない先行研究は、確かめない。"""
+    want = {"prior_agreed": "same", "prior_contrasted": "opposite"}
+    for pid, p in C.get("prior_works", {}).items():
+        claims = p.get("prior_claim") or []
+        claims = claims if isinstance(claims, list) else [claims]
+        for c in claims:
+            if c not in C["prior_claims"]:
+                err(f"{pid}: 先行研究の主張 {c} が未定義")
+        if not claims:
+            continue
+        for rel, kind in want.items():
+            hs = p.get(rel) or []
+            for h in hs if isinstance(hs, list) else [hs]:
+                h = short(h)
+                got = [compare_claims(T, C["hypotheses"][h], C["prior_claims"][c]) for c in claims
+                       if h in C["hypotheses"] and c in C["prior_claims"]]
+                if kind not in got:
+                    err(f"{pid} → {h}: 「{T.N[rel]['display'] if rel in T.N else rel}」と書かれているが、"
+                        f"先行研究の主張の中身から導くと {got}")
 
 
 def gather(D, T, name):
@@ -1357,6 +1398,7 @@ def check_claims(C, values, T):
         for r in h.get("supersedes", []):
             if r not in hyps:
                 err(f"{hid}: supersedes の仮説 {r} が未定義")
+    check_prior(C, T)
     for did, d in decs.items():
         if d["status"] not in T.kinds_of("decision"):
             err(f"{did}: status の {d['status']} は、決定の状態のノードでない")

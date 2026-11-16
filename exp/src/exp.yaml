@@ -56,6 +56,7 @@ nodes:
   v_check: {display: 確かめる, extends: v_refer, from: backlog_item, to: tests}
   v_prior_same: {display: 同じ向きの結果を先に報告した, extends: v_agree, from: prior_work, to: prior_agreed}
   v_prior_differ: {display: 異なる結果を報告した, extends: v_refer, from: prior_work, to: prior_contrasted}
+  v_state: {display: 主張として述べる, extends: v_refer, from: prior_work, to: prior_claim}
   v_prior_method: {display: 先行研究の手法を使う, extends: v_use, from: hypothesis, to: prior_work}
   v_file_of: {display: 結果ファイルとして部分になる, extends: v_compose, from: result_file, to: measurement_family}
   v_rows_of: {display: 行の集まりとして部分になる, extends: v_compose, from: row_collection, to: measurement_family}
@@ -105,6 +106,7 @@ nodes:
   other_definitions: {display: 他の定義, extends: definition, mod: {of: [v_agree, from], with: question, neg: true}}
   ordinary_definitions: {display: 一般の意味どおりの定義, extends: other_definitions, mod: {of: [v_agree, from], with: prior_meaning}}
   other_redefinitions: {display: 他の再定義, extends: other_definitions, mod: {of: [v_agree, from], with: prior_meaning, neg: true}}
+  preceding_distractor_set: {display: 前に並ぶ、問いと関係しない情報, extends: information_entity, mod: {of: [v_agree, from], with: question, neg: true}}
   preceding_definitions_set: {display: 前に並ぶ定義, extends: other_definitions, mod: {of: [v_come_after, to], with: relevant_definitions}}
   following_definitions_set: {display: 後ろに並ぶ定義, extends: other_definitions, mod: {of: [v_come_after, from], with: relevant_definitions}}
   reason: {display: 理由, extends: sentence, mod: {of: [v_refer, from], with: verdict}}
@@ -231,7 +233,8 @@ nodes:
   context_length: {display: 文脈の長さ, extends: factor, mod: {of: [v_depend, from], with: context}, axis: count}
   context_depth: {display: 文脈の深さ, extends: factor, mod: {of: [v_depend, from], with: preceding_text}, axis: count}
   distance_to_question: {display: 設問からの距離, extends: factor, mod: {of: [v_depend, from], with: following_text}, axis: count}
-  preceding_definitions: {display: 前に並ぶ定義の数, extends: factor, mod: {of: [v_depend, from], with: preceding_definitions_set}, axis: count}
+  preceding_distractors: {display: 前に並ぶ、問いと関係しない情報の数, extends: factor, mod: {of: [v_depend, from], with: preceding_distractor_set}, axis: count}
+  preceding_definitions: {display: 前に並ぶ定義の数, extends: preceding_distractors, mod: {of: [v_depend, from], with: preceding_definitions_set}, axis: count}
   following_definitions: {display: 後ろに並ぶ定義の数, extends: factor, mod: {of: [v_depend, from], with: following_definitions_set}, axis: count}
   prior_collision: {display: 元の意味との衝突, extends: factor, mod: {of: [v_depend, from], with: redefinition}}
   format_variation: {display: 設問形式の違い, extends: factor, mod: {of: [v_depend, from], with: question_format}}
@@ -239,7 +242,8 @@ nodes:
   layer_choice: {display: 単一層の選び方, extends: factor, mod: {of: [v_measure, from], with: single_layer_vector}, axis: order}
   chain_length: {display: 連鎖の段数, extends: factor, mod: {of: [v_measure, from], with: v_stage}, axis: count}
   quality_measure_to: {display: 測る先の質, extends: quality, mod: {of: [v_measure, to]}}
-  redefinition_following: {display: 再定義への追従, extends: quality_measure_to, mod: {of: [v_depend, from], with: conflict_case}}
+  context_following: {display: 文脈の情報への追従, extends: quality_measure_to, mod: {of: [v_depend, from], with: case}}
+  redefinition_following: {display: 再定義への追従, extends: context_following, mod: {of: [v_depend, from], with: conflict_case}}
   control_preservation: {display: 衝突しない事例での判定の維持, extends: quality_measure_to, mod: {of: [v_depend, from], with: control_case}}
   verdict_stability: {display: 選択肢の順序に対する判定の安定, extends: quality_measure_to, mod: {of: [v_depend, from], with: verdict_pair}}
   redefinition_success: {display: 再定義の成功, extends: quality_measure_to, mod: {of: [v_depend, from], with: redefinition}}
@@ -292,6 +296,7 @@ nodes:
   lim_unconverged: {display: 学習が収束していない, extends: limitation, mod: {of: [v_refer, from], with: training_loss}}
   lim_single_case: {display: 1例だけ, extends: limitation, mod: {of: [v_refer, from], with: observation, at: {count: 1}}}
   prior_work: {display: 先行研究, extends: sentence_refer_from_hypothesis, mod: {of: [v_expose, to]}}
+  prior_claim: {display: 先行研究の主張, extends: sentence, mod: {of: [v_refer, to], with: prior_work}}
   prior_agreed: {display: 先行研究が同じ向きを報告した主張, extends: hypothesis, mod: {of: [v_agree, to], with: prior_work}}
   prior_contrasted: {display: 先行研究と結果が異なる主張, extends: hypothesis, mod: {of: [v_refer, to], with: prior_work}}
   doubt: {display: 仮説への疑い, extends: sentence, mod: {of: [v_challenge, from], with: hypothesis}}
@@ -337,6 +342,11 @@ individuals:
   pw_panickssery2023_caa: {is: prior_work, display: "先行研究: Panickssery et al. 2023, Steering Llama 2 via Contrastive Activation Addition（arXiv:2312.06681）"}
   pw_todd2024_function_vectors: {is: prior_work, display: "先行研究: Todd et al. 2024, Function Vectors in Large Language Models（ICLR 2024, arXiv:2310.15213）"}
   pw_radevski2026_steering_tokens: {is: prior_work, display: "先行研究: Radevski et al. 2026, Compositional Steering of Large Language Models with Steering Tokens（ACL 2026, aclanthology 2026.acl-long.1435）"}
+  # 先行研究の主張。表示語に、要旨の該当する文を引く。中身は v_refer で、仮説と同じ形に書く
+  pwc_wang2025_interference: {is: prior_claim, display: "要旨: retrieval accuracy declines log-linearly toward zero as interference accumulates（前に並ぶ古い値が多いほど、最新の値の検索が下がる）"}
+  pwc_liu2024_middle: {is: prior_claim, display: "要旨: performance is often highest when relevant information occurs at the beginning or end of the input context（関係する情報が末尾から離れて中ほどにあると下がる）"}
+  pwc_stringli2025_anchoring: {is: prior_claim, display: "要旨: prompting strategies do not stop models from anchoring to memorized values（よく知られた定数を再定義しても、覚えた値に引きずられる）"}
+  pwc_eisenschlos2023_new_words: {is: prior_claim, display: "要旨: accuracy drops sharply when the key concept word is replaced by a synthetic word defined in the prompt（定義を与えた合成語では正答率が大きく下がる）"}
   model_4b: {is: open_weight_model, display: Qwen3-4B}
 
   # ===== 設計。1つしかない。
@@ -2132,15 +2142,21 @@ facts:
   - {is: v_check, from: b_more_concepts, to: h_vector_count_does_not_lower}
   # ===== 先行研究と主張の関係
   - {is: v_prior_same, from: pw_wang2025_proactive_interference, to: h_preceding_definitions_lower}
-  - {is: v_prior_same, from: pw_wang2025_proactive_interference, to: h_length_does_not_lower}
   - {is: v_prior_differ, from: pw_goworek2026_lexical_redefinition, to: h_following_definitions_do_not_lower}
   - {is: v_prior_same, from: pw_goworek2026_lexical_redefinition, to: h_collision_lowers_following}
   - {is: v_prior_same, from: pw_stringli2025_inverse_redefinition, to: h_collision_lowers_following}
   - {is: v_prior_same, from: pw_xu2024_knowledge_conflicts, to: h_collision_lowers_following}
-  - {is: v_prior_differ, from: pw_eisenschlos2023_winodict, to: h_new_word_immune}
   - {is: v_prior_differ, from: pw_liu2024_lost_in_the_middle, to: h_distance_does_not_lower}
-  - {is: v_prior_differ, from: pw_liu2024_lost_in_the_middle, to: h_preceding_definitions_lower}
   - {is: v_prior_method, from: h_vector_raises_following, to: pw_turner2023_activation_addition}
   - {is: v_prior_method, from: h_contrast_vector_raises_following, to: pw_panickssery2023_caa}
   - {is: v_prior_method, from: h_vector_raises_following, to: pw_todd2024_function_vectors}
   - {is: v_prior_same, from: pw_radevski2026_steering_tokens, to: h_modifier_transfers_to_unseen_genus}
+  # ----- 先行研究の主張の中身（この形から、仮説との関係を検査が導く）
+  - {is: v_state, from: pw_wang2025_proactive_interference, to: pwc_wang2025_interference}
+  - {is: v_refer, from: pwc_wang2025_interference, to: {is: v_lower, from: preceding_distractors, to: context_following}}
+  - {is: v_state, from: pw_liu2024_lost_in_the_middle, to: pwc_liu2024_middle}
+  - {is: v_refer, from: pwc_liu2024_middle, to: {is: v_lower, from: distance_to_question, to: context_following}}
+  - {is: v_state, from: pw_stringli2025_inverse_redefinition, to: pwc_stringli2025_anchoring}
+  - {is: v_refer, from: pwc_stringli2025_anchoring, to: {is: v_lower, from: prior_collision, to: redefinition_following}}
+  - {is: v_state, from: pw_eisenschlos2023_winodict, to: pwc_eisenschlos2023_new_words}
+  - {is: v_refer, from: pwc_eisenschlos2023_new_words, to: {is: v_lower, from: new_word, to: context_following}}
