@@ -6,7 +6,7 @@ domain: syntax
 grammar:
   grammar: [system, nodes, mod, cmp, base, axes, run, position, rel, function, value, logic, runtime, domain, individuals, facts, grammar]
   system: [base, axes, nodes, individuals, facts, runtime, grammar]
-  nodes: [display, gloss, extends, from, to, new_kind, holds, pre, post, form, of, neg, mod, val, cmp, axis]
+  nodes: [display, gloss, extends, from, to, new_kind, holds, pre, post, form, of, neg, mod, val, cmp, axis, many, opposite, derive, via]
   mod: [of, with, neg, quant, at]
   cmp: [axis, a, b, rel]
   base: [display, arity, system_act]
@@ -51,6 +51,10 @@ nodes:
   mod: {display: 修飾の指定, extends: expression_part, mod: {of: [v_compose, to], with: position}}
   with: {display: もう一方の端の指定, extends: expression_part, mod: {of: [v_refer, from], with: participant}}
   neg: {display: 否定の指定, extends: expression_part, val: {truth: false}}
+  many: {display: 複数を許す指定, extends: expression_part, mod: {of: [v_refer, from], with: kind, at: {count: {gt: 1}}}}   # この種類を終点とする関係は、1つの個体について複数の事実を持てる
+  opposite: {display: 反対の動詞の指定, extends: expression_part, mod: {of: [v_refer, from], with: occurrent}}   # 動詞に書く。2つの文の中身を比べるとき、この組は向きが反対
+  derive: {display: 中身から導く比較の結果の指定, extends: expression_part, mod: {of: [v_refer, from], with: rel}}   # 動詞に書く（same か opposite）。この動詞の事実は、中身の比較から導けなければならない
+  via: {display: 比べる中身を述べる動詞の指定, extends: expression_part, mod: {of: [v_refer, from], with: occurrent, at: {count: 1}}}   # derive と組で書く。始点がこの動詞で述べる文を、終点の文と比べる
   quant: {display: 数量化の指定, extends: expression_part, mod: {of: [v_refer, from], with: participant, at: {count: {gt: 1}}}}
   value_part: {display: 値の指定, extends: expression_part, mod: {of: [v_refer, from], with: value}}
   at: {display: 修飾の中の値の指定, extends: value_part, mod: {of: [v_compose, from], with: mod}}
@@ -68,9 +72,9 @@ nodes:
   laws: {display: 法則, extends: sentence_refer_from_state_relation, val: {truth: true}}
   law_rule: {display: 規則で書いた法則, extends: laws, mod: {of: [v_assume, from], with: premise}}
   law_given: {display: 意味を検査が与える法則, extends: laws, mod: {of: [v_assume, from], with: premise, neg: true}}
-  premise: {display: 法則の前提, extends: sentence_refer_from_state_relation, mod: {of: [v_assume, to], with: law_rule}}
-  derived: {display: 法則が導く文, extends: sentence_refer_from_state_relation, mod: {of: [v_derive, to], with: law_rule}}
-  required: {display: 法則が求める文, extends: sentence_refer_from_state_relation, mod: {of: [v_require, to], with: law_rule}}
+  premise: {display: 法則の前提, extends: sentence_refer_from_state_relation, mod: {of: [v_assume, to], with: law_rule}, many: true}
+  derived: {display: 法則が導く文, extends: sentence_refer_from_state_relation, mod: {of: [v_derive, to], with: law_rule}, many: true}
+  required: {display: 法則が求める文, extends: sentence_refer_from_state_relation, mod: {of: [v_require, to], with: law_rule}, many: true}
   v_assume: {display: 前提に置く, extends: v_refer, from: law_rule, to: premise}
   v_derive: {display: 導く, extends: v_refer, from: law_rule, to: derived}
   v_require: {display: 成り立つことを求める, extends: v_refer, from: law_rule, to: required}
@@ -103,7 +107,7 @@ nodes:
   logic: {display: 述語論理の語, extends: word, mod: {of: [v_refer, from], with: sentence}}
   sentence_refer_from_sentence: {display: 文へ述べる文, extends: sentence, mod: {of: [v_refer, from], with: sentence}}
   not: {display: 否定, extends: sentence_refer_from_sentence, cmp: [{axis: truth, a: not, b: sentence, rel: differ}]}
-  any: {display: 存在の数量化, extends: sentence, mod: {of: [v_refer, from], with: participant, at: {count: {ge: 1}}}}
+  any: {display: 存在の数量化, extends: sentence, mod: {of: [v_refer, from], with: participant, at: {count: {ge: 1}}}, many: true}
   all: {display: 全称の数量化, extends: not, mod: {of: [v_refer, from], with: any}}
   individuals: {display: 個体, form: [is, from]}
   facts: {display: 個体か種類についての文（種類についての文は、その種類のすべてについて）, extends: sentence, mod: {of: [v_refer, from], with: individuals}}
@@ -112,7 +116,7 @@ nodes:
   # ===== 実行の戦略と実行時の意味論。実行の検査（cscl/bootstrap/runtime/runtime.py）は、runtime の節に書かれた選択に従う =====
 
   # ===== 名前空間。領域ごとに識別子を持ち、ほかの領域のものは「領域.名前」で参照する =====
-  domain: {display: 領域, extends: information_entity, mod: {of: [v_compose, to], with: concept_expression}}
+  domain: {display: 領域, extends: information_entity, mod: {of: [v_compose, to], with: concept_expression}, many: true}
   v_use: {display: 使う, extends: v_depend, from: domain, to: domain}
 
 individuals:

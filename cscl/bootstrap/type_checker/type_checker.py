@@ -316,7 +316,6 @@ def merge_domain(name, O):
     return D
 
 
-MANY = {"scope", "evidence", "against", "limitation", "supersedes", "basis", "tests", "metric", "any", "domain", "premise", "derived", "required", "information_entity"}   # 検査が並びとして読む関係
 
 
 def is_kind_fact(f, T, dom, I):
@@ -416,9 +415,9 @@ def gather(D, T, name):
     for subj, x in I.items():
         for rel, vs in list(x.items()):
             if isinstance(vs, list) and rel not in T.G["individuals"] and rel not in ("o", "_at"):
-                if rel not in MANY and len(vs) > 1:
+                if rel not in T.many and len(vs) > 1:
                     err(f"{name} {subj}: 関係 {rel} の事実が2つ以上ある")
-                x[rel] = vs if rel in MANY else vs[0]
+                x[rel] = vs if rel in T.many else vs[0]
 
 
 def axes_of(I, T):
@@ -453,10 +452,46 @@ def axes_of(I, T):
                 fam.setdefault("meaning", {}).setdefault(al, {})[label(v)] = m
 
 
+def compare_claims(T, a, b):
+    """2つの文の中身（s, p, o）を比べる。両端が同じか上位・下位の関係にあるときだけ比べられる。
+    返す値: same（動詞が同じか上位・下位）、opposite（動詞が、opposite で宣言された反対の組）、other（両端は合うが動詞が別）、
+    None（両端が合わない）。"""
+    as_ = lambda v: v if isinstance(v, list) else [v]
+    if not a.get("p") or not b.get("p"):
+        return None
+    if not all(any(T.overlaps(x, y) for x in as_(a.get(k)) for y in as_(b.get(k))) for k in ("s", "o")):
+        return None
+    if T.overlaps(a["p"], b["p"]):
+        return "same"
+    up = lambda v: [v, *T.ancestors(v)]
+    opp = lambda x, y: any(short(T.N[u]["opposite"]) in {short(z) for z in up(y)}
+                           for u in up(x) if u in T.N and T.N[u].get("opposite"))
+    return "opposite" if opp(a["p"], b["p"]) or opp(b["p"], a["p"]) else "other"
+
+
+def check_derived(D, T, name):
+    """derive を持つ動詞の事実（始点 a から終点 h へ）を確かめる。a が via の動詞で述べる文のどれかと h の中身を比べ、
+    derive の結果（same か opposite）が導けること。a が via で何も述べていなければ、確かめない。"""
+    dom, local, I = D["domain"], D["_local"], D["individuals"]
+    q = lambda v: qualify(v, local, dom)
+    facts = [f for f in D.get("facts") or [] if isinstance(f, dict) and isinstance(f.get("is"), str)]
+    for f in facts:
+        n = T.N.get(q(f["is"])) or {}
+        want, via = n.get("derive"), n.get("via")
+        if not want:
+            continue
+        a, h = f.get("from"), f.get("to")
+        claims = [g.get("to") for g in facts if q(g["is"]) == q(via) and g.get("from") == a]
+        got = [compare_claims(T, I[h], I[c]) for c in claims if c in I and h in I]
+        if claims and want not in got:
+            err(f"{name}: {a} → {h} は「{n.get('display')}」と書かれているが、{a} の述べる文の中身から導くと {got}")
+
+
 def load_domain(name, D, T):
     """領域の個体を種類ごとに分ける。個体についての関係は、事実（動詞の個体）から集める（gather）。
     仮説・決定・残り項目の個体は、状態を表す下位の種類に属する。この検査が中身を確かめない種類の個体は、種類と項目だけを確かめる。"""
     gather(D, T, name)
+    check_derived(D, T, name)
     axes_of(D["individuals"], T)
     for k in D:
         if k not in T.G["domain"] and k != "_local":
@@ -772,6 +807,11 @@ class Ontology:
         ps = self.parents(nid)
         return ps[0] if ps else None
 
+    @property
+    def many(self):
+        """複数を許す関係の名（終点の種類に many: true を書いたもの）。"""
+        return {short(k) for k, n in self.N.items() if isinstance(n, dict) and n.get("many")}
+
     def ancestors(self, nid):
         out, todo = [], self.parents(nid)
         while todo:
@@ -1049,6 +1089,11 @@ class Ontology:
                     err(f"{nid}.cmp[{i}]: 語 {set(c) - set(self.G['cmp'])} が、grammar.cmp に書かれていない")
                 if c.get("axis") not in AX or c.get("a") not in N or c.get("b") not in N or c.get("rel") not in self.G["rel"]:
                     err(f"{nid}.cmp[{i}]: 軸・比べる2つ・比べた結果のどれかが正しくない")
+            for key in ("opposite", "via"):
+                if key in n and not (self.is_verb(nid) and self.resolve(short(n[key]), nid.split(".")[0]) and self.is_verb(self.resolve(short(n[key]), nid.split(".")[0]))):
+                    err(f"{nid}: {key} を書けるのは動詞だけで、値も動詞")
+            if "derive" in n and (n["derive"] not in ("same", "opposite") or "via" not in n):
+                err(f"{nid}: derive は same か opposite で、via と組で書く")
             if "axis" in n:
                 if n["axis"] not in AX or AX[n["axis"]]["value"] != "number":
                     err(f"{nid}: axis {n['axis']} は数の軸でない")

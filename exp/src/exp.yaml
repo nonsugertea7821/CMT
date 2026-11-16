@@ -261,7 +261,7 @@ nodes:
   measured_value: {display: 測定値, extends: magnitude, mod: {of: [v_depend, from], with: result_file}}
   mean_value: {display: 平均, extends: magnitude, mod: {of: [v_depend, from], with: measured_value, at: {count: {gt: 1}}}}
   tolerance: {display: 許容幅, extends: magnitude, mod: {of: [v_depend, from], with: observation}}
-  metric: {display: 指標, extends: quality, mod: measuring}
+  metric: {display: 指標, extends: quality, mod: measuring, many: true}
   row_filter: {display: 行の限定, extends: sentence, mod: {of: [v_refer, from], with: result_row}}
   condition_entry: {display: 条件ごとの記録, extends: information_entity_refer_from_verdict, mod: {of: [v_compose, from], with: result_row}}
 
@@ -273,16 +273,16 @@ nodes:
   sentence_refer_from_measured_value: {display: 測定値へ述べる文, extends: sentence, mod: {of: [v_refer, from], with: measured_value}}
   observation: {display: 観察, extends: sentence_refer_from_measured_value, val: {truth: true}}
   observation_agree_from_hypothesis: {display: 仮説へ一致する観察, extends: observation, mod: {of: [v_agree, from], with: hypothesis}}
-  evidence: {display: 支持する観察, extends: observation_agree_from_hypothesis, cmp: [{axis: truth, a: observation, b: hypothesis, rel: same}]}
-  against: {display: 反する観察, extends: observation_agree_from_hypothesis, cmp: [{axis: truth, a: observation, b: hypothesis, rel: differ}]}
+  evidence: {display: 支持する観察, extends: observation_agree_from_hypothesis, cmp: [{axis: truth, a: observation, b: hypothesis, rel: same}], many: true}
+  against: {display: 反する観察, extends: observation_agree_from_hypothesis, cmp: [{axis: truth, a: observation, b: hypothesis, rel: differ}], many: true}
   hypothesis_agree_to_evidence: {display: 支持する観察から一致する仮説, extends: hypothesis, mod: {of: [v_agree, to], with: evidence}}
   hyp_supported: {display: 支持された仮説, extends: hypothesis_agree_to_evidence, mod: {of: [v_agree, to], with: against, neg: true}}
   hypothesis_agree_to_evidence_not: {display: 支持する観察から一致することのない仮説, extends: hypothesis, mod: {of: [v_agree, to], with: evidence, neg: true}}
   hyp_refuted: {display: 反証された仮説, extends: hypothesis_agree_to_evidence_not, mod: {of: [v_agree, to], with: against}}
   hyp_mixed: {display: 支持と反証の両方がある仮説, extends: hypothesis_agree_to_evidence, mod: {of: [v_agree, to], with: against}}
   hyp_untested: {display: 未検証の仮説, extends: hypothesis_agree_to_evidence_not, mod: {of: [v_agree, to], with: against, neg: true}}
-  supersedes: {display: 置き換えられた文, extends: withdrawn_sentence, mod: {of: [v_refer, to], with: sentence}}
-  limitation: {display: 留保, extends: sentence_refer_from_hypothesis, mod: {of: [v_refer, from], with: observation}}
+  supersedes: {display: 置き換えられた文, extends: withdrawn_sentence, mod: {of: [v_refer, to], with: sentence}, many: true}
+  limitation: {display: 留保, extends: sentence_refer_from_hypothesis, mod: {of: [v_refer, from], with: observation}, many: true}
   lim_post_hoc: {display: 結果を見たあとで分類した, extends: limitation, mod: {of: [v_come_after, from], with: observation}}
   lim_range: {display: 測った範囲が限られる, extends: limitation, mod: {of: [v_refer, from], with: factor}}
   lim_one_item: {display: 差が1問以内, extends: limitation, mod: {of: [v_refer, from], with: question, at: {count: 1}}}
@@ -295,11 +295,11 @@ nodes:
   dec_adopted: {display: 採用済みの決定, extends: decision, mod: adopted}
   dec_tentative: {display: 暫定の決定, extends: decision, mod: not_adopted}
   dec_withdrawn: {display: 取り下げた決定, extends: withdrawn_sentence, mod: {of: [is, from], with: decision}}
-  basis: {display: 根拠となる仮説, extends: hypothesis, mod: {of: [v_depend, to], with: decision}}
+  basis: {display: 根拠となる仮説, extends: hypothesis, mod: {of: [v_depend, to], with: decision}, many: true}
   performed_experiment: {display: 行われた実験, extends: experiment, mod: {of: [v_perform, to]}}
   measured_experiment: {display: 結果ファイルが述べる実験, extends: experiment, mod: {of: [v_refer, to], with: result_file}}
   backlog_item: {display: 残り項目, extends: sentence, mod: {of: [v_refer, from], with: experiment}}
-  tests: {display: 確かめる仮説, extends: hypothesis, mod: {of: [v_refer, to], with: backlog_item}}
+  tests: {display: 確かめる仮説, extends: hypothesis, mod: {of: [v_refer, to], with: backlog_item}, many: true}
   item_done: {display: 済んだ項目, extends: backlog_item, mod: {of: [v_refer, from], with: measured_experiment}}
   backlog_item_refer_from_performed_experiment: {display: 行われた実験へ述べる残り項目, extends: backlog_item, mod: {of: [v_refer, from], with: performed_experiment}}
   item_running: {display: 実行中の項目, extends: backlog_item_refer_from_performed_experiment, mod: {of: [v_refer, from], with: measured_experiment, neg: true}}
