@@ -426,7 +426,7 @@ def compare_claims(T, a, b):
 
 def check_derived(D, T, name):
     """derive を持つ動詞の事実（始点 a から終点 h へ）を確かめる。a が via の動詞で述べる文のどれかと h の中身を比べ、
-    derive の結果（same か opposite）が導けること。a が via で何も述べていなければ、確かめない。"""
+    derive の結果（same か opposite）が導けること。a が via で何も述べていなければ、導けないので誤り。"""
     dom, local, I = D["domain"], D["_local"], D["individuals"]
     q = lambda v: qualify(v, local, dom)
     facts = [f for f in D.get("facts") or [] if isinstance(f, dict) and isinstance(f.get("is"), str)]
@@ -438,7 +438,9 @@ def check_derived(D, T, name):
         a, h = f.get("from"), f.get("to")
         claims = [g.get("to") for g in facts if q(g["is"]) == q(via) and g.get("from") == a]
         got = [compare_claims(T, I[h], I[c]) for c in claims if c in I and h in I]
-        if claims and want not in got:
+        if not claims:
+            err(f"{name}: {a} → {h} は「{n.get('display')}」と書かれているが、{a} は {short(via)} で何も述べていないので、中身から導けない")
+        elif want not in got:
             err(f"{name}: {a} → {h} は「{n.get('display')}」と書かれているが、{a} の述べる文の中身から導くと {got}")
 
 
