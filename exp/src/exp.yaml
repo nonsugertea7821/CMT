@@ -235,13 +235,15 @@ nodes:
   distance_to_question: {display: 設問からの距離, extends: factor, mod: {of: [v_depend, from], with: following_text}, axis: count}
   preceding_distractors: {display: 前に並ぶ、問いと関係しない情報の数, extends: factor, mod: {of: [v_depend, from], with: preceding_distractor_set}, axis: count}
   preceding_definitions: {display: 前に並ぶ定義の数, extends: preceding_distractors, mod: {of: [v_depend, from], with: preceding_definitions_set}, axis: count}
-  following_definitions: {display: 後ろに並ぶ定義の数, extends: factor, mod: {of: [v_depend, from], with: following_definitions_set}, axis: count}
+  following_context: {display: 定義の後ろに置かれる文脈, extends: factor, mod: {of: [v_compose, from], with: following_text}}
+  following_definitions: {display: 後ろに並ぶ定義の数, extends: following_context, mod: {of: [v_depend, from], with: following_definitions_set}, axis: count}
   prior_collision: {display: 元の意味との衝突, extends: factor, mod: {of: [v_depend, from], with: redefinition}}
   format_variation: {display: 設問形式の違い, extends: factor, mod: {of: [v_depend, from], with: question_format}}
   vector_count: {display: 同時に入れる概念ベクトルの数, extends: factor, mod: {of: [v_measure, from], with: concept_vector}, axis: count}
   layer_choice: {display: 単一層の選び方, extends: factor, mod: {of: [v_measure, from], with: single_layer_vector}, axis: order}
   chain_length: {display: 連鎖の段数, extends: factor, mod: {of: [v_measure, from], with: v_stage}, axis: count}
   quality_measure_to: {display: 測る先の質, extends: quality, mod: {of: [v_measure, to]}}
+  behavior_expression: {display: 狙った振る舞いの現れ, extends: quality_measure_to, mod: {of: [v_depend, from], with: state_shift}}
   context_following: {display: 文脈の情報への追従, extends: quality_measure_to, mod: {of: [v_depend, from], with: case}}
   redefinition_following: {display: 再定義への追従, extends: context_following, mod: {of: [v_depend, from], with: conflict_case}}
   control_preservation: {display: 衝突しない事例での判定の維持, extends: quality_measure_to, mod: {of: [v_depend, from], with: control_case}}
@@ -347,6 +349,12 @@ individuals:
   pwc_liu2024_middle: {is: prior_claim, display: "要旨: performance is often highest when relevant information occurs at the beginning or end of the input context（関係する情報が末尾から離れて中ほどにあると下がる）"}
   pwc_stringli2025_anchoring: {is: prior_claim, display: "要旨: prompting strategies do not stop models from anchoring to memorized values（よく知られた定数を再定義しても、覚えた値に引きずられる）"}
   pwc_eisenschlos2023_new_words: {is: prior_claim, display: "要旨: accuracy drops sharply when the key concept word is replaced by a synthetic word defined in the prompt（定義を与えた合成語では正答率が大きく下がる）"}
+  pwc_goworek2026_later_context: {is: prior_claim, display: "要旨: 後に来る文が指示の意味を保つ・弱める・逆にするかで結果が変わり、モデルは後の文脈に反応し続ける（再定義は固定の規則として働かない）"}
+  pwc_xu2024_context_memory: {is: prior_claim, display: "要旨: context-memory conflict（文脈と記憶した知識の衝突）は、モデルの信頼性と性能を大きく損なう"}
+  pwc_turner2023_actadd: {is: prior_claim, display: "要旨: 対になるプロンプトの活性化の差を推論時に足すと、話題や感情などの性質を狙った方へ動かせる"}
+  pwc_panickssery2023_caa: {is: prior_claim, display: "要旨: 正例と負例の残差の活性化の平均の差を足すと、振る舞いが大きく変わる（能力の低下は小さい）"}
+  pwc_todd2024_function_vector: {is: prior_claim, display: "要旨: 少数の注意ヘッドが運ぶ関数ベクトルを足すと、例示なしの文脈でもその課題が実行される"}
+  pwc_radevski2026_steering_tokens: {is: prior_claim, display: "要旨: 振る舞いを入力の専用トークンに埋め込むと、学習していない組み合わせにも汎化し、活性化の操舵より効く"}
   model_4b: {is: open_weight_model, display: Qwen3-4B}
 
   # ===== 設計。1つしかない。
@@ -2144,6 +2152,8 @@ facts:
   - {is: v_prior_same, from: pw_wang2025_proactive_interference, to: h_preceding_definitions_lower}
   - {is: v_prior_same, from: pw_stringli2025_inverse_redefinition, to: h_collision_lowers_following}
   - {is: v_prior_differ, from: pw_liu2024_lost_in_the_middle, to: h_distance_does_not_lower}
+  - {is: v_prior_differ, from: pw_goworek2026_lexical_redefinition, to: h_following_definitions_do_not_lower}
+  - {is: v_prior_same, from: pw_xu2024_knowledge_conflicts, to: h_collision_lowers_following}
   - {is: v_prior_method, from: h_vector_raises_following, to: pw_turner2023_activation_addition}
   - {is: v_prior_method, from: h_contrast_vector_raises_following, to: pw_panickssery2023_caa}
   - {is: v_prior_method, from: h_vector_raises_following, to: pw_todd2024_function_vectors}
@@ -2156,3 +2166,15 @@ facts:
   - {is: v_refer, from: pwc_stringli2025_anchoring, to: {is: v_lower, from: prior_collision, to: redefinition_following}}
   - {is: v_state, from: pw_eisenschlos2023_winodict, to: pwc_eisenschlos2023_new_words}
   - {is: v_refer, from: pwc_eisenschlos2023_new_words, to: {is: v_lower, from: new_word, to: context_following}}
+  - {is: v_state, from: pw_goworek2026_lexical_redefinition, to: pwc_goworek2026_later_context}
+  - {is: v_refer, from: pwc_goworek2026_later_context, to: {is: v_lower, from: following_context, to: redefinition_following}}
+  - {is: v_state, from: pw_xu2024_knowledge_conflicts, to: pwc_xu2024_context_memory}
+  - {is: v_refer, from: pwc_xu2024_context_memory, to: {is: v_lower, from: prior_collision, to: context_following}}
+  - {is: v_state, from: pw_turner2023_activation_addition, to: pwc_turner2023_actadd}
+  - {is: v_refer, from: pwc_turner2023_actadd, to: {is: v_raise, from: state_shift, to: behavior_expression}}
+  - {is: v_state, from: pw_panickssery2023_caa, to: pwc_panickssery2023_caa}
+  - {is: v_refer, from: pwc_panickssery2023_caa, to: {is: v_raise, from: state_shift, to: behavior_expression}}
+  - {is: v_state, from: pw_todd2024_function_vectors, to: pwc_todd2024_function_vector}
+  - {is: v_refer, from: pwc_todd2024_function_vector, to: {is: v_raise, from: state_shift, to: behavior_expression}}
+  - {is: v_state, from: pw_radevski2026_steering_tokens, to: pwc_radevski2026_steering_tokens}
+  - {is: v_refer, from: pwc_radevski2026_steering_tokens, to: {is: v_raise, from: dedicated_token, to: behavior_expression}}
