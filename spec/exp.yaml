@@ -186,6 +186,8 @@ nodes:
   symbolic_membership: {display: 事実の判定と体系での帰属の決定, extends: inference, mod: {of: [v_involve, from], with: system}}
   contrast_vector: {display: 定義の有無による活性化の差のベクトル, extends: concept_vector, mod: {of: [v_depend, from], with: definition_text}}
   swapped_concept_vector: {display: 他の語の概念ベクトル, extends: concept_vector, mod: {of: [v_depend, from], with: word, neg: true}}
+  common_vector_component: {display: 概念ベクトルの共通成分, extends: concept_vector, mod: {of: [v_compose, from], with: concept_vector}}
+  specific_vector_component: {display: 概念ベクトルの固有成分, extends: concept_vector, mod: {of: [v_depend, from], with: word}}
   opaque_expression: {display: core 以外の識別子を無意味にした概念式, extends: concept_expression, mod: {of: [v_compose, to], with: hidden_word}}
   text_and_vector: {display: 文章と概念ベクトルの併用, extends: text_injection, mod: {of: [is, from], with: concept_vector}}
   delta_weights: {display: 差分重み, extends: channel, mod: {of: [v_involve, from], with: weights}}
@@ -366,6 +368,7 @@ individuals:
   e15: {is: measurement_family}
   e15c: {is: measurement_family}
   e15r: {is: measurement_family}
+  e16: {is: measurement_family}
   # ----- 測定の族の軸（is: family_axis）と、軸の値（is: axis_value）。val の text は測定値の識別子に使う字。
   # 結果ファイルでの書き方（v_spell）と、値が指すもの（v_denote）は事実で書く。
   e1_model: {is: family_axis, val: {text: model}}
@@ -607,6 +610,14 @@ individuals:
   e15r_shift_e14: {is: axis_value, val: {text: e14}}
   e15r_shift_e12: {is: axis_value, val: {text: e12}}
   e15r_shift_near: {is: axis_value, val: {text: near}}
+  e16_group: {is: family_axis, val: {text: group}}
+  e16_group_G2c: {is: axis_value, val: {text: G2c}}
+  e16_group_G2k: {is: axis_value, val: {text: G2k}}
+  e16_cond: {is: family_axis, val: {text: cond}}
+  e16_cond_none: {is: axis_value, val: {text: none}}
+  e16_cond_full: {is: axis_value, val: {text: full}}
+  e16_cond_common: {is: axis_value, val: {text: common}}
+  e16_cond_specific: {is: axis_value, val: {text: specific}}
 
   # ===== 観察。s と o は測定値で、p は大きさを比べる動詞（is: observation）
   o_e1_redef_below_new_adjacent: {is: observation}
@@ -698,6 +709,9 @@ individuals:
   o_e15_swapped_below_none_control: {is: observation}
   o_e15_vector_orthogonal_to_text_shift: {is: observation}
   o_e15_vector_shift_smaller_than_text: {is: observation}
+  o_e16_specific_above_none_conflict: {is: observation}
+  o_e16_common_level_none_control: {is: observation}
+  o_e16_full_robust_above_specific_conflict: {is: observation}
 
   # ===== 仮説（is: hypothesis）
   # --- 文章での注入 ---
@@ -745,6 +759,8 @@ individuals:
   h_opaque_expression_raises_following: {is: hyp_mixed}
   h_swapped_vector_lowers_control: {is: hyp_supported}
   h_vector_agrees_with_text_shift: {is: hyp_refuted}
+  h_specific_component_raises_following: {is: hyp_supported}
+  h_common_component_lowers_control: {is: hyp_refuted}
   h_model_can_write_cscl: {is: hyp_untested}
   h_modifier_transfers_to_unseen_genus: {is: hyp_supported}
 
@@ -1521,6 +1537,26 @@ facts:
   - {is: v_denote, from: e15r_shift_near, to: contrast_vector}
   - {is: v_entry_of, from: '{shift}', to: e15r}
   - {is: v_metric_of, from: e15r, to: mean_value}
+  - {is: v_file_of, from: 'e16_Qwen2.5-1.5B-Instruct_L8_defqa.json', to: e16}
+  - {is: v_rows_of, from: [items], to: e16}
+  - {is: v_axis_of, from: e16_group, to: e16}
+  - {is: v_value_of, from: e16_group_G2c, to: e16_group}
+  - {is: v_denote, from: e16_group_G2c, to: g_redef_conflict}
+  - {is: v_value_of, from: e16_group_G2k, to: e16_group}
+  - {is: v_denote, from: e16_group_G2k, to: g_redef_control}
+  - {is: v_axis_of, from: e16_cond, to: e16}
+  - {is: v_value_of, from: e16_cond_none, to: e16_cond}
+  - {is: v_denote, from: e16_cond_none, to: no_channel}
+  - {is: v_value_of, from: e16_cond_full, to: e16_cond}
+  - {is: v_denote, from: e16_cond_full, to: single_layer_vector}
+  - {is: v_value_of, from: e16_cond_common, to: e16_cond}
+  - {is: v_denote, from: e16_cond_common, to: common_vector_component}
+  - {is: v_value_of, from: e16_cond_specific, to: e16_cond}
+  - {is: v_denote, from: e16_cond_specific, to: specific_vector_component}
+  - {is: v_filter_of, from: {group: '{group}'}, to: e16}
+  - {is: v_entry_of, from: '{cond}', to: e16}
+  - {is: v_metric_of, from: e16, to: accuracy}
+  - {is: v_metric_of, from: e16, to: order_robust_accuracy}
 
   # ===== 観察。s と o は測定値で、p は大きさを比べる動詞（is: observation）
   - {is: v_refer, from: o_e1_redef_below_new_adjacent, to: {is: v_come_before, from: e1.4b.G2c.near.accuracy, to: e1.4b.G3.near.accuracy}}
@@ -1608,6 +1644,9 @@ facts:
   - {is: v_refer, from: o_e15_swapped_below_none_control, to: {is: v_come_before, from: e15.G2k.swapped.accuracy, to: e14.G2k.none.accuracy}}
   - {is: v_refer, from: o_e15_vector_orthogonal_to_text_shift, to: {is: v_near, from: e15c.G2c.cos_centered.mean_value, to: 0.0, new: 0.05}}
   - {is: v_refer, from: o_e15_vector_shift_smaller_than_text, to: {is: v_come_before, from: e15r.e3.mean_value, to: e15r.near.mean_value}}
+  - {is: v_refer, from: o_e16_specific_above_none_conflict, to: {is: v_come_after, from: e16.G2c.specific.accuracy, to: e16.G2c.none.accuracy}}
+  - {is: v_refer, from: o_e16_common_level_none_control, to: {is: v_level, from: e16.G2k.common.accuracy, to: e16.G2k.none.accuracy}}
+  - {is: v_refer, from: o_e16_full_robust_above_specific_conflict, to: {is: v_come_after, from: e16.G2c.full.order_robust_accuracy, to: e16.G2c.specific.order_robust_accuracy}}
 
   # ===== 仮説（is: hypothesis）
   - {is: v_refer, from: h_collision_lowers_following, to: {is: v_lower, from: prior_collision, to: redefinition_following}}
@@ -1674,6 +1713,10 @@ facts:
   - {is: v_contradict, from: o_e15_vector_shift_smaller_than_text, to: h_vector_agrees_with_text_shift}
   - {is: v_refer, from: h_swapped_vector_lowers_control, to: {is: v_lower, from: swapped_concept_vector, to: control_preservation}}
   - {is: v_refer, from: h_vector_agrees_with_text_shift, to: {is: v_agree, from: single_layer_vector, to: contrast_vector}}
+  - {is: v_support, from: o_e16_specific_above_none_conflict, to: h_specific_component_raises_following}
+  - {is: v_contradict, from: o_e16_common_level_none_control, to: h_common_component_lowers_control}
+  - {is: v_refer, from: h_specific_component_raises_following, to: {is: v_raise, from: specific_vector_component, to: redefinition_following}}
+  - {is: v_refer, from: h_common_component_lowers_control, to: {is: v_lower, from: common_vector_component, to: control_preservation}}
   - {is: v_refer, from: h_length_does_not_lower, to: {is: v_not_lower, from: context_length, to: redefinition_following}}
   - {is: v_scope, from: model_4b, to: h_length_does_not_lower}
   - {is: v_scope, from: text_injection, to: h_length_does_not_lower}
