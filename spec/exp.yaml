@@ -111,15 +111,15 @@ nodes:
   filler_text: {display: 無関係な文章, extends: passage, mod: {of: [v_agree, from], with: question, neg: true}}
   context: {display: 文脈, extends: passage, mod: {of: [v_read, to], with: model}}
   glossary: {display: 用語集, extends: information_entity, mod: {of: [v_compose, to], with: definition, at: {count: {gt: 1}}}}
-  definition_compose_from_glossary: {display: 用語集へ部分になる定義, extends: definition, mod: {of: [v_compose, from], with: glossary}}
+  definition_compose_from_glossary: {display: 用語集の部分である定義, extends: definition, mod: {of: [v_compose, from], with: glossary}}
   glossary_head: {display: 用語集の先頭, extends: definition_compose_from_glossary, mod: {of: [v_come_after, from], with: definition, neg: true}}
   operator: {display: 運用者, extends: independent_continuant, mod: {of: [v_design, from], with: experiment_protocol}}
-  passage_compose_from_context: {display: 文脈へ部分になる文章, extends: passage, mod: {of: [v_compose, from], with: context}}
+  passage_compose_from_context: {display: 文脈の部分である文章, extends: passage, mod: {of: [v_compose, from], with: context}}
   place_system: {display: システムプロンプト, extends: passage_compose_from_context, mod: {of: [v_speak, to], with: operator}}
   place_adjacent: {display: 設問の直前, extends: passage_compose_from_context, mod: {of: [v_come_after, to], with: question, at: {order: 1}}}
   preceding_text: {display: 定義の前にある文章, extends: passage, mod: {of: [v_come_after, to], with: definition}}
   following_text: {display: 定義の後ろにある文章, extends: passage, mod: {of: [v_come_after, from], with: definition}}
-  information_entity_compose_to_new_word_n: {display: 新しい語から部分になる（count2）情報, extends: information_entity, mod: {of: [v_compose, to], with: new_word, at: {count: 2}}}
+  information_entity_compose_to_new_word_n: {display: 新しい語を部分に持つ（count2）情報, extends: information_entity, mod: {of: [v_compose, to], with: new_word, at: {count: 2}}}
   sibling_pair: {display: 兄弟概念の組, extends: information_entity_compose_to_new_word_n, mod: {of: [v_compose, to], with: genus_concept, at: {count: 1}}}
   information_entity_refer_from_concept_n: {display: '概念へ述べる（count{"gt": 1}）情報', extends: information_entity, mod: {of: [v_refer, from], with: concept, at: {count: {gt: 1}}}}
   information_entity_refer_from_concept_n_refer_from_v_depend: {display: '依存するへ述べる概念へ述べる（count{"gt": 1}）情報', extends: information_entity_refer_from_concept_n, mod: {of: [v_refer, from], with: v_depend}}
@@ -143,17 +143,17 @@ nodes:
   verdict_by_prior: {display: 元の意味による判定, extends: verdict, mod: {of: [v_agree, from], with: prior_meaning}}
   conflict_case: {display: 衝突する事例, extends: case, cmp: [{axis: truth, a: verdict_by_definition, b: verdict_by_prior, rel: differ}]}
   control_case: {display: 衝突しない事例, extends: case, cmp: [{axis: truth, a: verdict_by_definition, b: verdict_by_prior, rel: same}]}
-  information_entity_compose_to_case: {display: 事例から部分になる情報, extends: information_entity, mod: {of: [v_compose, to], with: case}}
+  information_entity_compose_to_case: {display: 事例を部分に持つ情報, extends: information_entity, mod: {of: [v_compose, to], with: case}}
   application_example: {display: 適用例, extends: information_entity_compose_to_case, mod: {of: [v_compose, to], with: verdict}}
   test: {display: テスト, extends: application_example, mod: {of: [v_use, to], with: verification}}
   label_token_positions: {display: 語のトークン位置, extends: information_entity_compose_to_word, mod: {of: [v_compose, from], with: context}}
-  information_entity_compose_from_question: {display: 設問へ部分になる情報, extends: information_entity, mod: {of: [v_compose, from], with: question}}
+  information_entity_compose_from_question: {display: 設問の部分である情報, extends: information_entity, mod: {of: [v_compose, from], with: question}}
   position_after_word: {display: 語の直後, extends: information_entity_compose_from_question, mod: {of: [v_come_after, from], with: word, at: {order: 1}}}
-  question_format_compose_to_opt_yes: {display: 選択肢「はい」から部分になる設問形式, extends: question_format, mod: {of: [v_compose, to], with: opt_yes}}
+  question_format_compose_to_opt_yes: {display: 選択肢「はい」を部分に持つ設問形式, extends: question_format, mod: {of: [v_compose, to], with: opt_yes}}
   fmt_yesno: {display: はい・いいえの二択, extends: question_format_compose_to_opt_yes, mod: {of: [v_compose, to], with: opt_no}}
-  question_format_compose_to_opt_applies: {display: 選択肢「当たる」から部分になる設問形式, extends: question_format, mod: {of: [v_compose, to], with: opt_applies}}
+  question_format_compose_to_opt_applies: {display: 選択肢「当たる」を部分に持つ設問形式, extends: question_format, mod: {of: [v_compose, to], with: opt_applies}}
   fmt_fill: {display: 空欄補充の二択, extends: question_format_compose_to_opt_applies, mod: {of: [v_compose, to], with: opt_not_applies}}
-  question_format_compose_to_opt_correct: {display: 選択肢「正しい」から部分になる設問形式, extends: question_format, mod: {of: [v_compose, to], with: opt_correct}}
+  question_format_compose_to_opt_correct: {display: 選択肢「正しい」を部分に持つ設問形式, extends: question_format, mod: {of: [v_compose, to], with: opt_correct}}
   fmt_truth: {display: 正誤判定の二択, extends: question_format_compose_to_opt_correct, mod: {of: [v_compose, to], with: opt_wrong}}
   fmt_paraphrase_choice: {display: 言い換えの二択, extends: question_format, mod: {of: [v_compose, to], with: definition, at: {count: 2}}}
   item_group: {display: 設問群, extends: information_entity, mod: {of: [v_compose, to], with: question, at: {count: {gt: 1}}}}
@@ -247,7 +247,7 @@ nodes:
   training_loss: {display: 学習の損失, extends: metric, mod: {of: [v_measure, from], with: teaching}}
   passage_compute_to: {display: 計算する先の文章, extends: passage, mod: {of: [v_compute, to]}}
   result_file: {display: 結果ファイル, extends: passage_compute_to, mod: {of: [v_refer, from], with: experiment}}
-  information_entity_compose_from_result_file: {display: 結果ファイルへ部分になる情報, extends: information_entity, mod: {of: [v_compose, from], with: result_file}}
+  information_entity_compose_from_result_file: {display: 結果ファイルの部分である情報, extends: information_entity, mod: {of: [v_compose, from], with: result_file}}
   result_row: {display: 結果の行, extends: information_entity_compose_from_result_file, mod: {of: [v_refer, from], with: question}}
   row_collection: {display: 行の集まり, extends: information_entity_compose_from_result_file, mod: {of: [v_compose, to], with: result_row, at: {count: {gt: 1}}}}
   logit_margin: {display: ロジット差の平均, extends: metric, mod: {of: [v_measure, from], with: verdict}, axis: order}

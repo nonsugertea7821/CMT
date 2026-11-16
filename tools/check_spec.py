@@ -409,7 +409,7 @@ def evaluate(rules, F, V):
 # ---------------------------------------------------------------- 概念の体系
 # 法則のうち、この検査が当てはめるもの / 実行の検査（run_spec.py）が当てはめるもの
 # 規則で書いた法則（law_rule）は、実行の検査がその規則を読んで当てはめる。ここには、意味を検査が与える法則（law_given）だけを挙げる。
-LAWS_HERE = set()
+LAWS_HERE = {"part_fact_direction", "part_display_explicit"}
 LAWS_RUN = {"unique_names", "step", "frame", "halt"}
 
 
@@ -1200,6 +1200,55 @@ def register_domains(O):
     return [(d, files[d]) for d in order]
 
 
+PART_WORDS = {"from": ("の部分である", "の時間的な部分である"), "to": ("を部分に持つ", "を時間的な部分に持つ")}
+PART_VAGUE = ("から部分になる", "へ部分になる", "から時間的な部分になる", "へ時間的な部分になる")
+
+
+def check_parts(T):
+    """法則 part_fact_direction と part_display_explicit。
+    - 事実「a は b の部分」に対し、b の種類が「a の種類の部分である」と限定されている（または a の種類が「b の種類を部分に持つ」）なら、向きが逆。
+    - 部分の限定（v_compose, v_stage）を持つ種類の表示名は、どちらが部分かを曖昧な言い方で書かず、明示した言い方なら限定の向きと合う。"""
+    kind = lambda x: T.I.get(x, x if x in T.N else None)
+    isa = lambda a, b: a is not None and (a == b or T.is_a(a, b))
+
+    def mods(k, pos, verb="v_compose"):
+        out, hops = [], 0
+        while k in T.N and hops < 50:
+            out += [m["with"] for m in T.N[k].get("mod") or []
+                    if isinstance(m, dict) and m.get("of") == [verb, pos] and not m.get("neg")]
+            k, hops = T.up(k), hops + 1
+        return out
+    files = [(root_name(), "core")] + [(name, dom) for dom, name in domain_files().items()]
+    for name, dom in files:
+        for f in yaml.safe_load((SPEC / name).read_text(encoding="utf-8")).get("facts") or []:
+            if not isinstance(f, dict) or not isinstance(f.get("is"), str):
+                continue
+            v = T.resolve(f["is"], dom)
+            if not v or not (v == "v_compose" or T.is_a(v, "v_compose")):
+                continue
+            r = lambda x: (x if x in T.I else (T.resolve(x, dom) or x)) if isinstance(x, str) else None
+            a, b = r(f.get("from")), r(f.get("to"))
+            for X in mods(kind(b), "from"):
+                if isa(kind(a), X):
+                    err(f"法則 part_fact_direction に反する: {name} の事実 {a} は {b} の部分だが、{b} の種類は {X} の部分と限定されている")
+            for X in mods(kind(a), "to"):
+                if isa(kind(b), X):
+                    err(f"法則 part_fact_direction に反する: {name} の事実 {a} は {b} の部分だが、{a} の種類は {X} を部分に持つと限定されている")
+    for nid, n in T.N.items():
+        disp = n.get("display") or ""
+        if T.is_verb(nid):
+            continue
+        for m in n.get("mod") or []:
+            if not isinstance(m, dict) or not isinstance(m.get("of"), list) or m["of"][0] not in ("v_compose", "v_stage"):
+                continue
+            pos = m["of"][1]
+            if any(w in disp for w in PART_VAGUE):
+                err(f"法則 part_display_explicit に反する: {nid} の表示名「{disp}」は、どちらが部分かが曖昧")
+            other = "to" if pos == "from" else "from"
+            if pos in PART_WORDS and any(w in disp for w in PART_WORDS[other]) and not m.get("neg"):
+                err(f"法則 part_display_explicit に反する: {nid} の表示名「{disp}」が、限定の向き（{pos}）と逆")
+
+
 def build():
     """体系を読み、検査して、(体系, ontology, 領域 subj, 測定の族, 文) を返す。誤りは errors に積む。
     領域のファイルは自分で見つけ、使う領域の順に読む。領域 exp の個体（測定・観察・仮説など）は、中身まで検査する。"""
@@ -1243,6 +1292,7 @@ def build():
     T.check_grammar()
     T.check_domains()
     T.check_laws()
+    check_parts(T)
     M, C = load_domain("exp.yaml", D, T)
     S = others.get("subj", (None, {"individuals": {}, "facts": [], "_local": set()}))[1]
     return T, O, S, M, C

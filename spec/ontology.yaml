@@ -103,10 +103,10 @@ nodes:
   language: {display: 言語, extends: information_entity, mod: {of: [v_express, to]}}
   system: {display: 体系, extends: information_entity, mod: {of: [v_compose, to], with: concept_expression, at: {count: {gt: 1}}}}
   cscl: {display: 概念体系制御言語, extends: language, mod: {of: [v_depend, from], with: system}}
-  definition_compose_from_system: {display: 体系へ部分になる定義, extends: definition, mod: {of: [v_compose, from], with: system}}
+  definition_compose_from_system: {display: 体系の部分である定義, extends: definition, mod: {of: [v_compose, from], with: system}}
   concept_expression: {display: 概念式, extends: definition_compose_from_system, mod: {of: [v_express, from], with: cscl}}
   natural_language: {display: 自然言語, extends: language, mod: {of: [v_design, to], neg: true}}
-  information_entity_compose_to_word: {display: 語から部分になる情報, extends: information_entity, mod: {of: [v_compose, to], with: word}}
+  information_entity_compose_to_word: {display: 語を部分に持つ情報, extends: information_entity, mod: {of: [v_compose, to], with: word}}
   sentence: {display: 文, extends: information_entity_compose_to_word, mod: {of: [v_express, from], with: language}}
   passage: {display: 文章, extends: information_entity, mod: {of: [v_compose, to], with: sentence}}
   passage_express_from_natural_language: {display: 自然言語へで書かれる文章, extends: passage, mod: {of: [v_express, from], with: natural_language}}
@@ -123,14 +123,14 @@ nodes:
 
   # ===== 人工物とモデル =====
   artifact: {display: 人工物, extends: generically_dependent_continuant, mod: {of: [v_refer, from], neg: true}}
-  artifact_compose_from_model: {display: モデルへ部分になる人工物, extends: artifact, mod: {of: [v_compose, from], with: model}}
+  artifact_compose_from_model: {display: モデルの部分である人工物, extends: artifact, mod: {of: [v_compose, from], with: model}}
   weights: {display: 重み, extends: artifact_compose_from_model, mod: learned}
   frozen_weights: {display: 固定された重み, extends: weights, mod: frozen}
   artifact_compute_from: {display: 計算する人工物, extends: artifact, mod: {of: [v_compute, from]}}
   model: {display: モデル, extends: artifact_compute_from, mod: {of: [v_compose, to], with: frozen_weights}}
 
   # ===== 過程・実験・推論 =====
-  process_stage_to_v_vary: {display: 動かすから時間的な部分になる過程, extends: process, mod: {of: [v_stage, to], with: v_vary}}
+  process_stage_to_v_vary: {display: 動かすを時間的な部分に持つ過程, extends: process, mod: {of: [v_stage, to], with: v_vary}}
   experiment: {display: 実験, extends: process_stage_to_v_vary, mod: {of: [v_stage, to], with: v_measure}}
   experiment_protocol: {display: 実験の取り決め, extends: definition, mod: {of: [v_refer, from], with: experiment}}
   role_depend_from_experiment_protocol: {display: 実験の取り決めへ依存する役割, extends: role, mod: {of: [v_depend, from], with: experiment_protocol}}
@@ -309,6 +309,7 @@ individuals:
   r_candidate: {is: law_relation, display: 具体的な候補である}
   r_missing: {is: law_relation, display: 候補の式が欠けている}
   r_visible: {is: law_relation, display: 参照できる}
+  r_kpart: {is: law_relation, display: 種類として部分である}
   # ===== 規則で書いた法則。前提（v_assume）がすべて成り立つとき、導く文（v_derive）を足し、求める文（v_require）が成り立っていなければ違反。
   # 否定の前提は、書かれていない（導かれていない）ことを表す。前提にだけ出てくる変数は「どれでも」と読む。
   # 基礎の関係の法則は実行の状態に、体系の書き方の法則は、検査が体系の書き方から読んだ文に当てはめる。
@@ -316,6 +317,11 @@ individuals:
   part_transitive: {is: law_rule, display: 部分であることは推移的}
   after_transitive: {is: law_rule, display: 後ろにあることは推移的}
   part_antisymmetric: {is: law_rule, display: 部分であることは反対称的}
+  kpart_by_mod_from: {is: law_rule, display: 「X の部分である」と限定した種類は、種類として X の部分}
+  kpart_by_mod_to: {is: law_rule, display: 「X を部分に持つ」と限定した種類は、種類として X を部分に持つ}
+  kpart_transitive: {is: law_rule, display: 種類としての部分は推移的}
+  kpart_inherit: {is: law_rule, display: 部分である種類の下位も、同じ全体の部分}
+  kpart_antisymmetric: {is: law_rule, display: 種類としての部分は反対称的（互いに部分なら同じ種類）}
   after_asymmetric: {is: law_rule, display: 後ろにあることは非対称的}
   depend_end_exists: {is: law_rule, display: 依存する始点が在れば終点も在る}
   involve_end_exists: {is: law_rule, display: 関わられる始点が在れば終点も在る}
@@ -370,6 +376,8 @@ individuals:
   step: {is: law_given, display: 前の状態が成り立つとき後の状態に置き換える}
   frame: {is: law_given, display: 動詞が触れなかった文は変わらない}
   halt: {is: law_given, display: 当てはまる動詞がなければ止まる}
+  part_fact_direction: {is: law_given, display: 部分の事実は、種類の限定と向きが逆にならない}
+  part_display_explicit: {is: law_given, display: 部分の限定を持つ種類の表示名は、どちらが部分かを明示し、限定の向きと合う}
 
 facts:
   - {is: v_use, from: run, to: core}
@@ -382,6 +390,27 @@ facts:
   - {is: v_assume, from: part_antisymmetric, to: {is: part, from: var1, to: var2}}
   - {is: v_assume, from: part_antisymmetric, to: {is: part, from: var2, to: var1}}
   - {is: v_require, from: part_antisymmetric, to: {is: same, from: var1, to: var2}}
+  - {is: v_assume, from: kpart_by_mod_from, to: {is: mod, from: var1, to: var2}}
+  - {is: v_assume, from: kpart_by_mod_from, to: {is: of, from: var2, to: v_compose}}
+  - {is: v_assume, from: kpart_by_mod_from, to: {is: position, from: var2, to: from}}
+  - {is: v_assume, from: kpart_by_mod_from, to: {is: with, from: var2, to: var3}}
+  - {is: v_assume, from: kpart_by_mod_from, to: {is: neg, from: var2, to: var4, neg: true}}
+  - {is: v_derive, from: kpart_by_mod_from, to: {is: r_kpart, from: var1, to: var3}}
+  - {is: v_assume, from: kpart_by_mod_to, to: {is: mod, from: var1, to: var2}}
+  - {is: v_assume, from: kpart_by_mod_to, to: {is: of, from: var2, to: v_compose}}
+  - {is: v_assume, from: kpart_by_mod_to, to: {is: position, from: var2, to: to}}
+  - {is: v_assume, from: kpart_by_mod_to, to: {is: with, from: var2, to: var3}}
+  - {is: v_assume, from: kpart_by_mod_to, to: {is: neg, from: var2, to: var4, neg: true}}
+  - {is: v_derive, from: kpart_by_mod_to, to: {is: r_kpart, from: var3, to: var1}}
+  - {is: v_assume, from: kpart_transitive, to: {is: r_kpart, from: var1, to: var3}}
+  - {is: v_assume, from: kpart_transitive, to: {is: r_kpart, from: var3, to: var2}}
+  - {is: v_derive, from: kpart_transitive, to: {is: r_kpart, from: var1, to: var2}}
+  - {is: v_assume, from: kpart_inherit, to: {is: r_ancestor, from: var1, to: var3}}
+  - {is: v_assume, from: kpart_inherit, to: {is: r_kpart, from: var3, to: var2}}
+  - {is: v_derive, from: kpart_inherit, to: {is: r_kpart, from: var1, to: var2}}
+  - {is: v_assume, from: kpart_antisymmetric, to: {is: r_kpart, from: var1, to: var2}}
+  - {is: v_assume, from: kpart_antisymmetric, to: {is: r_kpart, from: var2, to: var1}}
+  - {is: v_require, from: kpart_antisymmetric, to: {is: same, from: var1, to: var2}}
   - {is: v_assume, from: after_asymmetric, to: {is: after, from: var1, to: var2}}
   - {is: v_require, from: after_asymmetric, to: {is: after, from: var2, to: var1, neg: true}}
   - {is: v_assume, from: depend_end_exists, to: {is: exists, from: var1}}
@@ -537,3 +566,5 @@ facts:
   - {is: v_govern, from: step, to: run.run}
   - {is: v_govern, from: frame, to: run.run}
   - {is: v_govern, from: halt, to: run.run}
+  - {is: v_govern, from: part_fact_direction, to: concept_expression}
+  - {is: v_govern, from: part_display_explicit, to: concept_expression}
