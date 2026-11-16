@@ -1,7 +1,8 @@
 """仮説・決定を GitHub の issue に写す。定義の正本は体系（exp/src/exp.yaml と cscl/design/*.yaml）。
 
-issue 1件 = 主張（仮説か決定）1つ。本文は3節:
+issue 1件 = 主張（仮説か決定）1つ。本文は3節（観察のある主張は4節）:
   説明  Claude が書く自然言語の説明。このスクリプトは触らない
+  観察の値  体系の測定値から生成する。このスクリプトが毎回書き換える。ハッシュには入れない（値が変わっても説明は古くならない）
   定義  体系から生成する。このスクリプトが毎回書き換える。手で編集しない
   経緯  Claude が書く、議論の経緯。このスクリプトは触らない
 定義が変わったとき（ハッシュが違うとき）、説明が書かれていれば、ラベル「説明が古い」を付ける。
@@ -32,6 +33,10 @@ COLORS = {"exp": "1d76db", "cscl": "5319e7", "仮説": "c5def5", "決定": "fef2
           "混合": "fbca04", "未検証": "ededed", "採用": "0e8a16", "暫定": "fbca04", "取り下げ": "b60205",
           "説明が古い": "d93f0b", "主張": "000000"}
 MARK = "<!-- cscl-claim: {} -->"
+SYM = {"前に置かれる": "<", "後ろに置かれる": ">", "ほぼ同じ位置にある": "≈", "同じ位置にある": "=",
+       "前には置かれない": "≥", "後ろには置かれない": "≤"}
+LEGEND = ("記号: G2c は元の意味と衝突する再定義の設問、G2k は衝突しない対照の設問。"
+          "order_robust_accuracy は選択肢の順を入れ替えても正しく答えた割合。")
 EMPTY = "（未記入）"
 
 
@@ -57,6 +62,19 @@ def claims():
         raise SystemExit("体系の検査に失敗: " + "; ".join(type_checker.errors[:3]))
     I = individuals()
     ja = lambda x: display.ja(T, x, I)
+    values, _ = type_checker.expand(M, T)
+    val = lambda x: f"`{x}` = {values[x][0]:.3f}" if isinstance(x, str) and x in values else f"{x}"
+
+    def obs(oids):
+        lines = []
+        for oid in dict.fromkeys(oids):
+            o = C["observations"].get(oid)
+            if o:
+                lines.append(f"- `{oid}`: {val(o['s'])} {SYM.get(T.N[o['p']]['display'], T.N[o['p']]['display'])} {val(o['o'])}")
+        if not lines:
+            return None
+        text = "_体系の測定値から生成。手で編集しない。_ 正答率などの測定値。`<` は左が小さい。\n\n" + "\n".join(lines)
+        return text + ("\n\n" + LEGEND if re.search(r"G2[ck]", text) else "")
     out = []
     for sect, kind in (("hypotheses", "仮説"), ("decisions", "決定")):
         for cid, x in C[sect].items():
@@ -80,7 +98,9 @@ def claims():
                    if re.search(rf"(from|to): {re.escape(cid)}[,}}]", l) or re.match(rf"\s+{re.escape(cid)}:", l)]
             body_def = "\n".join(lines) + "\n\n<details><summary>体系での記述</summary>\n\n```yaml\n" + "\n".join(src) + "\n```\n</details>"
             h = hashlib.sha256(body_def.encode()).hexdigest()[:12]
-            out.append({"id": cid, "side": side, "kind": kind, "status": st,
+            oids = [type_checker.short(v) for k in ("evidence", "against") for v in
+                    (x.get(k) if isinstance(x.get(k), list) else [x.get(k)] if x.get(k) else [])]
+            out.append({"id": cid, "side": side, "kind": kind, "status": st, "obs": obs(oids),
                         "title": f"[{side}] {cid}: {content}"[:250], "def": body_def, "hash": h})
     return out
 
@@ -90,7 +110,8 @@ def section(name, text):
 
 
 def new_body(c):
-    return "\n\n".join([MARK.format(c["id"]), "## 説明", section("explain", EMPTY),
+    return "\n\n".join([MARK.format(c["id"]), "## 説明", section("explain", EMPTY)]
+                       + (["## 観察の値", section("obs", c["obs"])] if c["obs"] else []) + [
                         f"## 定義\n_体系から生成。手で編集しない（`.github/scripts/sync_issues.py`）。_ <!-- hash: {c['hash']} -->",
                         section("def", c["def"]), "## 経緯", section("history", EMPTY)])
 
@@ -99,6 +120,9 @@ def update_body(body, c):
     old = re.search(r"<!-- hash: (\w+) -->", body)
     body = re.sub(r"<!-- hash: \w+ -->", f"<!-- hash: {c['hash']} -->", body)
     body = re.sub(r"<!-- def:begin -->.*?<!-- def:end -->", lambda m: section("def", c["def"]), body, flags=re.S)
+    body = re.sub(r"## 観察の値\n\n<!-- obs:begin -->.*?<!-- obs:end -->\n\n", "", body, flags=re.S)
+    if c["obs"]:
+        body = body.replace("## 定義\n", "## 観察の値\n\n" + section("obs", c["obs"]) + "\n\n## 定義\n", 1)
     explained = EMPTY not in re.search(r"<!-- explain:begin -->(.*?)<!-- explain:end -->", body, re.S).group(1)
     return body, bool(old and old.group(1) != c["hash"] and explained)
 
@@ -121,7 +145,7 @@ class GitHub:
     def issues(self):
         out, page = [], 1
         while True:
-            xs = self.call("GET", f"/issues?labels=主張&state=all&per_page=100&page={page}".replace("主張", "%E4%B8%BB%E5%BC%B5"))
+            xs = self.call("GET", f"/issues?state=all&per_page=100&page={page}")   # ラベルで絞らない（外されても、印で同じ issue を見つける）
             out += [x for x in xs if "pull_request" not in x]
             if len(xs) < 100:
                 return out
