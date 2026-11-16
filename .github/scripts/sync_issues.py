@@ -5,7 +5,7 @@ issue 1件 = 主張（仮説か決定）1つ。本文は3節（観察のある�
   観察の値  体系の測定値から生成する。このスクリプトが毎回書き換える。ハッシュには入れない（値が変わっても説明は古くならない）
   定義  体系から生成する。このスクリプトが毎回書き換える。手で編集しない
   経緯  Claude が書く、議論の経緯。このスクリプトは触らない
-定義が変わったとき（ハッシュが違うとき）、説明が書かれていれば、ラベル「説明が古い」を付ける。
+定義が変わったとき（ハッシュが違うとき）、説明が書かれていれば、ラベル stale-explanation を付ける。
 
 使い方:
   python .github/scripts/sync_issues.py --out DIR        下書きを DIR に書く（GitHub に触らない）
@@ -17,6 +17,7 @@ import json
 import os
 import re
 import sys
+import urllib.parse
 import urllib.request
 from pathlib import Path
 
@@ -26,12 +27,21 @@ import type_checker  # noqa: E402
 import display  # noqa: E402
 
 SIDE = {"exp": "exp", "lang": "cscl"}   # 領域 → 側のラベル
-STATUS = {"hyp_supported": "支持", "hyp_refuted": "反証", "hyp_mixed": "混合", "hyp_untested": "未検証",
-          "dec_adopted": "採用", "dec_tentative": "暫定", "dec_withdrawn": "取り下げ"}
-CLOSED = {"支持", "反証", "採用", "取り下げ"}
-COLORS = {"exp": "1d76db", "cscl": "5319e7", "仮説": "c5def5", "決定": "fef2c0", "支持": "0e8a16", "反証": "b60205",
-          "混合": "fbca04", "未検証": "ededed", "採用": "0e8a16", "暫定": "fbca04", "取り下げ": "b60205",
-          "説明が古い": "d93f0b", "主張": "000000"}
+STATUS = {"hyp_supported": "supported", "hyp_refuted": "refuted", "hyp_mixed": "mixed", "hyp_untested": "untested",
+          "dec_adopted": "adopted", "dec_tentative": "tentative", "dec_withdrawn": "withdrawn"}
+CLOSED = {"supported", "refuted", "adopted", "withdrawn"}
+KIND = {"仮説": "hypothesis", "決定": "decision"}
+STALE = "stale-explanation"
+# 以前の日本語のラベル → 英語のラベル（GitHub 上で名前を変えるので、issue に付いたラベルもそのまま移る）
+RENAME = {"主張": "claim", "仮説": "hypothesis", "決定": "decision", "支持": "supported", "反証": "refuted",
+          "混合": "mixed", "未検証": "untested", "採用": "adopted", "暫定": "tentative", "取り下げ": "withdrawn",
+          "説明が古い": STALE}
+# GitHub が最初から作るラベル。使わないので消す
+DEFAULTS = ["bug", "documentation", "duplicate", "enhancement", "good first issue", "help wanted",
+            "invalid", "question", "wontfix"]
+COLORS = {"exp": "1d76db", "cscl": "5319e7", "hypothesis": "c5def5", "decision": "fef2c0", "supported": "0e8a16",
+          "refuted": "b60205", "mixed": "fbca04", "untested": "ededed", "adopted": "0e8a16", "tentative": "fbca04",
+          "withdrawn": "b60205", STALE: "d93f0b", "claim": "000000"}
 MARK = "<!-- cscl-claim: {} -->"
 SYM = {"前に置かれる": "<", "後ろに置かれる": ">", "ほぼ同じ位置にある": "≈", "同じ位置にある": "=",
        "前には置かれない": "≥", "後ろには置かれない": "≤"}
@@ -128,7 +138,7 @@ def update_body(body, c):
 
 
 def labels_of(c):
-    return ["主張", c["side"], c["kind"]] + ([c["status"]] if c["status"] else [])
+    return ["claim", c["side"], KIND[c["kind"]]] + ([c["status"]] if c["status"] else [])
 
 
 class GitHub:
@@ -155,6 +165,15 @@ class GitHub:
 def apply(cs):
     gh = GitHub()
     have = {x["name"] for x in gh.call("GET", "/labels?per_page=100")}
+    for old, new in RENAME.items():
+        if old in have and new not in have:
+            gh.call("PATCH", "/labels/" + urllib.parse.quote(old), {"new_name": new, "color": COLORS[new]})
+            print("ラベルの名前を変えた", old, "→", new)
+    for name in DEFAULTS:
+        if name in have:
+            gh.call("DELETE", "/labels/" + urllib.parse.quote(name))
+            print("ラベルを消した", name)
+    have = {x["name"] for x in gh.call("GET", "/labels?per_page=100")}
     for name, color in COLORS.items():
         if name not in have:
             gh.call("POST", "/labels", {"name": name, "color": color})
@@ -173,8 +192,8 @@ def apply(cs):
                 gh.call("PATCH", f"/issues/{x['number']}", {"state": "closed", "state_reason": "completed"})
             continue
         body, stale = update_body(x["body"], c)
-        keep = [l["name"] for l in x["labels"] if l["name"] not in COLORS or l["name"] == "説明が古い"]
-        labels = labels_of(c) + keep + (["説明が古い"] if stale and "説明が古い" not in keep else [])
+        keep = [l["name"] for l in x["labels"] if l["name"] not in COLORS and l["name"] not in RENAME or l["name"] == STALE]
+        labels = labels_of(c) + keep + ([STALE] if stale and STALE not in keep else [])
         patch = {"title": c["title"], "body": body, "labels": labels, "state": state}
         if state == "closed":
             patch["state_reason"] = "completed"
