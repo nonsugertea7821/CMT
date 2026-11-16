@@ -90,9 +90,9 @@ class Renderer:
     def text(self, word, mask=False, opaque=False, inds=False):
         """語の概念式と、それがたどる subj の種類と事実。
 
-        opaque: core 以外の識別子（subj の種類・動詞・個体の名前）を、意味を持たない記号 X01, X02, ... に置き換える。
+        opaque: axiom 以外の識別子（subj の種類・動詞・個体の名前）を、意味を持たない記号 X01, X02, ... に置き換える。
         表示名は、語そのものと個体（設問に出てくる固有のもの）だけ残す（mask と同じ）。識別はできるが、
-        意味を運ぶのは core の識別子と、式の構造（extends, mod, of, neg, at など）だけになる。
+        意味を運ぶのは axiom の識別子と、式の構造（extends, mod, of, neg, at など）だけになる。
         inds: 種類の限定が参照する個体（日曜、本州など）の行も並べる。False は E10・E11・E3-expr で使った出力
         （mod が並びのとき個体の行が落ちていた）を再現する。"""
         start = self.by_ja[word]

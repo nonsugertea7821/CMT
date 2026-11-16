@@ -2,8 +2,8 @@
 # tsconfig の include / exclude、Cargo の workspace members に当たる。
 # 型検査器（cscl/bootstrap/type_checker）と実行器（cscl/bootstrap/runtime）は、ここに書いた範囲のファイルだけを読む。
 # 領域どうしの依存（どの領域を使うか）は、ここではなく、各領域のファイルが自分で宣言する（v_use の事実）。
-root: cscl/library/core/ontology.yaml   # 言語の本体（core）。文法・基礎・法則。領域 core と run
-std: [cscl/library/std/*.yaml]          # 標準の語彙。領域 core に加わる
+root: cscl/library/axiom/ontology.yaml   # 公理（axiom）。文法・基礎・公理の法則。領域 axiom と run
+std: [cscl/library/std/*.yaml]          # 標準の語彙。領域 axiom に加わる（いまは同じ名前空間）
 include: [exp/src/*.yaml]               # 領域のファイル。最上位に domain を持つもの
 exclude: []
 runs: [exp/tests/*.yaml]                # 実行の記録

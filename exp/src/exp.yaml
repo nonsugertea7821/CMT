@@ -1,6 +1,6 @@
 # 領域 exp（実験）。体系（ontology.yaml）の一部で、同じ検査にかかる。
 # nodes:       この領域の種類。書き方は ontology.yaml と同じ。領域の中の識別子は、領域を書かずに書く。
-#              ほかの領域からは exp.名前 と書いて参照する。core と run は参照できるが、逆はできない（法則 layered）。
+#              ほかの領域からは exp.名前 と書いて参照する。axiom と run は参照できるが、逆はできない（法則 layered）。
 # individuals: 個体。is で種類に1つだけ属する（ほかに表示語 display と、軸の値 val を持てる）。
 #              仮説・決定・残り項目は、状態を表す下位の種類に属する（例 is: hyp_supported）。
 # facts:       事実。1つの事実は、1つの動詞の個体で、位置に名前を付けて書く: {is: 動詞, from: 始点, to: 終点, new: 第三のもの}。
@@ -189,7 +189,7 @@ nodes:
   common_vector_component: {display: 概念ベクトルの共通成分, extends: state_shift, mod: {of: [v_sum, from], with: concept_vector}}
   specific_vector_component: {display: 概念ベクトルの固有成分, extends: state_shift, mod: {of: [v_depend, from], with: word}}
   sense_difference_vector: {display: 語の意味の候補どうしの差のベクトル, extends: concept_vector, mod: {of: [v_depend, from], with: prior_meaning}}
-  opaque_expression: {display: core 以外の識別子を無意味にした概念式, extends: concept_expression, mod: {of: [v_compose, to], with: hidden_word}}
+  opaque_expression: {display: axiom 以外の識別子を無意味にした概念式, extends: concept_expression, mod: {of: [v_compose, to], with: hidden_word}}
   text_and_vector: {display: 文章と概念ベクトルの併用, extends: text_injection, mod: {of: [is, from], with: concept_vector}}
   delta_weights: {display: 差分重み, extends: channel, mod: {of: [v_involve, from], with: weights}}
   teacher_recite: {display: 定義文の暗唱を教師にする, extends: teaching, from: definition_text}
@@ -874,8 +874,8 @@ facts:
   # 種類どうしの事実（閉世界: その種類のすべてについて）。部分と依存（生成の順序）は、ここから導かれる
   - {is: v_sum, from: layer_output, to: state_shift, new: shifted_hidden_state}                    # h' = h ⊕ v（足す位置を語に限ったものが hidden_state）
   - {is: v_sum, from: common_vector_component, to: specific_vector_component, new: concept_vector}   # v = m ⊕ s
-  - {is: core.v_use, from: exp, to: core}
-  - {is: core.v_use, from: exp, to: run}
+  - {is: axiom.v_use, from: exp, to: axiom}
+  - {is: axiom.v_use, from: exp, to: run}
 
   # ===== モデル。種類ではなく、1つずつの成果物。
   - {is: v_compose, from: weights, to: model_15b, at: {count: 1500000000}}

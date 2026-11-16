@@ -113,11 +113,15 @@ def yload(src):
 def load(name):
     O = yaml.load((SPEC / name).read_text(encoding="utf-8"), Loader=_Unique)
     if name == root_name():
-        for p in in_scope("std"):   # 標準の語彙。core と同じ名前空間に加える
-            for nid, n in (yaml.load(p.read_text(encoding="utf-8"), Loader=_Unique).get("nodes") or {}).items():
-                if nid in O["nodes"]:
-                    err(f"{p.relative_to(ROOT)}: {nid} は core にもある")
-                O["nodes"][nid] = n
+        for p in in_scope("std"):   # 標準の語彙。axiom と同じ名前空間に、種類・個体・事実を加える
+            D = yaml.load(p.read_text(encoding="utf-8"), Loader=_Unique) or {}
+            for sec in ("nodes", "individuals"):
+                O.setdefault(sec, {})
+                for k, v in (D.get(sec) or {}).items():
+                    if k in O[sec]:
+                        err(f"{p.relative_to(ROOT)}: {k} は axiom にもある")
+                    O[sec][k] = v
+            O["facts"] = (O.get("facts") or []) + (D.get("facts") or [])
         core_sections(O)
     return O
 
@@ -152,8 +156,8 @@ LITERAL = {"display", "holds", "pre", "post", "result_file", "row_collection", "
 def qualify(x, local, dom):
     """領域のファイルの中で、領域を書かずに書かれた識別子を「領域.名前」に直す。文字列そのものを値とする項目は直さない。"""
     if isinstance(x, str):
-        if x.startswith("core."):   # 領域 core の識別子を、領域を書いて明示したもの（同じ名前が自分の領域にあるとき）
-            return x[len("core."):]
+        if x.startswith("axiom."):   # 領域 axiom の識別子を、領域を書いて明示したもの（同じ名前が自分の領域にあるとき）
+            return x[len("axiom."):]
         return f"{dom}.{x}" if x in local else x
     if isinstance(x, list):
         return [qualify(v, local, dom) for v in x]
@@ -195,7 +199,7 @@ def collect_kind_facts(T):
     """種類どうしの事実を、すべての領域から集めて T.KF に置く。型を確かめる。否定は書かせない
     （閉世界では書かれていない文は成り立たない。否定は法則の制約（v_require）で書く）。"""
     T.KF, T.COLL = [], {}
-    for name, dom in [(root_name(), "core")] + [(n, d) for d, n in domain_files().items()]:   # 種類の集まり（2階）
+    for name, dom in [(root_name(), "axiom")] + [(n, d) for d, n in domain_files().items()]:   # 種類の集まり（2階）
         for f in (yload((SPEC / name).read_text(encoding="utf-8")).get("facts") or []):
             if isinstance(f, dict) and f.get("is") == "v_collect" and f.get("from") in T.I:
                 k = T.resolve(f.get("to"), dom) if isinstance(f.get("to"), str) else None
@@ -203,7 +207,7 @@ def collect_kind_facts(T):
                     err(f"{name} の事実 {f}: 集まりの成員は種類（ノード）")
                 else:
                     T.COLL[f["from"]] = k   # 段の検査は法則 collection_level（規則）
-    for name, dom in [(root_name(), "core")] + [(n, d) for d, n in domain_files().items()]:
+    for name, dom in [(root_name(), "axiom")] + [(n, d) for d, n in domain_files().items()]:
         D = yload((SPEC / name).read_text(encoding="utf-8"))
         for i, f in enumerate(D.get("facts") or []):
             if not isinstance(f, dict) or not isinstance(f.get("is"), str) or not is_kind_fact(f, T, dom, D.get("individuals") or {}):
@@ -573,7 +577,7 @@ class Ontology:
                 err(f"axes.{aid}: 値の種類 {a['values']} が、grammar.values に書かれていない")
 
     def resolve(self, word, dom):
-        """領域を書かない語を、ノードの識別子に解決する。その領域、core、ほかの領域にただ1つ、の順に探す。"""
+        """領域を書かない語を、ノードの識別子に解決する。その領域、axiom、ほかの領域にただ1つ、の順に探す。"""
         if f"{dom}.{word}" in self.N:
             return f"{dom}.{word}"
         if word in self.N:
@@ -582,7 +586,7 @@ class Ontology:
         return found[0] if len(found) == 1 else None
 
     def domain(self, nid):
-        return nid.split(".", 1)[0] if "." in nid else "core"
+        return nid.split(".", 1)[0] if "." in nid else "axiom"
 
     def refs(self, nid):
         """ノードの式が参照しているノード。"""
@@ -720,7 +724,7 @@ class Ontology:
         for i in self.I:
             if isinstance(self.I[i], str):
                 add("is", i, self.I[i])
-            add("domain", i, "core" if i in (self.O.get("individuals") or {}) else self.Isubj.get(i, self.Idom))
+            add("domain", i, "axiom" if i in (self.O.get("individuals") or {}) else self.Isubj.get(i, self.Idom))
         for aid, a in self.AX.items():
             add("exists", aid)
             for v in a["value"] if isinstance(a["value"], list) else []:
@@ -761,10 +765,10 @@ class Ontology:
         return None
 
     def q(self, w):
-        """検査が名前で参照する語を、ノードの識別子に解決する（領域を書かない語は、個体の領域、core の順に探す）。"""
+        """検査が名前で参照する語を、ノードの識別子に解決する（領域を書かない語は、個体の領域、axiom の順に探す）。"""
         if not isinstance(w, str) or w in self.N or w in self.I or w == "any":
             return w
-        return self.resolve(w, self.Idom or "core") or w
+        return self.resolve(w, self.Idom or "axiom") or w
 
     def occupies(self, kind, end, verb):
         """個体（種類 kind）が、動詞 verb の端の種類 end の位置を占めてよいか。
@@ -973,7 +977,7 @@ class Ontology:
     def mods_of(self, nid):
         return [m for x in [nid] + self.ancestors(nid) for m in (self.N[x].get("mod") or []) if isinstance(m, dict)]
 
-    def field_ok(self, kind, f, dom="core"):
+    def field_ok(self, kind, f, dom="axiom"):
         """種類 kind の個体に、項目 f を書けるか。項目の表は持たず、式から決める。
         f が動詞かその位置の形（s, p, o）: kind が「について述べる」の始点に来る種類（文）であること。
         それ以外: f かその下位に、kind のものとの関係で限定されたノードがあること。または、kind の式が f のものとの関係で限定されていること。"""
@@ -1331,7 +1335,7 @@ def check_parts(T):
             k, hops = T.up(k), hops + 1
         return out
     m_ok = lambda m: isinstance(m, dict) and m.get("with") and not m.get("neg")
-    files = [(root_name(), "core")] + [(name, dom) for dom, name in domain_files().items()]
+    files = [(root_name(), "axiom")] + [(name, dom) for dom, name in domain_files().items()]
     for name, dom in files:
         for f in yload((SPEC / name).read_text(encoding="utf-8")).get("facts") or []:
             if not isinstance(f, dict) or not isinstance(f.get("is"), str):
@@ -1388,7 +1392,7 @@ def build():
         if set(x) - set(T.G["individuals"]) or x.get("is") not in T.N:
             err(f"ontology.yaml {iid}: 個体は {{is: 種類, display}} で書き、種類はノード")
     T.I |= {iid: x.get("is") for iid, x in core.items() if x.get("is") in T.N}
-    gather({"domain": "core", "_local": set(), "individuals": core, "facts": O.get("facts")}, T, "ontology.yaml")
+    gather({"domain": "axiom", "_local": set(), "individuals": core, "facts": O.get("facts")}, T, "ontology.yaml")
     others = {}
     for dom, (name, X) in Dm.items():
         if dom == "exp":
@@ -1423,7 +1427,7 @@ def main():
     values, meanings = expand(M, T)
     check_claims(C, values, T)
     if args.expr:
-        print(T.expr(args.expr if args.expr in T.N else T.resolve(args.expr, "core") or args.expr))
+        print(T.expr(args.expr if args.expr in T.N else T.resolve(args.expr, "axiom") or args.expr))
     if args.values:
         for mid, (v, n) in sorted(values.items()):
             print(f"{mid} = {v:.2f} (n={n})")
