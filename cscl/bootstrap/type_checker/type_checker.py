@@ -1,6 +1,6 @@
 """体系の型検査と値の計算（stage0。Python による最初の実装）。
 
-cscl.yaml の範囲のファイル（cscl/library/, exp/src/）が正本。文章（docs/, experiments/README.md）は正本ではない。
+cscl.yaml の範囲のファイル（cscl/library/, exp/src/）が正本。自然言語の文章は正本ではない。
 
 ontology.yaml  概念の体系。書き方はそのファイルの冒頭を見よ。
   検査: 表示語の一意性 / gloss を持つのは最上位の2つだけ / 動詞の式（状態の関係・両端・第三のものの種類）の一意性 /
