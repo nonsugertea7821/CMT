@@ -189,7 +189,17 @@ def is_kind_fact(f, T, dom, I):
 def collect_kind_facts(T):
     """種類どうしの事実を、すべての領域から集めて T.KF に置く。型を確かめる。否定は書かせない
     （閉世界では書かれていない文は成り立たない。否定は法則の制約（v_require）で書く）。"""
-    T.KF = []
+    T.KF, T.COLL = [], {}
+    for name, dom in [(root_name(), "core")] + [(n, d) for d, n in domain_files().items()]:   # 種類の集まり（2階）
+        for f in (yload((SPEC / name).read_text(encoding="utf-8")).get("facts") or []):
+            if isinstance(f, dict) and f.get("is") == "v_collect" and f.get("from") in T.I:
+                k = T.resolve(f.get("to"), dom) if isinstance(f.get("to"), str) else None
+                if k not in T.N or T.is_verb(k):
+                    err(f"{name} の事実 {f}: 集まりの成員は種類（ノード）")
+                elif T.is_a(k, "kind_collection"):
+                    err(f"法則 collection_level に反する: {name} の事実で、種類の集まり {k} を、集まり {f['from']} の成員にしている")
+                else:
+                    T.COLL[f["from"]] = k
     for name, dom in [(root_name(), "core")] + [(n, d) for d, n in domain_files().items()]:
         D = yload((SPEC / name).read_text(encoding="utf-8"))
         for i, f in enumerate(D.get("facts") or []):
@@ -210,38 +220,42 @@ def collect_kind_facts(T):
             T.KF.append((verb, x))
             if verb == "v_sum" or T.is_a(verb, "v_sum"):
                 sp = {p: space(T, k) for p, k in x.items()}
-                if None in sp.values() or len(set(sp.values())) > 1:
-                    err(f"法則 sum_same_space に反する: {where} の {x} は、同じ合成可能集合に属さない（{sp}）")
+                if sp["from"] is None or sp["from"] != sp["to"]:
+                    err(f"法則 sum_closed に反する: {where} の {x} で、合成する二つが同じ合成について閉じた集合に属さない（{sp}）")
+                elif sp.get("new") != sp["from"]:
+                    err(f"法則 sum_closed に反する: {where} の {x} で、合成してできたものが、合成について閉じた集合 {sp['from']} の外に出る")
     for nid, n in T.N.items():   # 限定「合成して X になる」も同じ
         for m in n.get("mod") or []:
             if isinstance(m, dict) and isinstance(m.get("of"), list) and m["of"][0] == "v_sum" and m.get("with"):
                 w = T.q(m["with"])
                 if space(T, nid) is None or space(T, nid) != space(T, w):
-                    err(f"法則 sum_same_space に反する: {nid} の限定「合成して {w} になる」で、合成可能集合が {space(T, nid)} と {space(T, w)}")
+                    err(f"法則 sum_closed に反する: {nid} の限定「合成して {w} になる」で、合成について閉じた集合が {space(T, nid)} と {space(T, w)}")
 
-    # 法則 sum_defined: 合成可能集合に属する種類は、自分か上位の種類が、合成する事実か限定に出てくる（合成が定義されている）
+    # 法則 sum_defined: 合成について閉じた集合に属する種類は、自分か上位の種類が、合成する事実か限定に出てくる（合成が定義されている）
     P = {k for verb, x in T.KF if verb == "v_sum" or T.is_a(verb, "v_sum") for k in x.values()}
     for nid, n in T.N.items():
         for m in n.get("mod") or []:
             if isinstance(m, dict) and isinstance(m.get("of"), list) and m["of"][0] == "v_sum" and not m.get("neg"):
-                P |= {nid} | ({T.q(m["with"])} if m.get("with") else set())
+                if m.get("with"):   # 相手のない限定（合成できる情報の定義）は、合成の定義に数えない
+                    P |= {nid, T.q(m["with"])}
     for nid in T.N:
         sp = space(T, nid)
-        if sp is None or nid == sp or T.is_verb(nid):
+        if sp is None or T.is_verb(nid) or nid == T.COLL.get(sp):   # 集まりの成員の種類そのものは、閉じていることで合成が定義される
             continue
         k, hops = nid, 0
-        while k in T.N and k != sp and k not in P and hops < 80:
+        while k in T.N and k not in P and hops < 80:
             k, hops = T.up(k), hops + 1
         if k not in P:
-            err(f"法則 sum_defined に反する: {nid} は合成可能集合 {sp} に属するが、合成が定義されていない（自分も上位も、合成する事実か限定に出てこない）")
+            err(f"法則 sum_defined に反する: {nid} は合成について閉じた集合 {sp} に属するが、合成が定義されていない（自分も上位も、合成する事実か限定に出てこない）")
 
 
 def space(T, k):
-    """種類 k が属する合成可能集合: k か上位のうち、合成可能集合（composable_set）のすぐ下の種類。なければ None。"""
+    """種類 k が属する合成について閉じた集合（個体）: 成員の種類が、k か k の上位でいちばん近いもの。なければ None。"""
     hops = 0
     while k in T.N and hops < 80:
-        if T.up(k) == "composable_set":
-            return k
+        for c, ck in getattr(T, "COLL", {}).items():
+            if ck == k and T.is_a(T.I.get(c), "composable_set"):
+                return c
         k, hops = T.up(k), hops + 1
     return None
 
@@ -516,7 +530,7 @@ def evaluate(rules, F, V):
 # ---------------------------------------------------------------- 概念の体系
 # 法則のうち、この検査が当てはめるもの / 実行の検査（run_spec.py）が当てはめるもの
 # 規則で書いた法則（law_rule）は、実行の検査がその規則を読んで当てはめる。ここには、意味を検査が与える法則（law_given）だけを挙げる。
-LAWS_HERE = {"part_fact_direction", "part_display_explicit", "sum_same_space", "sum_defined"}
+LAWS_HERE = {"part_fact_direction", "part_display_explicit", "sum_closed", "collection_level", "sum_defined"}
 LAWS_RUN = {"unique_names", "step", "frame", "halt"}
 
 

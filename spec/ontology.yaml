@@ -51,6 +51,7 @@ nodes:
   # ===== 動詞・静的。holds に、成り立っている状態の関係を書く =====
   v_depend: {display: 依存する, extends: occurrent, from: continuant, to: continuant, holds: [{is: depend, from: from, to: to}]}
   v_compose: {display: 部分になる, extends: occurrent, from: continuant, to: continuant, holds: [{is: part, from: from, to: to}]}
+  v_collect: {display: 成員の種類にする, extends: occurrent, from: kind_collection, to: continuant, holds: [{is: refer, from: from, to: to}]}
   v_sum: {display: 合成する, extends: occurrent, from: summand, to: summand, new_kind: summand,
           holds: [{is: part, from: from, to: new}, {is: part, from: to, to: new}, {is: depend, from: new, to: from}, {is: depend, from: new, to: to}]}
   v_stage: {display: 時間的な部分になる, extends: occurrent, from: occurrent, to: occurrent, holds: [{is: part, from: from, to: to}]}
@@ -102,7 +103,9 @@ nodes:
 
   # ===== 情報と言語 =====
   summand: {display: 合成できる情報, extends: information_entity, mod: {of: [v_sum, from]}}
-  composable_set: {display: 合成可能集合, extends: summand, mod: {of: [v_sum, new]}}   # 合成してできるものでもある種類。合成について閉じた集まり
+  # ===== 種類の集まり（2階）。成員は種類。集まりの性質は、成員の種類の下位には受け継がれない
+  kind_collection: {display: 種類の集まり, extends: information_entity, mod: {of: [v_collect, from]}}
+  composable_set: {display: 合成について閉じた集合, extends: kind_collection, mod: {of: [v_collect, from], with: summand}}   # 合成について閉じた集まり（法則 sum_closed）
   information_entity: {display: 情報, extends: generically_dependent_continuant, mod: {of: [v_refer, from]}}
   language: {display: 言語, extends: information_entity, mod: {of: [v_express, to]}}
   system: {display: 体系, extends: information_entity, mod: {of: [v_compose, to], with: concept_expression, at: {count: {gt: 1}}}}
@@ -395,8 +398,9 @@ individuals:
   frame: {is: law_given, display: 動詞が触れなかった文は変わらない}
   halt: {is: law_given, display: 当てはまる動詞がなければ止まる}
   part_fact_direction: {is: law_given, display: 部分の事実は、種類の限定と向きが逆にならない}
-  sum_same_space: {is: law_given, display: 合成する二つと合成してできたものは、同じ合成可能集合（いちばん近い上位の合成可能集合）に属する。合成可能集合は合成について閉じている}
-  sum_defined: {is: law_given, display: 合成可能集合に属する種類は、自分か上位の種類について合成（合成する事実か限定）が定義されている}
+  sum_closed: {is: law_given, display: 合成について閉じた集合は合成について閉じている。合成する二つがその集合の成員（の下位）なら、合成してできたものも成員（の下位）。合成する二つは同じ合成について閉じた集合に属する}
+  collection_level: {is: law_given, display: 種類の集まりの成員は、1階の種類。種類の集まりそのものを成員にしない}
+  sum_defined: {is: law_given, display: 合成について閉じた集合に属する種類は、自分か上位の種類について合成（合成する事実か限定）が定義されている}
   part_display_explicit: {is: law_given, display: 部分の限定を持つ種類の表示名は、どちらが部分かを明示し、限定の向きと合う}
 
 facts:
@@ -645,5 +649,6 @@ facts:
   - {is: v_govern, from: halt, to: run.run}
   - {is: v_govern, from: part_fact_direction, to: concept_expression}
   - {is: v_govern, from: part_display_explicit, to: concept_expression}
-  - {is: v_govern, from: sum_same_space, to: concept_expression}
+  - {is: v_govern, from: sum_closed, to: concept_expression}
+  - {is: v_govern, from: collection_level, to: concept_expression}
   - {is: v_govern, from: sum_defined, to: concept_expression}

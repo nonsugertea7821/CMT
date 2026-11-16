@@ -212,7 +212,7 @@ nodes:
   open_weight_model: {display: 重みが公開されたモデル, extends: model, mod: {of: [v_expose, from], with: weights}}
   api_only_model: {display: APIでしか使えないモデル, extends: model, mod: {of: [v_expose, from], with: weights, neg: true}}
   attention: {display: 注意機構, extends: artifact_compute_from, mod: {of: [v_compose, from], with: layer}}
-  residual_vector: {display: 残差の流れのベクトル, extends: composable_set, mod: {of: [v_depend, from], with: model}}
+  residual_vector: {display: 残差の流れのベクトル, extends: summand, mod: {of: [v_depend, from], with: model}}
   layer_output: {display: 層の出力, extends: residual_vector, mod: {of: [v_compute, to], with: layer}}
   hidden_state: {display: 隠れ状態, extends: layer_output, mod: {of: [v_depend, from], with: label_token_positions}}
   state_shift: {display: 隠れ状態のずれ, extends: residual_vector, mod: {of: [v_sum, from], with: shifted_hidden_state}}
@@ -319,6 +319,7 @@ individuals:
   # ===== モデル。種類ではなく、1つずつの成果物。
   # 数の項目は、その種類のものが、この個体との関係でいくつあるか（個数の軸の固定値）。
   model_15b: {is: open_weight_model, display: Qwen2.5-1.5B-Instruct}
+  residual_space: {is: composable_set, display: 残差の流れ}   # 種類の集まり（2階）
   model_4b: {is: open_weight_model, display: Qwen3-4B}
 
   # ===== 設計。1つしかない。
@@ -828,6 +829,7 @@ individuals:
   b_sparse_dictionary_observation: {is: item_queued}
 
 facts:
+  - {is: v_collect, from: residual_space, to: residual_vector}   # 残差の流れのベクトルは、合成について閉じた集合の一つ
   # 種類どうしの事実（閉世界: その種類のすべてについて）。部分と依存（生成の順序）は、ここから導かれる
   - {is: v_sum, from: layer_output, to: state_shift, new: shifted_hidden_state}                    # h' = h ⊕ v（足す位置を語に限ったものが hidden_state）
   - {is: v_sum, from: common_vector_component, to: specific_vector_component, new: concept_vector}   # v = m ⊕ s
