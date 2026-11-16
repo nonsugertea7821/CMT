@@ -217,7 +217,7 @@ nodes:
   # ===== 個体と事実。個体は is で種類に1つだけ属する。事実は、1つの関係だけを述べる =====
   is: {display: 属する, extends: p, to: kind}
   individuals: {display: 個体, form: [is, from]}
-  facts: {display: 個体についての文, extends: sentence, mod: {of: [v_refer, from], with: individuals}}
+  facts: {display: 個体か種類についての文（種類についての文は、その種類のすべてについて）, extends: sentence, mod: {of: [v_refer, from], with: individuals}}
   expect: {display: 期待する文, extends: facts, val: {truth: true}}
 
   # ===== 実行。動的な動詞は、個体の状態を書き換える規則である =====
@@ -326,6 +326,12 @@ individuals:
   kpart_by_sum_whole: {is: law_rule, display: 「X と何かを合わせてできる」と限定した種類は、種類として X を部分に持つ}
   kdep_by_mod: {is: law_rule, display: 「X に依存する」と限定した種類は、種類として X に依存する}
   kdep_by_sum: {is: law_rule, display: 合わせてできたものは、合わせる種類に依存する（生成の順序）}
+  kpart_by_sum_fact_from: {is: law_rule, display: 合わせる事実の始点は、合わせてできたものの部分}
+  kpart_by_sum_fact_to: {is: law_rule, display: 合わせる事実の終点は、合わせてできたものの部分}
+  kdep_by_sum_fact_from: {is: law_rule, display: 合わせてできたものは、合わせる事実の始点に依存する}
+  kdep_by_sum_fact_to: {is: law_rule, display: 合わせてできたものは、合わせる事実の終点に依存する}
+  kpart_by_compose_fact: {is: law_rule, display: 種類どうしの「部分になる」事実は、種類としての部分}
+  kdep_by_depend_fact: {is: law_rule, display: 種類どうしの「依存する」事実は、種類としての依存}
   kdep_inherit: {is: law_rule, display: 依存する種類の下位も、同じものに依存する}
   kdep_transitive: {is: law_rule, display: 種類としての依存は推移的}
   kdep_antisymmetric: {is: law_rule, display: 種類としての依存は反対称的（互いに依存するなら同じ種類）。生成の順序は逆に回らない}
@@ -436,6 +442,30 @@ facts:
   - {is: v_assume, from: kdep_by_sum, to: {is: with, from: var2, to: var3}}
   - {is: v_assume, from: kdep_by_sum, to: {is: neg, from: var2, to: var4, neg: true}}
   - {is: v_derive, from: kdep_by_sum, to: {is: r_kdep, from: var3, to: var1}}
+  - {is: v_assume, from: kpart_by_sum_fact_from, to: {is: of, from: var1, to: v_sum}}
+  - {is: v_assume, from: kpart_by_sum_fact_from, to: {is: from, from: var1, to: var2}}
+  - {is: v_assume, from: kpart_by_sum_fact_from, to: {is: new, from: var1, to: var3}}
+  - {is: v_derive, from: kpart_by_sum_fact_from, to: {is: r_kpart, from: var2, to: var3}}
+  - {is: v_assume, from: kdep_by_sum_fact_from, to: {is: of, from: var1, to: v_sum}}
+  - {is: v_assume, from: kdep_by_sum_fact_from, to: {is: from, from: var1, to: var2}}
+  - {is: v_assume, from: kdep_by_sum_fact_from, to: {is: new, from: var1, to: var3}}
+  - {is: v_derive, from: kdep_by_sum_fact_from, to: {is: r_kdep, from: var3, to: var2}}
+  - {is: v_assume, from: kpart_by_sum_fact_to, to: {is: of, from: var1, to: v_sum}}
+  - {is: v_assume, from: kpart_by_sum_fact_to, to: {is: to, from: var1, to: var2}}
+  - {is: v_assume, from: kpart_by_sum_fact_to, to: {is: new, from: var1, to: var3}}
+  - {is: v_derive, from: kpart_by_sum_fact_to, to: {is: r_kpart, from: var2, to: var3}}
+  - {is: v_assume, from: kdep_by_sum_fact_to, to: {is: of, from: var1, to: v_sum}}
+  - {is: v_assume, from: kdep_by_sum_fact_to, to: {is: to, from: var1, to: var2}}
+  - {is: v_assume, from: kdep_by_sum_fact_to, to: {is: new, from: var1, to: var3}}
+  - {is: v_derive, from: kdep_by_sum_fact_to, to: {is: r_kdep, from: var3, to: var2}}
+  - {is: v_assume, from: kpart_by_compose_fact, to: {is: of, from: var1, to: v_compose}}
+  - {is: v_assume, from: kpart_by_compose_fact, to: {is: from, from: var1, to: var2}}
+  - {is: v_assume, from: kpart_by_compose_fact, to: {is: to, from: var1, to: var3}}
+  - {is: v_derive, from: kpart_by_compose_fact, to: {is: r_kpart, from: var2, to: var3}}
+  - {is: v_assume, from: kdep_by_depend_fact, to: {is: of, from: var1, to: v_depend}}
+  - {is: v_assume, from: kdep_by_depend_fact, to: {is: from, from: var1, to: var2}}
+  - {is: v_assume, from: kdep_by_depend_fact, to: {is: to, from: var1, to: var3}}
+  - {is: v_derive, from: kdep_by_depend_fact, to: {is: r_kdep, from: var2, to: var3}}
   - {is: v_assume, from: kdep_inherit, to: {is: r_ancestor, from: var1, to: var3}}
   - {is: v_assume, from: kdep_inherit, to: {is: r_kdep, from: var3, to: var2}}
   - {is: v_derive, from: kdep_inherit, to: {is: r_kdep, from: var1, to: var2}}
