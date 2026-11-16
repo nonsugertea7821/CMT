@@ -874,8 +874,8 @@ facts:
   # 種類どうしの事実（閉世界: その種類のすべてについて）。部分と依存（生成の順序）は、ここから導かれる
   - {is: v_sum, from: layer_output, to: state_shift, new: shifted_hidden_state}                    # h' = h ⊕ v（足す位置を語に限ったものが hidden_state）
   - {is: v_sum, from: common_vector_component, to: specific_vector_component, new: concept_vector}   # v = m ⊕ s
-  - {is: axiom.v_use, from: exp, to: axiom}
-  - {is: axiom.v_use, from: exp, to: run}
+  - {is: syntax.v_use, from: exp, to: std}
+  - {is: syntax.v_use, from: exp, to: runtime}
 
   # ===== モデル。種類ではなく、1つずつの成果物。
   - {is: v_compose, from: weights, to: model_15b, at: {count: 1500000000}}
