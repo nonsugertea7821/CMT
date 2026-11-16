@@ -1,6 +1,6 @@
-"""体系の型検査と値の計算（stage0。Python による最初の実装）。
+"""体系の型検査（stage0。Python による最初の実装）。言語の検査だけをする。
 
-cscl.yaml の範囲のファイル（cscl/library/, exp/src/）が正本。自然言語の文章は正本ではない。
+cscl.yaml の範囲のファイル（cscl/library/, 領域のファイル）が正本。自然言語の文章は正本ではない。
 
 cscl.yaml の root と library  概念の体系（axiom → ontology → syntax → runtime → std の層）。
   検査: 表示語の一意性 / gloss を持つのは最上位の2つだけ / 動詞の式（状態の関係・両端・第三のものの種類）の一意性 /
@@ -9,23 +9,16 @@ cscl.yaml の root と library  概念の体系（axiom → ontology → syntax 
   grammar: 体系が、自分の書き方について述べる部分。文法の語は、すべてノードの識別子。節ごとに、使える語を並べる。
         検査は、ここに書かれた語だけを文法の語として受け付ける。logic は述語論理の語で、体系の中では定義しない。
 
-exp.yaml  領域 exp。種類（nodes）、個体（individuals）、事実（facts）を持つ。
-  個体は is で種類に1つだけ属する。仮説・決定・残り項目は、状態を表す下位の種類に属する（is: hyp_supported など）。
-  事実は動詞の個体で、位置に名前を付けて書く: {is: 動詞, from: 始点, to: 終点}。個体は、動詞のその位置の種類に
-  当たらなければならない。文が述べる中身は、同じ形を v_refer の終点に置く（主張ではない）。
-  検査は、事実を個体ごとに集めた形で読む。
-  測定値: 族ごとに、軸（axis）の直積で展開する。識別子は「族.軸の値....指標」。値は結果ファイルから計算する。
-  観察・仮説・決定: どれも「s が、p という関係で、o に」という文。
-    観察の s と o は測定値（o は数でもよい）、p は大きさを比べる動詞。真偽は、動詞の式（後ろにある、の成立と不成立）を
-    数に当てはめて決める。すべて真でなければ検査は失敗する。
-    仮説と決定の s と o はノード、p は動詞。s は p の始点、o は p の終点に来られるものでなければならない。
-    仮説の status は、根拠（evidence, against）の有無から決まる。決まり方は、状態のノードの式から読み取る。
-    決定の p が is_a のときは、体系の上位・下位の関係そのもの。採用済みなら、検査が構造から確かめる。
+領域のファイル（cscl.yaml の include）  種類（nodes）、個体（individuals）、事実（facts）を持つ。どの領域も同じに扱う。
+  個体は is で種類に1つだけ属する。事実は動詞の個体で、位置に名前を付けて書く: {is: 動詞, from: 始点, to: 終点}。
+  個体は、動詞のその位置の種類に当たらなければならない。検査は、事実を個体ごとに集めた形で読む。
+  関係の数（many）、値をそのまま持つ関係（verbatim）、中身から導く比較（derive, via, opposite）は、種類と動詞に書いた宣言から読む。
+
+領域に固有の中身の検査（例: exp の測定値・観察・仮説）は、cscl.yaml の checkers に書いたモジュールが持つ。
+この検査は、言語の検査のあと、それぞれの check(T, O, Dm) を呼ぶ。
 
 使い方:
   python cscl/bootstrap/type_checker/type_checker.py              検査
-  python cscl/bootstrap/type_checker/type_checker.py --values     測定値をすべて表示
-  python cscl/bootstrap/type_checker/type_checker.py --show ID    1つの項目を、参照を展開して表示
   python cscl/bootstrap/type_checker/type_checker.py --expr ID    ノードの式を、上位をたどって表示
 """
 import argparse
@@ -38,6 +31,8 @@ import sys
 from pathlib import Path
 
 import yaml
+
+sys.modules.setdefault("type_checker", sys.modules[__name__])   # 領域の検査が import type_checker で同じ errors を使う
 
 ROOT = Path(__file__).resolve().parents[3]   # リポジトリの根。cscl/bootstrap/type_checker/ の3つ上
 SPEC = ROOT   # 体系のファイルの名前は、根からの相対で書く（cscl.yaml と同じ）
@@ -167,7 +162,6 @@ def in_scope(key):
     c = config()
     excl = {p.resolve() for g in c.get("exclude") or [] for p in ROOT.glob(g)}
     return sorted({p.resolve() for g in c.get(key) or [] for p in ROOT.glob(g)} - excl)
-RESULTS = ROOT / yaml.safe_load(CONFIG.read_text(encoding="utf-8"))["results"]
 TOPS = ("ontology.continuant", "ontology.occurrent")
 LAYERS = ("axiom", "ontology", "syntax", "runtime", "std")   # 言語の層。下の層は上の層を参照しない
 LOCALS, USES, _SCOPES = {}, {}, {}   # 領域 → その領域のノードの名前 / 使う領域 / 名前の解決表
@@ -286,13 +280,6 @@ def core_sections(O):
             O["laws"][f["from"]][key[short(f["is"])]].append(t)
 
 
-KINDS = {"measurement_family": "families", "observation": "observations", "hypothesis": "hypotheses",
-         "decision": "decisions", "backlog_item": "backlog"}   # この検査が中身を確かめる種類
-
-
-LITERAL = {"display", "holds", "pre", "post", "result_file", "row_collection", "row_filter", "pattern", "condition_entry", "passage", "val"}
-
-
 def qualify(x, local, dom):
     """領域のファイルの中で、領域を書かずに書かれた語を、ノードの識別子に直す（自分の領域、使う領域の順）。語1つだけを直す。"""
     return qn(x, dom)
@@ -363,7 +350,7 @@ def gather(D, T, name):
     事実は動詞の個体: {is: 動詞, from, to, new, at, neg}。位置には名前を付ける。
     - 個体が、動詞のある位置の種類に当たるとき、その個体についての事実。関係の名は、もう一方の位置の種類。
     - at を持つ事実は、始点の種類のものがいくつ終点の部分になるか（個数）。関係の名は、始点の種類。
-    - v_refer の終点が事実の形をしていれば、それは文が述べる中身（主張ではない）。s, p, o, tolerance として読む。"""
+    - v_refer の終点が事実の形をしていれば、それは文が述べる中身（主張ではない）。s, p, o と、動詞が新しく取る位置の値 new として読む。"""
     dom, local, I = D["domain"], D["_local"], D["individuals"]
     q = lambda v: [qualify(y, local, dom) for y in v] if isinstance(v, list) else qualify(v, local, dom)
     for i, f in enumerate(D.get("facts") or []):
@@ -390,7 +377,7 @@ def gather(D, T, name):
                 I[subj]["s"], I[subj]["o"] = q(P.get("from")), q(P.get("to"))
                 I[subj]["p"] = "is_a" if P.get("is") == "extends" else q(P.get("is"))
                 if "new" in P:
-                    I[subj]["tolerance"] = P["new"]
+                    I[subj]["new"] = P["new"]
             else:
                 err(f"{where}: 始点 {subj} が個体でない")
             continue
@@ -407,7 +394,7 @@ def gather(D, T, name):
             if isinstance(ov, str) and ov in I and not T.occupies(T.I.get(ov), T.end(verb, other), verb):
                 err(f"{where}: {other} の {ov} は、動詞 {verb} のその位置（{T.end(verb, other)}）を占められない")
                 continue
-            val = f.get(other) if rel in LITERAL else q(f.get(other))
+            val = f.get(other) if rel in T.verbatim else q(f.get(other))
         if subj not in I:
             err(f"{where}: 始点 {subj} が個体でない")
             continue
@@ -418,38 +405,6 @@ def gather(D, T, name):
                 if rel not in T.many and len(vs) > 1:
                     err(f"{name} {subj}: 関係 {rel} の事実が2つ以上ある")
                 x[rel] = vs if rel in T.many else vs[0]
-
-
-def axes_of(I, T):
-    """測定の族の軸と軸の値（個体）を、族ごとの形に並べる。expand が読む形:
-    axis: {軸の字: [値の字] | {値の字: 書き方}}、meaning: {軸の字: {値の字: 指すもの | {identifier, value}}}。
-    並びは、個体を書いた順。"""
-    kind = lambda x: x.get("is")
-    for aid, a in I.items():
-        if not T.is_a(kind(a), "family_axis"):
-            continue
-        fam = I.get(a.get("measurement_family"))
-        if fam is None or not T.is_a(kind(fam), "measurement_family"):
-            err(f"exp {aid}: 測定の族の軸が、どの族の部分でもない")
-            continue
-        if "pattern" in a:
-            fam["row_keys"] = {"axis": label(a), "pattern": a["pattern"]}
-        vals = [(vid, v) for vid, v in I.items() if T.is_a(kind(v), "axis_value") and v.get("family_axis") == aid]
-        if not vals:
-            err(f"exp {aid}: 測定の族の軸に、値がない")
-        label = lambda x: (x.get("val") or {}).get("text")
-        al = label(a)
-        if any("passage" in v for _, v in vals):
-            fam.setdefault("axis", {})[al] = {label(v): v.get("passage", label(v)) for _, v in vals}
-        else:
-            fam.setdefault("axis", {})[al] = [label(v) for _, v in vals]
-        for vid, v in vals:
-            ids, at = v.get("any", []), v.get("_at", [])
-            if isinstance(ids, str):
-                ids = [ids]
-            if ids or at:
-                m = ids[0] if len(ids) == 1 and not at else {"identifier": ids} | ({"value": at} if at else {})
-                fam.setdefault("meaning", {}).setdefault(al, {})[label(v)] = m
 
 
 def compare_claims(T, a, b):
@@ -487,37 +442,6 @@ def check_derived(D, T, name):
             err(f"{name}: {a} → {h} は「{n.get('display')}」と書かれているが、{a} の述べる文の中身から導くと {got}")
 
 
-def load_domain(name, D, T):
-    """領域の個体を種類ごとに分ける。個体についての関係は、事実（動詞の個体）から集める（gather）。
-    仮説・決定・残り項目の個体は、状態を表す下位の種類に属する。この検査が中身を確かめない種類の個体は、種類と項目だけを確かめる。"""
-    gather(D, T, name)
-    check_derived(D, T, name)
-    axes_of(D["individuals"], T)
-    for k in D:
-        if k not in T.G["domain"] and k != "_local":
-            err(f"{name}: 語 {k} が、grammar.domain に書かれていない")
-    out = {sect: {} for sect in KINDS.values()}
-    for iid, x in D["individuals"].items():
-        if iid in T.N or T.resolve(iid, D["domain"]):
-            err(f"{name} {iid}: 個体の識別子が、ノードの識別子と重なっている")
-        kind = x.pop("is", None)
-        if kind not in T.N:
-            err(f"{name} {iid}: 種類 {kind} がノードでない")
-            continue
-        for ax, v in (x.get("val") or {}).items():
-            T.check_value(ax, v, f"{name} {iid}")
-        T.check_counts(kind, {f: v for f, v in x.items() if f not in T.G["individuals"] and f != "_at"}, f"{name} {iid}")
-        base = [k for k in KINDS if T.is_a(kind, k)]
-        if not base:
-            continue
-        if base[0] in ("hypothesis", "decision", "backlog_item"):
-            x["status"] = kind
-        out[KINDS[base[0]]][iid] = x
-    out["backlog"] = [{"identifier": k, **v} for k, v in out["backlog"].items()]
-    return {"families": out.pop("families")}, out
-
-
-# ---------------------------------------------------------------- 規則
 def law_rules(O):
     return [(lid, l) for lid, l in O["laws"].items() if l["kind"] == "law_rule"]
 
@@ -672,7 +596,7 @@ class Ontology:
     def __init__(self, O):
         self.O = O
         self.B, self.AX, self.N, self.G = O["base"], O["axes"], O["nodes"], O["grammar"]
-        self.I, self.Idom, self.Isubj = {}, None, {}   # 個体の識別子 → 種類、個体が書かれた領域
+        self.I, self.Idom, self.Isubj = {}, None, {}   # 個体の識別子 → 種類、名前を解決する既定の領域（領域の検査が設定する）、個体が書かれた領域
         for nid, n in self.N.items():  # mod は単一。中では並びとして扱う（限定の数は法則 single の規則が確かめる）
             if isinstance(n.get("extends"), list):
                 err(f"{nid}: extends は並べない。AND は「属する」（is）で限定して書く")
@@ -806,6 +730,11 @@ class Ontology:
     def up(self, nid):
         ps = self.parents(nid)
         return ps[0] if ps else None
+
+    @property
+    def verbatim(self):
+        """値をそのまま持つ関係の名（終点の種類に verbatim: true を書いたもの）。値を語として解決しない。"""
+        return {short(k) for k, n in self.N.items() if isinstance(n, dict) and n.get("verbatim")}
 
     @property
     def many(self):
@@ -1191,14 +1120,6 @@ class Ontology:
         has_child = {p for k in self.N for p in self.parents(k)}
         return [k for k in self.N if k not in has_child and k != nid and nid in self.ancestors(k)]
 
-    def status_pattern(self, nid):
-        """状態のノードの式から、「支持する観察がある / 反する観察がある」の組を読み取る。"""
-        pat = {}
-        for m in [m for x in [nid] + self.ancestors(nid) for m in (self.N[x].get("mod") or [])]:
-            if isinstance(m, dict) and m.get("of") == ["ontology.v_agree", "to"] and short(m.get("with")) in ("evidence", "against"):
-                pat[short(m["with"])] = not m.get("neg")
-        return pat if set(pat) == {"evidence", "against"} else None
-
     def compare(self, verb, a, b, tol):
         """大きさを比べる動詞の式（後ろにある、の成立と不成立）を、2つの数に当てはめる。"""
         hops = 0
@@ -1232,194 +1153,6 @@ class Ontology:
         return "\n  ← ".join(out)
 
 
-# ---------------------------------------------------------------- 測定値
-_cache = {}
-
-
-def rows_of(file, at):
-    key = (file, tuple(at))
-    if key not in _cache:
-        d = json.loads((RESULTS / file).read_text(encoding="utf-8"))
-        for k in at:
-            d = d[k]
-        _cache[key] = list(d.items()) if isinstance(d, dict) else [(str(i), r) for i, r in enumerate(d)]
-    return _cache[key]
-
-
-def stat(rows, cond, name):
-    vals = [r[cond] for _, r in rows if cond in r]
-    if not vals:
-        raise KeyError(f"条件 {cond} の行がない")
-    # 選択肢の順序ごとの値を並べた形（[順序1, 順序2]）は、平均と「両方とも正」に直す
-    vals = [{"margin": sum(v) / len(v), "both": all(x > 0 for x in v)} if isinstance(v, list) else v for v in vals]
-    n = len(vals)
-    if name == "accuracy":
-        return sum(v["margin"] > 0 for v in vals) / n, n
-    if name == "order_robust_accuracy":
-        return sum(bool(v["both"]) for v in vals) / n, n
-    if name == "logit_margin":
-        return sum(v["margin"] for v in vals) / n, n
-    if name == "judged_accuracy":
-        rs = [r for _, r in rows if cond in r]
-        return sum(r[cond]["judged"] == r["correct"] for r in rs) / n, n
-    if name == "mean_value":
-        return sum(vals) / n, n
-    raise KeyError(f"指標 {name} の計算方法が、検査ツールにない")
-
-
-def check_meaning(val, T, where):
-    if isinstance(val, str):
-        if val not in T.N and val not in T.I:
-            err(f"{where}: ノード {val} が未定義")
-        return
-    for nid in val.get("identifier", []):
-        if nid not in T.N:
-            err(f"{where}: ノード {nid} が未定義")
-    for v in val.get("value", []):
-        if v.get("s") not in T.N:
-            err(f"{where}: 値の s {v.get('s')} が未定義")
-        T.check_value(v.get("axis"), v.get("o"), where)
-
-
-def expand(M, T):
-    values, meanings = {}, {}
-    for fid, f in M["families"].items():
-        for st in f["metric"]:
-            if st not in T.N or not (T.is_a(st, "metric") or T.is_a(st, "magnitude")):
-                err(f"measurements.{fid}: 指標 {st} は、体系の指標でも大きさでもない")
-        axes = f["axis"]
-        names = list(axes)
-        keys = [list(axes[a]) if isinstance(axes[a], dict) else axes[a] for a in names]
-        for a, mp in (f.get("meaning") or {}).items():
-            for k, v in mp.items():
-                check_meaning(v, T, f"measurements.{fid}.meaning.{a}.{k}")
-        for combo in itertools.product(*keys):
-            b = dict(zip(names, combo))
-            sub = {a: (axes[a][b[a]] if isinstance(axes[a], dict) else b[a]) for a in names}
-            fmt = lambda x: x.format(**{k: v for k, v in sub.items() if not isinstance(v, list)}) if isinstance(x, str) else x
-            try:
-                rows = rows_of(fmt(f["result_file"]), [fmt(x) for x in f.get("row_collection", [])])
-            except (FileNotFoundError, KeyError) as e:
-                err(f"measurements.{fid}: {b} のファイルまたは位置が見つからない: {e}")
-                continue
-            for field, want in (f.get("row_filter") or {}).items():
-                want = sub[want[1:-1]] if isinstance(want, str) and want[1:-1] in sub and isinstance(sub[want[1:-1]], list) else fmt(want)
-                ok = (lambda x, w=want: x in w) if isinstance(want, list) else (lambda x, w=want: x == w)
-                rows = [(k, r) for k, r in rows if ok(r.get(field))]
-            if "row_keys" in f:
-                axis = f["row_keys"]["axis"]
-                allowed = {fmt(f["row_keys"]["pattern"]).replace("#", str(x)) for x in sub[axis]}
-                rows = [(k, r) for k, r in rows if k in allowed]
-            for st in f["metric"]:
-                mid = ".".join([fid] + [str(b[a]) for a in names] + [short(st)])
-                try:
-                    values[mid] = stat(rows, fmt(f["condition_entry"]), short(st))
-                except KeyError as e:
-                    err(f"measurements: {mid}: {e}")
-                meanings[mid] = {a: (f.get("meaning") or {}).get(a, {}).get(b[a], b[a]) for a in names} | {"metric": st}
-    return values, meanings
-
-
-# ---------------------------------------------------------------- 観察・仮説・決定
-def check_claims(C, values, T):
-    # 観察: 測定値どうし（または測定値と数）を、大きさを比べる動詞で結んだ文。すべて真であること
-    obs = C["observations"]
-    gap = {}   # 大小を述べる観察について、2つの値の差を問数に直したもの
-    for oid, o in obs.items():
-        vals = []
-        for side in ("s", "o"):
-            x = o[side]
-            if isinstance(x, (int, float)) and side == "o":
-                vals.append(float(x))
-            elif isinstance(x, str) and x in values:
-                vals.append(values[x][0])
-            else:
-                err(f"{oid}: {side} の {x} は、測定値でない")
-        if len(vals) < 2:
-            continue
-        if not T.is_verb(o["p"]):
-            err(f"{oid}: p の {o['p']} は動詞でない")
-            continue
-        near = short(T.end(o["p"], "new_kind")) == "tolerance"
-        if near != ("tolerance" in o):
-            err(f"{oid}: 許容幅は、動詞 {o['p']} の第三のものが許容幅であるときにだけ、必ず書く")
-            continue
-        holds = T.compare(o["p"], vals[0], vals[1], o["tolerance"] + 1e-9 if near else 1e-6)
-        if holds is None:
-            err(f"{oid}: 動詞 {o['p']} は、大きさを比べる動詞（「後ろにある」だけで書かれた静的な動詞）でない")
-        elif not holds:
-            err(f"observations: {oid} が成り立たない（{T.N[o['p']]['display']}: s={vals[0]:.3f}, o={vals[1]:.3f}）")
-        ns = [values[x][1] for x in (o["s"], o["o"]) if isinstance(x, str) and x in values]
-        gap[oid] = abs(vals[0] - vals[1]) * min(ns) if T.is_strict(o["p"]) else None
-
-    hyps, decs = C["hypotheses"], C["decisions"]
-
-    def triple(x, where, structural_ok=False):
-        ss = x["s"] if isinstance(x["s"], list) else [x["s"]]
-        oo = x["o"] if isinstance(x["o"], list) else [x["o"]]
-        for t in ss + oo:
-            if t not in T.N and t not in T.I:
-                err(f"{where}: ノード {t} が未定義")
-                return
-        if x["p"] == "is_a":
-            if not structural_ok:
-                err(f"{where}: is_a を使えるのは決定だけ")
-            elif T.is_a(x.get("status"), "dec_adopted") and not all(T.is_a(a, b) for a in ss for b in oo):
-                err(f"{where}: 採用済みの決定だが、体系の上で {ss} は {oo} の下位になっていない")
-            return
-        if not T.is_verb(x["p"]):
-            return err(f"{where}: {x['p']} は動詞でない")
-        for side, ts in (("from", ss), ("to", oo)):
-            bound = T.end(x["p"], side)
-            for t in ts:
-                if not T.overlaps(t, bound):
-                    err(f"{where}: {t} は動詞 {x['p']} の {side}（{bound}）に来られない")
-
-    patterns = {k: T.status_pattern(k) for k in T.kinds_of("hypothesis")}
-    patterns = {k: v for k, v in patterns.items() if v}
-    for hid, h in hyps.items():
-        triple(h, hid)
-        have = {"evidence": bool(h.get("evidence")), "against": bool(h.get("against"))}
-        want = [k for k, v in patterns.items() if v == have]
-        if short(h["status"]) not in {short(k) for k in patterns}:
-            err(f"{hid}: 種類 {h["status"]} は、仮説の状態のノードでない")
-        elif want != [h["status"]]:
-            err(f"{hid}: 種類は {h["status"]} と書かれているが、根拠の有無からは {want} になる")
-        for t in h.get("scope", []):
-            if t not in T.N and t not in T.I:
-                err(f"{hid}: scope のノード {t} が未定義")
-        for k in ("evidence", "against"):
-            for r in h.get(k, []):
-                if r not in obs:
-                    err(f"{hid}: {k} の観察 {r} が未定義")
-        for lim in h.get("limitation", []):
-            if lim not in T.kinds_of("limitation"):
-                err(f"{hid}: 留保 {lim} は、留保のノードでない")
-        if "lim_one_item" in [short(x) for x in h.get("limitation", [])]:
-            gs = [gap.get(r) for r in h.get("evidence", []) + h.get("against", [])]
-            if not any(g is not None and g <= 1.0 + 1e-6 for g in gs):
-                err(f"{hid}: 留保「差が1問以内」と書かれているが、根拠のうち大小を述べる観察に、差が1問以内のものがない")
-        for r in h.get("supersedes", []):
-            if r not in hyps:
-                err(f"{hid}: supersedes の仮説 {r} が未定義")
-    for did, d in decs.items():
-        if d["status"] not in T.kinds_of("decision"):
-            err(f"{did}: status の {d['status']} は、決定の状態のノードでない")
-        triple(d, did, structural_ok=True)
-        for r in d.get("basis", []):
-            if r not in hyps:
-                err(f"{did}: basis の仮説 {r} が未定義")
-        for r in d.get("supersedes", []):
-            if r not in decs:
-                err(f"{did}: supersedes の決定 {r} が未定義")
-    for b in C["backlog"]:
-        if b["status"] not in T.kinds_of("backlog_item"):
-            err(f"backlog {b['identifier']}: status の {b['status']} は、残り項目の状態のノードでない")
-        for r in b.get("tests", []):
-            if r not in hyps:
-                err(f"backlog {b['identifier']}: tests の仮説 {r} が未定義")
-
-
 def natural_language_only_in_ja(name, x, path=()):
     """自然言語を書けるのは、表示名 display だけ。例外は、字そのものが値であるもの:
     最上位2つの gloss、選択肢の字（val.text）、結果ファイルでの書き方（v_spell の終点）。"""
@@ -1436,34 +1169,6 @@ def natural_language_only_in_ja(name, x, path=()):
         opt = path[:1] == ("individuals",) and path[-2:] == ("val", "text")
         if path[-1:] != ("display",) and not top and not opt:
             err(f"{name} {'.'.join(path)}: 自然言語は表示名 display にだけ書く（{x[:20]}）")
-
-
-CLAIM_DOMAINS = {"lang"}   # exp のほかに、仮説・決定を置く領域（言語そのものについての主張）
-
-
-def check_sides(C, T):
-    """主張がどちらの側のものかを、中身が参照する語で確かめる。
-    lang の主張は、言語の層（axiom, ontology, syntax, runtime, std）と lang の語だけを参照する。exp の主張は、exp か subj の語（動詞を含む）を少なくとも1つ参照する。"""
-    def words(x):
-        out = []
-        for k in ("s", "o", "p"):
-            v = x.get(k)
-            out += v if isinstance(v, list) else [v]
-        return [w for w in out if isinstance(w, str) and w != "is_a"]
-
-    def dom(w):
-        if w in T.Isubj:
-            return T.Isubj[w]
-        if w in T.I:
-            return T.Idom if w not in (T.O.get("individuals") or {}) else "axiom"
-        return T.domain(w)
-    for sect in ("hypotheses", "decisions"):
-        for i, x in C[sect].items():
-            side, ds = C["side"].get(i), {dom(w) for w in words(x)}
-            if side in CLAIM_DOMAINS and ds - set(LAYERS) - {side}:
-                err(f"{i}: {side} の主張が、{side} と言語の層以外の語を参照している（{sorted(ds - set(LAYERS) - {side})}）")
-            if side == "exp" and ds and ds <= set(LAYERS):
-                err(f"{i}: exp の主張が、axiom の語だけを参照している。言語についての主張なら cscl の側に置く")
 
 
 def domain_files():
@@ -1571,9 +1276,38 @@ def check_parts(T):
                 err(f"法則 part_display_explicit に反する: {nid} の表示名「{disp}」が、限定の向き（{m['of'][1]}）と逆")
 
 
+def check_domain(name, D, T):
+    """領域のファイルの形と、個体の種類・値・項目の数を確かめる。どの領域にも同じ検査をする。"""
+    for k in D:
+        if k not in T.G["domain"] and k != "_local":
+            err(f"{name}: 語 {k} が、grammar.domain に書かれていない")
+    for iid, x in D["individuals"].items():
+        if iid in T.N or T.resolve(iid, D["domain"]):
+            err(f"{name} {iid}: 個体の識別子が、ノードの識別子と重なっている")
+        kind = x.get("is")
+        if kind not in T.N:
+            err(f"{name} {iid}: 種類 {kind} がノードでない")
+            continue
+        for ax, v in (x.get("val") or {}).items():
+            T.check_value(ax, v, f"{name} {iid}")
+        T.check_counts(kind, {f: v for f, v in x.items() if f not in T.G["individuals"] and f != "_at"}, f"{name} {iid}")
+
+
+def checkers():
+    """cscl.yaml の checkers に書いた、領域に固有の検査のモジュール。{領域: モジュール}。"""
+    import importlib.util
+    out = {}
+    for dom, path in (yaml.safe_load(CONFIG.read_text(encoding="utf-8")).get("checkers") or {}).items():
+        spec = importlib.util.spec_from_file_location(f"checker_{dom}", ROOT / path)
+        mod = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(mod)
+        out[dom] = mod
+    return out
+
+
 def build():
-    """体系を読み、検査して、(体系, ontology, 領域 subj, 測定の族, 文) を返す。誤りは errors に積む。
-    領域のファイルは自分で見つけ、使う領域の順に読む。領域 exp の個体（測定・観察・仮説など）は、中身まで検査する。"""
+    """体系を読み、言語の検査をする。(体系, ontology, 領域 {領域: (ファイル名, 中身)}) を返す。誤りは errors に積む。
+    領域のファイルは自分で見つけ、使う領域の順に読む。どの領域も同じ扱いで読み、領域に固有の中身の検査はしない（check_all が呼ぶ）。"""
     O = load(root_name())
     natural_language_only_in_ja(root_name(), yload(open(SPEC / root_name())))
     for p in in_scope("std"):
@@ -1584,88 +1318,51 @@ def build():
         natural_language_only_in_ja(name, yload(open(SPEC / name)))
         Dm[dom] = (name, merge_domain(name, O))
     T = Ontology(O)
-    _, D = Dm["exp"]
-    T.Idom = "exp"
-    for iid, x in D["individuals"].items():
-        if not isinstance(x.get("is"), str):
-            err(f"exp.yaml {iid}: is は種類を1つだけ書く。並べない")
-            x["is"] = None
-    T.I = {iid: x.get("is") for iid, x in D["individuals"].items() if x.get("is") in O["nodes"]}
     core = {iid: dict(x) for iid, x in (O.get("individuals") or {}).items()}
     for iid, x in core.items():
-        if iid in T.I or iid in T.N:
+        if iid in T.N:
             err(f"ontology.yaml {iid}: 個体の識別子が、ほかの個体かノードと重なっている")
         if set(x) - set(T.G["individuals"]) or x.get("is") not in T.N:
             err(f"ontology.yaml {iid}: 個体は {{is: 種類, display}} で書き、種類はノード")
     T.I |= {iid: x.get("is") for iid, x in core.items() if x.get("is") in T.N}
-    gather({"domain": "axiom", "_local": set(), "individuals": core, "facts": O.get("facts")}, T, "ontology.yaml")
-    others, claims = {}, {}
     for dom, (name, X) in Dm.items():
-        if dom == "exp":
-            continue
-        if dom in CLAIM_DOMAINS:   # 主張（仮説・決定）の領域。中身まで検査する
-            for iid, x in X["individuals"].items():
-                if iid in T.I or iid in T.N or iid in core:
-                    err(f"{name} {iid}: 個体の識別子が、ほかの個体かノードと重なっている")
-            T.I |= {iid: x.get("is") for iid, x in X["individuals"].items() if x.get("is") in T.N}
-            T.Isubj |= {iid: dom for iid in X["individuals"]}
-            claims[dom] = (name, X)
-            continue
-        ind = {iid: dict(x) for iid, x in X["individuals"].items()}
-        for iid in ind:
+        for iid, x in X["individuals"].items():
+            if not isinstance(x.get("is"), str):
+                err(f"{name} {iid}: is は種類を1つだけ書く。並べない")
+                x["is"] = None
             if iid in T.I or iid in T.N or iid in core:
                 err(f"{name} {iid}: 個体の識別子が、ほかの個体かノードと重なっている")
-        T.I |= {iid: x.get("is") for iid, x in ind.items() if x.get("is") in T.N}
-        T.Isubj |= {iid: dom for iid in ind}
-        others[dom] = (name, X, ind)
-    for dom, (name, X, ind) in others.items():
-        gather({"domain": dom, "_local": X["_local"], "individuals": ind, "facts": X.get("facts")}, T, name)
+        T.I |= {iid: x.get("is") for iid, x in X["individuals"].items() if x.get("is") in T.N}
+        T.Isubj |= {iid: dom for iid in X["individuals"]}
+    gather({"domain": "axiom", "_local": set(), "individuals": core, "facts": O.get("facts")}, T, "ontology.yaml")
+    for dom, (name, X) in Dm.items():
+        gather(X, T, name)
+        check_derived(X, T, name)
     collect_kind_facts(T)
     T.check()
     T.check_grammar()
     T.check_domains()
     T.check_laws()
     check_parts(T)
-    M, C = load_domain("exp.yaml", D, T)
-    C["side"] = {i: "exp" for sect in ("hypotheses", "decisions") for i in C[sect]}
-    for dom, (name, X) in claims.items():
-        _, C2 = load_domain(name, X, T)
-        for sect in ("hypotheses", "decisions", "observations"):
-            for i, x in C2[sect].items():
-                C[sect][i] = x
-                if sect != "observations":
-                    C["side"][i] = dom
-        C["backlog"] += C2["backlog"]
-    check_sides(C, T)
-    S = others.get("subj", (None, {"individuals": {}, "facts": [], "_local": set()}))[1]
-    return T, O, S, M, C
+    for dom, (name, X) in Dm.items():
+        check_domain(name, X, T)
+    return T, O, Dm
+
+
+def check_all():
+    """言語の検査のあと、cscl.yaml の checkers に書いた領域ごとの検査を呼ぶ。(体系, ontology, 領域, {領域: 検査の結果}) を返す。"""
+    T, O, Dm = build()
+    out = {dom: mod.check(T, O, Dm) for dom, mod in checkers().items() if dom in Dm}
+    return T, O, Dm, out
 
 
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("--values", action="store_true")
-    ap.add_argument("--show")
     ap.add_argument("--expr")
     args = ap.parse_args()
-    T, O, S, M, C = build()
-    values, meanings = expand(M, T)
-    check_claims(C, values, T)
+    T, O, Dm, out = check_all()
     if args.expr:
-        print(T.expr(args.expr if args.expr in T.N else T.resolve(args.expr, "exp") or args.expr))
-    if args.values:
-        for mid, (v, n) in sorted(values.items()):
-            print(f"{mid} = {v:.2f} (n={n})")
-    if args.show:
-        for sect in ("observations", "hypotheses", "decisions"):
-            if args.show in C[sect]:
-                x = C[sect][args.show]
-                print(yaml.safe_dump({args.show: x}, allow_unicode=True, sort_keys=False))
-                for k in ("s", "o"):
-                    if isinstance(x.get(k), str) and x[k] in values:
-                        v, n = values[x[k]]
-                        print(f"{x[k]} = {v:.2f} (n={n})  {meanings[x[k]]}")
-        if args.show in values:
-            print(values[args.show], meanings[args.show])
+        print(T.expr(args.expr if args.expr in T.N else next((r for d in Dm if (r := T.resolve(args.expr, d))), args.expr)))
     if errors:
         print(f"検査に失敗: {len(errors)} 件")
         for e in errors:
@@ -1673,8 +1370,10 @@ def main():
         sys.exit(1)
     N = T.N
     verbs = sum(1 for n in N.values() if "holds" in n or "pre" in n)
-    print(f"検査に成功: ノード {len(N)}（うち動詞の語根 {verbs}、役割 {len(T.roles)}）、基礎の関係 {len(T.B)}、分類の軸 {len(T.AX)}、"
-          f"測定値 {len(values)}、観察 {len(C['observations'])}、仮説 {len(C['hypotheses'])}、決定 {len(C['decisions'])}、残り項目 {len(C['backlog'])}")
+    print(f"検査に成功: ノード {len(N)}（うち動詞の語根 {verbs}、役割 {len(T.roles)}）、基礎の関係 {len(T.B)}、分類の軸 {len(T.AX)}、領域 {len(Dm)}")
+    for dom, r in out.items():
+        if r:
+            print(f"  {dom}: {r}")
 
 
 if __name__ == "__main__":

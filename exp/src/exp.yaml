@@ -248,10 +248,10 @@ nodes:
   order_robust_accuracy: {display: 選択肢の順序に頑健な正答率, extends: metric, mod: {of: [v_measure, from], with: verdict_pair}, axis: ratio}
   training_loss: {display: 学習の損失, extends: metric, mod: {of: [v_measure, from], with: teaching}}
   passage_compute_to: {display: 計算する先の文章, extends: passage, mod: {of: [v_compute, to]}}
-  result_file: {display: 結果ファイル, extends: passage_compute_to, mod: {of: [v_refer, from], with: experiment}}
+  result_file: {display: 結果ファイル, extends: passage_compute_to, mod: {of: [v_refer, from], with: experiment}, verbatim: true}
   information_entity_compose_from_result_file: {display: 結果ファイルの部分である情報, extends: information_entity, mod: {of: [v_compose, from], with: result_file}}
   result_row: {display: 結果の行, extends: information_entity_compose_from_result_file, mod: {of: [v_refer, from], with: question}}
-  row_collection: {display: 行の集まり, extends: information_entity_compose_from_result_file, mod: {of: [v_compose, to], with: result_row, at: {count: {gt: 1}}}}
+  row_collection: {display: 行の集まり, extends: information_entity_compose_from_result_file, mod: {of: [v_compose, to], with: result_row, at: {count: {gt: 1}}}, verbatim: true}
   logit_margin: {display: ロジット差の平均, extends: metric, mod: {of: [v_measure, from], with: verdict}, axis: order}
   judged_accuracy: {display: 自由生成での正答率, extends: accuracy, mod: {of: [v_depend, from], with: fmt_free}, axis: ratio}
   family_axis: {display: 測定の族の軸, extends: axis, mod: {of: [v_compose, from], with: measurement_family}}
@@ -262,8 +262,8 @@ nodes:
   mean_value: {display: 平均, extends: magnitude, mod: {of: [v_depend, from], with: measured_value, at: {count: {gt: 1}}}}
   tolerance: {display: 許容幅, extends: magnitude, mod: {of: [v_depend, from], with: observation}}
   metric: {display: 指標, extends: quality, mod: measuring, many: true}
-  row_filter: {display: 行の限定, extends: sentence, mod: {of: [v_refer, from], with: result_row}}
-  condition_entry: {display: 条件ごとの記録, extends: information_entity_refer_from_verdict, mod: {of: [v_compose, from], with: result_row}}
+  row_filter: {display: 行の限定, extends: sentence, mod: {of: [v_refer, from], with: result_row}, verbatim: true}
+  condition_entry: {display: 条件ごとの記録, extends: information_entity_refer_from_verdict, mod: {of: [v_compose, from], with: result_row}, verbatim: true}
 
   # ===== 観察・仮説・決定・残り項目 =====
   depended_information: {display: 他の記述が依存する記述, extends: information_entity, mod: {of: [v_depend, to], with: information_entity, quant: all}}

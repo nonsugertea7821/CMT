@@ -15,14 +15,16 @@ from pathlib import Path
 import yaml
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "cscl" / "bootstrap" / "type_checker"))
+sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 import type_checker  # noqa: E402
+import exp_check  # noqa: E402
 
 DOM = "subj"
 
 
 class LineChecker:
     def __init__(self):
-        self.T, self.O, self.S, _, _ = type_checker.build()
+        self.T, self.O, self.S, _, _ = exp_check.build()
         if type_checker.errors:
             raise SystemExit("体系の検査に失敗: " + "; ".join(type_checker.errors[:3]))
         self.subj_ind = {i: f"{DOM}.{x['is']}" if f"{DOM}.{x['is']}" in self.T.N else x["is"]
