@@ -178,13 +178,13 @@ nodes:
   semi_renaming: {display: 元の語が見える改名, extends: renaming, mod: {of: [v_involve, from], with: visible_word}}
   inline_expansion: {display: 設問中での定義の展開, extends: text_injection, mod: {of: [v_involve, from], with: position_after_word}}
   channel_involve_from_taught_vector: {display: 教示で得られたベクトルへに関わらせる接続手段, extends: channel, mod: {of: [v_involve, from], with: taught_vector}}
-  concept_vector: {display: 概念ベクトル, extends: channel_involve_from_taught_vector, mod: {of: [v_involve, from], with: label_token_positions}}
-  single_layer_vector: {display: 単一層の概念ベクトル, extends: concept_vector, mod: {of: [v_involve, from], with: layer, at: {count: 1}}}
-  multi_layer_vector: {display: 複数層の概念ベクトル, extends: concept_vector, mod: {of: [v_involve, from], with: layer, at: {count: {gt: 1}}}}
+  concept_vector: {display: 概念ベクトル, extends: state_shift, mod: {of: [v_depend, from], with: label_token_positions}}
+  single_layer_vector: {display: 単一層の概念ベクトル, extends: concept_vector, mod: {of: [v_depend, from], with: layer, at: {count: 1}}}
+  multi_layer_vector: {display: 複数層の概念ベクトル, extends: concept_vector, mod: {of: [v_depend, from], with: layer, at: {count: {gt: 1}}}}
   dedicated_token: {display: 概念専用のトークン, extends: identifier, mod: {of: [v_compose, from], with: context}}
-  key_token_vector: {display: 専用トークンの概念ベクトル, extends: channel_involve_from_taught_vector, mod: {of: [v_involve, from], with: dedicated_token}}
+  key_token_vector: {display: 専用トークンの概念ベクトル, extends: state_shift, mod: {of: [v_depend, from], with: dedicated_token}}
   symbolic_membership: {display: 事実の判定と体系での帰属の決定, extends: inference, mod: {of: [v_involve, from], with: system}}
-  contrast_vector: {display: 定義の有無による活性化の差のベクトル, extends: concept_vector, mod: {of: [v_involve, from], with: definition_text}}
+  contrast_vector: {display: 定義の有無による活性化の差のベクトル, extends: concept_vector, mod: {of: [v_depend, from], with: definition_text}}
   opaque_expression: {display: core 以外の識別子を無意味にした概念式, extends: concept_expression, mod: {of: [v_compose, to], with: hidden_word}}
   text_and_vector: {display: 文章と概念ベクトルの併用, extends: text_injection, mod: {of: [is, from], with: concept_vector}}
   delta_weights: {display: 差分重み, extends: channel, mod: {of: [v_involve, from], with: weights}}
