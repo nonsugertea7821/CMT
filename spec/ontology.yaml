@@ -51,7 +51,7 @@ nodes:
   # ===== 動詞・静的。holds に、成り立っている状態の関係を書く =====
   v_depend: {display: 依存する, extends: occurrent, from: continuant, to: continuant, holds: [{is: depend, from: from, to: to}]}
   v_compose: {display: 部分になる, extends: occurrent, from: continuant, to: continuant, holds: [{is: part, from: from, to: to}]}
-  v_sum: {display: 合わせる, extends: occurrent, from: continuant, to: continuant, new_kind: continuant,
+  v_sum: {display: 合わせる, extends: occurrent, from: summand, to: summand, new_kind: summand,
           holds: [{is: part, from: from, to: new}, {is: part, from: to, to: new}, {is: depend, from: new, to: from}, {is: depend, from: new, to: to}]}
   v_stage: {display: 時間的な部分になる, extends: occurrent, from: occurrent, to: occurrent, holds: [{is: part, from: from, to: to}]}
   v_come_after: {display: 後ろに置かれる, extends: occurrent, from: continuant, to: continuant, holds: [{is: after, from: from, to: to}]}
@@ -101,6 +101,7 @@ nodes:
   learned: {display: 学習で得られた, extends: quality, of: [v_learn, new]}
 
   # ===== 情報と言語 =====
+  summand: {display: 合わせられる情報, extends: information_entity, mod: {of: [v_sum, from]}}
   information_entity: {display: 情報, extends: generically_dependent_continuant, mod: {of: [v_refer, from]}}
   language: {display: 言語, extends: information_entity, mod: {of: [v_express, to]}}
   system: {display: 体系, extends: information_entity, mod: {of: [v_compose, to], with: concept_expression, at: {count: {gt: 1}}}}
@@ -393,6 +394,7 @@ individuals:
   frame: {is: law_given, display: 動詞が触れなかった文は変わらない}
   halt: {is: law_given, display: 当てはまる動詞がなければ止まる}
   part_fact_direction: {is: law_given, display: 部分の事実は、種類の限定と向きが逆にならない}
+  sum_same_space: {is: law_given, display: 合わせる二つと合わせてできたものは、同じ空間（合わせられる情報のすぐ下の種類）に属する}
   part_display_explicit: {is: law_given, display: 部分の限定を持つ種類の表示名は、どちらが部分かを明示し、限定の向きと合う}
 
 facts:
@@ -641,3 +643,4 @@ facts:
   - {is: v_govern, from: halt, to: run.run}
   - {is: v_govern, from: part_fact_direction, to: concept_expression}
   - {is: v_govern, from: part_display_explicit, to: concept_expression}
+  - {is: v_govern, from: sum_same_space, to: concept_expression}
