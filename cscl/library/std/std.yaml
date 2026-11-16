@@ -8,6 +8,7 @@ nodes:
   v_close: {display: について閉じている, extends: occurrent, from: kind_collection, to: verb_ref, holds: [{is: refer, from: from, to: to}]}
   v_sum: {display: 合成する, extends: occurrent, from: summand, to: summand, new_kind: summand,
           holds: [{is: part, from: from, to: new}, {is: part, from: to, to: new}, {is: depend, from: new, to: from}, {is: depend, from: new, to: to}]}
+  model_inference: {display: モデルの推論, extends: inference, mod: {of: [v_perform, to], with: model}}
   summand: {display: 合成できる情報, extends: information_entity, mod: {of: [v_sum, from]}}
   closed_set: {display: 閉集合, extends: kind_collection, mod: {of: [v_close, from]}}   # 何について閉じているかは、下位の限定で決める
   rewrite_rule: {display: 書き換えの規則, extends: definition, mod: {of: [v_refer, from], with: post}}
