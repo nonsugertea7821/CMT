@@ -287,6 +287,12 @@ individuals:
   # 結果: (領域, 語) 1307 のうち、解決先が2つあるのは syntax の any だけ（限定の with では syntax.any＝存在の数量化、動詞の端ではどのノードでもない any）。
   #   見込みどおり。qw が syntax で読み直す語が別の先になる組は出なかった。
   o_sys_spelling_one_word_two_referents: {is: exp.observation}
+  # 型検査と実行器が名を挙げる語の観察（exp/experiments/sys_special.py）。仮説の確かめではない。手順は実行の前に登録した。
+  # 結果: 名を挙げた語 128 のうち、シグネチャ 3、文法 66、どちらでもない 60（うち一字 5）。
+  # 実行の後の分け方（登録していない）: 一字を除く 55 を語の領域で分けると、syntax 15、runtime 5、ontology 15、基礎の関係 4（after, exists, part, refer）、
+  #   exp 1（v_spell）、意味を検査が与える法則 10、層の名 4、偶然の一致 2（kind は法則の辞書の鍵、type_checker はモジュール名）。
+  # 利用者の見方（実行の後に受けた）: 文法は syntax が定義している。コードは機械語に翻訳しているに過ぎない。
+  o_sys_special_outside_named: {is: exp.observation}
   o_sys_frame_declared_never_grows: {is: exp.observation}
   o_sys_frame_declared_never_shrinks: {is: exp.observation}
   o_sys_frame_creates_over_removes: {is: exp.observation}
@@ -406,6 +412,7 @@ facts:
   - {is: v_refer, from: o_sys_subsume_never_under_subsumer, to: {is: v_level, from: sys_subsume.all_ancestors.mean_value, to: 0.0}}
   - {is: v_refer, from: o_sys_subsume_layer_not_all_usable, to: {is: v_come_before, from: sys_subsume.some_usable.mean_value, to: 1.0}}
   - {is: v_refer, from: o_sys_spelling_one_word_two_referents, to: {is: v_come_after, from: sys_spelling.multi.mean_value, to: 0.0}}
+  - {is: v_refer, from: o_sys_special_outside_named, to: {is: v_come_after, from: sys_special.outside.mean_value, to: 0.0}}
   - {is: v_refer, from: o_sys_outlive_never_outlived, to: {is: v_level, from: sys_outlive.outlives_source.mean_value, to: 0.0}}
   - {is: v_refer, from: o_sys_outlive_compute_steps_ok, to: {is: v_level, from: sys_outlive.c_step_ok.mean_value, to: 1.0}}
   - {is: v_refer, from: o_sys_outlive_speak_steps_ok, to: {is: v_level, from: sys_outlive.s_step_ok.mean_value, to: 1.0}}
