@@ -177,6 +177,15 @@ def atom(f):
     return bool(f.get("neg")), f.get("is"), tuple(f[k] for k in ("from", "to") if k in f)
 
 
+def truth_of(f):
+    """状態の文が述べる真偽。val: {truth: false} なら偽と述べる文（False）、val がなければ真と述べる文（True）。
+    neg（述べられていない）とは別。形が合わなければ None。"""
+    v = f.get("val")
+    if v is None:
+        return True
+    return v["truth"] if isinstance(v, dict) and set(v) == {"truth"} and isinstance(v["truth"], bool) else None
+
+
 def short(w):
     return w.split(".")[-1] if isinstance(w, str) else w
 
@@ -369,6 +378,9 @@ def gather(D, T, name):
         where = f"{name} facts[{i}]"
         if not isinstance(f, dict) or set(f) - set(T.G["facts"]) or "is" not in f:
             err(f"{where}: 事実は {{is: 動詞, from: 始点, to: 終点}} で書き、語は grammar.facts のものだけ")
+            continue
+        if "val" in f:   # 偽と述べる文は、いまは状態（pre・post と実行の記録）でだけ読む
+            err(f"{where}: val（真偽を述べる）は、pre・post と実行の記録の文にだけ書く")
             continue
         verb = q(f["is"])
         if is_kind_fact(f, T, dom, I):
@@ -972,6 +984,9 @@ class Ontology:
             err(f"{vid}: 静的（holds）か動的（pre / post）のどちらかで書く")
         for key in ("holds", "pre", "post"):
             for f in n.get(key, []):
+                if isinstance(f, dict) and "val" in f and (key == "holds" or truth_of(f) is None or f.get("neg")):
+                    err(f"{vid}: {key} の {f}: val は pre・post にだけ、{{truth: true か false}} の形で、neg と別に書く")
+                    continue
                 ok = isinstance(f, dict) and not set(f) - set(self.G["facts"]) - {"at"} and f.get("is") in self.B
                 args = atom(f)[2] if ok else ()
                 if not ok or "at" in f or len(args) != self.B[f["is"]]["arity"] or any(a not in self.G["position"] for a in args):
