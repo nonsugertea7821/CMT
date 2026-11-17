@@ -617,6 +617,13 @@ individuals:
   sys_differentia_cond_dyn_unique: {is: axis_value, val: {text: dyn_unique}}
   sys_differentia_cond_st_unique: {is: axis_value, val: {text: st_unique}}
   sys_differentia_cond_creation_specific: {is: axis_value, val: {text: creation_specific}}
+  sys_subsume: {is: measurement_family}
+  sys_subsume_cond: {is: family_axis, val: {text: cond}}
+  sys_subsume_cond_has_subsumer: {is: axis_value, val: {text: has_subsumer}}
+  sys_subsume_cond_strict: {is: axis_value, val: {text: strict}}
+  sys_subsume_cond_any_end: {is: axis_value, val: {text: any_end}}
+  sys_subsume_cond_all_ancestors: {is: axis_value, val: {text: all_ancestors}}
+  sys_subsume_cond_some_usable: {is: axis_value, val: {text: some_usable}}
   sys_outlive: {is: measurement_family}
   sys_outlive_cond: {is: family_axis, val: {text: cond}}
   sys_outlive_cond_outlives_source: {is: axis_value, val: {text: outlives_source}}
@@ -2515,6 +2522,21 @@ facts:
   - {is: v_spell, from: sys_differentia_cond_creation_specific, to: creation_specific}
   - {is: v_entry_of, from: '{cond}', to: sys_differentia}
   - {is: v_metric_of, from: sys_differentia, to: mean_value}
+  - {is: v_file_of, from: sys_subsume.json, to: sys_subsume}
+  - {is: v_rows_of, from: [rows], to: sys_subsume}
+  - {is: v_axis_of, from: sys_subsume_cond, to: sys_subsume}
+  - {is: v_value_of, from: sys_subsume_cond_has_subsumer, to: sys_subsume_cond}
+  - {is: v_spell, from: sys_subsume_cond_has_subsumer, to: has_subsumer}
+  - {is: v_value_of, from: sys_subsume_cond_strict, to: sys_subsume_cond}
+  - {is: v_spell, from: sys_subsume_cond_strict, to: strict}
+  - {is: v_value_of, from: sys_subsume_cond_any_end, to: sys_subsume_cond}
+  - {is: v_spell, from: sys_subsume_cond_any_end, to: any_end}
+  - {is: v_value_of, from: sys_subsume_cond_all_ancestors, to: sys_subsume_cond}
+  - {is: v_spell, from: sys_subsume_cond_all_ancestors, to: all_ancestors}
+  - {is: v_value_of, from: sys_subsume_cond_some_usable, to: sys_subsume_cond}
+  - {is: v_spell, from: sys_subsume_cond_some_usable, to: some_usable}
+  - {is: v_entry_of, from: '{cond}', to: sys_subsume}
+  - {is: v_metric_of, from: sys_subsume, to: mean_value}
   - {is: v_file_of, from: sys_content_symmetry.json, to: sys_content_symmetry}
   - {is: v_rows_of, from: [rows], to: sys_content_symmetry}
   - {is: v_axis_of, from: sys_content_symmetry_cond, to: sys_content_symmetry}

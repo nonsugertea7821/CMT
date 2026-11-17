@@ -274,6 +274,15 @@ individuals:
   o_sys_differentia_dyn_not_all_unique: {is: exp.observation}
   o_sys_differentia_st_not_all_unique: {is: exp.observation}
   o_sys_differentia_creation_not_all_specific: {is: exp.observation}
+  # 動詞の親子を「端が内側にあり、式が相手の式を含む」で決めたときの観察（exp/experiments/sys_subsume.py）。仮説の確かめではない。手順は実行の前に登録した。
+  # 背景: any→any で式 F を持つ動詞は、F を含む式を持つ動詞すべての親になる（利用者の気づき「any を端に取る関係は全ての関係の親では」）。
+  # 結果: 語根 51 のうち 17 が別の語根に包まれる（15 は式が真に小さい親、14 は端に any を持つ親）。包む語根が上位にあるものは 0。
+  #   語根はどれも occurrent を直に上位とし、ほかの語根の下に式を足す書き方をしていない。
+  #   包む語根を使えない層にあるのは 5（ontology.v_depend・v_trigger、subj.v_begin・v_end は exp の v_rely・v_transfer に、ontology.v_design は std.v_compute に包まれる）。
+  #   ほかに見えた親子: v_level ⊂ v_not_after ∧ v_not_before、v_near ⊂ v_level、v_answer ⊂ v_come_after ∧ v_refer、v_speak ⊂ v_design、v_teach ⊂ v_expose、v_express ⊂ v_depend。
+  o_sys_subsume_some_subsumed: {is: exp.observation}
+  o_sys_subsume_never_under_subsumer: {is: exp.observation}
+  o_sys_subsume_layer_not_all_usable: {is: exp.observation}
   o_sys_frame_declared_never_grows: {is: exp.observation}
   o_sys_frame_declared_never_shrinks: {is: exp.observation}
   o_sys_frame_creates_over_removes: {is: exp.observation}
@@ -389,6 +398,9 @@ facts:
   - {is: v_refer, from: o_sys_differentia_dyn_not_all_unique, to: {is: v_come_before, from: sys_differentia.dyn_unique.mean_value, to: 1.0}}
   - {is: v_refer, from: o_sys_differentia_st_not_all_unique, to: {is: v_come_before, from: sys_differentia.st_unique.mean_value, to: 1.0}}
   - {is: v_refer, from: o_sys_differentia_creation_not_all_specific, to: {is: v_come_before, from: sys_differentia.creation_specific.mean_value, to: 1.0}}
+  - {is: v_refer, from: o_sys_subsume_some_subsumed, to: {is: v_come_after, from: sys_subsume.has_subsumer.mean_value, to: 0.0}}
+  - {is: v_refer, from: o_sys_subsume_never_under_subsumer, to: {is: v_level, from: sys_subsume.all_ancestors.mean_value, to: 0.0}}
+  - {is: v_refer, from: o_sys_subsume_layer_not_all_usable, to: {is: v_come_before, from: sys_subsume.some_usable.mean_value, to: 1.0}}
   - {is: v_refer, from: o_sys_outlive_never_outlived, to: {is: v_level, from: sys_outlive.outlives_source.mean_value, to: 0.0}}
   - {is: v_refer, from: o_sys_outlive_compute_steps_ok, to: {is: v_level, from: sys_outlive.c_step_ok.mean_value, to: 1.0}}
   - {is: v_refer, from: o_sys_outlive_speak_steps_ok, to: {is: v_level, from: sys_outlive.s_step_ok.mean_value, to: 1.0}}
