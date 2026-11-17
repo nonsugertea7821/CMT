@@ -56,6 +56,7 @@ nodes:
   v_check: {display: 確かめる, extends: v_refer, from: backlog_item, to: tests}
   v_prior_same: {display: 同じ向きの結果を先に報告した, extends: v_agree, from: prior_work, to: prior_agreed, derive: same, via: v_state}
   v_prior_differ: {display: 異なる結果を報告した, extends: v_refer, from: prior_work, to: prior_contrasted, derive: opposite, via: v_state}
+  v_report: {display: 観察として報告する, extends: v_refer, from: prior_work, to: prior_observation}
   v_state: {display: 主張として述べる, extends: v_refer, from: prior_work, to: prior_claim}
   v_prior_method: {display: 先行研究の手法を使う, extends: v_use, from: hypothesis, to: prior_work}
   v_file_of: {display: 結果ファイルとして部分になる, extends: v_compose, from: result_file, to: measurement_family}
@@ -286,6 +287,7 @@ nodes:
   rule_consolidation: {display: 変更の固定先の取り決め, extends: decision, mod: {of: [v_refer, from], with: change_holder}}
   sentence_refer_from_measured_value: {display: 測定値へ述べる文, extends: sentence, mod: {of: [v_refer, from], with: measured_value}}
   observation: {display: 観察, extends: sentence_refer_from_measured_value, val: {truth: true}}
+  prior_observation: {display: 先行研究の観察, extends: observation, mod: {of: [v_report, to], with: prior_work}, many: true}
   observation_agree_from_hypothesis: {display: 仮説へ一致する観察, extends: observation, mod: {of: [v_agree, from], with: hypothesis}}
   evidence: {display: 支持する観察, extends: observation_agree_from_hypothesis, cmp: [{axis: truth, a: observation, b: hypothesis, rel: same}], many: true}
   against: {display: 反する観察, extends: observation_agree_from_hypothesis, cmp: [{axis: truth, a: observation, b: hypothesis, rel: differ}], many: true}
@@ -408,6 +410,69 @@ individuals:
   e4: {is: measurement_family}
   e5: {is: measurement_family}
   e6_L8: {is: measurement_family}
+  pr_college_gre: {is: measurement_family}
+  pr_college_gre_cond: {is: family_axis, val: {text: cond}}
+  pr_college_gre_cond_college: {is: axis_value, val: {text: college}}
+  pr_college_gre_cond_prompting: {is: axis_value, val: {text: prompting}}
+  pr_college_gre_cond_chance: {is: axis_value, val: {text: chance}}
+  pr_college_gre_cond_real_word: {is: axis_value, val: {text: real_word}}
+  pr_college_defgen: {is: measurement_family}
+  pr_college_defgen_cond: {is: family_axis, val: {text: cond}}
+  pr_college_defgen_cond_college: {is: axis_value, val: {text: college}}
+  pr_college_defgen_cond_prompting: {is: axis_value, val: {text: prompting}}
+  pr_poiroux: {is: measurement_family}
+  pr_poiroux_cond: {is: family_axis, val: {text: cond}}
+  pr_poiroux_cond_greedy: {is: axis_value, val: {text: greedy}}
+  pr_poiroux_cond_filter_selfbleu: {is: axis_value, val: {text: filter_selfbleu}}
+  pr_poiroux_cond_val_no_filter_selfbleu: {is: axis_value, val: {text: val_no_filter_selfbleu}}
+  pr_poiroux_cond_val_filter_selfbleu: {is: axis_value, val: {text: val_filter_selfbleu}}
+  pr_liu: {is: measurement_family}
+  pr_liu_cond: {is: family_axis, val: {text: cond}}
+  pr_liu_cond_first: {is: axis_value, val: {text: first}}
+  pr_liu_cond_middle: {is: axis_value, val: {text: middle}}
+  pr_liu_cond_last: {is: axis_value, val: {text: last}}
+  pr_liu_cond_closed_book: {is: axis_value, val: {text: closed_book}}
+  pr_winodict: {is: measurement_family}
+  pr_winodict_cond: {is: family_axis, val: {text: cond}}
+  pr_winodict_cond_winodict: {is: axis_value, val: {text: winodict}}
+  pr_winodict_cond_original: {is: axis_value, val: {text: original}}
+  pr_winodict_cond_human_winodict: {is: axis_value, val: {text: human_winodict}}
+  pr_stringli: {is: measurement_family}
+  pr_stringli_cond: {is: family_axis, val: {text: cond}}
+  pr_stringli_cond_llama405b: {is: axis_value, val: {text: llama405b}}
+  pr_stringli_cond_llama70b: {is: axis_value, val: {text: llama70b}}
+  pr_goworek: {is: measurement_family}
+  pr_goworek_cond: {is: family_axis, val: {text: cond}}
+  pr_goworek_cond_redefined_without: {is: axis_value, val: {text: redefined_without}}
+  pr_goworek_cond_redefined_with: {is: axis_value, val: {text: redefined_with}}
+  pr_goworek_cond_original_without: {is: axis_value, val: {text: original_without}}
+  pr_goworek_cond_original_with: {is: axis_value, val: {text: original_with}}
+  pr_babaei: {is: measurement_family}
+  pr_babaei_cond: {is: family_axis, val: {text: cond}}
+  pr_babaei_cond_qwen72b_question: {is: axis_value, val: {text: qwen72b_question}}
+  pr_babaei_cond_qwen72b_rdf: {is: axis_value, val: {text: qwen72b_rdf}}
+  pr_babaei_cond_qwen05b_question: {is: axis_value, val: {text: qwen05b_question}}
+  pr_babaei_cond_qwen05b_rdf: {is: axis_value, val: {text: qwen05b_rdf}}
+  pr_cartridges: {is: measurement_family}
+  pr_cartridges_cond: {is: family_axis, val: {text: cond}}
+  pr_cartridges_cond_self_study: {is: axis_value, val: {text: self_study}}
+  pr_cartridges_cond_next_token: {is: axis_value, val: {text: next_token}}
+  o_pr_college_above_prompting: {is: prior_observation}
+  o_pr_college_below_real_word: {is: prior_observation}
+  o_pr_college_defgen_above_prompting: {is: prior_observation}
+  o_pr_poiroux_filter_above_greedy: {is: prior_observation}
+  o_pr_poiroux_filter_above_no_filter: {is: prior_observation}
+  o_pr_liu_middle_below_first: {is: prior_observation}
+  o_pr_liu_middle_below_last: {is: prior_observation}
+  o_pr_liu_middle_below_closed_book: {is: prior_observation}
+  o_pr_winodict_below_original: {is: prior_observation}
+  o_pr_winodict_below_human: {is: prior_observation}
+  o_pr_stringli_larger_anchored_more: {is: prior_observation}
+  o_pr_goworek_redefined_raised: {is: prior_observation}
+  o_pr_goworek_original_lowered: {is: prior_observation}
+  o_pr_babaei_large_rdf_raised: {is: prior_observation}
+  o_pr_babaei_small_rdf_lowered: {is: prior_observation}
+  o_pr_cartridges_self_study_above: {is: prior_observation}
   e6_L8_nll: {is: measurement_family}
   e6_defqa: {is: measurement_family}
   e6_defqa_nll: {is: measurement_family}
@@ -1789,6 +1854,143 @@ facts:
   - {is: v_refer, from: o_e6_recite_paraphrase_at_chance, to: {is: v_near, from: e6_L8.defonly.logit_margin, to: 0.0, new: 0.5}}
   - {is: v_refer, from: o_e6_examples_paraphrase_at_chance, to: {is: v_near, from: e6_L8.qa.logit_margin, to: 0.0, new: 0.5}}
   - {is: v_refer, from: o_e6_examples_recital_harder, to: {is: v_come_after, from: e6_L8_nll.qa.mean_value, to: e6_L8_nll.none.mean_value}}
+
+  # ===== 先行研究の観察。値は論文の表と本文から書き写したもの（experiments/results/prior/。出典は各ファイルの _source）。
+  - {is: v_file_of, from: prior/teehan2024_college_gre.json, to: pr_college_gre}
+  - {is: v_rows_of, from: [reported], to: pr_college_gre}
+  - {is: v_axis_of, from: pr_college_gre_cond, to: pr_college_gre}
+  - {is: v_value_of, from: pr_college_gre_cond_college, to: pr_college_gre_cond}
+  - {is: v_spell, from: pr_college_gre_cond_college, to: college}
+  - {is: v_value_of, from: pr_college_gre_cond_prompting, to: pr_college_gre_cond}
+  - {is: v_spell, from: pr_college_gre_cond_prompting, to: prompting}
+  - {is: v_value_of, from: pr_college_gre_cond_chance, to: pr_college_gre_cond}
+  - {is: v_spell, from: pr_college_gre_cond_chance, to: chance}
+  - {is: v_value_of, from: pr_college_gre_cond_real_word, to: pr_college_gre_cond}
+  - {is: v_spell, from: pr_college_gre_cond_real_word, to: real_word}
+  - {is: v_entry_of, from: '{cond}', to: pr_college_gre}
+  - {is: v_metric_of, from: pr_college_gre, to: mean_value}
+  - {is: v_file_of, from: prior/teehan2024_college_defgen.json, to: pr_college_defgen}
+  - {is: v_rows_of, from: [reported], to: pr_college_defgen}
+  - {is: v_axis_of, from: pr_college_defgen_cond, to: pr_college_defgen}
+  - {is: v_value_of, from: pr_college_defgen_cond_college, to: pr_college_defgen_cond}
+  - {is: v_spell, from: pr_college_defgen_cond_college, to: college}
+  - {is: v_value_of, from: pr_college_defgen_cond_prompting, to: pr_college_defgen_cond}
+  - {is: v_spell, from: pr_college_defgen_cond_prompting, to: prompting}
+  - {is: v_entry_of, from: '{cond}', to: pr_college_defgen}
+  - {is: v_metric_of, from: pr_college_defgen, to: mean_value}
+  - {is: v_file_of, from: prior/poiroux2024_typecheck.json, to: pr_poiroux}
+  - {is: v_rows_of, from: [reported], to: pr_poiroux}
+  - {is: v_axis_of, from: pr_poiroux_cond, to: pr_poiroux}
+  - {is: v_value_of, from: pr_poiroux_cond_greedy, to: pr_poiroux_cond}
+  - {is: v_spell, from: pr_poiroux_cond_greedy, to: greedy}
+  - {is: v_value_of, from: pr_poiroux_cond_filter_selfbleu, to: pr_poiroux_cond}
+  - {is: v_spell, from: pr_poiroux_cond_filter_selfbleu, to: filter_selfbleu}
+  - {is: v_value_of, from: pr_poiroux_cond_val_no_filter_selfbleu, to: pr_poiroux_cond}
+  - {is: v_spell, from: pr_poiroux_cond_val_no_filter_selfbleu, to: val_no_filter_selfbleu}
+  - {is: v_value_of, from: pr_poiroux_cond_val_filter_selfbleu, to: pr_poiroux_cond}
+  - {is: v_spell, from: pr_poiroux_cond_val_filter_selfbleu, to: val_filter_selfbleu}
+  - {is: v_entry_of, from: '{cond}', to: pr_poiroux}
+  - {is: v_metric_of, from: pr_poiroux, to: mean_value}
+  - {is: v_file_of, from: prior/liu2024_middle.json, to: pr_liu}
+  - {is: v_rows_of, from: [reported], to: pr_liu}
+  - {is: v_axis_of, from: pr_liu_cond, to: pr_liu}
+  - {is: v_value_of, from: pr_liu_cond_first, to: pr_liu_cond}
+  - {is: v_spell, from: pr_liu_cond_first, to: first}
+  - {is: v_value_of, from: pr_liu_cond_middle, to: pr_liu_cond}
+  - {is: v_spell, from: pr_liu_cond_middle, to: middle}
+  - {is: v_value_of, from: pr_liu_cond_last, to: pr_liu_cond}
+  - {is: v_spell, from: pr_liu_cond_last, to: last}
+  - {is: v_value_of, from: pr_liu_cond_closed_book, to: pr_liu_cond}
+  - {is: v_spell, from: pr_liu_cond_closed_book, to: closed_book}
+  - {is: v_entry_of, from: '{cond}', to: pr_liu}
+  - {is: v_metric_of, from: pr_liu, to: mean_value}
+  - {is: v_file_of, from: prior/eisenschlos2023_winodict.json, to: pr_winodict}
+  - {is: v_rows_of, from: [reported], to: pr_winodict}
+  - {is: v_axis_of, from: pr_winodict_cond, to: pr_winodict}
+  - {is: v_value_of, from: pr_winodict_cond_winodict, to: pr_winodict_cond}
+  - {is: v_spell, from: pr_winodict_cond_winodict, to: winodict}
+  - {is: v_value_of, from: pr_winodict_cond_original, to: pr_winodict_cond}
+  - {is: v_spell, from: pr_winodict_cond_original, to: original}
+  - {is: v_value_of, from: pr_winodict_cond_human_winodict, to: pr_winodict_cond}
+  - {is: v_spell, from: pr_winodict_cond_human_winodict, to: human_winodict}
+  - {is: v_entry_of, from: '{cond}', to: pr_winodict}
+  - {is: v_metric_of, from: pr_winodict, to: mean_value}
+  - {is: v_file_of, from: prior/stringli2025_anchoring.json, to: pr_stringli}
+  - {is: v_rows_of, from: [reported], to: pr_stringli}
+  - {is: v_axis_of, from: pr_stringli_cond, to: pr_stringli}
+  - {is: v_value_of, from: pr_stringli_cond_llama405b, to: pr_stringli_cond}
+  - {is: v_spell, from: pr_stringli_cond_llama405b, to: llama405b}
+  - {is: v_value_of, from: pr_stringli_cond_llama70b, to: pr_stringli_cond}
+  - {is: v_spell, from: pr_stringli_cond_llama70b, to: llama70b}
+  - {is: v_entry_of, from: '{cond}', to: pr_stringli}
+  - {is: v_metric_of, from: pr_stringli, to: mean_value}
+  - {is: v_file_of, from: prior/goworek2026_redefinition.json, to: pr_goworek}
+  - {is: v_rows_of, from: [reported], to: pr_goworek}
+  - {is: v_axis_of, from: pr_goworek_cond, to: pr_goworek}
+  - {is: v_value_of, from: pr_goworek_cond_redefined_without, to: pr_goworek_cond}
+  - {is: v_spell, from: pr_goworek_cond_redefined_without, to: redefined_without}
+  - {is: v_value_of, from: pr_goworek_cond_redefined_with, to: pr_goworek_cond}
+  - {is: v_spell, from: pr_goworek_cond_redefined_with, to: redefined_with}
+  - {is: v_value_of, from: pr_goworek_cond_original_without, to: pr_goworek_cond}
+  - {is: v_spell, from: pr_goworek_cond_original_without, to: original_without}
+  - {is: v_value_of, from: pr_goworek_cond_original_with, to: pr_goworek_cond}
+  - {is: v_spell, from: pr_goworek_cond_original_with, to: original_with}
+  - {is: v_entry_of, from: '{cond}', to: pr_goworek}
+  - {is: v_metric_of, from: pr_goworek, to: mean_value}
+  - {is: v_file_of, from: prior/babaei2025_ontology_prompt.json, to: pr_babaei}
+  - {is: v_rows_of, from: [reported], to: pr_babaei}
+  - {is: v_axis_of, from: pr_babaei_cond, to: pr_babaei}
+  - {is: v_value_of, from: pr_babaei_cond_qwen72b_question, to: pr_babaei_cond}
+  - {is: v_spell, from: pr_babaei_cond_qwen72b_question, to: qwen72b_question}
+  - {is: v_value_of, from: pr_babaei_cond_qwen72b_rdf, to: pr_babaei_cond}
+  - {is: v_spell, from: pr_babaei_cond_qwen72b_rdf, to: qwen72b_rdf}
+  - {is: v_value_of, from: pr_babaei_cond_qwen05b_question, to: pr_babaei_cond}
+  - {is: v_spell, from: pr_babaei_cond_qwen05b_question, to: qwen05b_question}
+  - {is: v_value_of, from: pr_babaei_cond_qwen05b_rdf, to: pr_babaei_cond}
+  - {is: v_spell, from: pr_babaei_cond_qwen05b_rdf, to: qwen05b_rdf}
+  - {is: v_entry_of, from: '{cond}', to: pr_babaei}
+  - {is: v_metric_of, from: pr_babaei, to: mean_value}
+  - {is: v_file_of, from: prior/eyuboglu2025_cartridges.json, to: pr_cartridges}
+  - {is: v_rows_of, from: [reported], to: pr_cartridges}
+  - {is: v_axis_of, from: pr_cartridges_cond, to: pr_cartridges}
+  - {is: v_value_of, from: pr_cartridges_cond_self_study, to: pr_cartridges_cond}
+  - {is: v_spell, from: pr_cartridges_cond_self_study, to: self_study}
+  - {is: v_value_of, from: pr_cartridges_cond_next_token, to: pr_cartridges_cond}
+  - {is: v_spell, from: pr_cartridges_cond_next_token, to: next_token}
+  - {is: v_entry_of, from: '{cond}', to: pr_cartridges}
+  - {is: v_metric_of, from: pr_cartridges, to: mean_value}
+  - {is: v_refer, from: o_pr_college_above_prompting, to: {is: v_come_after, from: pr_college_gre.college.mean_value, to: pr_college_gre.prompting.mean_value}}
+  - {is: v_report, from: pw_teehan2024_college, to: o_pr_college_above_prompting}
+  - {is: v_refer, from: o_pr_college_below_real_word, to: {is: v_come_before, from: pr_college_gre.college.mean_value, to: pr_college_gre.real_word.mean_value}}
+  - {is: v_report, from: pw_teehan2024_college, to: o_pr_college_below_real_word}
+  - {is: v_refer, from: o_pr_college_defgen_above_prompting, to: {is: v_come_after, from: pr_college_defgen.college.mean_value, to: pr_college_defgen.prompting.mean_value}}
+  - {is: v_report, from: pw_teehan2024_college, to: o_pr_college_defgen_above_prompting}
+  - {is: v_refer, from: o_pr_poiroux_filter_above_greedy, to: {is: v_come_after, from: pr_poiroux.filter_selfbleu.mean_value, to: pr_poiroux.greedy.mean_value}}
+  - {is: v_report, from: pw_poiroux2024_typecheck, to: o_pr_poiroux_filter_above_greedy}
+  - {is: v_refer, from: o_pr_poiroux_filter_above_no_filter, to: {is: v_come_after, from: pr_poiroux.val_filter_selfbleu.mean_value, to: pr_poiroux.val_no_filter_selfbleu.mean_value}}
+  - {is: v_report, from: pw_poiroux2024_typecheck, to: o_pr_poiroux_filter_above_no_filter}
+  - {is: v_refer, from: o_pr_liu_middle_below_first, to: {is: v_come_before, from: pr_liu.middle.mean_value, to: pr_liu.first.mean_value}}
+  - {is: v_report, from: pw_liu2024_lost_in_the_middle, to: o_pr_liu_middle_below_first}
+  - {is: v_refer, from: o_pr_liu_middle_below_last, to: {is: v_come_before, from: pr_liu.middle.mean_value, to: pr_liu.last.mean_value}}
+  - {is: v_report, from: pw_liu2024_lost_in_the_middle, to: o_pr_liu_middle_below_last}
+  - {is: v_refer, from: o_pr_liu_middle_below_closed_book, to: {is: v_come_before, from: pr_liu.middle.mean_value, to: pr_liu.closed_book.mean_value}}
+  - {is: v_report, from: pw_liu2024_lost_in_the_middle, to: o_pr_liu_middle_below_closed_book}
+  - {is: v_refer, from: o_pr_winodict_below_original, to: {is: v_come_before, from: pr_winodict.winodict.mean_value, to: pr_winodict.original.mean_value}}
+  - {is: v_report, from: pw_eisenschlos2023_winodict, to: o_pr_winodict_below_original}
+  - {is: v_refer, from: o_pr_winodict_below_human, to: {is: v_come_before, from: pr_winodict.winodict.mean_value, to: pr_winodict.human_winodict.mean_value}}
+  - {is: v_report, from: pw_eisenschlos2023_winodict, to: o_pr_winodict_below_human}
+  - {is: v_refer, from: o_pr_stringli_larger_anchored_more, to: {is: v_come_after, from: pr_stringli.llama405b.mean_value, to: pr_stringli.llama70b.mean_value}}
+  - {is: v_report, from: pw_stringli2025_inverse_redefinition, to: o_pr_stringli_larger_anchored_more}
+  - {is: v_refer, from: o_pr_goworek_redefined_raised, to: {is: v_come_after, from: pr_goworek.redefined_with.mean_value, to: pr_goworek.redefined_without.mean_value}}
+  - {is: v_report, from: pw_goworek2026_lexical_redefinition, to: o_pr_goworek_redefined_raised}
+  - {is: v_refer, from: o_pr_goworek_original_lowered, to: {is: v_come_before, from: pr_goworek.original_with.mean_value, to: pr_goworek.original_without.mean_value}}
+  - {is: v_report, from: pw_goworek2026_lexical_redefinition, to: o_pr_goworek_original_lowered}
+  - {is: v_refer, from: o_pr_babaei_large_rdf_raised, to: {is: v_come_after, from: pr_babaei.qwen72b_rdf.mean_value, to: pr_babaei.qwen72b_question.mean_value}}
+  - {is: v_report, from: pw_babaei2025_ontotruth, to: o_pr_babaei_large_rdf_raised}
+  - {is: v_refer, from: o_pr_babaei_small_rdf_lowered, to: {is: v_come_before, from: pr_babaei.qwen05b_rdf.mean_value, to: pr_babaei.qwen05b_question.mean_value}}
+  - {is: v_report, from: pw_babaei2025_ontotruth, to: o_pr_babaei_small_rdf_lowered}
+  - {is: v_refer, from: o_pr_cartridges_self_study_above, to: {is: v_come_after, from: pr_cartridges.self_study.mean_value, to: pr_cartridges.next_token.mean_value}}
+  - {is: v_report, from: pw_eyuboglu2025_cartridges, to: o_pr_cartridges_self_study_above}
   - {is: v_refer, from: o_e6_both_teachers_recital_easier, to: {is: v_come_before, from: e6_defqa_nll.L8.mean_value, to: e6_L8_nll.none.mean_value}}
   - {is: v_refer, from: o_e6_both_teachers_paraphrase_at_chance, to: {is: v_near, from: e6_defqa.L8.accuracy, to: 0.5, new: 0.05}}
   - {is: v_refer, from: o_e6_layer14_paraphrase_below_chance, to: {is: v_come_before, from: e6_defqa.L14.accuracy, to: 0.5}}
