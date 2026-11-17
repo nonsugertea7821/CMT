@@ -97,6 +97,8 @@ def q_node(n, dom):
     for k in ("of", "form"):
         if isinstance(n.get(k), list) and n[k]:
             n[k] = [qn(n[k][0], dom)] + n[k][1:]
+    if "of" in n and "with" in n:   # 名前を付けた限定の、もう一方の端
+        n["with"] = scope_of(dom).get("any") or "any" if n["with"] == "any" else qn(n["with"], dom)
 
     def m1(m):
         if isinstance(m, dict):
@@ -590,7 +592,7 @@ def evaluate(rules, F, V):
 # ---------------------------------------------------------------- 概念の体系
 # 法則のうち、この検査が当てはめるもの / 実行の検査（cscl/bootstrap/runtime/runtime.py）が当てはめるもの
 # 規則で書いた法則（law_rule）は、実行の検査がその規則を読んで当てはめる。ここには、意味を検査が与える法則（law_given）だけを挙げる。
-LAWS_HERE = {"part_fact_direction", "part_display_explicit"}
+LAWS_HERE = {"part_fact_direction", "part_display_explicit", "named_mod"}
 LAWS_RUN = {"unique_names", "step", "frame", "halt"}
 
 
@@ -608,6 +610,13 @@ class Ontology:
                     err(f"{nid}: mod は並べない。限定は1つだけ")
                 else:
                     n["mod"] = [n["mod"]]
+        # 名前を付けた限定（修飾語）は、中身に展開して、その場に書いた限定と同じに扱う。名前は mod_name に残す
+        self.mod_name = {}
+        for nid, n in self.N.items():
+            for i, m in enumerate(n.get("mod") or []):
+                if isinstance(m, str) and m in self.N and "of" in self.N[m]:
+                    n["mod"][i] = {k: self.N[m][k] for k in ("of", "with", "neg", "at") if k in self.N[m]}
+                    self.mod_name[(nid, i)] = m
         # 真偽を返す範囲の判定式。値の一種。gt などは文法の function、between は述語論理の語
         self.funcs = {op: 1 for op in self.G["function"]} | ({"between": 2} if "between" in self.G["logic"] else {})
 
@@ -1009,6 +1018,8 @@ class Ontology:
                     self.check_state(nid, n)
             elif "of" in n:
                 self.check_spot(n["of"], nid)
+                if "with" in n and n["with"] not in N and n["with"] != "any" and not str(n["with"]).endswith(".any"):
+                    err(f"{nid}: with の {n['with']} が未定義")
                 if not self.is_a(nid, "specifically_dependent_continuant"):
                     err(f"{nid}: 修飾語は特定依存持続体の下に置く")
             elif not (n.get("mod") or n.get("val") or n.get("cmp") or len(self.parents(nid)) > 1):
@@ -1063,7 +1074,7 @@ class Ontology:
                     if axis in AX and AX[axis]["source"] != "any" and AX[axis]["source"] not in self.base_of(verb):
                         err(f"{where}: 軸 {axis} は基礎の関係 {AX[axis]['source']} を抽象にしたものだが、{verb} はそれを使っていない")
             if not ("holds" in n or "pre" in n):
-                key = yaml.safe_dump({k: n[k] for k in ("extends", "from", "to", "of", "mod", "neg", "val", "cmp", "axis") if k in n}, sort_keys=True)
+                key = yaml.safe_dump({k: n[k] for k in ("extends", "from", "to", "of", "with", "at", "mod", "neg", "val", "cmp", "axis") if k in n}, sort_keys=True)
                 if key in forms:
                     err(f"{nid}: 式が {forms[key]} と同じ")
                 forms.setdefault(key, nid)
@@ -1221,6 +1232,26 @@ PART_WORDS = {"from": ("の部分である", "の時間的な部分である"), 
 PART_VAGUE = ("から部分になる", "へ部分になる", "から時間的な部分になる", "へ時間的な部分になる")
 
 
+def check_named_mod(T):
+    """法則 named_mod。2つ以上のノードが同じ限定を足すなら、その限定は名前を付けた修飾語で書く。
+    同じ中身の修飾語が既にあれば、その名前を使う。"""
+    key = lambda m: yaml.safe_dump(m, sort_keys=True, allow_unicode=True)
+    named = {}
+    for nid, n in T.N.items():
+        if "of" in n and not T.is_verb(nid):
+            named.setdefault(key({k: n[k] for k in ("of", "with", "neg", "at") if k in n}), nid)
+    inline = {}
+    for nid, n in T.N.items():
+        for i, m in enumerate(n.get("mod") or []):
+            if isinstance(m, dict) and (nid, i) not in T.mod_name:
+                inline.setdefault(key(m), []).append(nid)
+    for k, ids in inline.items():
+        if k in named:
+            err(f"法則 named_mod に反する: {', '.join(ids)} の限定は、修飾語 {named[k]} と同じ。名前で書く")
+        elif len(ids) > 1:
+            err(f"法則 named_mod に反する: {', '.join(ids)} が同じ限定を足している。名前を付けた修飾語にする")
+
+
 def check_parts(T):
     """法則 part_fact_direction と part_display_explicit。
     - 事実「a は b の部分」に対し、b の種類が「a の種類の部分である」と限定されている（または a の種類が「b の種類を部分に持つ」）なら、向きが逆。
@@ -1346,6 +1377,7 @@ def build():
     T.check_domains()
     T.check_laws()
     check_parts(T)
+    check_named_mod(T)
     for dom, (name, X) in Dm.items():
         check_domain(name, X, T)
     return T, O, Dm

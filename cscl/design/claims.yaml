@@ -3,13 +3,16 @@
 # 状態の種類（採用済み・暫定・未検証など）は、いまは exp の語を使う。std へ移すまでの仮の置き場。
 domain: lang
 nodes:
-  axiom_layer: {display: 公理の層, extends: section, mod: {of: [v_refer, from], with: laws}}
+  # ===== 名前を付けた限定（法則 named_mod）。2つ以上の概念が足す限定は、名前で書く
+  is_from_lang_decision: {display: 言語の設計の決定へ属する（始点）, extends: quality, of: [is, from], with: lang_decision}
+
+  axiom_layer: {display: 公理の層, extends: section, mod: refer_from_laws}
   std_layer: {display: 標準の語彙の層, extends: section, mod: {of: [v_depend, from], with: axiom_layer}}
   lang_decision: {display: 言語の設計の決定, extends: exp.decision, mod: {of: [v_compose, from], with: cscl}}
-  lang_dec_adopted: {display: 言語の採用済みの決定, extends: exp.dec_adopted, mod: {of: [is, from], with: lang_decision}}
-  lang_dec_tentative: {display: 言語の暫定の決定, extends: exp.dec_tentative, mod: {of: [is, from], with: lang_decision}}
-  lang_dec_withdrawn: {display: 言語の取り下げた決定, extends: exp.dec_withdrawn, mod: {of: [is, from], with: lang_decision}}
-  type_checker: {display: 型検査器, extends: artifact, mod: {of: [v_refer, from], with: laws}}
+  lang_dec_adopted: {display: 言語の採用済みの決定, extends: exp.dec_adopted, mod: is_from_lang_decision}
+  lang_dec_tentative: {display: 言語の暫定の決定, extends: exp.dec_tentative, mod: is_from_lang_decision}
+  lang_dec_withdrawn: {display: 言語の取り下げた決定, extends: exp.dec_withdrawn, mod: is_from_lang_decision}
+  type_checker: {display: 型検査器, extends: artifact, mod: refer_from_laws}
   previous_checker: {display: 前の版の型検査器, extends: type_checker, mod: {of: [v_come_after, to], with: type_checker}}
 
 individuals:

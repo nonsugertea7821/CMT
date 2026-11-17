@@ -12,32 +12,37 @@ runtime:
   progress: changes_state
 
 nodes:
+  # ===== 名前を付けた限定（法則 named_mod）。2つ以上の概念が足す限定は、名前で書く
+  refer_from_v_execute: {display: 実行するへ述べる（始点）, extends: quality, of: [v_refer, from], with: v_execute}
+  refer_from_post: {display: 後の状態の指定へ述べる（始点）, extends: quality, of: [v_refer, from], with: post}
+  refer_from_laws: {display: 法則へ述べる（始点）, extends: quality, of: [v_refer, from], with: laws}
+
 
   # ===== 実行。動的な動詞は、個体の状態を書き換える規則である =====
   state: {display: 状態, extends: information_entity, mod: {of: [v_compose, to], with: facts}}
   v_execute: {display: 実行する, extends: occurrent, from: continuant, to: state, new_kind: state,
               pre: [{is: exists, from: new, neg: true}], post: [{is: exists, from: new}, {is: after, from: new, to: to}]}
-  run: {display: 実行の記録, extends: information_entity, mod: {of: [v_refer, from], with: v_execute}}
-  rewrite_rule: {display: 書き換えの規則, extends: definition, mod: {of: [v_refer, from], with: post}}
+  run: {display: 実行の記録, extends: information_entity, mod: refer_from_v_execute}
+  rewrite_rule: {display: 書き換えの規則, extends: definition, mod: refer_from_post}
   role_depend_from_rewrite_rule: {display: 書き換えの規則へ依存する役割, extends: role, mod: {of: [v_depend, from], with: rewrite_rule}}
   executor: {display: 実行器, extends: role_depend_from_rewrite_rule, mod: {of: [v_execute, from]}}
   halted: {display: 止まった状態, extends: state, mod: {of: [v_execute, to], neg: true}}
   steps: {display: 歩みの並び, extends: information_entity, mod: {of: [v_refer, from], with: v_execute, at: {count: {ge: 1}}}}
-  strategy: {display: 実行の戦略, extends: definition, mod: {of: [v_refer, from], with: v_execute}}
+  strategy: {display: 実行の戦略, extends: definition, mod: refer_from_v_execute}
   runtime: {display: 実行時の意味論の節, extends: section, mod: {of: [v_refer, from], with: strategy}}
   world: {display: 書かれていない文の扱い, extends: strategy, mod: {of: [v_refer, from], with: facts}}
   closed_world: {display: 書かれていない文は成り立たない, extends: world, val: {truth: false}}
   pre_rule: {display: 前の状態の確かめ方, extends: strategy, mod: {of: [v_refer, from], with: pre}}
-  post_rule: {display: 後の状態の作り方, extends: strategy, mod: {of: [v_refer, from], with: post}}
+  post_rule: {display: 後の状態の作り方, extends: strategy, mod: refer_from_post}
   replace: {display: 否定の文を取り除き肯定の文を加える, extends: post_rule, mod: {of: [v_refer, from], with: not}}
-  law_check: {display: 法則を確かめる時点, extends: strategy, mod: {of: [v_refer, from], with: laws}}
+  law_check: {display: 法則を確かめる時点, extends: strategy, mod: refer_from_laws}
   every_step: {display: 1歩ごとに確かめる, extends: law_check, mod: {of: [v_come_after, from], with: steps}}
-  binding: {display: 位置への個体の割り当て方, extends: strategy, mod: {of: [v_refer, from], with: individuals}}
+  binding: {display: 位置への個体の割り当て方, extends: strategy, mod: refer_from_individuals}
   distinct: {display: 位置ごとに別の個体を割り当てる, extends: binding, cmp: [{axis: text, a: from, b: to, rel: differ}]}
   choice: {display: 当てはまる動詞の選び方, extends: strategy, mod: {of: [v_refer, from], with: steps}}
   recorded: {display: 実行の記録が選び方を与える, extends: choice, mod: {of: [v_depend, from], with: run}}
   progress: {display: 当てはまるとみなす条件, extends: strategy, mod: {of: [v_refer, from], with: halted}}
-  changes_state: {display: 前の状態が成り立ち後の状態がまだ成り立っていない, extends: progress, mod: {of: [v_come_before, from], with: post}}
+  changes_state: {display: 前の状態が成り立ち後の状態がまだ成り立っていない, extends: progress, mod: come_before_from_post}
 
 individuals:
   runtime: {is: domain, display: 実行}

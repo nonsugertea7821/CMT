@@ -14,6 +14,11 @@ axes:
   order: {display: 順番, source: after, value: number}
 
 nodes:
+  # ===== 名前を付けた限定（法則 named_mod）。2つ以上の概念が足す限定は、名前で書く
+  express_from_natural_language: {display: 自然言語へで書かれる（始点）, extends: quality, of: [v_express, from], with: natural_language}
+  refer_from_concept: {display: 概念へ述べる（始点）, extends: quality, of: [v_refer, from], with: concept}
+  perform_to: {display: 行う（終点）, extends: quality, of: [v_perform, to]}
+
   # ===== 最上位。説明文（gloss）を持つのは、この2つだけ =====
   continuant: {display: 持続体, gloss: 時間を通じて同一性を保って存在するもの}
   occurrent: {display: 生起体, gloss: 時間の中で起こり、展開するもの}
@@ -58,12 +63,12 @@ nodes:
   natural_language: {display: 自然言語, extends: language, mod: {of: [v_design, to], neg: true}}
   information_entity_compose_to_word: {display: 語を部分に持つ情報, extends: information_entity, mod: {of: [v_compose, to], with: word}}
   sentence: {display: 文, extends: information_entity_compose_to_word, mod: {of: [v_express, from], with: language}}
-  information_entity_express_from_natural_language: {display: 自然言語へで書かれる情報, extends: information_entity, mod: {of: [v_express, from], with: natural_language}}
+  information_entity_express_from_natural_language: {display: 自然言語へで書かれる情報, extends: information_entity, mod: express_from_natural_language}
   word: {display: 語, extends: information_entity_express_from_natural_language, mod: {of: [v_compose, from], with: sentence}}
-  definition: {display: 定義, extends: sentence, mod: {of: [v_refer, from], with: concept}}
+  definition: {display: 定義, extends: sentence, mod: refer_from_concept}
 
   # ===== 過程・実験・推論 =====
-  inference: {display: 推論, extends: process, mod: {of: [v_perform, to]}}
+  inference: {display: 推論, extends: process, mod: perform_to}
   concept: {display: 概念, extends: inference, mod: {of: [v_trigger, to], with: word}}
   kind: {display: 種類, form: [v_compose, to]}
   participant: {display: 関わるもの, form: [v_involve, to]}
