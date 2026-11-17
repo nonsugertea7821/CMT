@@ -1,15 +1,21 @@
 # 存在論（ontology）。最上位の2つ（持続体・生起体）と、その下の上位の分類、基礎の関係に当たる動詞、
-# 言語・文・語・定義・概念・推論。公理の上に定義する。機械学習や実験の語は持たない（std と exp に置く）。
+# 言語・文・語・定義・概念・推論。シグネチャの上に定義する。機械学習や実験の語は持たない（std と exp に置く）。
 
 domain: ontology
 
 base:
+  exists: {display: 在る, arity: 1}   # same から導く（法則 exists_self_same, self_same_exists）。実行器の pre・post が使うので、基礎の関係として置く
+  refer: {display: について述べる, arity: 2, system_act: true}
   depend: {display: 依存する, arity: 2}
   part: {display: 部分である, arity: 2}
   after: {display: 後ろにある, arity: 2}
   involve: {display: 関わる, arity: 2}
 
 axes:
+  count: {display: 個数, source: any, value: number}   # どの関係についても「いくつと結ばれるか」を見られる
+  amount: {display: 量, source: any, value: number}   # 質の大きさ。単位は質の種類が決める
+  text: {display: 文字列, source: refer, value: literal}
+  truth: {display: 真偽, source: refer, value: [true, false]}
   ratio: {display: 割合, source: part, value: number}
   order: {display: 順番, source: after, value: number}
 
@@ -109,6 +115,14 @@ nodes:
   disposition: {display: 傾向性, extends: realizable_entity, mod: {of: [v_depend, from], with: quality}}
 
 individuals:
+  # ===== 規則の変数。規則の中で、個体やノードの代わりに置く。
+  var1: {is: variable, display: 変数1}
+  var2: {is: variable, display: 変数2}
+  var3: {is: variable, display: 変数3}
+  var4: {is: variable, display: 変数4}
+  var5: {is: variable, display: 変数5}
+  exists_self_same: {is: law_rule, display: 在るものは自分と同じである}
+  self_same_exists: {is: law_rule, display: 自分と同じであるものは在る}
   ontology: {is: domain, display: 存在論}
   part_transitive: {is: law_rule, display: 部分であることは推移的}
   after_transitive: {is: law_rule, display: 後ろにあることは推移的}
@@ -118,6 +132,10 @@ individuals:
   involve_end_exists: {is: law_rule, display: 関わられる始点が在れば終点も在る}
 
 facts:
+  - {is: v_assume, from: exists_self_same, to: {is: exists, from: var1}}
+  - {is: v_derive, from: exists_self_same, to: {is: same, from: var1, to: var1}}
+  - {is: v_assume, from: self_same_exists, to: {is: same, from: var1, to: var1}}
+  - {is: v_derive, from: self_same_exists, to: {is: exists, from: var1}}
   - {is: v_use, from: ontology, to: signature}
   - {is: v_assume, from: part_transitive, to: {is: part, from: var1, to: var3}}
   - {is: v_assume, from: part_transitive, to: {is: part, from: var3, to: var2}}

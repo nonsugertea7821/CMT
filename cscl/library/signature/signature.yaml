@@ -1,28 +1,15 @@
-# CSCL のシグネチャ（signature）。在る（exists）、について述べる（refer）、同じである（same）と、分類の軸のうち特定の関係によらないもの、規則の変数。ノードは持たない。
+# CSCL のシグネチャ（signature）。自分（self）と、同じである（same）だけを置く。ノードは持たない。
+# self は、限定（mod）の暗黙の端。限定は λself. v(self, X) で、否定の限定は「self は肯定の限定が定める概念のどれとも同じでない」（∀s. ¬same(self, s)）。
+# 在る（exists）は same から導く（ontology の法則 exists_self_same, self_same_exists。自由論理の E!x ≡ ∃y. same(y, x) に当たる）。
+# について述べる（refer）、分類の軸、規則の変数は、self と same からは導けないので ontology に置く。
 # ほかの層（ontology, syntax, runtime, std）と領域（exp など）は、すべてこの上に定義する。
-# このファイルの個体と事実は、syntax の語（law_rule, v_assume など）で書く。書き方は syntax に従うが、意味は syntax に依存しない。
+# このファイルの個体は、syntax の語（domain, variable）で書く。書き方は syntax に従うが、意味は syntax に依存しない。
 
 domain: signature
 
 base:
-  exists: {display: 在る, arity: 1}
   same: {display: 同じである, arity: 2}
-  refer: {display: について述べる, arity: 2, system_act: true}
-
-axes:
-  count: {display: 個数, source: any, value: number}   # どの関係についても「いくつと結ばれるか」を見られる
-  amount: {display: 量, source: any, value: number}   # 質の大きさ。単位は質の種類が決める
-  text: {display: 文字列, source: refer, value: literal}
-  truth: {display: 真偽, source: refer, value: [true, false]}
 
 individuals:
   signature: {is: domain, display: シグネチャ}
-  # ===== 規則の変数。規則の中で、個体やノードの代わりに置く。
-  var1: {is: variable, display: 変数1}
-  var2: {is: variable, display: 変数2}
-  var3: {is: variable, display: 変数3}
-  var4: {is: variable, display: 変数4}
-  var5: {is: variable, display: 変数5}
-  # 法則は置かない。基礎の関係の法則は ontology に、体系の書き方の法則は syntax に、実行の法則は runtime に書く。
-
-facts:
+  self: {is: variable, display: 自分}   # 限定の暗黙の端。規則の変数と同じく、個体やノードの代わりに置く
