@@ -291,9 +291,10 @@ def core_sections(O):
     """領域と法則は、ontology.yaml の個体と事実で書く。検査と実行器が読む形に並べる（中身の検査は、ほかと同じく gather が行う）:
     domains: {領域: {display, uses: [使う領域]}}、laws: {法則: {kind, display, assume, derive, require, govern}}。"""
     I, F = O.get("individuals") or {}, O.get("facts") or []
+    kinds = set((O.get("grammar") or {}).get("laws") or [])   # 法則の種類は文法が挙げる（laws の下位と等しいことは check_grammar が確かめる）
     O["domains"] = {i: {"display": x.get("display"), "uses": []} for i, x in I.items() if short(x.get("is")) == "domain"}
     O["laws"] = {i: {"kind": short(x["is"]), "display": x.get("display"), "assume": [], "derive": [], "require": [], "govern": []}
-                 for i, x in I.items() if short(x.get("is")) in ("law_rule", "law_given")}
+                 for i, x in I.items() if short(x.get("is")) in kinds}
     key = {"v_assume": "assume", "v_derive": "derive", "v_require": "require", "v_govern": "govern"}
     for f in F:
         if not isinstance(f, dict):
