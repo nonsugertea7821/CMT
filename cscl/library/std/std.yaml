@@ -37,7 +37,7 @@ nodes:
   role_depend_from_experiment_protocol: {display: 実験の取り決めへ依存する役割, extends: role, mod: depend_from_experiment_protocol}
   scope: {display: 適用範囲, extends: role_depend_from_experiment_protocol, mod: {of: [v_depend, from], with: hypothesis}, many: true}
   composable_set: {display: 合成について閉じた集合, extends: closed_set, mod: {of: [v_close, from], with: v_sum}}
-  v_close: {display: について閉じている, extends: occurrent, from: kind_collection, to: verb_ref, holds: [{is: refer, from: from, to: to}]}
+  v_close: {display: について閉じている, extends: v_collect, from: kind_collection, to: verb_ref}
   v_sum: {display: 合成する, extends: occurrent, from: summand, to: summand, new_kind: summand,
           holds: [{is: part, from: from, to: new}, {is: part, from: to, to: new}, {is: depend, from: new, to: from}, {is: depend, from: new, to: to}]}
   model_inference: {display: モデルの推論, extends: inference, mod: {of: [v_perform, to], with: model}}
