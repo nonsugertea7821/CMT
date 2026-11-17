@@ -48,6 +48,8 @@ individuals:
   step: {is: law_given, display: 前の状態が成り立つとき後の状態に置き換える}
   frame: {is: law_given, display: 動詞が触れなかった文は変わらない}
   halt: {is: law_given, display: 当てはまる動詞がなければ止まる}
+  # 混同（動詞の位置を関係 R に沿ってずらした v∘R を、v の名前で書くこと）。観察 sys_confusion から
+  no_confusion: {is: law_given, display: 位置をずらした動詞を元の動詞の名前で書かない}
 
 facts:
   - {is: v_use, from: runtime, to: syntax}
@@ -56,3 +58,4 @@ facts:
   - {is: v_govern, from: step, to: runtime.run}
   - {is: v_govern, from: frame, to: runtime.run}
   - {is: v_govern, from: halt, to: runtime.run}
+  - {is: v_govern, from: no_confusion, to: runtime.run}

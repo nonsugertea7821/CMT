@@ -615,7 +615,7 @@ def evaluate(rules, F, V):
 # 法則のうち、この検査が当てはめるもの / 実行の検査（cscl/bootstrap/runtime/runtime.py）が当てはめるもの
 # 規則で書いた法則（law_rule）は、実行の検査がその規則を読んで当てはめる。ここには、意味を検査が与える法則（law_given）だけを挙げる。
 LAWS_HERE = {"part_fact_direction", "part_display_explicit", "named_mod", "world_declared", "definition_stratified"}
-LAWS_RUN = {"unique_names", "step", "frame", "halt"}
+LAWS_RUN = {"unique_names", "step", "frame", "halt", "no_confusion"}
 
 
 class Ontology:
