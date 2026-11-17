@@ -478,6 +478,16 @@ individuals:
   pr_goworek_cond_redefined_with: {is: axis_value, val: {text: redefined_with}}
   pr_goworek_cond_original_without: {is: axis_value, val: {text: original_without}}
   pr_goworek_cond_original_with: {is: axis_value, val: {text: original_with}}
+  # 体系そのものを数えた族（exp/experiments/sys_ends.py が書く）。言語の設計の主張（cscl/design/claims.yaml）の観察が使う
+  sys_depend_to: {is: measurement_family}
+  sys_depend_to_cond: {is: family_axis, val: {text: cond}}
+  sys_depend_to_cond_ic: {is: axis_value, val: {text: ic}}
+  sys_depend_to_cond_gdc: {is: axis_value, val: {text: gdc}}
+  sys_depend_to_cond_sdc: {is: axis_value, val: {text: sdc}}
+  sys_depend_to_cond_also_depends: {is: axis_value, val: {text: also_depends}}
+  sys_state_atoms: {is: measurement_family}
+  sys_state_atoms_cond: {is: family_axis, val: {text: cond}}
+  sys_state_atoms_cond_in_base: {is: axis_value, val: {text: in_base}}
   pr_babaei: {is: measurement_family}
   pr_babaei_cond: {is: family_axis, val: {text: cond}}
   pr_babaei_cond_qwen72b_question: {is: axis_value, val: {text: qwen72b_question}}
@@ -1978,6 +1988,26 @@ facts:
   - {is: v_spell, from: pr_goworek_cond_original_with, to: original_with}
   - {is: v_entry_of, from: '{cond}', to: pr_goworek}
   - {is: v_metric_of, from: pr_goworek, to: mean_value}
+  - {is: v_file_of, from: sys_depend_to.json, to: sys_depend_to}
+  - {is: v_rows_of, from: [rows], to: sys_depend_to}
+  - {is: v_axis_of, from: sys_depend_to_cond, to: sys_depend_to}
+  - {is: v_value_of, from: sys_depend_to_cond_ic, to: sys_depend_to_cond}
+  - {is: v_spell, from: sys_depend_to_cond_ic, to: ic}
+  - {is: v_value_of, from: sys_depend_to_cond_gdc, to: sys_depend_to_cond}
+  - {is: v_spell, from: sys_depend_to_cond_gdc, to: gdc}
+  - {is: v_value_of, from: sys_depend_to_cond_sdc, to: sys_depend_to_cond}
+  - {is: v_spell, from: sys_depend_to_cond_sdc, to: sdc}
+  - {is: v_value_of, from: sys_depend_to_cond_also_depends, to: sys_depend_to_cond}
+  - {is: v_spell, from: sys_depend_to_cond_also_depends, to: also_depends}
+  - {is: v_entry_of, from: '{cond}', to: sys_depend_to}
+  - {is: v_metric_of, from: sys_depend_to, to: mean_value}
+  - {is: v_file_of, from: sys_state_atoms.json, to: sys_state_atoms}
+  - {is: v_rows_of, from: [rows], to: sys_state_atoms}
+  - {is: v_axis_of, from: sys_state_atoms_cond, to: sys_state_atoms}
+  - {is: v_value_of, from: sys_state_atoms_cond_in_base, to: sys_state_atoms_cond}
+  - {is: v_spell, from: sys_state_atoms_cond_in_base, to: in_base}
+  - {is: v_entry_of, from: '{cond}', to: sys_state_atoms}
+  - {is: v_metric_of, from: sys_state_atoms, to: mean_value}
   - {is: v_file_of, from: prior/babaei2025_ontology_prompt.json, to: pr_babaei}
   - {is: v_rows_of, from: [reported], to: pr_babaei}
   - {is: v_axis_of, from: pr_babaei_cond, to: pr_babaei}

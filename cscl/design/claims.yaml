@@ -59,7 +59,15 @@ individuals:
   d_sig_design_to: {is: lang_dec_tentative}
 
   # ===== 否定だけで定義された種類の、肯定の定義の候補（法則 placed_deduced）
-  h_ic_is_bearer: {is: exp.hyp_untested}
+  h_ic_is_bearer: {is: exp.hyp_refuted}
+  # ===== 状態の関係（holds・pre・post の原子の動詞）の置き場
+  h_state_relation_in_base: {is: exp.hyp_supported}
+  d_state_relation_in_base: {is: lang_dec_adopted}
+
+  # ===== 観察（体系そのものを数えた族 sys_* の値。exp/experiments/sys_ends.py）
+  o_sys_depended_ic_below_gdc: {is: exp.observation}
+  o_sys_depended_mostly_depend: {is: exp.observation}
+  o_sys_state_atoms_all_base: {is: exp.observation}
 
 facts:
   - {is: syntax.v_use, from: lang, to: std}
@@ -100,3 +108,12 @@ facts:
   - {is: v_refer, from: d_sig_design_from, to: {is: extends, from: designer, to: continuant}}
   - {is: v_refer, from: d_sig_design_to, to: {is: extends, from: designed, to: continuant}}
   - {is: v_refer, from: h_ic_is_bearer, to: {is: v_depend, from: dependent, to: independent_continuant}}
+  - {is: v_refer, from: o_sys_depended_ic_below_gdc, to: {is: v_come_before, from: sys_depend_to.ic.mean_value, to: sys_depend_to.gdc.mean_value}}
+  - {is: v_refer, from: o_sys_depended_mostly_depend, to: {is: v_come_after, from: sys_depend_to.also_depends.mean_value, to: 0.5}}
+  - {is: v_contradict, from: o_sys_depended_ic_below_gdc, to: h_ic_is_bearer}
+  - {is: v_contradict, from: o_sys_depended_mostly_depend, to: h_ic_is_bearer}
+  - {is: v_refer, from: h_state_relation_in_base, to: {is: v_compose, from: state_relation, to: base}}
+  - {is: v_refer, from: o_sys_state_atoms_all_base, to: {is: v_level, from: sys_state_atoms.in_base.mean_value, to: 1.0}}
+  - {is: v_support, from: o_sys_state_atoms_all_base, to: h_state_relation_in_base}
+  - {is: v_refer, from: d_state_relation_in_base, to: {is: v_compose, from: state_relation, to: base}}
+  - {is: v_ground, from: d_state_relation_in_base, to: h_state_relation_in_base}
