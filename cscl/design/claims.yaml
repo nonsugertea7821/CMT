@@ -317,6 +317,15 @@ individuals:
   #   role は、外しても誤りにならず、役割の検査から黙って外れる。役割であることを求める法則がない（分類で検査をかけるが、分類そのものは確かめない）。
   o_sys_detach_neg_hold: {is: exp.observation}
   o_sys_detach_named_read_taxonomy: {is: exp.observation}
+  # 下の層が ontology の語を参照する位置の観察（exp/experiments/sys_lower.py）。仮説の確かめではない。手順は実行の前に登録した（4f2edbe）。
+  # 背景（利用者）: 変数は runtime が持つべき概念。runtime がシグネチャと syntax だけを知って書けるなら、bootstrap に繋がる。表は観察から演繹する。
+  # 結果（層ごと。スクリプトの出力）: runtime は 11 語のうち extends_only 5（definition, information_entity, occurrent, quality, role）、
+  #   reducible 4（v_come_after, v_compose, v_depend, v_refer）、other 2（continuant: 動詞の端、v_come_before: 端を入れ替えた after なので base_verb に当たらない）。
+  #   syntax は 27 語のうち extends_only 3、reducible 2、other 22（s, p, o, kind, sentence, word, participant など文法の位置と語の種類、v_express などの動詞）。
+  #   基礎の関係は 7 のうち 6 が ontology にあり、シグネチャには same だけ。reducible でも、書き直す先の基礎の関係が ontology にある。
+  # 読み: runtime は、基礎の関係をシグネチャに下ろせば、ほとんど ontology なしで書ける形をしている。syntax は ontology の意味を式で使っており、組み替えの本体は syntax の側。
+  o_sys_lower_syntax_uses_ontology: {is: exp.observation}
+  o_sys_lower_base_in_ontology: {is: exp.observation}
   o_sys_frame_declared_never_grows: {is: exp.observation}
   o_sys_frame_declared_never_shrinks: {is: exp.observation}
   o_sys_frame_creates_over_removes: {is: exp.observation}
@@ -441,6 +450,8 @@ facts:
   - {is: v_refer, from: o_sys_mutation_named_words_depend, to: {is: v_come_after, from: sys_mutation.test_changed.mean_value, to: 0.5}}
   - {is: v_refer, from: o_sys_detach_neg_hold, to: {is: v_level, from: sys_detach.neg_changed.mean_value, to: 0.0}}
   - {is: v_refer, from: o_sys_detach_named_read_taxonomy, to: {is: v_come_after, from: sys_detach.test_changed.mean_value, to: 0.5}}
+  - {is: v_refer, from: o_sys_lower_syntax_uses_ontology, to: {is: v_come_after, from: sys_lower.other.mean_value, to: 0.5}}
+  - {is: v_refer, from: o_sys_lower_base_in_ontology, to: {is: v_come_after, from: sys_lower.in_ontology.mean_value, to: 0.5}}
   - {is: v_refer, from: o_sys_outlive_never_outlived, to: {is: v_level, from: sys_outlive.outlives_source.mean_value, to: 0.0}}
   - {is: v_refer, from: o_sys_outlive_compute_steps_ok, to: {is: v_level, from: sys_outlive.c_step_ok.mean_value, to: 1.0}}
   - {is: v_refer, from: o_sys_outlive_speak_steps_ok, to: {is: v_level, from: sys_outlive.s_step_ok.mean_value, to: 1.0}}

@@ -643,6 +643,12 @@ individuals:
   sys_detach_cond_test_changed: {is: axis_value, val: {text: test_changed}}
   sys_detach_cond_neg_changed: {is: axis_value, val: {text: neg_changed}}
   sys_detach_cond_skipped: {is: axis_value, val: {text: skipped}}
+  sys_lower: {is: measurement_family}
+  sys_lower_cond: {is: family_axis, val: {text: cond}}
+  sys_lower_cond_extends_only: {is: axis_value, val: {text: extends_only}}
+  sys_lower_cond_reducible: {is: axis_value, val: {text: reducible}}
+  sys_lower_cond_other: {is: axis_value, val: {text: other}}
+  sys_lower_cond_in_ontology: {is: axis_value, val: {text: in_ontology}}
   sys_outlive: {is: measurement_family}
   sys_outlive_cond: {is: family_axis, val: {text: cond}}
   sys_outlive_cond_outlives_source: {is: axis_value, val: {text: outlives_source}}
@@ -2598,6 +2604,19 @@ facts:
   - {is: v_spell, from: sys_detach_cond_skipped, to: skipped}
   - {is: v_entry_of, from: '{cond}', to: sys_detach}
   - {is: v_metric_of, from: sys_detach, to: mean_value}
+  - {is: v_file_of, from: sys_lower.json, to: sys_lower}
+  - {is: v_rows_of, from: [rows], to: sys_lower}
+  - {is: v_axis_of, from: sys_lower_cond, to: sys_lower}
+  - {is: v_value_of, from: sys_lower_cond_extends_only, to: sys_lower_cond}
+  - {is: v_spell, from: sys_lower_cond_extends_only, to: extends_only}
+  - {is: v_value_of, from: sys_lower_cond_reducible, to: sys_lower_cond}
+  - {is: v_spell, from: sys_lower_cond_reducible, to: reducible}
+  - {is: v_value_of, from: sys_lower_cond_other, to: sys_lower_cond}
+  - {is: v_spell, from: sys_lower_cond_other, to: other}
+  - {is: v_value_of, from: sys_lower_cond_in_ontology, to: sys_lower_cond}
+  - {is: v_spell, from: sys_lower_cond_in_ontology, to: in_ontology}
+  - {is: v_entry_of, from: '{cond}', to: sys_lower}
+  - {is: v_metric_of, from: sys_lower, to: mean_value}
   - {is: v_file_of, from: sys_content_symmetry.json, to: sys_content_symmetry}
   - {is: v_rows_of, from: [rows], to: sys_content_symmetry}
   - {is: v_axis_of, from: sys_content_symmetry_cond, to: sys_content_symmetry}
