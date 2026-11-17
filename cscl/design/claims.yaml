@@ -16,6 +16,9 @@ nodes:
   v_not_depend: {display: に依存しない, extends: occurrent, from: continuant, to: continuant, holds: [{is: depend, from: from, to: to, neg: true}], opposite: v_depend}
   type_checker: {display: 型検査器, extends: artifact, mod: refer_from_laws}
   previous_checker: {display: 前の版の型検査器, extends: type_checker, mod: {of: [v_come_after, to], with: type_checker}}
+  # 真偽の対称性と健全性（h_symmetry_soundness）の語
+  symmetry_break: {display: 真偽の対の欠け, extends: quality, mod: {of: [v_refer, to], with: definition}}
+  definition_change: {display: 定義の書き換え, extends: process, mod: {of: [v_involve, from], with: definition}}
 
 individuals:
   lang: {is: domain, display: 言語}
@@ -66,6 +69,13 @@ individuals:
   # ===== 状態の関係（holds・pre・post の原子の動詞）の置き場
   h_state_relation_in_base: {is: exp.hyp_supported}
   d_state_relation_in_base: {is: lang_dec_adopted}
+  # ===== 真偽の対称性と健全性（利用者の直感から立てた仮説。結果を見る前に登録した）
+  # 中身は「真偽の対の欠けは、定義の書き換えを引き起こす」。確かめ方（exp/experiments/sys_soundness.py の説明に固定）:
+  #   版 48a43c9 の各ノード（動詞・限定）が真偽の対を持つかを測り、版 933ddd6 までに書き換えられたか消えたかと比べる。
+  #   対の無いノードの書き換えの割合が、対のあるノードより大きく、片側 Fisher で p < 0.05 なら支持、以下なら反証。
+  #   測るのは同時に起こることだけで、引き起こすことは示さない。書き換えを欠陥とみなすのは、この確かめでの取り決め
+  h_symmetry_soundness: {is: exp.hyp_untested}
+  b_symmetry_soundness: {is: exp.item_queued}
 
   # ===== 観察（体系そのものを数えた族 sys_* の値。exp/experiments/sys_ends.py, sys_structure.py）
   o_sys_depended_ic_below_gdc: {is: exp.observation}
@@ -130,6 +140,8 @@ facts:
   - {is: v_support, from: o_sys_state_atoms_all_base, to: h_state_relation_in_base}
   - {is: v_refer, from: d_state_relation_in_base, to: {is: v_compose, from: state_relation, to: base}}
   - {is: v_ground, from: d_state_relation_in_base, to: h_state_relation_in_base}
+  - {is: v_refer, from: h_symmetry_soundness, to: {is: v_trigger, from: symmetry_break, to: definition_change}}
+  - {is: exp.v_check, from: b_symmetry_soundness, to: h_symmetry_soundness}
   - {is: v_refer, from: o_sys_quant_with_qual, to: {is: v_level, from: sys_quadrants.quant_alone.mean_value, to: 0.0}}
   - {is: v_refer, from: o_sys_rel_disjoint, to: {is: v_level, from: sys_quadrants.rel_mixed.mean_value, to: 0.0}}
   - {is: v_refer, from: o_sys_unplaced_neg_only, to: {is: v_level, from: sys_quadrants.none_other.mean_value, to: 0.0}}
