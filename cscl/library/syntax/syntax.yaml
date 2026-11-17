@@ -205,6 +205,9 @@ individuals:
   placed_by_mod_from: {is: law_rule, display: 限定（始点）の端の種類が置かれていれば、限定したものも置かれる}
   placed_by_mod_to: {is: law_rule, display: 限定（終点）の端の種類が置かれていれば、限定したものも置かれる}
   placed_by_mod_new: {is: law_rule, display: 限定（第三の位置）の端の種類が置かれていれば、限定したものも置かれる}
+  placed_by_mod_up_from: {is: law_rule, display: 限定の動詞の上位の動詞の端（始点）の種類が置かれていれば、限定したものも置かれる}
+  placed_by_mod_up_to: {is: law_rule, display: 限定の動詞の上位の動詞の端（終点）の種類が置かれていれば、限定したものも置かれる}
+  placed_by_mod_up_new: {is: law_rule, display: 限定の動詞の上位の動詞の端（第三の位置）の種類が置かれていれば、限定したものも置かれる}
   placed_by_form: {is: law_rule, display: 形は、その位置の端の種類が置かれていれば置かれる}
   placed_by_parent: {is: law_rule, display: 根でない上位が置かれていれば、下位も置かれる}
   placed_deduced: {is: law_rule, display: 動詞でない概念は、定義から根の下に置かれる（根への宣言だけでは置かれない）}
@@ -388,6 +391,30 @@ facts:
   - {is: v_assume, from: placed_by_mod_new, to: {is: r_end_new_kind, from: var3, to: var4}}
   - {is: v_assume, from: placed_by_mod_new, to: {is: r_placed, from: var4}}
   - {is: v_derive, from: placed_by_mod_new, to: {is: r_placed, from: var1}}
+  - {is: v_assume, from: placed_by_mod_up_from, to: {is: mod, from: var1, to: var2}}
+  - {is: v_assume, from: placed_by_mod_up_from, to: {is: of, from: var2, to: var3}}
+  - {is: v_assume, from: placed_by_mod_up_from, to: {is: position, from: var2, to: from}}
+  - {is: v_assume, from: placed_by_mod_up_from, to: {is: neg, from: var2, to: true, neg: true}}
+  - {is: v_assume, from: placed_by_mod_up_from, to: {is: r_ancestor, from: var3, to: var5}}
+  - {is: v_assume, from: placed_by_mod_up_from, to: {is: r_end_from, from: var5, to: var4}}
+  - {is: v_assume, from: placed_by_mod_up_from, to: {is: r_placed, from: var4}}
+  - {is: v_derive, from: placed_by_mod_up_from, to: {is: r_placed, from: var1}}
+  - {is: v_assume, from: placed_by_mod_up_to, to: {is: mod, from: var1, to: var2}}
+  - {is: v_assume, from: placed_by_mod_up_to, to: {is: of, from: var2, to: var3}}
+  - {is: v_assume, from: placed_by_mod_up_to, to: {is: position, from: var2, to: to}}
+  - {is: v_assume, from: placed_by_mod_up_to, to: {is: neg, from: var2, to: true, neg: true}}
+  - {is: v_assume, from: placed_by_mod_up_to, to: {is: r_ancestor, from: var3, to: var5}}
+  - {is: v_assume, from: placed_by_mod_up_to, to: {is: r_end_to, from: var5, to: var4}}
+  - {is: v_assume, from: placed_by_mod_up_to, to: {is: r_placed, from: var4}}
+  - {is: v_derive, from: placed_by_mod_up_to, to: {is: r_placed, from: var1}}
+  - {is: v_assume, from: placed_by_mod_up_new, to: {is: mod, from: var1, to: var2}}
+  - {is: v_assume, from: placed_by_mod_up_new, to: {is: of, from: var2, to: var3}}
+  - {is: v_assume, from: placed_by_mod_up_new, to: {is: position, from: var2, to: new}}
+  - {is: v_assume, from: placed_by_mod_up_new, to: {is: neg, from: var2, to: true, neg: true}}
+  - {is: v_assume, from: placed_by_mod_up_new, to: {is: r_ancestor, from: var3, to: var5}}
+  - {is: v_assume, from: placed_by_mod_up_new, to: {is: r_end_new_kind, from: var5, to: var4}}
+  - {is: v_assume, from: placed_by_mod_up_new, to: {is: r_placed, from: var4}}
+  - {is: v_derive, from: placed_by_mod_up_new, to: {is: r_placed, from: var1}}
   - {is: v_assume, from: placed_by_form, to: {is: form, from: var1, to: var2}}
   - {is: v_assume, from: placed_by_form, to: {is: r_kind_up, from: var1, to: var3}}
   - {is: v_assume, from: placed_by_form, to: {is: r_parent, from: var1, to: var3, neg: true}}
