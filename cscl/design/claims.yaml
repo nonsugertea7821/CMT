@@ -234,6 +234,18 @@ individuals:
   o_sys_open_runtime_grows_by_creation: {is: exp.observation}
   o_sys_open_runtime_runs_ok: {is: exp.observation}
   o_sys_open_runtime_supported: {is: exp.observation}
+  # 動的な動詞と静的な動詞の違いの観察（exp/experiments/sys_verbs.py）。仮説の確かめではない。最上位の分類を演繹する型検査の材料。
+  # 多くの値は、会話の中で一度数えたものを手順に固定して記録し直したもの（記録の前に値を見ている）。
+  # 動的 36（自分で pre・post を持つのは 16）、静的 82。動的な動詞の from はすべて持続体。to が持続体でないのは std.v_compute（to: any）だけ。
+  # 動的な動詞の端に生起体はない。静的な動詞は 14 が生起体を端に持つ。静的な動詞は1つも限定されない。限定される動的な動詞 8 はどれも exp の手法の語
+  o_sys_verbs_dyn_from_con: {is: exp.observation}
+  o_sys_verbs_dyn_ends_not_all_con: {is: exp.observation}
+  o_sys_verbs_dyn_no_occ_end: {is: exp.observation}
+  o_sys_verbs_static_occ_end: {is: exp.observation}
+  o_sys_verbs_static_unlimited: {is: exp.observation}
+  o_sys_verbs_dyn_limited: {is: exp.observation}
+  o_sys_verbs_dyn_exists_more: {is: exp.observation}
+  o_sys_verbs_static_order_more: {is: exp.observation}
   o_sys_frame_declared_never_grows: {is: exp.observation}
   o_sys_frame_declared_never_shrinks: {is: exp.observation}
   o_sys_frame_creates_over_removes: {is: exp.observation}
@@ -346,6 +358,14 @@ facts:
   - {is: v_contradict, from: o_sys_tops_nouns_mostly_static, to: h_tops_derivable}
   - {is: v_refer, from: o_sys_tops_concept_static, to: {is: v_level, from: sys_tops.concept_dynamic.mean_value, to: 0.0}}
   - {is: v_contradict, from: o_sys_tops_concept_static, to: h_tops_derivable}
+  - {is: v_refer, from: o_sys_verbs_dyn_from_con, to: {is: v_level, from: sys_verbs.dyn_from_con.mean_value, to: 1.0}}
+  - {is: v_refer, from: o_sys_verbs_dyn_ends_not_all_con, to: {is: v_come_before, from: sys_verbs.dyn_ends_con.mean_value, to: 1.0}}
+  - {is: v_refer, from: o_sys_verbs_dyn_no_occ_end, to: {is: v_level, from: sys_verbs.dyn_ends_occ.mean_value, to: 0.0}}
+  - {is: v_refer, from: o_sys_verbs_static_occ_end, to: {is: v_come_after, from: sys_verbs.st_ends_occ.mean_value, to: 0.0}}
+  - {is: v_refer, from: o_sys_verbs_static_unlimited, to: {is: v_level, from: sys_verbs.st_has_mod.mean_value, to: 0.0}}
+  - {is: v_refer, from: o_sys_verbs_dyn_limited, to: {is: v_come_after, from: sys_verbs.dyn_has_mod.mean_value, to: 0.0}}
+  - {is: v_refer, from: o_sys_verbs_dyn_exists_more, to: {is: v_come_after, from: sys_verbs.dyn_exists.mean_value, to: sys_verbs.st_exists.mean_value}}
+  - {is: v_refer, from: o_sys_verbs_static_order_more, to: {is: v_come_after, from: sys_verbs.st_after_involve.mean_value, to: sys_verbs.dyn_after_involve.mean_value}}
   - {is: v_refer, from: o_sys_open_runtime_steps_ok, to: {is: v_level, from: sys_open_runtime.ok.mean_value, to: 1.0}}
   - {is: v_refer, from: o_sys_open_runtime_never_shrinks, to: {is: v_level, from: sys_open_runtime.declared_shrinks.mean_value, to: 0.0}}
   - {is: v_refer, from: o_sys_open_runtime_grows_by_creation, to: {is: v_level, from: sys_open_runtime.grows_by_creation.mean_value, to: 1.0}}

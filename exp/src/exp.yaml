@@ -611,6 +611,25 @@ individuals:
   sys_tops_cond_reaches_dynamic: {is: axis_value, val: {text: reaches_dynamic}}
   sys_tops_cond_concept_dynamic: {is: axis_value, val: {text: concept_dynamic}}
   sys_tops_cond_supported: {is: axis_value, val: {text: supported}}
+  sys_verbs: {is: measurement_family}
+  sys_verbs_cond: {is: family_axis, val: {text: cond}}
+  sys_verbs_cond_dyn_has_mod: {is: axis_value, val: {text: dyn_has_mod}}
+  sys_verbs_cond_dyn_from_con: {is: axis_value, val: {text: dyn_from_con}}
+  sys_verbs_cond_dyn_to_con: {is: axis_value, val: {text: dyn_to_con}}
+  sys_verbs_cond_dyn_ends_con: {is: axis_value, val: {text: dyn_ends_con}}
+  sys_verbs_cond_dyn_ends_occ: {is: axis_value, val: {text: dyn_ends_occ}}
+  sys_verbs_cond_dyn_exists: {is: axis_value, val: {text: dyn_exists}}
+  sys_verbs_cond_dyn_after_involve: {is: axis_value, val: {text: dyn_after_involve}}
+  sys_verbs_cond_dyn_opposite: {is: axis_value, val: {text: dyn_opposite}}
+  sys_verbs_cond_st_has_mod: {is: axis_value, val: {text: st_has_mod}}
+  sys_verbs_cond_st_from_con: {is: axis_value, val: {text: st_from_con}}
+  sys_verbs_cond_st_to_con: {is: axis_value, val: {text: st_to_con}}
+  sys_verbs_cond_st_ends_con: {is: axis_value, val: {text: st_ends_con}}
+  sys_verbs_cond_st_ends_occ: {is: axis_value, val: {text: st_ends_occ}}
+  sys_verbs_cond_st_exists: {is: axis_value, val: {text: st_exists}}
+  sys_verbs_cond_st_after_involve: {is: axis_value, val: {text: st_after_involve}}
+  sys_verbs_cond_st_opposite: {is: axis_value, val: {text: st_opposite}}
+  sys_verbs_cond_dyn_root: {is: axis_value, val: {text: dyn_root}}
   sys_content_symmetry: {is: measurement_family}
   sys_content_symmetry_cond: {is: family_axis, val: {text: cond}}
   sys_content_symmetry_cond_unpaired_changed: {is: axis_value, val: {text: unpaired_changed}}
@@ -2397,6 +2416,45 @@ facts:
   - {is: v_spell, from: sys_tops_cond_supported, to: supported}
   - {is: v_entry_of, from: '{cond}', to: sys_tops}
   - {is: v_metric_of, from: sys_tops, to: mean_value}
+  - {is: v_file_of, from: sys_verbs.json, to: sys_verbs}
+  - {is: v_rows_of, from: [rows], to: sys_verbs}
+  - {is: v_axis_of, from: sys_verbs_cond, to: sys_verbs}
+  - {is: v_value_of, from: sys_verbs_cond_dyn_has_mod, to: sys_verbs_cond}
+  - {is: v_spell, from: sys_verbs_cond_dyn_has_mod, to: dyn_has_mod}
+  - {is: v_value_of, from: sys_verbs_cond_dyn_from_con, to: sys_verbs_cond}
+  - {is: v_spell, from: sys_verbs_cond_dyn_from_con, to: dyn_from_con}
+  - {is: v_value_of, from: sys_verbs_cond_dyn_to_con, to: sys_verbs_cond}
+  - {is: v_spell, from: sys_verbs_cond_dyn_to_con, to: dyn_to_con}
+  - {is: v_value_of, from: sys_verbs_cond_dyn_ends_con, to: sys_verbs_cond}
+  - {is: v_spell, from: sys_verbs_cond_dyn_ends_con, to: dyn_ends_con}
+  - {is: v_value_of, from: sys_verbs_cond_dyn_ends_occ, to: sys_verbs_cond}
+  - {is: v_spell, from: sys_verbs_cond_dyn_ends_occ, to: dyn_ends_occ}
+  - {is: v_value_of, from: sys_verbs_cond_dyn_exists, to: sys_verbs_cond}
+  - {is: v_spell, from: sys_verbs_cond_dyn_exists, to: dyn_exists}
+  - {is: v_value_of, from: sys_verbs_cond_dyn_after_involve, to: sys_verbs_cond}
+  - {is: v_spell, from: sys_verbs_cond_dyn_after_involve, to: dyn_after_involve}
+  - {is: v_value_of, from: sys_verbs_cond_dyn_opposite, to: sys_verbs_cond}
+  - {is: v_spell, from: sys_verbs_cond_dyn_opposite, to: dyn_opposite}
+  - {is: v_value_of, from: sys_verbs_cond_st_has_mod, to: sys_verbs_cond}
+  - {is: v_spell, from: sys_verbs_cond_st_has_mod, to: st_has_mod}
+  - {is: v_value_of, from: sys_verbs_cond_st_from_con, to: sys_verbs_cond}
+  - {is: v_spell, from: sys_verbs_cond_st_from_con, to: st_from_con}
+  - {is: v_value_of, from: sys_verbs_cond_st_to_con, to: sys_verbs_cond}
+  - {is: v_spell, from: sys_verbs_cond_st_to_con, to: st_to_con}
+  - {is: v_value_of, from: sys_verbs_cond_st_ends_con, to: sys_verbs_cond}
+  - {is: v_spell, from: sys_verbs_cond_st_ends_con, to: st_ends_con}
+  - {is: v_value_of, from: sys_verbs_cond_st_ends_occ, to: sys_verbs_cond}
+  - {is: v_spell, from: sys_verbs_cond_st_ends_occ, to: st_ends_occ}
+  - {is: v_value_of, from: sys_verbs_cond_st_exists, to: sys_verbs_cond}
+  - {is: v_spell, from: sys_verbs_cond_st_exists, to: st_exists}
+  - {is: v_value_of, from: sys_verbs_cond_st_after_involve, to: sys_verbs_cond}
+  - {is: v_spell, from: sys_verbs_cond_st_after_involve, to: st_after_involve}
+  - {is: v_value_of, from: sys_verbs_cond_st_opposite, to: sys_verbs_cond}
+  - {is: v_spell, from: sys_verbs_cond_st_opposite, to: st_opposite}
+  - {is: v_value_of, from: sys_verbs_cond_dyn_root, to: sys_verbs_cond}
+  - {is: v_spell, from: sys_verbs_cond_dyn_root, to: dyn_root}
+  - {is: v_entry_of, from: '{cond}', to: sys_verbs}
+  - {is: v_metric_of, from: sys_verbs, to: mean_value}
   - {is: v_file_of, from: sys_content_symmetry.json, to: sys_content_symmetry}
   - {is: v_rows_of, from: [rows], to: sys_content_symmetry}
   - {is: v_axis_of, from: sys_content_symmetry_cond, to: sys_content_symmetry}
