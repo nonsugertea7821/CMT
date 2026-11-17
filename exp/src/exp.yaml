@@ -141,7 +141,7 @@ nodes:
   glossary: {display: 用語集, extends: information_entity, mod: {of: [v_compose, to], with: definition, at: {count: {gt: 1}}}}
   definition_compose_from_glossary: {display: 用語集の部分である定義, extends: definition, mod: {of: [v_compose, from], with: glossary}}
   glossary_head: {display: 用語集の先頭, extends: definition_compose_from_glossary, mod: {of: [v_come_after, from], with: definition, neg: true}}
-  operator: {display: 運用者, extends: independent_continuant, mod: {of: [v_design, from], with: experiment_protocol}}
+  operator: {display: 運用者, extends: continuant, mod: {of: [v_design, from], with: experiment_protocol}}
   passage_compose_from_context: {display: 文脈の部分である文章, extends: passage, mod: compose_from_context}
   place_system: {display: システムプロンプト, extends: passage_compose_from_context, mod: {of: [v_speak, to], with: operator}}
   place_adjacent: {display: 設問の直前, extends: passage_compose_from_context, mod: {of: [v_come_after, to], with: question, at: {order: 1}}}
@@ -478,6 +478,92 @@ individuals:
   pr_goworek_cond_redefined_with: {is: axis_value, val: {text: redefined_with}}
   pr_goworek_cond_original_without: {is: axis_value, val: {text: original_without}}
   pr_goworek_cond_original_with: {is: axis_value, val: {text: original_with}}
+  # 体系そのものを数えた族（exp/experiments/sys_ends.py が書く）。言語の設計の主張（cscl/design/claims.yaml）の観察が使う
+  sys_depend_to: {is: measurement_family}
+  sys_depend_to_cond: {is: family_axis, val: {text: cond}}
+  sys_depend_to_cond_ic: {is: axis_value, val: {text: ic}}
+  sys_depend_to_cond_gdc: {is: axis_value, val: {text: gdc}}
+  sys_depend_to_cond_sdc: {is: axis_value, val: {text: sdc}}
+  sys_depend_to_cond_also_depends: {is: axis_value, val: {text: also_depends}}
+  sys_state_atoms: {is: measurement_family}
+  sys_state_atoms_cond: {is: family_axis, val: {text: cond}}
+  sys_state_atoms_cond_in_base: {is: axis_value, val: {text: in_base}}
+  sys_quadrants: {is: measurement_family}
+  sys_quadrants_cond: {is: family_axis, val: {text: cond}}
+  sys_quadrants_cond_quant_alone: {is: axis_value, val: {text: quant_alone}}
+  sys_quadrants_cond_rel_mixed: {is: axis_value, val: {text: rel_mixed}}
+  sys_quadrants_cond_none_other: {is: axis_value, val: {text: none_other}}
+  sys_symmetry: {is: measurement_family}
+  sys_symmetry_cond: {is: family_axis, val: {text: cond}}
+  sys_symmetry_cond_reading: {is: axis_value, val: {text: reading}}
+  sys_symmetry_cond_step: {is: axis_value, val: {text: step}}
+  sys_limitation: {is: measurement_family}
+  sys_limitation_cond: {is: family_axis, val: {text: cond}}
+  sys_limitation_cond_in_closed: {is: axis_value, val: {text: in_closed}}
+  sys_limitation_cond_has_pair: {is: axis_value, val: {text: has_pair}}
+  sys_limitation_cond_pair_closed: {is: axis_value, val: {text: pair_closed}}
+  sys_limitation_cond_pair_open: {is: axis_value, val: {text: pair_open}}
+  sys_limitation_cond_pair_subj: {is: axis_value, val: {text: pair_subj}}
+  sys_limitation_cond_stated_false: {is: axis_value, val: {text: stated_false}}
+  sys_limitation_cond_unstated: {is: axis_value, val: {text: unstated}}
+  sys_limitation_cond_atom_stated_false: {is: axis_value, val: {text: atom_stated_false}}
+  sys_soundness: {is: measurement_family}
+  sys_soundness_cond: {is: family_axis, val: {text: cond}}
+  sys_soundness_cond_unpaired_changed: {is: axis_value, val: {text: unpaired_changed}}
+  sys_soundness_cond_paired_changed: {is: axis_value, val: {text: paired_changed}}
+  sys_soundness_cond_verb_unpaired_changed: {is: axis_value, val: {text: verb_unpaired_changed}}
+  sys_soundness_cond_verb_paired_changed: {is: axis_value, val: {text: verb_paired_changed}}
+  sys_soundness_cond_mod_unpaired_changed: {is: axis_value, val: {text: mod_unpaired_changed}}
+  sys_soundness_cond_mod_paired_changed: {is: axis_value, val: {text: mod_paired_changed}}
+  sys_soundness_cond_p_value: {is: axis_value, val: {text: p_value}}
+  sys_anomaly: {is: measurement_family}
+  sys_anomaly_cond: {is: family_axis, val: {text: cond}}
+  sys_anomaly_cond_live: {is: axis_value, val: {text: live}}
+  sys_anomaly_cond_crash: {is: axis_value, val: {text: crash}}
+  sys_anomaly_cond_breaks_fail: {is: axis_value, val: {text: breaks_fail}}
+  sys_anomaly_cond_keeps_fail: {is: axis_value, val: {text: keeps_fail}}
+  sys_anomaly_cond_p_value: {is: axis_value, val: {text: p_value}}
+  sys_declaration: {is: measurement_family}
+  sys_declaration_cond: {is: family_axis, val: {text: cond}}
+  sys_declaration_cond_b_ok: {is: axis_value, val: {text: b_ok}}
+  sys_declaration_cond_same_state: {is: axis_value, val: {text: same_state}}
+  sys_declaration_cond_dangling: {is: axis_value, val: {text: dangling}}
+  sys_declaration_cond_a_applicable: {is: axis_value, val: {text: a_applicable}}
+  sys_declaration_cond_b_fresh_applicable: {is: axis_value, val: {text: b_fresh_applicable}}
+  sys_declaration_cond_supported: {is: axis_value, val: {text: supported}}
+  sys_cycles: {is: measurement_family}
+  sys_cycles_cond: {is: family_axis, val: {text: cond}}
+  sys_cycles_cond_neg: {is: axis_value, val: {text: neg}}
+  sys_cycles_cond_same_relation: {is: axis_value, val: {text: same_relation}}
+  sys_cycles_cond_in_syntax: {is: axis_value, val: {text: in_syntax}}
+  sys_frames: {is: measurement_family}
+  sys_frames_cond: {is: family_axis, val: {text: cond}}
+  sys_frames_cond_creates: {is: axis_value, val: {text: creates}}
+  sys_frames_cond_removes: {is: axis_value, val: {text: removes}}
+  sys_frames_cond_truth_only: {is: axis_value, val: {text: truth_only}}
+  sys_frames_cond_declared_grows: {is: axis_value, val: {text: declared_grows}}
+  sys_frames_cond_declared_shrinks: {is: axis_value, val: {text: declared_shrinks}}
+  sys_frames_cond_exists_grows: {is: axis_value, val: {text: exists_grows}}
+  sys_frames_cond_exists_shrinks: {is: axis_value, val: {text: exists_shrinks}}
+  sys_frames_cond_about_absent: {is: axis_value, val: {text: about_absent}}
+  sys_open_runtime: {is: measurement_family}
+  sys_open_runtime_cond: {is: family_axis, val: {text: cond}}
+  sys_open_runtime_cond_ok: {is: axis_value, val: {text: ok}}
+  sys_open_runtime_cond_declared_grows: {is: axis_value, val: {text: declared_grows}}
+  sys_open_runtime_cond_declared_shrinks: {is: axis_value, val: {text: declared_shrinks}}
+  sys_open_runtime_cond_grows_by_creation: {is: axis_value, val: {text: grows_by_creation}}
+  sys_open_runtime_cond_run_ok: {is: axis_value, val: {text: run_ok}}
+  sys_open_runtime_cond_halted_false_decided: {is: axis_value, val: {text: halted_false_decided}}
+  sys_open_runtime_cond_supported: {is: axis_value, val: {text: supported}}
+  sys_content_symmetry: {is: measurement_family}
+  sys_content_symmetry_cond: {is: family_axis, val: {text: cond}}
+  sys_content_symmetry_cond_unpaired_changed: {is: axis_value, val: {text: unpaired_changed}}
+  sys_content_symmetry_cond_paired_changed: {is: axis_value, val: {text: paired_changed}}
+  sys_content_symmetry_cond_verb_unpaired_changed: {is: axis_value, val: {text: verb_unpaired_changed}}
+  sys_content_symmetry_cond_verb_paired_changed: {is: axis_value, val: {text: verb_paired_changed}}
+  sys_content_symmetry_cond_mod_unpaired_changed: {is: axis_value, val: {text: mod_unpaired_changed}}
+  sys_content_symmetry_cond_mod_paired_changed: {is: axis_value, val: {text: mod_paired_changed}}
+  sys_content_symmetry_cond_p_value: {is: axis_value, val: {text: p_value}}
   pr_babaei: {is: measurement_family}
   pr_babaei_cond: {is: family_axis, val: {text: cond}}
   pr_babaei_cond_qwen72b_question: {is: axis_value, val: {text: qwen72b_question}}
@@ -1978,6 +2064,188 @@ facts:
   - {is: v_spell, from: pr_goworek_cond_original_with, to: original_with}
   - {is: v_entry_of, from: '{cond}', to: pr_goworek}
   - {is: v_metric_of, from: pr_goworek, to: mean_value}
+  - {is: v_file_of, from: sys_depend_to.json, to: sys_depend_to}
+  - {is: v_rows_of, from: [rows], to: sys_depend_to}
+  - {is: v_axis_of, from: sys_depend_to_cond, to: sys_depend_to}
+  - {is: v_value_of, from: sys_depend_to_cond_ic, to: sys_depend_to_cond}
+  - {is: v_spell, from: sys_depend_to_cond_ic, to: ic}
+  - {is: v_value_of, from: sys_depend_to_cond_gdc, to: sys_depend_to_cond}
+  - {is: v_spell, from: sys_depend_to_cond_gdc, to: gdc}
+  - {is: v_value_of, from: sys_depend_to_cond_sdc, to: sys_depend_to_cond}
+  - {is: v_spell, from: sys_depend_to_cond_sdc, to: sdc}
+  - {is: v_value_of, from: sys_depend_to_cond_also_depends, to: sys_depend_to_cond}
+  - {is: v_spell, from: sys_depend_to_cond_also_depends, to: also_depends}
+  - {is: v_entry_of, from: '{cond}', to: sys_depend_to}
+  - {is: v_metric_of, from: sys_depend_to, to: mean_value}
+  - {is: v_file_of, from: sys_state_atoms.json, to: sys_state_atoms}
+  - {is: v_rows_of, from: [rows], to: sys_state_atoms}
+  - {is: v_axis_of, from: sys_state_atoms_cond, to: sys_state_atoms}
+  - {is: v_value_of, from: sys_state_atoms_cond_in_base, to: sys_state_atoms_cond}
+  - {is: v_spell, from: sys_state_atoms_cond_in_base, to: in_base}
+  - {is: v_entry_of, from: '{cond}', to: sys_state_atoms}
+  - {is: v_metric_of, from: sys_state_atoms, to: mean_value}
+  - {is: v_file_of, from: sys_quadrants.json, to: sys_quadrants}
+  - {is: v_rows_of, from: [rows], to: sys_quadrants}
+  - {is: v_axis_of, from: sys_quadrants_cond, to: sys_quadrants}
+  - {is: v_value_of, from: sys_quadrants_cond_quant_alone, to: sys_quadrants_cond}
+  - {is: v_spell, from: sys_quadrants_cond_quant_alone, to: quant_alone}
+  - {is: v_value_of, from: sys_quadrants_cond_rel_mixed, to: sys_quadrants_cond}
+  - {is: v_spell, from: sys_quadrants_cond_rel_mixed, to: rel_mixed}
+  - {is: v_value_of, from: sys_quadrants_cond_none_other, to: sys_quadrants_cond}
+  - {is: v_spell, from: sys_quadrants_cond_none_other, to: none_other}
+  - {is: v_entry_of, from: '{cond}', to: sys_quadrants}
+  - {is: v_metric_of, from: sys_quadrants, to: mean_value}
+  - {is: v_file_of, from: sys_symmetry.json, to: sys_symmetry}
+  - {is: v_rows_of, from: [rows], to: sys_symmetry}
+  - {is: v_axis_of, from: sys_symmetry_cond, to: sys_symmetry}
+  - {is: v_value_of, from: sys_symmetry_cond_reading, to: sys_symmetry_cond}
+  - {is: v_spell, from: sys_symmetry_cond_reading, to: reading}
+  - {is: v_value_of, from: sys_symmetry_cond_step, to: sys_symmetry_cond}
+  - {is: v_spell, from: sys_symmetry_cond_step, to: step}
+  - {is: v_entry_of, from: '{cond}', to: sys_symmetry}
+  - {is: v_metric_of, from: sys_symmetry, to: mean_value}
+  - {is: v_file_of, from: sys_limitation.json, to: sys_limitation}
+  - {is: v_rows_of, from: [rows], to: sys_limitation}
+  - {is: v_axis_of, from: sys_limitation_cond, to: sys_limitation}
+  - {is: v_value_of, from: sys_limitation_cond_in_closed, to: sys_limitation_cond}
+  - {is: v_spell, from: sys_limitation_cond_in_closed, to: in_closed}
+  - {is: v_value_of, from: sys_limitation_cond_has_pair, to: sys_limitation_cond}
+  - {is: v_spell, from: sys_limitation_cond_has_pair, to: has_pair}
+  - {is: v_value_of, from: sys_limitation_cond_pair_closed, to: sys_limitation_cond}
+  - {is: v_spell, from: sys_limitation_cond_pair_closed, to: pair_closed}
+  - {is: v_value_of, from: sys_limitation_cond_pair_open, to: sys_limitation_cond}
+  - {is: v_spell, from: sys_limitation_cond_pair_open, to: pair_open}
+  - {is: v_value_of, from: sys_limitation_cond_pair_subj, to: sys_limitation_cond}
+  - {is: v_spell, from: sys_limitation_cond_pair_subj, to: pair_subj}
+  - {is: v_value_of, from: sys_limitation_cond_stated_false, to: sys_limitation_cond}
+  - {is: v_spell, from: sys_limitation_cond_stated_false, to: stated_false}
+  - {is: v_value_of, from: sys_limitation_cond_unstated, to: sys_limitation_cond}
+  - {is: v_spell, from: sys_limitation_cond_unstated, to: unstated}
+  - {is: v_value_of, from: sys_limitation_cond_atom_stated_false, to: sys_limitation_cond}
+  - {is: v_spell, from: sys_limitation_cond_atom_stated_false, to: atom_stated_false}
+  - {is: v_entry_of, from: '{cond}', to: sys_limitation}
+  - {is: v_metric_of, from: sys_limitation, to: mean_value}
+  - {is: v_file_of, from: sys_soundness.json, to: sys_soundness}
+  - {is: v_rows_of, from: [rows], to: sys_soundness}
+  - {is: v_axis_of, from: sys_soundness_cond, to: sys_soundness}
+  - {is: v_value_of, from: sys_soundness_cond_unpaired_changed, to: sys_soundness_cond}
+  - {is: v_spell, from: sys_soundness_cond_unpaired_changed, to: unpaired_changed}
+  - {is: v_value_of, from: sys_soundness_cond_paired_changed, to: sys_soundness_cond}
+  - {is: v_spell, from: sys_soundness_cond_paired_changed, to: paired_changed}
+  - {is: v_value_of, from: sys_soundness_cond_verb_unpaired_changed, to: sys_soundness_cond}
+  - {is: v_spell, from: sys_soundness_cond_verb_unpaired_changed, to: verb_unpaired_changed}
+  - {is: v_value_of, from: sys_soundness_cond_verb_paired_changed, to: sys_soundness_cond}
+  - {is: v_spell, from: sys_soundness_cond_verb_paired_changed, to: verb_paired_changed}
+  - {is: v_value_of, from: sys_soundness_cond_mod_unpaired_changed, to: sys_soundness_cond}
+  - {is: v_spell, from: sys_soundness_cond_mod_unpaired_changed, to: mod_unpaired_changed}
+  - {is: v_value_of, from: sys_soundness_cond_mod_paired_changed, to: sys_soundness_cond}
+  - {is: v_spell, from: sys_soundness_cond_mod_paired_changed, to: mod_paired_changed}
+  - {is: v_value_of, from: sys_soundness_cond_p_value, to: sys_soundness_cond}
+  - {is: v_spell, from: sys_soundness_cond_p_value, to: p_value}
+  - {is: v_entry_of, from: '{cond}', to: sys_soundness}
+  - {is: v_metric_of, from: sys_soundness, to: mean_value}
+  - {is: v_file_of, from: sys_anomaly.json, to: sys_anomaly}
+  - {is: v_rows_of, from: [rows], to: sys_anomaly}
+  - {is: v_axis_of, from: sys_anomaly_cond, to: sys_anomaly}
+  - {is: v_value_of, from: sys_anomaly_cond_live, to: sys_anomaly_cond}
+  - {is: v_spell, from: sys_anomaly_cond_live, to: live}
+  - {is: v_value_of, from: sys_anomaly_cond_crash, to: sys_anomaly_cond}
+  - {is: v_spell, from: sys_anomaly_cond_crash, to: crash}
+  - {is: v_value_of, from: sys_anomaly_cond_breaks_fail, to: sys_anomaly_cond}
+  - {is: v_spell, from: sys_anomaly_cond_breaks_fail, to: breaks_fail}
+  - {is: v_value_of, from: sys_anomaly_cond_keeps_fail, to: sys_anomaly_cond}
+  - {is: v_spell, from: sys_anomaly_cond_keeps_fail, to: keeps_fail}
+  - {is: v_value_of, from: sys_anomaly_cond_p_value, to: sys_anomaly_cond}
+  - {is: v_spell, from: sys_anomaly_cond_p_value, to: p_value}
+  - {is: v_entry_of, from: '{cond}', to: sys_anomaly}
+  - {is: v_metric_of, from: sys_anomaly, to: mean_value}
+  - {is: v_file_of, from: sys_declaration.json, to: sys_declaration}
+  - {is: v_rows_of, from: [rows], to: sys_declaration}
+  - {is: v_axis_of, from: sys_declaration_cond, to: sys_declaration}
+  - {is: v_value_of, from: sys_declaration_cond_b_ok, to: sys_declaration_cond}
+  - {is: v_spell, from: sys_declaration_cond_b_ok, to: b_ok}
+  - {is: v_value_of, from: sys_declaration_cond_same_state, to: sys_declaration_cond}
+  - {is: v_spell, from: sys_declaration_cond_same_state, to: same_state}
+  - {is: v_value_of, from: sys_declaration_cond_dangling, to: sys_declaration_cond}
+  - {is: v_spell, from: sys_declaration_cond_dangling, to: dangling}
+  - {is: v_value_of, from: sys_declaration_cond_a_applicable, to: sys_declaration_cond}
+  - {is: v_spell, from: sys_declaration_cond_a_applicable, to: a_applicable}
+  - {is: v_value_of, from: sys_declaration_cond_b_fresh_applicable, to: sys_declaration_cond}
+  - {is: v_spell, from: sys_declaration_cond_b_fresh_applicable, to: b_fresh_applicable}
+  - {is: v_value_of, from: sys_declaration_cond_supported, to: sys_declaration_cond}
+  - {is: v_spell, from: sys_declaration_cond_supported, to: supported}
+  - {is: v_entry_of, from: '{cond}', to: sys_declaration}
+  - {is: v_metric_of, from: sys_declaration, to: mean_value}
+  - {is: v_file_of, from: sys_cycles.json, to: sys_cycles}
+  - {is: v_rows_of, from: [rows], to: sys_cycles}
+  - {is: v_axis_of, from: sys_cycles_cond, to: sys_cycles}
+  - {is: v_value_of, from: sys_cycles_cond_neg, to: sys_cycles_cond}
+  - {is: v_spell, from: sys_cycles_cond_neg, to: neg}
+  - {is: v_value_of, from: sys_cycles_cond_same_relation, to: sys_cycles_cond}
+  - {is: v_spell, from: sys_cycles_cond_same_relation, to: same_relation}
+  - {is: v_value_of, from: sys_cycles_cond_in_syntax, to: sys_cycles_cond}
+  - {is: v_spell, from: sys_cycles_cond_in_syntax, to: in_syntax}
+  - {is: v_entry_of, from: '{cond}', to: sys_cycles}
+  - {is: v_metric_of, from: sys_cycles, to: mean_value}
+  - {is: v_file_of, from: sys_frames.json, to: sys_frames}
+  - {is: v_rows_of, from: [rows], to: sys_frames}
+  - {is: v_axis_of, from: sys_frames_cond, to: sys_frames}
+  - {is: v_value_of, from: sys_frames_cond_creates, to: sys_frames_cond}
+  - {is: v_spell, from: sys_frames_cond_creates, to: creates}
+  - {is: v_value_of, from: sys_frames_cond_removes, to: sys_frames_cond}
+  - {is: v_spell, from: sys_frames_cond_removes, to: removes}
+  - {is: v_value_of, from: sys_frames_cond_truth_only, to: sys_frames_cond}
+  - {is: v_spell, from: sys_frames_cond_truth_only, to: truth_only}
+  - {is: v_value_of, from: sys_frames_cond_declared_grows, to: sys_frames_cond}
+  - {is: v_spell, from: sys_frames_cond_declared_grows, to: declared_grows}
+  - {is: v_value_of, from: sys_frames_cond_declared_shrinks, to: sys_frames_cond}
+  - {is: v_spell, from: sys_frames_cond_declared_shrinks, to: declared_shrinks}
+  - {is: v_value_of, from: sys_frames_cond_exists_grows, to: sys_frames_cond}
+  - {is: v_spell, from: sys_frames_cond_exists_grows, to: exists_grows}
+  - {is: v_value_of, from: sys_frames_cond_exists_shrinks, to: sys_frames_cond}
+  - {is: v_spell, from: sys_frames_cond_exists_shrinks, to: exists_shrinks}
+  - {is: v_value_of, from: sys_frames_cond_about_absent, to: sys_frames_cond}
+  - {is: v_spell, from: sys_frames_cond_about_absent, to: about_absent}
+  - {is: v_entry_of, from: '{cond}', to: sys_frames}
+  - {is: v_metric_of, from: sys_frames, to: mean_value}
+  - {is: v_file_of, from: sys_open_runtime.json, to: sys_open_runtime}
+  - {is: v_rows_of, from: [rows], to: sys_open_runtime}
+  - {is: v_axis_of, from: sys_open_runtime_cond, to: sys_open_runtime}
+  - {is: v_value_of, from: sys_open_runtime_cond_ok, to: sys_open_runtime_cond}
+  - {is: v_spell, from: sys_open_runtime_cond_ok, to: ok}
+  - {is: v_value_of, from: sys_open_runtime_cond_declared_grows, to: sys_open_runtime_cond}
+  - {is: v_spell, from: sys_open_runtime_cond_declared_grows, to: declared_grows}
+  - {is: v_value_of, from: sys_open_runtime_cond_declared_shrinks, to: sys_open_runtime_cond}
+  - {is: v_spell, from: sys_open_runtime_cond_declared_shrinks, to: declared_shrinks}
+  - {is: v_value_of, from: sys_open_runtime_cond_grows_by_creation, to: sys_open_runtime_cond}
+  - {is: v_spell, from: sys_open_runtime_cond_grows_by_creation, to: grows_by_creation}
+  - {is: v_value_of, from: sys_open_runtime_cond_run_ok, to: sys_open_runtime_cond}
+  - {is: v_spell, from: sys_open_runtime_cond_run_ok, to: run_ok}
+  - {is: v_value_of, from: sys_open_runtime_cond_halted_false_decided, to: sys_open_runtime_cond}
+  - {is: v_spell, from: sys_open_runtime_cond_halted_false_decided, to: halted_false_decided}
+  - {is: v_value_of, from: sys_open_runtime_cond_supported, to: sys_open_runtime_cond}
+  - {is: v_spell, from: sys_open_runtime_cond_supported, to: supported}
+  - {is: v_entry_of, from: '{cond}', to: sys_open_runtime}
+  - {is: v_metric_of, from: sys_open_runtime, to: mean_value}
+  - {is: v_file_of, from: sys_content_symmetry.json, to: sys_content_symmetry}
+  - {is: v_rows_of, from: [rows], to: sys_content_symmetry}
+  - {is: v_axis_of, from: sys_content_symmetry_cond, to: sys_content_symmetry}
+  - {is: v_value_of, from: sys_content_symmetry_cond_unpaired_changed, to: sys_content_symmetry_cond}
+  - {is: v_spell, from: sys_content_symmetry_cond_unpaired_changed, to: unpaired_changed}
+  - {is: v_value_of, from: sys_content_symmetry_cond_paired_changed, to: sys_content_symmetry_cond}
+  - {is: v_spell, from: sys_content_symmetry_cond_paired_changed, to: paired_changed}
+  - {is: v_value_of, from: sys_content_symmetry_cond_verb_unpaired_changed, to: sys_content_symmetry_cond}
+  - {is: v_spell, from: sys_content_symmetry_cond_verb_unpaired_changed, to: verb_unpaired_changed}
+  - {is: v_value_of, from: sys_content_symmetry_cond_verb_paired_changed, to: sys_content_symmetry_cond}
+  - {is: v_spell, from: sys_content_symmetry_cond_verb_paired_changed, to: verb_paired_changed}
+  - {is: v_value_of, from: sys_content_symmetry_cond_mod_unpaired_changed, to: sys_content_symmetry_cond}
+  - {is: v_spell, from: sys_content_symmetry_cond_mod_unpaired_changed, to: mod_unpaired_changed}
+  - {is: v_value_of, from: sys_content_symmetry_cond_mod_paired_changed, to: sys_content_symmetry_cond}
+  - {is: v_spell, from: sys_content_symmetry_cond_mod_paired_changed, to: mod_paired_changed}
+  - {is: v_value_of, from: sys_content_symmetry_cond_p_value, to: sys_content_symmetry_cond}
+  - {is: v_spell, from: sys_content_symmetry_cond_p_value, to: p_value}
+  - {is: v_entry_of, from: '{cond}', to: sys_content_symmetry}
+  - {is: v_metric_of, from: sys_content_symmetry, to: mean_value}
   - {is: v_file_of, from: prior/babaei2025_ontology_prompt.json, to: pr_babaei}
   - {is: v_rows_of, from: [reported], to: pr_babaei}
   - {is: v_axis_of, from: pr_babaei_cond, to: pr_babaei}

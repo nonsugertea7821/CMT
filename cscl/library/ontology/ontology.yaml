@@ -74,15 +74,38 @@ nodes:
   participant: {display: 関わるもの, form: [v_involve, to]}
   participant_p_from_not: {display: 関係づけることのない関わるもの, extends: participant, mod: {of: [p, from], neg: true}}
   third_participant: {display: 第三のもの, extends: participant_p_from_not, mod: {of: [p, to], neg: true}}
-  state_relation: {display: 状態の関係, extends: occurrent, mod: {of: [v_stage, to], neg: true}}
   a: {display: 比べる一方, form: [v_level, from]}
   b: {display: 比べるもう一方, form: [v_level, to]}
   same: {display: 同じである, extends: quality, of: [v_level, from]}
   differ: {display: 違っている, extends: quality, of: [v_level, from], neg: true}
 
+  # ===== 動詞の端に来るもの。動詞のシグネチャ（端の型）を、形のノードとして名指す。端の型を決めた理由は lang の決定に記録する
+  depended: {display: 依存されるもの, form: [v_depend, to]}
+  component: {display: 部分になるもの, form: [v_compose, from]}
+  temporal_part: {display: 時間的な部分になるもの, form: [v_stage, from]}
+  staged: {display: 時間的な部分を持つもの, form: [v_stage, to]}
+  later_one: {display: 後ろに置かれるもの, form: [v_come_after, from]}
+  later_target: {display: 後ろに置かれる相手, form: [v_come_after, to]}
+  referrer: {display: 述べるもの, form: [v_refer, from]}
+  agreeing: {display: 一致するもの, form: [v_agree, from]}
+  agreed: {display: 一致する相手, form: [v_agree, to]}
+  expressed: {display: で書かれるもの, form: [v_express, from]}
+  medium: {display: 書くのに使われるもの, form: [v_express, to]}
+  involving: {display: 関わらせるもの, form: [v_involve, from]}
+  performer: {display: 行うもの, form: [v_perform, from]}
+  performed: {display: 行われるもの, form: [v_perform, to]}
+  triggered: {display: 引き起こされるもの, form: [v_trigger, to]}
+  earlier_one: {display: 前に置かれるもの, form: [v_come_before, from]}
+  earlier_target: {display: 前に置かれる相手, form: [v_come_before, to]}
+  not_earlier_one: {display: 前には置かれないもの, form: [v_not_before, from]}
+  not_earlier_target: {display: 前には置かれない相手, form: [v_not_before, to]}
+  not_later_one: {display: 後ろには置かれないもの, form: [v_not_after, from]}
+  not_later_target: {display: 後ろには置かれない相手, form: [v_not_after, to]}
+  designer: {display: 設計するもの, form: [v_design, from]}
+  designed: {display: 設計されるもの, form: [v_design, to]}
+
   # ===== 個体と事実。個体は is で種類に1つだけ属する。事実は、1つの関係だけを述べる =====
   is: {display: 属する, extends: p, to: kind}
-  independent_continuant: {display: 独立持続体, extends: continuant, mod: {of: [v_depend, from], neg: true}}
   disposition: {display: 傾向性, extends: realizable_entity, mod: {of: [v_depend, from], with: quality}}
 
 individuals:

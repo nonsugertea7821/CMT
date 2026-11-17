@@ -12,8 +12,21 @@ nodes:
   lang_dec_adopted: {display: 言語の採用済みの決定, extends: exp.dec_adopted, mod: is_from_lang_decision}
   lang_dec_tentative: {display: 言語の暫定の決定, extends: exp.dec_tentative, mod: is_from_lang_decision}
   lang_dec_withdrawn: {display: 言語の取り下げた決定, extends: exp.dec_withdrawn, mod: is_from_lang_decision}
+  # 否定の動詞（中身の否定は、否定の動詞で書く。exp の v_not_transfer と同じ形）
+  v_not_depend: {display: に依存しない, extends: occurrent, from: continuant, to: continuant, holds: [{is: depend, from: from, to: to, neg: true}], opposite: v_depend}
   type_checker: {display: 型検査器, extends: artifact, mod: refer_from_laws}
   previous_checker: {display: 前の版の型検査器, extends: type_checker, mod: {of: [v_come_after, to], with: type_checker}}
+  # 真偽の対称性と健全性（h_symmetry_soundness）の語
+  symmetry_break: {display: 真偽の対の欠け, extends: quality, mod: {of: [v_refer, to], with: definition}}
+  definition_change: {display: 定義の書き換え, extends: process, mod: {of: [v_involve, from], with: definition}}
+  # 実装の対称性（h_anomaly_defect）と中身の対称性（h_content_asymmetry_harmless）の語
+  implementation_break: {display: 実装が壊す真偽の対称性, extends: quality, mod: {of: [v_depend, from], with: artifact}}
+  check_failure: {display: 検査の失敗, extends: process, mod: {of: [v_involve, from], with: artifact}}
+  # 定義の循環（h_definition_positive）の語
+  definition_cycle: {display: 定義の循環, extends: quality, mod: {of: [v_refer, from], with: definition}}
+  # 時間を含む実行での宣言の範囲（h_open_declaration）の語
+  declared_scope: {display: 宣言の範囲, extends: quality, mod: syntax.refer_from_individuals}
+  v_not_trigger: {display: 引き起こさない, extends: occurrent, from: any, to: occurrent, holds: [{is: depend, from: to, to: from, neg: true}], opposite: v_trigger}
 
 individuals:
   lang: {is: domain, display: 言語}
@@ -28,6 +41,154 @@ individuals:
   d_cscl_display_derived: {is: lang_dec_adopted}
   d_cscl_trust_previous_version: {is: lang_dec_tentative}
 
+  # ===== 動詞のシグネチャ（端の型）。観察の記録がまだないので暫定
+  d_sig_depend_from: {is: lang_dec_tentative}
+  d_sig_depend_to: {is: lang_dec_adopted}
+  d_sig_compose_from: {is: lang_dec_tentative}
+  d_sig_compose_to: {is: lang_dec_tentative}
+  d_sig_stage_from: {is: lang_dec_tentative}
+  d_sig_stage_to: {is: lang_dec_tentative}
+  d_sig_come_after_from: {is: lang_dec_tentative}
+  d_sig_come_after_to: {is: lang_dec_tentative}
+  d_sig_refer_from: {is: lang_dec_tentative}
+  d_sig_agree_from: {is: lang_dec_tentative}
+  d_sig_agree_to: {is: lang_dec_tentative}
+  d_sig_express_from: {is: lang_dec_tentative}
+  d_sig_express_to: {is: lang_dec_tentative}
+  d_sig_involve_from: {is: lang_dec_tentative}
+  d_sig_involve_to: {is: lang_dec_tentative}
+  d_sig_perform_from: {is: lang_dec_tentative}
+  d_sig_perform_to: {is: lang_dec_tentative}
+  d_sig_trigger_to: {is: lang_dec_tentative}
+  d_sig_come_before_from: {is: lang_dec_tentative}
+  d_sig_come_before_to: {is: lang_dec_tentative}
+  d_sig_not_before_from: {is: lang_dec_tentative}
+  d_sig_not_before_to: {is: lang_dec_tentative}
+  d_sig_not_after_from: {is: lang_dec_tentative}
+  d_sig_not_after_to: {is: lang_dec_tentative}
+  d_sig_level_from: {is: lang_dec_tentative}
+  d_sig_level_to: {is: lang_dec_tentative}
+  d_sig_design_from: {is: lang_dec_tentative}
+  d_sig_design_to: {is: lang_dec_tentative}
+
+  # ===== 否定だけで定義された種類（独立持続体 = 何にも依存しない持続体）の、肯定の定義の候補（法則 placed_deduced）。
+  # 中身は「依存されるものは、何にも依存しない」。観察に反したので、独立持続体を体系から除き、d_sig_depend_to を採用済みにした
+  h_ic_is_bearer: {is: exp.hyp_refuted}
+  # ===== 状態の関係（holds・pre・post の原子の動詞）の置き場
+  h_state_relation_in_base: {is: exp.hyp_supported}
+  d_state_relation_in_base: {is: lang_dec_adopted}
+  # ===== 真偽の対称性と健全性（利用者の直感から立てた仮説。結果を見る前に登録した）
+  # 中身は「真偽の対の欠けは、定義の書き換えを引き起こす」。確かめ方（exp/experiments/sys_soundness.py の説明に固定）:
+  #   版 48a43c9 の各ノード（動詞・限定）が真偽の対を持つかを測り、版 933ddd6 までに書き換えられたか消えたかと比べる。
+  #   対の無いノードの書き換えの割合が、対のあるノードより大きく、片側 Fisher で p < 0.05 なら支持、以下なら反証。
+  #   測るのは同時に起こることだけで、引き起こすことは示さない。書き換えを欠陥とみなすのは、この確かめでの取り決め
+  # 結果（判定: どちらでもない）。対の無いノードの書き換えは 0.042、対のあるノードは 0.025 で向きは合うが、p = 0.37。
+  # 動詞だけでは向きが逆（0.024 と 0.077）。登録した版の実行では、限定の対の判定に誤り（not と in の優先順位）があり、
+  # 限定に対のあるものが 0 件になっていた（そのときの値: 0.038 と 0.077、p = 0.91）。手順の説明どおりに直して測り直した
+  h_symmetry_soundness: {is: exp.hyp_mixed}
+  b_symmetry_soundness: {is: exp.item_done}
+  # ===== h_symmetry_soundness を、物理の対称性との類比で2つに分けた仮説（結果を見る前に登録した）
+  # (A) 量子異常の型: 意味として宣言した真偽の対称性を、実装が壊すなら欠陥になる。
+  #   確かめ方は exp/experiments/sys_anomaly.py の説明に固定。runtime.py の1か所の変異のうち、振る舞いを変えるものについて、
+  #   σ を壊す変異が、σ と別の検査（実行の記録の検査）を失敗させる割合が、壊さない変異より大きく、片側 Fisher で p < 0.05 なら支持
+  # 結果（判定: 反証）。振る舞いを変える変異 34 のうち、例外を出した 6 を除く 28 で、σ を壊す変異の失敗は 2/5（0.40）、
+  # 壊さない変異は 20/23（0.87）、p = 1.00。実行の記録は閉世界だけを使うので、述べていない文の扱いだけを変える変異
+  # （閉世界の既定値を真にするもの、開世界を閉世界にするもの）は、どれも検査を失敗させなかった
+  h_anomaly_defect: {is: exp.hyp_refuted}
+  b_anomaly_defect: {is: exp.item_done}
+  # (B) 明示的・自発的な破れの型: 定義の中身が真偽の対を欠くことは、定義の書き換えを引き起こさない。
+  #   確かめ方は exp/experiments/sys_content_symmetry.py の説明に固定（h_symmetry_soundness と重ならない期間 e845f0b → 6bfac2f）。
+  #   対の無いノードの書き換えが多く、片側 Fisher で p < 0.05 なら反証。そうでなければ反証されない（差を見つけられなかっただけ）
+  # 結果（判定: 反証されない）。対の無いノードの書き換え 7/370（0.019）、対のあるノード 0/77、p = 0.26。
+  # 向きは反証の側だが、書き換えが少なく差を見つけられなかった。差がないことの証明ではない
+  h_content_asymmetry_harmless: {is: exp.hyp_supported}
+  b_content_asymmetry_harmless: {is: exp.item_done}
+  # ===== 宣言と存在（利用者の見立てから立てた仮説。結果を見る前に登録した）
+  # 種類（時間によらない）では、宣言 ＝ 存在で閉じている（型検査器は宣言されたノードにだけ exists を与える）。
+  # 中身は「時間を含む実行では、宣言の範囲は歩みに依存する（開いている）。各時点では、宣言 ＝ 存在で閉じている」。
+  # 確かめ方は exp/experiments/sys_declaration.py の説明に固定。生まれる動詞と消える動詞を含む同じ歩みを、
+  #   (a) 名前を先に宣言し exists で在ることを述べる今の書き方と、(b) 宣言を歩みで足し取り消す書き方で実行し、
+  #   (b) がすべて歩め、各歩みの後の状態が (a) と一致し、宣言されていない名前を含む文が残らなければ支持、どれかが破れれば反証。
+  #   登録の前に確かめたのは、(a) の記録が今の実行器でエラーなく歩めることだけ
+  # 結果（判定: 反証）。(b) は3歩ともエラーなく歩め、各歩みの後の状態も (a) と一致した。
+  # しかし消える動詞 std.v_freeze で r1 の宣言を取り消すと、r1 についての文 depend(r1, sys1) と refer(r1, dec1) が残った。
+  # (a) では同じ2文が「在らないものについての文」として残る（法則 depend_end_exists は始点が在るときだけを縛るので、違反にならない）。
+  # 生まれることは宣言を足すことと読めたが、消えることは宣言の取り消しとは読めない。
+  # 登録した基準は3つの条件がすべて成り立つときだけ支持なので、成り立った2つ（歩める・状態が一致する）は観察として残し、支持には結ばない
+  # 利用者の指摘: この基準は真偽の軸と宣言の軸を取り違えていた。v_freeze は真偽の軸（exists）だけを操作し、宣言を減らさない。
+  # 宣言が減るのはスタックの巻き戻しのときだけで、「宣言されていない名前の文が残らない」は巻き戻しの後に確かめる条件だった。
+  # 判定は登録した基準どおりに残し、直した条件は別に扱う（フレームの観察 sys_frames を参照）
+  h_open_declaration: {is: exp.hyp_refuted}
+  b_open_declaration: {is: exp.item_done}
+  # ===== 名前を最初に全部宣言しない実行器（開世界）。利用者の提案「全部を最初に宣言しない実行器を作ればいい。開世界仮説で」から。結果を見る前に登録した
+  # 実行器と確かめ方は exp/experiments/open_runtime.py の説明に固定。世界は world（述べていない文に真偽を与えない）。
+  # 最初に宣言するのは最初に在る個体だけ。歩みが宣言されていない名前を名指したら、在るようにする位置（pre で exists が述べられていない・post で真）でだけ宣言する。
+  # 宣言は取り消さない（v_freeze は真偽の軸の exists を取り除くだけ）。フレームは1歩ごと。巻き戻しは扱わない。
+  # 中身は「宣言の範囲は、状態（真偽の文の集まり）に依存しない」（v_freeze が状態を変えても宣言は減らない）。支持の基準は、exp/tests の記録すべてと sys_declaration の記録で、
+  #   1. エラーなく歩め expect が決められて成り立つ、2. 宣言が減らない、3. 増えるのは在るようにする歩みだけ、4. halted: false の記録で halted: false と決まる、のすべて。
+  #   2 と 3 は作りからほぼ決まり、経験的な中身は 1 と 4。登録の前には、スクリプトが構文として読めることだけを確かめた（実行はしていない）
+  # 結果（判定: 支持）。2つの記録の6歩がすべてエラーなく歩め、expect も決められて成り立った。宣言は一度も減らず、
+  # 増えた2歩（std.v_learn, exp.v_see）はどちらも在るようにする位置に新しい名前を使った歩みだった。v_freeze の後も r1 の宣言は残った。
+  # 支持は弱い: 記録は exp/tests の adopt_withdraw と sys_declaration の2つだけ。adopt_withdraw は名前を足す歩みを含まない。
+  # halted: false を書いた記録は adopt_withdraw だけで、今の名前だけで当てはまる歩みが見つかったので、新しい名前を試す部分は使われていない
+  h_open_runtime: {is: exp.hyp_supported}
+  b_open_runtime: {is: exp.item_done}
+  # ===== 定義の循環（自分を限定するものについて述べる定義）。利用者の問い「self がシグネチャになるとどうなるか」から
+  # 定義の辺（上位・名前を付けた修飾語・限定の with）をたどった循環を数えた（exp/experiments/sys_cycles.py）。
+  # 仮説は、観察を見た後に立てた（事前の登録ではない）。中身は「定義の循環は、否定の限定を通らない」。
+  # 法則にする理由は観察だけではない。否定を通る循環は C = {x | ¬v(x, C)}（Russell の逆理）の形になり不動点がないことがある。
+  # 否定を通らない（単調な）定義には不動点がある（Knaster–Tarski）。法則の規則にはすでに同じ条件（strata）がある
+  h_definition_positive: {is: exp.hyp_supported}
+  # 法則 definition_stratified の理由になる定理（先行研究）
+  pw_russell1902_paradox: {is: exp.prior_work, display: "先行研究: Russell 1902, Frege への書簡（van Heijenoort 編 From Frege to Gödel, 1967 に所収）。Russell 1903, The Principles of Mathematics, 第10章"}
+  pwc_russell1902_negative_self: {is: exp.prior_claim, display: "要旨: 自分を含まない集まりの集まり {x | x ∉ x} を、制限なしの内包で作ると矛盾する。自分についての定義が否定を通ると、定義が定まらない"}
+  pw_tarski1955_fixpoint: {is: exp.prior_work, display: "先行研究: Tarski 1955, A lattice-theoretical fixpoint theorem and its applications（Pacific Journal of Mathematics 5(2), 285–309）"}
+  pwc_tarski1955_monotone: {is: exp.prior_claim, display: "要旨: 完備束の上の単調な写像は不動点を持ち、不動点の全体も完備束になる（最小と最大の不動点がある）。否定を通らない自己参照の定義は、単調なので定まる"}
+  pw_apt1988_stratified: {is: exp.prior_work, display: "先行研究: Apt, Blair & Walker 1988, Towards a theory of declarative knowledge（Minker 編 Foundations of Deductive Databases and Logic Programming, 89–148）"}
+  pwc_apt1988_stratified: {is: exp.prior_claim, display: "要旨: 否定を通る再帰を持たない（層に分けられる）論理プログラムは、層ごとに求まる1つの標準モデルを持つ"}
+  d_definition_stratified: {is: lang_dec_adopted}
+
+  # ===== 観察（体系そのものを数えた族 sys_* の値。exp/experiments/sys_ends.py, sys_structure.py）
+  o_sys_depended_ic_below_gdc: {is: exp.observation}
+  o_sys_depended_mostly_depend: {is: exp.observation}
+  o_sys_state_atoms_all_base: {is: exp.observation}
+  o_sys_quant_with_qual: {is: exp.observation}
+  o_sys_rel_disjoint: {is: exp.observation}
+  o_sys_unplaced_neg_only: {is: exp.observation}
+  o_sys_reading_symmetric: {is: exp.observation}
+  o_sys_step_symmetric: {is: exp.observation}
+  o_sys_limit_mostly_open: {is: exp.observation}
+  o_sys_limit_paired_open: {is: exp.observation}
+  o_sys_limit_subj_unpaired: {is: exp.observation}
+  o_sys_mod_no_stated_false: {is: exp.observation}
+  o_sys_atom_no_stated_false: {is: exp.observation}
+  o_sys_soundness_unpaired_above: {is: exp.observation}
+  o_sys_soundness_not_significant: {is: exp.observation}
+  o_sys_soundness_verbs_reversed: {is: exp.observation}
+  o_sys_soundness_mods_aligned: {is: exp.observation}
+  o_sys_anomaly_breaks_below: {is: exp.observation}
+  o_sys_content_not_significant: {is: exp.observation}
+  o_sys_content_unpaired_above: {is: exp.observation}
+  o_sys_declaration_steps_ok: {is: exp.observation}
+  o_sys_declaration_states_same: {is: exp.observation}
+  o_sys_declaration_dangling: {is: exp.observation}
+  o_sys_declaration_never_halts: {is: exp.observation}
+  o_sys_cycles_positive: {is: exp.observation}
+  o_sys_cycles_mostly_one_relation: {is: exp.observation}
+  o_sys_cycles_mostly_syntax: {is: exp.observation}
+  # フレーム（実行の各時点）の観察（exp/experiments/sys_frames.py）。仮説の確かめではない
+  o_sys_open_runtime_steps_ok: {is: exp.observation}
+  o_sys_open_runtime_never_shrinks: {is: exp.observation}
+  o_sys_open_runtime_grows_by_creation: {is: exp.observation}
+  o_sys_open_runtime_runs_ok: {is: exp.observation}
+  o_sys_open_runtime_supported: {is: exp.observation}
+  o_sys_frame_declared_never_grows: {is: exp.observation}
+  o_sys_frame_declared_never_shrinks: {is: exp.observation}
+  o_sys_frame_creates_over_removes: {is: exp.observation}
+  o_sys_frame_removal_truth_only: {is: exp.observation}
+  o_sys_frame_exists_shrinks: {is: exp.observation}
+  o_sys_frame_about_absent: {is: exp.observation}
+
 facts:
   - {is: syntax.v_use, from: lang, to: std}
   - {is: syntax.v_use, from: lang, to: runtime}
@@ -38,3 +199,104 @@ facts:
   - {is: v_refer, from: d_cscl_std_on_axiom, to: {is: v_depend, from: std_layer, to: axiom_layer}}
   - {is: v_refer, from: d_cscl_display_derived, to: {is: v_depend, from: display, to: system}}
   - {is: v_refer, from: d_cscl_trust_previous_version, to: {is: v_depend, from: type_checker, to: previous_checker}}
+  - {is: v_refer, from: d_sig_depend_from, to: {is: extends, from: dependent, to: continuant}}
+  - {is: v_refer, from: d_sig_depend_to, to: {is: extends, from: depended, to: continuant}}
+  - {is: v_ground, from: d_sig_depend_to, to: h_ic_is_bearer}
+  - {is: v_refer, from: d_sig_compose_from, to: {is: extends, from: component, to: continuant}}
+  - {is: v_refer, from: d_sig_compose_to, to: {is: extends, from: kind, to: continuant}}
+  - {is: v_refer, from: d_sig_stage_from, to: {is: extends, from: temporal_part, to: occurrent}}
+  - {is: v_refer, from: d_sig_stage_to, to: {is: extends, from: staged, to: occurrent}}
+  - {is: v_refer, from: d_sig_come_after_from, to: {is: extends, from: later_one, to: continuant}}
+  - {is: v_refer, from: d_sig_come_after_to, to: {is: extends, from: later_target, to: continuant}}
+  - {is: v_refer, from: d_sig_refer_from, to: {is: extends, from: referrer, to: continuant}}
+  - {is: v_refer, from: d_sig_agree_from, to: {is: extends, from: agreeing, to: continuant}}
+  - {is: v_refer, from: d_sig_agree_to, to: {is: extends, from: agreed, to: continuant}}
+  - {is: v_refer, from: d_sig_express_from, to: {is: extends, from: expressed, to: continuant}}
+  - {is: v_refer, from: d_sig_express_to, to: {is: extends, from: medium, to: continuant}}
+  - {is: v_refer, from: d_sig_involve_from, to: {is: extends, from: involving, to: occurrent}}
+  - {is: v_refer, from: d_sig_involve_to, to: {is: extends, from: participant, to: continuant}}
+  - {is: v_refer, from: d_sig_perform_from, to: {is: extends, from: performer, to: continuant}}
+  - {is: v_refer, from: d_sig_perform_to, to: {is: extends, from: performed, to: occurrent}}
+  - {is: v_refer, from: d_sig_trigger_to, to: {is: extends, from: triggered, to: occurrent}}
+  - {is: v_refer, from: d_sig_come_before_from, to: {is: extends, from: earlier_one, to: continuant}}
+  - {is: v_refer, from: d_sig_come_before_to, to: {is: extends, from: earlier_target, to: continuant}}
+  - {is: v_refer, from: d_sig_not_before_from, to: {is: extends, from: not_earlier_one, to: continuant}}
+  - {is: v_refer, from: d_sig_not_before_to, to: {is: extends, from: not_earlier_target, to: continuant}}
+  - {is: v_refer, from: d_sig_not_after_from, to: {is: extends, from: not_later_one, to: continuant}}
+  - {is: v_refer, from: d_sig_not_after_to, to: {is: extends, from: not_later_target, to: continuant}}
+  - {is: v_refer, from: d_sig_level_from, to: {is: extends, from: a, to: continuant}}
+  - {is: v_refer, from: d_sig_level_to, to: {is: extends, from: b, to: continuant}}
+  - {is: v_refer, from: d_sig_design_from, to: {is: extends, from: designer, to: continuant}}
+  - {is: v_refer, from: d_sig_design_to, to: {is: extends, from: designed, to: continuant}}
+  - {is: v_refer, from: h_ic_is_bearer, to: {is: v_not_depend, from: depended, to: continuant}}
+  - {is: v_refer, from: o_sys_depended_ic_below_gdc, to: {is: v_come_before, from: sys_depend_to.ic.mean_value, to: sys_depend_to.gdc.mean_value}}
+  - {is: v_refer, from: o_sys_depended_mostly_depend, to: {is: v_come_after, from: sys_depend_to.also_depends.mean_value, to: 0.5}}
+  - {is: v_contradict, from: o_sys_depended_ic_below_gdc, to: h_ic_is_bearer}
+  - {is: v_contradict, from: o_sys_depended_mostly_depend, to: h_ic_is_bearer}
+  - {is: v_refer, from: h_state_relation_in_base, to: {is: v_compose, from: state_relation, to: base}}
+  - {is: v_refer, from: o_sys_state_atoms_all_base, to: {is: v_level, from: sys_state_atoms.in_base.mean_value, to: 1.0}}
+  - {is: v_support, from: o_sys_state_atoms_all_base, to: h_state_relation_in_base}
+  - {is: v_refer, from: d_state_relation_in_base, to: {is: v_compose, from: state_relation, to: base}}
+  - {is: v_ground, from: d_state_relation_in_base, to: h_state_relation_in_base}
+  - {is: v_refer, from: h_symmetry_soundness, to: {is: v_trigger, from: symmetry_break, to: definition_change}}
+  - {is: exp.v_check, from: b_symmetry_soundness, to: h_symmetry_soundness}
+  - {is: v_refer, from: h_anomaly_defect, to: {is: v_trigger, from: implementation_break, to: check_failure}}
+  - {is: exp.v_check, from: b_anomaly_defect, to: h_anomaly_defect}
+  - {is: v_refer, from: h_content_asymmetry_harmless, to: {is: v_not_trigger, from: symmetry_break, to: definition_change}}
+  - {is: exp.v_check, from: b_content_asymmetry_harmless, to: h_content_asymmetry_harmless}
+  - {is: v_refer, from: o_sys_anomaly_breaks_below, to: {is: v_come_before, from: sys_anomaly.breaks_fail.mean_value, to: sys_anomaly.keeps_fail.mean_value}}
+  - {is: v_refer, from: o_sys_content_not_significant, to: {is: v_come_after, from: sys_content_symmetry.p_value.mean_value, to: 0.05}}
+  - {is: v_refer, from: o_sys_content_unpaired_above, to: {is: v_come_after, from: sys_content_symmetry.unpaired_changed.mean_value, to: sys_content_symmetry.paired_changed.mean_value}}
+  - {is: v_contradict, from: o_sys_anomaly_breaks_below, to: h_anomaly_defect}
+  - {is: v_support, from: o_sys_content_not_significant, to: h_content_asymmetry_harmless}
+  - {is: v_refer, from: h_definition_positive, to: {is: v_not_depend, from: definition_cycle, to: syntax.not}}
+  - {is: v_refer, from: d_definition_stratified, to: {is: v_not_depend, from: definition_cycle, to: syntax.not}}
+  - {is: v_ground, from: d_definition_stratified, to: h_definition_positive}
+  - {is: v_refer, from: o_sys_cycles_positive, to: {is: v_level, from: sys_cycles.neg.mean_value, to: 0.0}}
+  - {is: v_refer, from: o_sys_cycles_mostly_one_relation, to: {is: v_come_after, from: sys_cycles.same_relation.mean_value, to: 0.5}}
+  - {is: v_refer, from: o_sys_cycles_mostly_syntax, to: {is: v_come_after, from: sys_cycles.in_syntax.mean_value, to: 0.5}}
+  - {is: v_support, from: o_sys_cycles_positive, to: h_definition_positive}
+  - {is: v_refer, from: o_sys_frame_declared_never_grows, to: {is: v_level, from: sys_frames.declared_grows.mean_value, to: 0.0}}
+  - {is: v_refer, from: o_sys_frame_declared_never_shrinks, to: {is: v_level, from: sys_frames.declared_shrinks.mean_value, to: 0.0}}
+  - {is: v_refer, from: o_sys_frame_creates_over_removes, to: {is: v_come_after, from: sys_frames.creates.mean_value, to: sys_frames.removes.mean_value}}
+  - {is: v_refer, from: o_sys_frame_removal_truth_only, to: {is: v_level, from: sys_frames.truth_only.mean_value, to: 1.0}}
+  - {is: v_refer, from: o_sys_frame_exists_shrinks, to: {is: v_come_after, from: sys_frames.exists_shrinks.mean_value, to: 0.0}}
+  - {is: v_refer, from: o_sys_frame_about_absent, to: {is: v_come_after, from: sys_frames.about_absent.mean_value, to: 0.0}}
+  - {is: exp.v_state, from: pw_russell1902_paradox, to: pwc_russell1902_negative_self}
+  - {is: v_refer, from: pwc_russell1902_negative_self, to: {is: v_not_depend, from: definition_cycle, to: syntax.not}}
+  - {is: exp.v_prior_same, from: pw_russell1902_paradox, to: h_definition_positive}
+  - {is: exp.v_state, from: pw_apt1988_stratified, to: pwc_apt1988_stratified}
+  - {is: v_refer, from: pwc_apt1988_stratified, to: {is: v_not_depend, from: definition_cycle, to: syntax.not}}
+  - {is: exp.v_prior_same, from: pw_apt1988_stratified, to: h_definition_positive}
+  - {is: exp.v_state, from: pw_tarski1955_fixpoint, to: pwc_tarski1955_monotone}
+  - {is: v_refer, from: h_open_declaration, to: {is: v_depend, from: declared_scope, to: runtime.steps}}
+  - {is: exp.v_check, from: b_open_declaration, to: h_open_declaration}
+  - {is: v_refer, from: h_open_runtime, to: {is: v_not_depend, from: declared_scope, to: runtime.state}}
+  - {is: exp.v_check, from: b_open_runtime, to: h_open_runtime}
+  - {is: v_refer, from: o_sys_open_runtime_steps_ok, to: {is: v_level, from: sys_open_runtime.ok.mean_value, to: 1.0}}
+  - {is: v_refer, from: o_sys_open_runtime_never_shrinks, to: {is: v_level, from: sys_open_runtime.declared_shrinks.mean_value, to: 0.0}}
+  - {is: v_refer, from: o_sys_open_runtime_grows_by_creation, to: {is: v_level, from: sys_open_runtime.grows_by_creation.mean_value, to: 1.0}}
+  - {is: v_refer, from: o_sys_open_runtime_runs_ok, to: {is: v_level, from: sys_open_runtime.run_ok.mean_value, to: 1.0}}
+  - {is: v_refer, from: o_sys_open_runtime_supported, to: {is: v_level, from: sys_open_runtime.supported.mean_value, to: 1.0}}
+  - {is: v_support, from: o_sys_open_runtime_supported, to: h_open_runtime}
+  - {is: v_refer, from: o_sys_declaration_steps_ok, to: {is: v_level, from: sys_declaration.b_ok.mean_value, to: 1.0}}
+  - {is: v_refer, from: o_sys_declaration_states_same, to: {is: v_level, from: sys_declaration.same_state.mean_value, to: 1.0}}
+  - {is: v_refer, from: o_sys_declaration_dangling, to: {is: v_come_after, from: sys_declaration.dangling.mean_value, to: 0.0}}
+  - {is: v_refer, from: o_sys_declaration_never_halts, to: {is: v_come_after, from: sys_declaration.b_fresh_applicable.mean_value, to: 0.0}}
+  - {is: v_contradict, from: o_sys_declaration_dangling, to: h_open_declaration}
+  - {is: v_refer, from: o_sys_quant_with_qual, to: {is: v_level, from: sys_quadrants.quant_alone.mean_value, to: 0.0}}
+  - {is: v_refer, from: o_sys_rel_disjoint, to: {is: v_level, from: sys_quadrants.rel_mixed.mean_value, to: 0.0}}
+  - {is: v_refer, from: o_sys_unplaced_neg_only, to: {is: v_level, from: sys_quadrants.none_other.mean_value, to: 0.0}}
+  - {is: v_refer, from: o_sys_reading_symmetric, to: {is: v_level, from: sys_symmetry.reading.mean_value, to: 1.0}}
+  - {is: v_refer, from: o_sys_step_symmetric, to: {is: v_level, from: sys_symmetry.step.mean_value, to: 1.0}}
+  - {is: v_refer, from: o_sys_limit_mostly_open, to: {is: v_come_before, from: sys_limitation.in_closed.mean_value, to: 0.5}}
+  - {is: v_refer, from: o_sys_limit_paired_open, to: {is: v_come_after, from: sys_limitation.pair_open.mean_value, to: 0.5}}
+  - {is: v_refer, from: o_sys_limit_subj_unpaired, to: {is: v_level, from: sys_limitation.pair_subj.mean_value, to: 0.0}}
+  - {is: v_refer, from: o_sys_mod_no_stated_false, to: {is: v_level, from: sys_limitation.stated_false.mean_value, to: 0.0}}
+  - {is: v_refer, from: o_sys_atom_no_stated_false, to: {is: v_level, from: sys_limitation.atom_stated_false.mean_value, to: 0.0}}
+  - {is: v_refer, from: o_sys_soundness_unpaired_above, to: {is: v_come_after, from: sys_soundness.unpaired_changed.mean_value, to: sys_soundness.paired_changed.mean_value}}
+  - {is: v_refer, from: o_sys_soundness_not_significant, to: {is: v_come_after, from: sys_soundness.p_value.mean_value, to: 0.05}}
+  - {is: v_refer, from: o_sys_soundness_verbs_reversed, to: {is: v_come_before, from: sys_soundness.verb_unpaired_changed.mean_value, to: sys_soundness.verb_paired_changed.mean_value}}
+  - {is: v_refer, from: o_sys_soundness_mods_aligned, to: {is: v_come_after, from: sys_soundness.mod_unpaired_changed.mean_value, to: sys_soundness.mod_paired_changed.mean_value}}
+  - {is: v_support, from: o_sys_soundness_unpaired_above, to: h_symmetry_soundness}
+  - {is: v_contradict, from: o_sys_soundness_not_significant, to: h_symmetry_soundness}
