@@ -611,6 +611,12 @@ individuals:
   sys_tops_cond_reaches_dynamic: {is: axis_value, val: {text: reaches_dynamic}}
   sys_tops_cond_concept_dynamic: {is: axis_value, val: {text: concept_dynamic}}
   sys_tops_cond_supported: {is: axis_value, val: {text: supported}}
+  sys_outlive: {is: measurement_family}
+  sys_outlive_cond: {is: family_axis, val: {text: cond}}
+  sys_outlive_cond_outlives_source: {is: axis_value, val: {text: outlives_source}}
+  sys_outlive_cond_source_in_git: {is: axis_value, val: {text: source_in_git}}
+  sys_outlive_cond_c_step_ok: {is: axis_value, val: {text: c_step_ok}}
+  sys_outlive_cond_s_step_ok: {is: axis_value, val: {text: s_step_ok}}
   sys_confusion: {is: measurement_family}
   sys_confusion_cond: {is: family_axis, val: {text: cond}}
   sys_confusion_cond_v_a_ok: {is: axis_value, val: {text: v_a_ok}}
@@ -2477,6 +2483,19 @@ facts:
   - {is: v_spell, from: sys_confusion_cond_recomputed, to: recomputed}
   - {is: v_entry_of, from: '{cond}', to: sys_confusion}
   - {is: v_metric_of, from: sys_confusion, to: mean_value}
+  - {is: v_file_of, from: sys_outlive.json, to: sys_outlive}
+  - {is: v_rows_of, from: [rows], to: sys_outlive}
+  - {is: v_axis_of, from: sys_outlive_cond, to: sys_outlive}
+  - {is: v_value_of, from: sys_outlive_cond_outlives_source, to: sys_outlive_cond}
+  - {is: v_spell, from: sys_outlive_cond_outlives_source, to: outlives_source}
+  - {is: v_value_of, from: sys_outlive_cond_source_in_git, to: sys_outlive_cond}
+  - {is: v_spell, from: sys_outlive_cond_source_in_git, to: source_in_git}
+  - {is: v_value_of, from: sys_outlive_cond_c_step_ok, to: sys_outlive_cond}
+  - {is: v_spell, from: sys_outlive_cond_c_step_ok, to: c_step_ok}
+  - {is: v_value_of, from: sys_outlive_cond_s_step_ok, to: sys_outlive_cond}
+  - {is: v_spell, from: sys_outlive_cond_s_step_ok, to: s_step_ok}
+  - {is: v_entry_of, from: '{cond}', to: sys_outlive}
+  - {is: v_metric_of, from: sys_outlive, to: mean_value}
   - {is: v_file_of, from: sys_content_symmetry.json, to: sys_content_symmetry}
   - {is: v_rows_of, from: [rows], to: sys_content_symmetry}
   - {is: v_axis_of, from: sys_content_symmetry_cond, to: sys_content_symmetry}
