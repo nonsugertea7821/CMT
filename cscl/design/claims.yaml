@@ -19,6 +19,10 @@ nodes:
   # 真偽の対称性と健全性（h_symmetry_soundness）の語
   symmetry_break: {display: 真偽の対の欠け, extends: quality, mod: {of: [v_refer, to], with: definition}}
   definition_change: {display: 定義の書き換え, extends: process, mod: {of: [v_involve, from], with: definition}}
+  # 実装の対称性（h_anomaly_defect）と中身の対称性（h_content_asymmetry_harmless）の語
+  implementation_break: {display: 実装が壊す真偽の対称性, extends: quality, mod: {of: [v_depend, from], with: artifact}}
+  check_failure: {display: 検査の失敗, extends: process, mod: {of: [v_involve, from], with: artifact}}
+  v_not_trigger: {display: 引き起こさない, extends: occurrent, from: any, to: occurrent, holds: [{is: depend, from: to, to: from, neg: true}], opposite: v_trigger}
 
 individuals:
   lang: {is: domain, display: 言語}
@@ -79,6 +83,17 @@ individuals:
   # 限定に対のあるものが 0 件になっていた（そのときの値: 0.038 と 0.077、p = 0.91）。手順の説明どおりに直して測り直した
   h_symmetry_soundness: {is: exp.hyp_mixed}
   b_symmetry_soundness: {is: exp.item_done}
+  # ===== h_symmetry_soundness を、物理の対称性との類比で2つに分けた仮説（結果を見る前に登録した）
+  # (A) 量子異常の型: 意味として宣言した真偽の対称性を、実装が壊すなら欠陥になる。
+  #   確かめ方は exp/experiments/sys_anomaly.py の説明に固定。runtime.py の1か所の変異のうち、振る舞いを変えるものについて、
+  #   σ を壊す変異が、σ と別の検査（実行の記録の検査）を失敗させる割合が、壊さない変異より大きく、片側 Fisher で p < 0.05 なら支持
+  h_anomaly_defect: {is: exp.hyp_untested}
+  b_anomaly_defect: {is: exp.item_queued}
+  # (B) 明示的・自発的な破れの型: 定義の中身が真偽の対を欠くことは、定義の書き換えを引き起こさない。
+  #   確かめ方は exp/experiments/sys_content_symmetry.py の説明に固定（h_symmetry_soundness と重ならない期間 e845f0b → 6bfac2f）。
+  #   対の無いノードの書き換えが多く、片側 Fisher で p < 0.05 なら反証。そうでなければ反証されない（差を見つけられなかっただけ）
+  h_content_asymmetry_harmless: {is: exp.hyp_untested}
+  b_content_asymmetry_harmless: {is: exp.item_queued}
 
   # ===== 観察（体系そのものを数えた族 sys_* の値。exp/experiments/sys_ends.py, sys_structure.py）
   o_sys_depended_ic_below_gdc: {is: exp.observation}
@@ -150,6 +165,10 @@ facts:
   - {is: v_ground, from: d_state_relation_in_base, to: h_state_relation_in_base}
   - {is: v_refer, from: h_symmetry_soundness, to: {is: v_trigger, from: symmetry_break, to: definition_change}}
   - {is: exp.v_check, from: b_symmetry_soundness, to: h_symmetry_soundness}
+  - {is: v_refer, from: h_anomaly_defect, to: {is: v_trigger, from: implementation_break, to: check_failure}}
+  - {is: exp.v_check, from: b_anomaly_defect, to: h_anomaly_defect}
+  - {is: v_refer, from: h_content_asymmetry_harmless, to: {is: v_not_trigger, from: symmetry_break, to: definition_change}}
+  - {is: exp.v_check, from: b_content_asymmetry_harmless, to: h_content_asymmetry_harmless}
   - {is: v_refer, from: o_sys_quant_with_qual, to: {is: v_level, from: sys_quadrants.quant_alone.mean_value, to: 0.0}}
   - {is: v_refer, from: o_sys_rel_disjoint, to: {is: v_level, from: sys_quadrants.rel_mixed.mean_value, to: 0.0}}
   - {is: v_refer, from: o_sys_unplaced_neg_only, to: {is: v_level, from: sys_quadrants.none_other.mean_value, to: 0.0}}
