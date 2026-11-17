@@ -531,6 +531,11 @@ individuals:
   sys_declaration_cond_a_applicable: {is: axis_value, val: {text: a_applicable}}
   sys_declaration_cond_b_fresh_applicable: {is: axis_value, val: {text: b_fresh_applicable}}
   sys_declaration_cond_supported: {is: axis_value, val: {text: supported}}
+  sys_cycles: {is: measurement_family}
+  sys_cycles_cond: {is: family_axis, val: {text: cond}}
+  sys_cycles_cond_neg: {is: axis_value, val: {text: neg}}
+  sys_cycles_cond_same_relation: {is: axis_value, val: {text: same_relation}}
+  sys_cycles_cond_in_syntax: {is: axis_value, val: {text: in_syntax}}
   sys_content_symmetry: {is: measurement_family}
   sys_content_symmetry_cond: {is: family_axis, val: {text: cond}}
   sys_content_symmetry_cond_unpaired_changed: {is: axis_value, val: {text: unpaired_changed}}
@@ -2152,6 +2157,17 @@ facts:
   - {is: v_spell, from: sys_declaration_cond_supported, to: supported}
   - {is: v_entry_of, from: '{cond}', to: sys_declaration}
   - {is: v_metric_of, from: sys_declaration, to: mean_value}
+  - {is: v_file_of, from: sys_cycles.json, to: sys_cycles}
+  - {is: v_rows_of, from: [rows], to: sys_cycles}
+  - {is: v_axis_of, from: sys_cycles_cond, to: sys_cycles}
+  - {is: v_value_of, from: sys_cycles_cond_neg, to: sys_cycles_cond}
+  - {is: v_spell, from: sys_cycles_cond_neg, to: neg}
+  - {is: v_value_of, from: sys_cycles_cond_same_relation, to: sys_cycles_cond}
+  - {is: v_spell, from: sys_cycles_cond_same_relation, to: same_relation}
+  - {is: v_value_of, from: sys_cycles_cond_in_syntax, to: sys_cycles_cond}
+  - {is: v_spell, from: sys_cycles_cond_in_syntax, to: in_syntax}
+  - {is: v_entry_of, from: '{cond}', to: sys_cycles}
+  - {is: v_metric_of, from: sys_cycles, to: mean_value}
   - {is: v_file_of, from: sys_content_symmetry.json, to: sys_content_symmetry}
   - {is: v_rows_of, from: [rows], to: sys_content_symmetry}
   - {is: v_axis_of, from: sys_content_symmetry_cond, to: sys_content_symmetry}

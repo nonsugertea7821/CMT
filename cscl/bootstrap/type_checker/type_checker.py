@@ -614,7 +614,7 @@ def evaluate(rules, F, V):
 # ---------------------------------------------------------------- 概念の体系
 # 法則のうち、この検査が当てはめるもの / 実行の検査（cscl/bootstrap/runtime/runtime.py）が当てはめるもの
 # 規則で書いた法則（law_rule）は、実行の検査がその規則を読んで当てはめる。ここには、意味を検査が与える法則（law_given）だけを挙げる。
-LAWS_HERE = {"part_fact_direction", "part_display_explicit", "named_mod", "world_declared"}
+LAWS_HERE = {"part_fact_direction", "part_display_explicit", "named_mod", "world_declared", "definition_stratified"}
 LAWS_RUN = {"unique_names", "step", "frame", "halt"}
 
 
@@ -1284,6 +1284,74 @@ def check_world_declared(T):
                 err(f"法則 world_declared に反する: 法則 {lid} は否定を前提に使うが、領域 {dom} は閉世界を前提に置いていない")
 
 
+def definition_edges(T):
+    """定義が使う語への辺 (ノード, 使う語, 否定か)。上位（extends）、名前を付けた修飾語、限定の with をたどる。"""
+    out = []
+    for nid, n in T.N.items():
+        if n.get("extends") in T.N:
+            out.append((nid, n["extends"], False))
+        if "of" in n and n.get("with") in T.N:
+            out.append((nid, n["with"], bool(n.get("neg"))))
+        ms = n.get("mod") or []
+        for m in ms if isinstance(ms, list) else [ms]:
+            if isinstance(m, str) and m in T.N:
+                out.append((nid, m, False))
+            elif isinstance(m, dict) and m.get("with") in T.N:
+                out.append((nid, m["with"], bool(m.get("neg"))))
+    return out
+
+
+def definition_cycles(edges):
+    """定義の循環（強連結成分のうち、2つ以上のノードか自分への辺を持つもの）を、ノードの集まりの並びで返す。"""
+    G = collections.defaultdict(set)
+    for a, b, _ in edges:
+        G[a].add(b)
+    index, low, stack, on, out = {}, {}, [], set(), []
+    for root in list(G):
+        if root in index:
+            continue
+        work = [(root, iter(sorted(G[root])))]
+        index[root] = low[root] = len(index)
+        stack.append(root)
+        on.add(root)
+        while work:
+            v, it = work[-1]
+            for w in it:
+                if w not in index:
+                    index[w] = low[w] = len(index)
+                    stack.append(w)
+                    on.add(w)
+                    work.append((w, iter(sorted(G[w]))))
+                    break
+                if w in on:
+                    low[v] = min(low[v], index[w])
+            else:
+                work.pop()
+                if work:
+                    low[work[-1][0]] = min(low[work[-1][0]], low[v])
+                if low[v] == index[v]:
+                    c = set()
+                    while True:
+                        w = stack.pop()
+                        on.discard(w)
+                        c.add(w)
+                        if w == v:
+                            break
+                    if len(c) > 1 or v in G[v]:
+                        out.append(c)
+    return out
+
+
+def check_definition_stratified(T):
+    """法則 definition_stratified。定義の循環は、否定の限定を通らない（自分を限定するものは、肯定の位置にだけ現れる）。
+    否定を通る循環は、C = {x | ¬v(x, C)} の形（Russell の逆理）になり、不動点がないことがある。法則の規則の層分け（strata）と同じ条件。"""
+    edges = definition_edges(T)
+    for c in definition_cycles(edges):
+        bad = [(a, b) for a, b, neg in edges if neg and a in c and b in c]
+        if bad:
+            err(f"法則 definition_stratified に反する: 定義の循環 {sorted(c)} が否定の限定 {bad} を通る")
+
+
 def check_named_mod(T):
     """法則 named_mod。2つ以上のノードが同じ限定を足すなら、その限定は名前を付けた修飾語で書く。
     同じ中身の修飾語が既にあれば、その名前を使う。"""
@@ -1430,6 +1498,7 @@ def build():
     T.check_laws()
     check_parts(T)
     check_named_mod(T)
+    check_definition_stratified(T)
     check_world_declared(T)
     for dom, (name, X) in Dm.items():
         check_domain(name, X, T)
