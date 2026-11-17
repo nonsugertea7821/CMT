@@ -305,6 +305,18 @@ individuals:
   #   変異は名前への依存を見つけるが、その依存が正当（文法）かどうかは見分けない。
   o_sys_mutation_controls_hold: {is: exp.observation}
   o_sys_mutation_named_words_depend: {is: exp.observation}
+  # 語の下位を1つ外したときの振る舞いの観察（exp/experiments/sys_detach.py）。仮説の確かめではない。手順は実行の前に登録した（191c424）。
+  # 結果: 調べる語 9/11 で変わり、陰性の対照 0/3 は変わらなかった。飛ばした行はない。
+  # 実行の後に出力の違いを1つずつ見た（登録していない）。分類を読んだのは次のとおり。
+  #   コードが is_a で分類を読む: definition（役割の根拠）、magnitude（指標）、role（役割の数が 14 → 13。誤りは出ない）、v_depend と v_refer（動詞の書き方）。
+  #   体系の法則か型が読む: v_collect（法則 specific）、world（v_presume の終点の型）、v_refer・v_depend（法則 placed_deduced も）。
+  #   laws: 文法の laws の検査（d7dd752 で入れた、コードの鍵の集合・文法・laws の下位が等しいこと）が誤りを出した。
+  #     コードが law_given を名で集めることは変わっていない（core_sections）。見込みどおり。重複は、等しさの検査で表に出るようになった。
+  #   変わらなかった 2: quality（子 adopted。コードが質を読むのは axis を持つ語だけで、adopted は axis を持たない）、
+  #     type_checker（子 previous_checker。コードは lang の type_checker の分類を一度も読まない。体系の述べる型検査器と、コードは結ばれていない）。
+  #   role は、外しても誤りにならず、役割の検査から黙って外れる。役割であることを求める法則がない（分類で検査をかけるが、分類そのものは確かめない）。
+  o_sys_detach_neg_hold: {is: exp.observation}
+  o_sys_detach_named_read_taxonomy: {is: exp.observation}
   o_sys_frame_declared_never_grows: {is: exp.observation}
   o_sys_frame_declared_never_shrinks: {is: exp.observation}
   o_sys_frame_creates_over_removes: {is: exp.observation}
@@ -427,6 +439,8 @@ facts:
   - {is: v_refer, from: o_sys_special_outside_named, to: {is: v_come_after, from: sys_special.outside.mean_value, to: 0.0}}
   - {is: v_refer, from: o_sys_mutation_controls_hold, to: {is: v_level, from: sys_mutation.neg_changed.mean_value, to: 0.0}}
   - {is: v_refer, from: o_sys_mutation_named_words_depend, to: {is: v_come_after, from: sys_mutation.test_changed.mean_value, to: 0.5}}
+  - {is: v_refer, from: o_sys_detach_neg_hold, to: {is: v_level, from: sys_detach.neg_changed.mean_value, to: 0.0}}
+  - {is: v_refer, from: o_sys_detach_named_read_taxonomy, to: {is: v_come_after, from: sys_detach.test_changed.mean_value, to: 0.5}}
   - {is: v_refer, from: o_sys_outlive_never_outlived, to: {is: v_level, from: sys_outlive.outlives_source.mean_value, to: 0.0}}
   - {is: v_refer, from: o_sys_outlive_compute_steps_ok, to: {is: v_level, from: sys_outlive.c_step_ok.mean_value, to: 1.0}}
   - {is: v_refer, from: o_sys_outlive_speak_steps_ok, to: {is: v_level, from: sys_outlive.s_step_ok.mean_value, to: 1.0}}

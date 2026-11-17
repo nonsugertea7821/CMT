@@ -638,6 +638,11 @@ individuals:
   sys_mutation_cond_test_changed: {is: axis_value, val: {text: test_changed}}
   sys_mutation_cond_pos_changed: {is: axis_value, val: {text: pos_changed}}
   sys_mutation_cond_neg_changed: {is: axis_value, val: {text: neg_changed}}
+  sys_detach: {is: measurement_family}
+  sys_detach_cond: {is: family_axis, val: {text: cond}}
+  sys_detach_cond_test_changed: {is: axis_value, val: {text: test_changed}}
+  sys_detach_cond_neg_changed: {is: axis_value, val: {text: neg_changed}}
+  sys_detach_cond_skipped: {is: axis_value, val: {text: skipped}}
   sys_outlive: {is: measurement_family}
   sys_outlive_cond: {is: family_axis, val: {text: cond}}
   sys_outlive_cond_outlives_source: {is: axis_value, val: {text: outlives_source}}
@@ -2582,6 +2587,17 @@ facts:
   - {is: v_spell, from: sys_mutation_cond_neg_changed, to: neg_changed}
   - {is: v_entry_of, from: '{cond}', to: sys_mutation}
   - {is: v_metric_of, from: sys_mutation, to: mean_value}
+  - {is: v_file_of, from: sys_detach.json, to: sys_detach}
+  - {is: v_rows_of, from: [rows], to: sys_detach}
+  - {is: v_axis_of, from: sys_detach_cond, to: sys_detach}
+  - {is: v_value_of, from: sys_detach_cond_test_changed, to: sys_detach_cond}
+  - {is: v_spell, from: sys_detach_cond_test_changed, to: test_changed}
+  - {is: v_value_of, from: sys_detach_cond_neg_changed, to: sys_detach_cond}
+  - {is: v_spell, from: sys_detach_cond_neg_changed, to: neg_changed}
+  - {is: v_value_of, from: sys_detach_cond_skipped, to: sys_detach_cond}
+  - {is: v_spell, from: sys_detach_cond_skipped, to: skipped}
+  - {is: v_entry_of, from: '{cond}', to: sys_detach}
+  - {is: v_metric_of, from: sys_detach, to: mean_value}
   - {is: v_file_of, from: sys_content_symmetry.json, to: sys_content_symmetry}
   - {is: v_rows_of, from: [rows], to: sys_content_symmetry}
   - {is: v_axis_of, from: sys_content_symmetry_cond, to: sys_content_symmetry}
