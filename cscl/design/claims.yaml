@@ -115,6 +115,9 @@ individuals:
   # (a) では同じ2文が「在らないものについての文」として残る（法則 depend_end_exists は始点が在るときだけを縛るので、違反にならない）。
   # 生まれることは宣言を足すことと読めたが、消えることは宣言の取り消しとは読めない。
   # 登録した基準は3つの条件がすべて成り立つときだけ支持なので、成り立った2つ（歩める・状態が一致する）は観察として残し、支持には結ばない
+  # 利用者の指摘: この基準は真偽の軸と宣言の軸を取り違えていた。v_freeze は真偽の軸（exists）だけを操作し、宣言を減らさない。
+  # 宣言が減るのはスタックの巻き戻しのときだけで、「宣言されていない名前の文が残らない」は巻き戻しの後に確かめる条件だった。
+  # 判定は登録した基準どおりに残し、直した条件は別に扱う（フレームの観察 sys_frames を参照）
   h_open_declaration: {is: exp.hyp_refuted}
   b_open_declaration: {is: exp.item_done}
   # ===== 定義の循環（自分を限定するものについて述べる定義）。利用者の問い「self がシグネチャになるとどうなるか」から
@@ -160,6 +163,13 @@ individuals:
   o_sys_cycles_positive: {is: exp.observation}
   o_sys_cycles_mostly_one_relation: {is: exp.observation}
   o_sys_cycles_mostly_syntax: {is: exp.observation}
+  # フレーム（実行の各時点）の観察（exp/experiments/sys_frames.py）。仮説の確かめではない
+  o_sys_frame_declared_never_grows: {is: exp.observation}
+  o_sys_frame_declared_never_shrinks: {is: exp.observation}
+  o_sys_frame_creates_over_removes: {is: exp.observation}
+  o_sys_frame_removal_truth_only: {is: exp.observation}
+  o_sys_frame_exists_shrinks: {is: exp.observation}
+  o_sys_frame_about_absent: {is: exp.observation}
 
 facts:
   - {is: syntax.v_use, from: lang, to: std}
@@ -228,6 +238,12 @@ facts:
   - {is: v_refer, from: o_sys_cycles_mostly_one_relation, to: {is: v_come_after, from: sys_cycles.same_relation.mean_value, to: 0.5}}
   - {is: v_refer, from: o_sys_cycles_mostly_syntax, to: {is: v_come_after, from: sys_cycles.in_syntax.mean_value, to: 0.5}}
   - {is: v_support, from: o_sys_cycles_positive, to: h_definition_positive}
+  - {is: v_refer, from: o_sys_frame_declared_never_grows, to: {is: v_level, from: sys_frames.declared_grows.mean_value, to: 0.0}}
+  - {is: v_refer, from: o_sys_frame_declared_never_shrinks, to: {is: v_level, from: sys_frames.declared_shrinks.mean_value, to: 0.0}}
+  - {is: v_refer, from: o_sys_frame_creates_over_removes, to: {is: v_come_after, from: sys_frames.creates.mean_value, to: sys_frames.removes.mean_value}}
+  - {is: v_refer, from: o_sys_frame_removal_truth_only, to: {is: v_level, from: sys_frames.truth_only.mean_value, to: 1.0}}
+  - {is: v_refer, from: o_sys_frame_exists_shrinks, to: {is: v_come_after, from: sys_frames.exists_shrinks.mean_value, to: 0.0}}
+  - {is: v_refer, from: o_sys_frame_about_absent, to: {is: v_come_after, from: sys_frames.about_absent.mean_value, to: 0.0}}
   - {is: exp.v_state, from: pw_russell1902_paradox, to: pwc_russell1902_negative_self}
   - {is: v_refer, from: pwc_russell1902_negative_self, to: {is: v_not_depend, from: definition_cycle, to: syntax.not}}
   - {is: exp.v_prior_same, from: pw_russell1902_paradox, to: h_definition_positive}

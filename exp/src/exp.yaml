@@ -536,6 +536,16 @@ individuals:
   sys_cycles_cond_neg: {is: axis_value, val: {text: neg}}
   sys_cycles_cond_same_relation: {is: axis_value, val: {text: same_relation}}
   sys_cycles_cond_in_syntax: {is: axis_value, val: {text: in_syntax}}
+  sys_frames: {is: measurement_family}
+  sys_frames_cond: {is: family_axis, val: {text: cond}}
+  sys_frames_cond_creates: {is: axis_value, val: {text: creates}}
+  sys_frames_cond_removes: {is: axis_value, val: {text: removes}}
+  sys_frames_cond_truth_only: {is: axis_value, val: {text: truth_only}}
+  sys_frames_cond_declared_grows: {is: axis_value, val: {text: declared_grows}}
+  sys_frames_cond_declared_shrinks: {is: axis_value, val: {text: declared_shrinks}}
+  sys_frames_cond_exists_grows: {is: axis_value, val: {text: exists_grows}}
+  sys_frames_cond_exists_shrinks: {is: axis_value, val: {text: exists_shrinks}}
+  sys_frames_cond_about_absent: {is: axis_value, val: {text: about_absent}}
   sys_content_symmetry: {is: measurement_family}
   sys_content_symmetry_cond: {is: family_axis, val: {text: cond}}
   sys_content_symmetry_cond_unpaired_changed: {is: axis_value, val: {text: unpaired_changed}}
@@ -2168,6 +2178,27 @@ facts:
   - {is: v_spell, from: sys_cycles_cond_in_syntax, to: in_syntax}
   - {is: v_entry_of, from: '{cond}', to: sys_cycles}
   - {is: v_metric_of, from: sys_cycles, to: mean_value}
+  - {is: v_file_of, from: sys_frames.json, to: sys_frames}
+  - {is: v_rows_of, from: [rows], to: sys_frames}
+  - {is: v_axis_of, from: sys_frames_cond, to: sys_frames}
+  - {is: v_value_of, from: sys_frames_cond_creates, to: sys_frames_cond}
+  - {is: v_spell, from: sys_frames_cond_creates, to: creates}
+  - {is: v_value_of, from: sys_frames_cond_removes, to: sys_frames_cond}
+  - {is: v_spell, from: sys_frames_cond_removes, to: removes}
+  - {is: v_value_of, from: sys_frames_cond_truth_only, to: sys_frames_cond}
+  - {is: v_spell, from: sys_frames_cond_truth_only, to: truth_only}
+  - {is: v_value_of, from: sys_frames_cond_declared_grows, to: sys_frames_cond}
+  - {is: v_spell, from: sys_frames_cond_declared_grows, to: declared_grows}
+  - {is: v_value_of, from: sys_frames_cond_declared_shrinks, to: sys_frames_cond}
+  - {is: v_spell, from: sys_frames_cond_declared_shrinks, to: declared_shrinks}
+  - {is: v_value_of, from: sys_frames_cond_exists_grows, to: sys_frames_cond}
+  - {is: v_spell, from: sys_frames_cond_exists_grows, to: exists_grows}
+  - {is: v_value_of, from: sys_frames_cond_exists_shrinks, to: sys_frames_cond}
+  - {is: v_spell, from: sys_frames_cond_exists_shrinks, to: exists_shrinks}
+  - {is: v_value_of, from: sys_frames_cond_about_absent, to: sys_frames_cond}
+  - {is: v_spell, from: sys_frames_cond_about_absent, to: about_absent}
+  - {is: v_entry_of, from: '{cond}', to: sys_frames}
+  - {is: v_metric_of, from: sys_frames, to: mean_value}
   - {is: v_file_of, from: sys_content_symmetry.json, to: sys_content_symmetry}
   - {is: v_rows_of, from: [rows], to: sys_content_symmetry}
   - {is: v_axis_of, from: sys_content_symmetry_cond, to: sys_content_symmetry}
