@@ -1,4 +1,4 @@
-"""体系そのものを数える（2）。象限への分かれ方と、真偽の写像についての対称性。
+"""体系そのものを数える（2）。象限への分かれ方、真偽の写像についての対称性、制限（否定だけの限定）の在り方。
 言語の設計の主張（cscl/design/claims.yaml）の観察のもとになる結果ファイルを書く。
 
   sys_quadrants.json  ノード1つが1行。各ノードが自分で足した定義の形から、象限に入るか（0 か 1）を決める。
@@ -17,6 +17,13 @@
       世界は、閉世界 ↔ 鏡の世界（述べていない文は真。この確かめの中でだけ置く）、world だけの世界はそのまま。
       reading  ランダムな状態と世界で、すべての文と読み方の判定が、写した側の判定と一致するか
       step     動的な動詞の pre・post も写して1歩進めると、写した状態に移るか
+
+  sys_limitation.json 自分の定義が否定の限定だけのノード（制限）が1行、と、すべての限定（mod）が1行。
+      in_closed     そのノードの領域が閉世界を前提に置く（v_presume）
+      has_pair      同じ動詞・同じ端・同じ相手（of, with）の肯定の限定を持つノードがある
+      pair_closed / pair_open / pair_subj   has_pair を、閉世界の領域・開世界の領域（subj を除く）・subj に分けたもの
+      stated_false  限定が「偽と述べる」読み方（val: {truth: false}）である
+      unstated      限定が「述べられていない」読み方（neg）である
 
 使い方:
   python exp/experiments/sys_structure.py      結果ファイルを exp/experiments/results に書く
@@ -66,6 +73,25 @@ def quadrants(T):
             "none": int(none), "quant_alone": int(q["quant"] and not (q["rel"] or q["truth"] or q["qual"])),
             "rel_mixed": int(q["rel"] and (q["truth"] or q["quant"] or q["qual"])),
             "neg_only": int(neg_only), "none_other": int(none and not neg_only and n not in tc.TOPS)}
+    return rows
+
+
+def limitation(T, rows_q):
+    closed = {d for d, ws in tc.presumed_worlds().items() if "closed_world" in ws}
+    key = lambda m: (tuple(m["of"]), m.get("with"))
+    pos = {key(m) for x in T.N.values() for m in x.get("mod") or [] if isinstance(m, dict) and not m.get("neg")}
+    rows = {}
+    for n, q in rows_q.items():
+        if not q["neg_only"]:
+            continue
+        d, m = n.split(".")[0], T.N[n]["mod"][0]
+        pair = int(key(m) in pos)
+        side = "pair_closed" if d in closed else "pair_subj" if d == "subj" else "pair_open"
+        rows[f"node {n}"] = {"in_closed": int(d in closed), "has_pair": pair, side: pair}
+    for n, x in T.N.items():
+        for i, m in enumerate(m for m in x.get("mod") or [] if isinstance(m, dict)):
+            rows[f"mod {n} {i}"] = {"stated_false": int(tc.truth_of(m) is False and "val" in m),
+                                    "unstated": int(bool(m.get("neg")))}
     return rows
 
 
@@ -124,7 +150,8 @@ def main():
         for _, name in tc.register_domains(O2):
             tc.merge_domain(name, O2)
         T2 = tc.Ontology(O2)
-    for name, rows in (("sys_quadrants", quadrants(T)), ("sys_symmetry", symmetry(T2))):
+    q = quadrants(T)
+    for name, rows in (("sys_quadrants", q), ("sys_symmetry", symmetry(T2)), ("sys_limitation", limitation(T, q))):
         (OUT / f"{name}.json").write_text(json.dumps(
             {"_source": "exp/experiments/sys_structure.py", "_commit": commit, "rows": rows},
             ensure_ascii=False, indent=1), encoding="utf-8")

@@ -497,6 +497,15 @@ individuals:
   sys_symmetry_cond: {is: family_axis, val: {text: cond}}
   sys_symmetry_cond_reading: {is: axis_value, val: {text: reading}}
   sys_symmetry_cond_step: {is: axis_value, val: {text: step}}
+  sys_limitation: {is: measurement_family}
+  sys_limitation_cond: {is: family_axis, val: {text: cond}}
+  sys_limitation_cond_in_closed: {is: axis_value, val: {text: in_closed}}
+  sys_limitation_cond_has_pair: {is: axis_value, val: {text: has_pair}}
+  sys_limitation_cond_pair_closed: {is: axis_value, val: {text: pair_closed}}
+  sys_limitation_cond_pair_open: {is: axis_value, val: {text: pair_open}}
+  sys_limitation_cond_pair_subj: {is: axis_value, val: {text: pair_subj}}
+  sys_limitation_cond_stated_false: {is: axis_value, val: {text: stated_false}}
+  sys_limitation_cond_unstated: {is: axis_value, val: {text: unstated}}
   pr_babaei: {is: measurement_family}
   pr_babaei_cond: {is: family_axis, val: {text: cond}}
   pr_babaei_cond_qwen72b_question: {is: axis_value, val: {text: qwen72b_question}}
@@ -2037,6 +2046,25 @@ facts:
   - {is: v_spell, from: sys_symmetry_cond_step, to: step}
   - {is: v_entry_of, from: '{cond}', to: sys_symmetry}
   - {is: v_metric_of, from: sys_symmetry, to: mean_value}
+  - {is: v_file_of, from: sys_limitation.json, to: sys_limitation}
+  - {is: v_rows_of, from: [rows], to: sys_limitation}
+  - {is: v_axis_of, from: sys_limitation_cond, to: sys_limitation}
+  - {is: v_value_of, from: sys_limitation_cond_in_closed, to: sys_limitation_cond}
+  - {is: v_spell, from: sys_limitation_cond_in_closed, to: in_closed}
+  - {is: v_value_of, from: sys_limitation_cond_has_pair, to: sys_limitation_cond}
+  - {is: v_spell, from: sys_limitation_cond_has_pair, to: has_pair}
+  - {is: v_value_of, from: sys_limitation_cond_pair_closed, to: sys_limitation_cond}
+  - {is: v_spell, from: sys_limitation_cond_pair_closed, to: pair_closed}
+  - {is: v_value_of, from: sys_limitation_cond_pair_open, to: sys_limitation_cond}
+  - {is: v_spell, from: sys_limitation_cond_pair_open, to: pair_open}
+  - {is: v_value_of, from: sys_limitation_cond_pair_subj, to: sys_limitation_cond}
+  - {is: v_spell, from: sys_limitation_cond_pair_subj, to: pair_subj}
+  - {is: v_value_of, from: sys_limitation_cond_stated_false, to: sys_limitation_cond}
+  - {is: v_spell, from: sys_limitation_cond_stated_false, to: stated_false}
+  - {is: v_value_of, from: sys_limitation_cond_unstated, to: sys_limitation_cond}
+  - {is: v_spell, from: sys_limitation_cond_unstated, to: unstated}
+  - {is: v_entry_of, from: '{cond}', to: sys_limitation}
+  - {is: v_metric_of, from: sys_limitation, to: mean_value}
   - {is: v_file_of, from: prior/babaei2025_ontology_prompt.json, to: pr_babaei}
   - {is: v_rows_of, from: [reported], to: pr_babaei}
   - {is: v_axis_of, from: pr_babaei_cond, to: pr_babaei}

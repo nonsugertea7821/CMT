@@ -76,6 +76,10 @@ individuals:
   o_sys_unplaced_neg_only: {is: exp.observation}
   o_sys_reading_symmetric: {is: exp.observation}
   o_sys_step_symmetric: {is: exp.observation}
+  o_sys_limit_mostly_open: {is: exp.observation}
+  o_sys_limit_paired_open: {is: exp.observation}
+  o_sys_limit_subj_unpaired: {is: exp.observation}
+  o_sys_mod_no_stated_false: {is: exp.observation}
 
 facts:
   - {is: syntax.v_use, from: lang, to: std}
@@ -131,3 +135,7 @@ facts:
   - {is: v_refer, from: o_sys_unplaced_neg_only, to: {is: v_level, from: sys_quadrants.none_other.mean_value, to: 0.0}}
   - {is: v_refer, from: o_sys_reading_symmetric, to: {is: v_level, from: sys_symmetry.reading.mean_value, to: 1.0}}
   - {is: v_refer, from: o_sys_step_symmetric, to: {is: v_level, from: sys_symmetry.step.mean_value, to: 1.0}}
+  - {is: v_refer, from: o_sys_limit_mostly_open, to: {is: v_come_before, from: sys_limitation.in_closed.mean_value, to: 0.5}}
+  - {is: v_refer, from: o_sys_limit_paired_open, to: {is: v_come_after, from: sys_limitation.pair_open.mean_value, to: 0.5}}
+  - {is: v_refer, from: o_sys_limit_subj_unpaired, to: {is: v_level, from: sys_limitation.pair_subj.mean_value, to: 0.0}}
+  - {is: v_refer, from: o_sys_mod_no_stated_false, to: {is: v_level, from: sys_limitation.stated_false.mean_value, to: 0.0}}
