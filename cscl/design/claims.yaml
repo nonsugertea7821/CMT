@@ -26,6 +26,9 @@ nodes:
   definition_cycle: {display: 定義の循環, extends: quality, mod: {of: [v_refer, from], with: definition}}
   # 時間を含む実行での宣言の範囲（h_open_declaration）の語
   declared_scope: {display: 宣言の範囲, extends: quality, mod: syntax.refer_from_individuals}
+  # 層とシグネチャ（h_layers_signature）の語
+  layer_placement: {display: 層の置き場, extends: quality, mod: {of: [v_depend, from], with: syntax.domain}}
+  signature_class: {display: シグネチャから定まる分類, extends: quality, mod: {of: [v_depend, from], with: syntax.base}}
   v_not_trigger: {display: 引き起こさない, extends: occurrent, from: any, to: occurrent, holds: [{is: depend, from: to, to: from, neg: true}], opposite: v_trigger}
 
 individuals:
@@ -133,6 +136,15 @@ individuals:
   # halted: false を書いた記録は adopt_withdraw だけで、今の名前だけで当てはまる歩みが見つかったので、新しい名前を試す部分は使われていない
   h_open_runtime: {is: exp.hyp_supported}
   b_open_runtime: {is: exp.item_done}
+  # ===== 層とシグネチャ。利用者の指摘「層を分けるには、その層に分類されることを論理演算的に検出する法則が要る」「シグネチャから論理演算的に定められる分類を探すべき」から。
+  # 結果を見る前に登録した。確かめ方は exp/experiments/sys_layers.py の説明に固定。
+  # 各ノードから定義の辺（上位・限定の動詞と相手・動詞の端の種類）をたどり、届いたノードの holds・pre・post で分類する。
+  # 変化する動詞に届けば change、そうでなく refer に届けば refer、どちらでもなければ still。否定の辺もたどる（否定は「述べられていない」で、語としては使う）。
+  # 中身は「層の置き場は、シグネチャから定まる分類に依存する」。対応は ontology → still、syntax → refer、runtime → change。
+  # 支持は、3つの層のすべてのノードが対応する分類に入るとき（層を法則で決めるには、どのノードも事実から判定できなければならない）。1つでも外れれば反証。
+  # 登録の前に分かっていること: 前の版の体系で、似た表を会話の中で作り、外れるノードがあった。反証が見込まれる。目的は一致の度合いと外れの記録
+  h_layers_signature: {is: exp.hyp_untested}
+  b_layers_signature: {is: exp.item_queued}
   # ===== 定義の循環（自分を限定するものについて述べる定義）。利用者の問い「self がシグネチャになるとどうなるか」から
   # 定義の辺（上位・名前を付けた修飾語・限定の with）をたどった循環を数えた（exp/experiments/sys_cycles.py）。
   # 仮説は、観察を見た後に立てた（事前の登録ではない）。中身は「定義の循環は、否定の限定を通らない」。
@@ -273,6 +285,8 @@ facts:
   - {is: exp.v_check, from: b_open_declaration, to: h_open_declaration}
   - {is: v_refer, from: h_open_runtime, to: {is: v_not_depend, from: declared_scope, to: runtime.state}}
   - {is: exp.v_check, from: b_open_runtime, to: h_open_runtime}
+  - {is: v_refer, from: h_layers_signature, to: {is: v_depend, from: layer_placement, to: signature_class}}
+  - {is: exp.v_check, from: b_layers_signature, to: h_layers_signature}
   - {is: v_refer, from: o_sys_open_runtime_steps_ok, to: {is: v_level, from: sys_open_runtime.ok.mean_value, to: 1.0}}
   - {is: v_refer, from: o_sys_open_runtime_never_shrinks, to: {is: v_level, from: sys_open_runtime.declared_shrinks.mean_value, to: 0.0}}
   - {is: v_refer, from: o_sys_open_runtime_grows_by_creation, to: {is: v_level, from: sys_open_runtime.grows_by_creation.mean_value, to: 1.0}}
