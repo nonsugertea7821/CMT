@@ -2,7 +2,7 @@
 
 cscl.yaml の範囲のファイル（cscl/library/, 領域のファイル）が正本。自然言語の文章は正本ではない。
 
-cscl.yaml の root と library  概念の体系（axiom → ontology → syntax → runtime → std の層）。
+cscl.yaml の root と library  概念の体系（signature → ontology → syntax → runtime → std の層）。
   検査: 表示語の一意性 / gloss を持つのは最上位の2つだけ / 動詞の式（状態の関係・両端・第三のものの種類）の一意性 /
         動詞の下位が端を狭めていること / 修飾の型（その位置に来られるか）/ 分類の軸と値 / 概念の式の一意性 /
         役割が根拠となる定義を持つこと
@@ -152,8 +152,8 @@ def q_fact(f, dom, V=()):
 
 
 def lib_and_domain_files():
-    """(ファイル, 領域) を、公理、言語の層、領域のファイルの順に。"""
-    out = [(root_name(), "axiom")]
+    """(ファイル, 領域) を、シグネチャ、言語の層、領域のファイルの順に。"""
+    out = [(root_name(), "signature")]
     for p in library_files():
         out.append((str(p.relative_to(ROOT)), (yload(p.read_text(encoding="utf-8")) or {}).get("domain")))
     return out + [(n, d) for d, n in domain_files().items()]
@@ -165,7 +165,7 @@ def in_scope(key):
     excl = {p.resolve() for g in c.get("exclude") or [] for p in ROOT.glob(g)}
     return sorted({p.resolve() for g in c.get(key) or [] for p in ROOT.glob(g)} - excl)
 TOPS = ("ontology.continuant", "ontology.occurrent")
-LAYERS = ("axiom", "ontology", "syntax", "runtime", "std")   # 言語の層。下の層は上の層を参照しない
+LAYERS = ("signature", "ontology", "syntax", "runtime", "std")   # 言語の層。下の層は上の層を参照しない
 LOCALS, USES, _SCOPES = {}, {}, {}   # 領域 → その領域のノードの名前 / 使う領域 / 名前の解決表
 errors = []
 
@@ -240,7 +240,7 @@ def load(name):
         return yaml.load((SPEC / name).read_text(encoding="utf-8"), Loader=_Unique)
     A = yaml.load((SPEC / name).read_text(encoding="utf-8"), Loader=_Unique)
     libs = [(str(p.relative_to(ROOT)), yaml.load(p.read_text(encoding="utf-8"), Loader=_Unique) or {}) for p in library_files()]
-    LOCALS["axiom"], USES["axiom"] = set(A.get("nodes") or {}), uses_in(A, "axiom")
+    LOCALS["signature"], USES["signature"] = set(A.get("nodes") or {}), uses_in(A, "signature")
     for _, D in libs:
         LOCALS[D["domain"]], USES[D["domain"]] = set(D.get("nodes") or {}), uses_in(D, D["domain"])
     _SCOPES.clear()
@@ -701,7 +701,7 @@ class Ontology:
                 err(f"axes.{aid}: 値の種類 {a['values']} が、grammar.values に書かれていない")
 
     def resolve(self, word, dom):
-        """領域を書かない語を、ノードの識別子に解決する。その領域、axiom、ほかの領域にただ1つ、の順に探す。"""
+        """領域を書かない語を、ノードの識別子に解決する。その領域、signature、ほかの領域にただ1つ、の順に探す。"""
         if f"{dom}.{word}" in self.N:
             return f"{dom}.{word}"
         if word in self.N:
@@ -710,7 +710,7 @@ class Ontology:
         return found[0] if len(found) == 1 else None
 
     def domain(self, nid):
-        return nid.split(".", 1)[0] if "." in nid else "axiom"
+        return nid.split(".", 1)[0] if "." in nid else "signature"
 
     def refs(self, nid):
         """ノードの式が参照しているノード。"""
@@ -859,7 +859,7 @@ class Ontology:
         for i in self.I:
             if isinstance(self.I[i], str):
                 add("is", i, self.I[i])
-            add("domain", i, "axiom" if i in (self.O.get("individuals") or {}) else self.Isubj.get(i, self.Idom))
+            add("domain", i, "signature" if i in (self.O.get("individuals") or {}) else self.Isubj.get(i, self.Idom))
         for aid, a in self.AX.items():
             add("exists", aid)
             for v in a["value"] if isinstance(a["value"], list) else []:
@@ -900,10 +900,10 @@ class Ontology:
         return None
 
     def q(self, w):
-        """検査が名前で参照する語を、ノードの識別子に解決する（領域を書かない語は、個体の領域、axiom の順に探す）。"""
+        """検査が名前で参照する語を、ノードの識別子に解決する（領域を書かない語は、個体の領域、signature の順に探す）。"""
         if not isinstance(w, str) or w in self.N or w in self.I or w == "any":
             return w
-        return self.resolve(w, self.Idom or "axiom") or w
+        return self.resolve(w, self.Idom or "signature") or w
 
     def occupies(self, kind, end, verb):
         """個体（種類 kind）が、動詞 verb の端の種類 end の位置を占めてよいか。
@@ -1122,7 +1122,7 @@ class Ontology:
     def mods_of(self, nid):
         return [m for x in [nid] + self.ancestors(nid) for m in (self.N[x].get("mod") or []) if isinstance(m, dict)]
 
-    def field_ok(self, kind, f, dom="axiom"):
+    def field_ok(self, kind, f, dom="signature"):
         """種類 kind の個体に、項目 f を書けるか。項目の表は持たず、式から決める。
         f が動詞かその位置の形（s, p, o）: kind が「について述べる」の始点に来る種類（文）であること。
         それ以外: f かその下位に、kind のものとの関係で限定されたノードがあること。または、kind の式が f のものとの関係で限定されていること。"""
@@ -1487,7 +1487,7 @@ def build():
                 err(f"{name} {iid}: 個体の識別子が、ほかの個体かノードと重なっている")
         T.I |= {iid: x.get("is") for iid, x in X["individuals"].items() if x.get("is") in T.N}
         T.Isubj |= {iid: dom for iid in X["individuals"]}
-    gather({"domain": "axiom", "_local": set(), "individuals": core, "facts": O.get("facts")}, T, "ontology.yaml")
+    gather({"domain": "signature", "_local": set(), "individuals": core, "facts": O.get("facts")}, T, "ontology.yaml")
     for dom, (name, X) in Dm.items():
         gather(X, T, name)
         check_derived(X, T, name)
