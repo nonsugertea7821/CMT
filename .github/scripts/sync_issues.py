@@ -93,9 +93,11 @@ def claims():
             side = SIDE[C["side"][cid]]
             ss, oo = ([v] if isinstance(v, str) else v for v in (x["s"], x["o"]))
             if x["p"] == "is_a":
-                content = "、".join(f"{ja(a)} は {ja(b)} の一種である" for a in ss for b in oo)
+                one = "の一種でない" if x.get("neg") else "の一種である"
+                content = "、".join(f"{ja(a)} は {ja(b)} {one}" for a in ss for b in oo)
             else:
-                content = "、".join(display.fact(T, x["p"], a, b, I) for a in ss for b in oo)
+                facts = [display.fact(T, x["p"], a, b, I) for a in ss for b in oo]
+                content = "、".join(f.replace("(", "（否定）(", 1) if x.get("neg") else f for f in facts)
             st = status_label(T, x["status"])
             lines = [f"- 種類: {kind}（{ja(x['status'])}）", f"- 中身: {content}",
                      f"- 識別子: `{cid}`（`{C['side'][cid]}` 領域）"]

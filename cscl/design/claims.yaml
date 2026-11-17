@@ -30,7 +30,7 @@ individuals:
 
   # ===== 動詞のシグネチャ（端の型）。観察の記録がまだないので暫定
   d_sig_depend_from: {is: lang_dec_tentative}
-  d_sig_depend_to: {is: lang_dec_tentative}
+  d_sig_depend_to: {is: lang_dec_adopted}
   d_sig_compose_from: {is: lang_dec_tentative}
   d_sig_compose_to: {is: lang_dec_tentative}
   d_sig_stage_from: {is: lang_dec_tentative}
@@ -58,7 +58,8 @@ individuals:
   d_sig_design_from: {is: lang_dec_tentative}
   d_sig_design_to: {is: lang_dec_tentative}
 
-  # ===== 否定だけで定義された種類の、肯定の定義の候補（法則 placed_deduced）
+  # ===== 否定だけで定義された種類（独立持続体 = 何にも依存しない持続体）の、肯定の定義の候補（法則 placed_deduced）。
+  # 中身は「依存されるものは、何にも依存しない」。観察に反したので、独立持続体を体系から除き、d_sig_depend_to を採用済みにした
   h_ic_is_bearer: {is: exp.hyp_refuted}
   # ===== 状態の関係（holds・pre・post の原子の動詞）の置き場
   h_state_relation_in_base: {is: exp.hyp_supported}
@@ -81,6 +82,7 @@ facts:
   - {is: v_refer, from: d_cscl_trust_previous_version, to: {is: v_depend, from: type_checker, to: previous_checker}}
   - {is: v_refer, from: d_sig_depend_from, to: {is: extends, from: dependent, to: continuant}}
   - {is: v_refer, from: d_sig_depend_to, to: {is: extends, from: depended, to: continuant}}
+  - {is: v_ground, from: d_sig_depend_to, to: h_ic_is_bearer}
   - {is: v_refer, from: d_sig_compose_from, to: {is: extends, from: component, to: continuant}}
   - {is: v_refer, from: d_sig_compose_to, to: {is: extends, from: kind, to: continuant}}
   - {is: v_refer, from: d_sig_stage_from, to: {is: extends, from: temporal_part, to: occurrent}}
@@ -107,7 +109,7 @@ facts:
   - {is: v_refer, from: d_sig_level_to, to: {is: extends, from: b, to: continuant}}
   - {is: v_refer, from: d_sig_design_from, to: {is: extends, from: designer, to: continuant}}
   - {is: v_refer, from: d_sig_design_to, to: {is: extends, from: designed, to: continuant}}
-  - {is: v_refer, from: h_ic_is_bearer, to: {is: v_depend, from: dependent, to: independent_continuant}}
+  - {is: v_refer, from: h_ic_is_bearer, to: {is: v_depend, from: depended, to: continuant, neg: true}}
   - {is: v_refer, from: o_sys_depended_ic_below_gdc, to: {is: v_come_before, from: sys_depend_to.ic.mean_value, to: sys_depend_to.gdc.mean_value}}
   - {is: v_refer, from: o_sys_depended_mostly_depend, to: {is: v_come_after, from: sys_depend_to.also_depends.mean_value, to: 0.5}}
   - {is: v_contradict, from: o_sys_depended_ic_below_gdc, to: h_ic_is_bearer}

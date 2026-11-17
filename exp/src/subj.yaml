@@ -16,7 +16,7 @@ nodes:
   v_located: {display: 所在する, extends: v_compose, from: land, to: region}
   v_begin: {display: 始まる, extends: occurrent, from: process, to: any, holds: [{is: depend, from: from, to: to}, {is: after, from: from, to: to}]}
   v_end: {display: 終わる, extends: occurrent, from: process, to: any, holds: [{is: depend, from: from, to: to}, {is: after, from: to, to: from}]}
-  v_sell: {display: 販売する, extends: occurrent, from: agent, to: object, new_kind: money, pre: [{is: part, from: to, to: from}], post: [{is: part, from: to, to: from, neg: true}, {is: part, from: new, to: from}]}
+  v_sell: {display: 販売する, extends: occurrent, from: agent, to: component, new_kind: money, pre: [{is: part, from: to, to: from}], post: [{is: part, from: to, to: from, neg: true}, {is: part, from: new, to: from}]}
   v_register: {display: 登録者として関わらせる, extends: v_involve, from: service, to: person}
   v_seated: {display: 席にいる, extends: occurrent, from: person, to: process, holds: [{is: involve, from: to, to: from}]}
 
@@ -31,7 +31,7 @@ nodes:
   profit_gap: {display: 利益から目標額を引いた額（円）, extends: magnitude, mod: {of: [v_depend, from], with: account}, axis: amount}
 
   # ===== もの =====
-  agent: {display: 主体, extends: independent_continuant, mod: {of: [v_perform, from]}}
+  agent: {display: 主体, extends: continuant, mod: {of: [v_perform, from]}}
   person: {display: 人, extends: agent, mod: {of: [v_compose, to], with: agent, neg: true}}
   person_age_neg: {display: 年齢を問わない人, extends: person, mod: {of: [v_depend, to], with: age, quant: any}}
   organization: {display: 組織, extends: agent, mod: {of: [v_compose, to], with: person, at: {count: {gt: 1}}}}
@@ -54,9 +54,8 @@ nodes:
   setting_permission: {display: システムの設定を変更する権限, extends: permission, mod: {of: [v_depend, from], with: setting_rule}}
   admin: {display: 管理者, extends: user, mod: {of: [v_depend, to], with: setting_permission}}
 
-  object: {display: 物, extends: independent_continuant, mod: {of: [v_perform, from], neg: true}}
-  goods: {display: 商品, extends: object, mod: {of: [v_sell, to]}}
-  warehouse: {display: 倉庫, extends: object, mod: {of: [v_store, to]}}
+  goods: {display: 商品, extends: continuant, mod: {of: [v_sell, to]}}
+  warehouse: {display: 倉庫, extends: continuant, mod: {of: [v_store, to]}}
   stored_goods: {display: 倉庫にある商品, extends: goods, mod: {of: [v_store, from], with: warehouse}}
   stock: {display: 在庫, extends: stored_goods, mod: {of: [v_allocate, to], with: order, neg: true}}
   category: {display: 商品分類, extends: information_entity, mod: {of: [v_classify, to]}}
@@ -91,8 +90,8 @@ nodes:
   absence: {display: 欠席, extends: attendance, mod: {of: [v_refer, from], with: absent_person}}
 
   # ===== 場所 =====
-  land: {display: 土地, extends: independent_continuant, mod: {of: [v_located, from]}}
-  region: {display: 地方, extends: independent_continuant, mod: {of: [v_located, to]}}
+  land: {display: 土地, extends: continuant, mod: {of: [v_located, from]}}
+  region: {display: 地方, extends: continuant, mod: {of: [v_located, to]}}
   municipality: {display: 市町村, extends: region, mod: {of: [v_compose, from], with: region}}
   urban: {display: 都市部, extends: municipality, mod: {of: [v_depend, to], with: population, at: {amount: {ge: 10000}}}}
   domestic: {display: 国内, extends: land, mod: {of: [v_located, from], with: honshu}}
