@@ -4,7 +4,7 @@
 domain: syntax
 
 grammar:
-  grammar: [system, nodes, mod, cmp, base, axes, run, position, rel, function, value, logic, runtime, domain, individuals, facts, grammar]
+  grammar: [system, nodes, mod, cmp, base, axes, run, position, rel, function, value, logic, runtime, strategy, world, laws, rule_word, use_word, domain, individuals, facts, grammar]
   system: [base, axes, nodes, individuals, facts, runtime, grammar]
   nodes: [display, gloss, extends, from, to, new_kind, holds, pre, post, form, of, with, at, neg, mod, val, cmp, axis, many, opposite, derive, via, verbatim]
   mod: [of, with, neg, quant, at]
@@ -18,6 +18,12 @@ grammar:
   value: [number, literal]
   logic: [not, all, some, between]   # true と false は、真偽の軸の値
   runtime: [pre_rule, post_rule, law_check, binding, choice, progress]
+  # 以下は、型検査と実行器が名前で読む語（翻訳する側が知っている語）。コードの持つ語の集まりと等しいことを、それぞれの検査が確かめる
+  strategy: [replace, every_step, distinct, recorded, changes_state]   # 実行の戦略（runtime 節の値。pre_rule は logic の all か some）
+  world: [world, closed_world]   # 書かれていない文の扱い（領域が v_presume で置く）
+  laws: [law_rule, law_given, law_relation]   # 法則の種類
+  rule_word: [v_assume, v_derive, v_require, v_govern, variable]   # 法則を書く語
+  use_word: [v_use, v_presume]   # 領域が使う層と、置く前提を書く語
   domain: [domain, nodes, individuals, facts]   # 領域のファイル（exp/src/exp.yaml）
   individuals: [is, display, val]
   facts: [is, from, to, new, at, neg, val]   # 事実は動詞の個体。位置に名前を付けて書く。holds / pre / post も同じ形。neg は「述べられていない」、val: {truth: false} は「偽と述べる」
@@ -124,6 +130,8 @@ nodes:
 
   # ===== 述語論理の語。「について述べる」の限定として書く。区別は法則 truth_distinct が与える =====
   logic: {display: 述語論理の語, extends: word, mod: refer_from_sentence}
+  rule_word: {display: 法則を組み立てる語, extends: word, mod: {of: [v_compose, to], with: laws}}
+  use_word: {display: 領域の宣言を組み立てる語, extends: word, mod: {of: [v_compose, to], with: domain}}
   sentence_refer_from_sentence: {display: 文へ述べる文, extends: sentence, mod: refer_from_sentence}
   not: {display: 否定（示されていない文を述べる文）, extends: sentence_refer_from_sentence, mod: refer_from_facts}
   # 書かれていない文の扱いは、領域ごとに前提として選ぶ（v_presume）。世界は、書かれていない文の真偽を述べる文。

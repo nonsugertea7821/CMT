@@ -223,6 +223,11 @@ def main():
         merge_domain(name, O)
     T = Ontology(O)
     G = T.G["run"]
+    named = {"strategy": set().union(*IMPLEMENTED.values()) - set(T.G["logic"]), "world": set(WORLDS)}
+    for sect, ws in named.items():   # 実行器が名前で読む語は、文法に書かれている
+        if set(T.G.get(sect) or []) != ws:
+            print(f"実行の検査に失敗: 実行器が名前で読む語 {sorted(ws)} と、grammar.{sect} の語 {sorted(T.G.get(sect) or [])} が違う")
+            sys.exit(1)
     for k, v in T.O["runtime"].items():
         if v not in IMPLEMENTED.get(k, ()):
             print(f"実行の検査に失敗: runtime.{k} の選択 {v} は、この検査に実装がない")

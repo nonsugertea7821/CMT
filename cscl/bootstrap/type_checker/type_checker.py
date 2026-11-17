@@ -130,6 +130,9 @@ def q_node(n, dom):
 
 
 RULE_VERBS = ("v_assume", "v_derive", "v_require")
+# 型検査が名前で読む語（文法の節ごと）。syntax の grammar の同じ節と等しいことを確かめる（翻訳する側が知っている語は、文法に書かれている）
+KEYWORDS = {"laws": {"law_rule", "law_given", "law_relation"}, "rule_word": set(RULE_VERBS) | {"v_govern", "variable"},
+            "use_word": {"v_use", "v_presume"}, "world": {"world", "closed_world"}}
 
 
 def qw(w, dom):
@@ -664,6 +667,9 @@ class Ontology:
             for w in words:
                 if self.resolve(w, "syntax") is None:
                     err(f"grammar.{sect}: 語 {w} がノードになっていない")
+        for sect, ws in KEYWORDS.items():
+            if set(G.get(sect) or []) != ws:
+                err(f"grammar.{sect}: 型検査が名前で読む語 {sorted(ws)} と、文法に書かれた語 {sorted(G.get(sect) or [])} が違う")
         L = self.O["laws"]
         for lid, l in L.items():
             where = f"法則 {lid}"
