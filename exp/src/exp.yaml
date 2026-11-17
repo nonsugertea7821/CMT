@@ -488,6 +488,15 @@ individuals:
   sys_state_atoms: {is: measurement_family}
   sys_state_atoms_cond: {is: family_axis, val: {text: cond}}
   sys_state_atoms_cond_in_base: {is: axis_value, val: {text: in_base}}
+  sys_quadrants: {is: measurement_family}
+  sys_quadrants_cond: {is: family_axis, val: {text: cond}}
+  sys_quadrants_cond_quant_alone: {is: axis_value, val: {text: quant_alone}}
+  sys_quadrants_cond_rel_mixed: {is: axis_value, val: {text: rel_mixed}}
+  sys_quadrants_cond_none_other: {is: axis_value, val: {text: none_other}}
+  sys_symmetry: {is: measurement_family}
+  sys_symmetry_cond: {is: family_axis, val: {text: cond}}
+  sys_symmetry_cond_reading: {is: axis_value, val: {text: reading}}
+  sys_symmetry_cond_step: {is: axis_value, val: {text: step}}
   pr_babaei: {is: measurement_family}
   pr_babaei_cond: {is: family_axis, val: {text: cond}}
   pr_babaei_cond_qwen72b_question: {is: axis_value, val: {text: qwen72b_question}}
@@ -2008,6 +2017,26 @@ facts:
   - {is: v_spell, from: sys_state_atoms_cond_in_base, to: in_base}
   - {is: v_entry_of, from: '{cond}', to: sys_state_atoms}
   - {is: v_metric_of, from: sys_state_atoms, to: mean_value}
+  - {is: v_file_of, from: sys_quadrants.json, to: sys_quadrants}
+  - {is: v_rows_of, from: [rows], to: sys_quadrants}
+  - {is: v_axis_of, from: sys_quadrants_cond, to: sys_quadrants}
+  - {is: v_value_of, from: sys_quadrants_cond_quant_alone, to: sys_quadrants_cond}
+  - {is: v_spell, from: sys_quadrants_cond_quant_alone, to: quant_alone}
+  - {is: v_value_of, from: sys_quadrants_cond_rel_mixed, to: sys_quadrants_cond}
+  - {is: v_spell, from: sys_quadrants_cond_rel_mixed, to: rel_mixed}
+  - {is: v_value_of, from: sys_quadrants_cond_none_other, to: sys_quadrants_cond}
+  - {is: v_spell, from: sys_quadrants_cond_none_other, to: none_other}
+  - {is: v_entry_of, from: '{cond}', to: sys_quadrants}
+  - {is: v_metric_of, from: sys_quadrants, to: mean_value}
+  - {is: v_file_of, from: sys_symmetry.json, to: sys_symmetry}
+  - {is: v_rows_of, from: [rows], to: sys_symmetry}
+  - {is: v_axis_of, from: sys_symmetry_cond, to: sys_symmetry}
+  - {is: v_value_of, from: sys_symmetry_cond_reading, to: sys_symmetry_cond}
+  - {is: v_spell, from: sys_symmetry_cond_reading, to: reading}
+  - {is: v_value_of, from: sys_symmetry_cond_step, to: sys_symmetry_cond}
+  - {is: v_spell, from: sys_symmetry_cond_step, to: step}
+  - {is: v_entry_of, from: '{cond}', to: sys_symmetry}
+  - {is: v_metric_of, from: sys_symmetry, to: mean_value}
   - {is: v_file_of, from: prior/babaei2025_ontology_prompt.json, to: pr_babaei}
   - {is: v_rows_of, from: [reported], to: pr_babaei}
   - {is: v_axis_of, from: pr_babaei_cond, to: pr_babaei}
