@@ -123,6 +123,13 @@ individuals:
   # 法則にする理由は観察だけではない。否定を通る循環は C = {x | ¬v(x, C)}（Russell の逆理）の形になり不動点がないことがある。
   # 否定を通らない（単調な）定義には不動点がある（Knaster–Tarski）。法則の規則にはすでに同じ条件（strata）がある
   h_definition_positive: {is: exp.hyp_supported}
+  # 法則 definition_stratified の理由になる定理（先行研究）
+  pw_russell1902_paradox: {is: exp.prior_work, display: "先行研究: Russell 1902, Frege への書簡（van Heijenoort 編 From Frege to Gödel, 1967 に所収）。Russell 1903, The Principles of Mathematics, 第10章"}
+  pwc_russell1902_negative_self: {is: exp.prior_claim, display: "要旨: 自分を含まない集まりの集まり {x | x ∉ x} を、制限なしの内包で作ると矛盾する。自分についての定義が否定を通ると、定義が定まらない"}
+  pw_tarski1955_fixpoint: {is: exp.prior_work, display: "先行研究: Tarski 1955, A lattice-theoretical fixpoint theorem and its applications（Pacific Journal of Mathematics 5(2), 285–309）"}
+  pwc_tarski1955_monotone: {is: exp.prior_claim, display: "要旨: 完備束の上の単調な写像は不動点を持ち、不動点の全体も完備束になる（最小と最大の不動点がある）。否定を通らない自己参照の定義は、単調なので定まる"}
+  pw_apt1988_stratified: {is: exp.prior_work, display: "先行研究: Apt, Blair & Walker 1988, Towards a theory of declarative knowledge（Minker 編 Foundations of Deductive Databases and Logic Programming, 89–148）"}
+  pwc_apt1988_stratified: {is: exp.prior_claim, display: "要旨: 否定を通る再帰を持たない（層に分けられる）論理プログラムは、層ごとに求まる1つの標準モデルを持つ"}
   d_definition_stratified: {is: lang_dec_adopted}
 
   # ===== 観察（体系そのものを数えた族 sys_* の値。exp/experiments/sys_ends.py, sys_structure.py）
@@ -221,6 +228,13 @@ facts:
   - {is: v_refer, from: o_sys_cycles_mostly_one_relation, to: {is: v_come_after, from: sys_cycles.same_relation.mean_value, to: 0.5}}
   - {is: v_refer, from: o_sys_cycles_mostly_syntax, to: {is: v_come_after, from: sys_cycles.in_syntax.mean_value, to: 0.5}}
   - {is: v_support, from: o_sys_cycles_positive, to: h_definition_positive}
+  - {is: exp.v_state, from: pw_russell1902_paradox, to: pwc_russell1902_negative_self}
+  - {is: v_refer, from: pwc_russell1902_negative_self, to: {is: v_not_depend, from: definition_cycle, to: syntax.not}}
+  - {is: exp.v_prior_same, from: pw_russell1902_paradox, to: h_definition_positive}
+  - {is: exp.v_state, from: pw_apt1988_stratified, to: pwc_apt1988_stratified}
+  - {is: v_refer, from: pwc_apt1988_stratified, to: {is: v_not_depend, from: definition_cycle, to: syntax.not}}
+  - {is: exp.v_prior_same, from: pw_apt1988_stratified, to: h_definition_positive}
+  - {is: exp.v_state, from: pw_tarski1955_fixpoint, to: pwc_tarski1955_monotone}
   - {is: v_refer, from: h_open_declaration, to: {is: v_depend, from: declared_scope, to: runtime.steps}}
   - {is: exp.v_check, from: b_open_declaration, to: h_open_declaration}
   - {is: v_refer, from: o_sys_declaration_steps_ok, to: {is: v_level, from: sys_declaration.b_ok.mean_value, to: 1.0}}
