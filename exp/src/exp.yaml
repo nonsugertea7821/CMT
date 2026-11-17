@@ -624,6 +624,9 @@ individuals:
   sys_subsume_cond_any_end: {is: axis_value, val: {text: any_end}}
   sys_subsume_cond_all_ancestors: {is: axis_value, val: {text: all_ancestors}}
   sys_subsume_cond_some_usable: {is: axis_value, val: {text: some_usable}}
+  sys_spelling: {is: measurement_family}
+  sys_spelling_cond: {is: family_axis, val: {text: cond}}
+  sys_spelling_cond_multi: {is: axis_value, val: {text: multi}}
   sys_outlive: {is: measurement_family}
   sys_outlive_cond: {is: family_axis, val: {text: cond}}
   sys_outlive_cond_outlives_source: {is: axis_value, val: {text: outlives_source}}
@@ -2537,6 +2540,13 @@ facts:
   - {is: v_spell, from: sys_subsume_cond_some_usable, to: some_usable}
   - {is: v_entry_of, from: '{cond}', to: sys_subsume}
   - {is: v_metric_of, from: sys_subsume, to: mean_value}
+  - {is: v_file_of, from: sys_spelling.json, to: sys_spelling}
+  - {is: v_rows_of, from: [rows], to: sys_spelling}
+  - {is: v_axis_of, from: sys_spelling_cond, to: sys_spelling}
+  - {is: v_value_of, from: sys_spelling_cond_multi, to: sys_spelling_cond}
+  - {is: v_spell, from: sys_spelling_cond_multi, to: multi}
+  - {is: v_entry_of, from: '{cond}', to: sys_spelling}
+  - {is: v_metric_of, from: sys_spelling, to: mean_value}
   - {is: v_file_of, from: sys_content_symmetry.json, to: sys_content_symmetry}
   - {is: v_rows_of, from: [rows], to: sys_content_symmetry}
   - {is: v_axis_of, from: sys_content_symmetry_cond, to: sys_content_symmetry}
