@@ -13,7 +13,7 @@ nodes:
   lang_dec_tentative: {display: 言語の暫定の決定, extends: exp.dec_tentative, mod: is_from_lang_decision}
   lang_dec_withdrawn: {display: 言語の取り下げた決定, extends: exp.dec_withdrawn, mod: is_from_lang_decision}
   # 否定の動詞（中身の否定は、否定の動詞で書く。exp の v_not_transfer と同じ形）
-  v_not_depend: {display: に依存しない, extends: occurrent, from: continuant, to: continuant, holds: [{is: depend, from: from, to: to, neg: true}], opposite: v_depend}
+  v_not_depend: {display: に依存しない, extends: v_immune, from: continuant, to: continuant, opposite: v_depend}
   type_checker: {display: 型検査器, extends: artifact, mod: refer_from_laws}
   previous_checker: {display: 前の版の型検査器, extends: type_checker, mod: {of: [v_come_after, to], with: type_checker}}
   # 真偽の対称性と健全性（h_symmetry_soundness）の語
@@ -33,7 +33,7 @@ nodes:
   negated_limitation: {display: 否定の限定, extends: quality, mod: {of: [v_refer, from], with: syntax.neg}}
   # 持続体と生起体を導く（h_tops_derivable）の語
   top_placement: {display: 最上位の置き場, extends: quality, mod: syntax.refer_from_occurrent}
-  v_not_trigger: {display: 引き起こさない, extends: occurrent, from: any, to: occurrent, holds: [{is: depend, from: to, to: from, neg: true}], opposite: v_trigger}
+  v_not_trigger: {display: 引き起こさない, extends: v_not_transfer, from: any, to: occurrent, opposite: v_trigger}
 
 individuals:
   lang: {is: domain, display: 言語}
