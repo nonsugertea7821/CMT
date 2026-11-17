@@ -265,6 +265,15 @@ individuals:
   o_sys_outlive_never_outlived: {is: exp.observation}
   o_sys_outlive_compute_steps_ok: {is: exp.observation}
   o_sys_outlive_speak_steps_ok: {is: exp.observation}
+  # 動詞の種差の観察（exp/experiments/sys_differentia.py）。仮説の確かめではない。手順は実行の前に登録した。
+  # 利用者の気づき「それぞれに固有の関係が書かれていなかった」を抽象化した: 動詞の式は類と種差からなり、種差が状態の関係になく端の種類だけにあるものを数える。
+  # 結果: 式の語根 56 のうち、状態の式がほかの語根と同じものの組が 12（動的 16 のうち 7、静的 40 のうち 19 が組に入る）。在るようにする動的な語根 9 のうち、産物に固有の関係がないのは v_design と v_compute。
+  # 組の分かれ方（会話で分類）: 端の最上位だけ（v_come_after と v_happen_after、v_compose と v_stage、v_trigger と v_cause）、
+  #   端の any だけ（v_compute、v_rely、v_immune、v_not_transfer）、new_kind だけ（v_judge・v_see・v_learn、v_withdraw・v_vary、v_level・v_near）、
+  #   端を狭めただけ（v_perform と subj.v_seated、v_refer・std.v_close・syntax.v_collect）
+  o_sys_differentia_dyn_not_all_unique: {is: exp.observation}
+  o_sys_differentia_st_not_all_unique: {is: exp.observation}
+  o_sys_differentia_creation_not_all_specific: {is: exp.observation}
   o_sys_frame_declared_never_grows: {is: exp.observation}
   o_sys_frame_declared_never_shrinks: {is: exp.observation}
   o_sys_frame_creates_over_removes: {is: exp.observation}
@@ -377,6 +386,9 @@ facts:
   - {is: v_contradict, from: o_sys_tops_nouns_mostly_static, to: h_tops_derivable}
   - {is: v_refer, from: o_sys_tops_concept_static, to: {is: v_level, from: sys_tops.concept_dynamic.mean_value, to: 0.0}}
   - {is: v_contradict, from: o_sys_tops_concept_static, to: h_tops_derivable}
+  - {is: v_refer, from: o_sys_differentia_dyn_not_all_unique, to: {is: v_come_before, from: sys_differentia.dyn_unique.mean_value, to: 1.0}}
+  - {is: v_refer, from: o_sys_differentia_st_not_all_unique, to: {is: v_come_before, from: sys_differentia.st_unique.mean_value, to: 1.0}}
+  - {is: v_refer, from: o_sys_differentia_creation_not_all_specific, to: {is: v_come_before, from: sys_differentia.creation_specific.mean_value, to: 1.0}}
   - {is: v_refer, from: o_sys_outlive_never_outlived, to: {is: v_level, from: sys_outlive.outlives_source.mean_value, to: 0.0}}
   - {is: v_refer, from: o_sys_outlive_compute_steps_ok, to: {is: v_level, from: sys_outlive.c_step_ok.mean_value, to: 1.0}}
   - {is: v_refer, from: o_sys_outlive_speak_steps_ok, to: {is: v_level, from: sys_outlive.s_step_ok.mean_value, to: 1.0}}

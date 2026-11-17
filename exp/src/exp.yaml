@@ -611,6 +611,12 @@ individuals:
   sys_tops_cond_reaches_dynamic: {is: axis_value, val: {text: reaches_dynamic}}
   sys_tops_cond_concept_dynamic: {is: axis_value, val: {text: concept_dynamic}}
   sys_tops_cond_supported: {is: axis_value, val: {text: supported}}
+  sys_differentia: {is: measurement_family}
+  sys_differentia_cond: {is: family_axis, val: {text: cond}}
+  sys_differentia_cond_root: {is: axis_value, val: {text: root}}
+  sys_differentia_cond_dyn_unique: {is: axis_value, val: {text: dyn_unique}}
+  sys_differentia_cond_st_unique: {is: axis_value, val: {text: st_unique}}
+  sys_differentia_cond_creation_specific: {is: axis_value, val: {text: creation_specific}}
   sys_outlive: {is: measurement_family}
   sys_outlive_cond: {is: family_axis, val: {text: cond}}
   sys_outlive_cond_outlives_source: {is: axis_value, val: {text: outlives_source}}
@@ -2496,6 +2502,19 @@ facts:
   - {is: v_spell, from: sys_outlive_cond_s_step_ok, to: s_step_ok}
   - {is: v_entry_of, from: '{cond}', to: sys_outlive}
   - {is: v_metric_of, from: sys_outlive, to: mean_value}
+  - {is: v_file_of, from: sys_differentia.json, to: sys_differentia}
+  - {is: v_rows_of, from: [rows], to: sys_differentia}
+  - {is: v_axis_of, from: sys_differentia_cond, to: sys_differentia}
+  - {is: v_value_of, from: sys_differentia_cond_root, to: sys_differentia_cond}
+  - {is: v_spell, from: sys_differentia_cond_root, to: root}
+  - {is: v_value_of, from: sys_differentia_cond_dyn_unique, to: sys_differentia_cond}
+  - {is: v_spell, from: sys_differentia_cond_dyn_unique, to: dyn_unique}
+  - {is: v_value_of, from: sys_differentia_cond_st_unique, to: sys_differentia_cond}
+  - {is: v_spell, from: sys_differentia_cond_st_unique, to: st_unique}
+  - {is: v_value_of, from: sys_differentia_cond_creation_specific, to: sys_differentia_cond}
+  - {is: v_spell, from: sys_differentia_cond_creation_specific, to: creation_specific}
+  - {is: v_entry_of, from: '{cond}', to: sys_differentia}
+  - {is: v_metric_of, from: sys_differentia, to: mean_value}
   - {is: v_file_of, from: sys_content_symmetry.json, to: sys_content_symmetry}
   - {is: v_rows_of, from: [rows], to: sys_content_symmetry}
   - {is: v_axis_of, from: sys_content_symmetry_cond, to: sys_content_symmetry}
