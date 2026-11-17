@@ -185,6 +185,9 @@ nodes:
   inline_expansion: {display: 設問中での定義の展開, extends: text_injection, mod: {of: [v_involve, from], with: position_after_word}}
   channel_involve_from_taught_vector: {display: 教示で得られたベクトルへに関わらせる接続手段, extends: channel, mod: {of: [v_involve, from], with: taught_vector}}
   concept_vector: {display: 概念ベクトル, extends: state_shift, mod: {of: [v_depend, from], with: label_token_positions}}
+  qualification_vector: {display: 限定の差分ベクトル（下位の概念ベクトル − 上位の概念ベクトル）, extends: concept_vector, mod: {of: [v_depend, from], with: genus_concept}}
+  relation_operator: {display: 関係を取り出す線形の演算子, extends: state_shift, mod: {of: [v_depend, from], with: dependent}}
+  unseen_relation: {display: 学習していない関係, extends: dependent, mod: {of: [v_teach, from], neg: true}}
   single_layer_vector: {display: 単一層の概念ベクトル, extends: concept_vector, mod: {of: [v_depend, from], with: layer, at: {count: 1}}}
   multi_layer_vector: {display: 複数層の概念ベクトル, extends: concept_vector, mod: {of: [v_depend, from], with: layer, at: {count: {gt: 1}}}}
   dedicated_token: {display: 概念専用のトークン, extends: identifier, mod: {of: [v_compose, from], with: context}}
@@ -358,6 +361,9 @@ individuals:
   pw_coppolillo2025_kg_injection: {is: prior_work, display: "先行研究: Coppolillo 2025, Injecting Knowledge Graphs into Large Language Models（arXiv:2505.07554）"}
   pw_babaei2025_ontotruth: {is: prior_work, display: "先行研究: Babaei Giglou et al. 2025, Beyond Statistical Parroting: Hard-Coding Truth into LLMs via Ontologies（CEUR-WS Vol-4079）"}
   pw_poiroux2024_typecheck: {is: prior_work, display: "先行研究: Poiroux et al. 2024, Improving Autoformalization using Type Checking（arXiv:2406.07222）"}
+  pw_park2025_hierarchical_geometry: {is: prior_work, display: "先行研究: Park, Choe, Jiang & Veitch 2025, The Geometry of Categorical and Hierarchical Concepts in Large Language Models（ICLR 2025, arXiv:2406.01506）"}
+  pw_hernandez2024_lre: {is: prior_work, display: "先行研究: Hernandez et al. 2024, Linearity of Relation Decoding in Transformer Language Models（ICLR 2024, arXiv:2308.09124）"}
+  pw_christ2025_relation_operators: {is: prior_work, display: "先行研究: Christ, Csiszárik, Becsó & Varga 2025, The Structure of Relation Decoding Linear Operators in Large Language Models（arXiv:2510.26543）"}
   # 先行研究の主張。表示語に、要旨の該当する文を引く。中身は v_refer で、仮説と同じ形に書く
   pwc_wang2025_interference: {is: prior_claim, display: "要旨: retrieval accuracy declines log-linearly toward zero as interference accumulates（前に並ぶ古い値が多いほど、最新の値の検索が下がる）"}
   pwc_liu2024_middle: {is: prior_claim, display: "要旨: performance is often highest when relevant information occurs at the beginning or end of the input context（関係する情報が末尾から離れて中ほどにあると下がる）"}
@@ -376,6 +382,9 @@ individuals:
   pwc_coppolillo2025_graph_tokens: {is: prior_claim, display: "要旨: KG 埋め込みをトークンにして入力に足すと、LLM を学習し直さずに、KG についての推論が上がる"}
   pwc_babaei2025_axioms_in_prompt: {is: prior_claim, display: "要旨: オントロジーの公理をプロンプトに入れると、回答の正しさが上がる（Pizza Ontology、0.5B〜72B）"}
   pwc_poiroux2024_filter: {is: prior_claim, display: "要旨: 型検査を通らない候補を捨てると、自然言語から Lean への形式化の正しさが上がる（ProofNet で最大 +18.4 ポイント）"}
+  pwc_park2025_orthogonal_refinement: {is: prior_claim, display: "要旨: 階層は直交として表される。下位の概念のベクトルは、上位のベクトルに、それと直交する差分を足したもの（Gemma, LLaMA-3、WordNet 900 以上の概念）"}
+  pwc_hernandez2024_linear_relation: {is: prior_claim, display: "要旨: 一部の関係では、モデルの関係の読み出しは、主語の表現への1つの線形変換で近似できる"}
+  pwc_christ2025_property_based: {is: prior_claim, display: "要旨: 関係ごとの線形演算子は関係に固有ではなく、関係をまたぐ性質を取り出している。そのため、学習していない関係への汎化は、近い関係にしか届かない"}
   model_4b: {is: open_weight_model, display: Qwen3-4B}
 
   # ===== 設計。1つしかない。
@@ -454,6 +463,14 @@ individuals:
   pr_babaei_cond_qwen05b_question: {is: axis_value, val: {text: qwen05b_question}}
   pr_babaei_cond_qwen05b_rdf: {is: axis_value, val: {text: qwen05b_rdf}}
   pr_cartridges: {is: measurement_family}
+  pr_christ: {is: measurement_family}
+  pr_christ_cond: {is: family_axis, val: {text: cond}}
+  pr_christ_cond_extended_test: {is: axis_value, val: {text: extended_test}}
+  pr_christ_cond_majority_baseline: {is: axis_value, val: {text: majority_baseline}}
+  pr_christ_cond_arithmetic_heldout: {is: axis_value, val: {text: arithmetic_heldout}}
+  pr_christ_cond_jacobian_baseline: {is: axis_value, val: {text: jacobian_baseline}}
+  o_pr_christ_above_majority: {is: prior_observation}
+  o_pr_christ_arithmetic_above_general: {is: prior_observation}
   pr_cartridges_cond: {is: family_axis, val: {text: cond}}
   pr_cartridges_cond_self_study: {is: axis_value, val: {text: self_study}}
   pr_cartridges_cond_next_token: {is: axis_value, val: {text: next_token}}
@@ -941,6 +958,8 @@ individuals:
   h_attention_carries_text_route: {is: hyp_untested}
   h_model_can_write_cscl: {is: hyp_untested}
   h_typecheck_feedback_raises_writing: {is: hyp_untested}
+  h_qualification_vector_transfers_to_unseen_genus: {is: hyp_untested}
+  h_qualification_teacher_raises_following: {is: hyp_untested}
   h_modifier_transfers_to_unseen_genus: {is: hyp_supported}
 
   # ===== 決定（is: decision）
@@ -2417,3 +2436,30 @@ facts:
   - {is: v_refer, from: pwc_babaei2025_axioms_in_prompt, to: {is: v_raise, from: text_injection, to: task_performance}}
   - {is: v_state, from: pw_poiroux2024_typecheck, to: pwc_poiroux2024_filter}
   - {is: v_refer, from: pwc_poiroux2024_filter, to: {is: v_raise, from: type_check_result, to: formalization_accuracy}}
+
+  # ===== 限定の差分ベクトル（言語の限定 mod を、子 − 親のベクトルとして教える）
+  - {is: v_refer, from: h_qualification_vector_transfers_to_unseen_genus, to: {is: v_transfer, from: qualification_vector, to: unseen_genus}}
+  - {is: v_refer, from: h_qualification_teacher_raises_following, to: {is: v_raise, from: qualification_vector, to: redefinition_following}}
+  - {is: v_state, from: pw_park2025_hierarchical_geometry, to: pwc_park2025_orthogonal_refinement}
+  - {is: v_refer, from: pwc_park2025_orthogonal_refinement, to: {is: v_sum, from: concept_vector, to: qualification_vector, new: concept_vector}}
+  - {is: v_state, from: pw_hernandez2024_lre, to: pwc_hernandez2024_linear_relation}
+  - {is: v_refer, from: pwc_hernandez2024_linear_relation, to: {is: v_transfer, from: relation_operator, to: word}}
+  - {is: v_state, from: pw_christ2025_relation_operators, to: pwc_christ2025_property_based}
+  - {is: v_refer, from: pwc_christ2025_property_based, to: {is: v_not_transfer, from: relation_operator, to: unseen_relation}}
+  - {is: v_file_of, from: prior/christ2025_relation_operators.json, to: pr_christ}
+  - {is: v_rows_of, from: [reported], to: pr_christ}
+  - {is: v_axis_of, from: pr_christ_cond, to: pr_christ}
+  - {is: v_value_of, from: pr_christ_cond_extended_test, to: pr_christ_cond}
+  - {is: v_spell, from: pr_christ_cond_extended_test, to: extended_test}
+  - {is: v_value_of, from: pr_christ_cond_majority_baseline, to: pr_christ_cond}
+  - {is: v_spell, from: pr_christ_cond_majority_baseline, to: majority_baseline}
+  - {is: v_value_of, from: pr_christ_cond_arithmetic_heldout, to: pr_christ_cond}
+  - {is: v_spell, from: pr_christ_cond_arithmetic_heldout, to: arithmetic_heldout}
+  - {is: v_value_of, from: pr_christ_cond_jacobian_baseline, to: pr_christ_cond}
+  - {is: v_spell, from: pr_christ_cond_jacobian_baseline, to: jacobian_baseline}
+  - {is: v_entry_of, from: '{cond}', to: pr_christ}
+  - {is: v_metric_of, from: pr_christ, to: mean_value}
+  - {is: v_refer, from: o_pr_christ_above_majority, to: {is: v_come_after, from: pr_christ.extended_test.mean_value, to: pr_christ.majority_baseline.mean_value}}
+  - {is: v_report, from: pw_christ2025_relation_operators, to: o_pr_christ_above_majority}
+  - {is: v_refer, from: o_pr_christ_arithmetic_above_general, to: {is: v_come_after, from: pr_christ.arithmetic_heldout.mean_value, to: pr_christ.extended_test.mean_value}}
+  - {is: v_report, from: pw_christ2025_relation_operators, to: o_pr_christ_arithmetic_above_general}
