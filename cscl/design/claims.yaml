@@ -28,6 +28,39 @@ individuals:
   d_cscl_display_derived: {is: lang_dec_adopted}
   d_cscl_trust_previous_version: {is: lang_dec_tentative}
 
+  # ===== 動詞のシグネチャ（端の型）。観察の記録がまだないので暫定
+  d_sig_depend_from: {is: lang_dec_tentative}
+  d_sig_depend_to: {is: lang_dec_tentative}
+  d_sig_compose_from: {is: lang_dec_tentative}
+  d_sig_compose_to: {is: lang_dec_tentative}
+  d_sig_stage_from: {is: lang_dec_tentative}
+  d_sig_stage_to: {is: lang_dec_tentative}
+  d_sig_come_after_from: {is: lang_dec_tentative}
+  d_sig_come_after_to: {is: lang_dec_tentative}
+  d_sig_refer_from: {is: lang_dec_tentative}
+  d_sig_agree_from: {is: lang_dec_tentative}
+  d_sig_agree_to: {is: lang_dec_tentative}
+  d_sig_express_from: {is: lang_dec_tentative}
+  d_sig_express_to: {is: lang_dec_tentative}
+  d_sig_involve_from: {is: lang_dec_tentative}
+  d_sig_involve_to: {is: lang_dec_tentative}
+  d_sig_perform_from: {is: lang_dec_tentative}
+  d_sig_perform_to: {is: lang_dec_tentative}
+  d_sig_trigger_to: {is: lang_dec_tentative}
+  d_sig_come_before_from: {is: lang_dec_tentative}
+  d_sig_come_before_to: {is: lang_dec_tentative}
+  d_sig_not_before_from: {is: lang_dec_tentative}
+  d_sig_not_before_to: {is: lang_dec_tentative}
+  d_sig_not_after_from: {is: lang_dec_tentative}
+  d_sig_not_after_to: {is: lang_dec_tentative}
+  d_sig_level_from: {is: lang_dec_tentative}
+  d_sig_level_to: {is: lang_dec_tentative}
+  d_sig_design_from: {is: lang_dec_tentative}
+  d_sig_design_to: {is: lang_dec_tentative}
+
+  # ===== 否定だけで定義された種類の、肯定の定義の候補（法則 placed_deduced）
+  h_ic_is_bearer: {is: exp.hyp_untested}
+
 facts:
   - {is: syntax.v_use, from: lang, to: std}
   - {is: syntax.v_use, from: lang, to: runtime}
@@ -38,3 +71,32 @@ facts:
   - {is: v_refer, from: d_cscl_std_on_axiom, to: {is: v_depend, from: std_layer, to: axiom_layer}}
   - {is: v_refer, from: d_cscl_display_derived, to: {is: v_depend, from: display, to: system}}
   - {is: v_refer, from: d_cscl_trust_previous_version, to: {is: v_depend, from: type_checker, to: previous_checker}}
+  - {is: v_refer, from: d_sig_depend_from, to: {is: extends, from: dependent, to: continuant}}
+  - {is: v_refer, from: d_sig_depend_to, to: {is: extends, from: depended, to: continuant}}
+  - {is: v_refer, from: d_sig_compose_from, to: {is: extends, from: component, to: continuant}}
+  - {is: v_refer, from: d_sig_compose_to, to: {is: extends, from: kind, to: continuant}}
+  - {is: v_refer, from: d_sig_stage_from, to: {is: extends, from: temporal_part, to: occurrent}}
+  - {is: v_refer, from: d_sig_stage_to, to: {is: extends, from: staged, to: occurrent}}
+  - {is: v_refer, from: d_sig_come_after_from, to: {is: extends, from: later_one, to: continuant}}
+  - {is: v_refer, from: d_sig_come_after_to, to: {is: extends, from: later_target, to: continuant}}
+  - {is: v_refer, from: d_sig_refer_from, to: {is: extends, from: referrer, to: continuant}}
+  - {is: v_refer, from: d_sig_agree_from, to: {is: extends, from: agreeing, to: continuant}}
+  - {is: v_refer, from: d_sig_agree_to, to: {is: extends, from: agreed, to: continuant}}
+  - {is: v_refer, from: d_sig_express_from, to: {is: extends, from: expressed, to: continuant}}
+  - {is: v_refer, from: d_sig_express_to, to: {is: extends, from: medium, to: continuant}}
+  - {is: v_refer, from: d_sig_involve_from, to: {is: extends, from: involving, to: occurrent}}
+  - {is: v_refer, from: d_sig_involve_to, to: {is: extends, from: participant, to: continuant}}
+  - {is: v_refer, from: d_sig_perform_from, to: {is: extends, from: performer, to: continuant}}
+  - {is: v_refer, from: d_sig_perform_to, to: {is: extends, from: performed, to: occurrent}}
+  - {is: v_refer, from: d_sig_trigger_to, to: {is: extends, from: triggered, to: occurrent}}
+  - {is: v_refer, from: d_sig_come_before_from, to: {is: extends, from: earlier_one, to: continuant}}
+  - {is: v_refer, from: d_sig_come_before_to, to: {is: extends, from: earlier_target, to: continuant}}
+  - {is: v_refer, from: d_sig_not_before_from, to: {is: extends, from: not_earlier_one, to: continuant}}
+  - {is: v_refer, from: d_sig_not_before_to, to: {is: extends, from: not_earlier_target, to: continuant}}
+  - {is: v_refer, from: d_sig_not_after_from, to: {is: extends, from: not_later_one, to: continuant}}
+  - {is: v_refer, from: d_sig_not_after_to, to: {is: extends, from: not_later_target, to: continuant}}
+  - {is: v_refer, from: d_sig_level_from, to: {is: extends, from: a, to: continuant}}
+  - {is: v_refer, from: d_sig_level_to, to: {is: extends, from: b, to: continuant}}
+  - {is: v_refer, from: d_sig_design_from, to: {is: extends, from: designer, to: continuant}}
+  - {is: v_refer, from: d_sig_design_to, to: {is: extends, from: designed, to: continuant}}
+  - {is: v_refer, from: h_ic_is_bearer, to: {is: v_depend, from: dependent, to: independent_continuant}}
