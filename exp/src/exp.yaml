@@ -516,6 +516,22 @@ individuals:
   sys_soundness_cond_mod_unpaired_changed: {is: axis_value, val: {text: mod_unpaired_changed}}
   sys_soundness_cond_mod_paired_changed: {is: axis_value, val: {text: mod_paired_changed}}
   sys_soundness_cond_p_value: {is: axis_value, val: {text: p_value}}
+  sys_anomaly: {is: measurement_family}
+  sys_anomaly_cond: {is: family_axis, val: {text: cond}}
+  sys_anomaly_cond_live: {is: axis_value, val: {text: live}}
+  sys_anomaly_cond_crash: {is: axis_value, val: {text: crash}}
+  sys_anomaly_cond_breaks_fail: {is: axis_value, val: {text: breaks_fail}}
+  sys_anomaly_cond_keeps_fail: {is: axis_value, val: {text: keeps_fail}}
+  sys_anomaly_cond_p_value: {is: axis_value, val: {text: p_value}}
+  sys_content_symmetry: {is: measurement_family}
+  sys_content_symmetry_cond: {is: family_axis, val: {text: cond}}
+  sys_content_symmetry_cond_unpaired_changed: {is: axis_value, val: {text: unpaired_changed}}
+  sys_content_symmetry_cond_paired_changed: {is: axis_value, val: {text: paired_changed}}
+  sys_content_symmetry_cond_verb_unpaired_changed: {is: axis_value, val: {text: verb_unpaired_changed}}
+  sys_content_symmetry_cond_verb_paired_changed: {is: axis_value, val: {text: verb_paired_changed}}
+  sys_content_symmetry_cond_mod_unpaired_changed: {is: axis_value, val: {text: mod_unpaired_changed}}
+  sys_content_symmetry_cond_mod_paired_changed: {is: axis_value, val: {text: mod_paired_changed}}
+  sys_content_symmetry_cond_p_value: {is: axis_value, val: {text: p_value}}
   pr_babaei: {is: measurement_family}
   pr_babaei_cond: {is: family_axis, val: {text: cond}}
   pr_babaei_cond_qwen72b_question: {is: axis_value, val: {text: qwen72b_question}}
@@ -2096,6 +2112,40 @@ facts:
   - {is: v_spell, from: sys_soundness_cond_p_value, to: p_value}
   - {is: v_entry_of, from: '{cond}', to: sys_soundness}
   - {is: v_metric_of, from: sys_soundness, to: mean_value}
+  - {is: v_file_of, from: sys_anomaly.json, to: sys_anomaly}
+  - {is: v_rows_of, from: [rows], to: sys_anomaly}
+  - {is: v_axis_of, from: sys_anomaly_cond, to: sys_anomaly}
+  - {is: v_value_of, from: sys_anomaly_cond_live, to: sys_anomaly_cond}
+  - {is: v_spell, from: sys_anomaly_cond_live, to: live}
+  - {is: v_value_of, from: sys_anomaly_cond_crash, to: sys_anomaly_cond}
+  - {is: v_spell, from: sys_anomaly_cond_crash, to: crash}
+  - {is: v_value_of, from: sys_anomaly_cond_breaks_fail, to: sys_anomaly_cond}
+  - {is: v_spell, from: sys_anomaly_cond_breaks_fail, to: breaks_fail}
+  - {is: v_value_of, from: sys_anomaly_cond_keeps_fail, to: sys_anomaly_cond}
+  - {is: v_spell, from: sys_anomaly_cond_keeps_fail, to: keeps_fail}
+  - {is: v_value_of, from: sys_anomaly_cond_p_value, to: sys_anomaly_cond}
+  - {is: v_spell, from: sys_anomaly_cond_p_value, to: p_value}
+  - {is: v_entry_of, from: '{cond}', to: sys_anomaly}
+  - {is: v_metric_of, from: sys_anomaly, to: mean_value}
+  - {is: v_file_of, from: sys_content_symmetry.json, to: sys_content_symmetry}
+  - {is: v_rows_of, from: [rows], to: sys_content_symmetry}
+  - {is: v_axis_of, from: sys_content_symmetry_cond, to: sys_content_symmetry}
+  - {is: v_value_of, from: sys_content_symmetry_cond_unpaired_changed, to: sys_content_symmetry_cond}
+  - {is: v_spell, from: sys_content_symmetry_cond_unpaired_changed, to: unpaired_changed}
+  - {is: v_value_of, from: sys_content_symmetry_cond_paired_changed, to: sys_content_symmetry_cond}
+  - {is: v_spell, from: sys_content_symmetry_cond_paired_changed, to: paired_changed}
+  - {is: v_value_of, from: sys_content_symmetry_cond_verb_unpaired_changed, to: sys_content_symmetry_cond}
+  - {is: v_spell, from: sys_content_symmetry_cond_verb_unpaired_changed, to: verb_unpaired_changed}
+  - {is: v_value_of, from: sys_content_symmetry_cond_verb_paired_changed, to: sys_content_symmetry_cond}
+  - {is: v_spell, from: sys_content_symmetry_cond_verb_paired_changed, to: verb_paired_changed}
+  - {is: v_value_of, from: sys_content_symmetry_cond_mod_unpaired_changed, to: sys_content_symmetry_cond}
+  - {is: v_spell, from: sys_content_symmetry_cond_mod_unpaired_changed, to: mod_unpaired_changed}
+  - {is: v_value_of, from: sys_content_symmetry_cond_mod_paired_changed, to: sys_content_symmetry_cond}
+  - {is: v_spell, from: sys_content_symmetry_cond_mod_paired_changed, to: mod_paired_changed}
+  - {is: v_value_of, from: sys_content_symmetry_cond_p_value, to: sys_content_symmetry_cond}
+  - {is: v_spell, from: sys_content_symmetry_cond_p_value, to: p_value}
+  - {is: v_entry_of, from: '{cond}', to: sys_content_symmetry}
+  - {is: v_metric_of, from: sys_content_symmetry, to: mean_value}
   - {is: v_file_of, from: prior/babaei2025_ontology_prompt.json, to: pr_babaei}
   - {is: v_rows_of, from: [reported], to: pr_babaei}
   - {is: v_axis_of, from: pr_babaei_cond, to: pr_babaei}
