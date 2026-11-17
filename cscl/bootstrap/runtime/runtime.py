@@ -70,7 +70,7 @@ def show_atom(r, rel, args):
 # 書かれていない文の扱いは、ここでなく、領域 runtime が置く前提（{is: v_presume, from: runtime, to: 扱い}）から読む。
 WORLDS = {"closed_world": False, "world": None}   # 世界 → 述べていない文に与える真偽（None は与えない）
 IMPLEMENTED = {
-    "pre_rule": {"all", "any"},
+    "pre_rule": {"all", "some"},
     "post_rule": {"replace"},
     "law_check": {"every_step"},
     "binding": {"distinct"},

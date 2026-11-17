@@ -1,4 +1,6 @@
-# CSCL のシグネチャ（signature）。自分（self）と、同じである（same）だけを置く。ノードは持たない。
+# CSCL のシグネチャ（signature）。自分（self）、同じである（same）、何でも（any）だけを置く。
+# any は self が動く範囲そのもの（何も限定しない self）。端に書くと、その位置に何でも来る。same からは導けない（same(x, x) は在ることで、
+#   any は在らないものも含む: 設計する動詞の終点は、前の状態で在らない）。だから、ここに置く。存在の数量化（syntax.some）とは別のもの。
 # self は、限定（mod）の暗黙の端。限定は λself. v(self, X) で、否定の限定は「self は肯定の限定が定める概念のどれとも同じでない」（∀s. ¬same(self, s)）。
 # 在る（exists）は same から導く（ontology の法則 exists_self_same, self_same_exists。自由論理の E!x ≡ ∃y. same(y, x) に当たる）。
 # について述べる（refer）、分類の軸、規則の変数は、self と same からは導けないので ontology に置く。
@@ -9,6 +11,9 @@ domain: signature
 
 base:
   same: {display: 同じである, arity: 2}
+
+nodes:
+  any: {display: 何でも, gloss: 自分が動く範囲そのもの。何も限定しない, many: true}   # many: 端が any の位置には、事実を2つ以上書ける（以前は存在の数量化の many を借りていた）
 
 individuals:
   signature: {is: domain, display: シグネチャ}

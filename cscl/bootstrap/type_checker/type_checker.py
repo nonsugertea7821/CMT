@@ -66,7 +66,7 @@ def scope_of(dom):
         found = {}
         for d in level:
             for w in LOCALS.get(d, ()):
-                found.setdefault(w, set()).add(f"{d}.{w}")
+                found.setdefault(w, set()).add(w if d == "signature" else f"{d}.{w}")
         for w, qs in found.items():
             if w not in sc:
                 sc[w] = qs.pop() if len(qs) == 1 else None
@@ -111,15 +111,15 @@ def q_node(n, dom):
         if isinstance(n.get(k), list) and n[k]:
             n[k] = [qn(n[k][0], dom)] + n[k][1:]
     if "of" in n and "with" in n:   # 名前を付けた限定の、もう一方の端
-        n["with"] = note(dom, "any", scope_of(dom).get("any") or "any") if n["with"] == "any" else qn(n["with"], dom)
+        n["with"] = qn(n["with"], dom)
 
     def m1(m):
         if isinstance(m, dict):
             m = dict(m)
             if isinstance(m.get("of"), list) and m["of"]:
                 m["of"] = [qn(m["of"][0], dom)] + m["of"][1:]
-            if "with" in m:   # with の any は、存在の数量化（構文の語）
-                m["with"] = note(dom, "any", scope_of(dom).get("any") or "any") if m["with"] == "any" else qn(m["with"], dom)
+            if "with" in m:
+                m["with"] = qn(m["with"], dom)
             return m
         return qn(m, dom)
     if "mod" in n:
@@ -273,7 +273,7 @@ def load(name):
             if k not in ("domain", "base", "axes", "grammar", "runtime", "nodes", "individuals", "facts"):
                 err(f"{fname}: 節 {k} は、層のファイルに書けない")
         for nid, n in (D.get("nodes") or {}).items():
-            O["nodes"][f"{dom}.{nid}"] = q_node(n, dom)
+            O["nodes"][nid if dom == "signature" else f"{dom}.{nid}"] = q_node(n, dom)   # シグネチャの語は領域を書かない（domain()）
         for iid, x in (D.get("individuals") or {}).items():
             if iid in O["individuals"]:
                 err(f"{fname}: 個体 {iid} は、ほかの層にもある")
@@ -715,6 +715,8 @@ class Ontology:
 
     def resolve(self, word, dom):
         """領域を書かない語を、ノードの識別子に解決する。その領域、signature、ほかの領域にただ1つ、の順に探す。"""
+        if word == "any":   # シグネチャの語
+            return word
         if f"{dom}.{word}" in self.N:
             return f"{dom}.{word}"
         if word in self.N:
@@ -822,7 +824,9 @@ class Ontology:
         """体系の書き方を、文法の語を関係とする文に直す。法則の規則は、この文に当てはめる。"""
         out, dump = [], lambda x: yaml.safe_dump(x, sort_keys=True, allow_unicode=True).strip()
         add = lambda rel, *xs: out.append((rel, tuple(xs)))
-        add("exists", "any")   # 端の any（存在の数量化 syntax.any を、書き方の語として使う）
+        for (dom, w), rs in WRITTEN.items():   # 法則 one_spelling が読む
+            for r in rs:
+                add("r_written", f"{dom}:{w}", r)
         for nid, n in self.N.items():
             add("exists", nid)
             add("domain", nid, self.domain(nid))
@@ -1028,8 +1032,8 @@ class Ontology:
             if not ja:
                 err(f"{nid}: 表示語がない")
             seen[key] = nid
-            if nid in TOPS:
-                if set(n) != {"display", "gloss"}:
+            if nid in TOPS or nid == "any":   # 最上位と、シグネチャの any
+                if set(n) - {"many"} != {"display", "gloss"}:
                     err(f"{nid}: 最上位は gloss だけを持つ")
                 continue
             if "gloss" in n:
@@ -1056,7 +1060,7 @@ class Ontology:
                     self.check_state(nid, n)
             elif "of" in n:
                 self.check_spot(n["of"], nid)
-                if "with" in n and n["with"] not in N and n["with"] != "any" and not str(n["with"]).endswith(".any"):
+                if "with" in n and n["with"] not in N and n["with"] != "any":
                     err(f"{nid}: with の {n['with']} が未定義")
                 if not self.is_a(nid, "specifically_dependent_continuant"):
                     err(f"{nid}: 修飾語は特定依存持続体の下に置く")
@@ -1216,7 +1220,7 @@ def natural_language_only_in_ja(name, x, path=()):
         for v in x:
             natural_language_only_in_ja(name, v, path)
     elif isinstance(x, str) and re.search(r"[^\x00-\x7f]", x):
-        top = path[:1] == ("nodes",) and path[-1] == "gloss" and path[1] in ("continuant", "occurrent")
+        top = path[:1] == ("nodes",) and path[-1] == "gloss" and path[1] in ("continuant", "occurrent", "any")
         opt = path[:1] == ("individuals",) and path[-2:] == ("val", "text")
         if path[-1:] != ("display",) and not top and not opt:
             err(f"{name} {'.'.join(path)}: 自然言語は表示名 display にだけ書く（{x[:20]}）")

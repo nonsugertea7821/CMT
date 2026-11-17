@@ -16,7 +16,7 @@ grammar:
   rel: [same, differ]
   function: [gt, ge, lt, le]
   value: [number, literal]
-  logic: [not, all, any, between]   # true と false は、真偽の軸の値
+  logic: [not, all, some, between]   # true と false は、真偽の軸の値
   runtime: [pre_rule, post_rule, law_check, binding, choice, progress]
   domain: [domain, nodes, individuals, facts]   # 領域のファイル（exp/src/exp.yaml）
   individuals: [is, display, val]
@@ -132,8 +132,8 @@ nodes:
   world: {display: 書かれていない文の扱い, extends: definition, mod: refer_from_facts}
   closed_world: {display: 閉世界（書かれていない文は偽）, extends: world, val: {truth: false}}
   v_presume: {display: 前提として置くと述べる, extends: v_refer, from: domain, to: world}
-  any: {display: 存在の数量化, extends: sentence, mod: {of: [v_refer, from], with: participant, at: {count: {ge: 1}}}, many: true}
-  all: {display: 全称の数量化, extends: not, mod: {of: [v_refer, from], with: any}}
+  some: {display: 存在の数量化, extends: sentence, mod: {of: [v_refer, from], with: participant, at: {count: {ge: 1}}}, many: true}
+  all: {display: 全称の数量化, extends: not, mod: {of: [v_refer, from], with: some}}
   individuals: {display: 個体, form: [is, from]}
   facts: {display: 個体か種類についての文（種類についての文は、その種類のすべてについて）, extends: sentence, mod: refer_from_individuals}
   expect: {display: 期待する文, extends: facts, val: {truth: true}}
@@ -159,6 +159,7 @@ individuals:
   r_acc: {is: law_relation, display: 積み上がった式である}
   r_adds: {is: law_relation, display: 上位にない式を足している}
   r_concept: {is: law_relation, display: 概念である}
+  r_written: {is: law_relation, display: 領域に書かれた語が指す}
   r_root: {is: law_relation, display: 根である}
   r_verb: {is: law_relation, display: 動詞である}
   r_placed: {is: law_relation, display: 定義から根の下に置かれる}
@@ -184,6 +185,7 @@ individuals:
   kind_up_by_form_new_any: {is: law_rule, display: 第三の位置の種類が書かれていない形は any の下}
   below_self: {is: law_rule, display: 自分は自分の下}
   below_any: {is: law_rule, display: すべては any の下}
+  one_spelling: {is: law_rule, display: 同じ領域で同じ綴りの語は、どこに書かれても同じものを指す}
   below_by_step: {is: law_rule, display: 種類として上のものの下は下}
   narrow_from: {is: law_rule, display: 下位の動詞の端 from は、上位の動詞の端を狭める}
   narrow_to: {is: law_rule, display: 下位の動詞の端 to は、上位の動詞の端を狭める}
@@ -310,6 +312,9 @@ facts:
   - {is: v_derive, from: below_self, to: {is: r_below, from: var1, to: var1}}
   - {is: v_assume, from: below_any, to: {is: exists, from: var1}}
   - {is: v_derive, from: below_any, to: {is: r_below, from: var1, to: any}}
+  - {is: v_assume, from: one_spelling, to: {is: r_written, from: var1, to: var2}}
+  - {is: v_assume, from: one_spelling, to: {is: r_written, from: var1, to: var3}}
+  - {is: v_require, from: one_spelling, to: {is: same, from: var2, to: var3}}
   - {is: v_assume, from: below_by_step, to: {is: r_kind_up, from: var1, to: var3}}
   - {is: v_assume, from: below_by_step, to: {is: r_below, from: var3, to: var2}}
   - {is: v_derive, from: below_by_step, to: {is: r_below, from: var1, to: var2}}
