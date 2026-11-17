@@ -81,11 +81,24 @@ def scope_of(dom):
     return sc
 
 
-def qn(w, dom):
-    """語をノードの識別子に直す。領域を書いた語（領域.名前）と any は、そのまま。"""
+WRITTEN = collections.defaultdict(set)   # (領域, 書かれた語) → 解決した先。法則 one_spelling が読む（syntax_facts の r_written）
+
+
+def note(dom, w, r):
+    if isinstance(w, str) and "." not in w:
+        WRITTEN[(dom, w)].add(r)
+    return r
+
+
+def qn_raw(w, dom):
     if not isinstance(w, str) or w == "any" or "." in w:
         return w
     return scope_of(dom).get(w) or w
+
+
+def qn(w, dom):
+    """語をノードの識別子に直す。領域を書いた語（領域.名前）と any は、そのまま。"""
+    return note(dom, w, qn_raw(w, dom))
 
 
 def q_node(n, dom):
@@ -98,7 +111,7 @@ def q_node(n, dom):
         if isinstance(n.get(k), list) and n[k]:
             n[k] = [qn(n[k][0], dom)] + n[k][1:]
     if "of" in n and "with" in n:   # 名前を付けた限定の、もう一方の端
-        n["with"] = scope_of(dom).get("any") or "any" if n["with"] == "any" else qn(n["with"], dom)
+        n["with"] = note(dom, "any", scope_of(dom).get("any") or "any") if n["with"] == "any" else qn(n["with"], dom)
 
     def m1(m):
         if isinstance(m, dict):
@@ -106,7 +119,7 @@ def q_node(n, dom):
             if isinstance(m.get("of"), list) and m["of"]:
                 m["of"] = [qn(m["of"][0], dom)] + m["of"][1:]
             if "with" in m:   # with の any は、存在の数量化（構文の語）
-                m["with"] = scope_of(dom).get("any") or "any" if m["with"] == "any" else qn(m["with"], dom)
+                m["with"] = note(dom, "any", scope_of(dom).get("any") or "any") if m["with"] == "any" else qn(m["with"], dom)
             return m
         return qn(m, dom)
     if "mod" in n:
@@ -122,8 +135,8 @@ RULE_VERBS = ("v_assume", "v_derive", "v_require")
 def qw(w, dom):
     """書き方の語（個体の種類、事実の動詞）を直す。自分の領域で解決しなければ、構文（syntax）の語として読む。
     どの層のファイルも構文で書かれる。書き方が構文に従うことは、意味が構文に依存することではない。"""
-    r = qn(w, dom)
-    return qn(w, "syntax") if r == w and isinstance(w, str) and "." not in w else r
+    r = qn_raw(w, dom)
+    return note(dom, w, qn_raw(w, "syntax") if r == w and isinstance(w, str) and "." not in w else r)
 
 
 def q_fact(f, dom, V=()):
