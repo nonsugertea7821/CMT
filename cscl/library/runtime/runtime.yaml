@@ -3,7 +3,6 @@
 domain: runtime
 
 runtime:
-  world: closed_world
   pre_rule: all
   post_rule: replace
   law_check: every_step
@@ -30,8 +29,6 @@ nodes:
   steps: {display: 歩みの並び, extends: information_entity, mod: {of: [v_refer, from], with: v_execute, at: {count: {ge: 1}}}}
   strategy: {display: 実行の戦略, extends: definition, mod: refer_from_v_execute}
   runtime: {display: 実行時の意味論の節, extends: section, mod: {of: [v_refer, from], with: strategy}}
-  world: {display: 書かれていない文の扱い, extends: strategy, mod: {of: [v_refer, from], with: facts}}
-  closed_world: {display: 書かれていない文は成り立たない, extends: world, val: {truth: false}}
   pre_rule: {display: 前の状態の確かめ方, extends: strategy, mod: {of: [v_refer, from], with: pre}}
   post_rule: {display: 後の状態の作り方, extends: strategy, mod: refer_from_post}
   replace: {display: 否定の文を取り除き肯定の文を加える, extends: post_rule, mod: {of: [v_refer, from], with: not}}
@@ -54,6 +51,7 @@ individuals:
 
 facts:
   - {is: v_use, from: runtime, to: syntax}
+  - {is: v_presume, from: runtime, to: closed_world}   # 実行の状態は実行器が完全に持つので、書かれていない文は偽
   - {is: v_govern, from: unique_names, to: runtime.run}
   - {is: v_govern, from: step, to: runtime.run}
   - {is: v_govern, from: frame, to: runtime.run}

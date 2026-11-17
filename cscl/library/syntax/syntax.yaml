@@ -17,13 +17,14 @@ grammar:
   function: [gt, ge, lt, le]
   value: [number, literal]
   logic: [not, all, any, between]   # true と false は、真偽の軸の値
-  runtime: [world, pre_rule, post_rule, law_check, binding, choice, progress]
+  runtime: [pre_rule, post_rule, law_check, binding, choice, progress]
   domain: [domain, nodes, individuals, facts]   # 領域のファイル（exp/src/exp.yaml）
   individuals: [is, display, val]
   facts: [is, from, to, new, at, neg]   # 事実は動詞の個体。位置に名前を付けて書く。holds / pre / post も同じ形
 
 nodes:
   # ===== 名前を付けた限定（法則 named_mod）。2つ以上の概念が足す限定は、名前で書く
+  refer_from_facts: {display: 事実へ述べる（始点）, extends: quality, of: [v_refer, from], with: facts}
   refer_from_occurrent: {display: 生起体へ述べる（始点）, extends: quality, of: [v_refer, from], with: occurrent}
   compose_from_system: {display: 体系へ部分になる（始点）, extends: quality, of: [v_compose, from], with: system}
   express_from_cscl: {display: 概念体系制御言語へで書かれる（始点）, extends: quality, of: [v_express, from], with: cscl}
@@ -66,7 +67,7 @@ nodes:
   form: {display: 形の指定, extends: position, mod: not_compose_from_mod}
   mod: {display: 修飾の指定, extends: expression_part, mod: {of: [v_compose, to], with: position}}
   with: {display: もう一方の端の指定, extends: expression_part, mod: {of: [v_refer, from], with: participant}}
-  neg: {display: 否定の指定, extends: expression_part, val: {truth: false}}
+  neg: {display: 示されていないことの指定, extends: expression_part, mod: refer_from_facts}   # 否定は「その文が示されていない」。偽であることは、閉世界を前提に置いた領域でだけ言える
   many: {display: 複数を許す指定, extends: expression_part, mod: {of: [v_refer, from], with: kind, at: {count: {gt: 1}}}}   # この種類を終点とする関係は、1つの個体について複数の事実を持てる
   opposite: {display: 反対の動詞の指定, extends: expression_part, mod: refer_from_occurrent}   # 動詞に書く。2つの文の中身を比べるとき、この組は向きが反対
   derive: {display: 中身から導く比較の結果の指定, extends: expression_part, mod: {of: [v_refer, from], with: rel}}   # 動詞に書く（same か opposite）。この動詞の事実は、中身の比較から導けなければならない
@@ -123,7 +124,11 @@ nodes:
   # ===== 述語論理の語。「について述べる」の限定として書く。区別は法則 truth_distinct が与える =====
   logic: {display: 述語論理の語, extends: word, mod: refer_from_sentence}
   sentence_refer_from_sentence: {display: 文へ述べる文, extends: sentence, mod: refer_from_sentence}
-  not: {display: 否定, extends: sentence_refer_from_sentence, cmp: [{axis: truth, a: not, b: sentence, rel: differ}]}
+  not: {display: 否定（示されていない文を述べる文）, extends: sentence_refer_from_sentence, mod: refer_from_facts}
+  world: {display: 書かれていない文の扱い, extends: definition, mod: refer_from_facts}   # 閉世界と開世界は仮定。領域ごとに前提として選ぶ（v_presume）
+  closed_world: {display: 閉世界（書かれていない文は偽）, extends: world, val: {truth: false}}
+  open_world: {display: 開世界（書かれていない文は不明）, extends: world, mod: {of: [v_agree, from], with: closed_world, neg: true}}
+  v_presume: {display: 前提として置くと述べる, extends: v_refer, from: domain, to: world}
   any: {display: 存在の数量化, extends: sentence, mod: {of: [v_refer, from], with: participant, at: {count: {ge: 1}}}, many: true}
   all: {display: 全称の数量化, extends: not, mod: {of: [v_refer, from], with: any}}
   individuals: {display: 個体, form: [is, from]}
@@ -202,6 +207,7 @@ individuals:
   truth_two: {is: law_rule, display: 真偽の軸は true と false を持つ}
   truth_only: {is: law_rule, display: 真偽の軸の値は true か false}
   part_fact_direction: {is: law_given, display: 部分の事実は、種類の限定と向きが逆にならない}
+  world_declared: {is: law_given, display: 否定を前提に使う法則は、その法則の領域が閉世界を前提に置くときだけ当てはめる}
   named_mod: {is: law_given, display: 2つ以上の概念が同じ限定を足すなら、その限定は名前を付けた修飾語で書く}
   part_display_explicit: {is: law_given, display: 部分の限定を持つ種類の表示名は、どちらが部分かを明示し、限定の向きと合う}
   r_in: {is: law_relation, display: 集まりに属する}
@@ -377,6 +383,8 @@ facts:
   - {is: v_govern, from: part_fact_direction, to: concept_expression}
   - {is: v_govern, from: part_display_explicit, to: concept_expression}
   - {is: v_govern, from: named_mod, to: concept_expression}
+  - {is: v_govern, from: world_declared, to: concept_expression}
+  - {is: v_presume, from: syntax, to: closed_world}
   - {is: v_assume, from: in_by_collect, to: {is: of, from: var1, to: v_collect}}
   - {is: v_assume, from: in_by_collect, to: {is: from, from: var1, to: var2}}
   - {is: v_assume, from: in_by_collect, to: {is: to, from: var1, to: var3}}

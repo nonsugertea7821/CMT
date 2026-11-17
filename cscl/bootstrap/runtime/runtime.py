@@ -10,7 +10,7 @@
 
 記録の書き方:
   individuals: {個体: {is: 種類}}
-  facts: ["関係(個体, 個体)", ...]         最初の状態。書かれていない文は成り立っていない
+  facts: ["関係(個体, 個体)", ...]         最初の状態。書かれていない文は示されていない（領域 runtime が閉世界を置くので偽）
   steps: [[動詞, {from: 個体, to: 個体, new: 個体}], ...]
   expect: ["関係(...)", "not 関係(...)"]   最後の状態で成り立つこと
   halted: true | false
@@ -23,7 +23,7 @@ from pathlib import Path
 import yaml
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "type_checker"))
-from type_checker import Facts, Ontology, atom, evaluate, law_rules, in_scope, load, root_name, merge_domain, register_domains, variables  # noqa: E402
+from type_checker import Facts, Ontology, atom, evaluate, law_rules, in_scope, load, root_name, merge_domain, register_domains, variables, presumed_worlds  # noqa: E402
 
 ROOT = Path(__file__).resolve().parents[3]
 
@@ -42,8 +42,9 @@ def show(d):
 
 
 # 実行時の意味論のうち、この検査が実装している選択。体系の runtime に、ここにない選択が書かれていればエラー。
+# 書かれていない文の扱いは、ここでなく、領域 runtime が置く前提（{is: v_presume, from: runtime, to: 扱い}）から読む。
+WORLDS = {"closed_world", "open_world"}
 IMPLEMENTED = {
-    "world": {"closed_world"},
     "pre_rule": {"all", "any"},
     "post_rule": {"replace"},
     "law_check": {"every_step"},
@@ -54,8 +55,8 @@ IMPLEMENTED = {
 
 
 class Machine:
-    def __init__(self, T, run, name):
-        self.T, self.name, self.errors, self.R = T, name, [], T.O["runtime"]
+    def __init__(self, T, run, name, world):
+        self.T, self.name, self.errors, self.R, self.world = T, name, [], T.O["runtime"], world
         self.quant = all if self.R["pre_rule"] == "all" else any
         self.ind = {i: T.resolve(v["is"], "exp") or v["is"] for i, v in run["individuals"].items()}
         for i, k in self.ind.items():
@@ -66,7 +67,7 @@ class Machine:
             neg, rel, args = fact(f, T)
             f = show(f)
             if neg:
-                self.err(f"最初の状態に否定 {f} は書かない（書かれていない文は成り立っていない）")
+                self.err(f"最初の状態に否定 {f} は書かない（否定は「示されていない」。最初の状態には示す文だけを書く）")
             self.fact_ok(rel, args, f)
             self.facts.add((rel, args))
 
@@ -78,14 +79,18 @@ class Machine:
             self.err(f"式 {f} が、基礎の関係か個体に合わない")
 
     def holds(self, neg, rel, args):
-        return ((rel, args) in self.facts) != neg
+        """文が成り立つか。否定は「示されていない」。閉世界なら示されていない文は偽、開世界なら不明（None）。"""
+        if (rel, args) in self.facts:
+            return not neg
+        return neg if self.world == "closed_world" else None
 
     def check_laws(self, where):
         """規則で書いた法則（層のファイルの law_rule）のうち、基礎の関係だけで書かれたものを、状態に当てはめる。
         導く文を足して閉じてから、求める文を確かめる。same は名前が同じであること（法則 unique_names）。"""
         T = self.T
         rules = [(lid, l) for lid, l in law_rules(T.O)
-                 if all(atom(f)[1] in T.B for p in ("assume", "derive", "require") for f in l[p])]
+                 if all(atom(f)[1] in T.B for p in ("assume", "derive", "require") for f in l[p])
+                 and (self.world == "closed_world" or not any(atom(f)[0] for f in l["assume"]))]   # 否定の前提は閉世界でだけ
         for lid, b, f in evaluate(rules, Facts(self.facts), variables(T.O)):
             self.err(f"{where}: {dict(sorted(b.items()))} が法則 {lid}（{T.O['laws'][lid]['display']}）に反する")
 
@@ -123,6 +128,9 @@ class Machine:
             return self.err(f"{where}: {why}")
         if len(set(b.values())) != len(b):  # runtime.binding: distinct
             return self.err(f"{where}: 別々の位置に同じ個体が割り当てられている")
+        unknown = [f"not {rel}{args}" for neg, rel, args in r["pre"] if self.holds(neg, rel, args) is None]
+        if unknown:   # 開世界では、示されていないことから偽とは言えない
+            return self.err(f"{where}: pre の {unknown} は、開世界では決められない")
         if not self.quant(self.holds(*f) for f in r["pre"]):  # 法則 step。runtime.pre_rule
             bad = [f"{'not ' if neg else ''}{rel}{args}" for neg, rel, args in r["pre"] if not self.holds(neg, rel, args)]
             return self.err(f"{where}: pre の {bad} が成り立っていない")
@@ -140,7 +148,7 @@ class Machine:
             for combo in itertools.permutations(self.ind, len(poss)):
                 b = dict(zip(poss, combo))
                 r, _ = self.bind(vid, b)
-                if r and self.quant(self.holds(*x) for x in r["pre"]) and not all(self.holds(*x) for x in r["post"]):
+                if r and self.quant(self.holds(*x) is True for x in r["pre"]) and not all(self.holds(*x) is True for x in r["post"]):
                     found.append((vid, b))
         return found
 
@@ -155,13 +163,18 @@ def main():
         if v not in IMPLEMENTED.get(k, ()):
             print(f"実行の検査に失敗: runtime.{k} の選択 {v} は、この検査に実装がない")
             sys.exit(1)
+    world = presumed_worlds().get("runtime", set())
+    if len(world) != 1 or not world <= WORLDS:
+        print(f"実行の検査に失敗: 領域 runtime が置く、書かれていない文の扱い {sorted(world)} は、1つでないか、この検査に実装がない")
+        sys.exit(1)
+    world = next(iter(world))
     errors, n_steps, files = [], 0, in_scope("runs")
     for path in files:
         run = yaml.safe_load(path.read_text(encoding="utf-8"))
         for k in run:
             if k not in G:
                 errors.append(f"{path.name}: 語 {k} が、grammar.run に書かれていない")
-        m = Machine(T, run, path.name)
+        m = Machine(T, run, path.name, world)
         m.check_laws("最初の状態")
         for i, st in enumerate(run.get("steps", [])):
             if not isinstance(st, dict) or set(st) - set(T.G["facts"]) or "is" not in st:
@@ -171,11 +184,19 @@ def main():
             m.step(verb, b, f"steps[{i}] {verb}")
             n_steps += 1
         for f in run.get("expect", []):
-            if not m.holds(*fact(f, T)):
+            neg, rel, args = fact(f, T)
+            h = m.holds(neg, rel, args)
+            if h is None and not neg:   # 示されていない肯定の文は、どちらの世界でも成り立つと言えない
+                h = False
+            if h is None:
+                m.err(f"expect の {show(f)} は、開世界では決められない")
+            elif not h:
                 m.err(f"expect の {show(f)} が、最後の状態で成り立っていない")
         if "halted" in run:  # 法則 halt
             rest = m.applicable()
-            if run["halted"] != (not rest):
+            if m.world != "closed_world":
+                m.err("halted は、開世界では決められない（示されていない文から、当てはまらないとは言えない）")
+            elif run["halted"] != (not rest):
                 m.err(f"halted: {run['halted']} と書かれているが、当てはまる動詞は {len(rest)} 個（例: {rest[:1]}）")
         errors += m.errors
     if errors:
