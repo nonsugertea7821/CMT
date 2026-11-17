@@ -633,6 +633,11 @@ individuals:
   sys_special_cond_grammar: {is: axis_value, val: {text: grammar}}
   sys_special_cond_outside: {is: axis_value, val: {text: outside}}
   sys_special_cond_short: {is: axis_value, val: {text: short}}
+  sys_mutation: {is: measurement_family}
+  sys_mutation_cond: {is: family_axis, val: {text: cond}}
+  sys_mutation_cond_test_changed: {is: axis_value, val: {text: test_changed}}
+  sys_mutation_cond_pos_changed: {is: axis_value, val: {text: pos_changed}}
+  sys_mutation_cond_neg_changed: {is: axis_value, val: {text: neg_changed}}
   sys_outlive: {is: measurement_family}
   sys_outlive_cond: {is: family_axis, val: {text: cond}}
   sys_outlive_cond_outlives_source: {is: axis_value, val: {text: outlives_source}}
@@ -2566,6 +2571,17 @@ facts:
   - {is: v_spell, from: sys_special_cond_short, to: short}
   - {is: v_entry_of, from: '{cond}', to: sys_special}
   - {is: v_metric_of, from: sys_special, to: mean_value}
+  - {is: v_file_of, from: sys_mutation.json, to: sys_mutation}
+  - {is: v_rows_of, from: [rows], to: sys_mutation}
+  - {is: v_axis_of, from: sys_mutation_cond, to: sys_mutation}
+  - {is: v_value_of, from: sys_mutation_cond_test_changed, to: sys_mutation_cond}
+  - {is: v_spell, from: sys_mutation_cond_test_changed, to: test_changed}
+  - {is: v_value_of, from: sys_mutation_cond_pos_changed, to: sys_mutation_cond}
+  - {is: v_spell, from: sys_mutation_cond_pos_changed, to: pos_changed}
+  - {is: v_value_of, from: sys_mutation_cond_neg_changed, to: sys_mutation_cond}
+  - {is: v_spell, from: sys_mutation_cond_neg_changed, to: neg_changed}
+  - {is: v_entry_of, from: '{cond}', to: sys_mutation}
+  - {is: v_metric_of, from: sys_mutation, to: mean_value}
   - {is: v_file_of, from: sys_content_symmetry.json, to: sys_content_symmetry}
   - {is: v_rows_of, from: [rows], to: sys_content_symmetry}
   - {is: v_axis_of, from: sys_content_symmetry_cond, to: sys_content_symmetry}

@@ -293,6 +293,15 @@ individuals:
   #   exp 1（v_spell）、意味を検査が与える法則 10、層の名 4、偶然の一致 2（kind は法則の辞書の鍵、type_checker はモジュール名）。
   # 利用者の見方（実行の後に受けた）: 文法は syntax が定義している。コードは機械語に翻訳しているに過ぎない。
   o_sys_special_outside_named: {is: exp.observation}
+  # 語の名前を付け替えたときの振る舞いの観察（exp/experiments/sys_mutation.py）。仮説の確かめではない。手順は実行の前に登録した（利用者の案: 文法が振る舞いを変えるかを変異で見つける）。
+  # 結果: 陽性の対照（文法の語）4/4 が変わり、陰性の対照（コードに名の出ない言語の層の語）0/14 が変わった（見込みどおり）。調べる語は 43/51 が変わった。
+  #   変わらなかった 8: kind, laws, type_checker（コードの辞書の鍵・モジュール名との偶然の一致）、part, refer（基礎の関係。今の入力では表に出ない）、r_written, variable, world。
+  #   exp は変わったが、違う行がもとの出力のどこかにある（並びか数の違い。中身は見ていない）。
+  #   変わった語には、文法として読むべき語（v_assume, v_derive, v_require, law_rule, law_given など規則を書く語、runtime の選択の名）と、
+  #   意味をコードが持つ語（continuant, occurrent, role, quality, magnitude, definition, v_depend, v_refer, v_spell, verb_ref, v_collect, law_given の各法則）が混ざる。
+  #   変異は名前への依存を見つけるが、その依存が正当（文法）かどうかは見分けない。
+  o_sys_mutation_controls_hold: {is: exp.observation}
+  o_sys_mutation_named_words_depend: {is: exp.observation}
   o_sys_frame_declared_never_grows: {is: exp.observation}
   o_sys_frame_declared_never_shrinks: {is: exp.observation}
   o_sys_frame_creates_over_removes: {is: exp.observation}
@@ -413,6 +422,8 @@ facts:
   - {is: v_refer, from: o_sys_subsume_layer_not_all_usable, to: {is: v_come_before, from: sys_subsume.some_usable.mean_value, to: 1.0}}
   - {is: v_refer, from: o_sys_spelling_one_word_two_referents, to: {is: v_come_after, from: sys_spelling.multi.mean_value, to: 0.0}}
   - {is: v_refer, from: o_sys_special_outside_named, to: {is: v_come_after, from: sys_special.outside.mean_value, to: 0.0}}
+  - {is: v_refer, from: o_sys_mutation_controls_hold, to: {is: v_level, from: sys_mutation.neg_changed.mean_value, to: 0.0}}
+  - {is: v_refer, from: o_sys_mutation_named_words_depend, to: {is: v_come_after, from: sys_mutation.test_changed.mean_value, to: 0.5}}
   - {is: v_refer, from: o_sys_outlive_never_outlived, to: {is: v_level, from: sys_outlive.outlives_source.mean_value, to: 0.0}}
   - {is: v_refer, from: o_sys_outlive_compute_steps_ok, to: {is: v_level, from: sys_outlive.c_step_ok.mean_value, to: 1.0}}
   - {is: v_refer, from: o_sys_outlive_speak_steps_ok, to: {is: v_level, from: sys_outlive.s_step_ok.mean_value, to: 1.0}}
