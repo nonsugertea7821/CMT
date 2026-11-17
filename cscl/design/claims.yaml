@@ -31,6 +31,8 @@ nodes:
   signature_class: {display: シグネチャから定まる分類, extends: quality, mod: {of: [v_depend, from], with: syntax.base}}
   # 否定は self でないこと（h_neg_not_self）の語
   negated_limitation: {display: 否定の限定, extends: quality, mod: {of: [v_refer, from], with: syntax.neg}}
+  # 持続体と生起体を導く（h_tops_derivable）の語
+  top_placement: {display: 最上位の置き場, extends: quality, mod: syntax.refer_from_occurrent}
   v_not_trigger: {display: 引き起こさない, extends: occurrent, from: any, to: occurrent, holds: [{is: depend, from: to, to: from, neg: true}], opposite: v_trigger}
 
 individuals:
@@ -158,6 +160,16 @@ individuals:
   # 否定が定義の循環を通ると C = {x | x は C のどれとも同じでない} で self ≠ self になる（Russell の逆理。法則 definition_stratified が禁じる形）。
   # 根拠の観察は sys_layers の比較版（否定の辺をたどらない版は、シグネチャからの分類と層の一致が高い）。この読みを syntax の neg の定義に反映するかは、まだ決めていない
   h_neg_not_self: {is: exp.hyp_supported}
+  # ===== 持続体と生起体を self・same とフレームの変化から導く。利用者の問い「コンティニュアント・オカレントって導けないかな」から。結果を見る前に登録した
+  # 持続体は「どのフレームでも自分と同じであるもの」（∀t, t'. same(self_t, self_t')）。gloss「時間を通じて同一性を保って存在するもの」を self と same で書いたもの。
+  # 生起体は、利用者が選んだ D2:「前後のフレームを同じでなくするもの」（¬same(frame_t, frame_t+1)）。gloss「時間の中で起こり、展開するもの」を書いたもの。
+  #   D1「限定 λself. v(self, X) の v」は今の体系の書き方（動詞はすべて生起体）と合うが、展開することを使わない。D2 では静的な動詞は生起体でなく関係になる。
+  # 中身は「最上位の置き場は、シグネチャから定まる分類に依存する」。確かめ方は exp/experiments/sys_tops.py の説明に固定。
+  # 支持は、個体がすべて持続体、動的な動詞がすべて生起体、静的な動詞がどれも生起体でない、生起体の名詞がすべて動的な動詞に届く、概念が動的な動詞に届く、のすべて。
+  # 登録の前に分かっていること: 個体 1052 はすべて持続体。動詞 118 はすべて生起体で、動的なものは 16 前後。概念は変化に届かない（sys_layers）。反証が見込まれる。
+  #   目的は、導いた定義と今の体系の食い違いを記録し、そこから直すものを導くこと
+  h_tops_derivable: {is: exp.hyp_untested}
+  b_tops_derivable: {is: exp.item_queued}
   # ===== 定義の循環（自分を限定するものについて述べる定義）。利用者の問い「self がシグネチャになるとどうなるか」から
   # 定義の辺（上位・名前を付けた修飾語・限定の with）をたどった循環を数えた（exp/experiments/sys_cycles.py）。
   # 仮説は、観察を見た後に立てた（事前の登録ではない）。中身は「定義の循環は、否定の限定を通らない」。
@@ -315,6 +327,8 @@ facts:
   - {is: v_refer, from: o_sys_layers_pos_higher, to: {is: v_come_after, from: sys_layers.agree_pos.mean_value, to: sys_layers.agree.mean_value}}
   - {is: v_refer, from: h_neg_not_self, to: {is: v_not_depend, from: negated_limitation, to: syntax.holds}}
   - {is: v_support, from: o_sys_layers_pos_higher, to: h_neg_not_self}
+  - {is: v_refer, from: h_tops_derivable, to: {is: v_depend, from: top_placement, to: signature_class}}
+  - {is: exp.v_check, from: b_tops_derivable, to: h_tops_derivable}
   - {is: v_refer, from: o_sys_open_runtime_steps_ok, to: {is: v_level, from: sys_open_runtime.ok.mean_value, to: 1.0}}
   - {is: v_refer, from: o_sys_open_runtime_never_shrinks, to: {is: v_level, from: sys_open_runtime.declared_shrinks.mean_value, to: 0.0}}
   - {is: v_refer, from: o_sys_open_runtime_grows_by_creation, to: {is: v_level, from: sys_open_runtime.grows_by_creation.mean_value, to: 1.0}}
