@@ -39,7 +39,7 @@ nodes:
   v_cause: {display: の原因である, extends: occurrent, from: any, to: continuant, holds: [{is: after, from: to, to: from}, {is: depend, from: to, to: from}]}
   v_immune: {display: の影響を受けない, extends: occurrent, from: any, to: any, holds: [{is: depend, from: from, to: to, neg: true}]}
   v_transfer: {display: に転移する, extends: occurrent, from: any, to: any, holds: [{is: depend, from: to, to: from}]}
-  v_not_transfer: {display: に転移しない, extends: occurrent, from: any, to: any, holds: [{is: depend, from: to, to: from, neg: true}]}
+  v_not_transfer: {display: に転移しない, extends: occurrent, from: any, to: any, holds: [{is: depend, from: to, to: from, neg: true}], opposite: v_transfer}
   v_coexist: {display: と同居できる, extends: occurrent, from: occurrent, to: occurrent, holds: [{is: depend, from: from, to: new}, {is: depend, from: to, to: new}]}
   v_consist: {display: からなる, extends: occurrent, from: continuant, to: continuant, holds: [{is: part, from: to, to: from}]}
   v_rely: {display: に頼る, extends: occurrent, from: any, to: any, holds: [{is: depend, from: from, to: to}]}
@@ -244,6 +244,11 @@ nodes:
   chain_length: {display: 連鎖の段数, extends: factor, mod: {of: [v_measure, from], with: v_stage}, axis: count}
   quality_measure_to: {display: 測る先の質, extends: quality, mod: {of: [v_measure, to]}}
   behavior_expression: {display: 狙った振る舞いの現れ, extends: quality_measure_to, mod: {of: [v_depend, from], with: state_shift}}
+  task_performance: {display: 問いに答える課題の成績, extends: quality_measure_to, mod: {of: [v_depend, from], with: question}}
+  formalization_accuracy: {display: 形式言語で書いた文の正しさ, extends: quality_measure_to, mod: {of: [v_depend, from], with: concept_expression}}
+  traceability: {display: 推論の根拠をたどれること, extends: quality_measure_to, mod: {of: [v_depend, from], with: depended_information}}
+  structure_embedding: {display: 形式の構造から作った埋め込み, extends: information_entity, mod: {of: [v_compute, to], with: typed_graph}}
+  type_check_result: {display: 型検査の結果, extends: information_entity, mod: {of: [v_compute, to], with: concept_expression}}
   context_following: {display: 文脈の情報への追従, extends: quality_measure_to, mod: {of: [v_depend, from], with: case}}
   redefinition_following: {display: 再定義への追従, extends: context_following, mod: {of: [v_depend, from], with: conflict_case}}
   control_preservation: {display: 衝突しない事例での判定の維持, extends: quality_measure_to, mod: {of: [v_depend, from], with: control_case}}
@@ -344,6 +349,13 @@ individuals:
   pw_panickssery2023_caa: {is: prior_work, display: "先行研究: Panickssery et al. 2023, Steering Llama 2 via Contrastive Activation Addition（arXiv:2312.06681）"}
   pw_todd2024_function_vectors: {is: prior_work, display: "先行研究: Todd et al. 2024, Function Vectors in Large Language Models（ICLR 2024, arXiv:2310.15213）"}
   pw_radevski2026_steering_tokens: {is: prior_work, display: "先行研究: Radevski et al. 2026, Compositional Steering of Large Language Models with Steering Tokens（ACL 2026, aclanthology 2026.acl-long.1435）"}
+  pw_eyuboglu2025_cartridges: {is: prior_work, display: "先行研究: Eyuboglu et al. 2025, Cartridges: Lightweight and general-purpose long context representations via self-study（ICLR 2026, arXiv:2506.06266）"}
+  pw_teehan2024_college: {is: prior_work, display: "先行研究: Teehan, Lake & Ren 2024, CoLLEGe: Concept Embedding Generation for Large Language Models（arXiv:2403.15362）"}
+  pw_lenat2023_cyc: {is: prior_work, display: "先行研究: Lenat & Marcus 2023, Getting from Generative AI to Trustworthy AI: What LLMs might learn from Cyc（arXiv:2308.04445）"}
+  pw_luo2024_knowla: {is: prior_work, display: "先行研究: Luo et al. 2024, KnowLA: Enhancing Parameter-efficient Finetuning with Knowledgeable Adaptation（NAACL 2024, arXiv:2403.14950）"}
+  pw_coppolillo2025_kg_injection: {is: prior_work, display: "先行研究: Coppolillo 2025, Injecting Knowledge Graphs into Large Language Models（arXiv:2505.07554）"}
+  pw_babaei2025_ontotruth: {is: prior_work, display: "先行研究: Babaei Giglou et al. 2025, Beyond Statistical Parroting: Hard-Coding Truth into LLMs via Ontologies（CEUR-WS Vol-4079）"}
+  pw_poiroux2024_typecheck: {is: prior_work, display: "先行研究: Poiroux et al. 2024, Improving Autoformalization using Type Checking（arXiv:2406.07222）"}
   # 先行研究の主張。表示語に、要旨の該当する文を引く。中身は v_refer で、仮説と同じ形に書く
   pwc_wang2025_interference: {is: prior_claim, display: "要旨: retrieval accuracy declines log-linearly toward zero as interference accumulates（前に並ぶ古い値が多いほど、最新の値の検索が下がる）"}
   pwc_liu2024_middle: {is: prior_claim, display: "要旨: performance is often highest when relevant information occurs at the beginning or end of the input context（関係する情報が末尾から離れて中ほどにあると下がる）"}
@@ -355,6 +367,13 @@ individuals:
   pwc_panickssery2023_caa: {is: prior_claim, display: "要旨: 正例と負例の残差の活性化の平均の差を足すと、振る舞いが大きく変わる（能力の低下は小さい）"}
   pwc_todd2024_function_vector: {is: prior_claim, display: "要旨: 少数の注意ヘッドが運ぶ関数ベクトルを足すと、例示なしの文脈でもその課題が実行される"}
   pwc_radevski2026_steering_tokens: {is: prior_claim, display: "要旨: 振る舞いを入力の専用トークンに埋め込むと、学習していない組み合わせにも汎化し、活性化の操舵より効く"}
+  pwc_eyuboglu2025_self_study: {is: prior_claim, display: "要旨: コーパスごとに学習した小さな KV キャッシュは、合成した多様な会話で文脈蒸留すると、文脈に全文を置く場合と同等になる（次トークン予測だけでは届かない）"}
+  pwc_teehan2024_transfer: {is: prior_claim, display: "要旨: 少数の例文や定義から作った新しい概念の埋め込みは、課題ごとの学習なしに、定義の推測と言語推論の両方に効く（新しい語について）"}
+  pwc_lenat2023_hybrid: {is: prior_claim, display: "要旨: 明示的な知識と推論機関を持つ形式的な体系は、推論の各段を元の知識までたどれるようにする。信頼できる AI は LLM とこれの混成が要る"}
+  pwc_luo2024_kg_adapter: {is: prior_claim, display: "要旨: 入力に現れる実体の KG 埋め込みを、層に挟んだ適応層で混ぜると、知識を問う課題の成績が上がる"}
+  pwc_coppolillo2025_graph_tokens: {is: prior_claim, display: "要旨: KG 埋め込みをトークンにして入力に足すと、LLM を学習し直さずに、KG についての推論が上がる"}
+  pwc_babaei2025_axioms_in_prompt: {is: prior_claim, display: "要旨: オントロジーの公理をプロンプトに入れると、回答の正しさが上がる（Pizza Ontology、0.5B〜72B）"}
+  pwc_poiroux2024_filter: {is: prior_claim, display: "要旨: 型検査を通らない候補を捨てると、自然言語から Lean への形式化の正しさが上がる（ProofNet で最大 +18.4 ポイント）"}
   model_4b: {is: open_weight_model, display: Qwen3-4B}
 
   # ===== 設計。1つしかない。
@@ -856,6 +875,7 @@ individuals:
   h_common_component_transfers_to_unseen: {is: hyp_untested}
   h_attention_carries_text_route: {is: hyp_untested}
   h_model_can_write_cscl: {is: hyp_untested}
+  h_typecheck_feedback_raises_writing: {is: hyp_untested}
   h_modifier_transfers_to_unseen_genus: {is: hyp_supported}
 
   # ===== 決定（is: decision）
@@ -2078,6 +2098,7 @@ facts:
   - {is: v_refer, from: h_cscl_raises_following, to: {is: v_raise, from: cscl, to: redefinition_following}}
   - {is: v_scope, from: text_injection, to: h_cscl_raises_following}
   - {is: v_refer, from: h_model_can_write_cscl, to: {is: v_speak, from: model, to: concept_expression}}
+  - {is: v_refer, from: h_typecheck_feedback_raises_writing, to: {is: v_raise, from: type_check_result, to: formalization_accuracy}}
   - {is: v_refer, from: h_dedicated_key_raises_following, to: {is: v_raise, from: key_token_vector, to: redefinition_following}}
   - {is: v_refer, from: h_symbolic_membership_raises_following, to: {is: v_raise, from: symbolic_membership, to: redefinition_following}}
   - {is: v_refer, from: h_contrast_vector_raises_following, to: {is: v_raise, from: contrast_vector, to: redefinition_following}}
@@ -2154,6 +2175,8 @@ facts:
   - {is: v_prior_differ, from: pw_liu2024_lost_in_the_middle, to: h_distance_does_not_lower}
   - {is: v_prior_differ, from: pw_goworek2026_lexical_redefinition, to: h_following_definitions_do_not_lower}
   - {is: v_prior_same, from: pw_xu2024_knowledge_conflicts, to: h_collision_lowers_following}
+  - {is: v_prior_differ, from: pw_teehan2024_college, to: h_apply_does_not_transfer_to_paraphrase}
+  - {is: v_prior_same, from: pw_poiroux2024_typecheck, to: h_typecheck_feedback_raises_writing}
   - {is: v_prior_method, from: h_vector_raises_following, to: pw_turner2023_activation_addition}
   - {is: v_prior_method, from: h_contrast_vector_raises_following, to: pw_panickssery2023_caa}
   - {is: v_prior_method, from: h_vector_raises_following, to: pw_todd2024_function_vectors}
@@ -2178,3 +2201,17 @@ facts:
   - {is: v_refer, from: pwc_todd2024_function_vector, to: {is: v_raise, from: state_shift, to: behavior_expression}}
   - {is: v_state, from: pw_radevski2026_steering_tokens, to: pwc_radevski2026_steering_tokens}
   - {is: v_refer, from: pwc_radevski2026_steering_tokens, to: {is: v_raise, from: dedicated_token, to: behavior_expression}}
+  - {is: v_state, from: pw_eyuboglu2025_cartridges, to: pwc_eyuboglu2025_self_study}
+  - {is: v_refer, from: pwc_eyuboglu2025_self_study, to: {is: v_raise, from: taught_vector, to: task_performance}}
+  - {is: v_state, from: pw_teehan2024_college, to: pwc_teehan2024_transfer}
+  - {is: v_refer, from: pwc_teehan2024_transfer, to: {is: v_transfer, from: usage_apply, to: usage_define_paraphrase}}
+  - {is: v_state, from: pw_lenat2023_cyc, to: pwc_lenat2023_hybrid}
+  - {is: v_refer, from: pwc_lenat2023_hybrid, to: {is: v_raise, from: typed_graph, to: traceability}}
+  - {is: v_state, from: pw_luo2024_knowla, to: pwc_luo2024_kg_adapter}
+  - {is: v_refer, from: pwc_luo2024_kg_adapter, to: {is: v_raise, from: structure_embedding, to: task_performance}}
+  - {is: v_state, from: pw_coppolillo2025_kg_injection, to: pwc_coppolillo2025_graph_tokens}
+  - {is: v_refer, from: pwc_coppolillo2025_graph_tokens, to: {is: v_raise, from: structure_embedding, to: task_performance}}
+  - {is: v_state, from: pw_babaei2025_ontotruth, to: pwc_babaei2025_axioms_in_prompt}
+  - {is: v_refer, from: pwc_babaei2025_axioms_in_prompt, to: {is: v_raise, from: text_injection, to: task_performance}}
+  - {is: v_state, from: pw_poiroux2024_typecheck, to: pwc_poiroux2024_filter}
+  - {is: v_refer, from: pwc_poiroux2024_filter, to: {is: v_raise, from: type_check_result, to: formalization_accuracy}}
