@@ -611,6 +611,13 @@ individuals:
   sys_tops_cond_reaches_dynamic: {is: axis_value, val: {text: reaches_dynamic}}
   sys_tops_cond_concept_dynamic: {is: axis_value, val: {text: concept_dynamic}}
   sys_tops_cond_supported: {is: axis_value, val: {text: supported}}
+  sys_confusion: {is: measurement_family}
+  sys_confusion_cond: {is: family_axis, val: {text: cond}}
+  sys_confusion_cond_v_a_ok: {is: axis_value, val: {text: v_a_ok}}
+  sys_confusion_cond_v_m_ok: {is: axis_value, val: {text: v_m_ok}}
+  sys_confusion_cond_s_a_ok: {is: axis_value, val: {text: s_a_ok}}
+  sys_confusion_cond_s_m_ok: {is: axis_value, val: {text: s_m_ok}}
+  sys_confusion_cond_recomputed: {is: axis_value, val: {text: recomputed}}
   sys_verbs: {is: measurement_family}
   sys_verbs_cond: {is: family_axis, val: {text: cond}}
   sys_verbs_cond_dyn_has_mod: {is: axis_value, val: {text: dyn_has_mod}}
@@ -2455,6 +2462,21 @@ facts:
   - {is: v_spell, from: sys_verbs_cond_dyn_root, to: dyn_root}
   - {is: v_entry_of, from: '{cond}', to: sys_verbs}
   - {is: v_metric_of, from: sys_verbs, to: mean_value}
+  - {is: v_file_of, from: sys_confusion.json, to: sys_confusion}
+  - {is: v_rows_of, from: [rows], to: sys_confusion}
+  - {is: v_axis_of, from: sys_confusion_cond, to: sys_confusion}
+  - {is: v_value_of, from: sys_confusion_cond_v_a_ok, to: sys_confusion_cond}
+  - {is: v_spell, from: sys_confusion_cond_v_a_ok, to: v_a_ok}
+  - {is: v_value_of, from: sys_confusion_cond_v_m_ok, to: sys_confusion_cond}
+  - {is: v_spell, from: sys_confusion_cond_v_m_ok, to: v_m_ok}
+  - {is: v_value_of, from: sys_confusion_cond_s_a_ok, to: sys_confusion_cond}
+  - {is: v_spell, from: sys_confusion_cond_s_a_ok, to: s_a_ok}
+  - {is: v_value_of, from: sys_confusion_cond_s_m_ok, to: sys_confusion_cond}
+  - {is: v_spell, from: sys_confusion_cond_s_m_ok, to: s_m_ok}
+  - {is: v_value_of, from: sys_confusion_cond_recomputed, to: sys_confusion_cond}
+  - {is: v_spell, from: sys_confusion_cond_recomputed, to: recomputed}
+  - {is: v_entry_of, from: '{cond}', to: sys_confusion}
+  - {is: v_metric_of, from: sys_confusion, to: mean_value}
   - {is: v_file_of, from: sys_content_symmetry.json, to: sys_content_symmetry}
   - {is: v_rows_of, from: [rows], to: sys_content_symmetry}
   - {is: v_axis_of, from: sys_content_symmetry_cond, to: sys_content_symmetry}

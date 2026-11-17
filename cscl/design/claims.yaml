@@ -246,6 +246,17 @@ individuals:
   o_sys_verbs_dyn_limited: {is: exp.observation}
   o_sys_verbs_dyn_exists_more: {is: exp.observation}
   o_sys_verbs_static_order_more: {is: exp.observation}
+  # 動詞の位置の混同の観察（exp/experiments/sys_confusion.py）。仮説の確かめではない。手順は実行の前に登録した（git の履歴の結果ファイルを個体にする）。
+  # 混同の定義の候補: 動詞 v の定義 F が位置 p の b について成り立たず、F が成り立つ c と R(c, b) があるとき、その使い方は v∘R。v∘R を v と書くのが混同。
+  #   利用者の気づき「設計＝作ることで、別の動詞が混ざる」（programming_language を設計の終点に置く使い方）から抽象化した。体系にはその個体がないので、計算で観察した。
+  # 結果: 結果ファイルの計算の出来事 138（足す 99、計算し直す 39。ファイル 99 のうち 13 が計算し直された）。
+  # 今の語彙（ファイルを v_compute の終点に置く）では、計算し直す 39 がすべて pre の ¬exists(to) で破れる。終点を part に沿って版へずらすと、すべて歩める。
+  # 作りからほぼ決まる結果で、経験的な中身は「計算し直しが実際にある」こと
+  o_sys_confusion_v_create_ok: {is: exp.observation}
+  o_sys_confusion_v_recompute_fails: {is: exp.observation}
+  o_sys_confusion_s_create_ok: {is: exp.observation}
+  o_sys_confusion_s_recompute_ok: {is: exp.observation}
+  o_sys_confusion_recomputed_some: {is: exp.observation}
   o_sys_frame_declared_never_grows: {is: exp.observation}
   o_sys_frame_declared_never_shrinks: {is: exp.observation}
   o_sys_frame_creates_over_removes: {is: exp.observation}
@@ -358,6 +369,11 @@ facts:
   - {is: v_contradict, from: o_sys_tops_nouns_mostly_static, to: h_tops_derivable}
   - {is: v_refer, from: o_sys_tops_concept_static, to: {is: v_level, from: sys_tops.concept_dynamic.mean_value, to: 0.0}}
   - {is: v_contradict, from: o_sys_tops_concept_static, to: h_tops_derivable}
+  - {is: v_refer, from: o_sys_confusion_v_create_ok, to: {is: v_level, from: sys_confusion.v_a_ok.mean_value, to: 1.0}}
+  - {is: v_refer, from: o_sys_confusion_v_recompute_fails, to: {is: v_level, from: sys_confusion.v_m_ok.mean_value, to: 0.0}}
+  - {is: v_refer, from: o_sys_confusion_s_create_ok, to: {is: v_level, from: sys_confusion.s_a_ok.mean_value, to: 1.0}}
+  - {is: v_refer, from: o_sys_confusion_s_recompute_ok, to: {is: v_level, from: sys_confusion.s_m_ok.mean_value, to: 1.0}}
+  - {is: v_refer, from: o_sys_confusion_recomputed_some, to: {is: v_come_after, from: sys_confusion.recomputed.mean_value, to: 0.0}}
   - {is: v_refer, from: o_sys_verbs_dyn_from_con, to: {is: v_level, from: sys_verbs.dyn_from_con.mean_value, to: 1.0}}
   - {is: v_refer, from: o_sys_verbs_dyn_ends_not_all_con, to: {is: v_come_before, from: sys_verbs.dyn_ends_con.mean_value, to: 1.0}}
   - {is: v_refer, from: o_sys_verbs_dyn_no_occ_end, to: {is: v_level, from: sys_verbs.dyn_ends_occ.mean_value, to: 0.0}}
