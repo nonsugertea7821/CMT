@@ -108,8 +108,13 @@ individuals:
   #   (a) 名前を先に宣言し exists で在ることを述べる今の書き方と、(b) 宣言を歩みで足し取り消す書き方で実行し、
   #   (b) がすべて歩め、各歩みの後の状態が (a) と一致し、宣言されていない名前を含む文が残らなければ支持、どれかが破れれば反証。
   #   登録の前に確かめたのは、(a) の記録が今の実行器でエラーなく歩めることだけ
-  h_open_declaration: {is: exp.hyp_untested}
-  b_open_declaration: {is: exp.item_queued}
+  # 結果（判定: 反証）。(b) は3歩ともエラーなく歩め、各歩みの後の状態も (a) と一致した。
+  # しかし消える動詞 std.v_freeze で r1 の宣言を取り消すと、r1 についての文 depend(r1, sys1) と refer(r1, dec1) が残った。
+  # (a) では同じ2文が「在らないものについての文」として残る（法則 depend_end_exists は始点が在るときだけを縛るので、違反にならない）。
+  # 生まれることは宣言を足すことと読めたが、消えることは宣言の取り消しとは読めない。
+  # 登録した基準は3つの条件がすべて成り立つときだけ支持なので、成り立った2つ（歩める・状態が一致する）は観察として残し、支持には結ばない
+  h_open_declaration: {is: exp.hyp_refuted}
+  b_open_declaration: {is: exp.item_done}
 
   # ===== 観察（体系そのものを数えた族 sys_* の値。exp/experiments/sys_ends.py, sys_structure.py）
   o_sys_depended_ic_below_gdc: {is: exp.observation}
@@ -132,6 +137,10 @@ individuals:
   o_sys_anomaly_breaks_below: {is: exp.observation}
   o_sys_content_not_significant: {is: exp.observation}
   o_sys_content_unpaired_above: {is: exp.observation}
+  o_sys_declaration_steps_ok: {is: exp.observation}
+  o_sys_declaration_states_same: {is: exp.observation}
+  o_sys_declaration_dangling: {is: exp.observation}
+  o_sys_declaration_never_halts: {is: exp.observation}
 
 facts:
   - {is: syntax.v_use, from: lang, to: std}
@@ -195,6 +204,11 @@ facts:
   - {is: v_support, from: o_sys_content_not_significant, to: h_content_asymmetry_harmless}
   - {is: v_refer, from: h_open_declaration, to: {is: v_depend, from: declared_scope, to: runtime.steps}}
   - {is: exp.v_check, from: b_open_declaration, to: h_open_declaration}
+  - {is: v_refer, from: o_sys_declaration_steps_ok, to: {is: v_level, from: sys_declaration.b_ok.mean_value, to: 1.0}}
+  - {is: v_refer, from: o_sys_declaration_states_same, to: {is: v_level, from: sys_declaration.same_state.mean_value, to: 1.0}}
+  - {is: v_refer, from: o_sys_declaration_dangling, to: {is: v_come_after, from: sys_declaration.dangling.mean_value, to: 0.0}}
+  - {is: v_refer, from: o_sys_declaration_never_halts, to: {is: v_come_after, from: sys_declaration.b_fresh_applicable.mean_value, to: 0.0}}
+  - {is: v_contradict, from: o_sys_declaration_dangling, to: h_open_declaration}
   - {is: v_refer, from: o_sys_quant_with_qual, to: {is: v_level, from: sys_quadrants.quant_alone.mean_value, to: 0.0}}
   - {is: v_refer, from: o_sys_rel_disjoint, to: {is: v_level, from: sys_quadrants.rel_mixed.mean_value, to: 0.0}}
   - {is: v_refer, from: o_sys_unplaced_neg_only, to: {is: v_level, from: sys_quadrants.none_other.mean_value, to: 0.0}}

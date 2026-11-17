@@ -523,6 +523,14 @@ individuals:
   sys_anomaly_cond_breaks_fail: {is: axis_value, val: {text: breaks_fail}}
   sys_anomaly_cond_keeps_fail: {is: axis_value, val: {text: keeps_fail}}
   sys_anomaly_cond_p_value: {is: axis_value, val: {text: p_value}}
+  sys_declaration: {is: measurement_family}
+  sys_declaration_cond: {is: family_axis, val: {text: cond}}
+  sys_declaration_cond_b_ok: {is: axis_value, val: {text: b_ok}}
+  sys_declaration_cond_same_state: {is: axis_value, val: {text: same_state}}
+  sys_declaration_cond_dangling: {is: axis_value, val: {text: dangling}}
+  sys_declaration_cond_a_applicable: {is: axis_value, val: {text: a_applicable}}
+  sys_declaration_cond_b_fresh_applicable: {is: axis_value, val: {text: b_fresh_applicable}}
+  sys_declaration_cond_supported: {is: axis_value, val: {text: supported}}
   sys_content_symmetry: {is: measurement_family}
   sys_content_symmetry_cond: {is: family_axis, val: {text: cond}}
   sys_content_symmetry_cond_unpaired_changed: {is: axis_value, val: {text: unpaired_changed}}
@@ -2127,6 +2135,23 @@ facts:
   - {is: v_spell, from: sys_anomaly_cond_p_value, to: p_value}
   - {is: v_entry_of, from: '{cond}', to: sys_anomaly}
   - {is: v_metric_of, from: sys_anomaly, to: mean_value}
+  - {is: v_file_of, from: sys_declaration.json, to: sys_declaration}
+  - {is: v_rows_of, from: [rows], to: sys_declaration}
+  - {is: v_axis_of, from: sys_declaration_cond, to: sys_declaration}
+  - {is: v_value_of, from: sys_declaration_cond_b_ok, to: sys_declaration_cond}
+  - {is: v_spell, from: sys_declaration_cond_b_ok, to: b_ok}
+  - {is: v_value_of, from: sys_declaration_cond_same_state, to: sys_declaration_cond}
+  - {is: v_spell, from: sys_declaration_cond_same_state, to: same_state}
+  - {is: v_value_of, from: sys_declaration_cond_dangling, to: sys_declaration_cond}
+  - {is: v_spell, from: sys_declaration_cond_dangling, to: dangling}
+  - {is: v_value_of, from: sys_declaration_cond_a_applicable, to: sys_declaration_cond}
+  - {is: v_spell, from: sys_declaration_cond_a_applicable, to: a_applicable}
+  - {is: v_value_of, from: sys_declaration_cond_b_fresh_applicable, to: sys_declaration_cond}
+  - {is: v_spell, from: sys_declaration_cond_b_fresh_applicable, to: b_fresh_applicable}
+  - {is: v_value_of, from: sys_declaration_cond_supported, to: sys_declaration_cond}
+  - {is: v_spell, from: sys_declaration_cond_supported, to: supported}
+  - {is: v_entry_of, from: '{cond}', to: sys_declaration}
+  - {is: v_metric_of, from: sys_declaration, to: mean_value}
   - {is: v_file_of, from: sys_content_symmetry.json, to: sys_content_symmetry}
   - {is: v_rows_of, from: [rows], to: sys_content_symmetry}
   - {is: v_axis_of, from: sys_content_symmetry_cond, to: sys_content_symmetry}
