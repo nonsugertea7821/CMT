@@ -62,7 +62,7 @@ nodes:
   information_entity_express_from_cscl: {display: 概念体系制御言語へで書かれる情報, extends: information_entity, mod: express_from_cscl}
   identifier: {display: 識別子, extends: information_entity_express_from_cscl, mod: {of: [v_refer, from], with: concept_expression, at: {count: 1}}}
   pattern: {display: 識別子の雛形, extends: information_entity, mod: {of: [v_refer, from], with: identifier, at: {count: {gt: 1}}}, verbatim: true}
-  information_entity_refer_from_p: {display: 関係づけるへ述べる情報, extends: information_entity, mod: refer_from_p}
+  information_entity_refer_from_p: {display: 関係づけるへ述べる情報, extends: verb_ref, mod: refer_from_p}
   axis: {display: 軸, extends: information_entity_refer_from_p, mod: {of: [v_compose, to], with: value}}
   value: {display: 値, extends: information_entity, mod: {of: [v_compose, from], with: axis}}
   expression_part: {display: 概念式の部分, extends: information_entity, mod: {of: [v_compose, from], with: concept_expression}}
@@ -78,7 +78,7 @@ nodes:
   opposite: {display: 反対の動詞の指定, extends: expression_part, mod: refer_from_occurrent}   # 動詞に書く。2つの文の中身を比べるとき、この組は向きが反対
   derive: {display: 中身から導く比較の結果の指定, extends: expression_part, mod: {of: [v_refer, from], with: rel}}   # 動詞に書く（same か opposite）。この動詞の事実は、中身の比較から導けなければならない
   via: {display: 比べる中身を述べる動詞の指定, extends: expression_part, mod: {of: [v_refer, from], with: occurrent, at: {count: 1}}}   # derive と組で書く。始点がこの動詞で述べる文を、終点の文と比べる
-  verbatim: {display: 値をそのまま持つ指定, extends: expression_part, mod: {of: [v_refer, from], with: literal}}   # この種類を終点とする関係の値は、語として解決せず、そのまま持つ
+  verbatim: {display: 値をそのまま持つ指定, extends: value_part, mod: {of: [v_refer, from], with: literal}}   # この種類を終点とする関係の値は、語として解決せず、そのまま持つ
   quant: {display: 数量化の指定, extends: expression_part, mod: {of: [v_refer, from], with: participant, at: {count: {gt: 1}}}}
   value_part: {display: 値の指定, extends: expression_part, mod: refer_from_value}
   at: {display: 修飾の中の値の指定, extends: value_part, mod: {of: [v_compose, from], with: mod}}
@@ -87,7 +87,7 @@ nodes:
   rel: {display: 比べた結果, extends: quality, mod: {of: [v_depend, from], with: cmp}}
   from: {display: 始点の位置, extends: position, mod: {of: [v_refer, from], with: s}}
   to: {display: 終点の位置, extends: position, mod: {of: [v_refer, from], with: o}}
-  new_kind: {display: 第三のものの種類の指定, extends: expression_part, mod: refer_from_third_participant}
+  new_kind: {display: 第三のものの種類の指定, extends: with, mod: refer_from_third_participant}
   holds: {display: 成り立つ状態の指定, extends: expression_part, mod: refer_from_state_relation, verbatim: true}
   pre: {display: 前の状態の指定, extends: holds, mod: come_before_from_post, verbatim: true}
   post: {display: 後の状態の指定, extends: holds, mod: {of: [v_come_after, from], with: pre}, verbatim: true}
@@ -149,7 +149,7 @@ nodes:
   # ===== 実行の戦略と実行時の意味論。実行の検査（cscl/bootstrap/runtime/runtime.py）は、runtime の節に書かれた選択に従う =====
 
   # ===== 名前空間。領域ごとに識別子を持ち、ほかの領域のものは「領域.名前」で参照する =====
-  domain: {display: 領域, extends: information_entity, mod: {of: [v_compose, to], with: concept_expression}, many: true}
+  domain: {display: 領域, extends: passage, mod: {of: [v_compose, to], with: concept_expression}, many: true}
   v_use: {display: 使う, extends: v_depend, from: domain, to: domain}
 
 individuals:
@@ -171,8 +171,13 @@ individuals:
   r_root: {is: law_relation, display: 根である}
   r_verb: {is: law_relation, display: 動詞である}
   r_placed: {is: law_relation, display: 定義から根の下に置かれる}
+  r_sees: {is: law_relation, display: 自分の領域から見える概念である}
   r_candidate: {is: law_relation, display: 具体的な候補である}
   r_missing: {is: law_relation, display: 候補の式が欠けている}
+  r_same_slot: {is: law_relation, display: 同じ動詞の同じ位置の限定である}
+  r_qualified: {is: law_relation, display: 否定・数量・範囲の付いた限定である}
+  r_entail: {is: law_relation, display: 限定として含意する}
+  r_has: {is: law_relation, display: 式を（含意によっても）持つ}
   r_visible: {is: law_relation, display: 参照できる}
   # --- 体系の書き方
   parent_by_extends: {is: law_rule, display: extends に書いたものは上位}
@@ -226,7 +231,15 @@ individuals:
   placed_deduced: {is: law_rule, display: 動詞でない概念は、定義から根の下に置かれる（根への宣言だけでは置かれない）}
   monotone: {is: law_rule, display: 階層を降りるたびに限定が増える}
   parents_unordered: {is: law_rule, display: 上位に並べた2つは、上下の関係にない}
+  sees: {is: law_rule, display: 自分の領域から、相手の領域が見える}
   specific_candidate: {is: law_rule, display: 上位の下にあり、互いに上下でない別の概念}
+  qualified_by_neg: {is: law_rule, display: 否定の付いた限定}
+  qualified_by_quant: {is: law_rule, display: 数量の付いた限定}
+  qualified_by_at: {is: law_rule, display: 範囲の付いた限定}
+  same_slot: {is: law_rule, display: 同じ動詞の同じ位置を限定する2つ}
+  entail_by_with: {is: law_rule, display: 同じ動詞の同じ位置で、端が下位の限定は、端が上位の限定を含意する（どちらも否定・数量・範囲なし）}
+  has_by_acc: {is: law_rule, display: 積み上がった式は持つ}
+  has_by_entail: {is: law_rule, display: 積み上がった式が含意する式も持つ}
   specific_missing: {is: law_rule, display: 候補の式に、自分にない式がある}
   specific: {is: law_rule, display: より具体的な概念があればその下に置く}
   unique_in_domain: {is: law_rule, display: 表示語は同じ領域の中で重複しない}
@@ -459,10 +472,38 @@ facts:
   - {is: v_assume, from: specific_candidate, to: {is: same, from: var1, to: var2, neg: true}}
   - {is: v_assume, from: specific_candidate, to: {is: r_ancestor, from: var1, to: var2, neg: true}}
   - {is: v_assume, from: specific_candidate, to: {is: r_ancestor, from: var2, to: var1, neg: true}}
+  - {is: v_assume, from: specific_candidate, to: {is: r_sees, from: var1, to: var2}}
   - {is: v_derive, from: specific_candidate, to: {is: r_candidate, from: var1, to: var2}}
+  - {is: v_assume, from: sees, to: {is: domain, from: var1, to: var3}}
+  - {is: v_assume, from: sees, to: {is: domain, from: var2, to: var4}}
+  - {is: v_assume, from: sees, to: {is: r_visible, from: var3, to: var4}}
+  - {is: v_derive, from: sees, to: {is: r_sees, from: var1, to: var2}}
+  - {is: v_assume, from: qualified_by_neg, to: {is: neg, from: var1, to: var2}}
+  - {is: v_derive, from: qualified_by_neg, to: {is: r_qualified, from: var1}}
+  - {is: v_assume, from: qualified_by_quant, to: {is: quant, from: var1, to: var2}}
+  - {is: v_derive, from: qualified_by_quant, to: {is: r_qualified, from: var1}}
+  - {is: v_assume, from: qualified_by_at, to: {is: at, from: var1, to: var2}}
+  - {is: v_derive, from: qualified_by_at, to: {is: r_qualified, from: var1}}
+  - {is: v_assume, from: same_slot, to: {is: of, from: var1, to: var3}}
+  - {is: v_assume, from: same_slot, to: {is: of, from: var2, to: var3}}
+  - {is: v_assume, from: same_slot, to: {is: position, from: var1, to: var4}}
+  - {is: v_assume, from: same_slot, to: {is: position, from: var2, to: var4}}
+  - {is: v_derive, from: same_slot, to: {is: r_same_slot, from: var1, to: var2}}
+  - {is: v_assume, from: entail_by_with, to: {is: r_same_slot, from: var1, to: var2}}
+  - {is: v_assume, from: entail_by_with, to: {is: with, from: var1, to: var3}}
+  - {is: v_assume, from: entail_by_with, to: {is: with, from: var2, to: var4}}
+  - {is: v_assume, from: entail_by_with, to: {is: r_ancestor, from: var3, to: var4}}
+  - {is: v_assume, from: entail_by_with, to: {is: r_qualified, from: var1, neg: true}}
+  - {is: v_assume, from: entail_by_with, to: {is: r_qualified, from: var2, neg: true}}
+  - {is: v_derive, from: entail_by_with, to: {is: r_entail, from: var1, to: var2}}
+  - {is: v_assume, from: has_by_acc, to: {is: r_acc, from: var1, to: var2}}
+  - {is: v_derive, from: has_by_acc, to: {is: r_has, from: var1, to: var2}}
+  - {is: v_assume, from: has_by_entail, to: {is: r_acc, from: var1, to: var3}}
+  - {is: v_assume, from: has_by_entail, to: {is: r_entail, from: var3, to: var2}}
+  - {is: v_derive, from: has_by_entail, to: {is: r_has, from: var1, to: var2}}
   - {is: v_assume, from: specific_missing, to: {is: r_candidate, from: var1, to: var2}}
   - {is: v_assume, from: specific_missing, to: {is: r_acc, from: var2, to: var3}}
-  - {is: v_assume, from: specific_missing, to: {is: r_acc, from: var1, to: var3, neg: true}}
+  - {is: v_assume, from: specific_missing, to: {is: r_acc, from: var1, to: var3, neg: true}}   # 含意（r_has）に替えると 14 件の違反が残る。直してから替える
   - {is: v_derive, from: specific_missing, to: {is: r_missing, from: var1, to: var2}}
   - {is: v_assume, from: specific, to: {is: r_candidate, from: var1, to: var2}}
   - {is: v_require, from: specific, to: {is: r_missing, from: var1, to: var2}}

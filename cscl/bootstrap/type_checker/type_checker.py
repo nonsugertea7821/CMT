@@ -865,6 +865,9 @@ class Ontology:
                         add("with", t, m["with"])
                     if m.get("neg"):
                         add("neg", t, "true")
+                    for k in ("quant", "at"):
+                        if m.get(k) is not None:
+                            add(k, t, dump(m[k]))
                     if isinstance(m.get("with"), str) and m["with"] in self.I:
                         add("refer", nid, m["with"])
             for x in (n.get("val") or {}).items():
