@@ -20,7 +20,7 @@ grammar:
   runtime: [pre_rule, post_rule, law_check, binding, choice, progress]
   domain: [domain, nodes, individuals, facts]   # 領域のファイル（exp/src/exp.yaml）
   individuals: [is, display, val]
-  facts: [is, from, to, new, at, neg]   # 事実は動詞の個体。位置に名前を付けて書く。holds / pre / post も同じ形
+  facts: [is, from, to, new, at, neg, val]   # 事実は動詞の個体。位置に名前を付けて書く。holds / pre / post も同じ形。neg は「述べられていない」、val: {truth: false} は「偽と述べる」
 
 nodes:
   # ===== 名前を付けた限定（法則 named_mod）。2つ以上の概念が足す限定は、名前で書く
@@ -126,9 +126,11 @@ nodes:
   logic: {display: 述語論理の語, extends: word, mod: refer_from_sentence}
   sentence_refer_from_sentence: {display: 文へ述べる文, extends: sentence, mod: refer_from_sentence}
   not: {display: 否定（示されていない文を述べる文）, extends: sentence_refer_from_sentence, mod: refer_from_facts}
-  world: {display: 書かれていない文の扱い, extends: definition, mod: refer_from_facts}   # 閉世界と開世界は仮定。領域ごとに前提として選ぶ（v_presume）
+  # 書かれていない文の扱いは、領域ごとに前提として選ぶ（v_presume）。世界は、書かれていない文の真偽を述べる文。
+  # world だけを置けば、真偽を述べない（開世界: 書かれていない文の真偽は決められない）。閉世界は、それに「偽」を述べ足したもの。
+  # 開世界を、world と別のノードにしない。「閉世界に一致しない」という否定のほかに、world に足す中身がないので。
+  world: {display: 書かれていない文の扱い, extends: definition, mod: refer_from_facts}
   closed_world: {display: 閉世界（書かれていない文は偽）, extends: world, val: {truth: false}}
-  open_world: {display: 開世界（書かれていない文は不明）, extends: world, mod: {of: [v_agree, from], with: closed_world, neg: true}}
   v_presume: {display: 前提として置くと述べる, extends: v_refer, from: domain, to: world}
   any: {display: 存在の数量化, extends: sentence, mod: {of: [v_refer, from], with: participant, at: {count: {ge: 1}}}, many: true}
   all: {display: 全称の数量化, extends: not, mod: {of: [v_refer, from], with: any}}
