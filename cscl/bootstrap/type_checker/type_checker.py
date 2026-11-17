@@ -362,7 +362,7 @@ def gather(D, T, name):
     事実は動詞の個体: {is: 動詞, from, to, new, at, neg}。位置には名前を付ける。
     - 個体が、動詞のある位置の種類に当たるとき、その個体についての事実。関係の名は、もう一方の位置の種類。
     - at を持つ事実は、始点の種類のものがいくつ終点の部分になるか（個数）。関係の名は、始点の種類。
-    - v_refer の終点が事実の形をしていれば、それは文が述べる中身（主張ではない）。s, p, o と、動詞が新しく取る位置の値 new、否定 neg として読む。"""
+    - v_refer の終点が事実の形をしていれば、それは文が述べる中身（主張ではない）。s, p, o と、動詞が新しく取る位置の値 new として読む。"""
     dom, local, I = D["domain"], D["_local"], D["individuals"]
     q = lambda v: [qualify(y, local, dom) for y in v] if isinstance(v, list) else qualify(v, local, dom)
     for i, f in enumerate(D.get("facts") or []):
@@ -390,8 +390,6 @@ def gather(D, T, name):
                 I[subj]["s"], I[subj]["o"] = (end_word(P.get(k), q(P.get(k)), I[subj]["p"], k, T) for k in ("from", "to"))
                 if "new" in P:
                     I[subj]["new"] = P["new"]
-                if P.get("neg"):   # 中身が否定の文（「s は p で o に〜しない」）
-                    I[subj]["neg"] = True
             else:
                 err(f"{where}: 始点 {subj} が個体でない")
             continue

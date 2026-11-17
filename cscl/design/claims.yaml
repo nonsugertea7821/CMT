@@ -12,6 +12,8 @@ nodes:
   lang_dec_adopted: {display: 言語の採用済みの決定, extends: exp.dec_adopted, mod: is_from_lang_decision}
   lang_dec_tentative: {display: 言語の暫定の決定, extends: exp.dec_tentative, mod: is_from_lang_decision}
   lang_dec_withdrawn: {display: 言語の取り下げた決定, extends: exp.dec_withdrawn, mod: is_from_lang_decision}
+  # 否定の動詞（中身の否定は、否定の動詞で書く。exp の v_not_transfer と同じ形）
+  v_not_depend: {display: に依存しない, extends: occurrent, from: continuant, to: continuant, holds: [{is: depend, from: from, to: to, neg: true}], opposite: v_depend}
   type_checker: {display: 型検査器, extends: artifact, mod: refer_from_laws}
   previous_checker: {display: 前の版の型検査器, extends: type_checker, mod: {of: [v_come_after, to], with: type_checker}}
 
@@ -109,7 +111,7 @@ facts:
   - {is: v_refer, from: d_sig_level_to, to: {is: extends, from: b, to: continuant}}
   - {is: v_refer, from: d_sig_design_from, to: {is: extends, from: designer, to: continuant}}
   - {is: v_refer, from: d_sig_design_to, to: {is: extends, from: designed, to: continuant}}
-  - {is: v_refer, from: h_ic_is_bearer, to: {is: v_depend, from: depended, to: continuant, neg: true}}
+  - {is: v_refer, from: h_ic_is_bearer, to: {is: v_not_depend, from: depended, to: continuant}}
   - {is: v_refer, from: o_sys_depended_ic_below_gdc, to: {is: v_come_before, from: sys_depend_to.ic.mean_value, to: sys_depend_to.gdc.mean_value}}
   - {is: v_refer, from: o_sys_depended_mostly_depend, to: {is: v_come_after, from: sys_depend_to.also_depends.mean_value, to: 0.5}}
   - {is: v_contradict, from: o_sys_depended_ic_below_gdc, to: h_ic_is_bearer}
