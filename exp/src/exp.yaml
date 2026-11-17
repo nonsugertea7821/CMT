@@ -506,6 +506,16 @@ individuals:
   sys_limitation_cond_pair_subj: {is: axis_value, val: {text: pair_subj}}
   sys_limitation_cond_stated_false: {is: axis_value, val: {text: stated_false}}
   sys_limitation_cond_unstated: {is: axis_value, val: {text: unstated}}
+  sys_limitation_cond_atom_stated_false: {is: axis_value, val: {text: atom_stated_false}}
+  sys_soundness: {is: measurement_family}
+  sys_soundness_cond: {is: family_axis, val: {text: cond}}
+  sys_soundness_cond_unpaired_changed: {is: axis_value, val: {text: unpaired_changed}}
+  sys_soundness_cond_paired_changed: {is: axis_value, val: {text: paired_changed}}
+  sys_soundness_cond_verb_unpaired_changed: {is: axis_value, val: {text: verb_unpaired_changed}}
+  sys_soundness_cond_verb_paired_changed: {is: axis_value, val: {text: verb_paired_changed}}
+  sys_soundness_cond_mod_unpaired_changed: {is: axis_value, val: {text: mod_unpaired_changed}}
+  sys_soundness_cond_mod_paired_changed: {is: axis_value, val: {text: mod_paired_changed}}
+  sys_soundness_cond_p_value: {is: axis_value, val: {text: p_value}}
   pr_babaei: {is: measurement_family}
   pr_babaei_cond: {is: family_axis, val: {text: cond}}
   pr_babaei_cond_qwen72b_question: {is: axis_value, val: {text: qwen72b_question}}
@@ -2063,8 +2073,29 @@ facts:
   - {is: v_spell, from: sys_limitation_cond_stated_false, to: stated_false}
   - {is: v_value_of, from: sys_limitation_cond_unstated, to: sys_limitation_cond}
   - {is: v_spell, from: sys_limitation_cond_unstated, to: unstated}
+  - {is: v_value_of, from: sys_limitation_cond_atom_stated_false, to: sys_limitation_cond}
+  - {is: v_spell, from: sys_limitation_cond_atom_stated_false, to: atom_stated_false}
   - {is: v_entry_of, from: '{cond}', to: sys_limitation}
   - {is: v_metric_of, from: sys_limitation, to: mean_value}
+  - {is: v_file_of, from: sys_soundness.json, to: sys_soundness}
+  - {is: v_rows_of, from: [rows], to: sys_soundness}
+  - {is: v_axis_of, from: sys_soundness_cond, to: sys_soundness}
+  - {is: v_value_of, from: sys_soundness_cond_unpaired_changed, to: sys_soundness_cond}
+  - {is: v_spell, from: sys_soundness_cond_unpaired_changed, to: unpaired_changed}
+  - {is: v_value_of, from: sys_soundness_cond_paired_changed, to: sys_soundness_cond}
+  - {is: v_spell, from: sys_soundness_cond_paired_changed, to: paired_changed}
+  - {is: v_value_of, from: sys_soundness_cond_verb_unpaired_changed, to: sys_soundness_cond}
+  - {is: v_spell, from: sys_soundness_cond_verb_unpaired_changed, to: verb_unpaired_changed}
+  - {is: v_value_of, from: sys_soundness_cond_verb_paired_changed, to: sys_soundness_cond}
+  - {is: v_spell, from: sys_soundness_cond_verb_paired_changed, to: verb_paired_changed}
+  - {is: v_value_of, from: sys_soundness_cond_mod_unpaired_changed, to: sys_soundness_cond}
+  - {is: v_spell, from: sys_soundness_cond_mod_unpaired_changed, to: mod_unpaired_changed}
+  - {is: v_value_of, from: sys_soundness_cond_mod_paired_changed, to: sys_soundness_cond}
+  - {is: v_spell, from: sys_soundness_cond_mod_paired_changed, to: mod_paired_changed}
+  - {is: v_value_of, from: sys_soundness_cond_p_value, to: sys_soundness_cond}
+  - {is: v_spell, from: sys_soundness_cond_p_value, to: p_value}
+  - {is: v_entry_of, from: '{cond}', to: sys_soundness}
+  - {is: v_metric_of, from: sys_soundness, to: mean_value}
   - {is: v_file_of, from: prior/babaei2025_ontology_prompt.json, to: pr_babaei}
   - {is: v_rows_of, from: [reported], to: pr_babaei}
   - {is: v_axis_of, from: pr_babaei_cond, to: pr_babaei}

@@ -121,7 +121,7 @@ def main():
             if not ms:
                 continue
             kind = "mod"
-            paired = all(not bool(m.get("neg")) in pol[(json.dumps(m["of"]), json.dumps(m.get("with")))] for m in ms)
+            paired = all((not m.get("neg")) in pol[(json.dumps(m["of"]), json.dumps(m.get("with")))] for m in ms)
         defn = lambda x: {a: b for a, b in x.items() if a not in SKIP}
         changed = int(k not in N1 or defn(N1[k]) != defn(v))
         side = "paired" if paired else "unpaired"

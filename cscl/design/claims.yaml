@@ -74,8 +74,11 @@ individuals:
   #   版 48a43c9 の各ノード（動詞・限定）が真偽の対を持つかを測り、版 933ddd6 までに書き換えられたか消えたかと比べる。
   #   対の無いノードの書き換えの割合が、対のあるノードより大きく、片側 Fisher で p < 0.05 なら支持、以下なら反証。
   #   測るのは同時に起こることだけで、引き起こすことは示さない。書き換えを欠陥とみなすのは、この確かめでの取り決め
-  h_symmetry_soundness: {is: exp.hyp_untested}
-  b_symmetry_soundness: {is: exp.item_queued}
+  # 結果（判定: どちらでもない）。対の無いノードの書き換えは 0.042、対のあるノードは 0.025 で向きは合うが、p = 0.37。
+  # 動詞だけでは向きが逆（0.024 と 0.077）。登録した版の実行では、限定の対の判定に誤り（not と in の優先順位）があり、
+  # 限定に対のあるものが 0 件になっていた（そのときの値: 0.038 と 0.077、p = 0.91）。手順の説明どおりに直して測り直した
+  h_symmetry_soundness: {is: exp.hyp_mixed}
+  b_symmetry_soundness: {is: exp.item_done}
 
   # ===== 観察（体系そのものを数えた族 sys_* の値。exp/experiments/sys_ends.py, sys_structure.py）
   o_sys_depended_ic_below_gdc: {is: exp.observation}
@@ -90,6 +93,11 @@ individuals:
   o_sys_limit_paired_open: {is: exp.observation}
   o_sys_limit_subj_unpaired: {is: exp.observation}
   o_sys_mod_no_stated_false: {is: exp.observation}
+  o_sys_atom_no_stated_false: {is: exp.observation}
+  o_sys_soundness_unpaired_above: {is: exp.observation}
+  o_sys_soundness_not_significant: {is: exp.observation}
+  o_sys_soundness_verbs_reversed: {is: exp.observation}
+  o_sys_soundness_mods_aligned: {is: exp.observation}
 
 facts:
   - {is: syntax.v_use, from: lang, to: std}
@@ -151,3 +159,10 @@ facts:
   - {is: v_refer, from: o_sys_limit_paired_open, to: {is: v_come_after, from: sys_limitation.pair_open.mean_value, to: 0.5}}
   - {is: v_refer, from: o_sys_limit_subj_unpaired, to: {is: v_level, from: sys_limitation.pair_subj.mean_value, to: 0.0}}
   - {is: v_refer, from: o_sys_mod_no_stated_false, to: {is: v_level, from: sys_limitation.stated_false.mean_value, to: 0.0}}
+  - {is: v_refer, from: o_sys_atom_no_stated_false, to: {is: v_level, from: sys_limitation.atom_stated_false.mean_value, to: 0.0}}
+  - {is: v_refer, from: o_sys_soundness_unpaired_above, to: {is: v_come_after, from: sys_soundness.unpaired_changed.mean_value, to: sys_soundness.paired_changed.mean_value}}
+  - {is: v_refer, from: o_sys_soundness_not_significant, to: {is: v_come_after, from: sys_soundness.p_value.mean_value, to: 0.05}}
+  - {is: v_refer, from: o_sys_soundness_verbs_reversed, to: {is: v_come_before, from: sys_soundness.verb_unpaired_changed.mean_value, to: sys_soundness.verb_paired_changed.mean_value}}
+  - {is: v_refer, from: o_sys_soundness_mods_aligned, to: {is: v_come_after, from: sys_soundness.mod_unpaired_changed.mean_value, to: sys_soundness.mod_paired_changed.mean_value}}
+  - {is: v_support, from: o_sys_soundness_unpaired_above, to: h_symmetry_soundness}
+  - {is: v_contradict, from: o_sys_soundness_not_significant, to: h_symmetry_soundness}

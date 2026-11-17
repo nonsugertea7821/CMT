@@ -24,6 +24,7 @@
       pair_closed / pair_open / pair_subj   has_pair を、閉世界の領域・開世界の領域（subj を除く）・subj に分けたもの
       stated_false  限定が「偽と述べる」読み方（val: {truth: false}）である
       unstated      限定が「述べられていない」読み方（neg）である
+      atom_stated_false  動詞の holds・pre・post の原子が「偽と述べる」読み方（val: {truth: false}）である
 
 使い方:
   python exp/experiments/sys_structure.py      結果ファイルを exp/experiments/results に書く
@@ -92,6 +93,9 @@ def limitation(T, rows_q):
         for i, m in enumerate(m for m in x.get("mod") or [] if isinstance(m, dict)):
             rows[f"mod {n} {i}"] = {"stated_false": int(tc.truth_of(m) is False and "val" in m),
                                     "unstated": int(bool(m.get("neg")))}
+        for part in ("holds", "pre", "post"):
+            for i, f in enumerate(f for f in x.get(part) or [] if isinstance(f, dict)):
+                rows[f"atom {n} {part} {i}"] = {"atom_stated_false": int("val" in f and tc.truth_of(f) is False)}
     return rows
 
 
