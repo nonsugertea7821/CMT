@@ -22,6 +22,8 @@ nodes:
   # 実装の対称性（h_anomaly_defect）と中身の対称性（h_content_asymmetry_harmless）の語
   implementation_break: {display: 実装が壊す真偽の対称性, extends: quality, mod: {of: [v_depend, from], with: artifact}}
   check_failure: {display: 検査の失敗, extends: process, mod: {of: [v_involve, from], with: artifact}}
+  # 時間を含む実行での宣言の範囲（h_open_declaration）の語
+  declared_scope: {display: 宣言の範囲, extends: quality, mod: syntax.refer_from_individuals}
   v_not_trigger: {display: 引き起こさない, extends: occurrent, from: any, to: occurrent, holds: [{is: depend, from: to, to: from, neg: true}], opposite: v_trigger}
 
 individuals:
@@ -99,6 +101,15 @@ individuals:
   # 向きは反証の側だが、書き換えが少なく差を見つけられなかった。差がないことの証明ではない
   h_content_asymmetry_harmless: {is: exp.hyp_supported}
   b_content_asymmetry_harmless: {is: exp.item_done}
+  # ===== 宣言と存在（利用者の見立てから立てた仮説。結果を見る前に登録した）
+  # 種類（時間によらない）では、宣言 ＝ 存在で閉じている（型検査器は宣言されたノードにだけ exists を与える）。
+  # 中身は「時間を含む実行では、宣言の範囲は歩みに依存する（開いている）。各時点では、宣言 ＝ 存在で閉じている」。
+  # 確かめ方は exp/experiments/sys_declaration.py の説明に固定。生まれる動詞と消える動詞を含む同じ歩みを、
+  #   (a) 名前を先に宣言し exists で在ることを述べる今の書き方と、(b) 宣言を歩みで足し取り消す書き方で実行し、
+  #   (b) がすべて歩め、各歩みの後の状態が (a) と一致し、宣言されていない名前を含む文が残らなければ支持、どれかが破れれば反証。
+  #   登録の前に確かめたのは、(a) の記録が今の実行器でエラーなく歩めることだけ
+  h_open_declaration: {is: exp.hyp_untested}
+  b_open_declaration: {is: exp.item_queued}
 
   # ===== 観察（体系そのものを数えた族 sys_* の値。exp/experiments/sys_ends.py, sys_structure.py）
   o_sys_depended_ic_below_gdc: {is: exp.observation}
@@ -182,6 +193,8 @@ facts:
   - {is: v_refer, from: o_sys_content_unpaired_above, to: {is: v_come_after, from: sys_content_symmetry.unpaired_changed.mean_value, to: sys_content_symmetry.paired_changed.mean_value}}
   - {is: v_contradict, from: o_sys_anomaly_breaks_below, to: h_anomaly_defect}
   - {is: v_support, from: o_sys_content_not_significant, to: h_content_asymmetry_harmless}
+  - {is: v_refer, from: h_open_declaration, to: {is: v_depend, from: declared_scope, to: runtime.steps}}
+  - {is: exp.v_check, from: b_open_declaration, to: h_open_declaration}
   - {is: v_refer, from: o_sys_quant_with_qual, to: {is: v_level, from: sys_quadrants.quant_alone.mean_value, to: 0.0}}
   - {is: v_refer, from: o_sys_rel_disjoint, to: {is: v_level, from: sys_quadrants.rel_mixed.mean_value, to: 0.0}}
   - {is: v_refer, from: o_sys_unplaced_neg_only, to: {is: v_level, from: sys_quadrants.none_other.mean_value, to: 0.0}}
