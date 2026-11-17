@@ -29,6 +29,8 @@ nodes:
   # 層とシグネチャ（h_layers_signature）の語
   layer_placement: {display: 層の置き場, extends: quality, mod: {of: [v_depend, from], with: syntax.domain}}
   signature_class: {display: シグネチャから定まる分類, extends: quality, mod: {of: [v_depend, from], with: syntax.base}}
+  # 否定は self でないこと（h_neg_not_self）の語
+  negated_limitation: {display: 否定の限定, extends: quality, mod: {of: [v_refer, from], with: syntax.neg}}
   v_not_trigger: {display: 引き起こさない, extends: occurrent, from: any, to: occurrent, holds: [{is: depend, from: to, to: from, neg: true}], opposite: v_trigger}
 
 individuals:
@@ -143,8 +145,19 @@ individuals:
   # 中身は「層の置き場は、シグネチャから定まる分類に依存する」。対応は ontology → still、syntax → refer、runtime → change。
   # 支持は、3つの層のすべてのノードが対応する分類に入るとき（層を法則で決めるには、どのノードも事実から判定できなければならない）。1つでも外れれば反証。
   # 登録の前に分かっていること: 前の版の体系で、似た表を会話の中で作り、外れるノードがあった。反証が見込まれる。目的は一致の度合いと外れの記録
-  h_layers_signature: {is: exp.hyp_untested}
-  b_layers_signature: {is: exp.item_queued}
+  # 結果（判定: 反証）。3つの層の 202 ノードのうち、対応する分類に入ったのは 104（0.515）。
+  # runtime は 24 すべてが change。syntax は 104 のうち 80 が change で、どれも否定の辺を通って変化する動詞に届いた（否定の辺をたどらなければ syntax の change は 0）。
+  # 否定の辺をたどらない版では 177/202（0.876）。外れるのは ontology の情報と記述の語 14（refer）、ontology.v_design（change）、
+  # runtime の状態の語 6（refer: state, halted, rewrite_rule など）、syntax の individuals と名前を付けた否定の限定 3（still）
+  h_layers_signature: {is: exp.hyp_refuted}
+  b_layers_signature: {is: exp.item_done}
+  # ===== 否定は self でないこと。利用者の問い「否定って not self にならないか」「self があることで真偽が不要になるような」から。観察の後に立てた（事前の登録ではない）
+  # 限定は λself. v(self, X)。肯定の限定が定める概念を S = {s | v(s, X)} とすると、否定の限定 λself. ¬v(self, X) は「self は S のどれとも同じでない」（∀s∈S. ¬same(self, s)）。
+  # こう書くと真偽の軸は要らない（偽と述べるか述べられていないかの区別、閉世界か開世界かによらない）。否定の限定がシグネチャから使うのは same と self だけで、
+  # v の成り立つ状態（holds・pre・post）は持ち込まない。v は S を名指す名前としてだけ現れる。
+  # 否定が定義の循環を通ると C = {x | x は C のどれとも同じでない} で self ≠ self になる（Russell の逆理。法則 definition_stratified が禁じる形）。
+  # 根拠の観察は sys_layers の比較版（否定の辺をたどらない版は、シグネチャからの分類と層の一致が高い）。この読みを syntax の neg の定義に反映するかは、まだ決めていない
+  h_neg_not_self: {is: exp.hyp_supported}
   # ===== 定義の循環（自分を限定するものについて述べる定義）。利用者の問い「self がシグネチャになるとどうなるか」から
   # 定義の辺（上位・名前を付けた修飾語・限定の with）をたどった循環を数えた（exp/experiments/sys_cycles.py）。
   # 仮説は、観察を見た後に立てた（事前の登録ではない）。中身は「定義の循環は、否定の限定を通らない」。
@@ -189,6 +202,12 @@ individuals:
   o_sys_cycles_mostly_one_relation: {is: exp.observation}
   o_sys_cycles_mostly_syntax: {is: exp.observation}
   # フレーム（実行の各時点）の観察（exp/experiments/sys_frames.py）。仮説の確かめではない
+  o_sys_layers_not_all: {is: exp.observation}
+  o_sys_layers_runtime_change: {is: exp.observation}
+  o_sys_layers_syntax_change_via_neg: {is: exp.observation}
+  o_sys_layers_syntax_mostly_change: {is: exp.observation}
+  o_sys_layers_pos_not_all: {is: exp.observation}
+  o_sys_layers_pos_higher: {is: exp.observation}
   o_sys_open_runtime_steps_ok: {is: exp.observation}
   o_sys_open_runtime_never_shrinks: {is: exp.observation}
   o_sys_open_runtime_grows_by_creation: {is: exp.observation}
@@ -287,6 +306,15 @@ facts:
   - {is: exp.v_check, from: b_open_runtime, to: h_open_runtime}
   - {is: v_refer, from: h_layers_signature, to: {is: v_depend, from: layer_placement, to: signature_class}}
   - {is: exp.v_check, from: b_layers_signature, to: h_layers_signature}
+  - {is: v_refer, from: o_sys_layers_not_all, to: {is: v_come_before, from: sys_layers.agree.mean_value, to: 1.0}}
+  - {is: v_contradict, from: o_sys_layers_not_all, to: h_layers_signature}
+  - {is: v_refer, from: o_sys_layers_runtime_change, to: {is: v_level, from: sys_layers.runtime_change.mean_value, to: 1.0}}
+  - {is: v_refer, from: o_sys_layers_syntax_change_via_neg, to: {is: v_level, from: sys_layers.syntax_change_pos.mean_value, to: 0.0}}
+  - {is: v_refer, from: o_sys_layers_syntax_mostly_change, to: {is: v_come_after, from: sys_layers.syntax_change.mean_value, to: 0.5}}
+  - {is: v_refer, from: o_sys_layers_pos_not_all, to: {is: v_come_before, from: sys_layers.agree_pos.mean_value, to: 1.0}}
+  - {is: v_refer, from: o_sys_layers_pos_higher, to: {is: v_come_after, from: sys_layers.agree_pos.mean_value, to: sys_layers.agree.mean_value}}
+  - {is: v_refer, from: h_neg_not_self, to: {is: v_not_depend, from: negated_limitation, to: syntax.holds}}
+  - {is: v_support, from: o_sys_layers_pos_higher, to: h_neg_not_self}
   - {is: v_refer, from: o_sys_open_runtime_steps_ok, to: {is: v_level, from: sys_open_runtime.ok.mean_value, to: 1.0}}
   - {is: v_refer, from: o_sys_open_runtime_never_shrinks, to: {is: v_level, from: sys_open_runtime.declared_shrinks.mean_value, to: 0.0}}
   - {is: v_refer, from: o_sys_open_runtime_grows_by_creation, to: {is: v_level, from: sys_open_runtime.grows_by_creation.mean_value, to: 1.0}}
