@@ -127,8 +127,12 @@ individuals:
   # 中身は「宣言の範囲は、状態（真偽の文の集まり）に依存しない」（v_freeze が状態を変えても宣言は減らない）。支持の基準は、exp/tests の記録すべてと sys_declaration の記録で、
   #   1. エラーなく歩め expect が決められて成り立つ、2. 宣言が減らない、3. 増えるのは在るようにする歩みだけ、4. halted: false の記録で halted: false と決まる、のすべて。
   #   2 と 3 は作りからほぼ決まり、経験的な中身は 1 と 4。登録の前には、スクリプトが構文として読めることだけを確かめた（実行はしていない）
-  h_open_runtime: {is: exp.hyp_untested}
-  b_open_runtime: {is: exp.item_queued}
+  # 結果（判定: 支持）。2つの記録の6歩がすべてエラーなく歩め、expect も決められて成り立った。宣言は一度も減らず、
+  # 増えた2歩（std.v_learn, exp.v_see）はどちらも在るようにする位置に新しい名前を使った歩みだった。v_freeze の後も r1 の宣言は残った。
+  # 支持は弱い: 記録は exp/tests の adopt_withdraw と sys_declaration の2つだけ。adopt_withdraw は名前を足す歩みを含まない。
+  # halted: false を書いた記録は adopt_withdraw だけで、今の名前だけで当てはまる歩みが見つかったので、新しい名前を試す部分は使われていない
+  h_open_runtime: {is: exp.hyp_supported}
+  b_open_runtime: {is: exp.item_done}
   # ===== 定義の循環（自分を限定するものについて述べる定義）。利用者の問い「self がシグネチャになるとどうなるか」から
   # 定義の辺（上位・名前を付けた修飾語・限定の with）をたどった循環を数えた（exp/experiments/sys_cycles.py）。
   # 仮説は、観察を見た後に立てた（事前の登録ではない）。中身は「定義の循環は、否定の限定を通らない」。
@@ -173,6 +177,11 @@ individuals:
   o_sys_cycles_mostly_one_relation: {is: exp.observation}
   o_sys_cycles_mostly_syntax: {is: exp.observation}
   # フレーム（実行の各時点）の観察（exp/experiments/sys_frames.py）。仮説の確かめではない
+  o_sys_open_runtime_steps_ok: {is: exp.observation}
+  o_sys_open_runtime_never_shrinks: {is: exp.observation}
+  o_sys_open_runtime_grows_by_creation: {is: exp.observation}
+  o_sys_open_runtime_runs_ok: {is: exp.observation}
+  o_sys_open_runtime_supported: {is: exp.observation}
   o_sys_frame_declared_never_grows: {is: exp.observation}
   o_sys_frame_declared_never_shrinks: {is: exp.observation}
   o_sys_frame_creates_over_removes: {is: exp.observation}
@@ -264,6 +273,12 @@ facts:
   - {is: exp.v_check, from: b_open_declaration, to: h_open_declaration}
   - {is: v_refer, from: h_open_runtime, to: {is: v_not_depend, from: declared_scope, to: runtime.state}}
   - {is: exp.v_check, from: b_open_runtime, to: h_open_runtime}
+  - {is: v_refer, from: o_sys_open_runtime_steps_ok, to: {is: v_level, from: sys_open_runtime.ok.mean_value, to: 1.0}}
+  - {is: v_refer, from: o_sys_open_runtime_never_shrinks, to: {is: v_level, from: sys_open_runtime.declared_shrinks.mean_value, to: 0.0}}
+  - {is: v_refer, from: o_sys_open_runtime_grows_by_creation, to: {is: v_level, from: sys_open_runtime.grows_by_creation.mean_value, to: 1.0}}
+  - {is: v_refer, from: o_sys_open_runtime_runs_ok, to: {is: v_level, from: sys_open_runtime.run_ok.mean_value, to: 1.0}}
+  - {is: v_refer, from: o_sys_open_runtime_supported, to: {is: v_level, from: sys_open_runtime.supported.mean_value, to: 1.0}}
+  - {is: v_support, from: o_sys_open_runtime_supported, to: h_open_runtime}
   - {is: v_refer, from: o_sys_declaration_steps_ok, to: {is: v_level, from: sys_declaration.b_ok.mean_value, to: 1.0}}
   - {is: v_refer, from: o_sys_declaration_states_same, to: {is: v_level, from: sys_declaration.same_state.mean_value, to: 1.0}}
   - {is: v_refer, from: o_sys_declaration_dangling, to: {is: v_come_after, from: sys_declaration.dangling.mean_value, to: 0.0}}
