@@ -131,7 +131,7 @@ def q_node(n, dom):
 
 RULE_VERBS = ("v_assume", "v_derive", "v_require")
 # 型検査が名前で読む語（文法の節ごと）。syntax の grammar の同じ節と等しいことを確かめる（翻訳する側が知っている語は、文法に書かれている）
-KEYWORDS = {"laws": {"law_rule", "law_given", "law_relation"}, "rule_word": set(RULE_VERBS) | {"v_govern", "variable"},
+KEYWORDS = {"laws": {"law_rule", "law_given"}, "rule_word": set(RULE_VERBS) | {"v_govern", "variable", "law_relation"},
             "use_word": {"v_use", "v_presume"}, "world": {"world", "closed_world"}}
 
 
@@ -670,6 +670,9 @@ class Ontology:
         for sect, ws in KEYWORDS.items():
             if set(G.get(sect) or []) != ws:
                 err(f"grammar.{sect}: 型検査が名前で読む語 {sorted(ws)} と、文法に書かれた語 {sorted(G.get(sect) or [])} が違う")
+        below = {short(n) for n in self.N if n != "syntax.laws" and self.is_a(n, "syntax.laws")}
+        if set(G.get("laws") or []) != below:   # 法則の種類は、体系の分類（laws の下位）と同じ
+            err(f"grammar.laws: 文法に書かれた法則の種類 {sorted(G.get('laws') or [])} が、laws の下位 {sorted(below)} と違う")
         L = self.O["laws"]
         for lid, l in L.items():
             where = f"法則 {lid}"

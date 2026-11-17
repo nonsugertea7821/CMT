@@ -21,8 +21,8 @@ grammar:
   # 以下は、型検査と実行器が名前で読む語（翻訳する側が知っている語）。コードの持つ語の集まりと等しいことを、それぞれの検査が確かめる
   strategy: [replace, every_step, distinct, recorded, changes_state]   # 実行の戦略（runtime 節の値。pre_rule は logic の all か some）
   world: [world, closed_world]   # 書かれていない文の扱い（領域が v_presume で置く）
-  laws: [law_rule, law_given, law_relation]   # 法則の種類
-  rule_word: [v_assume, v_derive, v_require, v_govern, variable]   # 法則を書く語
+  laws: [law_rule, law_given]   # 法則の種類（laws の下位と等しいことを型検査が確かめる）
+  rule_word: [v_assume, v_derive, v_require, v_govern, variable, law_relation]   # 法則を書く語
   use_word: [v_use, v_presume]   # 領域が使う層と、置く前提を書く語
   domain: [domain, nodes, individuals, facts]   # 領域のファイル（exp/src/exp.yaml）
   individuals: [is, display, val]

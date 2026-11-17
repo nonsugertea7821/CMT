@@ -290,12 +290,15 @@ individuals:
   # 型検査と実行器が名を挙げる語の観察（exp/experiments/sys_special.py）。仮説の確かめではない。手順は実行の前に登録した。
   # 結果: 名を挙げた語 128 のうち、シグネチャ 3、文法 66、どちらでもない 60（うち一字 5）。
   # 実行の後の分け方（登録していない）: 一字を除く 55 を語の領域で分けると、syntax 15、runtime 5、ontology 15、基礎の関係 4（after, exists, part, refer）、
-  #   exp 1（v_spell）、意味を検査が与える法則 10、層の名 4、偶然の一致 2（kind は法則の辞書の鍵、type_checker はモジュール名）。
+  #   exp 1（v_spell）、意味を検査が与える法則 10、層の名 4、偶然の一致と見た 2（kind、type_checker。偶然でなかった: 下の sys_mutation の訂正）。
   # 利用者の見方（実行の後に受けた）: 文法は syntax が定義している。コードは機械語に翻訳しているに過ぎない。
   o_sys_special_outside_named: {is: exp.observation}
   # 語の名前を付け替えたときの振る舞いの観察（exp/experiments/sys_mutation.py）。仮説の確かめではない。手順は実行の前に登録した（利用者の案: 文法が振る舞いを変えるかを変異で見つける）。
   # 結果: 陽性の対照（文法の語）4/4 が変わり、陰性の対照（コードに名の出ない言語の層の語）0/14 が変わった（見込みどおり）。調べる語は 43/51 が変わった。
-  #   変わらなかった 8: kind, laws, type_checker（コードの辞書の鍵・モジュール名との偶然の一致）、part, refer（基礎の関係。今の入力では表に出ない）、r_written, variable, world。
+  #   変わらなかった 8: kind, laws, type_checker（はじめ偶然の一致と書いたが、利用者の問いで確かめると偶然でなかった。
+  #     コードの kind は個体の「属する」の終点＝ontology.kind（種類）、laws は law_rule と law_given を名で挙げて集めた syntax.laws の成員、
+  #     type_checker は lang が型検査器として述べる人工物そのもの。どれも同じものを同じ綴りで指すが、コードは体系から読まずに自分で持つ。
+  #     だから名前を付け替えても変わらない。名前への依存でなく、体系と結ばれていない重複。定義を変える変異でなら見える見込み）、part, refer（基礎の関係。今の入力では表に出ない）、r_written, variable, world。
   #   exp は変わったが、違う行がもとの出力のどこかにある（並びか数の違い。中身は見ていない）。
   #   変わった語には、文法として読むべき語（v_assume, v_derive, v_require, law_rule, law_given など規則を書く語、runtime の選択の名）と、
   #   意味をコードが持つ語（continuant, occurrent, role, quality, magnitude, definition, v_depend, v_refer, v_spell, verb_ref, v_collect, law_given の各法則）が混ざる。
