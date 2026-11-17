@@ -6,7 +6,7 @@ domain: syntax
 grammar:
   grammar: [system, nodes, mod, cmp, base, axes, run, position, rel, function, value, logic, runtime, domain, individuals, facts, grammar]
   system: [base, axes, nodes, individuals, facts, runtime, grammar]
-  nodes: [display, gloss, extends, from, to, new_kind, holds, pre, post, form, of, neg, mod, val, cmp, axis, many, opposite, derive, via, verbatim]
+  nodes: [display, gloss, extends, from, to, new_kind, holds, pre, post, form, of, with, at, neg, mod, val, cmp, axis, many, opposite, derive, via, verbatim]
   mod: [of, with, neg, quant, at]
   cmp: [axis, a, b, rel]
   base: [display, arity, system_act]
@@ -17,14 +17,31 @@ grammar:
   function: [gt, ge, lt, le]
   value: [number, literal]
   logic: [not, all, any, between]   # true と false は、真偽の軸の値
-  runtime: [world, pre_rule, post_rule, law_check, binding, choice, progress]
+  runtime: [pre_rule, post_rule, law_check, binding, choice, progress]
   domain: [domain, nodes, individuals, facts]   # 領域のファイル（exp/src/exp.yaml）
   individuals: [is, display, val]
   facts: [is, from, to, new, at, neg]   # 事実は動詞の個体。位置に名前を付けて書く。holds / pre / post も同じ形
 
 nodes:
+  # ===== 名前を付けた限定（法則 named_mod）。2つ以上の概念が足す限定は、名前で書く
+  refer_from_facts: {display: 事実へ述べる（始点）, extends: quality, of: [v_refer, from], with: facts}
+  refer_from_occurrent: {display: 生起体へ述べる（始点）, extends: quality, of: [v_refer, from], with: occurrent}
+  compose_from_system: {display: 体系へ部分になる（始点）, extends: quality, of: [v_compose, from], with: system}
+  express_from_cscl: {display: 概念体系制御言語へで書かれる（始点）, extends: quality, of: [v_express, from], with: cscl}
+  refer_from_p: {display: 関係づけるへ述べる（始点）, extends: quality, of: [v_refer, from], with: p}
+  not_compose_from_mod: {display: 修飾の指定へ部分になる（否定）（始点）, extends: quality, of: [v_compose, from], with: mod, neg: true}
+  refer_from_value: {display: 値へ述べる（始点）, extends: quality, of: [v_refer, from], with: value}
+  refer_from_third_participant: {display: 第三のものへ述べる（始点）, extends: quality, of: [v_refer, from], with: third_participant}
+  refer_from_state_relation: {display: 状態の関係へ述べる（始点）, extends: quality, of: [v_refer, from], with: state_relation}
+  come_before_from_post: {display: 後の状態の指定へ前に置かれる（始点）, extends: quality, of: [v_come_before, from], with: post}
+  not_before_from: {display: 前には置かれない（始点）, extends: quality, of: [v_not_before, from]}
+  not_after_from: {display: 後ろには置かれない（始点）, extends: quality, of: [v_not_after, from]}
+  refer_from_magnitude: {display: 大きさへ述べる（始点）, extends: quality, of: [v_refer, from], with: magnitude}
+  refer_from_sentence: {display: 文へ述べる（始点）, extends: quality, of: [v_refer, from], with: sentence}
+  refer_from_individuals: {display: 個体へ述べる（始点）, extends: quality, of: [v_refer, from], with: individuals}
+
   v_collect: {display: 成員の種類にする, extends: occurrent, from: kind_collection, to: continuant, holds: [{is: refer, from: from, to: to}]}
-  verb_ref: {display: 動詞を指すもの, extends: information_entity, mod: {of: [v_refer, from], with: occurrent}}   # 位置の型。この位置には動詞そのものが来る
+  verb_ref: {display: 動詞を指すもの, extends: information_entity, mod: refer_from_occurrent}   # 位置の型。この位置には動詞そのものが来る
   v_measure: {display: 測る, extends: occurrent, from: continuant, to: any, holds: [{is: refer, from: from, to: to}, {is: depend, from: from, to: to}]}
 
   # ===== 情報と言語 =====
@@ -32,44 +49,44 @@ nodes:
   kind_collection: {display: 種類の集まり, extends: information_entity, mod: {of: [v_collect, from]}}
   system: {display: 体系, extends: information_entity, mod: {of: [v_compose, to], with: concept_expression, at: {count: {gt: 1}}}}
   cscl: {display: 概念体系制御言語, extends: language, mod: {of: [v_depend, from], with: system}}
-  definition_compose_from_system: {display: 体系の部分である定義, extends: definition, mod: {of: [v_compose, from], with: system}}
-  concept_expression: {display: 概念式, extends: definition_compose_from_system, mod: {of: [v_express, from], with: cscl}}
+  definition_compose_from_system: {display: 体系の部分である定義, extends: definition, mod: compose_from_system}
+  concept_expression: {display: 概念式, extends: definition_compose_from_system, mod: express_from_cscl}
   passage: {display: 文章, extends: information_entity, mod: {of: [v_compose, to], with: sentence}, verbatim: true}
-  passage_express_from_natural_language: {display: 自然言語へで書かれる文章, extends: passage, mod: {of: [v_express, from], with: natural_language}}
-  information_entity_express_from_cscl: {display: 概念体系制御言語へで書かれる情報, extends: information_entity, mod: {of: [v_express, from], with: cscl}}
+  passage_express_from_natural_language: {display: 自然言語へで書かれる文章, extends: passage, mod: express_from_natural_language}
+  information_entity_express_from_cscl: {display: 概念体系制御言語へで書かれる情報, extends: information_entity, mod: express_from_cscl}
   identifier: {display: 識別子, extends: information_entity_express_from_cscl, mod: {of: [v_refer, from], with: concept_expression, at: {count: 1}}}
   pattern: {display: 識別子の雛形, extends: information_entity, mod: {of: [v_refer, from], with: identifier, at: {count: {gt: 1}}}, verbatim: true}
-  information_entity_refer_from_p: {display: 関係づけるへ述べる情報, extends: information_entity, mod: {of: [v_refer, from], with: p}}
+  information_entity_refer_from_p: {display: 関係づけるへ述べる情報, extends: information_entity, mod: refer_from_p}
   axis: {display: 軸, extends: information_entity_refer_from_p, mod: {of: [v_compose, to], with: value}}
   value: {display: 値, extends: information_entity, mod: {of: [v_compose, from], with: axis}}
   expression_part: {display: 概念式の部分, extends: information_entity, mod: {of: [v_compose, from], with: concept_expression}}
   display: {display: 表示語, extends: word, mod: {of: [v_agree, from], with: identifier}, verbatim: true}
-  gloss: {display: 説明文, extends: passage_express_from_natural_language, mod: {of: [v_refer, from], with: concept}}
+  gloss: {display: 説明文, extends: passage_express_from_natural_language, mod: refer_from_concept}
   extends: {display: 上位の指定, extends: expression_part, mod: {of: [v_refer, from], with: kind}}
-  position: {display: 位置, extends: expression_part, mod: {of: [v_refer, from], with: p}}
-  form: {display: 形の指定, extends: position, mod: {of: [v_compose, from], with: mod, neg: true}}
+  position: {display: 位置, extends: expression_part, mod: refer_from_p}
+  form: {display: 形の指定, extends: position, mod: not_compose_from_mod}
   mod: {display: 修飾の指定, extends: expression_part, mod: {of: [v_compose, to], with: position}}
   with: {display: もう一方の端の指定, extends: expression_part, mod: {of: [v_refer, from], with: participant}}
-  neg: {display: 否定の指定, extends: expression_part, val: {truth: false}}
+  neg: {display: 示されていないことの指定, extends: expression_part, mod: refer_from_facts}   # 否定は「その文が示されていない」。偽であることは、閉世界を前提に置いた領域でだけ言える
   many: {display: 複数を許す指定, extends: expression_part, mod: {of: [v_refer, from], with: kind, at: {count: {gt: 1}}}}   # この種類を終点とする関係は、1つの個体について複数の事実を持てる
-  opposite: {display: 反対の動詞の指定, extends: expression_part, mod: {of: [v_refer, from], with: occurrent}}   # 動詞に書く。2つの文の中身を比べるとき、この組は向きが反対
+  opposite: {display: 反対の動詞の指定, extends: expression_part, mod: refer_from_occurrent}   # 動詞に書く。2つの文の中身を比べるとき、この組は向きが反対
   derive: {display: 中身から導く比較の結果の指定, extends: expression_part, mod: {of: [v_refer, from], with: rel}}   # 動詞に書く（same か opposite）。この動詞の事実は、中身の比較から導けなければならない
   via: {display: 比べる中身を述べる動詞の指定, extends: expression_part, mod: {of: [v_refer, from], with: occurrent, at: {count: 1}}}   # derive と組で書く。始点がこの動詞で述べる文を、終点の文と比べる
   verbatim: {display: 値をそのまま持つ指定, extends: expression_part, mod: {of: [v_refer, from], with: literal}}   # この種類を終点とする関係の値は、語として解決せず、そのまま持つ
   quant: {display: 数量化の指定, extends: expression_part, mod: {of: [v_refer, from], with: participant, at: {count: {gt: 1}}}}
-  value_part: {display: 値の指定, extends: expression_part, mod: {of: [v_refer, from], with: value}}
+  value_part: {display: 値の指定, extends: expression_part, mod: refer_from_value}
   at: {display: 修飾の中の値の指定, extends: value_part, mod: {of: [v_compose, from], with: mod}}
-  val: {display: 概念が取る値の指定, extends: value_part, mod: {of: [v_compose, from], with: mod, neg: true}, verbatim: true}
+  val: {display: 概念が取る値の指定, extends: value_part, mod: not_compose_from_mod, verbatim: true}
   cmp: {display: 比較の指定, extends: expression_part, mod: {of: [v_refer, from], with: value, at: {count: 2}}}
   rel: {display: 比べた結果, extends: quality, mod: {of: [v_depend, from], with: cmp}}
   from: {display: 始点の位置, extends: position, mod: {of: [v_refer, from], with: s}}
   to: {display: 終点の位置, extends: position, mod: {of: [v_refer, from], with: o}}
-  new_kind: {display: 第三のものの種類の指定, extends: expression_part, mod: {of: [v_refer, from], with: third_participant}}
-  holds: {display: 成り立つ状態の指定, extends: expression_part, mod: {of: [v_refer, from], with: state_relation}, verbatim: true}
-  pre: {display: 前の状態の指定, extends: holds, mod: {of: [v_come_before, from], with: post}, verbatim: true}
+  new_kind: {display: 第三のものの種類の指定, extends: expression_part, mod: refer_from_third_participant}
+  holds: {display: 成り立つ状態の指定, extends: expression_part, mod: refer_from_state_relation, verbatim: true}
+  pre: {display: 前の状態の指定, extends: holds, mod: come_before_from_post, verbatim: true}
   post: {display: 後の状態の指定, extends: holds, mod: {of: [v_come_after, from], with: pre}, verbatim: true}
   arity: {display: 端の数, extends: magnitude, mod: {of: [v_measure, from], with: state_relation}}
-  sentence_refer_from_state_relation: {display: 状態の関係へ述べる文, extends: sentence, mod: {of: [v_refer, from], with: state_relation}}
+  sentence_refer_from_state_relation: {display: 状態の関係へ述べる文, extends: sentence, mod: refer_from_state_relation}
   laws: {display: 法則, extends: sentence_refer_from_state_relation, val: {truth: true}}
   law_rule: {display: 規則で書いた法則, extends: laws, mod: {of: [v_assume, from], with: premise}}
   law_given: {display: 意味を検査が与える法則, extends: laws, mod: {of: [v_assume, from], with: premise, neg: true}}
@@ -85,33 +102,37 @@ nodes:
   system_act: {display: 体系そのものの行為, extends: v_refer, from: system}
   grammar_rule: {display: 文法の規則, extends: sentence, mod: {of: [v_refer, from], with: expression_part}}
   grammar: {display: 文法の記述, extends: section, mod: {of: [v_compose, to], with: grammar_rule, at: {count: {gt: 1}}}}
-  new: {display: 第三の位置, extends: position, mod: {of: [v_refer, from], with: third_participant}}
+  new: {display: 第三の位置, extends: position, mod: refer_from_third_participant}
   of: {display: 位置の指定, extends: expression_part, mod: {of: [v_refer, from], with: position}}
-  section: {display: 体系の節, extends: information_entity, mod: {of: [v_compose, from], with: system}}
-  base: {display: 基礎の節, extends: section, mod: {of: [v_refer, from], with: state_relation}}
+  section: {display: 体系の節, extends: information_entity, mod: compose_from_system}
+  base: {display: 基礎の節, extends: section, mod: refer_from_state_relation}
   axes: {display: 軸の節, extends: section, mod: {of: [v_refer, from], with: axis}}
   nodes: {display: ノードの節, extends: section, mod: {of: [v_refer, from], with: concept_expression}}
   source: {display: もとになる関係の指定, extends: holds, mod: {of: [v_compose, from], with: axes}}
 
   # ===== 値と関数。軸の値は、固定値か、真偽を返す範囲の判定式 =====
-  function: {display: 関数, extends: value, mod: {of: [v_refer, from], with: value}}
+  function: {display: 関数, extends: value, mod: refer_from_value}
   gt: {display: より大きいという判定, extends: function, mod: {of: [v_come_after, from]}}
-  ge: {display: 以上という判定, extends: function, mod: {of: [v_not_before, from]}}
+  ge: {display: 以上という判定, extends: function, mod: not_before_from}
   lt: {display: より小さいという判定, extends: function, mod: {of: [v_come_before, from]}}
-  le: {display: 以下という判定, extends: function, mod: {of: [v_not_after, from]}}
-  number: {display: 数の値, extends: value, mod: {of: [v_refer, from], with: magnitude}}
+  le: {display: 以下という判定, extends: function, mod: not_after_from}
+  number: {display: 数の値, extends: value, mod: refer_from_magnitude}
   literal: {display: 文字の値, extends: value, mod: {of: [v_refer, from], with: word}}
-  value_not_before_from: {display: 前には置かれない値, extends: value, mod: {of: [v_not_before, from]}}
-  between: {display: 範囲の判定, extends: value_not_before_from, mod: {of: [v_not_after, from]}}
+  value_not_before_from: {display: 前には置かれない値, extends: value, mod: not_before_from}
+  between: {display: 範囲の判定, extends: value_not_before_from, mod: not_after_from}
 
   # ===== 述語論理の語。「について述べる」の限定として書く。区別は法則 truth_distinct が与える =====
-  logic: {display: 述語論理の語, extends: word, mod: {of: [v_refer, from], with: sentence}}
-  sentence_refer_from_sentence: {display: 文へ述べる文, extends: sentence, mod: {of: [v_refer, from], with: sentence}}
-  not: {display: 否定, extends: sentence_refer_from_sentence, cmp: [{axis: truth, a: not, b: sentence, rel: differ}]}
+  logic: {display: 述語論理の語, extends: word, mod: refer_from_sentence}
+  sentence_refer_from_sentence: {display: 文へ述べる文, extends: sentence, mod: refer_from_sentence}
+  not: {display: 否定（示されていない文を述べる文）, extends: sentence_refer_from_sentence, mod: refer_from_facts}
+  world: {display: 書かれていない文の扱い, extends: definition, mod: refer_from_facts}   # 閉世界と開世界は仮定。領域ごとに前提として選ぶ（v_presume）
+  closed_world: {display: 閉世界（書かれていない文は偽）, extends: world, val: {truth: false}}
+  open_world: {display: 開世界（書かれていない文は不明）, extends: world, mod: {of: [v_agree, from], with: closed_world, neg: true}}
+  v_presume: {display: 前提として置くと述べる, extends: v_refer, from: domain, to: world}
   any: {display: 存在の数量化, extends: sentence, mod: {of: [v_refer, from], with: participant, at: {count: {ge: 1}}}, many: true}
   all: {display: 全称の数量化, extends: not, mod: {of: [v_refer, from], with: any}}
   individuals: {display: 個体, form: [is, from]}
-  facts: {display: 個体か種類についての文（種類についての文は、その種類のすべてについて）, extends: sentence, mod: {of: [v_refer, from], with: individuals}}
+  facts: {display: 個体か種類についての文（種類についての文は、その種類のすべてについて）, extends: sentence, mod: refer_from_individuals}
   expect: {display: 期待する文, extends: facts, val: {truth: true}}
 
   # ===== 実行の戦略と実行時の意味論。実行の検査（cscl/bootstrap/runtime/runtime.py）は、runtime の節に書かれた選択に従う =====
@@ -186,6 +207,8 @@ individuals:
   truth_two: {is: law_rule, display: 真偽の軸は true と false を持つ}
   truth_only: {is: law_rule, display: 真偽の軸の値は true か false}
   part_fact_direction: {is: law_given, display: 部分の事実は、種類の限定と向きが逆にならない}
+  world_declared: {is: law_given, display: 否定を前提に使う法則は、その法則の領域が閉世界を前提に置くときだけ当てはめる}
+  named_mod: {is: law_given, display: 2つ以上の概念が同じ限定を足すなら、その限定は名前を付けた修飾語で書く}
   part_display_explicit: {is: law_given, display: 部分の限定を持つ種類の表示名は、どちらが部分かを明示し、限定の向きと合う}
   r_in: {is: law_relation, display: 集まりに属する}
   r_ind_kind: {is: law_relation, display: 個体の種類か、その上位である}
@@ -359,6 +382,9 @@ facts:
   - {is: v_require, from: truth_only, to: {is: same, from: var1, to: false}}
   - {is: v_govern, from: part_fact_direction, to: concept_expression}
   - {is: v_govern, from: part_display_explicit, to: concept_expression}
+  - {is: v_govern, from: named_mod, to: concept_expression}
+  - {is: v_govern, from: world_declared, to: concept_expression}
+  - {is: v_presume, from: syntax, to: closed_world}
   - {is: v_assume, from: in_by_collect, to: {is: of, from: var1, to: v_collect}}
   - {is: v_assume, from: in_by_collect, to: {is: from, from: var1, to: var2}}
   - {is: v_assume, from: in_by_collect, to: {is: to, from: var1, to: var3}}

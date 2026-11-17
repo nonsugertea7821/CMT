@@ -97,6 +97,8 @@ def q_node(n, dom):
     for k in ("of", "form"):
         if isinstance(n.get(k), list) and n[k]:
             n[k] = [qn(n[k][0], dom)] + n[k][1:]
+    if "of" in n and "with" in n:   # 名前を付けた限定の、もう一方の端
+        n["with"] = scope_of(dom).get("any") or "any" if n["with"] == "any" else qn(n["with"], dom)
 
     def m1(m):
         if isinstance(m, dict):
@@ -306,7 +308,7 @@ def merge_domain(name, O):
 
 
 def is_kind_fact(f, T, dom, I):
-    """位置がすべて種類（個体でなく、動詞でないノード）の事実。閉世界では、種類についての文は「その種類のすべてについて」と読む。"""
+    """位置がすべて種類（個体でなく、動詞でないノード）の事実。種類についての文は「その種類のすべてについて」と読む。"""
     ps = [f.get(p) for p in ("from", "to", "new") if p in f]
     return "at" not in f and len(ps) >= 2 and all(
         isinstance(x, str) and x not in I and x not in T.I and (T.resolve(x, dom) or x) in T.N
@@ -315,7 +317,7 @@ def is_kind_fact(f, T, dom, I):
 
 def collect_kind_facts(T):
     """種類どうしの事実を、すべての領域から集めて T.KF に置く。型を確かめる。否定は書かせない
-    （閉世界では書かれていない文は成り立たない。否定は法則の制約（v_require）で書く）。"""
+    （書かれていない文は示されていない。否定は法則の制約（v_require）で書く）。"""
     T.KF, T.COLL = [], {}
     for name, dom in lib_and_domain_files():   # 種類の集まり（2階）
         for f in (yload((SPEC / name).read_text(encoding="utf-8")).get("facts") or []):
@@ -336,13 +338,23 @@ def collect_kind_facts(T):
                 err(f"{where}: {f['is']} は動詞でない")
                 continue
             if f.get("neg"):
-                err(f"{where}: 種類どうしの事実は否定にしない（閉世界。否定は法則の制約で書く）")
+                err(f"{where}: 種類どうしの事実は否定にしない（否定は「示されていない」で、示す文である事実には書けない。否定は法則の制約で書く）")
                 continue
             x = {p: T.resolve(f[p], dom) or f[p] for p in ("from", "to", "new") if p in f}
             for p, k in x.items():
                 if not T.is_a(k, T.spot_type(verb, p)):
                     err(f"{where}: {p} の種類 {k} が、動詞 {verb} のその位置（{T.spot_type(verb, p)}）に当たらない")
             T.KF.append((verb, x))
+
+
+def end_word(raw, qd, verb, pos, T):
+    """述べる中身の端の語。同じ名の種類と個体があるとき、動詞のその位置の種類に当たる方を取る（種類で決める）。"""
+    if not isinstance(raw, str) or raw not in T.I or verb == "is_a" or not T.is_verb(verb):
+        return qd
+    want = T.end(verb, pos)
+    if qd in T.N and not T.overlaps(qd, want) and T.is_a(T.I[raw], want):
+        return raw
+    return qd
 
 
 def gather(D, T, name):
@@ -374,8 +386,8 @@ def gather(D, T, name):
             P = f["to"]
             subj = f.get("from")
             if subj in I:
-                I[subj]["s"], I[subj]["o"] = q(P.get("from")), q(P.get("to"))
                 I[subj]["p"] = "is_a" if P.get("is") == "extends" else q(P.get("is"))
+                I[subj]["s"], I[subj]["o"] = (end_word(P.get(k), q(P.get(k)), I[subj]["p"], k, T) for k in ("from", "to"))
                 if "new" in P:
                     I[subj]["new"] = P["new"]
             else:
@@ -590,7 +602,7 @@ def evaluate(rules, F, V):
 # ---------------------------------------------------------------- 概念の体系
 # 法則のうち、この検査が当てはめるもの / 実行の検査（cscl/bootstrap/runtime/runtime.py）が当てはめるもの
 # 規則で書いた法則（law_rule）は、実行の検査がその規則を読んで当てはめる。ここには、意味を検査が与える法則（law_given）だけを挙げる。
-LAWS_HERE = {"part_fact_direction", "part_display_explicit"}
+LAWS_HERE = {"part_fact_direction", "part_display_explicit", "named_mod", "world_declared"}
 LAWS_RUN = {"unique_names", "step", "frame", "halt"}
 
 
@@ -608,6 +620,13 @@ class Ontology:
                     err(f"{nid}: mod は並べない。限定は1つだけ")
                 else:
                     n["mod"] = [n["mod"]]
+        # 名前を付けた限定（修飾語）は、中身に展開して、その場に書いた限定と同じに扱う。名前は mod_name に残す
+        self.mod_name = {}
+        for nid, n in self.N.items():
+            for i, m in enumerate(n.get("mod") or []):
+                if isinstance(m, str) and m in self.N and "of" in self.N[m]:
+                    n["mod"][i] = {k: self.N[m][k] for k in ("of", "with", "neg", "at") if k in self.N[m]}
+                    self.mod_name[(nid, i)] = m
         # 真偽を返す範囲の判定式。値の一種。gt などは文法の function、between は述語論理の語
         self.funcs = {op: 1 for op in self.G["function"]} | ({"between": 2} if "between" in self.G["logic"] else {})
 
@@ -1009,6 +1028,8 @@ class Ontology:
                     self.check_state(nid, n)
             elif "of" in n:
                 self.check_spot(n["of"], nid)
+                if "with" in n and n["with"] not in N and n["with"] != "any" and not str(n["with"]).endswith(".any"):
+                    err(f"{nid}: with の {n['with']} が未定義")
                 if not self.is_a(nid, "specifically_dependent_continuant"):
                     err(f"{nid}: 修飾語は特定依存持続体の下に置く")
             elif not (n.get("mod") or n.get("val") or n.get("cmp") or len(self.parents(nid)) > 1):
@@ -1063,7 +1084,7 @@ class Ontology:
                     if axis in AX and AX[axis]["source"] != "any" and AX[axis]["source"] not in self.base_of(verb):
                         err(f"{where}: 軸 {axis} は基礎の関係 {AX[axis]['source']} を抽象にしたものだが、{verb} はそれを使っていない")
             if not ("holds" in n or "pre" in n):
-                key = yaml.safe_dump({k: n[k] for k in ("extends", "from", "to", "of", "mod", "neg", "val", "cmp", "axis") if k in n}, sort_keys=True)
+                key = yaml.safe_dump({k: n[k] for k in ("extends", "from", "to", "of", "with", "at", "mod", "neg", "val", "cmp", "axis") if k in n}, sort_keys=True)
                 if key in forms:
                     err(f"{nid}: 式が {forms[key]} と同じ")
                 forms.setdefault(key, nid)
@@ -1221,6 +1242,53 @@ PART_WORDS = {"from": ("の部分である", "の時間的な部分である"), 
 PART_VAGUE = ("から部分になる", "へ部分になる", "から時間的な部分になる", "へ時間的な部分になる")
 
 
+def presumed_worlds():
+    """各領域が自分について前提に置く、書かれていない文の扱い（{is: v_presume, from: 自分, to: 扱い}）。書いたままの事実から読む。"""
+    out = {}
+    for name, dom in lib_and_domain_files()[1:]:
+        for f in (load(name) or {}).get("facts") or []:
+            if isinstance(f, dict) and short(f.get("is") or "") == "v_presume":
+                if f.get("from") != dom:
+                    err(f"{name}: 領域 {dom} が、ほかの領域 {f.get('from')} の前提を置いている")
+                    continue
+                out.setdefault(dom, set()).add(short(f.get("to") or ""))
+    return out
+
+
+def check_world_declared(T):
+    """法則 world_declared。否定（示されていない）を前提に使う法則は、その法則の領域が閉世界を前提に置くときだけ当てはめる。
+    否定の前提を、閉世界を置かない領域で書けば誤り（その領域では、示されていない文は偽でなく不明）。"""
+    W = presumed_worlds()
+    for dom, ws in W.items():
+        if len(ws) > 1:
+            err(f"法則 world_declared: 領域 {dom} が、書かれていない文の扱いを2つ以上置いている（{sorted(ws)}）")
+    for lid, l in T.O.get("laws", {}).items():
+        if any(isinstance(a, dict) and a.get("neg") for a in l.get("assume") or []):
+            dom = T.O["_idom"].get(lid)
+            if "closed_world" not in W.get(dom, set()):
+                err(f"法則 world_declared に反する: 法則 {lid} は否定を前提に使うが、領域 {dom} は閉世界を前提に置いていない")
+
+
+def check_named_mod(T):
+    """法則 named_mod。2つ以上のノードが同じ限定を足すなら、その限定は名前を付けた修飾語で書く。
+    同じ中身の修飾語が既にあれば、その名前を使う。"""
+    key = lambda m: yaml.safe_dump(m, sort_keys=True, allow_unicode=True)
+    named = {}
+    for nid, n in T.N.items():
+        if "of" in n and not T.is_verb(nid):
+            named.setdefault(key({k: n[k] for k in ("of", "with", "neg", "at") if k in n}), nid)
+    inline = {}
+    for nid, n in T.N.items():
+        for i, m in enumerate(n.get("mod") or []):
+            if isinstance(m, dict) and (nid, i) not in T.mod_name:
+                inline.setdefault(key(m), []).append(nid)
+    for k, ids in inline.items():
+        if k in named:
+            err(f"法則 named_mod に反する: {', '.join(ids)} の限定は、修飾語 {named[k]} と同じ。名前で書く")
+        elif len(ids) > 1:
+            err(f"法則 named_mod に反する: {', '.join(ids)} が同じ限定を足している。名前を付けた修飾語にする")
+
+
 def check_parts(T):
     """法則 part_fact_direction と part_display_explicit。
     - 事実「a は b の部分」に対し、b の種類が「a の種類の部分である」と限定されている（または a の種類が「b の種類を部分に持つ」）なら、向きが逆。
@@ -1346,6 +1414,8 @@ def build():
     T.check_domains()
     T.check_laws()
     check_parts(T)
+    check_named_mod(T)
+    check_world_declared(T)
     for dom, (name, X) in Dm.items():
         check_domain(name, X, T)
     return T, O, Dm
