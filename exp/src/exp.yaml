@@ -14,6 +14,7 @@ nodes:
   refer_from_common_word: {display: 一般語へ述べる（始点）, extends: quality, of: [v_refer, from], with: common_word}
   not_agree_from_prior_meaning: {display: 元の意味へ一致する（否定）（始点）, extends: quality, of: [v_agree, from], with: prior_meaning, neg: true}
   design_to: {display: 設計する（終点）, extends: quality, of: [v_design, to]}
+  not_teach_from: {display: 教える（否定）（始点）, extends: quality, of: [v_teach, from], neg: true}
   express_from_programming_language: {display: プログラミング言語へで書かれる（始点）, extends: quality, of: [v_express, from], with: programming_language}
   not_agree_from_question: {display: 設問へ一致する（否定）（始点）, extends: quality, of: [v_agree, from], with: question, neg: true}
   agree_from_prior_meaning: {display: 元の意味へ一致する（始点）, extends: quality, of: [v_agree, from], with: prior_meaning}
@@ -60,7 +61,7 @@ nodes:
   v_cause: {display: の原因である, extends: occurrent, from: any, to: continuant, holds: [{is: after, from: to, to: from}, {is: depend, from: to, to: from}]}
   v_immune: {display: の影響を受けない, extends: occurrent, from: any, to: any, holds: [{is: depend, from: from, to: to, neg: true}]}
   v_transfer: {display: に転移する, extends: occurrent, from: any, to: any, holds: [{is: depend, from: to, to: from}]}
-  v_not_transfer: {display: に転移しない, extends: occurrent, from: any, to: any, holds: [{is: depend, from: to, to: from, neg: true}]}
+  v_not_transfer: {display: に転移しない, extends: occurrent, from: any, to: any, holds: [{is: depend, from: to, to: from, neg: true}], opposite: v_transfer}
   v_coexist: {display: と同居できる, extends: occurrent, from: occurrent, to: occurrent, holds: [{is: depend, from: from, to: new}, {is: depend, from: to, to: new}]}
   v_consist: {display: からなる, extends: occurrent, from: continuant, to: continuant, holds: [{is: part, from: to, to: from}]}
   v_rely: {display: に頼る, extends: occurrent, from: any, to: any, holds: [{is: depend, from: from, to: to}]}
@@ -77,6 +78,7 @@ nodes:
   v_check: {display: 確かめる, extends: v_refer, from: backlog_item, to: tests}
   v_prior_same: {display: 同じ向きの結果を先に報告した, extends: v_agree, from: prior_work, to: prior_agreed, derive: same, via: v_state}
   v_prior_differ: {display: 異なる結果を報告した, extends: v_refer, from: prior_work, to: prior_contrasted, derive: opposite, via: v_state}
+  v_report: {display: 観察として報告する, extends: v_refer, from: prior_work, to: prior_observation}
   v_state: {display: 主張として述べる, extends: v_refer, from: prior_work, to: prior_claim}
   v_prior_method: {display: 先行研究の手法を使う, extends: v_use, from: hypothesis, to: prior_work}
   v_file_of: {display: 結果ファイルとして部分になる, extends: v_compose, from: result_file, to: measurement_family}
@@ -117,7 +119,7 @@ nodes:
   modifier: {display: 修飾, extends: word, mod: {of: [v_refer, from], with: dependent}}
   genus_concept: {display: 上位概念, extends: word, mod: {of: [v_refer, from], with: dependent, neg: true}}
   seen_genus: {display: 学習した上位概念, extends: genus_concept, mod: {of: [v_teach, from]}}
-  unseen_genus: {display: 学習していない上位概念, extends: genus_concept, mod: {of: [v_teach, from], neg: true}}
+  unseen_genus: {display: 学習していない上位概念, extends: genus_concept, mod: not_teach_from}
   code: {display: コード, extends: passage, mod: express_from_programming_language}
   information_entity_express_from_programming_language: {display: プログラミング言語へで書かれる情報, extends: information_entity, mod: express_from_programming_language}
   symbol: {display: シンボル, extends: information_entity_express_from_programming_language, mod: {of: [v_compose, from], with: code}}
@@ -205,6 +207,9 @@ nodes:
   inline_expansion: {display: 設問中での定義の展開, extends: text_injection, mod: {of: [v_involve, from], with: position_after_word}}
   channel_involve_from_taught_vector: {display: 教示で得られたベクトルへに関わらせる接続手段, extends: channel, mod: {of: [v_involve, from], with: taught_vector}}
   concept_vector: {display: 概念ベクトル, extends: state_shift, mod: depend_from_label_token_positions}
+  qualification_vector: {display: 限定の差分ベクトル（下位の概念ベクトル − 上位の概念ベクトル）, extends: concept_vector, mod: {of: [v_depend, from], with: genus_concept}}
+  relation_operator: {display: 関係を取り出す線形の演算子, extends: state_shift, mod: {of: [v_depend, from], with: dependent}}
+  unseen_relation: {display: 学習していない関係, extends: dependent, mod: not_teach_from}
   single_layer_vector: {display: 単一層の概念ベクトル, extends: concept_vector, mod: {of: [v_depend, from], with: layer, at: {count: 1}}}
   multi_layer_vector: {display: 複数層の概念ベクトル, extends: concept_vector, mod: {of: [v_depend, from], with: layer, at: {count: {gt: 1}}}}
   dedicated_token: {display: 概念専用のトークン, extends: identifier, mod: compose_from_context}
@@ -265,6 +270,11 @@ nodes:
   chain_length: {display: 連鎖の段数, extends: factor, mod: {of: [v_measure, from], with: v_stage}, axis: count}
   quality_measure_to: {display: 測る先の質, extends: quality, mod: {of: [v_measure, to]}}
   behavior_expression: {display: 狙った振る舞いの現れ, extends: quality_measure_to, mod: {of: [v_depend, from], with: state_shift}}
+  task_performance: {display: 問いに答える課題の成績, extends: quality_measure_to, mod: {of: [v_depend, from], with: question}}
+  formalization_accuracy: {display: 形式言語で書いた文の正しさ, extends: quality_measure_to, mod: {of: [v_depend, from], with: concept_expression}}
+  traceability: {display: 推論の根拠をたどれること, extends: quality_measure_to, mod: {of: [v_depend, from], with: depended_information}}
+  structure_embedding: {display: 形式の構造から作った埋め込み, extends: information_entity, mod: {of: [v_compute, to], with: typed_graph}}
+  type_check_result: {display: 型検査の結果, extends: information_entity, mod: {of: [v_compute, to], with: concept_expression}}
   context_following: {display: 文脈の情報への追従, extends: quality_measure_to, mod: {of: [v_depend, from], with: case}}
   redefinition_following: {display: 再定義への追従, extends: context_following, mod: {of: [v_depend, from], with: conflict_case}}
   control_preservation: {display: 衝突しない事例での判定の維持, extends: quality_measure_to, mod: {of: [v_depend, from], with: control_case}}
@@ -302,6 +312,7 @@ nodes:
   rule_consolidation: {display: 変更の固定先の取り決め, extends: decision, mod: {of: [v_refer, from], with: change_holder}}
   sentence_refer_from_measured_value: {display: 測定値へ述べる文, extends: sentence, mod: {of: [v_refer, from], with: measured_value}}
   observation: {display: 観察, extends: sentence_refer_from_measured_value, val: {truth: true}}
+  prior_observation: {display: 先行研究の観察, extends: observation, mod: {of: [v_report, to], with: prior_work}, many: true}
   observation_agree_from_hypothesis: {display: 仮説へ一致する観察, extends: observation, mod: {of: [v_agree, from], with: hypothesis}}
   evidence: {display: 支持する観察, extends: observation_agree_from_hypothesis, cmp: [{axis: truth, a: observation, b: hypothesis, rel: same}], many: true}
   against: {display: 反する観察, extends: observation_agree_from_hypothesis, cmp: [{axis: truth, a: observation, b: hypothesis, rel: differ}], many: true}
@@ -365,6 +376,16 @@ individuals:
   pw_panickssery2023_caa: {is: prior_work, display: "先行研究: Panickssery et al. 2023, Steering Llama 2 via Contrastive Activation Addition（arXiv:2312.06681）"}
   pw_todd2024_function_vectors: {is: prior_work, display: "先行研究: Todd et al. 2024, Function Vectors in Large Language Models（ICLR 2024, arXiv:2310.15213）"}
   pw_radevski2026_steering_tokens: {is: prior_work, display: "先行研究: Radevski et al. 2026, Compositional Steering of Large Language Models with Steering Tokens（ACL 2026, aclanthology 2026.acl-long.1435）"}
+  pw_eyuboglu2025_cartridges: {is: prior_work, display: "先行研究: Eyuboglu et al. 2025, Cartridges: Lightweight and general-purpose long context representations via self-study（ICLR 2026, arXiv:2506.06266）"}
+  pw_teehan2024_college: {is: prior_work, display: "先行研究: Teehan, Lake & Ren 2024, CoLLEGe: Concept Embedding Generation for Large Language Models（arXiv:2403.15362）"}
+  pw_lenat2023_cyc: {is: prior_work, display: "先行研究: Lenat & Marcus 2023, Getting from Generative AI to Trustworthy AI: What LLMs might learn from Cyc（arXiv:2308.04445）"}
+  pw_luo2024_knowla: {is: prior_work, display: "先行研究: Luo et al. 2024, KnowLA: Enhancing Parameter-efficient Finetuning with Knowledgeable Adaptation（NAACL 2024, arXiv:2403.14950）"}
+  pw_coppolillo2025_kg_injection: {is: prior_work, display: "先行研究: Coppolillo 2025, Injecting Knowledge Graphs into Large Language Models（arXiv:2505.07554）"}
+  pw_babaei2025_ontotruth: {is: prior_work, display: "先行研究: Babaei Giglou et al. 2025, Beyond Statistical Parroting: Hard-Coding Truth into LLMs via Ontologies（CEUR-WS Vol-4079）"}
+  pw_poiroux2024_typecheck: {is: prior_work, display: "先行研究: Poiroux et al. 2024, Improving Autoformalization using Type Checking（arXiv:2406.07222）"}
+  pw_park2025_hierarchical_geometry: {is: prior_work, display: "先行研究: Park, Choe, Jiang & Veitch 2025, The Geometry of Categorical and Hierarchical Concepts in Large Language Models（ICLR 2025, arXiv:2406.01506）"}
+  pw_hernandez2024_lre: {is: prior_work, display: "先行研究: Hernandez et al. 2024, Linearity of Relation Decoding in Transformer Language Models（ICLR 2024, arXiv:2308.09124）"}
+  pw_christ2025_relation_operators: {is: prior_work, display: "先行研究: Christ, Csiszárik, Becsó & Varga 2025, The Structure of Relation Decoding Linear Operators in Large Language Models（arXiv:2510.26543）"}
   # 先行研究の主張。表示語に、要旨の該当する文を引く。中身は v_refer で、仮説と同じ形に書く
   pwc_wang2025_interference: {is: prior_claim, display: "要旨: retrieval accuracy declines log-linearly toward zero as interference accumulates（前に並ぶ古い値が多いほど、最新の値の検索が下がる）"}
   pwc_liu2024_middle: {is: prior_claim, display: "要旨: performance is often highest when relevant information occurs at the beginning or end of the input context（関係する情報が末尾から離れて中ほどにあると下がる）"}
@@ -376,6 +397,16 @@ individuals:
   pwc_panickssery2023_caa: {is: prior_claim, display: "要旨: 正例と負例の残差の活性化の平均の差を足すと、振る舞いが大きく変わる（能力の低下は小さい）"}
   pwc_todd2024_function_vector: {is: prior_claim, display: "要旨: 少数の注意ヘッドが運ぶ関数ベクトルを足すと、例示なしの文脈でもその課題が実行される"}
   pwc_radevski2026_steering_tokens: {is: prior_claim, display: "要旨: 振る舞いを入力の専用トークンに埋め込むと、学習していない組み合わせにも汎化し、活性化の操舵より効く"}
+  pwc_eyuboglu2025_self_study: {is: prior_claim, display: "要旨: コーパスごとに学習した小さな KV キャッシュは、合成した多様な会話で文脈蒸留すると、文脈に全文を置く場合と同等になる（次トークン予測だけでは届かない）"}
+  pwc_teehan2024_transfer: {is: prior_claim, display: "要旨: 少数の例文や定義から作った新しい概念の埋め込みは、課題ごとの学習なしに、定義の推測と言語推論の両方に効く（新しい語について）"}
+  pwc_lenat2023_hybrid: {is: prior_claim, display: "要旨: 明示的な知識と推論機関を持つ形式的な体系は、推論の各段を元の知識までたどれるようにする。信頼できる AI は LLM とこれの混成が要る"}
+  pwc_luo2024_kg_adapter: {is: prior_claim, display: "要旨: 入力に現れる実体の KG 埋め込みを、層に挟んだ適応層で混ぜると、知識を問う課題の成績が上がる"}
+  pwc_coppolillo2025_graph_tokens: {is: prior_claim, display: "要旨: KG 埋め込みをトークンにして入力に足すと、LLM を学習し直さずに、KG についての推論が上がる"}
+  pwc_babaei2025_axioms_in_prompt: {is: prior_claim, display: "要旨: オントロジーの公理をプロンプトに入れると、回答の正しさが上がる（Pizza Ontology、0.5B〜72B）"}
+  pwc_poiroux2024_filter: {is: prior_claim, display: "要旨: 型検査を通らない候補を捨てると、自然言語から Lean への形式化の正しさが上がる（ProofNet で最大 +18.4 ポイント）"}
+  pwc_park2025_orthogonal_refinement: {is: prior_claim, display: "要旨: 階層は直交として表される。下位の概念のベクトルは、上位のベクトルに、それと直交する差分を足したもの（Gemma, LLaMA-3、WordNet 900 以上の概念）"}
+  pwc_hernandez2024_linear_relation: {is: prior_claim, display: "要旨: 一部の関係では、モデルの関係の読み出しは、主語の表現への1つの線形変換で近似できる"}
+  pwc_christ2025_property_based: {is: prior_claim, display: "要旨: 関係ごとの線形演算子は関係に固有ではなく、関係をまたぐ性質を取り出している。そのため、学習していない関係への汎化は、近い関係にしか届かない"}
   model_4b: {is: open_weight_model, display: Qwen3-4B}
 
   # ===== 設計。1つしかない。
@@ -410,6 +441,77 @@ individuals:
   e4: {is: measurement_family}
   e5: {is: measurement_family}
   e6_L8: {is: measurement_family}
+  pr_college_gre: {is: measurement_family}
+  pr_college_gre_cond: {is: family_axis, val: {text: cond}}
+  pr_college_gre_cond_college: {is: axis_value, val: {text: college}}
+  pr_college_gre_cond_prompting: {is: axis_value, val: {text: prompting}}
+  pr_college_gre_cond_chance: {is: axis_value, val: {text: chance}}
+  pr_college_gre_cond_real_word: {is: axis_value, val: {text: real_word}}
+  pr_college_defgen: {is: measurement_family}
+  pr_college_defgen_cond: {is: family_axis, val: {text: cond}}
+  pr_college_defgen_cond_college: {is: axis_value, val: {text: college}}
+  pr_college_defgen_cond_prompting: {is: axis_value, val: {text: prompting}}
+  pr_poiroux: {is: measurement_family}
+  pr_poiroux_cond: {is: family_axis, val: {text: cond}}
+  pr_poiroux_cond_greedy: {is: axis_value, val: {text: greedy}}
+  pr_poiroux_cond_filter_selfbleu: {is: axis_value, val: {text: filter_selfbleu}}
+  pr_poiroux_cond_val_no_filter_selfbleu: {is: axis_value, val: {text: val_no_filter_selfbleu}}
+  pr_poiroux_cond_val_filter_selfbleu: {is: axis_value, val: {text: val_filter_selfbleu}}
+  pr_liu: {is: measurement_family}
+  pr_liu_cond: {is: family_axis, val: {text: cond}}
+  pr_liu_cond_first: {is: axis_value, val: {text: first}}
+  pr_liu_cond_middle: {is: axis_value, val: {text: middle}}
+  pr_liu_cond_last: {is: axis_value, val: {text: last}}
+  pr_liu_cond_closed_book: {is: axis_value, val: {text: closed_book}}
+  pr_winodict: {is: measurement_family}
+  pr_winodict_cond: {is: family_axis, val: {text: cond}}
+  pr_winodict_cond_winodict: {is: axis_value, val: {text: winodict}}
+  pr_winodict_cond_original: {is: axis_value, val: {text: original}}
+  pr_winodict_cond_human_winodict: {is: axis_value, val: {text: human_winodict}}
+  pr_stringli: {is: measurement_family}
+  pr_stringli_cond: {is: family_axis, val: {text: cond}}
+  pr_stringli_cond_llama405b: {is: axis_value, val: {text: llama405b}}
+  pr_stringli_cond_llama70b: {is: axis_value, val: {text: llama70b}}
+  pr_goworek: {is: measurement_family}
+  pr_goworek_cond: {is: family_axis, val: {text: cond}}
+  pr_goworek_cond_redefined_without: {is: axis_value, val: {text: redefined_without}}
+  pr_goworek_cond_redefined_with: {is: axis_value, val: {text: redefined_with}}
+  pr_goworek_cond_original_without: {is: axis_value, val: {text: original_without}}
+  pr_goworek_cond_original_with: {is: axis_value, val: {text: original_with}}
+  pr_babaei: {is: measurement_family}
+  pr_babaei_cond: {is: family_axis, val: {text: cond}}
+  pr_babaei_cond_qwen72b_question: {is: axis_value, val: {text: qwen72b_question}}
+  pr_babaei_cond_qwen72b_rdf: {is: axis_value, val: {text: qwen72b_rdf}}
+  pr_babaei_cond_qwen05b_question: {is: axis_value, val: {text: qwen05b_question}}
+  pr_babaei_cond_qwen05b_rdf: {is: axis_value, val: {text: qwen05b_rdf}}
+  pr_cartridges: {is: measurement_family}
+  pr_christ: {is: measurement_family}
+  pr_christ_cond: {is: family_axis, val: {text: cond}}
+  pr_christ_cond_extended_test: {is: axis_value, val: {text: extended_test}}
+  pr_christ_cond_majority_baseline: {is: axis_value, val: {text: majority_baseline}}
+  pr_christ_cond_arithmetic_heldout: {is: axis_value, val: {text: arithmetic_heldout}}
+  pr_christ_cond_jacobian_baseline: {is: axis_value, val: {text: jacobian_baseline}}
+  o_pr_christ_above_majority: {is: prior_observation}
+  o_pr_christ_arithmetic_above_general: {is: prior_observation}
+  pr_cartridges_cond: {is: family_axis, val: {text: cond}}
+  pr_cartridges_cond_self_study: {is: axis_value, val: {text: self_study}}
+  pr_cartridges_cond_next_token: {is: axis_value, val: {text: next_token}}
+  o_pr_college_above_prompting: {is: prior_observation}
+  o_pr_college_below_real_word: {is: prior_observation}
+  o_pr_college_defgen_above_prompting: {is: prior_observation}
+  o_pr_poiroux_filter_above_greedy: {is: prior_observation}
+  o_pr_poiroux_filter_above_no_filter: {is: prior_observation}
+  o_pr_liu_middle_below_first: {is: prior_observation}
+  o_pr_liu_middle_below_last: {is: prior_observation}
+  o_pr_liu_middle_below_closed_book: {is: prior_observation}
+  o_pr_winodict_below_original: {is: prior_observation}
+  o_pr_winodict_below_human: {is: prior_observation}
+  o_pr_stringli_larger_anchored_more: {is: prior_observation}
+  o_pr_goworek_redefined_raised: {is: prior_observation}
+  o_pr_goworek_original_lowered: {is: prior_observation}
+  o_pr_babaei_large_rdf_raised: {is: prior_observation}
+  o_pr_babaei_small_rdf_lowered: {is: prior_observation}
+  o_pr_cartridges_self_study_above: {is: prior_observation}
   e6_L8_nll: {is: measurement_family}
   e6_defqa: {is: measurement_family}
   e6_defqa_nll: {is: measurement_family}
@@ -877,6 +979,9 @@ individuals:
   h_common_component_transfers_to_unseen: {is: hyp_untested}
   h_attention_carries_text_route: {is: hyp_untested}
   h_model_can_write_cscl: {is: hyp_untested}
+  h_typecheck_feedback_raises_writing: {is: hyp_untested}
+  h_qualification_vector_transfers_to_unseen_genus: {is: hyp_untested}
+  h_qualification_teacher_raises_following: {is: hyp_untested}
   h_modifier_transfers_to_unseen_genus: {is: hyp_supported}
 
   # ===== 決定（is: decision）
@@ -1790,6 +1895,143 @@ facts:
   - {is: v_refer, from: o_e6_recite_paraphrase_at_chance, to: {is: v_near, from: e6_L8.defonly.logit_margin, to: 0.0, new: 0.5}}
   - {is: v_refer, from: o_e6_examples_paraphrase_at_chance, to: {is: v_near, from: e6_L8.qa.logit_margin, to: 0.0, new: 0.5}}
   - {is: v_refer, from: o_e6_examples_recital_harder, to: {is: v_come_after, from: e6_L8_nll.qa.mean_value, to: e6_L8_nll.none.mean_value}}
+
+  # ===== 先行研究の観察。値は論文の表と本文から書き写したもの（experiments/results/prior/。出典は各ファイルの _source）。
+  - {is: v_file_of, from: prior/teehan2024_college_gre.json, to: pr_college_gre}
+  - {is: v_rows_of, from: [reported], to: pr_college_gre}
+  - {is: v_axis_of, from: pr_college_gre_cond, to: pr_college_gre}
+  - {is: v_value_of, from: pr_college_gre_cond_college, to: pr_college_gre_cond}
+  - {is: v_spell, from: pr_college_gre_cond_college, to: college}
+  - {is: v_value_of, from: pr_college_gre_cond_prompting, to: pr_college_gre_cond}
+  - {is: v_spell, from: pr_college_gre_cond_prompting, to: prompting}
+  - {is: v_value_of, from: pr_college_gre_cond_chance, to: pr_college_gre_cond}
+  - {is: v_spell, from: pr_college_gre_cond_chance, to: chance}
+  - {is: v_value_of, from: pr_college_gre_cond_real_word, to: pr_college_gre_cond}
+  - {is: v_spell, from: pr_college_gre_cond_real_word, to: real_word}
+  - {is: v_entry_of, from: '{cond}', to: pr_college_gre}
+  - {is: v_metric_of, from: pr_college_gre, to: mean_value}
+  - {is: v_file_of, from: prior/teehan2024_college_defgen.json, to: pr_college_defgen}
+  - {is: v_rows_of, from: [reported], to: pr_college_defgen}
+  - {is: v_axis_of, from: pr_college_defgen_cond, to: pr_college_defgen}
+  - {is: v_value_of, from: pr_college_defgen_cond_college, to: pr_college_defgen_cond}
+  - {is: v_spell, from: pr_college_defgen_cond_college, to: college}
+  - {is: v_value_of, from: pr_college_defgen_cond_prompting, to: pr_college_defgen_cond}
+  - {is: v_spell, from: pr_college_defgen_cond_prompting, to: prompting}
+  - {is: v_entry_of, from: '{cond}', to: pr_college_defgen}
+  - {is: v_metric_of, from: pr_college_defgen, to: mean_value}
+  - {is: v_file_of, from: prior/poiroux2024_typecheck.json, to: pr_poiroux}
+  - {is: v_rows_of, from: [reported], to: pr_poiroux}
+  - {is: v_axis_of, from: pr_poiroux_cond, to: pr_poiroux}
+  - {is: v_value_of, from: pr_poiroux_cond_greedy, to: pr_poiroux_cond}
+  - {is: v_spell, from: pr_poiroux_cond_greedy, to: greedy}
+  - {is: v_value_of, from: pr_poiroux_cond_filter_selfbleu, to: pr_poiroux_cond}
+  - {is: v_spell, from: pr_poiroux_cond_filter_selfbleu, to: filter_selfbleu}
+  - {is: v_value_of, from: pr_poiroux_cond_val_no_filter_selfbleu, to: pr_poiroux_cond}
+  - {is: v_spell, from: pr_poiroux_cond_val_no_filter_selfbleu, to: val_no_filter_selfbleu}
+  - {is: v_value_of, from: pr_poiroux_cond_val_filter_selfbleu, to: pr_poiroux_cond}
+  - {is: v_spell, from: pr_poiroux_cond_val_filter_selfbleu, to: val_filter_selfbleu}
+  - {is: v_entry_of, from: '{cond}', to: pr_poiroux}
+  - {is: v_metric_of, from: pr_poiroux, to: mean_value}
+  - {is: v_file_of, from: prior/liu2024_middle.json, to: pr_liu}
+  - {is: v_rows_of, from: [reported], to: pr_liu}
+  - {is: v_axis_of, from: pr_liu_cond, to: pr_liu}
+  - {is: v_value_of, from: pr_liu_cond_first, to: pr_liu_cond}
+  - {is: v_spell, from: pr_liu_cond_first, to: first}
+  - {is: v_value_of, from: pr_liu_cond_middle, to: pr_liu_cond}
+  - {is: v_spell, from: pr_liu_cond_middle, to: middle}
+  - {is: v_value_of, from: pr_liu_cond_last, to: pr_liu_cond}
+  - {is: v_spell, from: pr_liu_cond_last, to: last}
+  - {is: v_value_of, from: pr_liu_cond_closed_book, to: pr_liu_cond}
+  - {is: v_spell, from: pr_liu_cond_closed_book, to: closed_book}
+  - {is: v_entry_of, from: '{cond}', to: pr_liu}
+  - {is: v_metric_of, from: pr_liu, to: mean_value}
+  - {is: v_file_of, from: prior/eisenschlos2023_winodict.json, to: pr_winodict}
+  - {is: v_rows_of, from: [reported], to: pr_winodict}
+  - {is: v_axis_of, from: pr_winodict_cond, to: pr_winodict}
+  - {is: v_value_of, from: pr_winodict_cond_winodict, to: pr_winodict_cond}
+  - {is: v_spell, from: pr_winodict_cond_winodict, to: winodict}
+  - {is: v_value_of, from: pr_winodict_cond_original, to: pr_winodict_cond}
+  - {is: v_spell, from: pr_winodict_cond_original, to: original}
+  - {is: v_value_of, from: pr_winodict_cond_human_winodict, to: pr_winodict_cond}
+  - {is: v_spell, from: pr_winodict_cond_human_winodict, to: human_winodict}
+  - {is: v_entry_of, from: '{cond}', to: pr_winodict}
+  - {is: v_metric_of, from: pr_winodict, to: mean_value}
+  - {is: v_file_of, from: prior/stringli2025_anchoring.json, to: pr_stringli}
+  - {is: v_rows_of, from: [reported], to: pr_stringli}
+  - {is: v_axis_of, from: pr_stringli_cond, to: pr_stringli}
+  - {is: v_value_of, from: pr_stringli_cond_llama405b, to: pr_stringli_cond}
+  - {is: v_spell, from: pr_stringli_cond_llama405b, to: llama405b}
+  - {is: v_value_of, from: pr_stringli_cond_llama70b, to: pr_stringli_cond}
+  - {is: v_spell, from: pr_stringli_cond_llama70b, to: llama70b}
+  - {is: v_entry_of, from: '{cond}', to: pr_stringli}
+  - {is: v_metric_of, from: pr_stringli, to: mean_value}
+  - {is: v_file_of, from: prior/goworek2026_redefinition.json, to: pr_goworek}
+  - {is: v_rows_of, from: [reported], to: pr_goworek}
+  - {is: v_axis_of, from: pr_goworek_cond, to: pr_goworek}
+  - {is: v_value_of, from: pr_goworek_cond_redefined_without, to: pr_goworek_cond}
+  - {is: v_spell, from: pr_goworek_cond_redefined_without, to: redefined_without}
+  - {is: v_value_of, from: pr_goworek_cond_redefined_with, to: pr_goworek_cond}
+  - {is: v_spell, from: pr_goworek_cond_redefined_with, to: redefined_with}
+  - {is: v_value_of, from: pr_goworek_cond_original_without, to: pr_goworek_cond}
+  - {is: v_spell, from: pr_goworek_cond_original_without, to: original_without}
+  - {is: v_value_of, from: pr_goworek_cond_original_with, to: pr_goworek_cond}
+  - {is: v_spell, from: pr_goworek_cond_original_with, to: original_with}
+  - {is: v_entry_of, from: '{cond}', to: pr_goworek}
+  - {is: v_metric_of, from: pr_goworek, to: mean_value}
+  - {is: v_file_of, from: prior/babaei2025_ontology_prompt.json, to: pr_babaei}
+  - {is: v_rows_of, from: [reported], to: pr_babaei}
+  - {is: v_axis_of, from: pr_babaei_cond, to: pr_babaei}
+  - {is: v_value_of, from: pr_babaei_cond_qwen72b_question, to: pr_babaei_cond}
+  - {is: v_spell, from: pr_babaei_cond_qwen72b_question, to: qwen72b_question}
+  - {is: v_value_of, from: pr_babaei_cond_qwen72b_rdf, to: pr_babaei_cond}
+  - {is: v_spell, from: pr_babaei_cond_qwen72b_rdf, to: qwen72b_rdf}
+  - {is: v_value_of, from: pr_babaei_cond_qwen05b_question, to: pr_babaei_cond}
+  - {is: v_spell, from: pr_babaei_cond_qwen05b_question, to: qwen05b_question}
+  - {is: v_value_of, from: pr_babaei_cond_qwen05b_rdf, to: pr_babaei_cond}
+  - {is: v_spell, from: pr_babaei_cond_qwen05b_rdf, to: qwen05b_rdf}
+  - {is: v_entry_of, from: '{cond}', to: pr_babaei}
+  - {is: v_metric_of, from: pr_babaei, to: mean_value}
+  - {is: v_file_of, from: prior/eyuboglu2025_cartridges.json, to: pr_cartridges}
+  - {is: v_rows_of, from: [reported], to: pr_cartridges}
+  - {is: v_axis_of, from: pr_cartridges_cond, to: pr_cartridges}
+  - {is: v_value_of, from: pr_cartridges_cond_self_study, to: pr_cartridges_cond}
+  - {is: v_spell, from: pr_cartridges_cond_self_study, to: self_study}
+  - {is: v_value_of, from: pr_cartridges_cond_next_token, to: pr_cartridges_cond}
+  - {is: v_spell, from: pr_cartridges_cond_next_token, to: next_token}
+  - {is: v_entry_of, from: '{cond}', to: pr_cartridges}
+  - {is: v_metric_of, from: pr_cartridges, to: mean_value}
+  - {is: v_refer, from: o_pr_college_above_prompting, to: {is: v_come_after, from: pr_college_gre.college.mean_value, to: pr_college_gre.prompting.mean_value}}
+  - {is: v_report, from: pw_teehan2024_college, to: o_pr_college_above_prompting}
+  - {is: v_refer, from: o_pr_college_below_real_word, to: {is: v_come_before, from: pr_college_gre.college.mean_value, to: pr_college_gre.real_word.mean_value}}
+  - {is: v_report, from: pw_teehan2024_college, to: o_pr_college_below_real_word}
+  - {is: v_refer, from: o_pr_college_defgen_above_prompting, to: {is: v_come_after, from: pr_college_defgen.college.mean_value, to: pr_college_defgen.prompting.mean_value}}
+  - {is: v_report, from: pw_teehan2024_college, to: o_pr_college_defgen_above_prompting}
+  - {is: v_refer, from: o_pr_poiroux_filter_above_greedy, to: {is: v_come_after, from: pr_poiroux.filter_selfbleu.mean_value, to: pr_poiroux.greedy.mean_value}}
+  - {is: v_report, from: pw_poiroux2024_typecheck, to: o_pr_poiroux_filter_above_greedy}
+  - {is: v_refer, from: o_pr_poiroux_filter_above_no_filter, to: {is: v_come_after, from: pr_poiroux.val_filter_selfbleu.mean_value, to: pr_poiroux.val_no_filter_selfbleu.mean_value}}
+  - {is: v_report, from: pw_poiroux2024_typecheck, to: o_pr_poiroux_filter_above_no_filter}
+  - {is: v_refer, from: o_pr_liu_middle_below_first, to: {is: v_come_before, from: pr_liu.middle.mean_value, to: pr_liu.first.mean_value}}
+  - {is: v_report, from: pw_liu2024_lost_in_the_middle, to: o_pr_liu_middle_below_first}
+  - {is: v_refer, from: o_pr_liu_middle_below_last, to: {is: v_come_before, from: pr_liu.middle.mean_value, to: pr_liu.last.mean_value}}
+  - {is: v_report, from: pw_liu2024_lost_in_the_middle, to: o_pr_liu_middle_below_last}
+  - {is: v_refer, from: o_pr_liu_middle_below_closed_book, to: {is: v_come_before, from: pr_liu.middle.mean_value, to: pr_liu.closed_book.mean_value}}
+  - {is: v_report, from: pw_liu2024_lost_in_the_middle, to: o_pr_liu_middle_below_closed_book}
+  - {is: v_refer, from: o_pr_winodict_below_original, to: {is: v_come_before, from: pr_winodict.winodict.mean_value, to: pr_winodict.original.mean_value}}
+  - {is: v_report, from: pw_eisenschlos2023_winodict, to: o_pr_winodict_below_original}
+  - {is: v_refer, from: o_pr_winodict_below_human, to: {is: v_come_before, from: pr_winodict.winodict.mean_value, to: pr_winodict.human_winodict.mean_value}}
+  - {is: v_report, from: pw_eisenschlos2023_winodict, to: o_pr_winodict_below_human}
+  - {is: v_refer, from: o_pr_stringli_larger_anchored_more, to: {is: v_come_after, from: pr_stringli.llama405b.mean_value, to: pr_stringli.llama70b.mean_value}}
+  - {is: v_report, from: pw_stringli2025_inverse_redefinition, to: o_pr_stringli_larger_anchored_more}
+  - {is: v_refer, from: o_pr_goworek_redefined_raised, to: {is: v_come_after, from: pr_goworek.redefined_with.mean_value, to: pr_goworek.redefined_without.mean_value}}
+  - {is: v_report, from: pw_goworek2026_lexical_redefinition, to: o_pr_goworek_redefined_raised}
+  - {is: v_refer, from: o_pr_goworek_original_lowered, to: {is: v_come_before, from: pr_goworek.original_with.mean_value, to: pr_goworek.original_without.mean_value}}
+  - {is: v_report, from: pw_goworek2026_lexical_redefinition, to: o_pr_goworek_original_lowered}
+  - {is: v_refer, from: o_pr_babaei_large_rdf_raised, to: {is: v_come_after, from: pr_babaei.qwen72b_rdf.mean_value, to: pr_babaei.qwen72b_question.mean_value}}
+  - {is: v_report, from: pw_babaei2025_ontotruth, to: o_pr_babaei_large_rdf_raised}
+  - {is: v_refer, from: o_pr_babaei_small_rdf_lowered, to: {is: v_come_before, from: pr_babaei.qwen05b_rdf.mean_value, to: pr_babaei.qwen05b_question.mean_value}}
+  - {is: v_report, from: pw_babaei2025_ontotruth, to: o_pr_babaei_small_rdf_lowered}
+  - {is: v_refer, from: o_pr_cartridges_self_study_above, to: {is: v_come_after, from: pr_cartridges.self_study.mean_value, to: pr_cartridges.next_token.mean_value}}
+  - {is: v_report, from: pw_eyuboglu2025_cartridges, to: o_pr_cartridges_self_study_above}
   - {is: v_refer, from: o_e6_both_teachers_recital_easier, to: {is: v_come_before, from: e6_defqa_nll.L8.mean_value, to: e6_L8_nll.none.mean_value}}
   - {is: v_refer, from: o_e6_both_teachers_paraphrase_at_chance, to: {is: v_near, from: e6_defqa.L8.accuracy, to: 0.5, new: 0.05}}
   - {is: v_refer, from: o_e6_layer14_paraphrase_below_chance, to: {is: v_come_before, from: e6_defqa.L14.accuracy, to: 0.5}}
@@ -2099,6 +2341,7 @@ facts:
   - {is: v_refer, from: h_cscl_raises_following, to: {is: v_raise, from: cscl, to: redefinition_following}}
   - {is: v_scope, from: text_injection, to: h_cscl_raises_following}
   - {is: v_refer, from: h_model_can_write_cscl, to: {is: v_speak, from: model, to: concept_expression}}
+  - {is: v_refer, from: h_typecheck_feedback_raises_writing, to: {is: v_raise, from: type_check_result, to: formalization_accuracy}}
   - {is: v_refer, from: h_dedicated_key_raises_following, to: {is: v_raise, from: key_token_vector, to: redefinition_following}}
   - {is: v_refer, from: h_symbolic_membership_raises_following, to: {is: v_raise, from: symbolic_membership, to: redefinition_following}}
   - {is: v_refer, from: h_contrast_vector_raises_following, to: {is: v_raise, from: contrast_vector, to: redefinition_following}}
@@ -2175,6 +2418,8 @@ facts:
   - {is: v_prior_differ, from: pw_liu2024_lost_in_the_middle, to: h_distance_does_not_lower}
   - {is: v_prior_differ, from: pw_goworek2026_lexical_redefinition, to: h_following_definitions_do_not_lower}
   - {is: v_prior_same, from: pw_xu2024_knowledge_conflicts, to: h_collision_lowers_following}
+  - {is: v_prior_differ, from: pw_teehan2024_college, to: h_apply_does_not_transfer_to_paraphrase}
+  - {is: v_prior_same, from: pw_poiroux2024_typecheck, to: h_typecheck_feedback_raises_writing}
   - {is: v_prior_method, from: h_vector_raises_following, to: pw_turner2023_activation_addition}
   - {is: v_prior_method, from: h_contrast_vector_raises_following, to: pw_panickssery2023_caa}
   - {is: v_prior_method, from: h_vector_raises_following, to: pw_todd2024_function_vectors}
@@ -2199,3 +2444,44 @@ facts:
   - {is: v_refer, from: pwc_todd2024_function_vector, to: {is: v_raise, from: state_shift, to: behavior_expression}}
   - {is: v_state, from: pw_radevski2026_steering_tokens, to: pwc_radevski2026_steering_tokens}
   - {is: v_refer, from: pwc_radevski2026_steering_tokens, to: {is: v_raise, from: dedicated_token, to: behavior_expression}}
+  - {is: v_state, from: pw_eyuboglu2025_cartridges, to: pwc_eyuboglu2025_self_study}
+  - {is: v_refer, from: pwc_eyuboglu2025_self_study, to: {is: v_raise, from: taught_vector, to: task_performance}}
+  - {is: v_state, from: pw_teehan2024_college, to: pwc_teehan2024_transfer}
+  - {is: v_refer, from: pwc_teehan2024_transfer, to: {is: v_transfer, from: usage_apply, to: usage_define_paraphrase}}
+  - {is: v_state, from: pw_lenat2023_cyc, to: pwc_lenat2023_hybrid}
+  - {is: v_refer, from: pwc_lenat2023_hybrid, to: {is: v_raise, from: typed_graph, to: traceability}}
+  - {is: v_state, from: pw_luo2024_knowla, to: pwc_luo2024_kg_adapter}
+  - {is: v_refer, from: pwc_luo2024_kg_adapter, to: {is: v_raise, from: structure_embedding, to: task_performance}}
+  - {is: v_state, from: pw_coppolillo2025_kg_injection, to: pwc_coppolillo2025_graph_tokens}
+  - {is: v_refer, from: pwc_coppolillo2025_graph_tokens, to: {is: v_raise, from: structure_embedding, to: task_performance}}
+  - {is: v_state, from: pw_babaei2025_ontotruth, to: pwc_babaei2025_axioms_in_prompt}
+  - {is: v_refer, from: pwc_babaei2025_axioms_in_prompt, to: {is: v_raise, from: text_injection, to: task_performance}}
+  - {is: v_state, from: pw_poiroux2024_typecheck, to: pwc_poiroux2024_filter}
+  - {is: v_refer, from: pwc_poiroux2024_filter, to: {is: v_raise, from: type_check_result, to: formalization_accuracy}}
+
+  # ===== 限定の差分ベクトル（言語の限定 mod を、子 − 親のベクトルとして教える）
+  - {is: v_refer, from: h_qualification_vector_transfers_to_unseen_genus, to: {is: v_transfer, from: qualification_vector, to: unseen_genus}}
+  - {is: v_refer, from: h_qualification_teacher_raises_following, to: {is: v_raise, from: qualification_vector, to: redefinition_following}}
+  - {is: v_state, from: pw_park2025_hierarchical_geometry, to: pwc_park2025_orthogonal_refinement}
+  - {is: v_refer, from: pwc_park2025_orthogonal_refinement, to: {is: v_sum, from: concept_vector, to: qualification_vector, new: concept_vector}}
+  - {is: v_state, from: pw_hernandez2024_lre, to: pwc_hernandez2024_linear_relation}
+  - {is: v_refer, from: pwc_hernandez2024_linear_relation, to: {is: v_transfer, from: relation_operator, to: word}}
+  - {is: v_state, from: pw_christ2025_relation_operators, to: pwc_christ2025_property_based}
+  - {is: v_refer, from: pwc_christ2025_property_based, to: {is: v_not_transfer, from: relation_operator, to: unseen_relation}}
+  - {is: v_file_of, from: prior/christ2025_relation_operators.json, to: pr_christ}
+  - {is: v_rows_of, from: [reported], to: pr_christ}
+  - {is: v_axis_of, from: pr_christ_cond, to: pr_christ}
+  - {is: v_value_of, from: pr_christ_cond_extended_test, to: pr_christ_cond}
+  - {is: v_spell, from: pr_christ_cond_extended_test, to: extended_test}
+  - {is: v_value_of, from: pr_christ_cond_majority_baseline, to: pr_christ_cond}
+  - {is: v_spell, from: pr_christ_cond_majority_baseline, to: majority_baseline}
+  - {is: v_value_of, from: pr_christ_cond_arithmetic_heldout, to: pr_christ_cond}
+  - {is: v_spell, from: pr_christ_cond_arithmetic_heldout, to: arithmetic_heldout}
+  - {is: v_value_of, from: pr_christ_cond_jacobian_baseline, to: pr_christ_cond}
+  - {is: v_spell, from: pr_christ_cond_jacobian_baseline, to: jacobian_baseline}
+  - {is: v_entry_of, from: '{cond}', to: pr_christ}
+  - {is: v_metric_of, from: pr_christ, to: mean_value}
+  - {is: v_refer, from: o_pr_christ_above_majority, to: {is: v_come_after, from: pr_christ.extended_test.mean_value, to: pr_christ.majority_baseline.mean_value}}
+  - {is: v_report, from: pw_christ2025_relation_operators, to: o_pr_christ_above_majority}
+  - {is: v_refer, from: o_pr_christ_arithmetic_above_general, to: {is: v_come_after, from: pr_christ.arithmetic_heldout.mean_value, to: pr_christ.extended_test.mean_value}}
+  - {is: v_report, from: pw_christ2025_relation_operators, to: o_pr_christ_arithmetic_above_general}
