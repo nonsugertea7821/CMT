@@ -6,6 +6,8 @@
   - 中身は `v_refer` で書く: `{is: v_refer, from: h_<名前>, to: {...}}`。
   - 確かめる残り項目を対で置く: `b_<名前>: {is: exp.item_queued}` と `{is: exp.v_check, from: b_<名前>, to: h_<名前>}`。
   - 仮説は main に入ると issue に写る（`.github/scripts/sync_issues.py`）。残り項目そのものは写らない。
+  - 登録だけの PR（h_・b_ とその v_refer・v_check を足すだけで、概念を足さないもの）は、auto-merge が自動でマージする。
+    概念を足す登録は、手で見る。
 
 ## 仮説を確かめる流れ
 1. 仮説が main に入り、issue が立つ。
