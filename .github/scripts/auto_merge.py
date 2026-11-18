@@ -9,6 +9,15 @@
   5. 事前登録: 実験スクリプトを1つ以上、結果ファイルを1つ以上含む。各スクリプトを触る commit はちょうど1つで、
      結果ファイルを触らず、結果ファイルを触るどの commit よりも前にある
   6. 訂正がない: 各スクリプトの「訂正」で始まる行の数が、base と head で同じ
+仮説の登録の PR（claude/ で始まり claude/h_ でないブランチ）は、次をすべて満たすとき、マージする:
+  R1. Draft でない
+  R2. 触るファイルが cscl/design/claims.yaml と exp/src/exp.yaml だけ
+  R3. 消す行がなく、足す行はすべて次のどれか（中身は yaml として読む）:
+      h_<名前>: {is: hyp_untested}（領域 exp. を付けてもよい）、b_<名前>: {is: item_queued}、
+      - {is: v_refer, from: h_<名前>, to: ...}、- {is: v_check, from: b_<名前>, to: h_<名前>}
+  R4. 足した h_<名前> ごとに、v_refer がちょうど1つ、それを結ぶ v_check がちょうど1つ、その b_<名前> が足してある。
+      足した v_refer と v_check は、足した h と b だけを結ぶ
+  概念（nodes）を足す登録は、定義を足すので手で見る。
 型検査（tc）と exp の検査（ec）は、ワークフローの前の段で走らせる（通らなければここまで来ない）。
 GITHUB_TOKEN でマージした push では他のワークフローが起きないので、issue の同期はワークフローの後の段で走らせる。
 
@@ -75,6 +84,70 @@ def decide(ref, draft, files, commits, status_base, status_head, scripts):
     return why
 
 
+REG_FILES = {"cscl/design/claims.yaml", "exp/src/exp.yaml"}
+
+
+def _short(x):
+    return str(x).split(".")[-1]
+
+
+def decide_registration(draft, files, added, removed):
+    """仮説の登録の PR の、外れた条件の理由の一覧（空ならマージしてよい）。added, removed: 足した行・消した行。"""
+    why = []
+    if draft:
+        why.append("Draft である")
+    bad = [f for f in files if f not in REG_FILES]
+    if bad:
+        why.append("範囲の外のファイルを触る: " + ", ".join(bad[:5]))
+    if not files:
+        why.append("変更がない")
+    if [l for l in removed if l.strip()]:
+        why.append(f"消す行がある（{len([l for l in removed if l.strip()])} 行）")
+    hs, bs, refers, checks = set(), set(), [], []
+    for line in (l for l in added if l.strip()):
+        try:
+            y = yaml.safe_load(line.strip())
+        except yaml.YAMLError:
+            why.append(f"yaml として読めない行: {line.strip()[:60]}")
+            continue
+        if isinstance(y, dict) and len(y) == 1:
+            (k, v), = y.items()
+            st = _short(v.get("is")) if isinstance(v, dict) and set(v) == {"is"} else None
+            if re.fullmatch(r"h_[a-z0-9_]+", str(k)) and st == "hyp_untested":
+                hs.add(k)
+                continue
+            if re.fullmatch(r"b_[a-z0-9_]+", str(k)) and st == "item_queued":
+                bs.add(k)
+                continue
+        if isinstance(y, list) and len(y) == 1 and isinstance(y[0], dict):
+            f = y[0]
+            if _short(f.get("is")) == "v_refer" and set(f) == {"is", "from", "to"}:
+                refers.append(f["from"])
+                continue
+            if _short(f.get("is")) == "v_check" and set(f) == {"is", "from", "to"}:
+                checks.append((f["from"], f["to"]))
+                continue
+        why.append(f"登録でない行: {line.strip()[:60]}")
+    if not hs:
+        why.append("足した仮説がない")
+    for h in sorted(hs):
+        if refers.count(h) != 1:
+            why.append(f"{h} の v_refer が {refers.count(h)} 個（1つでない）")
+        cs = [b for b, t in checks if t == h]
+        if len(cs) != 1 or cs[0] not in bs or cs[0] != "b_" + h[2:]:
+            why.append(f"{h} を結ぶ v_check と b_{h[2:]} が揃わない")
+    for r in refers:
+        if r not in hs:
+            why.append(f"足していない {r} の v_refer を足す")
+    for b, t in checks:
+        if b not in bs or t not in hs:
+            why.append(f"足していない項目か仮説の v_check を足す: {b} → {t}")
+    for b in sorted(bs):
+        if not any(c == b for c, _ in checks):
+            why.append(f"{b} を結ぶ v_check がない")
+    return why
+
+
 def git(*a):
     return subprocess.run(["git", *a], capture_output=True, text=True, check=True).stdout
 
@@ -105,6 +178,19 @@ def gather(base, head):
                 status_base=status(base, h) if h else None, status_head=status(head, h) if h else None, scripts=scripts)
 
 
+def gather_registration(base, head):
+    files = [f for f in git("diff", "--name-only", f"{base}...{head}").split() if f]
+    added, removed = [], []
+    for line in git("diff", "-U0", f"{base}...{head}", "--", *sorted(REG_FILES)).splitlines():
+        if line.startswith(("+++", "---")):
+            continue
+        if line.startswith("+"):
+            added.append(line[1:])
+        elif line.startswith("-"):
+            removed.append(line[1:])
+    return dict(draft=os.environ.get("DRAFT") == "true", files=files, added=added, removed=removed)
+
+
 def merge(head):
     repo, n = os.environ["GITHUB_REPOSITORY"], os.environ["PR_NUMBER"]
     req = urllib.request.Request(f"https://api.github.com/repos/{repo}/pulls/{n}/merge", method="PUT",
@@ -116,8 +202,10 @@ def merge(head):
 
 
 def main(base, head, do_merge):
-    why = decide(**gather(base, head))
-    lines = ["## 自動マージの判定", ""] + (["条件をすべて満たす。マージする。"] if not why else
+    ref = os.environ.get("HEAD_REF", "")
+    reg = not BRANCH.match(ref)
+    why = decide_registration(**gather_registration(base, head)) if reg else decide(**gather(base, head))
+    lines = ["## 自動マージの判定" + ("（仮説の登録）" if reg else ""), ""] + (["条件をすべて満たす。マージする。"] if not why else
                                          ["手で見る（外れた条件）:"] + [f"- {w}" for w in why])
     print("\n".join(lines))
     for k, v in (("GITHUB_STEP_SUMMARY", "\n".join(lines) + "\n"), ("GITHUB_OUTPUT", f"merge={'false' if why else 'true'}\n")):
