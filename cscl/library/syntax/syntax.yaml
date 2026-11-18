@@ -180,7 +180,6 @@ individuals:
   parent_by_is: {is: law_rule, display: 「属する」の始点として限定した種類は上位}
   ancestor_by_parent: {is: law_rule, display: 上位は祖先}
   ancestor_by_step: {is: law_rule, display: 上位の祖先は祖先}
-  any_above_end: {is: law_rule, display: 限定の端は何でもの下にある}
   acyclic: {is: law_rule, display: 定義は自分自身を参照しない（自分の祖先にならない）}
   inherit_from_own: {is: law_rule, display: 端 from は自分に書いたもの}
   inherit_from: {is: law_rule, display: 端 from を書かなければ上位から引き継ぐ}
@@ -314,9 +313,6 @@ facts:
   - {is: v_assume, from: ancestor_by_step, to: {is: r_parent, from: var1, to: var3}}
   - {is: v_assume, from: ancestor_by_step, to: {is: r_ancestor, from: var3, to: var2}}
   - {is: v_derive, from: ancestor_by_step, to: {is: r_ancestor, from: var1, to: var2}}
-  - {is: v_assume, from: any_above_end, to: {is: with, from: var1, to: var2}}
-  - {is: v_assume, from: any_above_end, to: {is: same, from: var2, to: any, neg: true}}
-  - {is: v_derive, from: any_above_end, to: {is: r_ancestor, from: var2, to: any}}
   - {is: v_assume, from: acyclic, to: {is: r_ancestor, from: var1, to: var2}}
   - {is: v_require, from: acyclic, to: {is: same, from: var1, to: var2, neg: true}}
   - {is: v_assume, from: inherit_from_own, to: {is: from, from: var1, to: var2}}
