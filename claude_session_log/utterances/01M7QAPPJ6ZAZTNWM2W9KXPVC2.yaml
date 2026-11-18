@@ -1,0 +1,23 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-18T12:39:29.606Z（UTC）
+individuals:
+  01M7QAPPJ6ZAZTNWM2W9KXPVC2:
+    is: model_utterance
+    display: 発言 1940
+    val:
+      order: 1940
+      text: |
+        「概念」の仮説は、バックログとして #211 で登録しました。式は `依存する(モデルの部分である状態へ述べる文, 定義)` です。定義は「概念へ述べる文」にあたります。
+
+        - **手で見る理由**: 「モデルの部分である状態」と「それへ述べる文」の 2 つの概念を足したためです。
+        - **まだ式にしていない部分**: 「起きてはいけない」（否定・禁止）と「帰納的・演繹的に導く」は、確かめる手順を決めるときに式にします。PR に書いておきました。
+
+        h_layers_unhardcode は、型検査器の書き換えまで済み、実験を走らせています（20 分ほどかかります）。
+
+        - **式から導く形に置き換えたもの**: 最上位、属する、依存する、特定依存持続体、質、大きさ、動詞を指すもの、LAYERS、v_spell の例外、部分の言い方（PART_WORDS）。
+        - **置き換えられなかったもの**: runtime の法則 5 つ（unique_names・step・frame・halt・no_confusion）。式の上では 5 つとも「law_given で、実行の記録を統べる」という同じ形で、名前と表示語でしか区別できません。
+        - **予想**: 事前登録の判定（名前を使わずに区別できない点が残れば反証）に従うと、反証になる見込みです。確定は結果が出てからです。
+facts:
+- {is: v_say, from: session_model, to: 01M7QAPPJ6ZAZTNWM2W9KXPVC2}
+- {is: exp.v_answer, from: 01M7QAPPJ6ZAZTNWM2W9KXPVC2, to: 01M7Q9KKM6W3PBJNKFKJF7TQ0E}
+- {is: v_refer, from: 01M7QAPPJ6ZAZTNWM2W9KXPVC2, to: exp.v_spell}
+- {is: v_refer, from: 01M7QAPPJ6ZAZTNWM2W9KXPVC2, to: syntax.law_given}
