@@ -1,0 +1,207 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-18T16:33:37.785Z（UTC）
+individuals:
+  01M7QR3DFS3Y6FTKG6AFZB7FNR:
+    is: session_summary
+    display: 発言 2060
+    val:
+      order: 2060
+      text: |
+        This session is being continued from a previous conversation that ran out of context. The summary below covers the earlier portion of the conversation.
+
+        <system-reminder>
+        <tools-used-before-summary>AskUserQuestion, Bash, Edit, Grep, Read, ReadNotifications, Skill, TaskStop, ToolSearch, WebFetch, WebSearch, Write, mcp__claude-code-remote__create_trigger, mcp__claude-code-remote__delete_trigger, mcp__claude-code-remote__get_trigger, mcp__claude-code-remote__read_documentation, mcp__claude-code-remote__send_later, mcp__claude-code-remote__subscribe_pr_activity, mcp__claude-code-remote__update_trigger, mcp__github__actions_get, mcp__github__actions_list, mcp__github__add_issue_comment, mcp__github__create_pull_request, mcp__github__get_job_logs, mcp__github__issue_read, mcp__github__issue_write, mcp__github__list_issue_types, mcp__github__list_issues, mcp__github__list_pull_requests, mcp__github__pull_request_read, mcp__github__update_pull_request</tools-used-before-summary>
+        </system-reminder>
+        Summary:
+        1. Primary Request and Intent
+
+        **Standing rules (still in force)**
+        - Repo: nonsugertea7821/CMT at /home/user/CMT.
+        - Reply in Japanese. Don't overclaim. Give interpretation.
+        - Restore files with `git show <rev>:<path> > <path>`. Never checkout to restore and never stash.
+        - Python: /home/user/venv/bin/python.
+        - Commit trailer:
+          `Co-Authored-By: Claude [モデル名を伏せた] <[メールアドレスを伏せた]>`
+          `Claude-Session: https://claude.ai/code/session_015KRKt6TNJZ7ZsQmEknANXK`
+        - PR body ends with:
+          `🤖 Generated with [Claude Code](https://claude.com/claude-code)`
+          blank line
+          `https://claude.ai/code/session_015KRKt6TNJZ7ZsQmEknANXK`
+        - Claude never merges.
+        - No personal info or model identifiers in pushed artifacts.
+        - Don't retry the MEXT PDF WebFetch without OK.
+        - No comments in system yaml. Never rerun recorded experiment scripts. CI belongs to GitHub.
+        - Every PR:
+          - subscribe_pr_activity;
+          - issue_write update with assignees [nonsugertea7821].
+        - After a merge:
+          - delete the local branch (`git fetch -q --prune origin`, then `git branch -D`);
+          - never push to a merged branch (that recreates it on the remote);
+          - never push branch deletions.
+
+        **User's current intent**
+        - The user is away for a while, so the manual merge gate stays open. Advance whatever auto-merge can carry:
+          - hypothesis experiment PRs on `claude/h_<name>`;
+          - registration-only PRs that add no concepts.
+        - Work in 30-minute cycles:
+          1. pick a hypothesis;
+          2. run it;
+          3. document the result;
+          4. reread it and ask "これ含意が無いか？" against prior results, the premises of registered hypotheses, and recorded observations;
+          5. if there is an implication, register new hypotheses in the user's style:
+             - 名前で読まず式で書く;
+             - 検査が与えるものを体系に置く;
+             - 測ったものから演繹する;
+             - 反証から別々の解き方を対で出す.
+        - Run only one heavy experiment at a time.
+        - Prefer hypotheses whose outcome can't be predicted from reading the code.
+        - Before defining operational terms, compare them with the definitions used by prior experiments.
+        - Add registrations away from the lines of currently running hypotheses, to avoid merge conflicts.
+
+        **Auto-merge conditions** (.github/scripts/auto_merge.py)
+        - Hypothesis PR:
+          - branch `claude/h_<name>`, and the hypothesis exists on base;
+          - not Draft;
+          - touches only claims.yaml, exp/src/*.yaml, exp/experiments/*.py and exp/experiments/results/*;
+          - status goes from untested to supported or refuted;
+          - each script is touched by exactly one commit, without result files, and before any result commit;
+          - no "訂正" lines added.
+        - Registration PR: touches only claims.yaml / exp.yaml and only adds h_ / b_ / v_refer / v_check lines.
+
+        2. Key Technical Concepts
+
+        **Type checker gather**
+        - Reading formulas are collected by assignment, so a later v_refer of the same subject overwrites the earlier one.
+        - The many-check exempts o and _at.
+
+        **exp_check**
+        - It checks a hypothesis formula only structurally (triple: names defined, verb ends fit).
+        - It checks status against the presence of evidence/against links.
+        - It does not relate the formula content to observations, so support/contradict links are declarations.
+
+        **Measurement families in exp.yaml**
+        - Node pattern:
+          - `{F}: {is: measurement_family}`
+          - `{F}_cond: {is: family_axis, val: {text: cond}}`
+          - `{F}_cond_{c}: {is: axis_value, val: {text: c}}`
+        - Fact pattern:
+          - `v_file_of`, `v_rows_of [rows]`, `v_axis_of`;
+          - `v_value_of` plus `v_spell` per column;
+          - `v_entry_of '{cond}'`, `v_metric_of mean_value`.
+        - Helper script `/tmp/claude-0/-home-user-CMT/e05d2140-ce91-515f-a5fb-e6251e13d406/scratchpad/addfam.py F col1,col2,...` inserts the family after the sys_reading_ends_resolved block. `addfam_before.py` inserts it before.
+
+        **Observations**
+        - Written as `o_x: {is: exp.observation}` in claims.yaml, or `{is: observation}` in exp.yaml.
+        - Formula: `- {is: v_refer, from: o_x, to: {is: v_level, from: fam.col.mean_value, to: N}}`.
+        - Linked with `exp.v_support` / `exp.v_contradict` (unprefixed in exp.yaml).
+
+        3. Files and Code Sections
+
+        **Done this session (all merged unless noted)**
+
+        | PR | Hypothesis | Result | Note |
+        |---|---|---|---|
+        | #224 | h_plural_from | refuted | asym 175; from rejected 307 by tc; to rejected 132 only by ec, observations only |
+        | #227 | h_given_laws_as_rules | refuted | 4 of 5 runtime laws read state outside rules |
+        | #230 | h_law_names_grammar | refuted | sys_law_names_grammar.py; see below |
+        | #231 | h_checker_words_in_grammar | registration | role, definition, v_refer as grammar words |
+        | #233 | — | **open, manual merge** | correction disclosure appended to the docstring of sys_law_names_grammar.py |
+        | #234 | h_readings_many | supported | sys_readings_many.py; all 7 overwritten earlier formulas pass when read |
+        | #235 | h_family_refers_hypothesis | registration | in exp.yaml: `{is: v_refer, from: h_family_refers_hypothesis, to: {is: v_refer, from: measurement_family, to: hypothesis}}` |
+
+        - #230 detail: 95 identifier names; grammar 72, domain 1, base 0, law 10, other 12. Genuine name reads are any, role, definition and v_refer.
+        - #233 detail: #210 had treated syntax-layer nodes as readable by name. Under that range only `any` remains, so the hypothesis would not be refuted. The verdict was kept.
+
+        **Current: exp/experiments/sys_family_refers_hypothesis.py**
+        - Branch claude/h_family_refers_hypothesis. Prereg commit cd7bde5, results commit 58dc5b7 (pushed). Draft PR #237: subscribed and assigned.
+        - Method:
+          - parse the yaml from cscl.yaml;
+          - families = nodes or individuals with is measurement_family;
+          - each observation's families = prefixes of `fam.` strings in the from/to/new of its v_refer formulas;
+          - links = v_support / v_contradict from o_ to h_.
+        - Rows: "family F" {n_obs, n_hyps, shared} and "link o" {n_families, no_family}.
+        - Summary: n_families_linked 69, n_shared 17, n_links 157, n_obs_linked 148, n_obs_no_family 0, n_obs_multi_family 15.
+        - Verdict: refuted.
+        - The shared families are mostly the model experiments: e1, e3, e5, e7, e9, e16, e1type, e14, e7b, e1b, e3b, e6_L8, e6_L8_nll and e6_defqa. Of the sys_ families, only sys_layers, sys_layers_role_edges and sys_layers_primitives are shared.
+        - Recorded in exp.yaml:
+          - status h_family_refers_hypothesis hyp_refuted; b_ item_done;
+          - observations o_sys_family_refers_shared (17), o_sys_family_refers_linked (69) and o_sys_family_refers_no_family (0);
+          - v_contradict from the shared observation;
+          - the family sys_family_refers_hypothesis with columns n_obs, n_hyps, shared, n_families, no_family, n_families_linked, n_shared, n_links, n_obs_linked, n_obs_no_family, n_obs_multi_family.
+        - tc and ec passed.
+
+        4. Errors and fixes
+
+        - **Merge conflicts in claims.yaml:** registrations sat next to hypothesis status lines. Resolved by taking main's lines and keeping the new ones. Registrations now go elsewhere.
+        - **Recreated deleted branch:** pushing to claude/h_given_laws_as_rules after its merge recreated it on the remote. The user was told; it was later deleted.
+        - **Narrow definition in the #230 prereg:** "grammar" covered only the grammar section, so the result conflicts with #210's convention. Disclosed in #233.
+
+        5. Problem Solving
+
+        Implications found so far:
+        - Overwritten readings are unchecked but true (#234).
+        - ec doesn't relate formulas to observations (led to #235).
+        - h_renaming_invariant equals h_layers_unhardcode's overwritten formula, and #210 already observed that renaming breaks law names. If done, restrict its scope and disclose that.
+        - Today's earlier hypotheses were low-information, because the outcome was predictable from the code.
+
+        Local cleanup: stale merged claude/h_* branches deleted. Remaining local branches: cross, cscl, exp, readme, model-concept-language-mapping-g0lw1i and h_law_names_grammar-correction.
+
+        6. All user messages
+
+        - "うん、しばらくOpenの仮説を幾つかピックアップして、必要に応じて仮説を登録しながら主体的に進めてみて。やり方はさっきと同じで。"
+        - "30m毎に進めるイメージ。仮説を選び、実行し、結果を文書化し、読み返し、重要そうな含意があればこれまでの私の思考の型と照らし合わせながら仮説を作る。勿論私もPRは見てるし、マージゲートはあるからとんでもないことにはならないと思う。よろしく。"
+        - "自分の前の報告のログを一度読み返して、思考するとよいかもね。"
+        - "たまに私がやっていた「これ含意が無いか？」の型。"
+        - "すまないがしばらく席を外すのでマージゲートは空いたままになる それで進められるものを進めていってね。"
+        - Earlier, still relevant:
+          - "並列で待ちあうのはちょっとやだな。実行時間がファクトになりにくい"
+          - "GithubのComputingリソースがもったいない"
+
+        7. Pending Tasks
+
+        - **Finish #237:** update the PR body (results table and interpretation) and undraft it.
+        - **Implication from #237:** families are too coarse. Shared families split by condition (axis value); for example, e7's conditions depth and distance mirror the hypothesis names.
+          - Register a follow-up such as h_cell_refers_hypothesis: `{is: v_refer, from: axis_value, to: hypothesis}`, as a registration-only PR in exp.yaml away from the running lines.
+          - Possibly also the pair: the hypothesis refers to the families or cells that test it.
+        - **Next cycle:** fires at 17:01Z via send_later (trig_01QumsFswUQ3ifttEvtjD51B), with the full cycle prompt. The candidates there are h_family_refers_hypothesis (now done), h_checker_words_in_grammar, h_prior_claim_ends_resolved (predictable), and h_renaming_invariant (narrowed). The old trigger trig_01KXvSJYntKFdxsMvMf4Ty3U was one-shot and has already fired.
+        - **#233** waits for the user's manual merge. On merge, delete the local branch claude/h_law_names_grammar-correction.
+        - **Later:** a gather change that reads all readings (evaluator change, manual PR). h_leap_reaches_agreement and h_leap_lowers_chain preregs. Backlog h_concept_bounds_model_state.
+
+        8. Current Work
+
+        In the 16:30 cycle, I chose h_family_refers_hypothesis, ran it (refuted, 17 of 69 families shared), recorded it in exp.yaml, and committed and pushed 58dc5b7 on claude/h_family_refers_hypothesis. PR #237 is still Draft with only the prereg body.
+
+        9. Optional Next Step
+
+        - Update the #237 body with:
+          - the results: 69 families linked, 17 shared (mostly model e* families), 0 observations without a family, 15 multi-family observations;
+          - the interpretation: the family is too coarse; conditions (axis values) separate the hypotheses; every observation already passes through family values.
+        - Undraft #237 with update_pull_request (draft false).
+        - Register the follow-up hypothesis (cell or axis value refers to hypothesis) as a registration-only PR, then subscribe to it and assign it.
+        - Report briefly in Japanese: the result, the implication, and the new hypothesis.
+
+        If you need specific details from before compaction (like exact code snippets, error messages, or content you generated), read the full transcript at: /root/.claude/projects/-home-user-CMT/e05d2140-ce91-515f-a5fb-e6251e13d406.jsonl
+        Continue the conversation from where it left off without asking the user any further questions. Resume directly — do not acknowledge the summary, do not recap what was happening, do not preface with "I'll continue" or similar. Pick up the last task as if the break never happened.
+
+        The messages after this summary are the most recent messages from before compaction, kept verbatim. The summary was written without seeing them, so something it says has not happened yet may already have happened in them.
+facts:
+- {is: v_say, from: session_model, to: 01M7QR3DFS3Y6FTKG6AFZB7FNR}
+- {is: v_refer, from: 01M7QR3DFS3Y6FTKG6AFZB7FNR, to: ontology.v_refer}
+- {is: v_refer, from: 01M7QR3DFS3Y6FTKG6AFZB7FNR, to: exp.v_check}
+- {is: v_refer, from: 01M7QR3DFS3Y6FTKG6AFZB7FNR, to: exp.measurement_family}
+- {is: v_refer, from: 01M7QR3DFS3Y6FTKG6AFZB7FNR, to: exp.family_axis}
+- {is: v_refer, from: 01M7QR3DFS3Y6FTKG6AFZB7FNR, to: exp.axis_value}
+- {is: v_refer, from: 01M7QR3DFS3Y6FTKG6AFZB7FNR, to: exp.v_file_of}
+- {is: v_refer, from: 01M7QR3DFS3Y6FTKG6AFZB7FNR, to: exp.v_rows_of}
+- {is: v_refer, from: 01M7QR3DFS3Y6FTKG6AFZB7FNR, to: exp.v_axis_of}
+- {is: v_refer, from: 01M7QR3DFS3Y6FTKG6AFZB7FNR, to: exp.v_value_of}
+- {is: v_refer, from: 01M7QR3DFS3Y6FTKG6AFZB7FNR, to: exp.v_spell}
+- {is: v_refer, from: 01M7QR3DFS3Y6FTKG6AFZB7FNR, to: exp.v_entry_of}
+- {is: v_refer, from: 01M7QR3DFS3Y6FTKG6AFZB7FNR, to: exp.v_metric_of}
+- {is: v_refer, from: 01M7QR3DFS3Y6FTKG6AFZB7FNR, to: exp.mean_value}
+- {is: v_refer, from: 01M7QR3DFS3Y6FTKG6AFZB7FNR, to: exp.observation}
+- {is: v_refer, from: 01M7QR3DFS3Y6FTKG6AFZB7FNR, to: ontology.v_level}
+- {is: v_refer, from: 01M7QR3DFS3Y6FTKG6AFZB7FNR, to: exp.v_support}
+- {is: v_refer, from: 01M7QR3DFS3Y6FTKG6AFZB7FNR, to: exp.v_contradict}
+- {is: v_refer, from: 01M7QR3DFS3Y6FTKG6AFZB7FNR, to: any}
+- {is: v_refer, from: 01M7QR3DFS3Y6FTKG6AFZB7FNR, to: exp.hyp_refuted}
+- {is: v_refer, from: 01M7QR3DFS3Y6FTKG6AFZB7FNR, to: exp.item_done}
