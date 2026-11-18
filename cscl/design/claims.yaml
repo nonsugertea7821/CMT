@@ -366,6 +366,19 @@ individuals:
   #   うち 2 組は y が V と同じ（money, verb_ref）。浅い端だけで定義された y は、正しい下位も、違反の下位も集める。
   o_sys_specific_depth_v_mostly_shallow: {is: exp.observation}
   o_sys_specific_depth_c_rarely_shallow: {is: exp.observation}
+  # 過大拡張の予測の観察（exp/experiments/sys_overextension.py）。手順と判定は実行の前に登録した（1122b96）。
+  #   訂正（結果を見る前、b8deb03）: with の終点が個体の式があり止まったので、個体の終点を深さの計算から除いた。
+  #   予測（利用者の直観「階層の深さが概念の発達水準を示す」から）: 定義の端が浅い（祖先 2 以下）概念ほど、
+  #   定義を満たすのに下にない概念（absorbs）を持つ。判定: 持つ概念の割合が、浅い群で深い群の 3 倍以上（見た概念を除いても）。
+  # 結果: 全体で浅い 12/86（14.0%）、深い 19/295（6.4%）、比 2.2。見た概念を除くと浅い 6/80（7.5%）、深い 14/281（5.0%）、比 1.5。
+  #   登録した判定により「予測は外れた」（向きは予測のとおりだが、3 倍に届かない）。
+  # 実行の後の読み（登録していない）: 端の深さごとの割合は 0: 6/20、1: 3/28、2: 3/38、3: 4/51、4: 8/99、5: 4/63、6: 0/32、7: 3/44、8: 0/6。
+  #   深さ 0（最上位の端だけで定義）だけが 30% で、1 から先はほぼ平ら。集める数は浅い概念が大きい
+  #   （verb_ref 80、hypothesis 54、run 12。深い概念の最大は 6）。深さに沿ってなだらかに発達水準が上がる形ではなく、
+  #   最上位の端だけで定義された概念が、大きく過大拡張する形。
+  o_sys_overext_shallow_more: {is: exp.observation}
+  o_sys_overext_not_threefold: {is: exp.observation}
+  o_sys_overext_unseen_shallow_more: {is: exp.observation}
   o_sys_frame_declared_never_grows: {is: exp.observation}
   o_sys_frame_declared_never_shrinks: {is: exp.observation}
   o_sys_frame_creates_over_removes: {is: exp.observation}
@@ -503,6 +516,9 @@ facts:
   - {is: v_refer, from: o_sys_specific_slot_never_c, to: {is: v_level, from: sys_specific.C_independent_slot.mean_value, to: 0.0}}
   - {is: v_refer, from: o_sys_specific_depth_v_mostly_shallow, to: {is: v_level, from: sys_specific_depth.V_y_def_shallow.mean_value, to: 8.0}}
   - {is: v_refer, from: o_sys_specific_depth_c_rarely_shallow, to: {is: v_level, from: sys_specific_depth.C_y_def_shallow.mean_value, to: 3.0}}
+  - {is: v_refer, from: o_sys_overext_shallow_more, to: {is: v_come_after, from: sys_overextension.all_shallow_rate.mean_value, to: sys_overextension.all_deep_rate.mean_value}}
+  - {is: v_refer, from: o_sys_overext_not_threefold, to: {is: v_come_before, from: sys_overextension.all_shallow_rate.mean_value, to: 0.1932}}
+  - {is: v_refer, from: o_sys_overext_unseen_shallow_more, to: {is: v_come_after, from: sys_overextension.unseen_shallow_rate.mean_value, to: sys_overextension.unseen_deep_rate.mean_value}}
   - {is: v_refer, from: o_sys_outlive_never_outlived, to: {is: v_level, from: sys_outlive.outlives_source.mean_value, to: 0.0}}
   - {is: v_refer, from: o_sys_outlive_compute_steps_ok, to: {is: v_level, from: sys_outlive.c_step_ok.mean_value, to: 1.0}}
   - {is: v_refer, from: o_sys_outlive_speak_steps_ok, to: {is: v_level, from: sys_outlive.s_step_ok.mean_value, to: 1.0}}
