@@ -335,6 +335,15 @@ individuals:
   # 読み: syntax の下には ontology の約半分と、基礎の関係のほぼすべてが要る。外に残るのは、動詞の端の役と、役割・定義の系統。
   o_sys_core_half_needed: {is: exp.observation}
   o_sys_core_base_needed: {is: exp.observation}
+  # 基礎の関係 after を式に持つ動詞の観察（exp/experiments/sys_after.py）。仮説の確かめではない。手順は実行の前に登録した（1b2a69c）。
+  # 訂正: 一度走らせたあと、used の数え方の誤り（領域のファイルの事実が入っていない）に気づき、直して登録し直した（563e920）。記録はその結果。
+  # 結果: after を持つ動詞 17。端が両方 occurrent（時間）1（v_happen_after）、両方 continuant（並び）8、どちらでもない 8。事実で使われる 11。
+  #   after を書いた規則の法則は after_asymmetric と after_transitive。
+  # 実行の後の読み（登録していない）: continuant の 8 には、値の大小（v_come_after, v_come_before, v_level, v_near。観察の
+  #   「平均値が 0.5 の後ろ」はこれ）と、文の並びが入る。どちらでもない 8 には、原因と結果（v_cause, v_trigger）、上げ下げ（v_raise は after(to, new)）、
+  #   始まりと終わり（v_begin, v_end）が入る。一つの after が、時間・値の大小・並びの3つに使われている。端の種類だけでは時間の順序を見分けられない。
+  o_sys_after_time_rare: {is: exp.observation}
+  o_sys_after_mostly_used: {is: exp.observation}
   o_sys_frame_declared_never_grows: {is: exp.observation}
   o_sys_frame_declared_never_shrinks: {is: exp.observation}
   o_sys_frame_creates_over_removes: {is: exp.observation}
@@ -463,6 +472,8 @@ facts:
   - {is: v_refer, from: o_sys_lower_base_in_ontology, to: {is: v_come_after, from: sys_lower.in_ontology.mean_value, to: 0.5}}
   - {is: v_refer, from: o_sys_core_half_needed, to: {is: v_come_after, from: sys_core.core.mean_value, to: 0.5}}
   - {is: v_refer, from: o_sys_core_base_needed, to: {is: v_come_after, from: sys_core.used.mean_value, to: 0.5}}
+  - {is: v_refer, from: o_sys_after_time_rare, to: {is: v_come_before, from: sys_after.time.mean_value, to: 0.5}}
+  - {is: v_refer, from: o_sys_after_mostly_used, to: {is: v_come_after, from: sys_after.used.mean_value, to: 0.5}}
   - {is: v_refer, from: o_sys_outlive_never_outlived, to: {is: v_level, from: sys_outlive.outlives_source.mean_value, to: 0.0}}
   - {is: v_refer, from: o_sys_outlive_compute_steps_ok, to: {is: v_level, from: sys_outlive.c_step_ok.mean_value, to: 1.0}}
   - {is: v_refer, from: o_sys_outlive_speak_steps_ok, to: {is: v_level, from: sys_outlive.s_step_ok.mean_value, to: 1.0}}
