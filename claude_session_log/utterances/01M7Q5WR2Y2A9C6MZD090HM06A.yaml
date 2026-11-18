@@ -1,0 +1,28 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-18T11:15:24.894Z（UTC）
+individuals:
+  01M7Q5WR2Y2A9C6MZD090HM06A:
+    is: model_utterance
+    display: 発言 1881
+    val:
+      order: 1881
+      text: |
+        そうです。ただ、対になりきってはいません。
+
+        **対になっているところ**
+        - `mod` は一つの歩みの中での限定です。「この動詞のこの位置に、この相手と一緒に来るもの」と書きます。幾何の類比でいう、静的な座標にあたります。
+        - `always`・`sometime` は、歩みをまたぐ限定です。「どの歩みでも成り立つ」「ある歩みで前から後へ変わる」と書きます。不変（点、w=1）と変位（w=0）にあたります。
+        - これまで時間方向の式は、動詞の `holds`・`pre`・`post` だけでした。今回、それを種類（名詞）の定義にも書けるようにした、という形です。
+
+        **対になりきっていないところ**
+        - `mod` は相手（with）との関係を書けます。新しい欄の原子は項が `self` だけなので、自分一つのことしか書けません。たとえば「ある歩みで、何かに関わるようになる」とは、まだ書けません。
+        - `mod` は型検査で、端の型が合うかまで調べます。新しい欄は、基礎の関係と項の数しか調べていません。
+        - 最上位の `mod`（持続体の「時間的な部分を持たない」）は、そもそも修飾の検査を通っていません。
+
+        ですから今は、時間方向の限定は自分についての一項の文だけです。ここまでが PR #192 で足したものです。
+facts:
+- {is: v_say, from: session_model, to: 01M7Q5WR2Y2A9C6MZD090HM06A}
+- {is: exp.v_answer, from: 01M7Q5WR2Y2A9C6MZD090HM06A, to: 01M7Q5WCZFQVDE55AZ34WNQQYY}
+- {is: v_refer, from: 01M7Q5WR2Y2A9C6MZD090HM06A, to: syntax.mod}
+- {is: v_refer, from: 01M7Q5WR2Y2A9C6MZD090HM06A, to: syntax.holds}
+- {is: v_refer, from: 01M7Q5WR2Y2A9C6MZD090HM06A, to: syntax.pre}
+- {is: v_refer, from: 01M7Q5WR2Y2A9C6MZD090HM06A, to: syntax.post}
