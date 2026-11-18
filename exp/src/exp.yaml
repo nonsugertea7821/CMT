@@ -130,12 +130,15 @@ nodes:
   definition_compose_from_glossary: {display: 用語集の部分である定義, extends: definition, mod: {of: [v_compose, from], with: glossary}}
   glossary_head: {display: 用語集の先頭, extends: definition_compose_from_glossary, mod: {of: [v_come_after, from], with: definition, neg: true}}
   operator: {display: 運用者, extends: continuant, mod: {of: [v_design, from], with: experiment_protocol}}
+  operator_speech: {display: 運用者の発言, extends: continuant, mod: speak_to_operator}
+  attribution: {display: 運用者へ帰する文, extends: sentence, mod: {of: [v_refer, from], with: operator}}
   protocol_sentence: {display: 取り決めの部分である文, extends: sentence, mod: {of: [v_compose, from], with: experiment_protocol}}
   correction: {display: 訂正, extends: protocol_sentence, mod: come_after_from_observation}
   uncorrected_protocol: {display: 訂正のない取り決め, extends: experiment_protocol, mod: {of: [v_compose, to], with: correction, neg: true}}
   merge_verdict: {display: マージの判定, extends: verdict, mod: {of: [v_refer, from], with: uncorrected_protocol}}
   passage_compose_from_context: {display: 文脈の部分である文章, extends: passage, mod: compose_from_context}
-  place_system: {display: システムプロンプト, extends: passage_compose_from_context, mod: {of: [v_speak, to], with: operator}}
+  speak_to_operator: {display: 運用者が発話する（終点）, extends: quality, of: [v_speak, to], with: operator}
+  place_system: {display: システムプロンプト, extends: passage_compose_from_context, mod: speak_to_operator}
   place_adjacent: {display: 設問の直前, extends: passage_compose_from_context, mod: {of: [v_come_after, to], with: question, at: {order: 1}}}
   preceding_text: {display: 定義の前にある文章, extends: passage, mod: {of: [v_come_after, to], with: definition}}
   following_text: {display: 定義の後ろにある文章, extends: passage, mod: {of: [v_come_after, from], with: definition}}
@@ -324,6 +327,7 @@ nodes:
   dec_adopted: {display: 採用済みの決定, extends: decision, mod: adopted}
   dec_tentative: {display: 暫定の決定, extends: decision, mod: not_adopted}
   dec_withdrawn: {display: 取り下げた決定, extends: withdrawn_sentence, mod: {of: [is, from], with: decision}}
+  hyp_withdrawn: {display: 取り下げた仮説, extends: withdrawn_sentence, mod: {of: [is, from], with: hypothesis}}
   basis: {display: 根拠となる仮説, extends: hypothesis, mod: {of: [v_depend, to], with: decision}, many: true}
   performed_experiment: {display: 行われた実験, extends: experiment, mod: perform_to}
   measured_experiment: {display: 結果ファイルが述べる実験, extends: experiment, mod: {of: [v_refer, to], with: result_file}}
@@ -976,6 +980,30 @@ individuals:
   sys_case_frame_by_relation_cond_acc_single: {is: axis_value, val: {text: acc_single}}
   sys_case_frame_by_relation_cond_acc_relation_held: {is: axis_value, val: {text: acc_relation_held}}
   sys_case_frame_by_relation_cond_acc_display_held: {is: axis_value, val: {text: acc_display_held}}
+  sys_attribution: {is: measurement_family}
+  sys_attribution_cond: {is: family_axis, val: {text: cond}}
+  sys_attribution_cond_n_quotes: {is: axis_value, val: {text: n_quotes}}
+  sys_attribution_cond_n_before: {is: axis_value, val: {text: n_before}}
+  sys_attribution_cond_n_exact: {is: axis_value, val: {text: n_exact}}
+  sys_attribution_cond_n_near: {is: axis_value, val: {text: n_near}}
+  sys_attribution_cond_n_absent: {is: axis_value, val: {text: n_absent}}
+  sys_attribution_cond_n_checked: {is: axis_value, val: {text: n_checked}}
+  sys_attribution_cond_rate_exact: {is: axis_value, val: {text: rate_exact}}
+  sys_attribution_cond_rate_absent: {is: axis_value, val: {text: rate_absent}}
+  sys_comment_ban: {is: measurement_family}
+  sys_comment_ban_cond: {is: family_axis, val: {text: cond}}
+  sys_comment_ban_cond_n_total: {is: axis_value, val: {text: n_total}}
+  sys_comment_ban_cond_n_head: {is: axis_value, val: {text: n_head}}
+  sys_comment_ban_cond_n_record: {is: axis_value, val: {text: n_record}}
+  sys_comment_ban_cond_n_code: {is: axis_value, val: {text: n_code}}
+  sys_comment_ban_cond_n_para: {is: axis_value, val: {text: n_para}}
+  sys_comment_ban_cond_n_defn: {is: axis_value, val: {text: n_defn}}
+  sys_comment_ban_cond_n_unlabeled: {is: axis_value, val: {text: n_unlabeled}}
+  sys_comment_ban_cond_n_defn_formal: {is: axis_value, val: {text: n_defn_formal}}
+  sys_comment_ban_cond_n_defn_left: {is: axis_value, val: {text: n_defn_left}}
+  sys_comment_ban_cond_n_after: {is: axis_value, val: {text: n_after}}
+  sys_comment_ban_cond_n_script_missing: {is: axis_value, val: {text: n_script_missing}}
+  sys_comment_ban_cond_errors: {is: axis_value, val: {text: errors}}
   sys_display_residual_before: {is: measurement_family}
   sys_display_residual_before_cond: {is: family_axis, val: {text: cond}}
   sys_display_residual_before_cond_V: {is: axis_value, val: {text: V}}
@@ -1495,6 +1523,10 @@ individuals:
   h_new_word_immune: {is: hyp_supported}
   h_attention_causes_preceding_effect: {is: hyp_untested}
   h_auto_merge_uncorrected: {is: hyp_untested}
+  h_attribution_logged: {is: hyp_refuted}
+  b_attribution_logged: {is: item_done}
+  o_sys_attribution_absent: {is: observation}
+  o_sys_attribution_exact: {is: observation}
   b_auto_merge_uncorrected: {is: item_queued}
   h_opaque_renaming_raises: {is: hyp_supported}
   h_semi_renaming_does_not_raise: {is: hyp_supported}
@@ -3745,6 +3777,56 @@ facts:
   - {is: v_spell, from: sys_case_frame_by_relation_cond_acc_display_held, to: acc_display_held}
   - {is: v_entry_of, from: '{cond}', to: sys_case_frame_by_relation}
   - {is: v_metric_of, from: sys_case_frame_by_relation, to: mean_value}
+  - {is: v_file_of, from: sys_attribution.json, to: sys_attribution}
+  - {is: v_rows_of, from: [rows], to: sys_attribution}
+  - {is: v_axis_of, from: sys_attribution_cond, to: sys_attribution}
+  - {is: v_value_of, from: sys_attribution_cond_n_quotes, to: sys_attribution_cond}
+  - {is: v_spell, from: sys_attribution_cond_n_quotes, to: n_quotes}
+  - {is: v_value_of, from: sys_attribution_cond_n_before, to: sys_attribution_cond}
+  - {is: v_spell, from: sys_attribution_cond_n_before, to: n_before}
+  - {is: v_value_of, from: sys_attribution_cond_n_exact, to: sys_attribution_cond}
+  - {is: v_spell, from: sys_attribution_cond_n_exact, to: n_exact}
+  - {is: v_value_of, from: sys_attribution_cond_n_near, to: sys_attribution_cond}
+  - {is: v_spell, from: sys_attribution_cond_n_near, to: n_near}
+  - {is: v_value_of, from: sys_attribution_cond_n_absent, to: sys_attribution_cond}
+  - {is: v_spell, from: sys_attribution_cond_n_absent, to: n_absent}
+  - {is: v_value_of, from: sys_attribution_cond_n_checked, to: sys_attribution_cond}
+  - {is: v_spell, from: sys_attribution_cond_n_checked, to: n_checked}
+  - {is: v_value_of, from: sys_attribution_cond_rate_exact, to: sys_attribution_cond}
+  - {is: v_spell, from: sys_attribution_cond_rate_exact, to: rate_exact}
+  - {is: v_value_of, from: sys_attribution_cond_rate_absent, to: sys_attribution_cond}
+  - {is: v_spell, from: sys_attribution_cond_rate_absent, to: rate_absent}
+  - {is: v_entry_of, from: '{cond}', to: sys_attribution}
+  - {is: v_metric_of, from: sys_attribution, to: mean_value}
+  - {is: v_file_of, from: sys_comment_ban.json, to: sys_comment_ban}
+  - {is: v_rows_of, from: [rows], to: sys_comment_ban}
+  - {is: v_axis_of, from: sys_comment_ban_cond, to: sys_comment_ban}
+  - {is: v_value_of, from: sys_comment_ban_cond_n_total, to: sys_comment_ban_cond}
+  - {is: v_spell, from: sys_comment_ban_cond_n_total, to: n_total}
+  - {is: v_value_of, from: sys_comment_ban_cond_n_head, to: sys_comment_ban_cond}
+  - {is: v_spell, from: sys_comment_ban_cond_n_head, to: n_head}
+  - {is: v_value_of, from: sys_comment_ban_cond_n_record, to: sys_comment_ban_cond}
+  - {is: v_spell, from: sys_comment_ban_cond_n_record, to: n_record}
+  - {is: v_value_of, from: sys_comment_ban_cond_n_code, to: sys_comment_ban_cond}
+  - {is: v_spell, from: sys_comment_ban_cond_n_code, to: n_code}
+  - {is: v_value_of, from: sys_comment_ban_cond_n_para, to: sys_comment_ban_cond}
+  - {is: v_spell, from: sys_comment_ban_cond_n_para, to: n_para}
+  - {is: v_value_of, from: sys_comment_ban_cond_n_defn, to: sys_comment_ban_cond}
+  - {is: v_spell, from: sys_comment_ban_cond_n_defn, to: n_defn}
+  - {is: v_value_of, from: sys_comment_ban_cond_n_unlabeled, to: sys_comment_ban_cond}
+  - {is: v_spell, from: sys_comment_ban_cond_n_unlabeled, to: n_unlabeled}
+  - {is: v_value_of, from: sys_comment_ban_cond_n_defn_formal, to: sys_comment_ban_cond}
+  - {is: v_spell, from: sys_comment_ban_cond_n_defn_formal, to: n_defn_formal}
+  - {is: v_value_of, from: sys_comment_ban_cond_n_defn_left, to: sys_comment_ban_cond}
+  - {is: v_spell, from: sys_comment_ban_cond_n_defn_left, to: n_defn_left}
+  - {is: v_value_of, from: sys_comment_ban_cond_n_after, to: sys_comment_ban_cond}
+  - {is: v_spell, from: sys_comment_ban_cond_n_after, to: n_after}
+  - {is: v_value_of, from: sys_comment_ban_cond_n_script_missing, to: sys_comment_ban_cond}
+  - {is: v_spell, from: sys_comment_ban_cond_n_script_missing, to: n_script_missing}
+  - {is: v_value_of, from: sys_comment_ban_cond_errors, to: sys_comment_ban_cond}
+  - {is: v_spell, from: sys_comment_ban_cond_errors, to: errors}
+  - {is: v_entry_of, from: '{cond}', to: sys_comment_ban}
+  - {is: v_metric_of, from: sys_comment_ban, to: mean_value}
   - {is: v_metric_of, from: sys_meet, to: mean_value}
   - {is: v_metric_of, from: sys_unit_axis_after_all, to: mean_value}
   - {is: v_metric_of, from: sys_money_axis_after3, to: mean_value}
@@ -3973,6 +4055,11 @@ facts:
   - {is: v_refer, from: h_attention_carries_text_route, to: {is: v_raise, from: attention, to: redefinition_following}}
   - {is: v_refer, from: h_auto_merge_uncorrected, to: {is: v_immune, from: merge_verdict, to: operator}}
   - {is: v_check, from: b_auto_merge_uncorrected, to: h_auto_merge_uncorrected}
+  - {is: v_refer, from: h_attribution_logged, to: {is: v_agree, from: attribution, to: operator_speech}}
+  - {is: v_check, from: b_attribution_logged, to: h_attribution_logged}
+  - {is: v_refer, from: o_sys_attribution_absent, to: {is: v_come_after, from: sys_attribution.n_absent.mean_value, to: 0}}
+  - {is: v_refer, from: o_sys_attribution_exact, to: {is: v_level, from: sys_attribution.rate_exact.mean_value, to: 0.375}}
+  - {is: v_contradict, from: o_sys_attribution_absent, to: h_attribution_logged}
   - {is: v_refer, from: h_length_does_not_lower, to: {is: v_not_lower, from: context_length, to: redefinition_following}}
   - {is: v_scope, from: model_4b, to: h_length_does_not_lower}
   - {is: v_scope, from: text_injection, to: h_length_does_not_lower}
