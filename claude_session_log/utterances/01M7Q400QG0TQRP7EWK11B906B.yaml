@@ -1,0 +1,295 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-18T10:42:14.896Z（UTC）
+individuals:
+  01M7Q400QG0TQRP7EWK11B906B:
+    is: session_summary
+    display: 発言 1852
+    val:
+      order: 1852
+      text: |
+        This session is being continued from a previous conversation that ran out of context. The summary below covers the earlier portion of the conversation.
+
+        <system-reminder>
+        <tools-used-before-summary>AskUserQuestion, Bash, Edit, Grep, Read, ReadNotifications, Skill, TaskStop, ToolSearch, WebFetch, WebSearch, Write, mcp__claude-code-remote__create_trigger, mcp__claude-code-remote__delete_trigger, mcp__claude-code-remote__get_trigger, mcp__claude-code-remote__read_documentation, mcp__claude-code-remote__send_later, mcp__claude-code-remote__subscribe_pr_activity, mcp__claude-code-remote__update_trigger, mcp__github__actions_get, mcp__github__actions_list, mcp__github__add_issue_comment, mcp__github__create_pull_request, mcp__github__get_job_logs, mcp__github__issue_read, mcp__github__issue_write, mcp__github__list_issue_types, mcp__github__list_issues, mcp__github__list_pull_requests, mcp__github__pull_request_read, mcp__github__update_pull_request</tools-used-before-summary>
+        </system-reminder>
+        Summary:
+        1. Primary Request and Intent
+
+        **Standing rules (still in force)**
+        - Repo: nonsugertea7821/CMT at /home/user/CMT.
+        - Reply in Japanese. Don't overclaim. Give interpretation.
+        - Restore files with `git show <rev>:<path> > <path>`. Never use git checkout to restore files, and never stash.
+        - Python: /home/user/venv/bin/python.
+        - Commit trailer:
+          `Co-Authored-By: Claude [モデル名を伏せた] <[メールアドレスを伏せた]>`
+          `Claude-Session: https://claude.ai/code/session_015KRKt6TNJZ7ZsQmEknANXK`
+        - PR body ends with:
+          `🤖 Generated with [Claude Code](https://claude.com/claude-code)`
+          blank line
+          `https://claude.ai/code/session_015KRKt6TNJZ7ZsQmEknANXK`
+        - Claude never merges.
+        - No personal info or model identifiers in pushed artifacts.
+        - Don't retry the MEXT PDF WebFetch without OK.
+
+        **CLAUDE.md flow**
+        - Register proposals as untested hypotheses before telling the user.
+        - Hypothesis branch `claude/h_<name>`. Open a Draft PR referencing the issue.
+        - The first commit is the prereg with the script only. Results come in a later commit, added with `git add -f`.
+        - Add an observation plus v_support / v_contradict, then undraft.
+        - Every PR gets assignee nonsugertea7821 via issue_write update.
+        - Subscribe to every PR and keep a send_later check about 50 minutes out. Delete the trigger when the PR merges.
+        - No comments in system yaml.
+        - Never rerun recorded scripts.
+        - Don't ask permission in chat; decide, proceed, and put reasoning in the PR body. Ask in chat only for direction-level choices.
+
+        **Attribution practice**
+        - When attributing words to the user, check the session log: branch `claude/session-log-nonsugertea7821`, files `claude_session_log/utterances/*.yaml`, entries with is: user_utterance, text in val.text.
+        - Quote the original text with its ULID. Never invent ULIDs. Mark my own readings separately.
+
+        **Latest user request**
+        "h_w_from_frames,h_gloss_formulaを登録して確かめていこう"
+        - Both hypotheses are already registered (untested). The work is prereg and testing for each.
+
+        2. Key Technical Concepts
+
+        **exp.yaml family pattern**
+        - Nodes: `F: {is: measurement_family}`, `F_cond: {is: family_axis, val: {text: cond}}`, and `F_cond_k: {is: axis_value, val: {text: k}}` for each key.
+        - Facts:
+          - v_file_of F.json
+          - v_rows_of [rows]
+          - v_axis_of
+          - v_value_of and v_spell for each key
+          - `v_entry_of '{cond}'`
+          - v_metric_of mean_value
+        - Insert after the sys_ja_case_frame family (sys_ja_roundtrip now follows it).
+
+        **Observations**
+        - In claims.yaml they use the `exp.` prefix: `o_x: {is: exp.observation}`, `{is: v_refer, from: o_x, to: {is: v_level, from: F.key.mean_value, to: N}}`, `{is: exp.v_support, from: o_x, to: h_x}`.
+
+        **Withdrawal**
+        - `{is: exp.hyp_withdrawn}`; remove b_ and its v_check.
+        - Sync closes the issue as not_planned with the withdrawn label (verified for #178 and #175).
+
+        **Geometry analogy (commit 702414b)**
+        - Points = continuants (w=1); displacements = occurrents (w=0).
+        - same = identity invariant under substitution; any = the whole without that distinction; self = the base point of each definition.
+        - h_w_from_frames: top placement depends on frame trace (pre/post presence and declarations). Static verbs (holds only) form a third class, relation.
+
+        **Glosses (targets of h_gloss_formula)**
+        - signature.yaml:7 any: 「自分が動く範囲そのもの。何も限定しない」
+        - ontology.yaml:24 continuant: 「時間を通じて同一性を保って存在するもの」
+        - ontology.yaml:25 occurrent: 「時間の中で起こり、展開するもの」
+        - syntax.gloss: {display: 説明文}.
+
+        **h_tops_derivable (refuted, sys_tops.py)**
+        - D2 definitions:
+          - continuant = ∀t,t'. same(self_t, self_t')
+          - occurrent = ¬same(frame_t, frame_t+1)
+          - dynamic verbs have pre or post
+        - Results:
+          - ind_continuant 1.0
+          - dyn_occurrent 1.0
+          - static_occurrent 1.0 (should be 0)
+          - nouns under occurrent mostly do not reach dynamic: 49 nouns. Temporal regions such as subj.day/week/morning, ontology.process/staged/temporal_part, and ontology.concept give 0.
+          - concept_dynamic 0
+        - I have seen this noun list, so it must be disclosed in the prereg.
+
+        **sys_frames.py**
+        - Verb rows: creates, removes, truth_only.
+        - Step rows: declared_grows/shrinks, exists_grows/shrinks, about_absent.
+        - Uses runtime, sys_declaration.RECORD and exp/tests records.
+
+        **Related hypotheses**
+        - h_above_sound: refuted (1535 unwitnessed, gap_zero 941).
+        - h_above_closed, h_above_individual: untested.
+        - h_symmetry_soundness: mixed.
+        - h_open_runtime: supported.
+        - h_open_declaration: refuted.
+        - signature_class: {display: シグネチャから定まる分類} in claims.yaml:21.
+        - frame_trace: {display: 後の状態の痕跡, mod: runtime.refer_from_post}.
+        - top_placement: {display: 最上位の置き場}.
+
+        3. Files and Code Sections
+
+        **exp/experiments/sys_ja_roundtrip.py** (created, merged via #183)
+        - Renders hypothesis and decision facts to Japanese:
+          - verb fact: 「A が B〈印〉〈動詞〉」, with the mark from the sys_ja_case_frame frame
+          - is_a: 「AはBの一種である」
+        - Reads back with a closed lexicon of display words; verbs are nodes with from and to.
+        - Classes: ok / lex / struct / miss.
+        - Result: n_facts 146, n_excluded 2, n_ok 146, n_struct 0, n_homonym_words 2 → supported.
+
+        **cscl/bootstrap/display/display.py** (merged via #184). Added:
+        ```python
+        P1 = ("について", "から", "より", "に", "で", "と", "を", "へ")
+
+        def case_mark(vd):
+            """動詞の表示語から、目的語に付ける印を決める（h_ja_case_frame の F の枠）。"""
+            if vd.startswith(P1):
+                return ""
+            i = min((vd.find(p) for p in P1 if vd.find(p) > 0), default=-1)
+            if i > 0 and ("一" <= vd[0] <= "鿿" or "゠" <= vd[0] <= "ヿ"):
+                return "の"
+            return "を"
+
+        def sentence(T, verb, a, b, individuals=None):
+            if verb == "is_a":
+                return f"{ja(T, a, individuals)}は{ja(T, b, individuals)}の一種である"
+            vd = ja(T, verb, individuals)
+            return f"{ja(T, a, individuals)}が{ja(T, b, individuals)}{case_mark(vd)}{vd}"
+        ```
+        - Verified equal to frame() on all 699 nodes.
+
+        **.github/scripts/build_readme.py** (created, merged via #184)
+        - Replaces the block between `<!-- generated:begin -->` and `<!-- generated:end -->` with a table of adopted decisions, selected by `sync_issues.status_label == "adopted"` and grouped by the side's display (実験 / 言語).
+        - Columns: sentence and `{is:..., from:..., to:...}`.
+        - `--check` exits 1 if the block differs.
+
+        **.github/workflows/spec.yml**
+        - Added the step `README の生成する部分の確認: python .github/scripts/build_readme.py --check`.
+
+        **README.md** (rewritten, merged via #184)
+        - Sections:
+          1. One-line lead 「定義を、文ではなく型の付いた式で書く。」 plus English summary
+          2. Label links
+          3. なぜ式で書くのか (3 bullets)
+          4. 採用した決定 (generated)
+          5. 仮説の流れ
+          6. 構成 table
+          7. 手元で検査する
+          8. セッションの記録 (original text)
+          9. ライセンス
+        - No system names in the hand-written part.
+        - Known flaw: the generated sentences are broken, e.g. 「表示語が体系を依存する」 and 「runtimeが閉世界…の前提として置くと述べる」.
+
+        **cscl/design/claims.yaml on PR #185** (branch claude/model-concept-language-mapping-g0lw1i, commit 2de6fc6)
+        - `h_case_frame_by_role: {is: exp.hyp_withdrawn}`; b_case_frame_by_role and its v_check removed.
+        - Added `h_case_frame_by_signature: {is: exp.hyp_untested}`, `b_case_frame_by_signature: {is: exp.item_queued}`, `{is: v_refer, from: h_case_frame_by_signature, to: {is: v_depend, from: case_frame, to: signature_class}}`, `{is: exp.v_check, from: b_case_frame_by_signature, to: h_case_frame_by_signature}`.
+
+        **Current branch: claude/h_w_from_frames** (created from origin/main, no changes yet)
+        - Read exp/experiments/sys_tops.py: is_dynamic(T, n) walks extends looking for pre/post; reaches_dynamic does a BFS over sys_layers edges.
+        - Read exp/experiments/sys_frames.py.
+
+        4. Errors and fixes
+
+        - **Stale origin/main:** build_readme.py was missing after branching. Fixed by re-fetching origin/main and re-creating the branch (the working-tree change carried over).
+        - **Fabricated ULID:** I wrote a partial ULID "01M7Q32..." for the user's latest utterance in a commit message. Fixed by amending to say the utterance is not yet in the log, then force-pushing my own branch.
+        - **case_mark operator precedence:** rewritten with explicit parentheses.
+        - **Earlier user feedback still applies:**
+          - "僕が言ってないことが入ってそう"
+          - "そんなときのためのsessionlogでは"
+          - Always verify attributions in the log.
+
+        5. Problem Solving
+
+        - #176: h_annotation_gold withdrawn and merged; issue #175 closed as not_planned.
+        - Issue types: personal account has no custom issue types setting, so labels are kept.
+        - h_ja_roundtrip: supported and auto-merged. It is a weak test because noun-phrase-internal attachment is not measured.
+        - README: drift-free design, merged.
+        - h_case_frame_by_role: the hypothesis referred to the BFO role, not semantic roles. Adding named semantic roles would repeat the gloss/top error. Replaced by the signature-derived version (PR #185).
+        - Ordering insight: tops must be derivable before case frames. h_w_from_frames and h_gloss_formula come first.
+
+        6. All user messages
+
+        - "176の選択肢は？"
+        - "取り下げで"
+        - "今気づいたけどgithubってlabelとtypeがあるんだな / typeは仮説か主張の区分に使えそう"
+        - "claimって主張じゃなかったっけ？あれ？"
+        - "typeはちょっと調べてみよう"
+        - "organizationではないから弄れないかもしれないね" (sent mid-turn)
+        - "あー、無いわ"
+        - "ちょっと本題からずれるけど。READMEについて、外から来た人向けの案内として変わらない部分だけ入れておきたいかもしれない。どう伝えるのがインパクトが強いだろうか。また、研究中の内容とずれが無いようにするにはどうするのが適切だろうか。"
+        - "識別子が式として帰納され、displayが消えることは体系の閉包条件に当たるが、その書き方だとその瞬間崩れないか？"
+        - "そうしようか。有名なREPOのREADMEを幾つか拾ってきて、それなりのものを作ろう"
+        - "h_case_frame_by_roleかなぁ"
+        - "というかそれってまあ前々から言ってるけど最上位の関係の件と同質じゃないか？" (logged as 01M7Q3ECNKQXBHZNE8N6NB9WBP)
+        - "grossは消えるはず、ってやつ" (sent after an interrupt)
+        - "オカレントとコンティニュアント自体もsignatureから導けないかって話をしてた気がする"
+        - "だよね。で、それを解くために幾何や物理との類比をしてた流れだよね？"
+        - "h_w_from_frames,h_gloss_formulaを登録して確かめていこう"
+
+        7. Pending Tasks
+
+        - **PR #185:** awaiting the user's merge; CI is green on 2de6fc6.
+          - Safety check: trig_01KoswHhAAkB4vT2W5YxR1dW at 11:26Z. Delete it when the PR merges.
+          - After merge, check that issue h_case_frame_by_role closes as not_planned.
+        - **h_w_from_frames:** prereg (script only), then results, observations and verdict. Branch claude/h_w_from_frames already created. Find the issue number from the issue list.
+        - **h_gloss_formula:** prereg and test, likely on its own branch claude/h_gloss_formula. A possible method is like sys_comment_ban: split each gloss into clauses, map each to existing formulas or new formulas, count what is left; n_left = 0 → support.
+        - **Later:**
+          - h_case_frame_by_signature, which needs verb meaning moved from display into formulas.
+          - The README sentence flaws will improve as that happens.
+          - Other untested hypotheses: h_ja_connective, h_identifier_by_expansion, h_above_closed, and others.
+
+        8. Current Work
+
+        I was starting the prereg design for h_w_from_frames and h_gloss_formula. I created branch claude/h_w_from_frames from origin/main and gathered context:
+        - sys_tops.py and sys_frames.py headers and code.
+        - The sys_tops.json noun rows: 49 occurrent nouns. Many temporal regions such as subj.day, week, morning, time_span, and ontology.process, temporal_part, concept have reaches_dynamic 0.
+        - Commit 702414b, which gives h_w_from_frames' rationale.
+        - Commit d804a35, which gives h_gloss_formula's rationale.
+        - The three glosses (any, continuant, occurrent).
+
+        No script has been written yet.
+
+        **Design considerations so far**
+        - h_w_from_frames:
+          - Derive a class for each node from frame structure:
+            - declared individuals are continuant
+            - verbs with pre/post are occurrent
+            - holds-only verbs are relation (a third class)
+            - nouns are classified by reaching dynamic verbs or the time order
+          - Compare the derived class with the current placement. The relation class is allowed for static verbs.
+          - Disclose that the sys_tops noun results were already seen (post-hoc risk).
+          - Temporal regions (day/week) are a likely sticking point.
+        - h_gloss_formula:
+          - Treat each gloss clause like a sys_comment_ban defn line.
+          - Move each to a formula in the same change, or mark it "left".
+          - Support if n_left = 0; refute if n_left > 0.
+          - Adding concepts makes it a manual-review PR.
+
+        9. Optional Next Step
+
+        Write the prereg for h_w_from_frames on branch claude/h_w_from_frames, as directed by the user's latest message: "h_w_from_frames,h_gloss_formulaを登録して確かめていこう".
+
+        Steps:
+        1. Find its issue number with list_issues.
+        2. Write exp/experiments/sys_w_from_frames.py. The docstring states the procedure and verdict before running and discloses the prior knowledge from sys_tops. Reuse is_dynamic and the sys_layers edges.
+        3. Commit it alone with `git add -f`, push, open a Draft PR referencing the issue, set the assignee, subscribe, and set a send_later check.
+        4. Run the script, add the family, observations and verdict in a second commit, then undraft.
+        5. Do the same for h_gloss_formula on branch claude/h_gloss_formula.
+
+        If you need specific details from before compaction (like exact code snippets, error messages, or content you generated), read the full transcript at: /root/.claude/projects/-home-user-CMT/e05d2140-ce91-515f-a5fb-e6251e13d406.jsonl
+        Continue the conversation from where it left off without asking the user any further questions. Resume directly — do not acknowledge the summary, do not recap what was happening, do not preface with "I'll continue" or similar. Pick up the last task as if the break never happened.
+
+        The messages after this summary are the most recent messages from before compaction, kept verbatim. The summary was written without seeing them, so something it says has not happened yet may already have happened in them.
+facts:
+- {is: v_say, from: session_model, to: 01M7Q400QG0TQRP7EWK11B906B}
+- {is: v_refer, from: 01M7Q400QG0TQRP7EWK11B906B, to: exp.v_support}
+- {is: v_refer, from: 01M7Q400QG0TQRP7EWK11B906B, to: exp.v_contradict}
+- {is: v_refer, from: 01M7Q400QG0TQRP7EWK11B906B, to: claude_session_log.user_utterance}
+- {is: v_refer, from: 01M7Q400QG0TQRP7EWK11B906B, to: exp.measurement_family}
+- {is: v_refer, from: 01M7Q400QG0TQRP7EWK11B906B, to: exp.family_axis}
+- {is: v_refer, from: 01M7Q400QG0TQRP7EWK11B906B, to: exp.axis_value}
+- {is: v_refer, from: 01M7Q400QG0TQRP7EWK11B906B, to: exp.v_file_of}
+- {is: v_refer, from: 01M7Q400QG0TQRP7EWK11B906B, to: exp.v_rows_of}
+- {is: v_refer, from: 01M7Q400QG0TQRP7EWK11B906B, to: exp.v_axis_of}
+- {is: v_refer, from: 01M7Q400QG0TQRP7EWK11B906B, to: exp.v_value_of}
+- {is: v_refer, from: 01M7Q400QG0TQRP7EWK11B906B, to: exp.v_spell}
+- {is: v_refer, from: 01M7Q400QG0TQRP7EWK11B906B, to: exp.v_entry_of}
+- {is: v_refer, from: 01M7Q400QG0TQRP7EWK11B906B, to: exp.v_metric_of}
+- {is: v_refer, from: 01M7Q400QG0TQRP7EWK11B906B, to: exp.mean_value}
+- {is: v_refer, from: 01M7Q400QG0TQRP7EWK11B906B, to: exp.observation}
+- {is: v_refer, from: 01M7Q400QG0TQRP7EWK11B906B, to: ontology.v_refer}
+- {is: v_refer, from: 01M7Q400QG0TQRP7EWK11B906B, to: ontology.v_level}
+- {is: v_refer, from: 01M7Q400QG0TQRP7EWK11B906B, to: exp.v_check}
+- {is: v_refer, from: 01M7Q400QG0TQRP7EWK11B906B, to: syntax.gloss}
+- {is: v_refer, from: 01M7Q400QG0TQRP7EWK11B906B, to: subj.day}
+- {is: v_refer, from: 01M7Q400QG0TQRP7EWK11B906B, to: ontology.process}
+- {is: v_refer, from: 01M7Q400QG0TQRP7EWK11B906B, to: ontology.temporal_part}
+- {is: v_refer, from: 01M7Q400QG0TQRP7EWK11B906B, to: ontology.concept}
+- {is: v_refer, from: 01M7Q400QG0TQRP7EWK11B906B, to: lang.signature_class}
+- {is: v_refer, from: 01M7Q400QG0TQRP7EWK11B906B, to: runtime.refer_from_post}
+- {is: v_refer, from: 01M7Q400QG0TQRP7EWK11B906B, to: lang.top_placement}
+- {is: v_refer, from: 01M7Q400QG0TQRP7EWK11B906B, to: exp.hyp_untested}
+- {is: v_refer, from: 01M7Q400QG0TQRP7EWK11B906B, to: exp.item_queued}
+- {is: v_refer, from: 01M7Q400QG0TQRP7EWK11B906B, to: ontology.v_depend}
+- {is: v_refer, from: 01M7Q400QG0TQRP7EWK11B906B, to: subj.time_span}
