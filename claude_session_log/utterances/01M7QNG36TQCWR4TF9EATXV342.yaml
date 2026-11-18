@@ -1,0 +1,44 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-18T15:48:07.514Z（UTC）
+individuals:
+  01M7QNG36TQCWR4TF9EATXV342:
+    is: model_utterance
+    display: 発言 2043
+    val:
+      order: 2043
+      text: |
+        30分ごとに回す形にしました。最初の一周を済ませ、次の周回を 16:20Z に予約してあります。
+
+        **この周: h_law_names_grammar（#230）は反証**
+        - type_checker.py の文字列のうち、体系の語と一致したのは 95 語でした。
+
+        | 組 | 語の数 |
+        |---|---|
+        | 文法の語 | 72 |
+        | 法則の名 | 10 |
+        | 層の名 | 1 |
+        | どれにも入らない | 12 |
+
+        - どれにも入らない 12 語を箇所ごとに見ました。
+          - 7 語は偶然の一致です。辞書の鍵や内部の関係（s、p、o）などで、体系の語を読んでいません。
+          - `syntax` は層の名でしたが、事前登録の「層」の範囲が狭く、こちらに数えました。手順の不備として PR の本文に開示しました。
+          - 残る 4 語は、体系の語を名前で読んでいます。`any`、`role`、`definition`、`v_refer` です。
+        - 法則の名を文法の語に置いても、`role`、`definition`、`v_refer` の3語は名前で読まれたまま残ります。`any` はシグネチャの語なので、仮説の範囲に入れられます。
+        - 実験は 7 秒で、ほかの実験とは重ねていません。#230 は Draft を外したので、確認とマージをお願いします。
+
+        **新しい仮説: h_checker_words_in_grammar（#231、登録だけ）**
+        - 残る3語も、文法の語として置けるか、という仮説です。
+        - 法則の反証から「規則で書く」と「文法に置く」の二つの解き方を対で出したのと同じ型で、ここでも「文法に置く」側を先に確かめます。
+        - 置けない語があれば、その語は名前でなく式で区別する側に回します。
+        - 概念を足さない登録なので、自動マージに乗るはずです。
+
+        **次の周（16:20Z）**
+        - h_renaming_invariant（#151）から始めます。
+        - 候補はその後 h_checker_words_in_grammar、h_readings_many、h_prior_claim_ends_resolved の順です。
+        - 周を始めるたびに、次の周を 30 分後に予約します。tc を何度も走らせる重い実験は、一度に一つだけにします。
+facts:
+- {is: v_say, from: session_model, to: 01M7QNG36TQCWR4TF9EATXV342}
+- {is: exp.v_answer, from: 01M7QNG36TQCWR4TF9EATXV342, to: 01M7QN8ZF8TCGY2KYRZSWW9MT2}
+- {is: v_refer, from: 01M7QNG36TQCWR4TF9EATXV342, to: any}
+- {is: v_refer, from: 01M7QNG36TQCWR4TF9EATXV342, to: ontology.role}
+- {is: v_refer, from: 01M7QNG36TQCWR4TF9EATXV342, to: ontology.definition}
+- {is: v_refer, from: 01M7QNG36TQCWR4TF9EATXV342, to: ontology.v_refer}
