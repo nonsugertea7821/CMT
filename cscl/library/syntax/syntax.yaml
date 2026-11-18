@@ -171,6 +171,8 @@ individuals:
   r_root: {is: law_relation, display: 根である}
   r_verb: {is: law_relation, display: 動詞である}
   r_placed: {is: law_relation, display: 定義から根の下に置かれる}
+  r_mod_lacks: {is: law_relation, display: 同じ動詞の同じ位置の限定で、相手の語のどれかを持たない}
+  r_mod_differ: {is: law_relation, display: 同じ動詞の同じ位置の限定で、どちらかが相手の語のどれかを持たない}
   r_near: {is: law_relation, display: 上位の下にある別の概念である（見えるかを問わない）}
   r_pair: {is: law_relation, display: 比べる組である（兄弟か、上位の下にある別の概念）}
   r_lacks: {is: law_relation, display: 相手の式のどれかを（含意によっても）持たない}
@@ -239,6 +241,16 @@ individuals:
   lacks: {is: law_rule, display: 組の相手の式のうち、自分が持たないものがある}
   pair_near: {is: law_rule, display: 上位の下にある別の概念は、比べる組}
   pair_back: {is: law_rule, display: 比べる組は向きを問わない}
+  mod_lacks_with: {is: law_rule, display: 同じ位置の限定の相手が持つ with を持たない}
+  mod_lacks_neg: {is: law_rule, display: 同じ位置の限定の相手が持つ neg を持たない}
+  mod_lacks_quant: {is: law_rule, display: 同じ位置の限定の相手が持つ quant を持たない}
+  mod_lacks_at: {is: law_rule, display: 同じ位置の限定の相手が持つ at を持たない}
+  mod_lacks_extends: {is: law_rule, display: 同じ位置の限定の相手が持つ extends を持たない}
+  mod_lacks_mod: {is: law_rule, display: 同じ位置の限定の相手が持つ mod を持たない}
+  mod_differ_left: {is: law_rule, display: 自分が相手の語を欠く限定は、相手と違う}
+  mod_differ_right: {is: law_rule, display: 相手が自分の語を欠く限定は、相手と違う}
+  one_mod: {is: law_rule, display: 同じ動詞の同じ位置を、同じ語で限定する名前は1つだけ}
+  one_form: {is: law_rule, display: 同じ動詞の同じ位置に来るものの名前は1つだけ}
   differ_left: {is: law_rule, display: 自分が相手の式を欠くなら、2つは違う}
   differ_right: {is: law_rule, display: 相手が自分の式を欠くなら、2つは違う}
   one_name: {is: law_rule, display: 互いに相手の式を（含意によっても）持つ組は、同じものの別の名前なので置かない}
@@ -484,6 +496,44 @@ facts:
   - {is: v_derive, from: pair_near, to: {is: r_pair, from: var1, to: var2}}
   - {is: v_assume, from: pair_back, to: {is: r_near, from: var2, to: var1}}
   - {is: v_derive, from: pair_back, to: {is: r_pair, from: var1, to: var2}}
+  - {is: v_assume, from: mod_lacks_with, to: {is: r_same_slot, from: var1, to: var2}}
+  - {is: v_assume, from: mod_lacks_with, to: {is: with, from: var2, to: var3}}
+  - {is: v_assume, from: mod_lacks_with, to: {is: with, from: var1, to: var3, neg: true}}
+  - {is: v_derive, from: mod_lacks_with, to: {is: r_mod_lacks, from: var1, to: var2}}
+  - {is: v_assume, from: mod_lacks_neg, to: {is: r_same_slot, from: var1, to: var2}}
+  - {is: v_assume, from: mod_lacks_neg, to: {is: neg, from: var2, to: var3}}
+  - {is: v_assume, from: mod_lacks_neg, to: {is: neg, from: var1, to: var3, neg: true}}
+  - {is: v_derive, from: mod_lacks_neg, to: {is: r_mod_lacks, from: var1, to: var2}}
+  - {is: v_assume, from: mod_lacks_quant, to: {is: r_same_slot, from: var1, to: var2}}
+  - {is: v_assume, from: mod_lacks_quant, to: {is: quant, from: var2, to: var3}}
+  - {is: v_assume, from: mod_lacks_quant, to: {is: quant, from: var1, to: var3, neg: true}}
+  - {is: v_derive, from: mod_lacks_quant, to: {is: r_mod_lacks, from: var1, to: var2}}
+  - {is: v_assume, from: mod_lacks_at, to: {is: r_same_slot, from: var1, to: var2}}
+  - {is: v_assume, from: mod_lacks_at, to: {is: at, from: var2, to: var3}}
+  - {is: v_assume, from: mod_lacks_at, to: {is: at, from: var1, to: var3, neg: true}}
+  - {is: v_derive, from: mod_lacks_at, to: {is: r_mod_lacks, from: var1, to: var2}}
+  - {is: v_assume, from: mod_lacks_extends, to: {is: r_same_slot, from: var1, to: var2}}
+  - {is: v_assume, from: mod_lacks_extends, to: {is: extends, from: var2, to: var3}}
+  - {is: v_assume, from: mod_lacks_extends, to: {is: extends, from: var1, to: var3, neg: true}}
+  - {is: v_derive, from: mod_lacks_extends, to: {is: r_mod_lacks, from: var1, to: var2}}
+  - {is: v_assume, from: mod_lacks_mod, to: {is: r_same_slot, from: var1, to: var2}}
+  - {is: v_assume, from: mod_lacks_mod, to: {is: mod, from: var2, to: var3}}
+  - {is: v_assume, from: mod_lacks_mod, to: {is: mod, from: var1, to: var3, neg: true}}
+  - {is: v_derive, from: mod_lacks_mod, to: {is: r_mod_lacks, from: var1, to: var2}}
+  - {is: v_assume, from: mod_differ_left, to: {is: r_mod_lacks, from: var1, to: var2}}
+  - {is: v_derive, from: mod_differ_left, to: {is: r_mod_differ, from: var1, to: var2}}
+  - {is: v_assume, from: mod_differ_right, to: {is: r_mod_lacks, from: var2, to: var1}}
+  - {is: v_derive, from: mod_differ_right, to: {is: r_mod_differ, from: var1, to: var2}}
+  - {is: v_assume, from: one_mod, to: {is: r_same_slot, from: var1, to: var2}}
+  - {is: v_assume, from: one_mod, to: {is: exists, from: var1}}
+  - {is: v_assume, from: one_mod, to: {is: exists, from: var2}}
+  - {is: v_assume, from: one_mod, to: {is: same, from: var1, to: var2, neg: true}}
+  - {is: v_require, from: one_mod, to: {is: r_mod_differ, from: var1, to: var2}}
+  - {is: v_assume, from: one_form, to: {is: form, from: var1, to: var3}}
+  - {is: v_assume, from: one_form, to: {is: form, from: var2, to: var3}}
+  - {is: v_assume, from: one_form, to: {is: position, from: var1, to: var4}}
+  - {is: v_assume, from: one_form, to: {is: position, from: var2, to: var4}}
+  - {is: v_require, from: one_form, to: {is: same, from: var1, to: var2}}
   - {is: v_assume, from: lacks, to: {is: r_pair, from: var1, to: var2}}
   - {is: v_assume, from: lacks, to: {is: r_acc, from: var2, to: var3}}
   - {is: v_assume, from: lacks, to: {is: r_has, from: var1, to: var3, neg: true}}

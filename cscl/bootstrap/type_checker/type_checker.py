@@ -851,6 +851,14 @@ class Ontology:
                 if isinstance(n.get(k), list) and len(n[k]) == 2:
                     add(k, nid, n[k][0])
                     add("position", nid, n[k][1])
+            if "of" in n:   # 名前を付けた限定は、式の中の限定と同じ語で書く
+                if isinstance(n.get("with"), str):
+                    add("with", nid, n["with"])
+                if n.get("neg"):
+                    add("neg", nid, "true")
+                for k in ("quant", "at"):
+                    if n.get(k) is not None:
+                        add(k, nid, dump(n[k]))
             for k in ("holds", "pre"):
                 for i, _ in enumerate(n.get(k) or []):
                     add(k, nid, i)
@@ -1038,7 +1046,7 @@ class Ontology:
         for aid, a in AX.items():
             if a["source"] != "any" and a["source"] not in B:
                 err(f"axes: {aid} のもとになる関係 {a['from']} が未定義")
-        seen, forms = {}, {}
+        seen = {}
         for nid, n in N.items():
             ja = n.get("display")
             key = (self.domain(nid), ja)  # 法則 unique_in_domain
@@ -1128,11 +1136,6 @@ class Ontology:
                     self.check_value(axis, v, where)
                     if axis in AX and AX[axis]["source"] != "any" and AX[axis]["source"] not in self.base_of(verb):
                         err(f"{where}: 軸 {axis} は基礎の関係 {AX[axis]['source']} を抽象にしたものだが、{verb} はそれを使っていない")
-            if not ("holds" in n or "pre" in n):
-                key = yaml.safe_dump({k: n[k] for k in ("extends", "from", "to", "of", "with", "at", "mod", "neg", "val", "cmp", "axis") if k in n}, sort_keys=True)
-                if key in forms:
-                    err(f"{nid}: 式が {forms[key]} と同じ")
-                forms.setdefault(key, nid)
         self.roles = [nid for nid in N if nid != "ontology.role" and "form" not in N[nid] and self.is_a(nid, "role")]
         for nid in self.roles:
             g = self.grounding(nid)
