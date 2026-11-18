@@ -108,8 +108,8 @@ individuals:
   b_gloss_formula: {is: exp.item_queued}
   h_negation_formula: {is: exp.hyp_untested}
   b_negation_formula: {is: exp.item_queued}
-  h_comment_ban: {is: exp.hyp_untested}
-  b_comment_ban: {is: exp.item_queued}
+  h_comment_ban: {is: exp.hyp_supported}
+  b_comment_ban: {is: exp.item_done}
   h_above_closed: {is: exp.hyp_untested}
   b_above_closed: {is: exp.item_queued}
   h_above_individual: {is: exp.hyp_untested}
@@ -310,6 +310,8 @@ individuals:
   o_sys_case_frame_formula_below: {is: exp.observation}
   o_sys_case_frame_by_relation_acc: {is: exp.observation}
   o_sys_case_frame_by_relation_below: {is: exp.observation}
+  o_sys_comment_ban_defn_left: {is: exp.observation}
+  o_sys_comment_ban_after: {is: exp.observation}
   o_sys_comments_claims_most: {is: exp.observation}
   o_sys_frame_declared_never_grows: {is: exp.observation}
   o_sys_frame_declared_never_shrinks: {is: exp.observation}
@@ -585,6 +587,10 @@ facts:
   - {is: v_refer, from: o_sys_case_frame_by_relation_acc, to: {is: v_level, from: sys_case_frame_by_relation.acc_relation.mean_value, to: 0.4912}}
   - {is: v_refer, from: o_sys_case_frame_by_relation_below, to: {is: v_come_before, from: sys_case_frame_by_relation.acc_relation.mean_value, to: sys_case_frame_by_relation.acc_display.mean_value}}
   - {is: exp.v_contradict, from: o_sys_case_frame_by_relation_below, to: h_case_frame_by_relation}
+  - {is: v_refer, from: o_sys_comment_ban_defn_left, to: {is: v_level, from: sys_comment_ban.n_defn_left.mean_value, to: 0}}
+  - {is: v_refer, from: o_sys_comment_ban_after, to: {is: v_level, from: sys_comment_ban.n_after.mean_value, to: 0}}
+  - {is: exp.v_support, from: o_sys_comment_ban_defn_left, to: h_comment_ban}
+  - {is: exp.v_support, from: o_sys_comment_ban_after, to: h_comment_ban}
   - {is: v_refer, from: o_sys_comments_claims_most, to: {is: v_come_after, from: sys_comments.history.mean_value, to: sys_comments.code.mean_value}}
   - {is: v_refer, from: o_sys_outlive_never_outlived, to: {is: v_level, from: sys_outlive.outlives_source.mean_value, to: 0.0}}
   - {is: v_refer, from: o_sys_outlive_compute_steps_ok, to: {is: v_level, from: sys_outlive.c_step_ok.mean_value, to: 1.0}}
