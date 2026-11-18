@@ -1,0 +1,22 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-18T15:19:11.402Z（UTC）
+individuals:
+  01M7QKV3SANAZVCNAM737JTW1P:
+    is: model_utterance
+    display: 発言 2009
+    val:
+      order: 2009
+      text: |
+        重なって走っていた分を減らす PR を立てました（#225）。変えたのは `spec.yml` の起動条件だけで、マージはそちらで判断してください。
+
+        - **PR のブランチ:** これまで push と pull_request の両方で spec が走り、push 1回で同じ検査が2本動いていました。今後は PR の検査として1回だけ走ります。
+        - **会話の記録のブランチ:** ここへの push のたびに spec が走っていて、実行のほぼ半分を占めていました。今後は走りません。push で走るのは main だけです。
+        - **同じ PR への続けての push:** 古い実行は止まり、新しい方だけが走ります。
+
+        なくなるのは、PR をまだ立てていないブランチへの push の検査です。仮説のブランチは事前登録の push のすぐ後に Draft の PR を立てるので、検査されない時間は数分です。
+
+        1回の実行の中にも重なりが1つ残っています。型検査（約 14 秒）と issue 同期の確認（約 19 秒）が、それぞれ体系を一から組み直しています。これを1回にまとめるにはスクリプトの手直しが要るので、この PR には入れていません。
+
+        実験は2つとも、まだ走っています。
+facts:
+- {is: v_say, from: session_model, to: 01M7QKV3SANAZVCNAM737JTW1P}
+- {is: exp.v_answer, from: 01M7QKV3SANAZVCNAM737JTW1P, to: 01M7QKSJC93JVFH88AXH1ZKQNE}
