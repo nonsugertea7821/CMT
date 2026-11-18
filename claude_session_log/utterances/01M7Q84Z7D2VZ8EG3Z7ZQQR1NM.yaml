@@ -1,0 +1,43 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-18T11:54:51.501Z（UTC）
+individuals:
+  01M7Q84Z7D2VZ8EG3Z7ZQQR1NM:
+    is: model_utterance
+    display: 発言 1919
+    val:
+      order: 1919
+      text: |
+        h_layers_neg_dual（#202）も**支持**でした。予想どおり `halted` は runtime に残り、層の法則の違反はなくなりました。PR #204 の Draft は外してあります。
+
+        | | #194 | #199 | #203 | 今回 |
+        |---|---|---|---|---|
+        | 外れ | 28 | 33 | 30 | 29 |
+        | 外れのうち動かせる割合 | 0.82 | 0.91 | 0.97 | **1.0** |
+        | 層の法則に反する組 | 7 | 2 | 1 | **0** |
+
+        **足した規則**
+        四つの実験で、読みを選ばずにシグネチャの区別だけで決まる規則を三つ足しました。
+        1. 役割（`form`）は、その動詞と同じ層に置く。
+        2. 存在の変化（`exists` だけ）は、点の側に置く。
+        3. 否定しても量化の軸は変わらない（◇ と □¬ は、同じステップの列の上の量化）。
+
+        この三つを入れると、点・関係・変位の分類を、層の法則を一つも壊さずに今の置き場へ写せるようになりました。読みの問題がシグネチャ（基礎の関係の種類、否定と量化の双対）にしか残らない、というあなたの直観と、ここまでの結果は合っています。
+
+        **まだ言えないこと**
+        - 外れ 29 は、いまも「今の置き場と分類が食い違うノード」です。全部を動かしても法則は壊れない、ということまでしか示していません。
+        - 規則 2 と 3 で実際に効いたのは、どちらも 1 ノードずつです（`v_design` と `halted`）。規則が広く効くことは、まだ示していません。
+        - 否定で変位を指すノードは、exp の中にもあと 9 つあります。exp は層の外なので、今回は数えていません。
+
+        **決めてほしいこと**
+        置き場が分類から「決まる」と言うには、次のどちらかを選ぶ必要があります。
+        - 外れ 29（concept, word, sentence, v_refer, runtime.state など）を、実際に分類どおりの層へ動かす。
+        - 分類の側をさらに直して、今の置き場に合わせる。
+
+        これは体系の形そのものの選択なので、あなたに決めてほしいです。
+facts:
+- {is: v_say, from: session_model, to: 01M7Q84Z7D2VZ8EG3Z7ZQQR1NM}
+- {is: exp.v_answer, from: 01M7Q84Z7D2VZ8EG3Z7ZQQR1NM, to: 01M7Q7Q804073AW28WHBXD3D3T}
+- {is: v_refer, from: 01M7Q84Z7D2VZ8EG3Z7ZQQR1NM, to: runtime.halted}
+- {is: v_refer, from: 01M7Q84Z7D2VZ8EG3Z7ZQQR1NM, to: syntax.form}
+- {is: v_refer, from: 01M7Q84Z7D2VZ8EG3Z7ZQQR1NM, to: ontology.v_design}
+- {is: v_refer, from: 01M7Q84Z7D2VZ8EG3Z7ZQQR1NM, to: ontology.v_refer}
+- {is: v_refer, from: 01M7Q84Z7D2VZ8EG3Z7ZQQR1NM, to: runtime.state}
