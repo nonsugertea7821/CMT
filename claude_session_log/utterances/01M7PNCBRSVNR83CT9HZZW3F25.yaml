@@ -1,0 +1,46 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-18T06:26:50.777Z（UTC）
+individuals:
+  01M7PNCBRSVNR83CT9HZZW3F25:
+    is: model_utterance
+    display: 発言 1703
+    val:
+      order: 1703
+      text: |
+        「運ばれない」は、ある概念が具体的な限定を持っていても、そこから「端に any を持つ限定も持つ」が導かれない、という意味です。
+
+        **含意で運ぶ仕組み**
+        - 規則 `entail_by_with` は、二つの限定の間に「含意する」を導きます。条件は三つです。
+          - 同じ動詞の、同じ位置の限定であること。
+          - 一方の端 w が、もう一方の端の下にあること（今回の法則で any がこの「下にある」先に入りました）。
+          - どちらにも否定・数量・範囲（neg・quant・at）が付いていないこと。
+        - 規則 `has_by_entail` は、概念が自分で書いた限定（親から受け継いだものも含む）から、それが含意する限定も持たせます。
+
+        この二つで、「`{of: [v_compose, to], with: genus_concept}` を持つ概念は、`{of: [v_compose, to], with: any}` も持つ」ことが導かれます。これを「運ぶ」と書きました。
+
+        **運ばれなかった 495 組**
+        三つ目の条件があるため、付いた限定を持つ概念には any の限定が届きません。中身を調べると、次のようになりました。
+
+        | 付いているもの | 組の数 | 「その位置に何かの v がある」と言えるか |
+        |---|---|---|
+        | `count: {ge: 1}`（1 つ以上） | 292 | 言える |
+        | `count: 1`・`count: 2`・`count: {gt: 1}` | 63 | 言える |
+        | `order: 1`・`amount: …` | 7 | おそらく言える |
+        | `neg: true`（その位置にその v がない） | 125 | 言えない |
+        | `quant: all`（その位置の v はすべて W） | 4 | 言えない（v が一つもなくても成り立つ） |
+
+        例を挙げます。`exp.sibling_pair` は `{of: [v_compose, to], with: genus_concept, at: {count: 1}}`（類概念をちょうど一つ組み込む）を持っています。これはどう読んでも「何かを組み込む」を含意します。ところが、`at` が付いているので規則が働きません。
+
+        **ここから読めること**
+        - 約 360 組は、運ばれるべきなのに運ばれていない、法則の側の穴です。規則が、付いた限定を一律に外しているためです。
+          - 数が 1 以上、ちょうど n（n ≥ 1）、n より多い（n ≥ 0）といった付き方は、存在を含意します。
+          - 本来、外すべきなのは否定と、0 を許す数え方や全称だけです。
+        - 否定の 125 組は、運ばれないのが正しい組です。これは、私が「理想の集合」に数えてしまった測り方の誤りです。PR の本文にも書いてあります。
+
+        まとめると、「付いた限定」は一つの理由ではありません。法則の穴（約 360 組）と測り方の誤り（約 130 組）が混ざったものです。この内訳は記録していない事後の下調べなので、確かめるなら別の仮説として事前登録して測る必要があります。
+facts:
+- {is: v_say, from: session_model, to: 01M7PNCBRSVNR83CT9HZZW3F25}
+- {is: exp.v_answer, from: 01M7PNCBRSVNR83CT9HZZW3F25, to: 01M7PNB0E5KPQ1HSXRDSJBYG30}
+- {is: v_refer, from: 01M7PNCBRSVNR83CT9HZZW3F25, to: ontology.v_compose}
+- {is: v_refer, from: 01M7PNCBRSVNR83CT9HZZW3F25, to: exp.genus_concept}
+- {is: v_refer, from: 01M7PNCBRSVNR83CT9HZZW3F25, to: exp.sibling_pair}
+- {is: v_refer, from: 01M7PNCBRSVNR83CT9HZZW3F25, to: syntax.at}
