@@ -139,6 +139,10 @@ individuals:
   b_layers_unhardcode: {is: exp.item_done}
   h_concept_bounds_model_state: {is: exp.hyp_untested}
   b_concept_bounds_model_state: {is: exp.item_queued}
+  h_given_laws_as_rules: {is: exp.hyp_untested}
+  b_given_laws_as_rules: {is: exp.item_queued}
+  h_law_names_grammar: {is: exp.hyp_untested}
+  b_law_names_grammar: {is: exp.item_queued}
   h_tops_from_primitives: {is: exp.hyp_supported}
   b_tops_from_primitives: {is: exp.item_done}
   h_any_not_vacuous: {is: exp.hyp_refuted}
@@ -498,6 +502,10 @@ facts:
   - {is: exp.v_check, from: b_layers_unhardcode, to: h_layers_unhardcode}
   - {is: v_refer, from: h_concept_bounds_model_state, to: {is: v_depend, from: model_state_sentence, to: definition}}
   - {is: exp.v_check, from: b_concept_bounds_model_state, to: h_concept_bounds_model_state}
+  - {is: v_refer, from: h_given_laws_as_rules, to: {is: v_express, from: syntax.law_given, to: syntax.law_rule}}
+  - {is: exp.v_check, from: b_given_laws_as_rules, to: h_given_laws_as_rules}
+  - {is: v_refer, from: h_law_names_grammar, to: {is: v_depend, from: type_checker, to: [layer_placement, signature_class, syntax.grammar]}}
+  - {is: exp.v_check, from: b_law_names_grammar, to: h_law_names_grammar}
   - {is: v_refer, from: h_tops_from_primitives, to: {is: v_depend, from: top_placement, to: [step_quantification, kind_existence, variable_range]}}
   - {is: exp.v_check, from: b_tops_from_primitives, to: h_tops_from_primitives}
   - {is: v_refer, from: h_any_not_vacuous, to: {is: v_depend, from: any_limitation, to: syntax.of}}
