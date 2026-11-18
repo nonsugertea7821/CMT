@@ -249,6 +249,8 @@ individuals:
   at_axis: {is: law_rule, display: 限定が値を指定する軸は、比べる概念の値の軸かその上位（円の量で年齢を比べない）}
   deep_end: {is: law_rule, display: 自前の式の端に、祖先が3つ以上ある種類があれば、深い端を持つ}
   shallow_ends: {is: law_rule, display: 自前の式に端があり、深い端を持たなければ、浅い端だけで定義される}
+  deep_end_ind: {is: law_rule, display: 自前の式の端に、属する種類が3つ以上ある個体があれば、深い端を持つ}
+  shallow_ends_ind: {is: law_rule, display: 自前の式の端に個体があり、深い端を持たなければ、浅い端だけで定義される}
   entail_by_with: {is: law_rule, display: 同じ動詞の同じ位置で、端が下位の限定は、端が上位の限定を含意する（どちらも否定・数量・範囲なし）}
   has_by_acc: {is: law_rule, display: 積み上がった式は持つ}
   has_by_entail: {is: law_rule, display: 積み上がった式が含意する式も持つ}
@@ -583,6 +585,15 @@ facts:
   - {is: v_assume, from: shallow_ends, to: {is: exists, from: var3}}
   - {is: v_assume, from: shallow_ends, to: {is: r_deep_end, from: var1, neg: true}}
   - {is: v_derive, from: shallow_ends, to: {is: r_shallow, from: var1}}
+  - {is: v_assume, from: deep_end_ind, to: {is: r_own, from: var1, to: var2}}
+  - {is: v_assume, from: deep_end_ind, to: {is: with, from: var2, to: var3}}
+  - {is: v_assume, from: deep_end_ind, to: {is: r_ind_kind, from: var3, to: var4, at: {count: {gt: 2}}}}
+  - {is: v_derive, from: deep_end_ind, to: {is: r_deep_end, from: var1}}
+  - {is: v_assume, from: shallow_ends_ind, to: {is: r_own, from: var1, to: var2}}
+  - {is: v_assume, from: shallow_ends_ind, to: {is: with, from: var2, to: var3}}
+  - {is: v_assume, from: shallow_ends_ind, to: {is: r_ind_kind, from: var3, to: var4}}
+  - {is: v_assume, from: shallow_ends_ind, to: {is: r_deep_end, from: var1, neg: true}}
+  - {is: v_derive, from: shallow_ends_ind, to: {is: r_shallow, from: var1}}
   - {is: v_assume, from: at_axis, to: {is: with, from: var1, to: var2}}
   - {is: v_assume, from: at_axis, to: {is: axis, from: var1, to: var3}}
   - {is: v_assume, from: at_axis, to: {is: r_entail, from: var3, to: var4}}
