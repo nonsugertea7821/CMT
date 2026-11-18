@@ -1,0 +1,34 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-18T05:57:15.147Z（UTC）
+individuals:
+  01M7PKP5RBR89VTQ2ZEMCDET0D:
+    is: model_utterance
+    display: 発言 1694
+    val:
+      order: 1694
+      text: |
+        仮説の登録だけの PR も、自動マージの対象にしました。変更は PR #156 に載せたので、この PR だけは手でマージしていただく必要があります。マージした後に立つ登録の PR から、自動でマージされるようになります。
+
+        **自動マージする条件:**
+        - ブランチが `claude/` で始まり、`claude/h_` ではない。
+        - Draft ではない。
+        - 触るのは `cscl/design/claims.yaml` と `exp/src/exp.yaml` だけ。
+        - 行を消していない。
+        - 足した行は、`h_`（未検証）、`b_`（確かめる残り項目）、それを結ぶ `v_refer` と `v_check` だけ。
+        - 仮説ごとに `v_refer` が 1 つあり、`b_` と `v_check` が 1 組そろっている。
+        - 型検査器と ec が通る。
+
+        **手で見るもの:** 次のどれかを含む PR です。
+        - 概念を足す登録。概念の定義が入るためです。h_any_not_vacuous のときに any_limitation を足したのが、これに当たります。
+        - 仮説の状態を変える。
+        - 観察を足す。
+
+        判定の確かめを `test_auto_merge.py` に 13 件足し、手元で全部通りました。CLAUDE.md にもこの決まりを書き足してあります。CI の結果はまだ出ていません。
+
+        **決めてほしいこと:** 実験の自動マージは、その前提を仮説 h_auto_merge_uncorrected として体系に書いてあります。今回の登録の自動マージには、まだ対応する前提の仮説がありません。そろえるなら、仮説として登録します。
+
+        PR #156: https://github.com/nonsugertea7821/CMT/pull/156
+facts:
+- {is: v_say, from: session_model, to: 01M7PKP5RBR89VTQ2ZEMCDET0D}
+- {is: exp.v_answer, from: 01M7PKP5RBR89VTQ2ZEMCDET0D, to: 01M7PKKM9NBAQBJS574GR5GKQX}
+- {is: v_refer, from: 01M7PKP5RBR89VTQ2ZEMCDET0D, to: ontology.v_refer}
+- {is: v_refer, from: 01M7PKP5RBR89VTQ2ZEMCDET0D, to: exp.v_check}
