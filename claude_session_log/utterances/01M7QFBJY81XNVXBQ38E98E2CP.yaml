@@ -1,0 +1,53 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-18T14:00:48.328Z（UTC）
+individuals:
+  01M7QFBJY81XNVXBQ38E98E2CP:
+    is: model_utterance
+    display: 発言 1967
+    val:
+      order: 1967
+      text: |
+        あります。調べると、私が言った「式の端に個々の法則を置けない」は正確ではありませんでした。正確には、次の3つが分かりました。
+
+        **1. 置けないのは、別の領域の個体だけ**
+        - 仮説の中身を読むとき、型検査器は端の語を次の順で探します（`type_checker.py:398` の `end_word`）。
+          - まず、同じ領域（claims）の個体。
+          - なければ、名前に領域を付けて、種類（ノード）として探します。
+        - `runtime.unique_names` は runtime 領域の個体です。種類として探されたので「ノードが未定義」になりました。
+        - 含意は、個体が宣言した領域の中でしか名指せないことです。ほかの領域からは、その個体が属する種類を通してしか語れません。
+        - #206 の `not_compose_from_mod` で、ontology から node-level の `with` が見えなかったのと同じ形の、見える範囲の制約です。
+
+        **2. 個体は、名前のほかに式を持たない**
+        - runtime の法則は `{is: law_given, display: …}` だけで書かれています。
+        - そのため、外から名指す手段も、互いを区別する手段も、名前しかありません。#210 で law_given の5つを式で区別できなかったのは、この表れだと読めます。
+        - 規則（law_rule）として書くことは、法則に式を与えることです。そうすれば名前に頼らずに済みます。h_given_laws_as_rules はこの方向です。
+        - h_law_names_grammar は逆の方向です。名前で読むことを、文法の語として正当なものにします。
+
+        **3. 種類に置き換えたことで、仮説の意味がずれた**
+        - 種類の定義はこうです。
+          - `law_given` は、前提を持たない（`v_assume` の `premise` を否定した）法則です。
+          - `law_rule` は、前提を持つ法則です。
+          - 2つは定義の上で排他です。
+        - そのため、`v_express(law_given, law_rule)` は「前提を持たない法則を、前提を持つ法則で表す」と読めます。表せた時点で、その法則は law_given ではなくなります。
+        - law_given という分類は、法則の中身ではなく、いまの書き方で決まっています。だから、この仮説の主語は、書き換えると空になる種類です。
+        - 私が言いたかったのは、5つの法則という特定のものについての主張でした。しかし式では、それを書き方の種類についての主張に変えてしまっています。
+
+        **ついでに見つけた非対称**
+        - `from` に並びを書くと、事実が複数あるものとして読まれました（「関係 s の事実が2つ以上ある」）。`to` には並びが書けます（h_layers_from_primitives など）。
+        - そのため、仮説の主語を複数にすることもできません。
+
+        **いまの登録への影響**
+        h_given_laws_as_rules の式は、意図とずれた形で main に入っています。確かめる段（事前登録）では、判定を「5つの法則が law_rule として書けるか」にする必要があります。それとは別に、仮説の式を直すかどうかも考える必要があります。
+
+        「別の領域の個体を名指せない」「`from` が複数を取れない」が言語として正しい制約なのかは、それ自体が問いになりえます。仮説として登録するかは、あなたの判断を待ちます。
+facts:
+- {is: v_say, from: session_model, to: 01M7QFBJY81XNVXBQ38E98E2CP}
+- {is: exp.v_answer, from: 01M7QFBJY81XNVXBQ38E98E2CP, to: 01M7QFACFET1KR5D9V1K9ZZFBG}
+- {is: v_refer, from: 01M7QFBJY81XNVXBQ38E98E2CP, to: syntax.not_compose_from_mod}
+- {is: v_refer, from: 01M7QFBJY81XNVXBQ38E98E2CP, to: syntax.with}
+- {is: v_refer, from: 01M7QFBJY81XNVXBQ38E98E2CP, to: syntax.law_given}
+- {is: v_refer, from: 01M7QFBJY81XNVXBQ38E98E2CP, to: syntax.law_rule}
+- {is: v_refer, from: 01M7QFBJY81XNVXBQ38E98E2CP, to: syntax.v_assume}
+- {is: v_refer, from: 01M7QFBJY81XNVXBQ38E98E2CP, to: syntax.premise}
+- {is: v_refer, from: 01M7QFBJY81XNVXBQ38E98E2CP, to: ontology.v_express}
+- {is: v_refer, from: 01M7QFBJY81XNVXBQ38E98E2CP, to: syntax.from}
+- {is: v_refer, from: 01M7QFBJY81XNVXBQ38E98E2CP, to: syntax.to}
