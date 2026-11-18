@@ -1778,6 +1778,8 @@ individuals:
   o_e10o_opaque_below_none_control: {is: observation}
   o_e14_vec_below_none_control: {is: observation}
   o_e14_vec_below_near_conflict: {is: observation}
+  o_e14_vec_robust_below_none_conflict: {is: observation}
+  o_e14_vec_robust_below_none_control: {is: observation}
   o_e20_examples_move_apply: {is: observation}
   o_e20_examples_explain_below_threshold: {is: observation}
   o_e20_examples_explain_robust_below_none: {is: observation}
@@ -1856,7 +1858,7 @@ individuals:
   h_common_component_raises_stability: {is: hyp_supported}
   h_specific_component_not_raise_stability: {is: hyp_mixed}
   h_full_vector_raises_stability_beyond_specific: {is: hyp_supported}
-  h_text_shift_raises_stability: {is: hyp_untested}
+  h_text_shift_raises_stability: {is: hyp_refuted}
   h_specific_agrees_with_sense_difference: {is: hyp_refuted}
   h_vector_transfers_beyond_choice_format: {is: hyp_mixed}
   h_specific_composes_from_expression: {is: hyp_untested}
@@ -4877,6 +4879,8 @@ facts:
   - {is: v_refer, from: o_e10o_opaque_below_none_control, to: {is: v_come_before, from: 'e10o.G2k.expr_opaque.accuracy', to: 'e10o.G2k.none.accuracy'}}
   - {is: v_refer, from: o_e14_vec_below_none_control, to: {is: v_come_before, from: 'e14.G2k.vec1.accuracy', to: 'e14.G2k.none.accuracy'}}
   - {is: v_refer, from: o_e14_vec_below_near_conflict, to: {is: v_come_before, from: 'e14.G2c.vec1.order_robust_accuracy', to: 'e14.G2c.near.order_robust_accuracy'}}
+  - {is: v_refer, from: o_e14_vec_robust_below_none_conflict, to: {is: v_come_before, from: 'e14.G2c.vec1.order_robust_accuracy', to: 'e14.G2c.none.order_robust_accuracy'}}
+  - {is: v_refer, from: o_e14_vec_robust_below_none_control, to: {is: v_come_before, from: 'e14.G2k.vec1.order_robust_accuracy', to: 'e14.G2k.none.order_robust_accuracy'}}
   - {is: v_refer, from: o_e15_swapped_below_own_conflict, to: {is: v_come_before, from: e15.G2c.swapped.accuracy, to: e15.G2c.own.accuracy}}
   - {is: v_refer, from: o_e15_swapped_below_none_control, to: {is: v_come_before, from: e15.G2k.swapped.accuracy, to: e14.G2k.none.accuracy}}
   - {is: v_refer, from: o_e15_vector_orthogonal_to_text_shift, to: {is: v_near, from: e15c.G2c.cos_centered.mean_value, to: 0.0, new: 0.05}}
@@ -5377,3 +5381,5 @@ facts:
   - {is: v_check, from: b_multi_layer_transfers_to_explain, to: h_multi_layer_transfers_to_explain}
   - {is: v_refer, from: h_explain_transfers_to_apply, to: {is: v_transfer, from: usage_explain, to: usage_apply}}
   - {is: v_check, from: b_explain_transfers_to_apply, to: h_explain_transfers_to_apply}
+  - {is: v_contradict, from: o_e14_vec_robust_below_none_conflict, to: h_text_shift_raises_stability}
+  - {is: v_contradict, from: o_e14_vec_robust_below_none_control, to: h_text_shift_raises_stability}
