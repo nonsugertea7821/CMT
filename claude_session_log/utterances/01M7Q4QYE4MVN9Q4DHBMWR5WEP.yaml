@@ -1,0 +1,31 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-18T10:55:18.980Z（UTC）
+individuals:
+  01M7Q4QYE4MVN9Q4DHBMWR5WEP:
+    is: model_utterance
+    display: 発言 1870
+    val:
+      order: 1870
+      text: |
+        その三つを鍵として、仮説を二つ登録しました（PR #189）。新しい概念を足しているので、自動ではマージされません。手で見てもらう必要があります。
+
+        **登録した仮説（どちらも未検証）**
+        - **h_layers_from_primitives**: 層の置き場は、その三つで決まる。h_layers_signature の続きです。
+          - 私の読みでは、層ごとに使うものが一つずつ対応します。runtime は歩みを動く量化、ontology は在ることを述べる場所、syntax は変数の範囲です。
+          - 前の観察で層から外れたもの（ontology の語・文・概念、runtime の state・rule）が、この区別で分かれるかを見ます。
+        - **h_tops_from_primitives**: 持続体・生起体・any の置き場は、その三つで決まる。
+          - 持続体は「どの歩みでも在り、同じ」、生起体は「ある歩みで在るようになる」、any は「変数の範囲」と書けるかを見ます。
+          - 書ければ、説明文のうち式にできなかった節（自分が動く範囲、存在する、起こる）が式になります。
+
+        **足した概念は、式がまだ薄い**
+        三つとも今の体系にない形なので、意味の大半は表示語に置いたままです。最初に書いた式は、型検査の法則 named_mod で既存の語と同じ式になりました。
+        - 「種類について述べる」は `syntax.extends` と同じでした。
+        - 「歩みの並びについて述べる」は `runtime.choice` と同じでした。
+
+        今ある語では区別を書けない、ということの表れです。`quant: all`（すべてについて）を足して式を分けましたが、これで意味が正しく入ったとは言えません。tc と ec は手元で通っています。
+
+        確かめるには、この三つを実際に書ける形を体系に足す必要があります。足す形の案を、マージの後に事前登録として出します。
+facts:
+- {is: v_say, from: session_model, to: 01M7Q4QYE4MVN9Q4DHBMWR5WEP}
+- {is: exp.v_answer, from: 01M7Q4QYE4MVN9Q4DHBMWR5WEP, to: 01M7Q4MEDAQ5S62YNBQBXK422Z}
+- {is: v_refer, from: 01M7Q4QYE4MVN9Q4DHBMWR5WEP, to: syntax.extends}
+- {is: v_refer, from: 01M7Q4QYE4MVN9Q4DHBMWR5WEP, to: runtime.choice}
