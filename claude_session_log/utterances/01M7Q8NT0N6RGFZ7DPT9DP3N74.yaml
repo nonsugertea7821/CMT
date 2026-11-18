@@ -1,0 +1,41 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-18T12:04:03.221Z（UTC）
+individuals:
+  01M7Q8NT0N6RGFZ7DPT9DP3N74:
+    is: model_utterance
+    display: 発言 1925
+    val:
+      order: 1925
+      text: |
+        PR #206 で、29 のうち 27 ノードを分類した層へ移しました。この PR は手で見てもらう必要があります。tc・ec・README の検査は手元で通りました。
+
+        **移したもの**
+        - ontology から syntax へ 17（concept, word, sentence, v_refer, v_agree, role, definition など）
+        - runtime から syntax へ 5（state, rewrite_rule など）
+        - syntax から ontology へ 5（v_above, deep_kind, verb_ref など）
+        - `ontology.role` のように層名付きで書いていた参照は、型検査器・claims.yaml・exp_check.py で書き換えました。
+
+        **移さなかった 2 つ** — h_layers_unhardcode に直接関わります。
+        1. **`syntax.individuals`**: これは文法の語です。分類では ontology に入りますが、「文法の語は syntax に置く」という取り決めと食い違います。シグネチャ・シンタックス以外のハードコーディングを取り除けるかを問うとき、文法の語の置き場をどう読むかが論点の一つになります。
+        2. **`syntax.not_compose_from_mod`**: 実験の数え方に穴があり、これは移せないノードでした。
+           - 型検査器の `T.refs` は、ノード直下に書いた `with`（参照先）を数えていませんでした。
+           - このノードは syntax.mod を参照しています。ontology からは syntax が見えないので、移すと参照先が未定義になります。
+           - そのため、#204 の「外れはすべて移せる・違反 0」は、正しく数えると「29 のうち 28 が移せる」です。
+           - `T.refs` に `with` を足しました。今の体系では新しい違反は出ません。
+
+        #206 がマージされたら、h_layers_unhardcode の事前登録に進みます。「問題なく」は次の 2 条件で判定する予定です。
+        - ハードコーディングを外した tc が、移した後の体系をエラー 0 で通す。
+        - 決めておいた壊し方の組で、古い tc と同じものを弾く。
+
+        #205 と #206 は見張っていて、約 50 分後にもう一度状態を確かめます。
+facts:
+- {is: v_say, from: session_model, to: 01M7Q8NT0N6RGFZ7DPT9DP3N74}
+- {is: exp.v_answer, from: 01M7Q8NT0N6RGFZ7DPT9DP3N74, to: 01M7Q8B18ET419Z6X0YH2VN38K}
+- {is: v_refer, from: 01M7Q8NT0N6RGFZ7DPT9DP3N74, to: ontology.v_refer}
+- {is: v_refer, from: 01M7Q8NT0N6RGFZ7DPT9DP3N74, to: ontology.v_agree}
+- {is: v_refer, from: 01M7Q8NT0N6RGFZ7DPT9DP3N74, to: runtime.rewrite_rule}
+- {is: v_refer, from: 01M7Q8NT0N6RGFZ7DPT9DP3N74, to: syntax.verb_ref}
+- {is: v_refer, from: 01M7Q8NT0N6RGFZ7DPT9DP3N74, to: ontology.role}
+- {is: v_refer, from: 01M7Q8NT0N6RGFZ7DPT9DP3N74, to: syntax.individuals}
+- {is: v_refer, from: 01M7Q8NT0N6RGFZ7DPT9DP3N74, to: syntax.not_compose_from_mod}
+- {is: v_refer, from: 01M7Q8NT0N6RGFZ7DPT9DP3N74, to: syntax.with}
+- {is: v_refer, from: 01M7Q8NT0N6RGFZ7DPT9DP3N74, to: syntax.mod}

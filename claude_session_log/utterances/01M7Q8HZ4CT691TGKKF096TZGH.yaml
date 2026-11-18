@@ -1,0 +1,348 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-18T12:01:57.388Z（UTC）
+individuals:
+  01M7Q8HZ4CT691TGKKF096TZGH:
+    is: session_summary
+    display: 発言 1924
+    val:
+      order: 1924
+      text: |
+        This session is being continued from a previous conversation that ran out of context. The summary below covers the earlier portion of the conversation.
+
+        <system-reminder>
+        <tools-used-before-summary>AskUserQuestion, Bash, Edit, Grep, Read, ReadNotifications, Skill, TaskStop, ToolSearch, WebFetch, WebSearch, Write, mcp__claude-code-remote__create_trigger, mcp__claude-code-remote__delete_trigger, mcp__claude-code-remote__get_trigger, mcp__claude-code-remote__read_documentation, mcp__claude-code-remote__send_later, mcp__claude-code-remote__subscribe_pr_activity, mcp__claude-code-remote__update_trigger, mcp__github__actions_get, mcp__github__actions_list, mcp__github__add_issue_comment, mcp__github__create_pull_request, mcp__github__get_job_logs, mcp__github__issue_read, mcp__github__issue_write, mcp__github__list_issue_types, mcp__github__list_issues, mcp__github__list_pull_requests, mcp__github__pull_request_read, mcp__github__update_pull_request</tools-used-before-summary>
+        </system-reminder>
+        Summary:
+        1. Primary Request and Intent
+
+        **Standing rules (still in force)**
+        - Repo: nonsugertea7821/CMT at /home/user/CMT.
+        - Reply in Japanese. Don't overclaim. Give interpretation.
+        - Restore files with `git show <rev>:<path> > <path>`. Never use git checkout to restore files, and never stash.
+        - Python: /home/user/venv/bin/python.
+        - Commit trailer:
+          `Co-Authored-By: Claude [モデル名を伏せた] <[メールアドレスを伏せた]>`
+          `Claude-Session: https://claude.ai/code/session_015KRKt6TNJZ7ZsQmEknANXK`
+        - PR body ends with:
+          `🤖 Generated with [Claude Code](https://claude.com/claude-code)`
+          blank line
+          `https://claude.ai/code/session_015KRKt6TNJZ7ZsQmEknANXK`
+        - Claude never merges.
+        - No personal info or model identifiers in pushed artifacts.
+        - Don't retry the MEXT PDF WebFetch without OK.
+
+        **CLAUDE.md flow**
+        - Register proposals as untested hypotheses before telling the user. Language hypotheses go in claims.yaml; experiment hypotheses go in exp.yaml.
+        - Branch `claude/h_<name>`. The first commit is the prereg with the script only (`git add -f`). The results commit adds observations, v_support / v_contradict, and the result JSON (`git add -f`). Then undraft.
+        - Every PR: set assignee nonsugertea7821 via issue_write update, subscribe_pr_activity, and a send_later check about 50 minutes out. On merge, delete the trigger and clean up branches.
+        - No comments in system yaml.
+        - Never rerun recorded scripts.
+        - Don't ask permission in chat. Ask only on direction-level choices.
+        - **Merged-branch cleanup:**
+          - Do not push.
+          - `git fetch -q --prune origin && git switch -q --detach origin/main && git branch -D <branch>`.
+
+        **Attribution**
+        - Verify any words attributed to the user against the session log branch `claude/session-log-nonsugertea7821` (claude_session_log/utterances/<ULID>.yaml; 547 user utterances and 1316 Claude utterances). Never invent ULIDs.
+
+        **User's latest intent**
+        "分類通りの層に動かすのは前提。ただもう一つ検証するべき仮説がある。「動かすことで型検査器からすべてのハードコーディング（シグネチャ・シンタックス以外）を問題なく取り除ける」のか"
+        - So:
+          - Move the 29 outlier nodes to their classified layers.
+          - Then test h_layers_unhardcode.
+
+        2. Key Technical Concepts
+
+        **Layers and mapping**
+        - Geometric mapping (from the user):
+          - ontology = points (existence)
+          - runtime = displacements (steps)
+          - syntax = relations between them (refer)
+          - signature = variable range, the base (any)
+        - Domain uses: signature ← ontology ← syntax ← runtime; std uses syntax; exp uses std and runtime; lang uses std, runtime, exp; subj uses std.
+        - Visibility is the transitive closure of uses.
+        - The `layered` law: refs must be visible. tc's `T.refs(nid)` covers parents, from/to/new_kind, of/form[0], mod of/with, and cmp.
+
+        **Classification evolution**
+        Each step changes one thing:
+        1. sys_layers pos version: edges are extends, from/to/new_kind, and mod of/with; negation edges are skipped.
+           - change if a reached node has pre/post.
+           - refer if a reached holds/pre/post atom uses `refer`.
+           - otherwise still.
+           - Mapping: still → ontology, refer → syntax, change → runtime.
+        2. Plus `form[0]` edges (roles move with their verb).
+        3. change only if the verb's pre/post use a base relation other than `exists`. Exists-only verbs: ontology.v_design and std.v_compute.
+        4. Plus nodes having a negated mod whose of-verb "moves" count as change. Reading: ◇ and □¬ are both step quantification, so the sign doesn't change the axis.
+
+        **Results so far**
+
+        | PR | n_out | movable rate | violations |
+        |---|---|---|---|
+        | #194 | 28 | 0.82 | 7 |
+        | #199 | 33 | 0.91 | 2 |
+        | #203 | 30 | 0.97 | 1 |
+        | #204 | 29 | 1.0 | 0 |
+
+        - In #204, n_neg_moving was 10:
+          - in exp: api_only_model, dec_tentative, hidden, hidden_word, not_adopted, not_teach_from, shift_unseen_by_layer, unseen_genus, unseen_relation
+          - in runtime: halted
+
+        **Base relations**
+        - Base relations: after, exists, part, refer, same, depend, above?, is? (8 in total).
+        - Grammar words live in syntax.yaml `grammar:`.
+
+        3. Files and Code Sections
+
+        **exp/experiments/sys_layers_primitives.py** (merged #194)
+        - Exports `visible(O)`, `TO_LAYER`, `LAYERS = ("ontology","syntax","runtime")`.
+        - Imports classify from sys_layers.
+        - Result: 210 nodes, n_out 28, movable 23, violations 7.
+          - Violations came from form roles (referrer, agreeing, agreed, designer, designed).
+          - And from neg mods (natural_language → v_design, halted → v_execute).
+
+        **exp/experiments/sys_layers_role_edges.py** (merged #199)
+        - Exports `edges_role(T, nid)` (= edges(T, nid, True) + form[0]), `classify`, and `via(T, a, b)` → (form?, neg?).
+        - PREV_RATE = 23/28.
+        - Verdict: n_form_violations == 0 and rate ≥ PREV → support.
+        - Result: supported.
+
+        **exp/experiments/sys_layers_exists_change.py** (merged #203)
+        - Exports `moves(T, x)`: pre/post base relations minus {exists} is nonempty.
+        - PREV_RATE = 30/33.
+        - Verdict: violations < 2 and rate ≥ PREV → support.
+        - Result: supported (violations 1).
+
+        **exp/experiments/sys_layers_neg_dual.py** (merged #204)
+        ```python
+        def neg_moving(T, x):
+            n = T.N[x]
+            ms = n.get("mod") or []
+            lims = ([n] if "of" in n else []) + [m for m in (ms if isinstance(ms, list) else [ms]) if isinstance(m, dict)]
+            return any(m.get("neg") and m.get("of") and m["of"][0] in T.N and moves(T, m["of"][0]) for m in lims)
+        # classify: change = any(moves(T,x) or neg_moving(T,x) for x in seen)
+        ```
+        - PREV_RATE = 29/30.
+        - Result: supported, n_violations 0, n_out 29, all movable.
+        - Its result JSON (exp/experiments/results/sys_layers_neg_dual.json) holds the "outliers" dict with from/to for all 29.
+
+        **cscl/design/claims.yaml**
+        - Hypotheses and their status:
+          - h_layers_from_primitives: hyp_mixed (o_sys_layers_primitives_mostly v_support; _blocked v_contradict; _violations; _errors)
+          - h_layers_role_edges: hyp_supported
+          - h_layers_exists_change: hyp_supported
+          - h_layers_neg_dual: hyp_supported
+          - h_layers_unhardcode: untested (PR #205)
+        - Formulas:
+          - h_layers_role_edges: v_depend(layer_placement, [step_quantification, kind_existence, variable_range, ontology.role])
+          - h_layers_exists_change: v_depend(layer_placement, [kind_existence, signature_class])
+          - h_layers_neg_dual: v_depend(layer_placement, [step_quantification, signature_class])
+          - h_layers_unhardcode: two v_refer facts
+            - v_not_depend(type_checker, name_choice)
+            - v_depend(type_checker, [layer_placement, signature_class])
+        - Insertion patterns:
+          - h_/b_ nodes go after the previous b_ line.
+          - v_refer/v_check facts go after the previous v_check.
+          - Observations go after `  o_sys_ja_roundtrip_struct: {is: exp.observation}`.
+          - Their facts go after `  - {is: exp.v_support, from: o_sys_ja_roundtrip_struct, to: h_ja_roundtrip}`.
+        - Related existing concepts:
+          - type_checker (line 12, extends artifact, mod refer_from_laws)
+          - name_choice (line 30)
+          - h_renaming_invariant (untested: v_not_depend(type_checker, name_choice))
+          - signature_class (line 21)
+          - layer_placement (line 20)
+
+        **exp/src/exp.yaml**
+        - Families sys_layers_primitives, sys_layers_role_edges, sys_layers_exists_change and sys_layers_neg_dual are added.
+          - Nodes go before `  sys_case_frame_formula: {is: measurement_family}`.
+          - Facts go after `  - {is: v_metric_of, from: sys_ja_roundtrip, to: mean_value}`.
+          - Each axis_value must match an actual row column; ec errors on missing ones.
+        - h_leap_reaches_agreement: v_raise(operator_speech, hypothesis_agree_to_evidence).
+        - h_leap_lowers_chain: v_lower(operator_speech, chain_length).
+        - Their b_ items follow b_sparse_dictionary_observation; their facts follow the v_check for b_more_concepts.
+
+        **Checks used before each commit**
+        - tc: `cscl/bootstrap/type_checker/type_checker.py`
+        - ec: `exp/src/exp_check.py`
+        - README: `.github/scripts/build_readme.py --check`
+
+        **cscl/bootstrap/type_checker/type_checker.py** (1643 lines): hardcoded non-signature/syntax names
+        - line 183: `TOPS = ("ontology.continuant", "ontology.occurrent")`
+        - line 184: `LAYERS = ("signature","ontology","syntax","runtime","std")`
+        - lines 665-666:
+          - LAWS_HERE = {part_fact_direction, part_display_explicit, named_mod, world_declared, definition_stratified} (syntax laws)
+          - LAWS_RUN = {unique_names, step, frame, halt, no_confusion} (runtime laws)
+        - line 742: `pre_rule`
+        - line 852: TOPS
+        - line 994: is_a(end, "role")
+        - line 1108: is_a(m["with"], "definition")
+        - line 1128: `nid in TOPS or nid == "any"`
+        - line 1149: "occurrent"
+        - line 1160: "specifically_dependent_continuant"
+        - line 1179: "quality"
+        - line 1213: "ontology.role"
+        - line 1218: "ontology.definition"
+        - line 1240: `["ontology.v_refer","from"]`
+        - line 1256: "magnitude"
+        - line 1305: "v_spell" (exp)
+        - line 1313: gloss top check `("continuant","occurrent","any")`
+        - lines 1363-1364: PART_WORDS / PART_VAGUE Japanese display strings (時間的な部分)
+
+        4. Errors and fixes
+
+        - **ec error:** "条件 syntax_change の行がない" and "条件 runtime_still".
+          - Fix: removed axis values with no rows. Later I derived columns dynamically from the rows.
+        - **Stop hook flagged 3 unpushed commits** on merged claude/h_layers_from_primitives.
+          - Cause: a stale remote-tracking ref.
+          - Fix: `git fetch --prune`, then deleted the local branches. Did not push.
+          - The user asked for the explanation in Japanese; I gave it.
+        - **CI notification mismatch:** a check_suite notice for the prereg sha arrived first. I verified the head sha before concluding.
+
+        5. Problem Solving
+
+        **Solved**
+        - The classification now maps onto the current layering with 0 violations, via three signature-level rules: form → with its verb; exists-only change → point; negation keeps the step axis.
+
+        **Caveats (disclosed)**
+        - Rules 2 and 3 each affected one node.
+        - exp's 9 neg-moving nodes are not counted.
+        - The 29 outliers are not yet moved.
+
+        **Found when starting the move**
+        - syntax.individuals (`{display: 個体, form: [is, from]}`) is a grammar word: it appears in `grammar:` sections such as system, run, domain and `individuals: [is, display, val]`.
+        - So moving it to ontology conflicts with "grammar words live in syntax" and with tc reading grammar sections. This is a key finding for h_layers_unhardcode and the move.
+        - Other moving syntax nodes:
+          - not_compose_from_mod is used by syntax `form`. syntax→ontology refs are allowed.
+          - v_above extends ontology.occurrent, holds `above`.
+          - verb_ref, deep_kind, not_before_from, not_after_from.
+        - Qualified-name references that need updating on the move:
+          - tc lines 1213 (ontology.role), 1218 (ontology.definition), 1240 (ontology.v_refer)
+          - claims.yaml: syntax.v_above (lines 26, 28), runtime.refer_from_post (31), runtime.state (40, 42, 442), ontology.role (482)
+        - Unqualified refs resolve own-domain → signature → unique anywhere.
+        - Name collisions in target files: none found.
+        - Multi-line definitions: syntax.individuals only.
+        - Facts and individuals are not covered by T.refs and may also reference moved nodes.
+
+        6. All user messages
+
+        - (Earlier in this segment, before the summary): "歩みって言い方だけ直してほしい / ステップ、あるいはもう少し学術的な定義で / それと合わせて進めよう"
+        - "form？ fromじゃなくて？"
+        - "ちょっと本題からそれるんだけど、仮説として後程これを確かめることはできる？ 私の発言とClaudeの演繹、体系の現在から。 形式的に正しい解釈の積み重ねで問題を発見しようとすることは、そこに発生する推論の情報量を脳に入れることだ。これはとても難しく、どちらかと言えば機械が得意とする領域である。一方、認知したものの特徴量を経験と重ね合わせ、その類似性を抽象に遡って解くと、その推論を省略しつつも近しい含意を得ることが出来る。"
+        - (Stop hook feedback, not the user): unpushed commits on claude/h_layers_from_primitives.
+        - "I didn't push to claude/h_layers_from_primitives. … The working copy now sits on origin/main, detached. これを日本語に" (asking for a Japanese translation of my reply)
+        - "h_layers_role_edgesを進める"
+        - "あーっとね 読みの問題 はsignatureにしか残らないのが私の直観なんだ。絶対に何か含意、対称性があるはず。"
+        - "なんならそのsignatureでさえ含意から作ってるし。" (mid-turn)
+        - "分類通りの層に動かすのは前提。ただもう一つ検証するべき仮説がある。「動かすことで型検査器からすべてのハードコーディング（シグネチャ・シンタックス以外）を問題なく取り除ける」のか"
+
+        7. Pending Tasks
+
+        - **PR #205** (register h_layers_unhardcode): open and subscribed, with send_later trig_01EiEbVnsB1a4bFoJRz3eQdD. It should auto-merge. On merge: delete the trigger, then clean up local branch claude/register-layers-unhardcode (currently checked out or detached).
+        - **Move the 29 outliers** to their classified layers (the premise). This is a manual-review PR.
+          - List from sys_layers_neg_dual.json "outliers":
+            - ontology→syntax: agreed, agreeing, concept, definition, express_from_natural_language, information_entity, information_entity_compose_to_word, information_entity_express_from_natural_language, language, natural_language, refer_from_concept, referrer, role, sentence, v_agree, v_refer, word
+            - runtime→syntax: refer_from_laws, refer_from_post, rewrite_rule, role_depend_from_rewrite_rule, state
+            - syntax→ontology: deep_kind, individuals, not_after_from, not_before_from, not_compose_from_mod, v_above, verb_ref
+          - Must handle the syntax.individuals grammar-word conflict. Disclose it, and possibly keep it in syntax as an exception or a finding.
+        - **Then preregister and test h_layers_unhardcode.** "問題なく" planned as:
+          - the de-hardcoded tc passes the moved system with 0 errors;
+          - on a fixed set of mutants, it rejects the same ones as the old tc.
+        - **Later:** h_leap_reaches_agreement (#197) and h_leap_lowers_chain (#198) need a prereg that decides:
+          - the self-fulfilling correction;
+          - how utterances map to hypotheses;
+          - how to judge a "close implication".
+        - **Other open items:** h_renaming_invariant is related. Issue #190 (mixed) stays open.
+
+        8. Current Work
+
+        I had just started the move of the 29 outlier nodes, the premise for h_layers_unhardcode. I ran an analysis script showing each outlier's target, whether it collides, and its qualified-ref counts.
+
+        Findings:
+        - syntax.individuals is a grammar word, the only one among the 29.
+        - Qualified references to update:
+          - tc lines 1213, 1218, 1240
+          - claims.yaml lines 26, 28, 31, 40, 42, 442, 482
+        - The moving syntax nodes' definitions:
+          - `not_compose_from_mod: {..., extends: quality, of: [v_compose, from], with: mod, neg: true}`
+          - `v_above: {display: 上位に持つ, extends: ontology.occurrent, from: any, to: any, holds: [{is: above, from: from, to: to}]}`
+          - `deep_kind: {..., extends: ontology.kind, mod: {of: [v_above, from], with: any, at: {count: {gt: 2}}}}`
+          - `verb_ref: {display: 動詞を指すもの, extends: kind, mod: {of: [is, to], with: occurrent}}`
+
+        The working copy is on branch claude/register-layers-unhardcode or detached at origin/main; it was switched to detached origin/main in the last command.
+
+        I had told the user: "まず 1 の移動から始めます" — i.e., first a PR moving the 29 to their classified layers (manual review), then prereg h_layers_unhardcode with "問題なく" judged by 0 tc errors on the moved system and identical rejection on a mutant set.
+
+        9. Optional Next Step
+
+        1. Handle PR #205's merge notification when it arrives: delete the trigger, prune, and delete the local branch.
+        2. Continue the move. Create a branch such as claude/move-layers from origin/main and write a mover script in the scratchpad (not the repo) that:
+           - relocates the node definitions between ontology.yaml, syntax.yaml and runtime.yaml;
+           - updates the qualified references in tc (1213, 1218, 1240) and in claims.yaml;
+           - handles syntax.individuals (grammar word) explicitly: likely keep it in syntax, and record it as a finding for h_layers_unhardcode.
+        3. Run tc, ec and the README check, then open a manual-review PR.
+
+        This continues the user's instruction: "分類通りの層に動かすのは前提。ただもう一つ検証するべき仮説がある。「動かすことで型検査器からすべてのハードコーディング（シグネチャ・シンタックス以外）を問題なく取り除ける」のか". It also continues my stated plan: "1. 外れ 29 を分類どおりの層へ動かす PR を立てます（ライブラリの置き場の変更なので手で見る PR）。2. そのうえで h_layers_unhardcode を事前登録して確かめます。…まず 1 の移動から始めます。"
+
+        If you need specific details from before compaction (like exact code snippets, error messages, or content you generated), read the full transcript at: /root/.claude/projects/-home-user-CMT/e05d2140-ce91-515f-a5fb-e6251e13d406.jsonl
+        Continue the conversation from where it left off without asking the user any further questions. Resume directly — do not acknowledge the summary, do not recap what was happening, do not preface with "I'll continue" or similar. Pick up the last task as if the break never happened.
+
+        The messages after this summary are the most recent messages from before compaction, kept verbatim. The summary was written without seeing them, so something it says has not happened yet may already have happened in them.
+facts:
+- {is: v_say, from: session_model, to: 01M7Q8HZ4CT691TGKKF096TZGH}
+- {is: v_refer, from: 01M7Q8HZ4CT691TGKKF096TZGH, to: exp.v_support}
+- {is: v_refer, from: 01M7Q8HZ4CT691TGKKF096TZGH, to: exp.v_contradict}
+- {is: v_refer, from: 01M7Q8HZ4CT691TGKKF096TZGH, to: syntax.new_kind}
+- {is: v_refer, from: 01M7Q8HZ4CT691TGKKF096TZGH, to: ontology.v_design}
+- {is: v_refer, from: 01M7Q8HZ4CT691TGKKF096TZGH, to: std.v_compute}
+- {is: v_refer, from: 01M7Q8HZ4CT691TGKKF096TZGH, to: exp.api_only_model}
+- {is: v_refer, from: 01M7Q8HZ4CT691TGKKF096TZGH, to: exp.dec_tentative}
+- {is: v_refer, from: 01M7Q8HZ4CT691TGKKF096TZGH, to: exp.hidden_word}
+- {is: v_refer, from: 01M7Q8HZ4CT691TGKKF096TZGH, to: exp.not_adopted}
+- {is: v_refer, from: 01M7Q8HZ4CT691TGKKF096TZGH, to: exp.not_teach_from}
+- {is: v_refer, from: 01M7Q8HZ4CT691TGKKF096TZGH, to: exp.shift_unseen_by_layer}
+- {is: v_refer, from: 01M7Q8HZ4CT691TGKKF096TZGH, to: exp.unseen_genus}
+- {is: v_refer, from: 01M7Q8HZ4CT691TGKKF096TZGH, to: exp.unseen_relation}
+- {is: v_refer, from: 01M7Q8HZ4CT691TGKKF096TZGH, to: ontology.natural_language}
+- {is: v_refer, from: 01M7Q8HZ4CT691TGKKF096TZGH, to: runtime.v_execute}
+- {is: v_refer, from: 01M7Q8HZ4CT691TGKKF096TZGH, to: exp.hyp_mixed}
+- {is: v_refer, from: 01M7Q8HZ4CT691TGKKF096TZGH, to: exp.hyp_supported}
+- {is: v_refer, from: 01M7Q8HZ4CT691TGKKF096TZGH, to: ontology.v_depend}
+- {is: v_refer, from: 01M7Q8HZ4CT691TGKKF096TZGH, to: lang.layer_placement}
+- {is: v_refer, from: 01M7Q8HZ4CT691TGKKF096TZGH, to: ontology.role}
+- {is: v_refer, from: 01M7Q8HZ4CT691TGKKF096TZGH, to: lang.signature_class}
+- {is: v_refer, from: 01M7Q8HZ4CT691TGKKF096TZGH, to: ontology.v_refer}
+- {is: v_refer, from: 01M7Q8HZ4CT691TGKKF096TZGH, to: lang.v_not_depend}
+- {is: v_refer, from: 01M7Q8HZ4CT691TGKKF096TZGH, to: lang.type_checker}
+- {is: v_refer, from: 01M7Q8HZ4CT691TGKKF096TZGH, to: exp.v_check}
+- {is: v_refer, from: 01M7Q8HZ4CT691TGKKF096TZGH, to: exp.observation}
+- {is: v_refer, from: 01M7Q8HZ4CT691TGKKF096TZGH, to: runtime.refer_from_laws}
+- {is: v_refer, from: 01M7Q8HZ4CT691TGKKF096TZGH, to: exp.measurement_family}
+- {is: v_refer, from: 01M7Q8HZ4CT691TGKKF096TZGH, to: exp.v_metric_of}
+- {is: v_refer, from: 01M7Q8HZ4CT691TGKKF096TZGH, to: exp.mean_value}
+- {is: v_refer, from: 01M7Q8HZ4CT691TGKKF096TZGH, to: exp.axis_value}
+- {is: v_refer, from: 01M7Q8HZ4CT691TGKKF096TZGH, to: exp.v_raise}
+- {is: v_refer, from: 01M7Q8HZ4CT691TGKKF096TZGH, to: exp.hypothesis_agree_to_evidence}
+- {is: v_refer, from: 01M7Q8HZ4CT691TGKKF096TZGH, to: exp.v_lower}
+- {is: v_refer, from: 01M7Q8HZ4CT691TGKKF096TZGH, to: exp.chain_length}
+- {is: v_refer, from: 01M7Q8HZ4CT691TGKKF096TZGH, to: ontology.continuant}
+- {is: v_refer, from: 01M7Q8HZ4CT691TGKKF096TZGH, to: ontology.occurrent}
+- {is: v_refer, from: 01M7Q8HZ4CT691TGKKF096TZGH, to: runtime.pre_rule}
+- {is: v_refer, from: 01M7Q8HZ4CT691TGKKF096TZGH, to: ontology.specifically_dependent_continuant}
+- {is: v_refer, from: 01M7Q8HZ4CT691TGKKF096TZGH, to: ontology.definition}
+- {is: v_refer, from: 01M7Q8HZ4CT691TGKKF096TZGH, to: exp.v_spell}
+- {is: v_refer, from: 01M7Q8HZ4CT691TGKKF096TZGH, to: syntax.individuals}
+- {is: v_refer, from: 01M7Q8HZ4CT691TGKKF096TZGH, to: syntax.not_compose_from_mod}
+- {is: v_refer, from: 01M7Q8HZ4CT691TGKKF096TZGH, to: syntax.form}
+- {is: v_refer, from: 01M7Q8HZ4CT691TGKKF096TZGH, to: syntax.verb_ref}
+- {is: v_refer, from: 01M7Q8HZ4CT691TGKKF096TZGH, to: syntax.not_before_from}
+- {is: v_refer, from: 01M7Q8HZ4CT691TGKKF096TZGH, to: syntax.not_after_from}
+- {is: v_refer, from: 01M7Q8HZ4CT691TGKKF096TZGH, to: runtime.refer_from_post}
+- {is: v_refer, from: 01M7Q8HZ4CT691TGKKF096TZGH, to: runtime.state}
+- {is: v_refer, from: 01M7Q8HZ4CT691TGKKF096TZGH, to: ontology.express_from_natural_language}
+- {is: v_refer, from: 01M7Q8HZ4CT691TGKKF096TZGH, to: ontology.information_entity}
+- {is: v_refer, from: 01M7Q8HZ4CT691TGKKF096TZGH, to: ontology.information_entity_compose_to_word}
+- {is: v_refer, from: 01M7Q8HZ4CT691TGKKF096TZGH, to: ontology.information_entity_express_from_natural_language}
+- {is: v_refer, from: 01M7Q8HZ4CT691TGKKF096TZGH, to: ontology.refer_from_concept}
+- {is: v_refer, from: 01M7Q8HZ4CT691TGKKF096TZGH, to: ontology.v_agree}
+- {is: v_refer, from: 01M7Q8HZ4CT691TGKKF096TZGH, to: runtime.rewrite_rule}
+- {is: v_refer, from: 01M7Q8HZ4CT691TGKKF096TZGH, to: runtime.role_depend_from_rewrite_rule}
+- {is: v_refer, from: 01M7Q8HZ4CT691TGKKF096TZGH, to: ontology.v_compose}
+- {is: v_refer, from: 01M7Q8HZ4CT691TGKKF096TZGH, to: ontology.kind}
