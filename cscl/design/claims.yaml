@@ -44,6 +44,11 @@ nodes:
   any_limitation: {display: 何でもを端に持つ限定, extends: quality, mod: {of: [v_refer, from], with: any}}
   reading_formula: {display: 読みの式, extends: quality, mod: exp.refer_from_hypothesis}
   annotation: {display: 注釈, extends: passage_express_from_natural_language, mod: {of: [v_refer, from], with: syntax.domain}}
+  ja_text: {display: 式から訳した日本語の文章, extends: passage_express_from_natural_language, mod: {of: [v_depend, from], with: syntax.mod}}
+  ja_readback: {display: 日本語の文章から読み戻した式, extends: quality, mod: {of: [v_depend, from], with: ja_text}}
+  ja_ambiguity: {display: 日本語の係りの多義, extends: quality, mod: {of: [v_refer, from], with: ja_text}}
+  case_frame: {display: 動詞の格の枠, extends: quality, mod: {of: [v_depend, from], with: syntax.position}}
+  ja_connective: {display: 文と文の接続, extends: quality, mod: {of: [v_refer, from], with: v_agree}}
   v_not_trigger: {display: 引き起こさない, extends: v_not_transfer, from: any, to: occurrent, opposite: v_trigger}
 
 individuals:
@@ -213,6 +218,12 @@ individuals:
   b_any_not_vacuous: {is: exp.item_done}
   h_any_by_entail: {is: exp.hyp_untested}
   b_any_by_entail: {is: exp.item_queued}
+  h_ja_case_frame: {is: exp.hyp_untested}
+  b_ja_case_frame: {is: exp.item_queued}
+  h_ja_roundtrip: {is: exp.hyp_untested}
+  b_ja_roundtrip: {is: exp.item_queued}
+  h_ja_connective: {is: exp.hyp_untested}
+  b_ja_connective: {is: exp.item_queued}
   # ===== 定義の循環（自分を限定するものについて述べる定義）。利用者の問い「self がシグネチャになるとどうなるか」から
   # 定義の辺（上位・名前を付けた修飾語・限定の with）をたどった循環を数えた（exp/experiments/sys_cycles.py）。
   # 仮説は、観察を見た後に立てた（事前の登録ではない）。中身は「定義の循環は、否定の限定を通らない」。
@@ -683,6 +694,12 @@ facts:
   - {is: exp.v_check, from: b_any_not_vacuous, to: h_any_not_vacuous}
   - {is: v_refer, from: h_any_by_entail, to: {is: v_depend, from: any_limitation, to: above_order}}
   - {is: exp.v_check, from: b_any_by_entail, to: h_any_by_entail}
+  - {is: v_refer, from: h_ja_case_frame, to: {is: v_depend, from: ja_text, to: case_frame}}
+  - {is: exp.v_check, from: b_ja_case_frame, to: h_ja_case_frame}
+  - {is: v_refer, from: h_ja_roundtrip, to: {is: v_not_depend, from: ja_readback, to: ja_ambiguity}}
+  - {is: exp.v_check, from: b_ja_roundtrip, to: h_ja_roundtrip}
+  - {is: v_refer, from: h_ja_connective, to: {is: v_depend, from: annotation, to: ja_connective}}
+  - {is: exp.v_check, from: b_ja_connective, to: h_ja_connective}
   - {is: v_refer, from: h_gloss_formula, to: {is: v_not_depend, from: top_placement, to: syntax.gloss}}
   - {is: exp.v_check, from: b_gloss_formula, to: h_gloss_formula}
   - {is: v_refer, from: h_negation_formula, to: {is: v_not_depend, from: negated_limitation, to: type_checker}}
