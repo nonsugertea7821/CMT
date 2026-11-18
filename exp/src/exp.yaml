@@ -148,6 +148,7 @@ nodes:
   expose_to: {display: 公開される（終点）, extends: quality, of: [v_expose, to]}
   public_passage: {display: 公開された自然言語の文章, extends: passage_express_from_natural_language, mod: expose_to}
   reliability: {display: 文章の信頼性, extends: quality, mod: {of: [v_depend, from], with: passage}}
+  attachment_tendency: {display: 修飾の掛かり方の傾向, extends: quality, mod: {of: [v_depend, from], with: modifier}}
   attribution: {display: 運用者へ帰する文, extends: sentence, mod: {of: [v_refer, from], with: operator}}
   protocol_sentence: {display: 取り決めの部分である文, extends: sentence, mod: {of: [v_compose, from], with: experiment_protocol}}
   correction: {display: 訂正, extends: protocol_sentence, mod: come_after_from_observation}
@@ -1930,6 +1931,8 @@ individuals:
   b_model_utterance_less_reliable: {is: item_queued}
   h_prosody_carries_reliability: {is: hyp_untested}
   b_prosody_carries_reliability: {is: item_queued}
+  h_model_attachment_differs: {is: hyp_untested}
+  b_model_attachment_differs: {is: item_queued}
 facts:
   - {is: v_collect, from: residual_space, to: residual_vector}
   - {is: v_sum, from: layer_output, to: state_shift, new: shifted_hidden_state}
@@ -5233,3 +5236,5 @@ facts:
   - {is: v_check, from: b_model_utterance_less_reliable, to: h_model_utterance_less_reliable}
   - {is: v_refer, from: h_prosody_carries_reliability, to: {is: v_depend, from: reliability, to: prosodic_modifier}}
   - {is: v_check, from: b_prosody_carries_reliability, to: h_prosody_carries_reliability}
+  - {is: v_refer, from: h_model_attachment_differs, to: {is: v_depend, from: attachment_tendency, to: speak_to_model}}
+  - {is: v_check, from: b_model_attachment_differs, to: h_model_attachment_differs}
