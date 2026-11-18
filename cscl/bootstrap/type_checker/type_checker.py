@@ -890,6 +890,8 @@ class Ontology:
                     for k in ("quant", "at"):
                         if m.get(k) is not None:
                             add(k, t, dump(m[k]))
+                    for a in (m.get("at") or {}) if isinstance(m.get("at"), dict) else ():   # 限定が値を指定する軸（法則 at_axis が読む）
+                        add("axis", t, a)
                     if isinstance(m.get("with"), str) and m["with"] in self.I:
                         add("refer", nid, m["with"])
             for x in (n.get("val") or {}).items():
