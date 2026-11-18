@@ -1074,6 +1074,25 @@ individuals:
   sys_layers_neg_dual_cond_n_neg_violations: {is: axis_value, val: {text: n_neg_violations}}
   sys_layers_neg_dual_cond_n_neg_moving: {is: axis_value, val: {text: n_neg_moving}}
   sys_layers_neg_dual_cond_errors: {is: axis_value, val: {text: errors}}
+  sys_layers_unhardcode: {is: measurement_family}
+  sys_layers_unhardcode_cond: {is: family_axis, val: {text: cond}}
+  sys_layers_unhardcode_cond_determinable: {is: axis_value, val: {text: determinable}}
+  sys_layers_unhardcode_cond_left: {is: axis_value, val: {text: left}}
+  sys_layers_unhardcode_cond_n_left: {is: axis_value, val: {text: n_left}}
+  sys_layers_unhardcode_cond_n_qualified: {is: axis_value, val: {text: n_qualified}}
+  sys_layers_unhardcode_cond_n_ja: {is: axis_value, val: {text: n_ja}}
+  sys_layers_unhardcode_cond_errors_new: {is: axis_value, val: {text: errors_new}}
+  sys_layers_unhardcode_cond_errors_old: {is: axis_value, val: {text: errors_old}}
+  sys_layers_unhardcode_cond_n_renamed: {is: axis_value, val: {text: n_renamed}}
+  sys_layers_unhardcode_cond_n_kept: {is: axis_value, val: {text: n_kept}}
+  sys_layers_unhardcode_cond_n_mutants: {is: axis_value, val: {text: n_mutants}}
+  sys_layers_unhardcode_cond_n_agree: {is: axis_value, val: {text: n_agree}}
+  sys_layers_unhardcode_cond_old_reject: {is: axis_value, val: {text: old_reject}}
+  sys_layers_unhardcode_cond_new_reject: {is: axis_value, val: {text: new_reject}}
+  sys_layers_unhardcode_cond_n_hard: {is: axis_value, val: {text: n_hard}}
+  sys_layers_unhardcode_cond_n_determinable: {is: axis_value, val: {text: n_determinable}}
+  sys_layers_unhardcode_cond_errors_system: {is: axis_value, val: {text: errors_system}}
+  sys_layers_unhardcode_cond_errors_rename: {is: axis_value, val: {text: errors_rename}}
   sys_case_frame_formula: {is: measurement_family}
   sys_case_frame_formula_cond: {is: family_axis, val: {text: cond}}
   sys_case_frame_formula_cond_errors: {is: axis_value, val: {text: errors}}
@@ -3912,6 +3931,45 @@ facts:
   - {is: v_spell, from: sys_layers_neg_dual_cond_errors, to: errors}
   - {is: v_entry_of, from: '{cond}', to: sys_layers_neg_dual}
   - {is: v_metric_of, from: sys_layers_neg_dual, to: mean_value}
+  - {is: v_file_of, from: sys_layers_unhardcode.json, to: sys_layers_unhardcode}
+  - {is: v_rows_of, from: [rows], to: sys_layers_unhardcode}
+  - {is: v_axis_of, from: sys_layers_unhardcode_cond, to: sys_layers_unhardcode}
+  - {is: v_value_of, from: sys_layers_unhardcode_cond_determinable, to: sys_layers_unhardcode_cond}
+  - {is: v_spell, from: sys_layers_unhardcode_cond_determinable, to: determinable}
+  - {is: v_value_of, from: sys_layers_unhardcode_cond_left, to: sys_layers_unhardcode_cond}
+  - {is: v_spell, from: sys_layers_unhardcode_cond_left, to: left}
+  - {is: v_value_of, from: sys_layers_unhardcode_cond_n_left, to: sys_layers_unhardcode_cond}
+  - {is: v_spell, from: sys_layers_unhardcode_cond_n_left, to: n_left}
+  - {is: v_value_of, from: sys_layers_unhardcode_cond_n_qualified, to: sys_layers_unhardcode_cond}
+  - {is: v_spell, from: sys_layers_unhardcode_cond_n_qualified, to: n_qualified}
+  - {is: v_value_of, from: sys_layers_unhardcode_cond_n_ja, to: sys_layers_unhardcode_cond}
+  - {is: v_spell, from: sys_layers_unhardcode_cond_n_ja, to: n_ja}
+  - {is: v_value_of, from: sys_layers_unhardcode_cond_errors_new, to: sys_layers_unhardcode_cond}
+  - {is: v_spell, from: sys_layers_unhardcode_cond_errors_new, to: errors_new}
+  - {is: v_value_of, from: sys_layers_unhardcode_cond_errors_old, to: sys_layers_unhardcode_cond}
+  - {is: v_spell, from: sys_layers_unhardcode_cond_errors_old, to: errors_old}
+  - {is: v_value_of, from: sys_layers_unhardcode_cond_n_renamed, to: sys_layers_unhardcode_cond}
+  - {is: v_spell, from: sys_layers_unhardcode_cond_n_renamed, to: n_renamed}
+  - {is: v_value_of, from: sys_layers_unhardcode_cond_n_kept, to: sys_layers_unhardcode_cond}
+  - {is: v_spell, from: sys_layers_unhardcode_cond_n_kept, to: n_kept}
+  - {is: v_value_of, from: sys_layers_unhardcode_cond_n_mutants, to: sys_layers_unhardcode_cond}
+  - {is: v_spell, from: sys_layers_unhardcode_cond_n_mutants, to: n_mutants}
+  - {is: v_value_of, from: sys_layers_unhardcode_cond_n_agree, to: sys_layers_unhardcode_cond}
+  - {is: v_spell, from: sys_layers_unhardcode_cond_n_agree, to: n_agree}
+  - {is: v_value_of, from: sys_layers_unhardcode_cond_old_reject, to: sys_layers_unhardcode_cond}
+  - {is: v_spell, from: sys_layers_unhardcode_cond_old_reject, to: old_reject}
+  - {is: v_value_of, from: sys_layers_unhardcode_cond_new_reject, to: sys_layers_unhardcode_cond}
+  - {is: v_spell, from: sys_layers_unhardcode_cond_new_reject, to: new_reject}
+  - {is: v_value_of, from: sys_layers_unhardcode_cond_n_hard, to: sys_layers_unhardcode_cond}
+  - {is: v_spell, from: sys_layers_unhardcode_cond_n_hard, to: n_hard}
+  - {is: v_value_of, from: sys_layers_unhardcode_cond_n_determinable, to: sys_layers_unhardcode_cond}
+  - {is: v_spell, from: sys_layers_unhardcode_cond_n_determinable, to: n_determinable}
+  - {is: v_value_of, from: sys_layers_unhardcode_cond_errors_system, to: sys_layers_unhardcode_cond}
+  - {is: v_spell, from: sys_layers_unhardcode_cond_errors_system, to: errors_system}
+  - {is: v_value_of, from: sys_layers_unhardcode_cond_errors_rename, to: sys_layers_unhardcode_cond}
+  - {is: v_spell, from: sys_layers_unhardcode_cond_errors_rename, to: errors_rename}
+  - {is: v_entry_of, from: '{cond}', to: sys_layers_unhardcode}
+  - {is: v_metric_of, from: sys_layers_unhardcode, to: mean_value}
   - {is: v_file_of, from: sys_layers_exists_change.json, to: sys_layers_exists_change}
   - {is: v_rows_of, from: [rows], to: sys_layers_exists_change}
   - {is: v_axis_of, from: sys_layers_exists_change_cond, to: sys_layers_exists_change}
