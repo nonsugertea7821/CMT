@@ -1,0 +1,23 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-18T01:24:48.095Z（UTC）
+individuals:
+  01M7P439TZX699K680JXYWHWC7:
+    is: model_utterance
+    display: 発言 1447
+    val:
+      order: 1447
+      text: |
+        保留の検査は、あなたの発言だけにしました。Claude の返答とセッション要約は、もう保留されません。
+
+        **変えたこと**
+        - 個人情報らしい語で記録を止める検査を、あなたの発言だけにかけるようにしました。
+        - メールアドレス・電話番号・カード番号・API キーなどを「[…を伏せた]」に置き換える処理は、今までどおり全員の発言にかけます。
+        - 変更は claude_session_log/build.py で、claude/session-log に push しました（835e867）。
+
+        **確認**
+        - 新しい規則で今のセッションの記録を作り直してみました。保留はなく、正常に終わりました。
+        - 作り直した中身は手元で捨てています。実際の記録は、次に返答が終わったときにフックが自動で足します。
+
+        本題は、9 件の違反の区別を式に移す手前で止まっています。進めてよければ、そう言ってください。
+facts:
+- {is: v_say, from: session_model, to: 01M7P439TZX699K680JXYWHWC7}
+- {is: exp.v_answer, from: 01M7P439TZX699K680JXYWHWC7, to: 01M7P42ANKHQG3WYAQQPYJ2BQT}
