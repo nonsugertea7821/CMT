@@ -1637,6 +1637,20 @@ individuals:
   e20_explain_noans_cond_none: {is: axis_value, val: {text: 'none'}}
   e20_explain_noans_cond_qa: {is: axis_value, val: {text: 'qa'}}
   e20_explain_noans_cond_defqa: {is: axis_value, val: {text: 'defqa'}}
+  e21: {is: measurement_family}
+  e21_group: {is: family_axis, val: {text: group}}
+  e21_group_G1: {is: axis_value, val: {text: G1}}
+  e21_group_G3: {is: axis_value, val: {text: G3}}
+  e21_group_G4: {is: axis_value, val: {text: G4}}
+  e21_cond: {is: family_axis, val: {text: cond}}
+  e21_cond_none: {is: axis_value, val: {text: 'none'}}
+  e21_cond_common: {is: axis_value, val: {text: common}}
+  e21_cond_rand: {is: axis_value, val: {text: rand}}
+  e21_all: {is: measurement_family}
+  e21_all_cond: {is: family_axis, val: {text: cond}}
+  e21_all_cond_none: {is: axis_value, val: {text: 'none'}}
+  e21_all_cond_common: {is: axis_value, val: {text: common}}
+  e21_all_cond_rand: {is: axis_value, val: {text: rand}}
   e15_group: {is: family_axis, val: {text: group}}
   e15_group_G2c: {is: axis_value, val: {text: G2c}}
   e15_group_G2k: {is: axis_value, val: {text: G2k}}
@@ -1778,6 +1792,8 @@ individuals:
   o_e10o_opaque_below_none_control: {is: observation}
   o_e14_vec_below_none_control: {is: observation}
   o_e14_vec_below_near_conflict: {is: observation}
+  o_e21_common_robust_below_none: {is: observation}
+  o_e21_common_robust_below_rand: {is: observation}
   o_e14_vec_robust_below_none_conflict: {is: observation}
   o_e14_vec_robust_below_none_control: {is: observation}
   o_e20_examples_move_apply: {is: observation}
@@ -1862,7 +1878,7 @@ individuals:
   h_specific_agrees_with_sense_difference: {is: hyp_refuted}
   h_vector_transfers_beyond_choice_format: {is: hyp_mixed}
   h_specific_composes_from_expression: {is: hyp_untested}
-  h_common_component_transfers_to_unseen: {is: hyp_untested}
+  h_common_component_transfers_to_unseen: {is: hyp_refuted}
   h_attention_carries_text_route: {is: hyp_untested}
   h_model_can_write_cscl: {is: hyp_untested}
   h_typecheck_feedback_raises_writing: {is: hyp_untested}
@@ -2793,6 +2809,38 @@ facts:
   - {is: v_entry_of, from: '{cond}', to: e16}
   - {is: v_metric_of, from: e16, to: accuracy}
   - {is: v_metric_of, from: e16, to: order_robust_accuracy}
+  - {is: v_file_of, from: 'e21_Qwen2.5-1.5B-Instruct_L8_defqa.json', to: e21}
+  - {is: v_rows_of, from: [items], to: e21}
+  - {is: v_axis_of, from: e21_group, to: e21}
+  - {is: v_value_of, from: e21_group_G1, to: e21_group}
+  - {is: v_denote, from: e21_group_G1, to: g_confusable}
+  - {is: v_value_of, from: e21_group_G3, to: e21_group}
+  - {is: v_denote, from: e21_group_G3, to: g_sibling}
+  - {is: v_value_of, from: e21_group_G4, to: e21_group}
+  - {is: v_denote, from: e21_group_G4, to: g_replaced}
+  - {is: v_axis_of, from: e21_cond, to: e21}
+  - {is: v_value_of, from: e21_cond_none, to: e21_cond}
+  - {is: v_denote, from: e21_cond_none, to: no_channel}
+  - {is: v_value_of, from: e21_cond_common, to: e21_cond}
+  - {is: v_denote, from: e21_cond_common, to: common_vector_component}
+  - {is: v_value_of, from: e21_cond_rand, to: e21_cond}
+  - {is: v_denote, from: e21_cond_rand, to: state_shift}
+  - {is: v_filter_of, from: {group: '{group}'}, to: e21}
+  - {is: v_entry_of, from: '{cond}', to: e21}
+  - {is: v_metric_of, from: e21, to: accuracy}
+  - {is: v_metric_of, from: e21, to: order_robust_accuracy}
+  - {is: v_file_of, from: 'e21_Qwen2.5-1.5B-Instruct_L8_defqa.json', to: e21_all}
+  - {is: v_rows_of, from: [items], to: e21_all}
+  - {is: v_axis_of, from: e21_all_cond, to: e21_all}
+  - {is: v_value_of, from: e21_all_cond_none, to: e21_all_cond}
+  - {is: v_denote, from: e21_all_cond_none, to: no_channel}
+  - {is: v_value_of, from: e21_all_cond_common, to: e21_all_cond}
+  - {is: v_denote, from: e21_all_cond_common, to: common_vector_component}
+  - {is: v_value_of, from: e21_all_cond_rand, to: e21_all_cond}
+  - {is: v_denote, from: e21_all_cond_rand, to: state_shift}
+  - {is: v_entry_of, from: '{cond}', to: e21_all}
+  - {is: v_metric_of, from: e21_all, to: accuracy}
+  - {is: v_metric_of, from: e21_all, to: order_robust_accuracy}
   - {is: v_file_of, from: 'e17_Qwen2.5-1.5B-Instruct_L8.json', to: e17}
   - {is: v_rows_of, from: [items], to: e17}
   - {is: v_axis_of, from: e17_group, to: e17}
@@ -5381,5 +5429,9 @@ facts:
   - {is: v_check, from: b_multi_layer_transfers_to_explain, to: h_multi_layer_transfers_to_explain}
   - {is: v_refer, from: h_explain_transfers_to_apply, to: {is: v_transfer, from: usage_explain, to: usage_apply}}
   - {is: v_check, from: b_explain_transfers_to_apply, to: h_explain_transfers_to_apply}
+  - {is: v_refer, from: o_e21_common_robust_below_none, to: {is: v_come_before, from: e21_all.common.order_robust_accuracy, to: e21_all.none.order_robust_accuracy}}
+  - {is: v_refer, from: o_e21_common_robust_below_rand, to: {is: v_come_before, from: e21_all.common.order_robust_accuracy, to: e21_all.rand.order_robust_accuracy}}
+  - {is: v_contradict, from: o_e21_common_robust_below_none, to: h_common_component_transfers_to_unseen}
+  - {is: v_contradict, from: o_e21_common_robust_below_rand, to: h_common_component_transfers_to_unseen}
   - {is: v_contradict, from: o_e14_vec_robust_below_none_conflict, to: h_text_shift_raises_stability}
   - {is: v_contradict, from: o_e14_vec_robust_below_none_control, to: h_text_shift_raises_stability}
