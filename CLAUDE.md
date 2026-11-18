@@ -7,6 +7,13 @@
   - 確かめる残り項目を対で置く: `b_<名前>: {is: exp.item_queued}` と `{is: exp.v_check, from: b_<名前>, to: h_<名前>}`。
   - 仮説は main に入ると issue に写る（`.github/scripts/sync_issues.py`）。残り項目そのものは写らない。
 
+## 仮説を確かめる流れ
+1. 仮説が main に入り、issue が立つ。
+2. 仮説ごとにブランチ `claude/h_<仮説名>` を切り、Draft の PR を立てる。本文で issue を参照する。最初の commit は事前登録（手順と判定）。
+3. 測って、観察を体系に書き、仮説を `v_support` か `v_contradict` で結ぶ。解釈は commit のメッセージと PR の本文に書く。
+4. ec が通り、状態が支持・反証・mixed のどれかになったら、Draft を外す（確認の合図。承認でもマージでもない）。外れて訂正し、未検証のまま残るなら Draft のまま。
+5. 利用者が確認してマージする。Claude はマージしない。main への push で sync が状態を読み、issue を閉じる。
+
 ## 体系のファイル（cscl.yaml, cscl/library, cscl/design, exp/src の yaml）
 - コメントを足さない。定義に効く内容は式で書く。経緯と解釈は commit のメッセージと会話に書く。
   - `.claude/hooks/no_new_comments.py` が、ファイルを書いたときと `git commit` の前に検査する。
