@@ -1,0 +1,33 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-18T17:37:32.335Z（UTC）
+individuals:
+  01M7QVRE5FT5SNKQW422HJ2Z28:
+    is: model_utterance
+    display: 発言 2074
+    val:
+      order: 2074
+      text: |
+        今回の周期では h_denote_meets_hypothesis を確かめ、反証でした（PR #244、Draft を外して自動マージ待ち）。
+
+        **結果**
+        - 観察と仮説の結びは 159 あり、そのうち 92 で、比べの条件が表すものと仮説が指すものが会いませんでした。
+        - 会わない 92 のうち 53 は、観察の側が空です。そのうち 51 は体系の実験のもので、軸の値が結果の列の名になっていて、表すもの（v_denote・v_compose）がありません。
+        - 残る 39 はモデルの実験です。仮説の変数（prior_collision や distance_to_question など、factor を extends するもの）と、条件が表すものが会いません。
+        - 手順の限り: 名で書かれた mod と、個体の is はたどっていません。PR に開示し、判定は変えていません。
+
+        **含意**
+        - 体系の実験の観察は要約の値の水準を見ているので、表すものを通して仮説を照らす道が最初からありません。
+        - モデルの実験では、条件がどの factor を動かすかを結ぶ式がありません。それを言っているのは、いまは結びの宣言だけです。
+
+        **新しい仮説（PR #245、登録だけ、自動マージ待ち）**
+        反証から、別々の解き方を対で出しました。
+        - **h_factor_depends_value:** 条件と factor の橋を、事実として体系に置きます（factor が軸の値に依る）。
+        - **h_definition_bridges_value:** 橋は定義にすでにある、と見ます。名で書かれた mod と個体の is までたどれば、factor に届くはずです。
+
+        次の周期は 18:05Z です。
+facts:
+- {is: v_say, from: session_model, to: 01M7QVRE5FT5SNKQW422HJ2Z28}
+- {is: exp.v_answer, from: 01M7QVRE5FT5SNKQW422HJ2Z28, to: 01M7QNRG53Q5EVGTFRH8VFETVW}
+- {is: v_refer, from: 01M7QVRE5FT5SNKQW422HJ2Z28, to: exp.v_denote}
+- {is: v_refer, from: 01M7QVRE5FT5SNKQW422HJ2Z28, to: ontology.v_compose}
+- {is: v_refer, from: 01M7QVRE5FT5SNKQW422HJ2Z28, to: exp.prior_collision}
+- {is: v_refer, from: 01M7QVRE5FT5SNKQW422HJ2Z28, to: exp.distance_to_question}
