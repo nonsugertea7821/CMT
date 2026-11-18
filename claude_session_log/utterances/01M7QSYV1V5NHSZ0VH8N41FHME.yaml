@@ -1,0 +1,31 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-18T17:06:04.987Z（UTC）
+individuals:
+  01M7QSYV1V5NHSZ0VH8N41FHME:
+    is: model_utterance
+    display: 発言 2067
+    val:
+      order: 2067
+      text: |
+        今回の周期では h_value_refers_hypothesis を確かめ、反証でした（PR #241）。Draft は外したので、自動マージを待っています。
+
+        **結果**
+        - 指す単位を族から軸の値に細かくしても、共有は残りました。軸の値 206 のうち 52 が、2つ以上の仮説に結ばれています。
+        - 測った点1つ（cell）の単位に分けても、197 のうち 31 が共有されます。
+        - 解けない区切りと、軸の値を含まない観察は、どちらも 0 でした。
+
+        **含意**
+        - 事前登録の外の探索として、観察を「比べる2点の組」で分けて数えました。それでも 145 の組のうち 11 が、2つ以上の仮説の根拠になっています。
+        - 例として、e7 の sys1 と sys1-far2000 の比べがあります。far2000 は後ろに 2000 の文を足した条件で、距離と長さが同時に変わります。その1つの比べが、h_distance_does_not_lower と h_length_does_not_lower の両方の根拠になっています。
+        - つまり、比べがどの仮説に効くかは、値の単位では分けられません。分けるのは、比べる値が表すもの（v_denote・v_compose）だと見ています。
+        - 2つの変数が同時に動く比べを両方の根拠に数えてよいかは、結びの妥当性の問いとして残ります。
+
+        **新しい仮説（PR #242、登録だけ、自動マージを待っています）**
+        - h_denote_meets_hypothesis は、軸の値が表すものが、結ばれた仮説の指すものに会う、という仮説です。
+        - 対になる解き方（仮説から族を指し、複数を許す）は、前の周期で h_hypothesis_refers_family として登録済みです。
+
+        #233 は、引き続きあなたの手でのマージを待っています。次の周期は 17:33Z です。
+facts:
+- {is: v_say, from: session_model, to: 01M7QSYV1V5NHSZ0VH8N41FHME}
+- {is: exp.v_answer, from: 01M7QSYV1V5NHSZ0VH8N41FHME, to: 01M7QNRG53Q5EVGTFRH8VFETVW}
+- {is: v_refer, from: 01M7QSYV1V5NHSZ0VH8N41FHME, to: exp.v_denote}
+- {is: v_refer, from: 01M7QSYV1V5NHSZ0VH8N41FHME, to: ontology.v_compose}
