@@ -1492,6 +1492,15 @@ individuals:
   e4_cond_none: {is: axis_value, val: {text: none}}
   e4_cond_text: {is: axis_value, val: {text: text}}
   e4_cond_vec: {is: axis_value, val: {text: vec}}
+  e22: {is: measurement_family}
+  e22_split: {is: family_axis, val: {text: split}}
+  e22_split_train: {is: axis_value, val: {text: train}}
+  e22_split_test: {is: axis_value, val: {text: test}}
+  e22_cond: {is: family_axis, val: {text: cond}}
+  e22_cond_none: {is: axis_value, val: {text: 'none'}}
+  e22_cond_text: {is: axis_value, val: {text: text}}
+  e22_cond_mod: {is: axis_value, val: {text: mod}}
+  e22_cond_qual: {is: axis_value, val: {text: qual}}
   e5_model: {is: family_axis, val: {text: model}}
   e5_model_15b: {is: axis_value, val: {text: 15b}}
   e5_model_4b: {is: axis_value, val: {text: 4b}}
@@ -1758,6 +1767,8 @@ individuals:
   o_e7_15_definitions_no_drop: {is: observation}
   o_e4_modifier_transfers_in_converged_pair: {is: observation}
   o_e4_pair1_training_failed: {is: observation}
+  o_e22_qual_above_none: {is: observation}
+  o_e22_qual_robust_above_none: {is: observation}
   o_e8_paraphrase_like_single_layer: {is: observation}
   o_e8_conflict_ge_single_layer: {is: observation}
   o_e8_control_below_single_layer: {is: observation}
@@ -1783,6 +1794,8 @@ individuals:
   o_e14_vec_below_near_conflict: {is: observation}
   o_e21_common_robust_below_none: {is: observation}
   o_e21_common_robust_below_rand: {is: observation}
+  o_e14_vec_robust_below_none_conflict: {is: observation}
+  o_e14_vec_robust_below_none_control: {is: observation}
   o_e20_examples_move_apply: {is: observation}
   o_e20_examples_explain_below_threshold: {is: observation}
   o_e20_examples_explain_robust_below_none: {is: observation}
@@ -1861,7 +1874,7 @@ individuals:
   h_common_component_raises_stability: {is: hyp_supported}
   h_specific_component_not_raise_stability: {is: hyp_mixed}
   h_full_vector_raises_stability_beyond_specific: {is: hyp_supported}
-  h_text_shift_raises_stability: {is: hyp_untested}
+  h_text_shift_raises_stability: {is: hyp_refuted}
   h_specific_agrees_with_sense_difference: {is: hyp_refuted}
   h_vector_transfers_beyond_choice_format: {is: hyp_mixed}
   h_specific_composes_from_expression: {is: hyp_untested}
@@ -1869,7 +1882,7 @@ individuals:
   h_attention_carries_text_route: {is: hyp_untested}
   h_model_can_write_cscl: {is: hyp_untested}
   h_typecheck_feedback_raises_writing: {is: hyp_untested}
-  h_qualification_vector_transfers_to_unseen_genus: {is: hyp_untested}
+  h_qualification_vector_transfers_to_unseen_genus: {is: hyp_supported}
   h_qualification_teacher_raises_following: {is: hyp_untested}
   h_modifier_transfers_to_unseen_genus: {is: hyp_supported}
 
@@ -1977,6 +1990,16 @@ individuals:
   b_explain_transfers_to_apply: {is: item_queued}
   h_contrast_vector_lowers_stability: {is: hyp_untested}
   b_contrast_vector_lowers_stability: {is: item_queued}
+  h_common_component_lowers_prior_meaning: {is: hyp_untested}
+  b_common_component_lowers_prior_meaning: {is: item_queued}
+  h_qualification_raises_stability: {is: hyp_untested}
+  b_qualification_raises_stability: {is: item_queued}
+  h_modifier_vector_raises_stability: {is: hyp_untested}
+  b_modifier_vector_raises_stability: {is: item_queued}
+  h_multi_layer_raises_conflict_following: {is: hyp_untested}
+  b_multi_layer_raises_conflict_following: {is: item_queued}
+  h_modifier_vector_raises_conflict_following: {is: hyp_untested}
+  b_modifier_vector_raises_conflict_following: {is: item_queued}
 facts:
   - {is: v_collect, from: residual_space, to: residual_vector}
   - {is: v_sum, from: layer_output, to: state_shift, new: shifted_hidden_state}
@@ -2282,6 +2305,28 @@ facts:
   - {is: v_filter_of, from: {pair: '{pair}', split: '{split}'}, to: e4}
   - {is: v_entry_of, from: '{cond}', to: e4}
   - {is: v_metric_of, from: e4, to: accuracy}
+  - {is: v_file_of, from: 'e22_Qwen2.5-1.5B-Instruct_L8.json', to: e22}
+  - {is: v_rows_of, from: [items], to: e22}
+  - {is: v_axis_of, from: e22_split, to: e22}
+  - {is: v_value_of, from: e22_split_train, to: e22_split}
+  - {is: v_denote, from: e22_split_train, to: seen_genus}
+  - {is: v_value_of, from: e22_split_test, to: e22_split}
+  - {is: v_denote, from: e22_split_test, to: unseen_genus}
+  - {is: v_axis_of, from: e22_cond, to: e22}
+  - {is: v_value_of, from: e22_cond_none, to: e22_cond}
+  - {is: v_denote, from: e22_cond_none, to: no_channel}
+  - {is: v_value_of, from: e22_cond_text, to: e22_cond}
+  - {is: v_denote, from: e22_cond_text, to: text_injection}
+  - {is: v_denote, from: e22_cond_text, to: definition_text}
+  - {is: v_value_of, from: e22_cond_mod, to: e22_cond}
+  - {is: v_denote, from: e22_cond_mod, to: single_layer_vector}
+  - {is: v_denote, from: e22_cond_mod, to: modifier}
+  - {is: v_value_of, from: e22_cond_qual, to: e22_cond}
+  - {is: v_denote, from: e22_cond_qual, to: qualification_vector}
+  - {is: v_filter_of, from: {split: '{split}'}, to: e22}
+  - {is: v_entry_of, from: '{cond}', to: e22}
+  - {is: v_metric_of, from: e22, to: accuracy}
+  - {is: v_metric_of, from: e22, to: order_robust_accuracy}
   - {is: v_file_of, from: 'e5_{model}.json', to: e5}
   - {is: v_axis_of, from: e5_model, to: e5}
   - {is: v_value_of, from: e5_model_15b, to: e5_model}
@@ -4855,6 +4900,10 @@ facts:
   - {is: v_refer, from: o_e7_15_definitions_no_drop, to: {is: v_near, from: e7.redef.gl15.accuracy, to: e7.redef.sys1.accuracy, new: 0.05}}
   - {is: v_refer, from: o_e4_modifier_transfers_in_converged_pair, to: {is: v_come_after, from: e4.p3.test.vec.accuracy, to: e4.p3.test.text.accuracy}}
   - {is: v_refer, from: o_e4_pair1_training_failed, to: {is: v_near, from: e4.p1.train.vec.accuracy, to: 0.5, new: 0.01}}
+  - {is: v_refer, from: o_e22_qual_above_none, to: {is: v_come_after, from: e22.test.qual.accuracy, to: e22.test.none.accuracy}}
+  - {is: v_refer, from: o_e22_qual_robust_above_none, to: {is: v_come_after, from: e22.test.qual.order_robust_accuracy, to: e22.test.none.order_robust_accuracy}}
+  - {is: v_support, from: o_e22_qual_above_none, to: h_qualification_vector_transfers_to_unseen_genus}
+  - {is: v_support, from: o_e22_qual_robust_above_none, to: h_qualification_vector_transfers_to_unseen_genus}
   - {is: v_refer, from: o_e8_paraphrase_like_single_layer, to: {is: v_near, from: e8def.vec.accuracy, to: e6_defqa.L8.accuracy, new: 0.05}}
   - {is: v_refer, from: o_e8_conflict_ge_single_layer, to: {is: v_not_before, from: e8.G2c.vec.accuracy, to: e3.L8_defqa.G2c.vec.accuracy}}
   - {is: v_refer, from: o_e8_control_below_single_layer, to: {is: v_come_before, from: e8.G2k.vec.accuracy, to: e3.L8_defqa.G2k.vec.accuracy}}
@@ -4878,6 +4927,8 @@ facts:
   - {is: v_refer, from: o_e10o_opaque_below_none_control, to: {is: v_come_before, from: 'e10o.G2k.expr_opaque.accuracy', to: 'e10o.G2k.none.accuracy'}}
   - {is: v_refer, from: o_e14_vec_below_none_control, to: {is: v_come_before, from: 'e14.G2k.vec1.accuracy', to: 'e14.G2k.none.accuracy'}}
   - {is: v_refer, from: o_e14_vec_below_near_conflict, to: {is: v_come_before, from: 'e14.G2c.vec1.order_robust_accuracy', to: 'e14.G2c.near.order_robust_accuracy'}}
+  - {is: v_refer, from: o_e14_vec_robust_below_none_conflict, to: {is: v_come_before, from: 'e14.G2c.vec1.order_robust_accuracy', to: 'e14.G2c.none.order_robust_accuracy'}}
+  - {is: v_refer, from: o_e14_vec_robust_below_none_control, to: {is: v_come_before, from: 'e14.G2k.vec1.order_robust_accuracy', to: 'e14.G2k.none.order_robust_accuracy'}}
   - {is: v_refer, from: o_e15_swapped_below_own_conflict, to: {is: v_come_before, from: e15.G2c.swapped.accuracy, to: e15.G2c.own.accuracy}}
   - {is: v_refer, from: o_e15_swapped_below_none_control, to: {is: v_come_before, from: e15.G2k.swapped.accuracy, to: e14.G2k.none.accuracy}}
   - {is: v_refer, from: o_e15_vector_orthogonal_to_text_shift, to: {is: v_near, from: e15c.G2c.cos_centered.mean_value, to: 0.0, new: 0.05}}
@@ -5217,6 +5268,16 @@ facts:
   - {is: v_check, from: b_e14_contrast_vector, to: h_contrast_vector_raises_following}
   - {is: v_refer, from: h_contrast_vector_lowers_stability, to: {is: v_lower, from: contrast_vector, to: verdict_stability}}
   - {is: v_check, from: b_contrast_vector_lowers_stability, to: h_contrast_vector_lowers_stability}
+  - {is: v_refer, from: h_common_component_lowers_prior_meaning, to: {is: v_lower, from: common_vector_component, to: prior_meaning}}
+  - {is: v_check, from: b_common_component_lowers_prior_meaning, to: h_common_component_lowers_prior_meaning}
+  - {is: v_refer, from: h_qualification_raises_stability, to: {is: v_raise, from: qualification_vector, to: verdict_stability}}
+  - {is: v_check, from: b_qualification_raises_stability, to: h_qualification_raises_stability}
+  - {is: v_refer, from: h_modifier_vector_raises_stability, to: {is: v_raise, from: modifier, to: verdict_stability}}
+  - {is: v_check, from: b_modifier_vector_raises_stability, to: h_modifier_vector_raises_stability}
+  - {is: v_refer, from: h_multi_layer_raises_conflict_following, to: {is: v_raise, from: multi_layer_vector, to: redefinition_following}}
+  - {is: v_check, from: b_multi_layer_raises_conflict_following, to: h_multi_layer_raises_conflict_following}
+  - {is: v_refer, from: h_modifier_vector_raises_conflict_following, to: {is: v_raise, from: modifier, to: redefinition_following}}
+  - {is: v_check, from: b_modifier_vector_raises_conflict_following, to: h_modifier_vector_raises_conflict_following}
   - {is: v_check, from: b_e10_opaque_identifiers, to: h_opaque_expression_raises_following}
   - {is: v_check, from: b_e9_scratchpad, to: h_scratchpad_raises_rule_following}
   - {is: v_check, from: b_e9_scratchpad, to: h_scratchpad_raises_rule_following_4b}
@@ -5372,3 +5433,5 @@ facts:
   - {is: v_refer, from: o_e21_common_robust_below_rand, to: {is: v_come_before, from: e21_all.common.order_robust_accuracy, to: e21_all.rand.order_robust_accuracy}}
   - {is: v_contradict, from: o_e21_common_robust_below_none, to: h_common_component_transfers_to_unseen}
   - {is: v_contradict, from: o_e21_common_robust_below_rand, to: h_common_component_transfers_to_unseen}
+  - {is: v_contradict, from: o_e14_vec_robust_below_none_conflict, to: h_text_shift_raises_stability}
+  - {is: v_contradict, from: o_e14_vec_robust_below_none_control, to: h_text_shift_raises_stability}
