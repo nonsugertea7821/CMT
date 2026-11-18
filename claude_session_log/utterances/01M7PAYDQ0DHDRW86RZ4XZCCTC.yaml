@@ -1,0 +1,58 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-18T03:24:28.256Z（UTC）
+individuals:
+  01M7PAYDQ0DHDRW86RZ4XZCCTC:
+    is: model_utterance
+    display: 発言 1515
+    val:
+      order: 1515
+      text: |
+        A を測りました。予測は外れで、残る 6 件の違反に交わり（meet）は 1 つもありませんでした。ただ、外れ方が、さっきのコメントと display の話にそのままつながっています。
+
+        ## 結果（sys_meet、手順は先に登録）
+
+        | 値 | 結果 |
+        |---|---|
+        | 違反の組 | 6 |
+        | 交わりだった組 | 0 |
+        | 数え方の前提の確認（足りない式がある組） | 0（成り立つ） |
+
+        どの組でも、下に来るべきでない概念 x は、自分の上位 p と相手 y の式に加えて、自分の限定をちょうど 1 つ足していました。x は p と y を合わせただけのもの（交わり）ではありません。つまり「上位を 1 つしか書けないから片方を選ばされた」のではなく、x 自身の 1 つの限定が y の式を含意してしまっています。
+
+        ## 解釈（実行後の読みで、登録した判定ではありません）
+
+        6 組のうち 5 組では、y の定義が `refer_from_occurrent`（生起体へ述べる）だけでした。
+
+        | x（違反） | y | 意味の上での区別 |
+        |---|---|---|
+        | run（実行の記録）・attendance（出席の記録）・plan（プラン） | verb_ref（動詞を指すもの） | x は起こったこと（成員）を指す。y は動詞そのもの（種類）を指す |
+        | position | opposite（反対の動詞の指定） | 同じ |
+        | backlog_item（残り項目） | hypothesis（仮説） | 同じ形 |
+
+        「生起体へ述べる」という式は、次の 2 つを区別できていません。
+        - 動詞そのもの（種類、2 階のもの）を指す。
+        - 起こったこと（成員）を指す。
+
+        この区別は今、式の外にしかありません。
+        - `verb_ref` のコメント「この位置には動詞そのものが来る」
+        - 型検査器が `verb_ref` という名前で読み分けているコードの箇所（`type_checker.py:1140` 付近）
+
+        「式に無い意味がコメントやコードに逃げている場所が、体系の誤りとして表に出る」という形が、money の「円」と同じく、ここでもう一度見えたことになります。円は単位（軸）の未分化で、今回は階（種類か成員か）の未分化です。コメントを禁止すべきだという考えを、データの側から支える例になると思います。
+
+        残る 1 組（control_preservation → context_following）は別の型です。control_case が case の下位なので、y の限定を含意しています。y の context_following の定義が「事例に依存する」だけで薄いのが原因だと見ています。
+
+        ## 次
+
+        推奨順どおり C（display のうち式から導けない部分を数える）に進めます。C の測り方なら、今回の型の取り残しも拾えるはずです。例えば「動詞を指すもの」の「動詞そのもの」は、式「生起体へ述べる」からは導けません。
+
+        その前に、今回見つけた「種類を指すか、成員を指すか」の区別を式にする作業（money の単位と同じく、手順を登録して試す）を挟むこともできます。どちらにしますか。特に指示がなければ C に進みます。
+
+        記録は 0066196 で claude/cross に push してあります。CI は GitHub 側で走ります。
+facts:
+- {is: v_say, from: session_model, to: 01M7PAYDQ0DHDRW86RZ4XZCCTC}
+- {is: exp.v_answer, from: 01M7PAYDQ0DHDRW86RZ4XZCCTC, to: 01M7PAV5B5T56XPP9GNYNZ1S7Y}
+- {is: v_refer, from: 01M7PAYDQ0DHDRW86RZ4XZCCTC, to: syntax.refer_from_occurrent}
+- {is: v_refer, from: 01M7PAYDQ0DHDRW86RZ4XZCCTC, to: syntax.verb_ref}
+- {is: v_refer, from: 01M7PAYDQ0DHDRW86RZ4XZCCTC, to: exp.backlog_item}
+- {is: v_refer, from: 01M7PAYDQ0DHDRW86RZ4XZCCTC, to: exp.control_preservation}
+- {is: v_refer, from: 01M7PAYDQ0DHDRW86RZ4XZCCTC, to: exp.context_following}
+- {is: v_refer, from: 01M7PAYDQ0DHDRW86RZ4XZCCTC, to: exp.control_case}
