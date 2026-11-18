@@ -146,6 +146,8 @@ individuals:
   b_individual_scope_by_kind: {is: exp.item_queued}
   h_plural_from: {is: exp.hyp_untested}
   b_plural_from: {is: exp.item_queued}
+  h_reading_ends_resolved: {is: exp.hyp_untested}
+  b_reading_ends_resolved: {is: exp.item_queued}
   h_law_names_grammar: {is: exp.hyp_untested}
   b_law_names_grammar: {is: exp.item_queued}
   h_tops_from_primitives: {is: exp.hyp_supported}
@@ -513,6 +515,8 @@ facts:
   - {is: exp.v_check, from: b_individual_scope_by_kind, to: h_individual_scope_by_kind}
   - {is: v_refer, from: h_plural_from, to: {is: v_refer, from: syntax.many, to: [syntax.from, syntax.to]}}
   - {is: exp.v_check, from: b_plural_from, to: h_plural_from}
+  - {is: v_refer, from: h_reading_ends_resolved, to: {is: v_depend, from: reading_formula, to: declared_scope}}
+  - {is: exp.v_check, from: b_reading_ends_resolved, to: h_reading_ends_resolved}
   - {is: v_refer, from: h_law_names_grammar, to: {is: v_depend, from: type_checker, to: [layer_placement, signature_class, syntax.grammar]}}
   - {is: exp.v_check, from: b_law_names_grammar, to: h_law_names_grammar}
   - {is: v_refer, from: h_tops_from_primitives, to: {is: v_depend, from: top_placement, to: [step_quantification, kind_existence, variable_range]}}
