@@ -17,6 +17,7 @@ nodes:
   check_failure: {display: 検査の失敗, extends: process, mod: {of: [v_involve, from], with: artifact}}
   definition_cycle: {display: 定義の循環, extends: quality, mod: {of: [v_refer, from], with: definition}}
   declared_scope: {display: 宣言の範囲, extends: quality, mod: syntax.refer_from_individuals}
+  run_sentence: {display: 実行の記録へ述べる文, extends: syntax.sentence, mod: {of: [v_refer, from], with: runtime.run}}
   layer_placement: {display: 層の置き場, extends: quality, mod: {of: [v_depend, from], with: syntax.domain}}
   signature_class: {display: シグネチャから定まる分類, extends: quality, mod: {of: [v_depend, from], with: syntax.base}}
   negated_limitation: {display: 否定の限定, extends: quality, mod: {of: [v_refer, from], with: syntax.neg}}
@@ -141,6 +142,10 @@ individuals:
   b_concept_bounds_model_state: {is: exp.item_queued}
   h_given_laws_as_rules: {is: exp.hyp_untested}
   b_given_laws_as_rules: {is: exp.item_queued}
+  h_individual_scope_by_kind: {is: exp.hyp_untested}
+  b_individual_scope_by_kind: {is: exp.item_queued}
+  h_plural_from: {is: exp.hyp_untested}
+  b_plural_from: {is: exp.item_queued}
   h_law_names_grammar: {is: exp.hyp_untested}
   b_law_names_grammar: {is: exp.item_queued}
   h_tops_from_primitives: {is: exp.hyp_supported}
@@ -502,8 +507,12 @@ facts:
   - {is: exp.v_check, from: b_layers_unhardcode, to: h_layers_unhardcode}
   - {is: v_refer, from: h_concept_bounds_model_state, to: {is: v_depend, from: model_state_sentence, to: definition}}
   - {is: exp.v_check, from: b_concept_bounds_model_state, to: h_concept_bounds_model_state}
-  - {is: v_refer, from: h_given_laws_as_rules, to: {is: v_express, from: syntax.law_given, to: syntax.law_rule}}
+  - {is: v_refer, from: h_given_laws_as_rules, to: {is: v_express, from: run_sentence, to: syntax.law_rule}}
   - {is: exp.v_check, from: b_given_laws_as_rules, to: h_given_laws_as_rules}
+  - {is: v_refer, from: h_individual_scope_by_kind, to: {is: v_depend, from: declared_scope, to: syntax.domain}}
+  - {is: exp.v_check, from: b_individual_scope_by_kind, to: h_individual_scope_by_kind}
+  - {is: v_refer, from: h_plural_from, to: {is: v_refer, from: syntax.many, to: [syntax.from, syntax.to]}}
+  - {is: exp.v_check, from: b_plural_from, to: h_plural_from}
   - {is: v_refer, from: h_law_names_grammar, to: {is: v_depend, from: type_checker, to: [layer_placement, signature_class, syntax.grammar]}}
   - {is: exp.v_check, from: b_law_names_grammar, to: h_law_names_grammar}
   - {is: v_refer, from: h_tops_from_primitives, to: {is: v_depend, from: top_placement, to: [step_quantification, kind_existence, variable_range]}}
