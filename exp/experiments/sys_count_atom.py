@@ -45,6 +45,14 @@
 訂正（before を走らせたとき、結果を見る前）: with の終点が個体の式があり、T.ancestors が個体を扱えず止まった。
   script の深さを、終点が個体なら「属する種類の深さ + 1」（属する種類とその祖先を祖先とする）と数える。法則の側の r_ancestor が
   is から上位を導く（parent_by_is）読み方に合わせた。sys_specific_depth の定義は、個体の終点を決めていなかった。
+訂正（after を測ったあと。after は外れ: errors 1, ec_errors 1, mismatch 11。結果はそのまま記録した）:
+  - 誤りは、法則の形の検査（check_laws）が規則の原子の at を受け付けないことだった。前提（assume）の原子に限り、
+    at: {count: c} だけを持つ形を受け付けるようにする。数える原子の変数は、束縛された変数に数えない（外に束縛しないので）。
+  - mismatch 11 は、すべて端が個体の概念だった。法則の r_ancestor は個体に祖先を導かず、上の訂正（個体を種類の深さ + 1）は
+    法則の読み方と合っていなかった。利用者と決めて、個体の端は法則でもスクリプトでも数えない（sys_overextension と同じ）。
+    法則は両方の規則の前提に {is: exists, from: var3} を足す（exists はノードにだけ成り立つ: ノード 670 のすべて、個体 0）。
+    スクリプトは、T.N にない端を深さの計算から除く（端がなければ浅くない）。個体の上位を導くことは、別の実験にする。
+  同じ判定で測り直す（引数 after2）。
 見込み: errors 0、ec_errors 0、changed 0、extra 0。mismatch は 0 か、form を端に持つ概念の数だけ出る。
 
 行（sys_count_atom_<引数>.json）:
@@ -53,7 +61,7 @@
   "rel r":        n（before だけ。関係ごとの文の数と、文の並びのハッシュ）
 
 使い方:
-  python exp/experiments/sys_count_atom.py before|after
+  python exp/experiments/sys_count_atom.py before|after|after2
 """
 import collections
 import contextlib
@@ -114,12 +122,14 @@ def main(label):
     def deep(e):
         if e in T.N:
             return len(T.ancestors(e))
+        if label == "after2":
+            return None
         k = T.q(T.I[e]) if isinstance(T.I.get(e), str) else None
         return 1 + len(T.ancestors(k)) if k in T.N else 0
 
     script, depth = set(), {}
     for y in own:
-        ds = [deep(e) for m in own[y] for e in with_[m]]
+        ds = [d for m in own[y] for e in with_[m] for d in [deep(e)] if d is not None]
         if ds:
             depth[y] = max(ds)
             if max(ds) <= 2:
@@ -154,5 +164,5 @@ def main(label):
 
 
 if __name__ == "__main__":
-    assert sys.argv[1:] in (["before"], ["after"])
+    assert sys.argv[1:] in (["before"], ["after"], ["after2"])
     main(sys.argv[1])
