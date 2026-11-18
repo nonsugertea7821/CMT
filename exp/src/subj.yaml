@@ -33,7 +33,7 @@ nodes:
   # ===== もの =====
   agent: {display: 主体, extends: continuant, mod: {of: [v_perform, from]}}
   person: {display: 人, extends: agent, mod: {of: [v_compose, to], with: agent, neg: true}}
-  person_age_neg: {display: 年齢を問わない人, extends: person, mod: {of: [v_depend, to], with: age, quant: some}}
+  person_age_neg: {display: 年齢を問わない人, extends: person, mod: {of: [v_depend, to], with: age, at: {count: {ge: 1}}}}
   organization: {display: 組織, extends: agent, mod: {of: [v_compose, to], with: person, at: {count: {gt: 1}}}}
   statute: {display: 法律, extends: definition, mod: {of: [v_refer, from], with: organization}}
   legal_personality: {display: 法人格, extends: role, mod: {of: [v_depend, from], with: statute}}
@@ -99,7 +99,7 @@ nodes:
   # ===== 時間 =====
   day: {display: 日, extends: process, mod: {of: [v_weekday_of, to]}}
   business_day: {display: 営業日, extends: day, mod: {of: [v_weekday_of, to], with: sunday, neg: true}}
-  weekday_base: {display: 日曜でない日, extends: day, mod: {of: [v_weekday_of, to], with: sunday, neg: true, quant: some}}
+  weekday_base: {display: 日曜でない日, extends: day, mod: {of: [v_weekday_of, to], with: sunday, neg: true, at: {count: {ge: 1}}}}
   weekday_day: {display: 平日, extends: weekday_base, mod: {of: [v_weekday_of, to], with: monday, neg: true}}
   weekday: {display: 曜日, extends: quality, mod: {of: [v_weekday_of, from]}}
   week_span: {display: 七日間, extends: process, mod: {of: [v_stage, to], with: day, at: {count: 7}}}
