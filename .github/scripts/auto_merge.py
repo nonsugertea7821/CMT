@@ -201,6 +201,29 @@ def merge(head):
         return json.load(r)
 
 
+MARK = "<!-- auto-merge-judgment -->"
+
+
+def api(path, method="GET", body=None):
+    req = urllib.request.Request(f"https://api.github.com/repos/{os.environ['GITHUB_REPOSITORY']}/{path}", method=method,
+                                 data=json.dumps(body).encode() if body is not None else None,
+                                 headers={"Authorization": f"Bearer {os.environ['GITHUB_TOKEN']}",
+                                          "Accept": "application/vnd.github+json"})
+    with urllib.request.urlopen(req) as r:
+        return json.load(r)
+
+
+def comment(text):
+    """判定を PR のコメントに書く。前に書いた判定のコメントがあれば、それを書き換える。"""
+    n = os.environ["PR_NUMBER"]
+    body = MARK + "\n" + text
+    old = [c for c in api(f"issues/{n}/comments?per_page=100") if c["body"].startswith(MARK)]
+    if old:
+        api(f"issues/comments/{old[-1]['id']}", "PATCH", {"body": body})
+    else:
+        api(f"issues/{n}/comments", "POST", {"body": body})
+
+
 def main(base, head, do_merge):
     ref = os.environ.get("HEAD_REF", "")
     reg = not BRANCH.match(ref)
@@ -212,6 +235,8 @@ def main(base, head, do_merge):
         if os.environ.get(k):
             with open(os.environ[k], "a", encoding="utf-8") as f:
                 f.write(v)
+    if do_merge and why:
+        comment("\n".join(lines) + f"\n\n（head {head[:7]}）")
     if do_merge and not why:
         print(merge(head).get("message", ""))
 
