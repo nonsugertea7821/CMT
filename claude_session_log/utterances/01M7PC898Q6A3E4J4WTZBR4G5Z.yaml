@@ -1,0 +1,59 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-18T03:47:19.959Z（UTC）
+individuals:
+  01M7PC898Q6A3E4J4WTZBR4G5Z:
+    is: model_utterance
+    display: 発言 1551
+    val:
+      order: 1551
+      text: |
+        大半は今の体系で書けます。ただ、決定的に足りない語が1つあります。
+
+        **解釈を書く形は、すでにある**
+        claims は、解釈を仮説として書く形をもう持っています。例は `h_tops_derivable` です。
+        - 中身は `v_refer` で書きます: `{is: v_depend, from: top_placement, to: signature_class}`。
+        - 状態は種類で表します: `hyp_untested` / `hyp_supported` / `hyp_refuted`。
+        - 観察とのつながりは `v_support` / `v_contradict` で書きます。
+        - 決定の根拠は `v_ground` で書きます。
+
+        claims のコメント 277 行をこの形に当てはめると、次のように分かれます。
+
+        | コメントの中身 | 書く先 |
+        |---|---|
+        | 結果の数値 | 観察の事実（`o_* v_level ...`）。ほとんどはもう書いてあり、コメントは重複 |
+        | 「h_xxx の語」という見出し | 不要。その語が仮説の中身に出てくることから導ける |
+        | 手順・登録した commit・訂正 | 経緯なので git が持つ |
+        | 「実行の後の読み（登録していない）」 | 仮説として書くはず。ここで詰まる（次の節） |
+
+        **足りないもの: 観察から思いついた、という関係**
+        `hyp_untested` は「支持する観察も、反する観察も持たない仮説」と式で定義されています（exp.yaml:299, 302）。そのため、「この観察を見て、こう読んだ」を `v_support` で書くと、その仮説は未検証でなくなってしまいます。
+
+        これは型の誤りではなく、方法として正しい制約です。データを見てから作った読みを、同じデータで支持されたことにしてはいけないからです。
+
+        ですが「観察 X から着想した（支持ではない）」を言う動詞がありません。示唆・着想に当たる語は、ライブラリにも exp にもありませんでした。だから今まで、読みはコメントに逃げていたのだと思います。
+
+        **もう1つの弱点: 中身の語が薄い**
+        `top_placement`（quality, `mod: refer_from_occurrent`）のような仮説ごとの語は、式がほとんど空で、意味は display に寄っています。形は書けても、中身が display 頼みになるので、前に見た「薄い概念」と同じ問題が残ります。
+
+        **提案**
+        1. 動詞を1つ足します。仮の名前は `v_suggest`（観察 → 仮説、着想した）で、`v_agree` の下には置きません。支持にならないので、`hyp_untested` のまま書けます。言語の設計の決定なので、足してよいか確認させてください。
+        2. 試しに、claims の「読み」3つ程度をこの形で書いてみます。たとえば「一つの after が時間・大小・並びの3つに使われている」や「深さ 0 だけが 30%」です。
+           - 確かめること: 既存の語だけで中身が書けるか、新しい語が要るか、型検査が通るか。
+           - 手順は事前登録します。
+
+        この2つの結果で、claims のコメントを消すだけで済むのか、書き移してから消すのかが決まります。
+facts:
+- {is: v_say, from: session_model, to: 01M7PC898Q6A3E4J4WTZBR4G5Z}
+- {is: exp.v_answer, from: 01M7PC898Q6A3E4J4WTZBR4G5Z, to: 01M7PC6Q8SPJZNPJZ9X6EVC0V7}
+- {is: v_refer, from: 01M7PC898Q6A3E4J4WTZBR4G5Z, to: ontology.v_refer}
+- {is: v_refer, from: 01M7PC898Q6A3E4J4WTZBR4G5Z, to: ontology.v_depend}
+- {is: v_refer, from: 01M7PC898Q6A3E4J4WTZBR4G5Z, to: lang.top_placement}
+- {is: v_refer, from: 01M7PC898Q6A3E4J4WTZBR4G5Z, to: lang.signature_class}
+- {is: v_refer, from: 01M7PC898Q6A3E4J4WTZBR4G5Z, to: exp.hyp_untested}
+- {is: v_refer, from: 01M7PC898Q6A3E4J4WTZBR4G5Z, to: exp.hyp_supported}
+- {is: v_refer, from: 01M7PC898Q6A3E4J4WTZBR4G5Z, to: exp.hyp_refuted}
+- {is: v_refer, from: 01M7PC898Q6A3E4J4WTZBR4G5Z, to: exp.v_support}
+- {is: v_refer, from: 01M7PC898Q6A3E4J4WTZBR4G5Z, to: exp.v_contradict}
+- {is: v_refer, from: 01M7PC898Q6A3E4J4WTZBR4G5Z, to: exp.v_ground}
+- {is: v_refer, from: 01M7PC898Q6A3E4J4WTZBR4G5Z, to: ontology.v_level}
+- {is: v_refer, from: 01M7PC898Q6A3E4J4WTZBR4G5Z, to: syntax.refer_from_occurrent}
+- {is: v_refer, from: 01M7PC898Q6A3E4J4WTZBR4G5Z, to: ontology.v_agree}
