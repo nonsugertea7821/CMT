@@ -18,6 +18,11 @@
      訂正・mixed・評価器や文法の変更は手で見る。前提は仮説 `h_auto_merge_uncorrected`。
    - 自動マージに乗せるため、事前登録の commit はスクリプトだけを触り、結果ファイルは後の commit で足す。
 
+## ブランチ
+- マージしたブランチは消す。自動マージしたものはワークフローが消す。手でマージしたものは、マージのときに消す（GitHub の Delete branch）。
+- 残すのは、main、作業中のブランチ（開いている PR があるもの）、セッションの記録のブランチ `claude/session-log-<ユーザー名>`。
+- このセッションの環境からはブランチを消せない（push の削除が拒まれる）。消すのは利用者か、ワークフロー。
+
 ## 体系のファイル（cscl.yaml, cscl/library, cscl/design, exp/src の yaml）
 - コメントを足さない。定義に効く内容は式で書く。経緯と解釈は commit のメッセージと会話に書く。
   - `.claude/hooks/no_new_comments.py` が、ファイルを書いたときと `git commit` の前に検査する。
