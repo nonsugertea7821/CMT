@@ -171,7 +171,7 @@ individuals:
   r_root: {is: law_relation, display: 根である}
   r_verb: {is: law_relation, display: 動詞である}
   r_placed: {is: law_relation, display: 定義から根の下に置かれる}
-  r_sees: {is: law_relation, display: 自分の領域から見える概念である}
+  r_near: {is: law_relation, display: 上位の下にある別の概念である（見えるかを問わない）}
   r_candidate: {is: law_relation, display: 具体的な候補である}
   r_missing: {is: law_relation, display: 候補の式が欠けている}
   r_same_slot: {is: law_relation, display: 同じ動詞の同じ位置の限定である}
@@ -231,7 +231,7 @@ individuals:
   placed_deduced: {is: law_rule, display: 動詞でない概念は、定義から根の下に置かれる（根への宣言だけでは置かれない）}
   monotone: {is: law_rule, display: 階層を降りるたびに限定が増える}
   parents_unordered: {is: law_rule, display: 上位に並べた2つは、上下の関係にない}
-  sees: {is: law_rule, display: 自分の領域から、相手の領域が見える}
+  sees: {is: law_rule, display: 別の概念のうち、自分の領域から見えるものが候補}
   specific_candidate: {is: law_rule, display: 上位の下にあり、互いに上下でない別の概念}
   qualified_by_neg: {is: law_rule, display: 否定の付いた限定}
   qualified_by_quant: {is: law_rule, display: 数量の付いた限定}
@@ -472,12 +472,12 @@ facts:
   - {is: v_assume, from: specific_candidate, to: {is: same, from: var1, to: var2, neg: true}}
   - {is: v_assume, from: specific_candidate, to: {is: r_ancestor, from: var1, to: var2, neg: true}}
   - {is: v_assume, from: specific_candidate, to: {is: r_ancestor, from: var2, to: var1, neg: true}}
-  - {is: v_assume, from: specific_candidate, to: {is: r_sees, from: var1, to: var2}}
-  - {is: v_derive, from: specific_candidate, to: {is: r_candidate, from: var1, to: var2}}
+  - {is: v_derive, from: specific_candidate, to: {is: r_near, from: var1, to: var2}}
+  - {is: v_assume, from: sees, to: {is: r_near, from: var1, to: var2}}
   - {is: v_assume, from: sees, to: {is: domain, from: var1, to: var3}}
   - {is: v_assume, from: sees, to: {is: domain, from: var2, to: var4}}
   - {is: v_assume, from: sees, to: {is: r_visible, from: var3, to: var4}}
-  - {is: v_derive, from: sees, to: {is: r_sees, from: var1, to: var2}}
+  - {is: v_derive, from: sees, to: {is: r_candidate, from: var1, to: var2}}
   - {is: v_assume, from: qualified_by_neg, to: {is: neg, from: var1, to: var2}}
   - {is: v_derive, from: qualified_by_neg, to: {is: r_qualified, from: var1}}
   - {is: v_assume, from: qualified_by_quant, to: {is: quant, from: var1, to: var2}}
