@@ -1,0 +1,42 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-18T14:13:53.115Z（UTC）
+individuals:
+  01M7QG3HAVT9D7B5SBQBERXG96:
+    is: model_utterance
+    display: 発言 1975
+    val:
+      order: 1975
+      text: |
+        未検証の言語の仮説のうち、#210 から出た4つを中心に順序を考えました。結論は、**1. h_individual_scope_by_kind → 2. h_plural_from → 3. h_given_laws_as_rules → 4. h_law_names_grammar → 5. h_renaming_invariant** の順です。
+
+        **1. h_individual_scope_by_kind（個体を名指す範囲は領域で決まる）**
+        - 3と4の前提になるので、最初に置きます。
+        - 別の領域の個体を名指せるべきだと分かれば、5つの法則を claims から直接名指せます。そうなれば、3の主語を run_sentence に替える必要はありませんでした。
+        - 4も、法則の名前を文法の語にすべきか、個体のまま名指せばよいかが、ここで変わります。
+        - 調べ方は軽く済みます。体系の中で、別の領域の個体を名指したかったのに、種類で代用したり書けなかったりした箇所を数えます。
+
+        **2. h_plural_from（始点にも複数を置ける）**
+        - ほかの仮説から独立していて、小さく済みます。主に型検査器が事実を集める部分を見ます。
+        - 先に決めておくと、3の事前登録の書き方が変わります。始点に複数を置けるなら、「5つの法則」を1つの式で述べられます。
+
+        **3. h_given_laws_as_rules（5つの法則を規則で書ける）**
+        - 重い仮説です。step・frame・halt を規則として書き直し、v_govern の始点の定義も直す必要があります。
+        - 結果は、法則ごとに分かれる見込みです（mixed）。この結果が、4で残る範囲を決めます。
+
+        **4. h_law_names_grammar（法則の名前を文法の語にする）**
+        - 3で規則にできなかった法則だけが対象になるので、3の後に置きます。
+        - 先にやると、規則にできる法則まで文法の語にしてしまいます。
+
+        **5. h_renaming_invariant（型検査器は名前の選び方に依らない）**
+        - 式が、反証された h_layers_unhardcode の前半と同じです。
+        - 3と4が済めば、名前を読む箇所が文法の語だけになるはずです。そうなって初めて、改めて確かめる意味が出ます。
+
+        **ほかの仮説との関係**
+        - **実験の側:** h_leap_reaches_agreement（#197）と h_leap_lowers_chain（#198）は、操作者の発話についての実験です。上の5つとは独立しているので、合間に入れられます。
+        - **バックログ:** h_concept_bounds_model_state は「概念とは何か」が先に要るので、上の流れの後に回します。
+        - **並べなかったもの:** h_placement_in_laws と h_negation_formula も「型検査器に依らない」という形の仮説です。ただ、扱うのは層の置き場と否定で、上の流れの外にあるので並べていません。
+
+        1の事前登録から始めます。
+facts:
+- {is: v_say, from: session_model, to: 01M7QG3HAVT9D7B5SBQBERXG96}
+- {is: exp.v_answer, from: 01M7QG3HAVT9D7B5SBQBERXG96, to: 01M7QG2TFY9G2WHZX4DJ5RB9GM}
+- {is: v_refer, from: 01M7QG3HAVT9D7B5SBQBERXG96, to: syntax.v_govern}
