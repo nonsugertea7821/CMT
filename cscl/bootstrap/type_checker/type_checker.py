@@ -180,8 +180,9 @@ def in_scope(key):
     c = config()
     excl = {p.resolve() for g in c.get("exclude") or [] for p in ROOT.glob(g)}
     return sorted({p.resolve() for g in c.get(key) or [] for p in ROOT.glob(g)} - excl)
-TOPS = ("ontology.continuant", "ontology.occurrent")
-LAYERS = ("signature", "ontology", "syntax", "runtime", "std")   # 言語の層。下の層は上の層を参照しない
+TOPS = ()   # 最上位（持続体と生起体）。名前でなく式で決める（tops_of）。読み込みのあと load が置く
+VERBATIM_TO = set()   # 終点が字そのもの（verbatim の種類）である動詞。読み込みのあと load が置く
+LAYERS = []   # 言語の層。シグネチャと、cscl.yaml の library に書いたファイルの領域を、その順に。読み込みのあと load が置く
 LOCALS, USES, _SCOPES = {}, {}, {}   # 領域 → その領域のノードの名前 / 使う領域 / 名前の解決表
 errors = []
 
@@ -249,6 +250,17 @@ def uses_in(D, dom):
             and (f.get("is") == "syntax.v_use" or (f.get("is") == "v_use" and ("v_use" not in local or dom == "syntax")))]
 
 
+def tops_of(N):
+    """最上位: 上位も、位置（of・form）も、状態の関係（holds）も持たず、always か sometime を持つノード。
+    always（ステップをまたいで在る）が持続体、sometime（在ることが変わる）が生起体。(持続体, 生起体) を返す。"""
+    c = [x for x, n in N.items() if not ({"extends", "of", "form", "holds"} & set(n)) and "always" in n]
+    o = [x for x, n in N.items() if not ({"extends", "of", "form", "holds"} & set(n)) and "sometime" in n]
+    if len(c) != 1 or len(o) != 1:
+        err(f"最上位が式から1つに決まらない（always: {c}、sometime: {o}）")
+        return tuple(c[:1] + o[:1])
+    return c[0], o[0]
+
+
 def load(name):
     """公理（root）と言語の層（library）を読み、1つの体系 O にまとめる。
     ノードは「層.名前」、個体は名前のまま。層のファイルの中の語は、その層と使う層の順に解決する（scope_of）。"""
@@ -265,8 +277,6 @@ def load(name):
     V = {i for _, D in [(name, A)] + libs for i, x in (D.get("individuals") or {}).items() if short(x.get("is")) == "variable"}
     for fname, D in [(name, A)] + libs:
         dom = D.get("domain")
-        if dom not in LAYERS:
-            err(f"{fname}: 層 {dom} は、言語の層 {LAYERS} にない")
         for sec in ("base", "axes", "grammar", "runtime"):
             for k, v in (D.get(sec) or {}).items():
                 if k in O[sec]:
@@ -284,6 +294,14 @@ def load(name):
             O["_idom"][iid] = dom
         O["facts"] += [q_fact(f, dom, V) for f in D.get("facts") or []]
     core_sections(O)
+    for fname, D in libs:
+        if D.get("domain") not in O["domains"]:
+            err(f"{fname}: 層 {D.get('domain')} は、領域の個体として書かれていない")
+    global TOPS
+    TOPS = tops_of(O["nodes"])
+    VERBATIM_TO.clear()
+    VERBATIM_TO.update(short(x) for x, n in O["nodes"].items() if n.get("to") in O["nodes"] and O["nodes"][n["to"]].get("verbatim"))
+    LAYERS[:] = list(dict.fromkeys([A.get("domain")] + [D.get("domain") for _, D in libs]))
     return O
 
 
@@ -689,6 +707,34 @@ class Ontology:
                     self.mod_name[(nid, i)] = m
         # 真偽を返す範囲の判定式。値の一種。gt などは文法の function、between は述語論理の語
         self.funcs = {op: 1 for op in self.G["function"]} | ({"between": 2} if "between" in self.G["logic"] else {})
+        self.anchor()
+
+    def anchor(self):
+        """検査が読む語を、名前でなく式から決める。どれも、条件に当たるノードがちょうど1つであることを確かめる。"""
+        N = self.N
+        self.top_c, self.top_o = (TOPS + (None, None))[:2]
+        mods = lambda x: [m for m in N[x].get("mod") or [] if isinstance(m, dict)]
+        atoms = lambda x: [(a.get("is"), a.get("from"), a.get("to"), bool(a.get("neg"))) for a in N[x].get("holds") or []]
+
+        def one(what, xs):
+            if len(xs) != 1:
+                err(f"{what} が式から1つに決まらない（{sorted(xs)}）")
+            return xs[0] if xs else None
+
+        under_o = [x for x, n in N.items() if n.get("extends") == self.top_o]
+        self.v_relate = one("関係づける（在るものどうしの動詞）", [x for x in under_o if N[x].get("from") == "any" and N[x].get("to") == "any"
+                                                   and sorted(atoms(x)) == [("exists", "from", None, False), ("exists", "to", None, False)]])
+        self.v_is = one("属する", [x for x, n in N.items() if n.get("extends") == self.v_relate and "to" in n and "holds" not in n])
+        self.v_depend = one("依存する", [x for x in under_o if atoms(x) == [("depend", "from", "to", False)]
+                                       and N[x].get("from") == self.top_c and N[x].get("to") == self.top_c])
+        self.v_parts = [x for x in under_o if atoms(x) == [("part", "from", "to", False)]]
+        self.sdc = one("特定依存持続体", [x for x in N if any(m.get("of") == [self.v_depend, "from"] and (m.get("at") or {}).get("count") == 1
+                                                         and not m.get("neg") and "with" not in m for m in mods(x))])
+        self.quality = one("質", [x for x, n in N.items() if n.get("extends") == self.sdc and any(m.get("neg") for m in mods(x))])
+        self.magnitude = one("大きさ", [x for x, n in N.items() if n.get("extends") == self.quality
+                                      and any(m.get("with") == self.quality and not m.get("neg") for m in mods(x))])
+        self.verb_ref = one("動詞を指すもの", [x for x in N if any(m.get("of") == [self.v_is, "to"] and m.get("with") == self.top_o
+                                                          and not m.get("neg") for m in mods(x))])
 
     def check_grammar(self):
         """文法の語が、体系のノードに当たっていること。体系の各節が、文法に書かれた語だけを使っていること。"""
@@ -820,7 +866,7 @@ class Ontology:
         n = self.N[nid]
         out = [n["extends"]] if isinstance(n.get("extends"), str) else []
         for m in n.get("mod") or []:
-            if isinstance(m, dict) and m.get("of") == ["ontology.is", "from"] and not m.get("neg") and m.get("with") in self.N:
+            if isinstance(m, dict) and m.get("of") == [self.v_is, "from"] and not m.get("neg") and m.get("with") in self.N:
                 out.append(m["with"])
         return out
 
@@ -1104,7 +1150,7 @@ class Ontology:
 
     def grounding(self, nid):
         return [m["with"] for x in [nid] + self.ancestors(nid) for m in (self.N[x].get("mod") or [])
-                if isinstance(m, dict) and m.get("of") == ["ontology.v_depend", "from"] and "with" in m and not m.get("neg")
+                if isinstance(m, dict) and m.get("of") == [self.v_depend, "from"] and "with" in m and not m.get("neg")
                 and self.is_a(m["with"], "definition")]
 
     def check(self):
@@ -1146,7 +1192,7 @@ class Ontology:
                 err(f"{nid}: 上位がない、または未定義")
                 continue
             if self.is_verb(nid):
-                if not self.is_a(nid, "occurrent"):
+                if not self.is_a(nid, self.top_o):
                     err(f"{nid}: 動詞は生起体の下に置く")
                 if self.is_verb(self.up(nid)):
                     if not any(k in n for k in ("from", "to", "mod")) and len(self.parents(nid)) < 2:
@@ -1157,7 +1203,7 @@ class Ontology:
                 self.check_spot(n["of"], nid)
                 if "with" in n and n["with"] not in N and n["with"] != "any":
                     err(f"{nid}: with の {n['with']} が未定義")
-                if not self.is_a(nid, "specifically_dependent_continuant"):
+                if not self.is_a(nid, self.sdc):
                     err(f"{nid}: 修飾語は特定依存持続体の下に置く")
             elif not (n.get("mod") or n.get("val") or n.get("cmp") or len(self.parents(nid)) > 1):
                 err(f"{nid}: 式がない")
@@ -1176,7 +1222,7 @@ class Ontology:
             if "axis" in n:
                 if n["axis"] not in AX or AX[n["axis"]]["value"] != "number":
                     err(f"{nid}: axis {n['axis']} は数の軸でない")
-                if not self.is_a(nid, "quality"):
+                if not self.is_a(nid, self.quality):
                     err(f"{nid}: axis を持てるのは質だけ")
             for i, m in enumerate(n.get("mod") or []):
                 where = f"{nid}.mod[{i}]"
@@ -1194,10 +1240,10 @@ class Ontology:
                     other = {"from": "to", "to": "from"}.get(pos)
                     if other is None:
                         err(f"{where}: 位置 new には with を付けられない")
-                    elif verb == "ontology.is" and other == "to":   # 「属する」の終点は、種類そのもの（その成員ではない）
+                    elif verb == self.v_is and other == "to":   # 「属する」の終点は、種類そのもの（その成員ではない）
                         if m["with"] not in N or not self.is_concept(m["with"]):
                             err(f"{where}: {m['with']} は種類でない")
-                    elif self.is_a(self.end(verb, other), "verb_ref"):   # 動詞を受け取る位置: 来るのは動詞そのもの
+                    elif self.is_a(self.end(verb, other), self.verb_ref):   # 動詞を受け取る位置: 来るのは動詞そのもの
                         if not self.is_verb(m["with"]):
                             err(f"{where}: {m['with']} は動詞でない。{verb} の {other} は動詞を受け取る")
                     elif (m["with"] not in N and m["with"] not in self.I) or not self.overlaps(m["with"], self.end(verb, other)):
@@ -1253,7 +1299,7 @@ class Ontology:
         """個数の事実が、種類の式の個数の限定に入っていること。"""
         for f, v in x.items():
             f = self.q(f)
-            if isinstance(v, (int, float)) and not isinstance(v, bool) and f in self.N and not self.is_a(f, "magnitude"):
+            if isinstance(v, (int, float)) and not isinstance(v, bool) and f in self.N and not self.is_a(f, self.magnitude):
                 for m in self.mods_of(kind):
                     want = (m.get("at") or {}).get("count")
                     if want is not None and m.get("with") in self.N and self.is_a(f, m["with"]) and not self.count_ok(want, v):
@@ -1300,9 +1346,9 @@ class Ontology:
 
 def natural_language_only_in_ja(name, x, path=()):
     """自然言語を書けるのは、表示名 display だけ。例外は、字そのものが値であるもの:
-    最上位2つの gloss、選択肢の字（val.text）、結果ファイルでの書き方（v_spell の終点）。"""
+    最上位2つの gloss、選択肢の字（val.text）、終点が字そのもの（verbatim）である動詞の事実。"""
     if isinstance(x, dict):
-        if x.get("is") == "v_spell":
+        if short(x.get("is")) in VERBATIM_TO:
             return
         for k, v in x.items():
             natural_language_only_in_ja(name, v, path + (str(k),))
@@ -1310,7 +1356,7 @@ def natural_language_only_in_ja(name, x, path=()):
         for v in x:
             natural_language_only_in_ja(name, v, path)
     elif isinstance(x, str) and re.search(r"[^\x00-\x7f]", x):
-        top = path[:1] == ("nodes",) and path[-1] == "gloss" and path[1] in ("continuant", "occurrent", "any")
+        top = path[:1] == ("nodes",) and path[-1] == "gloss" and path[1] in {short(t) for t in TOPS} | {"any"}
         opt = path[:1] == ("individuals",) and path[-2:] == ("val", "text")
         if path[-1:] != ("display",) and not top and not opt:
             err(f"{name} {'.'.join(path)}: 自然言語は表示名 display にだけ書く（{x[:20]}）")
@@ -1360,8 +1406,13 @@ def register_domains(O):
     return [(d, files[d]) for d in order]
 
 
-PART_WORDS = {"from": ("の部分である", "の時間的な部分である"), "to": ("を部分に持つ", "を時間的な部分に持つ")}
-PART_VAGUE = ("から部分になる", "へ部分になる", "から時間的な部分になる", "へ時間的な部分になる")
+def part_words(T):
+    """部分の言い方。部分の動詞（holds が部分の文だけの動詞）の表示語から作る。
+    (明示した言い方 {from: 部分である側, to: 部分に持つ側}, 曖昧な言い方)。助詞と語尾は日本語の文法なので、ここに書く。"""
+    stems = [T.N[v]["display"].removesuffix("になる") for v in T.v_parts if T.N[v].get("display")]
+    words = {"from": tuple(f"の{s}である" for s in stems), "to": tuple(f"を{s}に持つ" for s in stems)}
+    vague = tuple(f"{p}{T.N[v]['display']}" for v in T.v_parts if T.N[v].get("display") for p in ("から", "へ"))
+    return words, vague
 
 
 def presumed_worlds():
@@ -1522,6 +1573,7 @@ def check_parts(T):
             for X in mods(kind(a), "whole"):
                 if isa(kind(b), X):
                     err(f"法則 part_fact_direction に反する: {name} の事実 {a} は {b} の部分だが、{a} の種類は {X} を部分に持つと限定されている")
+    PART_WORDS, PART_VAGUE = part_words(T)
     for nid, n in T.N.items():
         disp = n.get("display") or ""
         if T.is_verb(nid):
@@ -1570,13 +1622,12 @@ def build():
     領域のファイルは自分で見つけ、使う領域の順に読む。どの領域も同じ扱いで読み、領域に固有の中身の検査はしない（check_all が呼ぶ）。"""
     O = load(root_name())
     natural_language_only_in_ja(root_name(), yload(open(SPEC / root_name())))
-    for p in in_scope("std"):
-        natural_language_only_in_ja(str(p.relative_to(ROOT)), yload(open(p)))
     order = register_domains(O)
     Dm = {}
     for dom, name in order:
-        natural_language_only_in_ja(name, yload(open(SPEC / name)))
         Dm[dom] = (name, merge_domain(name, O))
+        VERBATIM_TO.update(short(x) for x, n in O["nodes"].items() if n.get("to") in O["nodes"] and O["nodes"][n["to"]].get("verbatim"))
+        natural_language_only_in_ja(name, yload(open(SPEC / name)))
     T = Ontology(O)
     core = {iid: dict(x) for iid, x in (O.get("individuals") or {}).items()}
     for iid, x in core.items():
