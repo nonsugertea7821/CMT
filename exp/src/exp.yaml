@@ -12,6 +12,7 @@ nodes:
   agree_from_prior_meaning: {display: 元の意味へ一致する（始点）, extends: quality, of: [v_agree, from], with: prior_meaning}
   refer_from_verdict: {display: 判定へ述べる（始点）, extends: quality, of: [v_refer, from], with: verdict}
   compose_from_context: {display: 文脈へ部分になる（始点）, extends: quality, of: [v_compose, from], with: context}
+  compose_from_utterance: {display: 発話へ部分になる（始点）, extends: quality, of: [v_compose, from], with: utterance}
   stage_to_v_speak_reason: {display: 理由を発話するへ時間的な部分になる（終点）, extends: quality, of: [v_stage, to], with: v_speak_reason}
   refer_from_question: {display: 設問へ述べる（始点）, extends: quality, of: [v_refer, from], with: question}
   compose_from_question: {display: 設問へ部分になる（始点）, extends: quality, of: [v_compose, from], with: question}
@@ -131,6 +132,15 @@ nodes:
   glossary_head: {display: 用語集の先頭, extends: definition_compose_from_glossary, mod: {of: [v_come_after, from], with: definition, neg: true}}
   operator: {display: 運用者, extends: continuant, mod: {of: [v_design, from], with: experiment_protocol}}
   operator_speech: {display: 運用者の発言, extends: continuant, mod: speak_to_operator}
+  utterance: {display: 発話, extends: passage, mod: {of: [v_speak, to]}}
+  utterance_quality: {display: 発話の質, extends: quality, mod: {of: [v_depend, from], with: utterance}}
+  prosody: {display: 韻律, extends: utterance_quality, mod: {of: [v_express, to], with: word}}
+  prosodic_modifier: {display: 韻律で書かれる修飾, extends: modifier, mod: {of: [v_express, from], with: prosody}}
+  naturalness: {display: 発話の自然さ, extends: utterance_quality, mod: {of: [v_judge, to], with: operator}}
+  utterance_sentence: {display: 発話の部分である文, extends: sentence, mod: compose_from_utterance}
+  example_in_utterance: {display: 発話の中の例示, extends: sentence_refer_from_case, mod: compose_from_utterance}
+  contrast_in_utterance: {display: 発話の中の対比, extends: utterance_sentence, mod: {of: [v_refer, from], with: information_entity, at: {count: {gt: 1}}}}
+  followup_question: {display: 発話に返る問い, extends: quality, mod: {of: [v_depend, from], with: operator_speech}}
   attribution: {display: 運用者へ帰する文, extends: sentence, mod: {of: [v_refer, from], with: operator}}
   protocol_sentence: {display: 取り決めの部分である文, extends: sentence, mod: {of: [v_compose, from], with: experiment_protocol}}
   correction: {display: 訂正, extends: protocol_sentence, mod: come_after_from_observation}
@@ -1881,6 +1891,14 @@ individuals:
   o_sys_denote_meets_meets: {is: observation}
   o_sys_denote_meets_empty: {is: observation}
 
+  h_prosody_carries_mod: {is: hyp_untested}
+  b_prosody_carries_mod: {is: item_queued}
+  h_prosody_lowers_followup: {is: hyp_untested}
+  b_prosody_lowers_followup: {is: item_queued}
+  h_example_lowers_followup: {is: hyp_untested}
+  b_example_lowers_followup: {is: item_queued}
+  h_contrast_lowers_followup: {is: hyp_untested}
+  b_contrast_lowers_followup: {is: item_queued}
 facts:
   - {is: v_collect, from: residual_space, to: residual_vector}
   - {is: v_sum, from: layer_output, to: state_shift, new: shifted_hidden_state}
@@ -5152,3 +5170,11 @@ facts:
   - {is: v_report, from: pw_christ2025_relation_operators, to: o_pr_christ_above_majority}
   - {is: v_refer, from: o_pr_christ_arithmetic_above_general, to: {is: v_come_after, from: pr_christ.arithmetic_heldout.mean_value, to: pr_christ.extended_test.mean_value}}
   - {is: v_report, from: pw_christ2025_relation_operators, to: o_pr_christ_arithmetic_above_general}
+  - {is: v_refer, from: h_prosody_carries_mod, to: {is: v_depend, from: naturalness, to: prosodic_modifier}}
+  - {is: v_check, from: b_prosody_carries_mod, to: h_prosody_carries_mod}
+  - {is: v_refer, from: h_prosody_lowers_followup, to: {is: v_lower, from: prosodic_modifier, to: followup_question}}
+  - {is: v_check, from: b_prosody_lowers_followup, to: h_prosody_lowers_followup}
+  - {is: v_refer, from: h_example_lowers_followup, to: {is: v_lower, from: example_in_utterance, to: followup_question}}
+  - {is: v_check, from: b_example_lowers_followup, to: h_example_lowers_followup}
+  - {is: v_refer, from: h_contrast_lowers_followup, to: {is: v_lower, from: contrast_in_utterance, to: followup_question}}
+  - {is: v_check, from: b_contrast_lowers_followup, to: h_contrast_lowers_followup}
