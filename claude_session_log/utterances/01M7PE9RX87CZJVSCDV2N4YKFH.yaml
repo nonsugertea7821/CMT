@@ -1,0 +1,29 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-18T04:23:05.896Z（UTC）
+individuals:
+  01M7PE9RX87CZJVSCDV2N4YKFH:
+    is: model_utterance
+    display: 発言 1595
+    val:
+      order: 1595
+      text: |
+        はい、その流れで成り立ちます。今の仕組みに当てはめると、こうなります。
+
+        1. **issue が立つ。** 仮説を登録したブランチが main に入ると、sync が issue を作ります。
+        2. **Draft PR を立てる。** 仮説ごとにブランチを切り、最初の commit を事前登録（手順と判定）にします。PR の本文で issue を参照します。事前登録が PR の履歴の先頭に残るので、結果より前に決めたことが PR の上で見えます。
+        3. **観察と解釈をつける。** 測った結果と観察を体系に書き、仮説を v_support か v_contradict で結んで状態を変えます。解釈は体系のファイルに書かない取り決めなので、commit メッセージと PR 本文に書きます。issue の「説明」「経緯」に書いてもよいです。
+        4. **Open にする。** ec が通り、状態が支持か反証になったら、私が Draft を外します。外すのは「確認してほしい」という合図だけで、承認でもマージでもありません。
+        5. **確認してマージする。** 利用者がマージします。main への push で sync が状態を読み、issue を閉じます。
+
+        決めてほしいことが二つあります。
+
+        - **mixed（支持も反証もある）になったとき。** 体系には mixed の状態があります。これも Open にして見てもらう形でよいですか。外れて訂正し、未検証のまま残る場合は Draft のままにします。
+        - **ブランチ名。** たとえば `claude/h_<仮説名>` でよいですか。
+
+        もう一つ、順番の制約があります。今の6つの仮説は claude/cross にしかないので、claude/cross が main に入るまで issue が立ちません。この流れで最初の仮説を始めるのは、その後になります。
+
+        この二点が決まったら、流れを CLAUDE.md に書き足して push します。
+facts:
+- {is: v_say, from: session_model, to: 01M7PE9RX87CZJVSCDV2N4YKFH}
+- {is: exp.v_answer, from: 01M7PE9RX87CZJVSCDV2N4YKFH, to: 01M7PE9BJXJG5CK2AZBG22W62S}
+- {is: v_refer, from: 01M7PE9RX87CZJVSCDV2N4YKFH, to: exp.v_support}
+- {is: v_refer, from: 01M7PE9RX87CZJVSCDV2N4YKFH, to: exp.v_contradict}
