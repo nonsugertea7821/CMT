@@ -1,0 +1,40 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-18T14:05:26.942Z（UTC）
+individuals:
+  01M7QFM30YHVMJFSNPCAPB8N2C:
+    is: model_utterance
+    display: 発言 1969
+    val:
+      order: 1969
+      text: |
+        2つの含意を仮説として登録し、h_given_laws_as_rules の式を直しました。PR #217 です。新しい概念を1つ足したので、自動マージには乗りません。手で見てください。tc と ec は手元で通っています。
+
+        **h_given_laws_as_rules の修正**
+        - 前の式 `v_express(law_given, law_rule)` は、書き方で決まる種類を主語にしていました。
+        - 新しい式は `v_express(run_sentence, law_rule)` です。
+        - run_sentence は新しく足した概念で、表示は「実行の記録へ述べる文」です。runtime の5つの法則は、どれも実行の記録へ述べる文なので、ここに入ります。
+        - 主語を、書き方ではなく中身で決まる種類に替えたことになります。
+
+        **新しい仮説**
+        - **h_individual_scope_by_kind** `v_depend(declared_scope, syntax.domain)`
+          - 個体を名指せる範囲は、宣言した領域で決まる、という仮説です。
+          - 確かめたいのは、別の領域の個体を種類を通してしか語れなくても、言うべきことを言い切れるかです。
+        - **h_plural_from** `v_refer(syntax.many, [syntax.from, syntax.to])`
+          - 終点と同じく、始点にも複数を置けるようにする、という仮説です。
+
+        **作業の途中で、さらに2つ見えたこと**
+        - 法則の種類は、文法に挙げた2つ（law_rule と law_given）に閉じていて、下位を足せません。そのため run_sentence は、法則の下位ではなく、文の下位に置きました。その分 run_sentence は法則でない文も含むので、確かめる段では5つの法則に絞ります。
+        - 法則を実行の記録に掛ける動詞 v_govern は、始点を law_given に限っています。法則を law_rule で書き直すなら、v_govern の定義も一緒に直す必要があります。h_given_laws_as_rules を確かめるときに扱います。
+facts:
+- {is: v_say, from: session_model, to: 01M7QFM30YHVMJFSNPCAPB8N2C}
+- {is: exp.v_answer, from: 01M7QFM30YHVMJFSNPCAPB8N2C, to: 01M7QFFMV8R7DEV9GKXGXMF1JT}
+- {is: v_refer, from: 01M7QFM30YHVMJFSNPCAPB8N2C, to: ontology.v_express}
+- {is: v_refer, from: 01M7QFM30YHVMJFSNPCAPB8N2C, to: syntax.law_given}
+- {is: v_refer, from: 01M7QFM30YHVMJFSNPCAPB8N2C, to: syntax.law_rule}
+- {is: v_refer, from: 01M7QFM30YHVMJFSNPCAPB8N2C, to: ontology.v_depend}
+- {is: v_refer, from: 01M7QFM30YHVMJFSNPCAPB8N2C, to: lang.declared_scope}
+- {is: v_refer, from: 01M7QFM30YHVMJFSNPCAPB8N2C, to: syntax.domain}
+- {is: v_refer, from: 01M7QFM30YHVMJFSNPCAPB8N2C, to: ontology.v_refer}
+- {is: v_refer, from: 01M7QFM30YHVMJFSNPCAPB8N2C, to: syntax.many}
+- {is: v_refer, from: 01M7QFM30YHVMJFSNPCAPB8N2C, to: syntax.from}
+- {is: v_refer, from: 01M7QFM30YHVMJFSNPCAPB8N2C, to: syntax.to}
+- {is: v_refer, from: 01M7QFM30YHVMJFSNPCAPB8N2C, to: syntax.v_govern}
