@@ -957,6 +957,17 @@ individuals:
   sys_ja_case_frame_cond_viol_occ: {is: axis_value, val: {text: viol_occ}}
   sys_ja_case_frame_cond_rate_occ: {is: axis_value, val: {text: rate_occ}}
   sys_ja_case_frame_cond_frame_classes: {is: axis_value, val: {text: frame_classes}}
+  sys_ja_roundtrip: {is: measurement_family}
+  sys_ja_roundtrip_cond: {is: family_axis, val: {text: cond}}
+  sys_ja_roundtrip_cond_n_facts: {is: axis_value, val: {text: n_facts}}
+  sys_ja_roundtrip_cond_n_excluded: {is: axis_value, val: {text: n_excluded}}
+  sys_ja_roundtrip_cond_n_ok: {is: axis_value, val: {text: n_ok}}
+  sys_ja_roundtrip_cond_n_lex: {is: axis_value, val: {text: n_lex}}
+  sys_ja_roundtrip_cond_n_struct: {is: axis_value, val: {text: n_struct}}
+  sys_ja_roundtrip_cond_n_miss: {is: axis_value, val: {text: n_miss}}
+  sys_ja_roundtrip_cond_rate_ok: {is: axis_value, val: {text: rate_ok}}
+  sys_ja_roundtrip_cond_n_homonym_words: {is: axis_value, val: {text: n_homonym_words}}
+  sys_ja_roundtrip_cond_errors: {is: axis_value, val: {text: errors}}
   sys_case_frame_formula: {is: measurement_family}
   sys_case_frame_formula_cond: {is: family_axis, val: {text: cond}}
   sys_case_frame_formula_cond_errors: {is: axis_value, val: {text: errors}}
@@ -3729,6 +3740,29 @@ facts:
   - {is: v_spell, from: sys_ja_case_frame_cond_frame_classes, to: frame_classes}
   - {is: v_entry_of, from: '{cond}', to: sys_ja_case_frame}
   - {is: v_metric_of, from: sys_ja_case_frame, to: mean_value}
+  - {is: v_file_of, from: sys_ja_roundtrip.json, to: sys_ja_roundtrip}
+  - {is: v_rows_of, from: [rows], to: sys_ja_roundtrip}
+  - {is: v_axis_of, from: sys_ja_roundtrip_cond, to: sys_ja_roundtrip}
+  - {is: v_value_of, from: sys_ja_roundtrip_cond_n_facts, to: sys_ja_roundtrip_cond}
+  - {is: v_spell, from: sys_ja_roundtrip_cond_n_facts, to: n_facts}
+  - {is: v_value_of, from: sys_ja_roundtrip_cond_n_excluded, to: sys_ja_roundtrip_cond}
+  - {is: v_spell, from: sys_ja_roundtrip_cond_n_excluded, to: n_excluded}
+  - {is: v_value_of, from: sys_ja_roundtrip_cond_n_ok, to: sys_ja_roundtrip_cond}
+  - {is: v_spell, from: sys_ja_roundtrip_cond_n_ok, to: n_ok}
+  - {is: v_value_of, from: sys_ja_roundtrip_cond_n_lex, to: sys_ja_roundtrip_cond}
+  - {is: v_spell, from: sys_ja_roundtrip_cond_n_lex, to: n_lex}
+  - {is: v_value_of, from: sys_ja_roundtrip_cond_n_struct, to: sys_ja_roundtrip_cond}
+  - {is: v_spell, from: sys_ja_roundtrip_cond_n_struct, to: n_struct}
+  - {is: v_value_of, from: sys_ja_roundtrip_cond_n_miss, to: sys_ja_roundtrip_cond}
+  - {is: v_spell, from: sys_ja_roundtrip_cond_n_miss, to: n_miss}
+  - {is: v_value_of, from: sys_ja_roundtrip_cond_rate_ok, to: sys_ja_roundtrip_cond}
+  - {is: v_spell, from: sys_ja_roundtrip_cond_rate_ok, to: rate_ok}
+  - {is: v_value_of, from: sys_ja_roundtrip_cond_n_homonym_words, to: sys_ja_roundtrip_cond}
+  - {is: v_spell, from: sys_ja_roundtrip_cond_n_homonym_words, to: n_homonym_words}
+  - {is: v_value_of, from: sys_ja_roundtrip_cond_errors, to: sys_ja_roundtrip_cond}
+  - {is: v_spell, from: sys_ja_roundtrip_cond_errors, to: errors}
+  - {is: v_entry_of, from: '{cond}', to: sys_ja_roundtrip}
+  - {is: v_metric_of, from: sys_ja_roundtrip, to: mean_value}
   - {is: v_file_of, from: sys_case_frame_formula.json, to: sys_case_frame_formula}
   - {is: v_rows_of, from: [rows], to: sys_case_frame_formula}
   - {is: v_axis_of, from: sys_case_frame_formula_cond, to: sys_case_frame_formula}
