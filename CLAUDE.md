@@ -18,6 +18,9 @@
      訂正・mixed・評価器や文法の変更は手で見る。前提は仮説 `h_auto_merge_uncorrected`。
    - 自動マージに乗せるため、事前登録の commit はスクリプトだけを触り、結果ファイルは後の commit で足す。
 
+## PR
+- 立てた PR は見張る（subscribe_pr_activity）。フック `.claude/hooks/watch_new_pr.py` が、PR を立てた直後に促す。
+
 ## ブランチ
 - マージしたブランチは消す。自動マージしたものはワークフローが消す。手でマージしたものは、マージのときに消す（GitHub の Delete branch）。
 - 残すのは、main、作業中のブランチ（開いている PR があるもの）、セッションの記録のブランチ `claude/session-log-<ユーザー名>`。
