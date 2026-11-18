@@ -475,6 +475,11 @@ individuals:
   #   （is と occurrent と kind の表示名からは来ない。「動詞」は 生起体 の別の名で、日本語の辞書の側の語）。
   o_sys_display_residual_not_distinct: {is: exp.observation}
   o_sys_display_residual_mostly_residual: {is: exp.observation}
+  # 体系のファイルのコメントを、決まった規則で分けて数えた棚卸し（exp/experiments/sys_comments.py。手順は実行の前に登録した 64fa140）。
+  # 結果: 431 個（見出し 115、経緯 146、コード 20、意味 150。行だけのもの 386、値の後ろ 45）。claims.yaml が 277（経緯 136、意味 110）、
+  #   cscl/library の 5 ファイルが 76（見出し 41、意味 25、経緯 6、コード 4）、exp/src が 64（見出し 52）、cscl.yaml が 14。
+  #   分け方は語で決めるので、複数行の経緯の2行目以降は「意味」に入る（claims の意味 110 の多くはそれ）。
+  o_sys_comments_claims_most: {is: exp.observation}
   o_sys_frame_declared_never_grows: {is: exp.observation}
   o_sys_frame_declared_never_shrinks: {is: exp.observation}
   o_sys_frame_creates_over_removes: {is: exp.observation}
@@ -642,6 +647,7 @@ facts:
   - {is: v_refer, from: o_sys_kind_ref_passes_checks, to: {is: v_level, from: sys_kind_ref_after2.errors.mean_value, to: 0.0}}
   - {is: v_refer, from: o_sys_display_residual_not_distinct, to: {is: v_come_before, from: sys_display_residual_before.rate_y.mean_value, to: 1.16}}
   - {is: v_refer, from: o_sys_display_residual_mostly_residual, to: {is: v_come_after, from: sys_display_residual_before.rate_all.mean_value, to: 0.5}}
+  - {is: v_refer, from: o_sys_comments_claims_most, to: {is: v_come_after, from: sys_comments.history.mean_value, to: sys_comments.code.mean_value}}
   - {is: v_refer, from: o_sys_outlive_never_outlived, to: {is: v_level, from: sys_outlive.outlives_source.mean_value, to: 0.0}}
   - {is: v_refer, from: o_sys_outlive_compute_steps_ok, to: {is: v_level, from: sys_outlive.c_step_ok.mean_value, to: 1.0}}
   - {is: v_refer, from: o_sys_outlive_speak_steps_ok, to: {is: v_level, from: sys_outlive.s_step_ok.mean_value, to: 1.0}}

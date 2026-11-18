@@ -828,6 +828,15 @@ individuals:
   sys_display_residual_now_cond_n_all: {is: axis_value, val: {text: n_all}}
   sys_display_residual_now_cond_rate_y: {is: axis_value, val: {text: rate_y}}
   sys_display_residual_now_cond_rate_all: {is: axis_value, val: {text: rate_all}}
+  sys_comments: {is: measurement_family}
+  sys_comments_cond: {is: family_axis, val: {text: cond}}
+  sys_comments_cond_total: {is: axis_value, val: {text: total}}
+  sys_comments_cond_header: {is: axis_value, val: {text: header}}
+  sys_comments_cond_history: {is: axis_value, val: {text: history}}
+  sys_comments_cond_code: {is: axis_value, val: {text: code}}
+  sys_comments_cond_meaning: {is: axis_value, val: {text: meaning}}
+  sys_comments_cond_inline: {is: axis_value, val: {text: inline}}
+  sys_comments_cond_line: {is: axis_value, val: {text: line}}
   sys_outlive: {is: measurement_family}
   sys_outlive_cond: {is: family_axis, val: {text: cond}}
   sys_outlive_cond_outlives_source: {is: axis_value, val: {text: outlives_source}}
@@ -3175,6 +3184,25 @@ facts:
   - {is: v_value_of, from: sys_display_residual_now_cond_rate_all, to: sys_display_residual_now_cond}
   - {is: v_spell, from: sys_display_residual_now_cond_rate_all, to: rate_all}
   - {is: v_entry_of, from: '{cond}', to: sys_display_residual_now}
+  - {is: v_file_of, from: sys_comments.json, to: sys_comments}
+  - {is: v_rows_of, from: [rows], to: sys_comments}
+  - {is: v_axis_of, from: sys_comments_cond, to: sys_comments}
+  - {is: v_value_of, from: sys_comments_cond_total, to: sys_comments_cond}
+  - {is: v_spell, from: sys_comments_cond_total, to: total}
+  - {is: v_value_of, from: sys_comments_cond_header, to: sys_comments_cond}
+  - {is: v_spell, from: sys_comments_cond_header, to: header}
+  - {is: v_value_of, from: sys_comments_cond_history, to: sys_comments_cond}
+  - {is: v_spell, from: sys_comments_cond_history, to: history}
+  - {is: v_value_of, from: sys_comments_cond_code, to: sys_comments_cond}
+  - {is: v_spell, from: sys_comments_cond_code, to: code}
+  - {is: v_value_of, from: sys_comments_cond_meaning, to: sys_comments_cond}
+  - {is: v_spell, from: sys_comments_cond_meaning, to: meaning}
+  - {is: v_value_of, from: sys_comments_cond_inline, to: sys_comments_cond}
+  - {is: v_spell, from: sys_comments_cond_inline, to: inline}
+  - {is: v_value_of, from: sys_comments_cond_line, to: sys_comments_cond}
+  - {is: v_spell, from: sys_comments_cond_line, to: line}
+  - {is: v_entry_of, from: '{cond}', to: sys_comments}
+  - {is: v_metric_of, from: sys_comments, to: mean_value}
   - {is: v_metric_of, from: sys_display_residual_now, to: mean_value}
   - {is: v_metric_of, from: sys_kind_ref_after2, to: mean_value}
   - {is: v_metric_of, from: sys_meet, to: mean_value}
