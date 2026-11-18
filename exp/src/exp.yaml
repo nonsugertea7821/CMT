@@ -1959,6 +1959,8 @@ individuals:
   b_multi_layer_transfers_to_explain: {is: item_queued}
   h_explain_transfers_to_apply: {is: hyp_untested}
   b_explain_transfers_to_apply: {is: item_queued}
+  h_contrast_vector_lowers_stability: {is: hyp_untested}
+  b_contrast_vector_lowers_stability: {is: item_queued}
 facts:
   - {is: v_collect, from: residual_space, to: residual_vector}
   - {is: v_sum, from: layer_output, to: state_shift, new: shifted_hidden_state}
@@ -5165,6 +5167,8 @@ facts:
   - {is: v_check, from: b_e12_dedicated_key, to: h_dedicated_key_raises_following}
   - {is: v_check, from: b_e13_fact_then_symbolic, to: h_symbolic_membership_raises_following}
   - {is: v_check, from: b_e14_contrast_vector, to: h_contrast_vector_raises_following}
+  - {is: v_refer, from: h_contrast_vector_lowers_stability, to: {is: v_lower, from: contrast_vector, to: verdict_stability}}
+  - {is: v_check, from: b_contrast_vector_lowers_stability, to: h_contrast_vector_lowers_stability}
   - {is: v_check, from: b_e10_opaque_identifiers, to: h_opaque_expression_raises_following}
   - {is: v_check, from: b_e9_scratchpad, to: h_scratchpad_raises_rule_following}
   - {is: v_check, from: b_e9_scratchpad, to: h_scratchpad_raises_rule_following_4b}
