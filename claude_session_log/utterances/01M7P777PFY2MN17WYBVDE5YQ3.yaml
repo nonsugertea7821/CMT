@@ -1,0 +1,58 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-18T02:19:22.703Z（UTC）
+individuals:
+  01M7P777PFY2MN17WYBVDE5YQ3:
+    is: model_utterance
+    display: 発言 1481
+    val:
+      order: 1481
+      text: |
+        尺度を分化させました。`money` の過大拡張は止まり、検査も 0 エラーのまま通っています。変えたのは 2 か所で、軸に上下を書けるようにし（`円の量 ⊂ 量`）、`money` の軸を `amount` から新しい `yen` に替えました。
+
+        ## 結果（sys_money_axis、after3）
+
+        | 指標 | 前 | 後 |
+        |---|---|---|
+        | 検査のエラー | 0 | 0 |
+        | specific の違反（全体） | 9 | 7 |
+        | money が関わる違反 | 2 | 0 |
+        | sales はまだ money の下か | 1 | 1 |
+        | money がほかの概念を誤って下に集める件数 | 2 | 0 |
+        | money は量（amount）の式を持つか | 1 | 1（含意で持つ） |
+
+        登録した 5 つの基準をすべて満たしました。
+
+        ## 経緯（正直に書いておくこと）
+
+        前提の不備で 2 回失敗し、そのたびに手順の訂正を書いてから測り直しました。
+
+        - **after**：領域のファイルに軸を書けず、エラーが 2 件出ました。書けるようにしてから測り直しました（訂正 1、52fa1e5）。
+        - **after2**：軸の上下を `extends` の文に訳したため、概念の法則が `yen` を概念として扱い、エラーが 1 件出ました。`axis` の文に訳し直し、上位の上位まで含意を伸ばす法則 `entail_by_axis_step` を足しました。
+        - **after3**：訂正 2 の文書は after3 の値を見たあとに書いています。この順序は記録に明記しました。after2 の結果ファイルは after3 の実行で上書きされたため、画面に出た値から作り直し、そのことを注記しています。
+
+        ## 解釈
+
+        これまでの `money` は「過程を測るもの」としか定義されておらず、「円」は表示名の中にしかありませんでした。式の上では、同じように何かを測るほかの量と区別がつかず、それらを下に集めすぎていました。
+
+        最初に「円」を mod（限定）として足したときは、法則 single（限定は 1 つまで）に反しました。単位は限定ではなく、量という尺度そのものの分化だったからです。軸の上下として書くと、次の 2 つが規則だけで両立しました。
+
+        - 円の量は量でもあるので、`money` は量の式を失いません。
+        - 円の量はほかの量とは違うので、過大拡張が止まります。
+
+        「名前にしかない区別を、尺度の分化として式に移す」ことが、この種の過大拡張を直す 1 つの手になりそうです。ただし今回直したのは 1 例だけなので、ほかの概念にも同じ手が効くかはまだ測っていません。
+
+        ## 次の候補（どれから進めるか決めてください）
+
+        1. **軸の食い違いの検査を足す**：今は条件に書いた量（`at: {amount: ...}`）が、比べる概念の軸と合っているかを確かめていません。これは計画の第 3 段で、`money` を `yen` に替えたので必要性が上がりました。
+        2. **年齢と身長にも同じ操作を当てる**：「歳」と「センチ」の軸を分けます。残る違反に `height → age` があり、同じ形の例です。
+        3. **ほかの定義の薄い概念を扱う**：残る違反は `verb_ref`・`opposite` に関わる 4 件と `hypothesis` の 1 件です。ただし薄い中身は単位ではなく「階」や「文の役割」なので、別の分化の操作が要るかもしれません。
+
+        最後の commit ac8ac33 は claude/cross に push 済みで、GitHub の CI は実行中です。
+facts:
+- {is: v_say, from: session_model, to: 01M7P777PFY2MN17WYBVDE5YQ3}
+- {is: exp.v_answer, from: 01M7P777PFY2MN17WYBVDE5YQ3, to: 01M7P6T5FSCNF7SQKC943MSW4W}
+- {is: v_refer, from: 01M7P777PFY2MN17WYBVDE5YQ3, to: subj.money}
+- {is: v_refer, from: 01M7P777PFY2MN17WYBVDE5YQ3, to: syntax.extends}
+- {is: v_refer, from: 01M7P777PFY2MN17WYBVDE5YQ3, to: syntax.axis}
+- {is: v_refer, from: 01M7P777PFY2MN17WYBVDE5YQ3, to: syntax.verb_ref}
+- {is: v_refer, from: 01M7P777PFY2MN17WYBVDE5YQ3, to: syntax.opposite}
+- {is: v_refer, from: 01M7P777PFY2MN17WYBVDE5YQ3, to: std.hypothesis}
