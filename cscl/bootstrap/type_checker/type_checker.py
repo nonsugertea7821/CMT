@@ -1075,7 +1075,7 @@ class Ontology:
                     err(f"{vid}: {key} の {f} が、基礎の関係と位置で書かれていない")
 
     def check_primitives(self, nid, n):
-        """always（どの歩みでも）・sometime（ある歩みで pre から post へ）・ranges（変数の範囲）。原子の項は self だけ。"""
+        """always（どのステップでも）・sometime（あるステップで pre から post へ）・ranges（変数の範囲）。原子の項は self だけ。"""
         def atoms_ok(key, fs):
             if not isinstance(fs, list) or not fs:
                 return err(f"{nid}: {key} は原子の並びで書く")
