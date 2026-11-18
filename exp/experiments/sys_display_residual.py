@@ -19,6 +19,8 @@
   rate_y が rate_all の 1.5 倍以上なら「定義の薄い概念は、表示名に式から来ない部分を持つ傾向がある」。そうでなければ外れ。
   今の体系（HEAD）でも同じ値を記録する（判定には使わない）。money（円）と verb_ref の R が、直す前後でどう変わったかも書く。
 見込み: 分からない。表示名は語彙化した名前（売上 など）が多く、rate_all がもともと高いかもしれない。
+訂正（結果を見る前。最初の実行が個体の表示名を読むところで止まり、値は出ていない）: 型検査器の I は個体から種類への対応で、
+  表示名を持たない。個体の表示名は、ontology と各領域のファイルの individuals から読む。
 
 行（sys_display_residual_<名>.json。名は before（2477928）か now（HEAD））:
   "summary 要約": V, n_y, n_all, rate_y, rate_all
@@ -47,7 +49,7 @@ def main(root, label):
     os.chdir(root)
     with contextlib.redirect_stdout(io.StringIO()):
         import type_checker as tc
-        T, O, _ = tc.build()
+        T, O, D = tc.build()
     F = tc.Facts(T.syntax_facts())
     tc.evaluate(tc.law_rules(O), F, tc.variables(O))
     rel = lambda r: F.by.get(r, set())
@@ -62,13 +64,16 @@ def main(root, label):
     V = sorted((x, y) for x, y in rel("r_candidate") if acc[y] <= has[x] and not acc[y] <= acc[x])
     Y = {y for _, y in V}
     concepts = sorted(t[0] for t in rel("r_concept"))
-    N, AX, I = T.N, T.AX, getattr(T, "I", {})
+    N, AX, I = T.N, T.AX, T.I   # I: 個体 → 種類
+    ID = {i: (x or {}).get("display") or "" for i, x in (O.get("individuals") or {}).items()}
+    for _, (_, X) in D.items():
+        ID |= {i: (x or {}).get("display") or "" for i, x in ((X or {}).get("individuals") or {}).items()}
 
     def disp(x):
         if x in N:
             return N[x].get("display") or ""
         if x in I:
-            return (I[x] or {}).get("display") or ""
+            return ID.get(x, "")
         return ""
 
     def up_nodes(x):
@@ -88,10 +93,7 @@ def main(root, label):
                 if isinstance(w, str):
                     if w in I:
                         s.append(disp(w))
-                        k = (I[w] or {}).get("is")
-                        if isinstance(k, str):
-                            k = T.q(k) if hasattr(T, "q") else k
-                            s += [disp(v) for v in up_nodes(k)]
+                        s += [disp(v) for v in up_nodes(I[w])]
                     else:
                         s += [disp(v) for v in up_nodes(w)]
             ax = N[a].get("axis")
