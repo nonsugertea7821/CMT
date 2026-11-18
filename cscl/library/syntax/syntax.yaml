@@ -397,7 +397,7 @@ facts:
   - {is: v_derive, from: acc_ancestor, to: {is: r_acc, from: var1, to: var2}}
   - {is: v_assume, from: adds, to: {is: r_parent, from: var1, to: var3}}
   - {is: v_assume, from: adds, to: {is: r_own, from: var1, to: var2}}
-  - {is: v_assume, from: adds, to: {is: r_acc, from: var3, to: var2, neg: true}}
+  - {is: v_assume, from: adds, to: {is: r_has, from: var3, to: var2, neg: true}}   # 含意で持つ式は足したことにならない
   - {is: v_derive, from: adds, to: {is: r_adds, from: var1, to: var3}}
   - {is: v_assume, from: concept_kind, to: {is: extends, from: var1, to: var2}}
   - {is: v_assume, from: concept_kind, to: {is: of, from: var1, to: var3, neg: true}}
@@ -583,7 +583,7 @@ facts:
   - {is: v_derive, from: has_by_entail, to: {is: r_has, from: var1, to: var2}}
   - {is: v_assume, from: specific_missing, to: {is: r_candidate, from: var1, to: var2}}
   - {is: v_assume, from: specific_missing, to: {is: r_acc, from: var2, to: var3}}
-  - {is: v_assume, from: specific_missing, to: {is: r_acc, from: var1, to: var3, neg: true}}   # 含意（r_has）に替えると 14 件の違反が残る。直してから替える
+  - {is: v_assume, from: specific_missing, to: {is: r_acc, from: var1, to: var3, neg: true}}   # 含意（r_has）に替えると 9 件の違反が残る（式の上では下位だが、法則では区別がつかない）。観察してから替える
   - {is: v_derive, from: specific_missing, to: {is: r_missing, from: var1, to: var2}}
   - {is: v_assume, from: specific, to: {is: r_candidate, from: var1, to: var2}}
   - {is: v_require, from: specific, to: {is: r_missing, from: var1, to: var2}}
