@@ -1,0 +1,36 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-18T11:49:31.859Z（UTC）
+individuals:
+  01M7Q7V72KSA8A81XC5BVKF9YW:
+    is: model_utterance
+    display: 発言 1913
+    val:
+      order: 1913
+      text: |
+        その直観に沿うと、二通りの決め方がありえます。どちらも決め手はシグネチャ（基礎の関係の種類と、否定と量化の双対）です。二つとも未検証の仮説として登録しました（PR #200。新しい概念は足していないので、CI が通れば自動でマージされます）。
+
+        **1. 存在の変化は点の側（h_layers_exists_change）**
+        状態が変わる（pre・post を持つ）動詞 16 個の、pre・post の中身を並べてみました。
+        - `ontology.v_design` は「pre: to が在らない → post: to が在る」です。これは occurrent に足した sometime（在らない → 在る）とまったく同じ形で、項が self か to かの違いしかありません。
+        - このように `exists` しか変えない動詞は、`v_design` と `std.v_compute` だけでした。
+        - ほかの動詞は after・part・depend を変えます。`runtime.v_execute` も `exists` と `after`（順序）を変えます。
+
+        そこで、「点が現れる・消える」は点の側（ontology）に置き、「点のあいだの関係が変わる」を変位（runtime）に置く、という分け方が考えられます。こうすると `v_design` は ontology に残り、`natural_language → v_design` の違反は消えるはずです。
+
+        **2. 否定は □ と ◇ の双対（h_layers_neg_dual）**
+        動詞の端につけた肯定の限定は「あるステップで（◇）」、否定の限定は「¬◇ ＝ □¬（どのステップでも〜でない）」と読めます。always と sometime を足したことで、否定の限定は sometime の双対として書けるようになりました。そうであれば、否定の参照の置き場は読みで選ぶものではなく、この双対から決まるはずだ、という仮説です。
+
+        **正直なところ、まだ見えていないこと**
+        - `halted → v_execute` は、1 では消えません。v_execute は after も変えるので、runtime に残るからです。
+        - 2 で消えるかどうかは、確かめ方をまだ詰めていません。halted を □¬ で書き直すには「どの状態も self の後に来ない」と書く必要がありますが、今の always の原子は項に self しか使えないので、そのままでは書けないかもしれません。
+        - `v_design` と `v_compute` は、基礎の関係の上ではまったく同じ形です。違いは端の種類（from・to）だけです。この二つが同じ層に来るか違う層に来るかも、1 の確かめに入れます。
+
+        「signature でさえ含意から作っている」なら、最後にはシグネチャ自体も、こうした双対や対称から導けるかを問うことになりそうです。いまはまだ、層の置き場の側から追いかけている段階です。
+
+        この二つは、1 から事前登録して確かめます。
+facts:
+- {is: v_say, from: session_model, to: 01M7Q7V72KSA8A81XC5BVKF9YW}
+- {is: exp.v_answer, from: 01M7Q7V72KSA8A81XC5BVKF9YW, to: 01M7Q7Q804073AW28WHBXD3D3T}
+- {is: v_refer, from: 01M7Q7V72KSA8A81XC5BVKF9YW, to: ontology.v_design}
+- {is: v_refer, from: 01M7Q7V72KSA8A81XC5BVKF9YW, to: std.v_compute}
+- {is: v_refer, from: 01M7Q7V72KSA8A81XC5BVKF9YW, to: runtime.v_execute}
+- {is: v_refer, from: 01M7Q7V72KSA8A81XC5BVKF9YW, to: ontology.natural_language}
