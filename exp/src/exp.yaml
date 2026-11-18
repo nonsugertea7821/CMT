@@ -1974,6 +1974,10 @@ individuals:
   b_contrast_vector_lowers_stability: {is: item_queued}
   h_common_component_lowers_prior_meaning: {is: hyp_untested}
   b_common_component_lowers_prior_meaning: {is: item_queued}
+  h_qualification_raises_stability: {is: hyp_untested}
+  b_qualification_raises_stability: {is: item_queued}
+  h_modifier_vector_raises_stability: {is: hyp_untested}
+  b_modifier_vector_raises_stability: {is: item_queued}
 facts:
   - {is: v_collect, from: residual_space, to: residual_vector}
   - {is: v_sum, from: layer_output, to: state_shift, new: shifted_hidden_state}
@@ -5210,6 +5214,10 @@ facts:
   - {is: v_check, from: b_contrast_vector_lowers_stability, to: h_contrast_vector_lowers_stability}
   - {is: v_refer, from: h_common_component_lowers_prior_meaning, to: {is: v_lower, from: common_vector_component, to: prior_meaning}}
   - {is: v_check, from: b_common_component_lowers_prior_meaning, to: h_common_component_lowers_prior_meaning}
+  - {is: v_refer, from: h_qualification_raises_stability, to: {is: v_raise, from: qualification_vector, to: verdict_stability}}
+  - {is: v_check, from: b_qualification_raises_stability, to: h_qualification_raises_stability}
+  - {is: v_refer, from: h_modifier_vector_raises_stability, to: {is: v_raise, from: modifier, to: verdict_stability}}
+  - {is: v_check, from: b_modifier_vector_raises_stability, to: h_modifier_vector_raises_stability}
   - {is: v_check, from: b_e10_opaque_identifiers, to: h_opaque_expression_raises_following}
   - {is: v_check, from: b_e9_scratchpad, to: h_scratchpad_raises_rule_following}
   - {is: v_check, from: b_e9_scratchpad, to: h_scratchpad_raises_rule_following_4b}
