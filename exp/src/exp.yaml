@@ -1131,6 +1131,19 @@ individuals:
   sys_reading_ends_resolved_cond_n_unmutated: {is: axis_value, val: {text: n_unmutated}}
   sys_reading_ends_resolved_cond_n_multi: {is: axis_value, val: {text: n_multi}}
   sys_reading_ends_resolved_cond_n_multi_accepted: {is: axis_value, val: {text: n_multi_accepted}}
+  sys_family_refers_hypothesis: {is: measurement_family}
+  sys_family_refers_hypothesis_cond: {is: family_axis, val: {text: cond}}
+  sys_family_refers_hypothesis_cond_n_obs: {is: axis_value, val: {text: n_obs}}
+  sys_family_refers_hypothesis_cond_n_hyps: {is: axis_value, val: {text: n_hyps}}
+  sys_family_refers_hypothesis_cond_shared: {is: axis_value, val: {text: shared}}
+  sys_family_refers_hypothesis_cond_n_families: {is: axis_value, val: {text: n_families}}
+  sys_family_refers_hypothesis_cond_no_family: {is: axis_value, val: {text: no_family}}
+  sys_family_refers_hypothesis_cond_n_families_linked: {is: axis_value, val: {text: n_families_linked}}
+  sys_family_refers_hypothesis_cond_n_shared: {is: axis_value, val: {text: n_shared}}
+  sys_family_refers_hypothesis_cond_n_links: {is: axis_value, val: {text: n_links}}
+  sys_family_refers_hypothesis_cond_n_obs_linked: {is: axis_value, val: {text: n_obs_linked}}
+  sys_family_refers_hypothesis_cond_n_obs_no_family: {is: axis_value, val: {text: n_obs_no_family}}
+  sys_family_refers_hypothesis_cond_n_obs_multi_family: {is: axis_value, val: {text: n_obs_multi_family}}
   sys_readings_many: {is: measurement_family}
   sys_readings_many_cond: {is: family_axis, val: {text: cond}}
   sys_readings_many_cond_kind: {is: axis_value, val: {text: kind}}
@@ -1828,8 +1841,11 @@ individuals:
   h_leap_lowers_chain: {is: hyp_untested}
   b_leap_reaches_agreement: {is: item_queued}
   b_leap_lowers_chain: {is: item_queued}
-  h_family_refers_hypothesis: {is: hyp_untested}
-  b_family_refers_hypothesis: {is: item_queued}
+  h_family_refers_hypothesis: {is: hyp_refuted}
+  b_family_refers_hypothesis: {is: item_done}
+  o_sys_family_refers_shared: {is: observation}
+  o_sys_family_refers_linked: {is: observation}
+  o_sys_family_refers_no_family: {is: observation}
 
 facts:
   - {is: v_collect, from: residual_space, to: residual_vector}
@@ -4124,6 +4140,33 @@ facts:
   - {is: v_spell, from: sys_reading_ends_resolved_cond_n_multi_accepted, to: n_multi_accepted}
   - {is: v_entry_of, from: '{cond}', to: sys_reading_ends_resolved}
   - {is: v_metric_of, from: sys_reading_ends_resolved, to: mean_value}
+  - {is: v_file_of, from: sys_family_refers_hypothesis.json, to: sys_family_refers_hypothesis}
+  - {is: v_rows_of, from: [rows], to: sys_family_refers_hypothesis}
+  - {is: v_axis_of, from: sys_family_refers_hypothesis_cond, to: sys_family_refers_hypothesis}
+  - {is: v_value_of, from: sys_family_refers_hypothesis_cond_n_obs, to: sys_family_refers_hypothesis_cond}
+  - {is: v_spell, from: sys_family_refers_hypothesis_cond_n_obs, to: n_obs}
+  - {is: v_value_of, from: sys_family_refers_hypothesis_cond_n_hyps, to: sys_family_refers_hypothesis_cond}
+  - {is: v_spell, from: sys_family_refers_hypothesis_cond_n_hyps, to: n_hyps}
+  - {is: v_value_of, from: sys_family_refers_hypothesis_cond_shared, to: sys_family_refers_hypothesis_cond}
+  - {is: v_spell, from: sys_family_refers_hypothesis_cond_shared, to: shared}
+  - {is: v_value_of, from: sys_family_refers_hypothesis_cond_n_families, to: sys_family_refers_hypothesis_cond}
+  - {is: v_spell, from: sys_family_refers_hypothesis_cond_n_families, to: n_families}
+  - {is: v_value_of, from: sys_family_refers_hypothesis_cond_no_family, to: sys_family_refers_hypothesis_cond}
+  - {is: v_spell, from: sys_family_refers_hypothesis_cond_no_family, to: no_family}
+  - {is: v_value_of, from: sys_family_refers_hypothesis_cond_n_families_linked, to: sys_family_refers_hypothesis_cond}
+  - {is: v_spell, from: sys_family_refers_hypothesis_cond_n_families_linked, to: n_families_linked}
+  - {is: v_value_of, from: sys_family_refers_hypothesis_cond_n_shared, to: sys_family_refers_hypothesis_cond}
+  - {is: v_spell, from: sys_family_refers_hypothesis_cond_n_shared, to: n_shared}
+  - {is: v_value_of, from: sys_family_refers_hypothesis_cond_n_links, to: sys_family_refers_hypothesis_cond}
+  - {is: v_spell, from: sys_family_refers_hypothesis_cond_n_links, to: n_links}
+  - {is: v_value_of, from: sys_family_refers_hypothesis_cond_n_obs_linked, to: sys_family_refers_hypothesis_cond}
+  - {is: v_spell, from: sys_family_refers_hypothesis_cond_n_obs_linked, to: n_obs_linked}
+  - {is: v_value_of, from: sys_family_refers_hypothesis_cond_n_obs_no_family, to: sys_family_refers_hypothesis_cond}
+  - {is: v_spell, from: sys_family_refers_hypothesis_cond_n_obs_no_family, to: n_obs_no_family}
+  - {is: v_value_of, from: sys_family_refers_hypothesis_cond_n_obs_multi_family, to: sys_family_refers_hypothesis_cond}
+  - {is: v_spell, from: sys_family_refers_hypothesis_cond_n_obs_multi_family, to: n_obs_multi_family}
+  - {is: v_entry_of, from: '{cond}', to: sys_family_refers_hypothesis}
+  - {is: v_metric_of, from: sys_family_refers_hypothesis, to: mean_value}
   - {is: v_file_of, from: sys_readings_many.json, to: sys_readings_many}
   - {is: v_rows_of, from: [rows], to: sys_readings_many}
   - {is: v_axis_of, from: sys_readings_many_cond, to: sys_readings_many}
@@ -4941,6 +4984,10 @@ facts:
   - {is: v_check, from: b_leap_lowers_chain, to: h_leap_lowers_chain}
   - {is: v_refer, from: h_family_refers_hypothesis, to: {is: v_refer, from: measurement_family, to: hypothesis}}
   - {is: v_check, from: b_family_refers_hypothesis, to: h_family_refers_hypothesis}
+  - {is: v_refer, from: o_sys_family_refers_shared, to: {is: v_level, from: sys_family_refers_hypothesis.n_shared.mean_value, to: 17}}
+  - {is: v_refer, from: o_sys_family_refers_linked, to: {is: v_level, from: sys_family_refers_hypothesis.n_families_linked.mean_value, to: 69}}
+  - {is: v_refer, from: o_sys_family_refers_no_family, to: {is: v_level, from: sys_family_refers_hypothesis.n_obs_no_family.mean_value, to: 0}}
+  - {is: v_contradict, from: o_sys_family_refers_shared, to: h_family_refers_hypothesis}
   - {is: v_prior_same, from: pw_wang2025_proactive_interference, to: h_preceding_definitions_lower}
   - {is: v_prior_same, from: pw_stringli2025_inverse_redefinition, to: h_collision_lowers_following}
   - {is: v_prior_differ, from: pw_liu2024_lost_in_the_middle, to: h_distance_does_not_lower}
