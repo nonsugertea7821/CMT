@@ -38,6 +38,9 @@ nodes:
   case_frame: {display: 動詞の格の枠, extends: quality, mod: {of: [v_depend, from], with: syntax.position}}
   ja_connective: {display: 文と文の接続, extends: quality, mod: {of: [v_refer, from], with: v_agree}}
   exists_scope: {display: 在るものの範囲, extends: quality, mod: {of: [v_depend, from], with: runtime.state}}
+  step_quantification: {display: 歩みを動く量化, extends: quality, mod: {of: [v_refer, from], with: runtime.steps, quant: all}}
+  kind_existence: {display: 種類について在ることを述べる場所, extends: quality, mod: {of: [v_refer, from], with: runtime.state, quant: all}}
+  variable_range: {display: 変数の範囲, extends: quality, mod: {of: [v_refer, from], with: syntax.variable}}
   v_not_trigger: {display: 引き起こさない, extends: v_not_transfer, from: any, to: occurrent, opposite: v_trigger}
 
 individuals:
@@ -122,6 +125,10 @@ individuals:
   b_renaming_invariant: {is: exp.item_queued}
   h_w_from_frames: {is: exp.hyp_refuted}
   b_w_from_frames: {is: exp.item_done}
+  h_layers_from_primitives: {is: exp.hyp_untested}
+  b_layers_from_primitives: {is: exp.item_queued}
+  h_tops_from_primitives: {is: exp.hyp_untested}
+  b_tops_from_primitives: {is: exp.item_queued}
   h_any_not_vacuous: {is: exp.hyp_refuted}
   b_any_not_vacuous: {is: exp.item_done}
   h_any_by_entail: {is: exp.hyp_refuted}
@@ -448,6 +455,10 @@ facts:
   - {is: exp.v_check, from: b_renaming_invariant, to: h_renaming_invariant}
   - {is: v_refer, from: h_w_from_frames, to: {is: v_depend, from: top_placement, to: frame_trace}}
   - {is: exp.v_check, from: b_w_from_frames, to: h_w_from_frames}
+  - {is: v_refer, from: h_layers_from_primitives, to: {is: v_depend, from: layer_placement, to: [step_quantification, kind_existence, variable_range]}}
+  - {is: exp.v_check, from: b_layers_from_primitives, to: h_layers_from_primitives}
+  - {is: v_refer, from: h_tops_from_primitives, to: {is: v_depend, from: top_placement, to: [step_quantification, kind_existence, variable_range]}}
+  - {is: exp.v_check, from: b_tops_from_primitives, to: h_tops_from_primitives}
   - {is: v_refer, from: h_any_not_vacuous, to: {is: v_depend, from: any_limitation, to: syntax.of}}
   - {is: exp.v_check, from: b_any_not_vacuous, to: h_any_not_vacuous}
   - {is: v_refer, from: h_any_by_entail, to: {is: v_depend, from: any_limitation, to: above_order}}
