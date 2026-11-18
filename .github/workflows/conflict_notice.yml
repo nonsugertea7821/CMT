@@ -1,0 +1,28 @@
+name: conflict-notice
+
+# main への push のたびに、開いている PR が main と衝突していないかを調べ、衝突していればコメントで知らせる。
+# PR を見張るセッションに、衝突は届かないが、コメントは届く。中身は .github/scripts/conflict_notice.py。
+on:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+  pull-requests: read
+  issues: write
+
+concurrency:
+  group: conflict-notice
+  cancel-in-progress: true
+
+jobs:
+  notice:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: python .github/scripts/conflict_notice.py ${{ github.sha }}
