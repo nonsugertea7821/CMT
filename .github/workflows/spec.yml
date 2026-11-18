@@ -1,8 +1,15 @@
 name: spec
 
+# main への push と、PR（開いた・push した）で走る。PR のないブランチへの push（セッションの記録など）では走らない。
+# 同じ PR に続けて push したら、古い実行を止める。
 on:
   push:
+    branches: [main]
   pull_request:
+
+concurrency:
+  group: spec-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 jobs:
   check:
