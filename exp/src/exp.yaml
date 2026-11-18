@@ -1131,6 +1131,15 @@ individuals:
   sys_reading_ends_resolved_cond_n_unmutated: {is: axis_value, val: {text: n_unmutated}}
   sys_reading_ends_resolved_cond_n_multi: {is: axis_value, val: {text: n_multi}}
   sys_reading_ends_resolved_cond_n_multi_accepted: {is: axis_value, val: {text: n_multi_accepted}}
+  sys_readings_many: {is: measurement_family}
+  sys_readings_many_cond: {is: family_axis, val: {text: cond}}
+  sys_readings_many_cond_kind: {is: axis_value, val: {text: kind}}
+  sys_readings_many_cond_passed: {is: axis_value, val: {text: passed}}
+  sys_readings_many_cond_n_errors: {is: axis_value, val: {text: n_errors}}
+  sys_readings_many_cond_n_subjects: {is: axis_value, val: {text: n_subjects}}
+  sys_readings_many_cond_n_hidden: {is: axis_value, val: {text: n_hidden}}
+  sys_readings_many_cond_n_passed: {is: axis_value, val: {text: n_passed}}
+  sys_readings_many_cond_n_failed: {is: axis_value, val: {text: n_failed}}
   sys_law_names_grammar: {is: measurement_family}
   sys_law_names_grammar_cond: {is: family_axis, val: {text: cond}}
   sys_law_names_grammar_cond_grammar: {is: axis_value, val: {text: grammar}}
@@ -4113,6 +4122,25 @@ facts:
   - {is: v_spell, from: sys_reading_ends_resolved_cond_n_multi_accepted, to: n_multi_accepted}
   - {is: v_entry_of, from: '{cond}', to: sys_reading_ends_resolved}
   - {is: v_metric_of, from: sys_reading_ends_resolved, to: mean_value}
+  - {is: v_file_of, from: sys_readings_many.json, to: sys_readings_many}
+  - {is: v_rows_of, from: [rows], to: sys_readings_many}
+  - {is: v_axis_of, from: sys_readings_many_cond, to: sys_readings_many}
+  - {is: v_value_of, from: sys_readings_many_cond_kind, to: sys_readings_many_cond}
+  - {is: v_spell, from: sys_readings_many_cond_kind, to: kind}
+  - {is: v_value_of, from: sys_readings_many_cond_passed, to: sys_readings_many_cond}
+  - {is: v_spell, from: sys_readings_many_cond_passed, to: passed}
+  - {is: v_value_of, from: sys_readings_many_cond_n_errors, to: sys_readings_many_cond}
+  - {is: v_spell, from: sys_readings_many_cond_n_errors, to: n_errors}
+  - {is: v_value_of, from: sys_readings_many_cond_n_subjects, to: sys_readings_many_cond}
+  - {is: v_spell, from: sys_readings_many_cond_n_subjects, to: n_subjects}
+  - {is: v_value_of, from: sys_readings_many_cond_n_hidden, to: sys_readings_many_cond}
+  - {is: v_spell, from: sys_readings_many_cond_n_hidden, to: n_hidden}
+  - {is: v_value_of, from: sys_readings_many_cond_n_passed, to: sys_readings_many_cond}
+  - {is: v_spell, from: sys_readings_many_cond_n_passed, to: n_passed}
+  - {is: v_value_of, from: sys_readings_many_cond_n_failed, to: sys_readings_many_cond}
+  - {is: v_spell, from: sys_readings_many_cond_n_failed, to: n_failed}
+  - {is: v_entry_of, from: '{cond}', to: sys_readings_many}
+  - {is: v_metric_of, from: sys_readings_many, to: mean_value}
   - {is: v_file_of, from: sys_law_names_grammar.json, to: sys_law_names_grammar}
   - {is: v_rows_of, from: [rows], to: sys_law_names_grammar}
   - {is: v_axis_of, from: sys_law_names_grammar_cond, to: sys_law_names_grammar}
