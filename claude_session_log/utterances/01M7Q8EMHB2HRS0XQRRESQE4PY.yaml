@@ -1,0 +1,42 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-18T12:00:08.235Z（UTC）
+individuals:
+  01M7Q8EMHB2HRS0XQRRESQE4PY:
+    is: model_utterance
+    display: 発言 1923
+    val:
+      order: 1923
+      text: |
+        ご提案を仮説 `h_layers_unhardcode` として登録しました（PR #205）。登録だけの PR なので、自動でマージされるはずです。似た仮説 h_renaming_invariant（「型検査器は識別子の選び方に依存しない」、まだ確かめていない）がすでにあるので、それを「層を動かしたあとで」と具体にした形です。
+
+        **型検査器に直接書かれている、シグネチャ・シンタックス以外の名前**（動かす前の数え）
+
+        | 種類 | 名前 | 動かしたあと |
+        |---|---|---|
+        | ontology の概念 | role, definition, v_refer | syntax に入るので、問題でなくなる |
+        | ontology の概念 | continuant・occurrent（最上位）、specifically_dependent_continuant、quality、magnitude | 残る |
+        | runtime | 法則の名前（step, frame, halt, unique_names, no_confusion）、pre_rule | 残る |
+        | exp | v_spell | 残る |
+        | 名前でないもの | 表示語の「時間的な部分」などの語、層の順（LAYERS） | 残る |
+
+        残るものが、それぞれ何かから導けるかの見込みです（まだ確かめていません）。
+        - **最上位:** 今日入れた always・sometime・ranges を持つノードとして、式から特定できそうです。
+        - **層の順:** `uses` と layered の法則から導けそうです。
+        - **runtime の法則の名前と pre_rule:** 法則を名前で呼ばずに、`law_given` の種類や書き方から拾えるかを見ます。
+        - **quality・magnitude・specifically_dependent_continuant:** 型検査器が「この種類の下にあるか」を名前で調べている箇所です。ここが一番難しいところになると思います。
+        - **表示語の語:** 表示語を文字列として読んでいるので、これを式に移せるかが問題になります。
+
+        **進め方**
+        1. 外れ 29 を分類どおりの層へ動かす PR を立てます。ライブラリの置き場を変えるので、手で見てもらう PR になります。
+        2. その上で、`h_layers_unhardcode` を事前登録して確かめます。「問題なく」は次の二つで判定するつもりです。
+           - 名前を取り除いた型検査器が、動かした体系をエラー 0 で通す。
+           - 体系をわざと壊した版（変異体）を一組用意し、前の型検査器と同じものを同じように弾く。
+
+        まず 1 の移動から始めます。
+facts:
+- {is: v_say, from: session_model, to: 01M7Q8EMHB2HRS0XQRRESQE4PY}
+- {is: exp.v_answer, from: 01M7Q8EMHB2HRS0XQRRESQE4PY, to: 01M7Q8B18ET419Z6X0YH2VN38K}
+- {is: v_refer, from: 01M7Q8EMHB2HRS0XQRRESQE4PY, to: ontology.v_refer}
+- {is: v_refer, from: 01M7Q8EMHB2HRS0XQRRESQE4PY, to: ontology.specifically_dependent_continuant}
+- {is: v_refer, from: 01M7Q8EMHB2HRS0XQRRESQE4PY, to: runtime.pre_rule}
+- {is: v_refer, from: 01M7Q8EMHB2HRS0XQRRESQE4PY, to: exp.v_spell}
+- {is: v_refer, from: 01M7Q8EMHB2HRS0XQRRESQE4PY, to: syntax.law_given}
