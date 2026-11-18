@@ -1,0 +1,39 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-18T18:04:18.445Z（UTC）
+individuals:
+  01M7QX9EMDP720FZR4SC3BZ891:
+    is: model_utterance
+    display: 発言 2113
+    val:
+      order: 2113
+      text: |
+        未検証の仮説を、モデルの概念一貫性に寄与しそうな順に並べました。この順を周回の指示に入れたので、18:05Z の周回から上から順に進めます。
+
+        **目標**: 体系の採用済みの決定で、再定義の成功を測るのは「使い方をまたぐ一貫性」です。これに近いものほど上に置いています。
+
+        **A. 使い方をまたぐ一貫性に直接効くもの**（Qwen2.5-1.5B を CPU で回し、e3 で学習済みのベクトルを使う）
+        1. `h_apply_does_not_transfer_to_explain`（#35）
+           - 「適用」の使い方で学習したベクトルが、「説明」には転移しない、という仮説です。
+           - 兄弟の仮説（言い換え・暗唱には転移しない）はすでに支持されています。説明だけが残っていて、ここが埋まると使い方をまたぐ見取り図がそろいます。最初にこれをやります。
+        2. 学習していない上位概念へ転移するか：`h_qualification_vector_transfers_to_unseen_genus`（#91）、`h_common_component_transfers_to_unseen`（#56）
+        3. 限定の差分ベクトルを教えると再定義への追従が上がるか：`h_qualification_teacher_raises_following`（#92）
+        4. 判定の安定と、固有成分と概念式の一致：`h_text_shift_raises_stability`（#52）、`h_specific_composes_from_expression`（#55）
+
+        **B. モデルが式を書けるか**
+        - `h_model_can_write_cscl`（#58）、続けて `h_typecheck_feedback_raises_writing`（#90）
+
+        **C. 仕組みの側**
+        - 注意機構（#57、#18）と、数の大小の照合（#8）
+
+        **D. 発話・韻律・公開コーパスの系列**（#249〜#263）
+        - 先に、書き言葉で韻律の句切りをどう数えるかを事前登録で決めます。
+
+        **E. 体系の内側の検査**（sys_ の実験）
+        - 一貫性への寄与は間接的なので、最後に回します。
+
+        **進め方**
+        - モデルを回す実験は時間がかかるので、裏で回し、待つ間に軽い作業をします。
+        - 重い実験は一度に1つだけにします。
+        - 記録済みの結果ファイルは上書きせず、新しい名前で出します。
+facts:
+- {is: v_say, from: session_model, to: 01M7QX9EMDP720FZR4SC3BZ891}
+- {is: exp.v_answer, from: 01M7QX9EMDP720FZR4SC3BZ891, to: 01M7QX6P4NGX093F7V7AN9Y408}
