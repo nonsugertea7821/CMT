@@ -692,6 +692,20 @@ individuals:
   sys_overextension_cond_unseen_deep_n: {is: axis_value, val: {text: unseen_deep_n}}
   sys_overextension_cond_unseen_deep_any: {is: axis_value, val: {text: unseen_deep_any}}
   sys_overextension_cond_unseen_deep_rate: {is: axis_value, val: {text: unseen_deep_rate}}
+  sys_differentiation: {is: measurement_family}
+  sys_differentiation_cond: {is: family_axis, val: {text: cond}}
+  sys_differentiation_cond_edges: {is: axis_value, val: {text: edges}}
+  sys_differentiation_cond_own_formulas: {is: axis_value, val: {text: own_formulas}}
+  sys_differentiation_cond_negate: {is: axis_value, val: {text: negate}}
+  sys_differentiation_cond_narrow_end: {is: axis_value, val: {text: narrow_end}}
+  sys_differentiation_cond_add_end: {is: axis_value, val: {text: add_end}}
+  sys_differentiation_cond_narrow_verb: {is: axis_value, val: {text: narrow_verb}}
+  sys_differentiation_cond_limit: {is: axis_value, val: {text: limit}}
+  sys_differentiation_cond_new: {is: axis_value, val: {text: new}}
+  sys_differentiation_cond_other: {is: axis_value, val: {text: other}}
+  sys_differentiation_cond_edges_with_own: {is: axis_value, val: {text: edges_with_own}}
+  sys_differentiation_cond_edges_one_own: {is: axis_value, val: {text: edges_one_own}}
+  sys_differentiation_cond_narrow_end_hop1: {is: axis_value, val: {text: narrow_end_hop1}}
   sys_outlive: {is: measurement_family}
   sys_outlive_cond: {is: family_axis, val: {text: cond}}
   sys_outlive_cond_outlives_source: {is: axis_value, val: {text: outlives_source}}
@@ -2755,6 +2769,35 @@ facts:
   - {is: v_spell, from: sys_overextension_cond_unseen_deep_rate, to: unseen_deep_rate}
   - {is: v_entry_of, from: '{cond}', to: sys_overextension}
   - {is: v_metric_of, from: sys_overextension, to: mean_value}
+  - {is: v_file_of, from: sys_differentiation.json, to: sys_differentiation}
+  - {is: v_rows_of, from: [rows], to: sys_differentiation}
+  - {is: v_axis_of, from: sys_differentiation_cond, to: sys_differentiation}
+  - {is: v_value_of, from: sys_differentiation_cond_edges, to: sys_differentiation_cond}
+  - {is: v_spell, from: sys_differentiation_cond_edges, to: edges}
+  - {is: v_value_of, from: sys_differentiation_cond_own_formulas, to: sys_differentiation_cond}
+  - {is: v_spell, from: sys_differentiation_cond_own_formulas, to: own_formulas}
+  - {is: v_value_of, from: sys_differentiation_cond_negate, to: sys_differentiation_cond}
+  - {is: v_spell, from: sys_differentiation_cond_negate, to: negate}
+  - {is: v_value_of, from: sys_differentiation_cond_narrow_end, to: sys_differentiation_cond}
+  - {is: v_spell, from: sys_differentiation_cond_narrow_end, to: narrow_end}
+  - {is: v_value_of, from: sys_differentiation_cond_add_end, to: sys_differentiation_cond}
+  - {is: v_spell, from: sys_differentiation_cond_add_end, to: add_end}
+  - {is: v_value_of, from: sys_differentiation_cond_narrow_verb, to: sys_differentiation_cond}
+  - {is: v_spell, from: sys_differentiation_cond_narrow_verb, to: narrow_verb}
+  - {is: v_value_of, from: sys_differentiation_cond_limit, to: sys_differentiation_cond}
+  - {is: v_spell, from: sys_differentiation_cond_limit, to: limit}
+  - {is: v_value_of, from: sys_differentiation_cond_new, to: sys_differentiation_cond}
+  - {is: v_spell, from: sys_differentiation_cond_new, to: new}
+  - {is: v_value_of, from: sys_differentiation_cond_other, to: sys_differentiation_cond}
+  - {is: v_spell, from: sys_differentiation_cond_other, to: other}
+  - {is: v_value_of, from: sys_differentiation_cond_edges_with_own, to: sys_differentiation_cond}
+  - {is: v_spell, from: sys_differentiation_cond_edges_with_own, to: edges_with_own}
+  - {is: v_value_of, from: sys_differentiation_cond_edges_one_own, to: sys_differentiation_cond}
+  - {is: v_spell, from: sys_differentiation_cond_edges_one_own, to: edges_one_own}
+  - {is: v_value_of, from: sys_differentiation_cond_narrow_end_hop1, to: sys_differentiation_cond}
+  - {is: v_spell, from: sys_differentiation_cond_narrow_end_hop1, to: narrow_end_hop1}
+  - {is: v_entry_of, from: '{cond}', to: sys_differentiation}
+  - {is: v_metric_of, from: sys_differentiation, to: mean_value}
   - {is: v_file_of, from: sys_content_symmetry.json, to: sys_content_symmetry}
   - {is: v_rows_of, from: [rows], to: sys_content_symmetry}
   - {is: v_axis_of, from: sys_content_symmetry_cond, to: sys_content_symmetry}

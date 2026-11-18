@@ -379,6 +379,19 @@ individuals:
   o_sys_overext_shallow_more: {is: exp.observation}
   o_sys_overext_not_threefold: {is: exp.observation}
   o_sys_overext_unseen_shallow_more: {is: exp.observation}
+  # 分化の操作の観察（exp/experiments/sys_differentiation.py）。手順と判定は実行の前に登録した（49fba98）。
+  #   利用者の直観「発達・分化の操作自体に規則性がある」から。すべての直接の上下関係（概念と親）466 辺、下位が足した式 490。
+  # 結果: new（新しい特徴を足す）238、add_end（端のなかった式に端を書く）157、negate 41、narrow_end（端を狭める）30
+  #   （うち段数 1 が 22）、other 18、narrow_verb 6、limit 0。
+  #   (a) other 3.7%（5% 以下）: 満たす。(b) 自前の式が1つの辺 442/466（94.8%、80% 以上）: 満たす。
+  #   (c) narrow_end 6.1%（50% 以上）: 外れ。登録した判定により「式1つずつ・少ない種類」の規則性はあり、
+  #   「端を狭めるのが典型」は外れ。
+  # 実行の後の読み（登録していない）: 端に関わる狭め（add_end と narrow_end）を合わせると 187（38%）。分化は、
+  #   一辺に式1つで、主に「新しい特徴を足す」か「端を決める・狭める」の2つで進む。new の親は information_entity 24、
+  #   process 12、quality 11 など最上位に近い概念が多い。sys_specific の C で見えた「端を1段狭める」は、洗練の対を選んだ偏り。
+  o_sys_diff_few_kinds: {is: exp.observation}
+  o_sys_diff_one_step: {is: exp.observation}
+  o_sys_diff_narrow_not_typical: {is: exp.observation}
   o_sys_frame_declared_never_grows: {is: exp.observation}
   o_sys_frame_declared_never_shrinks: {is: exp.observation}
   o_sys_frame_creates_over_removes: {is: exp.observation}
@@ -519,6 +532,9 @@ facts:
   - {is: v_refer, from: o_sys_overext_shallow_more, to: {is: v_come_after, from: sys_overextension.all_shallow_rate.mean_value, to: sys_overextension.all_deep_rate.mean_value}}
   - {is: v_refer, from: o_sys_overext_not_threefold, to: {is: v_come_before, from: sys_overextension.all_shallow_rate.mean_value, to: 0.1932}}
   - {is: v_refer, from: o_sys_overext_unseen_shallow_more, to: {is: v_come_after, from: sys_overextension.unseen_shallow_rate.mean_value, to: sys_overextension.unseen_deep_rate.mean_value}}
+  - {is: v_refer, from: o_sys_diff_few_kinds, to: {is: v_come_before, from: sys_differentiation.other.mean_value, to: 24.5}}
+  - {is: v_refer, from: o_sys_diff_one_step, to: {is: v_come_after, from: sys_differentiation.edges_one_own.mean_value, to: 372.8}}
+  - {is: v_refer, from: o_sys_diff_narrow_not_typical, to: {is: v_come_before, from: sys_differentiation.narrow_end.mean_value, to: 245.0}}
   - {is: v_refer, from: o_sys_outlive_never_outlived, to: {is: v_level, from: sys_outlive.outlives_source.mean_value, to: 0.0}}
   - {is: v_refer, from: o_sys_outlive_compute_steps_ok, to: {is: v_level, from: sys_outlive.c_step_ok.mean_value, to: 1.0}}
   - {is: v_refer, from: o_sys_outlive_speak_steps_ok, to: {is: v_level, from: sys_outlive.s_step_ok.mean_value, to: 1.0}}
