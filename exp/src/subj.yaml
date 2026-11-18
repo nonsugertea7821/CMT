@@ -1,15 +1,12 @@
-# 領域 subj（題材）。実験で定義を与える語を、概念体系制御言語で書く。体系（ontology.yaml）の一部で、同じ検査にかかる。
-# 書き方は exp.yaml と同じ。signature を使う。固有のもの（曜日、地域、品目）は個体で書き、種類の式の中から参照する。
 domain: subj
 axes:
-  yen: {display: 円の量, source: any, value: number, extends: amount}   # 単位は量の分化（sys_money_axis）
+  yen: {display: 円の量, source: any, value: number, extends: amount}
   sai: {display: 歳の量, source: any, value: number, extends: amount}
   cm: {display: センチの量, source: any, value: number, extends: amount}
   people: {display: 人の量, source: any, value: number, extends: amount}
   days: {display: 日の量, source: any, value: number, extends: amount}
   hours: {display: 時の量, source: any, value: number, extends: amount}
 nodes:
-  # ===== 動詞 =====
   v_contract: {display: 契約を結ぶ, extends: occurrent, from: agent, to: agent, holds: [{is: depend, from: new, to: from}, {is: depend, from: new, to: to}]}
   v_employ: {display: 雇用する, extends: v_contract, from: organization, to: person}
   v_place: {display: 発注する, extends: v_depend, from: order, to: agent}
@@ -27,7 +24,6 @@ nodes:
   v_register: {display: 登録者として関わらせる, extends: v_involve, from: service, to: person}
   v_seated: {display: 席にいる, extends: v_perform, from: person, to: process}
 
-  # ===== 量。値は単位の軸の数（どの単位の軸も amount の下位。sys_unit_axis） =====
   age: {display: 年齢（歳）, extends: magnitude, mod: {of: [v_depend, from], with: person}, axis: sai}
   height: {display: 身長（センチ）, extends: magnitude, mod: {of: [v_depend, from], with: person_age_neg}, axis: cm}
   monthly_fee: {display: 月額（円）, extends: magnitude, mod: {of: [v_depend, from], with: plan}, axis: yen}
@@ -37,7 +33,6 @@ nodes:
   hour: {display: 時刻（時）, extends: magnitude, mod: {of: [v_measure, from], with: day}, axis: hours}
   profit_gap: {display: 利益から目標額を引いた額（円）, extends: magnitude, mod: {of: [v_depend, from], with: account}, axis: yen}
 
-  # ===== もの =====
   agent: {display: 主体, extends: continuant, mod: {of: [v_perform, from]}}
   person: {display: 人, extends: agent, mod: {of: [v_compose, to], with: agent, neg: true}}
   person_age_neg: {display: 年齢を問わない人, extends: person, mod: {of: [v_depend, to], with: age, at: {count: {ge: 1}}}}
@@ -96,14 +91,12 @@ nodes:
   attendance: {display: 出席の記録, extends: information_entity, mod: {of: [v_refer, from], with: meeting}}
   absence: {display: 欠席, extends: attendance, mod: {of: [v_refer, from], with: absent_person}}
 
-  # ===== 場所 =====
   land: {display: 土地, extends: continuant, mod: {of: [v_located, from]}}
   region: {display: 地方, extends: continuant, mod: {of: [v_located, to]}}
   municipality: {display: 市町村, extends: region, mod: {of: [v_compose, from], with: region}}
   urban: {display: 都市部, extends: municipality, mod: {of: [v_depend, to], with: population, at: {amount: {ge: 10000}}}}
   domestic: {display: 国内, extends: land, mod: {of: [v_located, from], with: honshu}}
 
-  # ===== 時間 =====
   day: {display: 日, extends: process, mod: {of: [v_weekday_of, to]}}
   business_day: {display: 営業日, extends: day, mod: {of: [v_weekday_of, to], with: sunday, neg: true}}
   weekday_base: {display: 日曜でない日, extends: day, mod: {of: [v_weekday_of, to], with: sunday, neg: true, at: {count: {ge: 1}}}}
