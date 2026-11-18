@@ -1,0 +1,41 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-18T10:51:36.717Z（UTC）
+individuals:
+  01M7Q4H5CD2J046P4MH28B5X9T:
+    is: model_utterance
+    display: 発言 1863
+    val:
+      order: 1863
+      text: |
+        「syntax の不足」というのは、私の言い過ぎでした。何を syntax に入れるかを式で決める条件は、今の体系にはありません。
+
+        **今 syntax に入っているものの決まり方**
+        - 層の置き場は、ファイルで決まっているだけです。`cscl.yaml` の `library` が `cscl/library/syntax/*.yaml` を読み込み、そこに書かれたものが syntax の層になります。
+        - 式として効いているのは二つだけです。
+          - `grammar`: 定義にどの語（`mod`, `pre`, `post`, `quant` など）を書いてよいかの一覧。
+          - 法則 `layered`: どの領域を参照してよいか。
+        - どちらも、あるものが syntax に属する条件ではありません。
+
+        **条件を式で決めようとした試み**
+        仮説 h_layers_signature で、シグネチャから導いた分類と層を対応させようとしました。対応は「ontology＝変わらず述べない」「syntax＝述べる」「runtime＝変化する」です。結果は反証でした。syntax のノード 104 は、変化に入るものが 80、述べるが 21、どちらでもないが 3 でした。syntax を「述べるもの」とする条件は成り立っていません。
+
+        **二つの反証で足りなかったもの**
+        層を決めずに言い直すと、次の三つです。
+        1. 歩み（フレーム）を動く量化。「どの歩みでも同じ」「ある歩みで在るようになる」を書く手段がありません。歩みの概念は runtime にあります。
+        2. 種類について exists を述べる場所。exists は ontology の基礎の関係ですが、ノードの定義からは指せません。
+        3. 変数（self）が動く範囲。self と any はシグネチャにあります。
+
+        ですから「syntax が足りない」とは言えません。言えるのは「ノードの定義に書ける形が足りない」までです。足すなら、それがどの層に入るかも、同時に決めることになります。
+
+        ここで二つの道が分かれます。
+        - 層の条件をまず式で決め直す（h_layers_signature の続き）。
+        - 先にこの三つを足して、置き場は後で決める。
+
+        方向として、どちらを取りますか。
+facts:
+- {is: v_say, from: session_model, to: 01M7Q4H5CD2J046P4MH28B5X9T}
+- {is: exp.v_answer, from: 01M7Q4H5CD2J046P4MH28B5X9T, to: 01M7Q4GG5G7FSPQFDWTPJ3A5KZ}
+- {is: v_refer, from: 01M7Q4H5CD2J046P4MH28B5X9T, to: syntax.grammar}
+- {is: v_refer, from: 01M7Q4H5CD2J046P4MH28B5X9T, to: syntax.mod}
+- {is: v_refer, from: 01M7Q4H5CD2J046P4MH28B5X9T, to: syntax.pre}
+- {is: v_refer, from: 01M7Q4H5CD2J046P4MH28B5X9T, to: syntax.post}
+- {is: v_refer, from: 01M7Q4H5CD2J046P4MH28B5X9T, to: syntax.quant}
