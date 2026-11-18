@@ -1843,6 +1843,10 @@ individuals:
   b_leap_lowers_chain: {is: item_queued}
   h_family_refers_hypothesis: {is: hyp_refuted}
   b_family_refers_hypothesis: {is: item_done}
+  h_value_refers_hypothesis: {is: hyp_untested}
+  b_value_refers_hypothesis: {is: item_queued}
+  h_hypothesis_refers_family: {is: hyp_untested}
+  b_hypothesis_refers_family: {is: item_queued}
   o_sys_family_refers_shared: {is: observation}
   o_sys_family_refers_linked: {is: observation}
   o_sys_family_refers_no_family: {is: observation}
@@ -4984,6 +4988,10 @@ facts:
   - {is: v_check, from: b_leap_lowers_chain, to: h_leap_lowers_chain}
   - {is: v_refer, from: h_family_refers_hypothesis, to: {is: v_refer, from: measurement_family, to: hypothesis}}
   - {is: v_check, from: b_family_refers_hypothesis, to: h_family_refers_hypothesis}
+  - {is: v_refer, from: h_value_refers_hypothesis, to: {is: v_refer, from: axis_value, to: hypothesis}}
+  - {is: v_check, from: b_value_refers_hypothesis, to: h_value_refers_hypothesis}
+  - {is: v_refer, from: h_hypothesis_refers_family, to: {is: v_refer, from: hypothesis, to: measurement_family}}
+  - {is: v_check, from: b_hypothesis_refers_family, to: h_hypothesis_refers_family}
   - {is: v_refer, from: o_sys_family_refers_shared, to: {is: v_level, from: sys_family_refers_hypothesis.n_shared.mean_value, to: 17}}
   - {is: v_refer, from: o_sys_family_refers_linked, to: {is: v_level, from: sys_family_refers_hypothesis.n_families_linked.mean_value, to: 69}}
   - {is: v_refer, from: o_sys_family_refers_no_family, to: {is: v_level, from: sys_family_refers_hypothesis.n_obs_no_family.mean_value, to: 0}}
