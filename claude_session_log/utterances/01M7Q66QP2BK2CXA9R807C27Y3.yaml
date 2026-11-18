@@ -1,0 +1,286 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-18T11:20:52.162Z（UTC）
+individuals:
+  01M7Q66QP2BK2CXA9R807C27Y3:
+    is: session_summary
+    display: 発言 1886
+    val:
+      order: 1886
+      text: |
+        This session is being continued from a previous conversation that ran out of context. The summary below covers the earlier portion of the conversation.
+
+        <system-reminder>
+        <tools-used-before-summary>AskUserQuestion, Bash, Edit, Grep, Read, ReadNotifications, Skill, TaskStop, ToolSearch, WebFetch, WebSearch, Write, mcp__claude-code-remote__create_trigger, mcp__claude-code-remote__delete_trigger, mcp__claude-code-remote__get_trigger, mcp__claude-code-remote__read_documentation, mcp__claude-code-remote__send_later, mcp__claude-code-remote__subscribe_pr_activity, mcp__claude-code-remote__update_trigger, mcp__github__actions_get, mcp__github__actions_list, mcp__github__add_issue_comment, mcp__github__create_pull_request, mcp__github__get_job_logs, mcp__github__issue_read, mcp__github__issue_write, mcp__github__list_issue_types, mcp__github__list_issues, mcp__github__list_pull_requests, mcp__github__pull_request_read, mcp__github__update_pull_request</tools-used-before-summary>
+        </system-reminder>
+        Summary:
+        1. Primary Request and Intent
+
+        **Standing rules (still in force)**
+        - Repo: nonsugertea7821/CMT at /home/user/CMT.
+        - Reply in Japanese. Don't overclaim. Give interpretation.
+        - Restore files with `git show <rev>:<path> > <path>`. Never use git checkout to restore files, and never stash.
+        - Python: /home/user/venv/bin/python.
+        - Commit trailer:
+          `Co-Authored-By: Claude [モデル名を伏せた] <[メールアドレスを伏せた]>`
+          `Claude-Session: https://claude.ai/code/session_015KRKt6TNJZ7ZsQmEknANXK`
+        - PR body ends with:
+          `🤖 Generated with [Claude Code](https://claude.com/claude-code)`
+          blank line
+          `https://claude.ai/code/session_015KRKt6TNJZ7ZsQmEknANXK`
+        - Claude never merges.
+        - No personal info or model identifiers in pushed artifacts.
+        - Don't retry the MEXT PDF WebFetch without OK.
+
+        **CLAUDE.md flow**
+        - Register proposals as untested hypotheses before telling the user.
+        - Branch `claude/h_<name>`. The first commit is the prereg with the script only (`git add -f`). The results commit adds observations, v_support / v_contradict and the result JSON. Then undraft.
+        - Every PR gets assignee nonsugertea7821 via issue_write update.
+        - Subscribe to every PR and set a send_later check about 50 minutes out. Delete the trigger on merge.
+        - No comments in system yaml.
+        - Never rerun recorded scripts.
+        - Don't ask permission in chat. Ask only on direction-level choices.
+        - Merged branches are deleted by the workflow. When a stop hook reports unpushed commits on a merged branch, do not push. Reset the local branch to origin/main and set its upstream to origin/main.
+
+        **Attribution**
+        - Verify any words attributed to the user in the session log: branch `claude/session-log-nonsugertea7821`. Never invent ULIDs.
+
+        **Latest user request**
+        "歩みって言い方だけ直してほしい / ステップ、あるいはもう少し学術的な定義で / それと合わせて進めよう"
+        - Rename 歩み → ステップ.
+        - Proceed with h_layers_from_primitives (#190) using plan B under the user's new reading: syntax = relations between the dimensions/vectors of the geometric interpretation.
+        - New mapping:
+          - ontology = points (existence)
+          - runtime = displacements (steps)
+          - syntax = relations between them
+          - signature = variable range (any/self), the base under all layers
+
+        2. Key Technical Concepts
+
+        **Geometric analogy**
+        - mod = static (frame-internal) qualification.
+        - always / sometime = time-axis qualification, the counterpart of mod. Their atoms can only use the term self (asymmetry: no relations to others).
+        - pre→post = point + displacement.
+        - Syntax words are the affine structure, not content.
+        - sys_layers pos version: syntax 100/104 fall in "refer"; refer is the single system_act relation.
+
+        **sys_layers results** (sys_layers.json, commit f33d9e8; main has moved about 196+ commits since)
+
+        | Layer | Following negation edges | Pos version (negation edges not followed) |
+        |---|---|---|
+        | ontology (74) | — | still 59, refer 14, change 1 |
+        | syntax (104) | change 80, refer 21, still 3 | refer 100, still 4 |
+        | runtime (24) | change 24 | change 18, refer 6 |
+
+        Pos-version outliers:
+        - ontology refer: concept, definition, express_from_natural_language, information_entity, information_entity_compose_to_word, information_entity_express_from_natural_language, language, natural_language, refer_from_concept, role, sentence, v_agree, v_refer, word.
+        - ontology change: v_design.
+        - syntax still: individuals, not_after_from, not_before_from, not_compose_from_mod.
+        - runtime refer: halted, refer_from_laws, refer_from_post, rewrite_rule, role_depend_from_rewrite_rule, state.
+
+        **Family pattern in exp.yaml**
+        - Nodes inserted before `  sys_case_frame_formula: {is: measurement_family}`.
+        - Facts appended after `  - {is: v_metric_of, from: sys_ja_roundtrip, to: mean_value}`.
+
+        **Observations in claims.yaml**
+        - `o_x: {is: exp.observation}` inserted after `  o_sys_ja_roundtrip_struct: {is: exp.observation}`.
+        - Facts inserted after `  - {is: exp.v_support, from: o_sys_ja_roundtrip_struct, to: h_ja_roundtrip}`.
+
+        **Layering**
+        - The law `layered` in syntax.yaml (~lines 641-647) uses r_visible.
+        - Order: signature → ontology → syntax → runtime → std.
+        - ontology cannot reference runtime.
+
+        3. Files and Code Sections
+
+        **exp/experiments/sys_w_from_frames.py** (created, merged #186)
+        - Imports is_dynamic and reaches_dynamic from sys_tops.
+        - Rows per subject:
+          - individual i: ind_point
+          - verb: dyn_occ for dynamic verbs, relation 1 for static verbs
+          - con n: con_point
+          - occ n: occ_move
+          - summary: n_ind, n_dyn, n_static, n_con, n_occ, n_untopped, errors
+        - Verdict: all rates ≥ 0.9 → support; any < 0.5 → refute; otherwise mixed.
+        - Results: n_ind 1768, n_dyn 36, n_static 83, n_con 525, n_occ 49, untopped 4 (any, ontology.o, ontology.s, syntax.individuals). Rates: con_point 0.5086, occ_move 0.2857 → refuted.
+        - Observations: o_sys_w_from_frames_dyn, o_sys_w_from_frames_con_moving, o_sys_w_from_frames_occ_still (exp.v_contradict).
+
+        **exp/experiments/sys_gloss_formula.py** (created, merged #187)
+        - Copies the system to a temp dir, patches the top lines, runs tc as a subprocess, and filters out the "最上位は gloss だけを持つ" error.
+        - Results:
+          - a_free and c_same accepted.
+          - a_range and c_exists had no candidate.
+          - o_happen: KeyError 'from'.
+          - o_unfold: named_mod with ontology.process.
+          - n_left 4 → refuted.
+        - Observations: o_sys_gloss_formula_accepted, o_sys_gloss_formula_left (v_contradict).
+
+        **cscl/design/claims.yaml** (via #189, #192)
+        - Concepts:
+        ```yaml
+        step_quantification: {display: ステップ上の量化, extends: quality, mod: {of: [v_refer, from], with: runtime.steps, quant: all}}
+        kind_existence: {display: 種類について在ることを述べる場所, extends: quality, mod: {of: [v_refer, from], with: runtime.state, quant: all}}
+        variable_range: {display: 変数の範囲, extends: quality, mod: syntax.refer_from_variable}
+        ```
+          - The step_quantification display is "ステップ上の量化" on the rename-step branch; it was 歩みを動く量化 before.
+        - Hypotheses:
+          - h_layers_from_primitives (untested, #190): `{is: v_depend, from: layer_placement, to: [step_quantification, kind_existence, variable_range]}`.
+          - h_tops_from_primitives (now supported, #191): `{is: v_depend, from: top_placement, to: [...]}`.
+          - Observations: o_sys_tops_primitives_left (v_support), o_sys_tops_primitives_errors.
+
+        **exp/experiments/sys_tops_primitives.py** (created, merged #192)
+        - Reads the system directly. Per-clause predicates on the raw top nodes, vocab check, gloss_gone, tc errors.
+        - Verdict: n_left = 0 → support; ≥ 3 → refute; otherwise mixed.
+        - Result: all 6 accepted → supported.
+
+        **cscl/bootstrap/type_checker/type_checker.py** (merged #192)
+        - Top rule: tops and any may hold display, many, mod, always, sometime, ranges, gloss. `self.check_primitives(nid, n)` is called for tops and for all nodes.
+        - New method:
+        ```python
+        def check_primitives(self, nid, n):
+            """always（どのステップでも）・sometime（あるステップで pre から post へ）・ranges（変数の範囲）。原子の項は self だけ。"""
+            def atoms_ok(key, fs):
+                if not isinstance(fs, list) or not fs:
+                    return err(f"{nid}: {key} は原子の並びで書く")
+                for f in fs:
+                    ok = isinstance(f, dict) and not set(f) - set(self.G["facts"]) and f.get("is") in self.B and "val" not in f
+                    args = atom(f)[2] if ok else ()
+                    if not ok or len(args) != self.B[f["is"]]["arity"] or any(a != "self" for a in args):
+                        err(f"{nid}: {key} の {f} が、基礎の関係と項 self で書かれていない")
+            # always: atoms_ok
+            # sometime: list of {pre, post}, each atoms_ok; pre == post is an error
+            # ranges: must be an individual is_a variable
+        ```
+        - The body-hash key list now includes always, sometime, ranges.
+        - Top-level mod is still not checked, because tops `continue` before the mod checks.
+
+        **cscl/library/syntax/syntax.yaml**
+        - grammar.nodes adds always, sometime, ranges.
+        - Nodes:
+          - always: `extends holds, mod {of:[v_refer,from], with: state_relation, quant: all}, verbatim`
+          - sometime: `extends expression_part, mod {of:[v_compose,to], with: pre}, verbatim`
+          - ranges: `extends expression_part, mod: refer_from_variable`
+          - refer_from_variable: `{display: 変数へ述べる（始点）, extends: quality, of: [v_refer, from], with: variable}`
+
+        **Top nodes**
+        - any (signature.yaml): `{display: 何でも, many: true, ranges: self}`
+        - continuant (ontology.yaml): `{display: 持続体, mod: {of: [v_stage, to], neg: true}, always: [{is: exists, from: self}]}`
+        - occurrent: `{display: 生起体, sometime: [{pre: [¬exists self], post: [exists self]}, {pre: [exists self], post: [¬exists self]}]}`
+
+        **Branch claude/rename-step** (commit pushed, no PR yet)
+        - runtime.steps display → ステップの列
+        - syntax.always → どのステップでも成り立つ状態の指定
+        - syntax.sometime → あるステップで起こる変化の指定
+        - lang.step_quantification → ステップ上の量化
+        - tc docstring updated.
+        - tc, ec and the README check all pass.
+        - Recorded experiment scripts were left unchanged.
+
+        4. Errors and fixes
+
+        - **named_mod collisions while defining concepts**
+          - with: kind collided with syntax.extends; with: runtime.steps collided with runtime.choice.
+          - Fix: added quant: all.
+          - syntax.ranges collided with lang.variable_range.
+          - Fix: added the named modifier syntax.refer_from_variable and used it in both.
+        - **Stop hook reported unpushed commits on deleted merged branches**
+          - Did not push. Ran `git switch -C <branch> origin/main` and `git branch -u origin/main`.
+        - **sleep blocked by the harness**
+          - Avoid sleep; use Monitor if waiting is needed.
+        - **User correction on wording**
+          - "歩みって言い方だけ直してほしい" → renamed to ステップ.
+          - Earlier I overclaimed "syntax の不足". I corrected it: there is no formula condition for what syntax is.
+
+        5. Problem Solving
+
+        - h_w_from_frames refuted: reachability is too coarse for nouns.
+        - h_gloss_formula refuted: missing step quantification, existence and variable range.
+        - These three were added as grammar primitives; h_tops_from_primitives supported, but weakly and by construction.
+        - Known gaps:
+          - Top mod is unchecked.
+          - Semantic equivalence to the old glosses is not machine-checked.
+          - always / sometime are not verified against runtime records.
+          - Node placement is not derived from the new formulas.
+        - Issue #173 closure (withdrawn) was not verified.
+
+        6. All user messages
+
+        - "syntaxの不足ってこと？ syntaxに分類される条件は何だっけ？"
+        - "h_layers_signatureの続きだな。観察が居る"
+        - "足りない三つ（歩みを動く量化、種類について在ることを述べる場所、変数の範囲） これがキーな気がするんだよね"
+        - "進めて"
+        - "あーなるほどね 時間軸方向にmodと対になる定義を作ったのか"
+        - "動詞の holds・pre・post だけでした。今回、それを種類（名詞）の定義にも書けるようにした これさぁ、ひょっとして各次元……って言い方が適切かはわからないけど、幾何で解釈した概念大系の各ベクトル間の関係を示すのがsyntaxってことにならないか？"
+        - "歩みって言い方だけ直してほしい ステップ、あるいはもう少し学術的な定義で それと合わせて進めよう"
+        - Earlier in this segment, before the summary: "h_w_from_frames,h_gloss_formulaを登録して確かめていこう" (done).
+
+        7. Pending Tasks
+
+        - Create the PR for branch claude/rename-step: title like 「表示語の歩みをステップに直す」, assignee nonsugertea7821, subscribe, send_later check. It is a manual-review PR because it changes library displays.
+        - Prereg and test h_layers_from_primitives (#190) under plan B with the new mapping, on branch claude/h_layers_from_primitives.
+        - Optionally verify issue #173 closed as not_planned.
+
+        8. Current Work
+
+        Just committed and pushed the rename on branch claude/rename-step (歩み → ステップ in runtime.steps, syntax.always, syntax.sometime, lang.step_quantification and the tc docstring). No PR has been opened yet.
+
+        Next is the h_layers_from_primitives prereg. Design under consideration:
+        - New script (not a rerun of sys_layers.py) computes the pos classification on current main, reusing sys_layers.edges with negation edges excluded.
+        - Classes: change → runtime, refer → syntax (relations), still → ontology (points).
+        - List the outliers.
+        - For each outlier, test movability to its target layer under the layering law:
+          - no referrer in a layer lower than the target;
+          - all of the node's referents are in layers at or below the target.
+        - Verdict: all outliers movable → support; movable fraction < 0.5 → refute; otherwise mixed.
+        - Disclose prior knowledge of the outlier list from f33d9e8.
+        - I was about to inspect the layered / r_visible implementation in syntax.yaml (~641-647) and tc's visibility code.
+
+        9. Optional Next Step
+
+        Open the PR for claude/rename-step (assign, subscribe, send_later). Then create branch claude/h_layers_from_primitives from origin/main and write the prereg script for plan B with the user's mapping. This follows the user's latest request: "歩みって言い方だけ直してほしい ステップ、あるいはもう少し学術的な定義で それと合わせて進めよう". It also follows my prior message: "さっきの案 B（外れた 25 ノードが正しい層に分かれるか）を、この対応で事前登録しようと思います。h_layers_from_primitives の中身も、この対応に合わせて書き直します。"
+
+        The hypothesis formula (v_depend layer_placement → the three) need not change. The mapping goes in the prereg docstring.
+
+        If you need specific details from before compaction (like exact code snippets, error messages, or content you generated), read the full transcript at: /root/.claude/projects/-home-user-CMT/e05d2140-ce91-515f-a5fb-e6251e13d406.jsonl
+        Continue the conversation from where it left off without asking the user any further questions. Resume directly — do not acknowledge the summary, do not recap what was happening, do not preface with "I'll continue" or similar. Pick up the last task as if the break never happened.
+
+        The messages after this summary are the most recent messages from before compaction, kept verbatim. The summary was written without seeing them, so something it says has not happened yet may already have happened in them.
+facts:
+- {is: v_say, from: session_model, to: 01M7Q66QP2BK2CXA9R807C27Y3}
+- {is: v_refer, from: 01M7Q66QP2BK2CXA9R807C27Y3, to: exp.v_support}
+- {is: v_refer, from: 01M7Q66QP2BK2CXA9R807C27Y3, to: exp.v_contradict}
+- {is: v_refer, from: 01M7Q66QP2BK2CXA9R807C27Y3, to: syntax.system_act}
+- {is: v_refer, from: 01M7Q66QP2BK2CXA9R807C27Y3, to: ontology.express_from_natural_language}
+- {is: v_refer, from: 01M7Q66QP2BK2CXA9R807C27Y3, to: ontology.information_entity}
+- {is: v_refer, from: 01M7Q66QP2BK2CXA9R807C27Y3, to: ontology.information_entity_compose_to_word}
+- {is: v_refer, from: 01M7Q66QP2BK2CXA9R807C27Y3, to: ontology.information_entity_express_from_natural_language}
+- {is: v_refer, from: 01M7Q66QP2BK2CXA9R807C27Y3, to: ontology.natural_language}
+- {is: v_refer, from: 01M7Q66QP2BK2CXA9R807C27Y3, to: ontology.refer_from_concept}
+- {is: v_refer, from: 01M7Q66QP2BK2CXA9R807C27Y3, to: ontology.v_agree}
+- {is: v_refer, from: 01M7Q66QP2BK2CXA9R807C27Y3, to: ontology.v_refer}
+- {is: v_refer, from: 01M7Q66QP2BK2CXA9R807C27Y3, to: ontology.v_design}
+- {is: v_refer, from: 01M7Q66QP2BK2CXA9R807C27Y3, to: syntax.not_after_from}
+- {is: v_refer, from: 01M7Q66QP2BK2CXA9R807C27Y3, to: syntax.not_before_from}
+- {is: v_refer, from: 01M7Q66QP2BK2CXA9R807C27Y3, to: syntax.not_compose_from_mod}
+- {is: v_refer, from: 01M7Q66QP2BK2CXA9R807C27Y3, to: runtime.refer_from_laws}
+- {is: v_refer, from: 01M7Q66QP2BK2CXA9R807C27Y3, to: runtime.refer_from_post}
+- {is: v_refer, from: 01M7Q66QP2BK2CXA9R807C27Y3, to: runtime.rewrite_rule}
+- {is: v_refer, from: 01M7Q66QP2BK2CXA9R807C27Y3, to: runtime.role_depend_from_rewrite_rule}
+- {is: v_refer, from: 01M7Q66QP2BK2CXA9R807C27Y3, to: exp.measurement_family}
+- {is: v_refer, from: 01M7Q66QP2BK2CXA9R807C27Y3, to: exp.v_metric_of}
+- {is: v_refer, from: 01M7Q66QP2BK2CXA9R807C27Y3, to: exp.mean_value}
+- {is: v_refer, from: 01M7Q66QP2BK2CXA9R807C27Y3, to: exp.observation}
+- {is: v_refer, from: 01M7Q66QP2BK2CXA9R807C27Y3, to: ontology.o}
+- {is: v_refer, from: 01M7Q66QP2BK2CXA9R807C27Y3, to: ontology.s}
+- {is: v_refer, from: 01M7Q66QP2BK2CXA9R807C27Y3, to: syntax.individuals}
+- {is: v_refer, from: 01M7Q66QP2BK2CXA9R807C27Y3, to: ontology.process}
+- {is: v_refer, from: 01M7Q66QP2BK2CXA9R807C27Y3, to: runtime.steps}
+- {is: v_refer, from: 01M7Q66QP2BK2CXA9R807C27Y3, to: runtime.state}
+- {is: v_refer, from: 01M7Q66QP2BK2CXA9R807C27Y3, to: ontology.v_depend}
+- {is: v_refer, from: 01M7Q66QP2BK2CXA9R807C27Y3, to: lang.layer_placement}
+- {is: v_refer, from: 01M7Q66QP2BK2CXA9R807C27Y3, to: lang.top_placement}
+- {is: v_refer, from: 01M7Q66QP2BK2CXA9R807C27Y3, to: lang.type_checker}
+- {is: v_refer, from: 01M7Q66QP2BK2CXA9R807C27Y3, to: syntax.state_relation}
+- {is: v_refer, from: 01M7Q66QP2BK2CXA9R807C27Y3, to: syntax.expression_part}
+- {is: v_refer, from: 01M7Q66QP2BK2CXA9R807C27Y3, to: ontology.v_compose}
+- {is: v_refer, from: 01M7Q66QP2BK2CXA9R807C27Y3, to: ontology.v_stage}
+- {is: v_refer, from: 01M7Q66QP2BK2CXA9R807C27Y3, to: syntax.extends}
+- {is: v_refer, from: 01M7Q66QP2BK2CXA9R807C27Y3, to: runtime.choice}

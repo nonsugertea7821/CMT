@@ -1,0 +1,54 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-18T11:24:39.443Z（UTC）
+individuals:
+  01M7Q6DNMK0Y4M1030G505WTFB:
+    is: model_utterance
+    display: 発言 1891
+    val:
+      order: 1891
+      text: |
+        「歩み」を「ステップ」に直す PR と、h_layers_from_primitives（#190）を確かめる PR を立てました。#190 の結果は、支持と反証の両方がある **mixed** です。
+
+        **PR #193（歩み→ステップ）**
+        - runtime.steps は「ステップの列」、always は「どのステップでも成り立つ状態の指定」に直しました。
+        - sometime は「あるステップで起こる変化の指定」、step_quantification は「ステップ上の量化」に直しました。
+        - 「ステップ」は状態遷移系での一回の遷移の意味です。always と sometime は、ステップの列の上の量化として、線形時相論理の □（いつも）と ◇（いつか）にあたる、と本文に書きました。
+
+        **PR #194（h_layers_from_primitives）**
+        今の main で、ontology・syntax・runtime のノードを、あなたの対応にしたがって分類しました。
+        - ontology＝点（在ること）
+        - runtime＝変位（ステップ）
+        - syntax＝その間の関係（refer）
+        - signature＝変数の範囲（土台なので動かさない）
+
+        分類の規則は、前の実験 sys_layers の「否定の辺をたどらない版」から変えていません。
+
+        | | 数 |
+        |---|---|
+        | ノード | 210 |
+        | 分類が今の層と合う | 182 |
+        | 外れ | 28 |
+        | 外れのうち、一度に分類の層へ動かしても層の法則を壊さない | 23（0.82） |
+
+        - **動かせたもの:** concept, word, sentence などは syntax へ、runtime.state などは syntax へ、syntax.individuals などは ontology へ移せます。
+        - **動かせなかった 5 つ:** どれも、分類がたどる辺と、層の法則が参照として数える辺がずれているところで詰まりました。
+          - **v_refer・v_agree・v_design:** 役割（referrer, designer など）が `form` でこれらの動詞を参照しています。分類は `form` をたどらないので、役割は ontology に残り、動詞だけが動いてしまいます。
+          - **natural_language・halted:** どちらも動詞を否定して参照しています（「設計されない」「実行されない」）。否定の辺は分類ではたどりませんが、層の法則では参照になります。
+
+        解釈です。点・変位・関係の読みは、大筋では今の層と合っています。崩れるのは、分類の規則と層の参照の規則がそろっていないところだけです。ただしこの実験は、三つの形が層の置き場を「決める」ことまでは示していません。
+
+        次の仮説として `h_layers_role_edges` を未検証で登録しました。役割の辺（`form`）を分類に入れれば役割が動詞といっしょに動き、違反は否定の 2 組だけに減る、という予想です。
+
+        否定の 2 組が残ったら、扱いを決める必要があります。「〜しない」という否定の関係を、その変位の層に属すると見るか、点の側に置いたままにするかです。これは読みの問題なので、そのときにご意見をいただきたいです。
+
+        #194 は mixed なので自動マージには乗りません。手で見てマージしてください。
+facts:
+- {is: v_say, from: session_model, to: 01M7Q6DNMK0Y4M1030G505WTFB}
+- {is: exp.v_answer, from: 01M7Q6DNMK0Y4M1030G505WTFB, to: 01M7Q62VBC600HGFTVX41XC6YA}
+- {is: v_refer, from: 01M7Q6DNMK0Y4M1030G505WTFB, to: runtime.steps}
+- {is: v_refer, from: 01M7Q6DNMK0Y4M1030G505WTFB, to: runtime.state}
+- {is: v_refer, from: 01M7Q6DNMK0Y4M1030G505WTFB, to: syntax.individuals}
+- {is: v_refer, from: 01M7Q6DNMK0Y4M1030G505WTFB, to: ontology.v_refer}
+- {is: v_refer, from: 01M7Q6DNMK0Y4M1030G505WTFB, to: ontology.v_agree}
+- {is: v_refer, from: 01M7Q6DNMK0Y4M1030G505WTFB, to: ontology.v_design}
+- {is: v_refer, from: 01M7Q6DNMK0Y4M1030G505WTFB, to: syntax.form}
+- {is: v_refer, from: 01M7Q6DNMK0Y4M1030G505WTFB, to: ontology.natural_language}
