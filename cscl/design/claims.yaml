@@ -151,8 +151,8 @@ individuals:
   b_reading_ends_resolved: {is: exp.item_done}
   h_prior_claim_ends_resolved: {is: exp.hyp_untested}
   b_prior_claim_ends_resolved: {is: exp.item_queued}
-  h_readings_many: {is: exp.hyp_untested}
-  b_readings_many: {is: exp.item_queued}
+  h_readings_many: {is: exp.hyp_supported}
+  b_readings_many: {is: exp.item_done}
   h_law_names_grammar: {is: exp.hyp_refuted}
   b_law_names_grammar: {is: exp.item_done}
   h_checker_words_in_grammar: {is: exp.hyp_untested}
@@ -355,6 +355,8 @@ individuals:
   o_sys_law_names_grammar_words: {is: exp.observation}
   o_sys_reading_ends_resolved_accepted: {is: exp.observation}
   o_sys_reading_ends_resolved_overwritten: {is: exp.observation}
+  o_sys_readings_many_passed: {is: exp.observation}
+  o_sys_readings_many_failed: {is: exp.observation}
   o_sys_plural_from_asym: {is: exp.observation}
   o_sys_plural_from_from_rejected: {is: exp.observation}
   o_sys_plural_from_to_rejected: {is: exp.observation}
@@ -705,6 +707,10 @@ facts:
   - {is: v_refer, from: o_sys_reading_ends_resolved_accepted, to: {is: v_level, from: sys_reading_ends_resolved.n_accepted.mean_value, to: 20}}
   - {is: v_refer, from: o_sys_reading_ends_resolved_overwritten, to: {is: v_level, from: sys_reading_ends_resolved.n_multi_accepted.mean_value, to: 7}}
   - {is: exp.v_contradict, from: o_sys_reading_ends_resolved_accepted, to: h_reading_ends_resolved}
+  - {is: v_refer, from: o_sys_readings_many_passed, to: {is: v_level, from: sys_readings_many.n_passed.mean_value, to: 7}}
+  - {is: v_refer, from: o_sys_readings_many_failed, to: {is: v_level, from: sys_readings_many.n_failed.mean_value, to: 0}}
+  - {is: exp.v_support, from: o_sys_readings_many_passed, to: h_readings_many}
+  - {is: exp.v_support, from: o_sys_readings_many_failed, to: h_readings_many}
   - {is: v_refer, from: o_sys_plural_from_asym, to: {is: v_level, from: sys_plural_from.n_asym.mean_value, to: 175}}
   - {is: v_refer, from: o_sys_plural_from_from_rejected, to: {is: v_level, from: sys_plural_from.n_from_rejected.mean_value, to: 307}}
   - {is: v_refer, from: o_sys_plural_from_to_rejected, to: {is: v_level, from: sys_plural_from.n_to_rejected.mean_value, to: 132}}
