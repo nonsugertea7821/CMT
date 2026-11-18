@@ -314,13 +314,17 @@ def qualify(x, local, dom):
 
 
 def merge_domain(name, O):
-    """領域のファイルを読み、そのノードを体系に加える。領域のファイルは、その領域の種類（nodes）と個体（individuals）を持つ。"""
+    """領域のファイルを読み、そのノードを体系に加える。領域のファイルは、その領域の種類（nodes）と個体（individuals）と、軸（axes）を持てる。"""
     D = load(name)
     dom = D.get("domain")
     if dom not in O["domains"]:
         err(f"{name}: 領域 {dom} が domains に書かれていない")
     local = set(D.get("nodes") or {})
     D.setdefault("individuals", {})
+    for k, v in (D.get("axes") or {}).items():   # 領域の軸（単位など）。軸の名は体系の中で1つ
+        if k in O["axes"]:
+            err(f"{name}: axes.{k} は、ほかの層か領域にもある")
+        O["axes"][k] = v
     for nid, n in (D.get("nodes") or {}).items():
         O["nodes"][f"{dom}.{nid}"] = q_node(n, dom)
     D["individuals"] = {iid: {k: (qn(v, dom) if k == "is" else v) for k, v in x.items()} for iid, x in D["individuals"].items()}
