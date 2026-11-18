@@ -465,6 +465,14 @@ individuals:
   o_sys_kind_ref_stops_overextension: {is: exp.observation}
   o_sys_kind_ref_no_new_violation: {is: exp.observation}
   o_sys_kind_ref_passes_checks: {is: exp.observation}
+  o_sys_draw_on_fails: {is: exp.observation}
+  o_sys_draw_on_no_new_violation: {is: exp.observation}
+  o_sys_draw_on_content_thin: {is: exp.observation}
+  o_sys_count_atom_first_fails: {is: exp.observation}
+  o_sys_count_atom_matches: {is: exp.observation}
+  o_sys_count_atom_passes_checks: {is: exp.observation}
+  o_sys_count_atom_conservative: {is: exp.observation}
+  o_sys_count_atom_no_extra: {is: exp.observation}
   # 表示名のうち、式が参照するものの表示名から来ない部分（余り）を見た観察（exp/experiments/sys_display_residual.py）。
   #   手順と判定は実行の前に登録した（841ff81。結果を見る前の訂正 12a37cb: 個体の表示名の読み先）。
   # 結果（2477928、違反 9 組のとき）: V 9（前提は成り立つ）、違反の上 y 6 つの余りを持つ割合 rate_y 1.0、概念 526 すべてでは rate_all 0.772。
@@ -645,6 +653,14 @@ facts:
   - {is: v_refer, from: o_sys_kind_ref_stops_overextension, to: {is: v_come_before, from: sys_kind_ref_after2.v_verb_ref.mean_value, to: sys_kind_ref_before.v_verb_ref.mean_value}}
   - {is: v_refer, from: o_sys_kind_ref_no_new_violation, to: {is: v_level, from: sys_kind_ref_after2.new_V.mean_value, to: 0.0}}
   - {is: v_refer, from: o_sys_kind_ref_passes_checks, to: {is: v_level, from: sys_kind_ref_after2.errors.mean_value, to: 0.0}}
+  - {is: v_refer, from: o_sys_draw_on_fails, to: {is: v_level, from: sys_draw_on_after.errors.mean_value, to: 1.0}}
+  - {is: v_refer, from: o_sys_draw_on_no_new_violation, to: {is: v_level, from: sys_draw_on_after.new_V.mean_value, to: 0.0}}
+  - {is: v_refer, from: o_sys_draw_on_content_thin, to: {is: v_level, from: sys_draw_on_after.thin.mean_value, to: 4.0}}
+  - {is: v_refer, from: o_sys_count_atom_first_fails, to: {is: v_level, from: sys_count_atom_after.errors.mean_value, to: 1.0}}
+  - {is: v_refer, from: o_sys_count_atom_matches, to: {is: v_level, from: sys_count_atom_after2.mismatch.mean_value, to: 0.0}}
+  - {is: v_refer, from: o_sys_count_atom_passes_checks, to: {is: v_level, from: sys_count_atom_after2.errors.mean_value, to: 0.0}}
+  - {is: v_refer, from: o_sys_count_atom_conservative, to: {is: v_level, from: sys_count_atom_after2.changed.mean_value, to: 0.0}}
+  - {is: v_refer, from: o_sys_count_atom_no_extra, to: {is: v_level, from: sys_count_atom_after2.extra.mean_value, to: 0.0}}
   - {is: v_refer, from: o_sys_display_residual_not_distinct, to: {is: v_come_before, from: sys_display_residual_before.rate_y.mean_value, to: 1.16}}
   - {is: v_refer, from: o_sys_display_residual_mostly_residual, to: {is: v_come_after, from: sys_display_residual_before.rate_all.mean_value, to: 0.5}}
   - {is: v_refer, from: o_sys_comments_claims_most, to: {is: v_come_after, from: sys_comments.history.mean_value, to: sys_comments.code.mean_value}}

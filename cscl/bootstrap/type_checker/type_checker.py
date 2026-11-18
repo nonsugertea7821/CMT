@@ -527,9 +527,32 @@ class Facts:
                 yield xs
 
 
+class Count:
+    """前提の原子の個数の限定（at: {count: c}）。束縛済みの変数を固定して、原子を満たす組の数が c に入ること。"""
+    def __init__(self, want):
+        self.want = want
+
+    def ok(self, v):
+        w = self.want
+        if isinstance(w, dict):
+            (op, arg), = w.items()
+            return {"gt": v > arg, "ge": v >= arg, "lt": v < arg, "le": v <= arg}.get(op, True)
+        return w == v
+
+
+def counted(f):
+    """原子が個数の限定を持てば Count を返す。"""
+    c = (f.get("at") or {}).get("count") if isinstance(f, dict) and isinstance(f.get("at"), dict) else None
+    return Count(c) if c is not None else None
+
+
 def compile_atoms(atoms):
-    """前提の並びを (否定, 関係, 位置の並び) に直し、肯定を先に並べる。"""
-    return sorted((atom(f) for f in atoms), key=lambda a: a[0])
+    """前提の並びを (否定, 関係, 位置の並び) に直し、肯定を先に並べる。個数の限定を持つ原子は、否定の位置に Count を置く。"""
+    out = []
+    for f in atoms:
+        neg, rel, args = atom(f)
+        out.append((counted(f) or neg, rel, args))
+    return sorted(out, key=lambda a: 0 if a[0] is False else 1)
 
 
 def matches(atoms, F, V, b=None):
@@ -558,6 +581,10 @@ def _match(cs, i, F, V, b, first=None):
         return
     pat = tuple(b.get(a) if a in V else a for a in args)
     src = first[1] if first is not None and first[0] == i else F
+    if isinstance(neg, Count):
+        if neg.ok(sum(1 for _ in F.find(rel, pat))):
+            yield from _match(cs, i + 1, F, V, b, first)
+        return
     if neg:
         if next(F.find(rel, pat), None) is None:
             yield from _match(cs, i + 1, F, V, b, first)
@@ -586,7 +613,7 @@ def strata(rules):
                 for p in l["assume"]:
                     neg, r, _ = atom(p)
                     if r in st:
-                        need = st[r] + (1 if neg else 0)
+                        need = st[r] + (1 if neg or counted(p) else 0)
                         if need > st[h]:
                             st[h], changed = need, True
         if not changed:
@@ -686,11 +713,12 @@ class Ontology:
                     err(f"{where}: 規則で書いた法則は、前提と、導く文か求める文を持ち、掛かる節を持たない")
                 V = variables(self.O)
                 rels = set(self.B) | {short(n) for n in self.N} | {i for i, x in (self.O.get("individuals") or {}).items() if short(x.get("is")) == "law_relation"}
-                bound = {a for f in l["assume"] if not atom(f)[0] for a in atom(f)[2] if a in V}
+                bound = {a for f in l["assume"] if not atom(f)[0] and not counted(f) for a in atom(f)[2] if a in V}
                 for part in ("assume", "derive", "require"):
                     for f in l[part]:
                         neg, rel, args = atom(f)
-                        if not isinstance(f, dict) or set(f) - {"is", "from", "to", "neg"} or rel not in rels or not args:
+                        keys = {"is", "from", "to", "neg"} | ({"at"} if part == "assume" and counted(f) and set(f["at"]) == {"count"} else set())
+                        if not isinstance(f, dict) or set(f) - keys or rel not in rels or not args:
                             err(f"{where}: {part} の {f} が、関係（基礎の関係・文法の語・導いた関係）と項で書かれていない")
                         if rel in self.B and len(args) != self.B[rel]["arity"]:
                             err(f"{where}: {part} の {f} の端の数が、{rel} と合わない")
