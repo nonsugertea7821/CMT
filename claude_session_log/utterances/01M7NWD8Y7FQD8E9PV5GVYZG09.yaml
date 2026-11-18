@@ -1,0 +1,38 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-17T23:10:26.247Z（UTC）
+individuals:
+  01M7NWD8Y7FQD8E9PV5GVYZG09:
+    is: model_utterance
+    display: 発言 1320
+    val:
+      order: 1320
+      text: |
+        失礼しました。日本語で言い直します。
+
+        その見方で合っていると思います。今、変異による確かめを裏で走らせています。80語ほどで、1語あたり約5秒なので、7分ほどかかります。
+
+        **やり方**
+        - YAML の中で、ある語の名前を全部一貫して付け替えます（例: `role` を `mut_role` に）。
+        - その状態で型検査と実行器を走らせ、出力の名前を元に戻してから、付け替えない場合の出力と比べます。
+        - コードが翻訳に過ぎないなら、名前を付け替えても振る舞いは同じになるはずです。変わったら、コードがその名前で分岐している（定義を読まず、名前に意味を持たせている）ことになります。
+
+        **語の組**（どれも走らせる前に決めて、手順をコミットしました: 5fcb47a）
+
+        | 組 | 中身 | 見込み |
+        |---|---|---|
+        | 陽性の対照 | 文法の語 `holds`、`extends`、`verbatim`、`many` | 変わる |
+        | 陰性の対照 | 言語の層のノードのうち、コードのソースに名前が一度も出てこないもの | 変わらない |
+        | 調べる語 | 前回の一覧で「シグネチャでも文法でもない」とした 55 語 | — |
+
+        **読むときの注意**
+        - 確かめは片側だけです。振る舞いが変われば名前に依存していると言えますが、変わらなくても依存していないとは言えません。今の体系の入力で表に出ていないだけかもしれないからです。
+        - 前回の文字列の拾い出しでは見えなかった、組み立てた名前（f"..."）への依存も、この方法なら見えます。
+
+        終わったら結果を報告します。
+facts:
+- {is: v_say, from: session_model, to: 01M7NWD8Y7FQD8E9PV5GVYZG09}
+- {is: exp.v_answer, from: 01M7NWD8Y7FQD8E9PV5GVYZG09, to: 01M7NWD37SW9MV9AXDFZNFDVTH}
+- {is: v_refer, from: 01M7NWD8Y7FQD8E9PV5GVYZG09, to: ontology.role}
+- {is: v_refer, from: 01M7NWD8Y7FQD8E9PV5GVYZG09, to: syntax.holds}
+- {is: v_refer, from: 01M7NWD8Y7FQD8E9PV5GVYZG09, to: syntax.extends}
+- {is: v_refer, from: 01M7NWD8Y7FQD8E9PV5GVYZG09, to: syntax.verbatim}
+- {is: v_refer, from: 01M7NWD8Y7FQD8E9PV5GVYZG09, to: syntax.many}

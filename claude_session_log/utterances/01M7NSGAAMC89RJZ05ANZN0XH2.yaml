@@ -1,0 +1,56 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-17T22:19:40.244Z（UTC）
+individuals:
+  01M7NSGAAMC89RJZ05ANZN0XH2:
+    is: model_utterance
+    display: 発言 1276
+    val:
+      order: 1276
+      text: |
+        手順 1 で止まりました。直した v_compute が、今度は exp.v_speak（発話する）と式が同じになりました。変更はコミットせずにパッチとして退避し、作業ツリーは HEAD のままです。退避したパッチは `/tmp/claude-0/-home-user-CMT/e05d2140-ce91-515f-a5fb-e6251e13d406/scratchpad/top_placement.patch` です。
+
+        **起きたこと**
+        v_compute の post に depend(to, from) を足し、to を continuant にすると、型検査が次の誤りを出しました。
+
+        ```
+        動詞の式が同じ: ['std.v_compute', 'exp.v_speak']
+        ```
+
+        v_speak の定義はすでにこうなっています。
+
+        ```yaml
+        v_speak: {from: continuant, to: continuant, pre: [{is: exists, from: to, neg: true}], post: [{is: exists, from: to}, {is: depend, from: to, to: from}]}
+        ```
+
+        **法則 top_placement 自体は通りました**
+        誤りはこの1件だけで、T1〜T3（個体の種類、フレームを変える動詞、その端）はすべて成り立っていました。v_compute の to を continuant にできれば、法則はそのまま入ります。
+
+        **分かったこと**
+        在るようにする動詞は、式で並べると次のようになります。
+
+        | 動詞 | post | 使われ方（始点） |
+        |---|---|---|
+        | 設計する | exists(to) | 運用者 |
+        | 発話する | exists(to)、depend(to, from) | 運用者 |
+        | 計算する（直した版） | exists(to)、depend(to, from) | 人工物（model・layer）、情報（typed_graph・概念式） |
+
+        今の書き方では、「作られたものが作ったものに依存する」以上の違いが書けません。`any` が隠していた区別のつかなさは、v_design との間だけでなく、v_speak との間にもありました。
+
+        **直し方の候補**
+        - A：**始点の種類で分ける。** 発話するの from を運用者（行為者）、計算するの from を人工物・情報にします。これは使われ方の観察に基づいていて、`any` のような中身のない区別とは違います。ただし「種類の違いで動詞を分ける」点は `any` と同じです。
+        - B：**同じ動詞だと認める。** 式が同じなら同じ、という向きを受け入れ、発話を「発話者による計算」とみなして1つにまとめます。
+        - C：**違いを状態の関係で書く。** たとえば「計算の結果は入力にも依存する」（入力を第三の位置 new に置き、depend(to, new) を足す）。使われ方では、layer_output は層、type_check_result は概念式という入力と結ばれていて、この形に合います。発話には入力の位置がありません。
+
+        私は C を勧めます。状態の違いとして書けるので、`any` や種類で区別するのとは違う、本当の区別になります。計算する（入力から結果を作る）の使われ方にも合います。
+
+        どれにするか指示してください。決まれば、パッチに反映して法則 top_placement と一緒に入れます。
+facts:
+- {is: v_say, from: session_model, to: 01M7NSGAAMC89RJZ05ANZN0XH2}
+- {is: exp.v_answer, from: 01M7NSGAAMC89RJZ05ANZN0XH2, to: 01M7NSEB89AZ7HH8R4BAPY69R2}
+- {is: v_refer, from: 01M7NSGAAMC89RJZ05ANZN0XH2, to: std.v_compute}
+- {is: v_refer, from: 01M7NSGAAMC89RJZ05ANZN0XH2, to: exp.v_speak}
+- {is: v_refer, from: 01M7NSGAAMC89RJZ05ANZN0XH2, to: lang.top_placement}
+- {is: v_refer, from: 01M7NSGAAMC89RJZ05ANZN0XH2, to: exp.typed_graph}
+- {is: v_refer, from: 01M7NSGAAMC89RJZ05ANZN0XH2, to: any}
+- {is: v_refer, from: 01M7NSGAAMC89RJZ05ANZN0XH2, to: ontology.v_design}
+- {is: v_refer, from: 01M7NSGAAMC89RJZ05ANZN0XH2, to: exp.layer_output}
+- {is: v_refer, from: 01M7NSGAAMC89RJZ05ANZN0XH2, to: exp.type_check_result}

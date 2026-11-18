@@ -1,0 +1,25 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-15T09:46:23.965Z（UTC）
+individuals:
+  01M7F9KKAX58YPCDZ8GJYRHG0A:
+    is: model_utterance
+    display: 発言 499
+    val:
+      order: 499
+      text: |
+        E10 に、表示名を外した条件 `expr_masked` を足しました（9dc6177、push 済み）。
+
+        - **外すもの:** 中間の種類や動詞の表示名（`ja:`）です。
+        - **残すもの:** 設問に出てくる語そのもの（果物など）と、トマトのような個体の表示名です。どちらも設問の文に出てくるので、外すと設問と結び付かなくなります。
+        - **ついでに直した不具合:** 果物の式に、関係のない魚類の事実（エビの分類）まで混ざっていました。事実を選ぶ条件が緩すぎたためで、直しました。
+
+        **この対照で分かることの限界**
+        識別子は英語の名前のままなので、`fruit_category` や `stored_goods` のように、名前から意味が透けて見えます。E10 の比較で切り分けられるのは「日本語の表示名の手がかり」までで、「名前の手がかり」全体ではありません。
+
+        名前の手がかりを完全に断つには、識別子も意味のない記号（`n1`、`n2` など）に置き換える必要があります。2 段階の対照になるので、`expr_masked` の結果を見てから足すかどうか決めるのでもよいと思います。
+
+        E11 と、概念式で学習する E3 は、表示名を残したままで実行を待たせています。
+facts:
+- {is: v_say, from: session_model, to: 01M7F9KKAX58YPCDZ8GJYRHG0A}
+- {is: exp.v_answer, from: 01M7F9KKAX58YPCDZ8GJYRHG0A, to: 01M7F9J12RR0VPKKBD2SZKDVH3}
+- {is: v_refer, from: 01M7F9KKAX58YPCDZ8GJYRHG0A, to: subj.fruit_category}
+- {is: v_refer, from: 01M7F9KKAX58YPCDZ8GJYRHG0A, to: subj.stored_goods}

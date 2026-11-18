@@ -1,0 +1,65 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-17T10:44:43.686Z（UTC）
+individuals:
+  01M7MHQV16VWPZVBRQBNG9JBF3:
+    is: model_utterance
+    display: 発言 1015
+    val:
+      order: 1015
+      text: |
+        `with` の先まで追うと、表の形は「否定の限定を数えるかどうか」で決まりました。
+
+        ## 1. 否定の限定も数えた版
+        - syntax の 99 個のうち 67 個が「変化あり」になります。
+        - 原因は、すべて `ontology.v_design`（設計する）1つです。
+        - 経路：`natural_language` の定義が「設計されていない言語」（否定の限定）です。そこから `word` → `concept` / `definition` → `role` → syntax の語へと広がっています。
+        - 「設計されていない」は変化を述べていないので、これは数え方の問題です。
+
+        ## 2. 否定の限定を除いた版（`with` の先と、動詞の端の種類まで追う）
+
+        | | ontology | syntax | runtime | std | exp | lang |
+        |---|---|---|---|---|---|---|
+        | 述べない・変わらない | **38** | 3 | 0 | 1 | 18 | 0 |
+        | 述べる・変わらない | 14 | **96** | 6 | 6 | 28 | 4 |
+        | 変わる・述べない | 1 | 0 | 0 | 13 | 10 | 0 |
+        | 変わる・述べる | 0 | 0 | **20** | 8 | 254 | 5 |
+
+        `with` の先と動詞の端の種類まで追うと、前の表より境界がはっきりしました。
+        - **syntax：** 99 個のうち 96 個が「述べる・変わらない」です。外れる3個は `not_before_from`、`not_after_from`、`individuals` です。
+        - **runtime：** 26 個のうち 20 個が「変わる・述べる」です。
+        - **ontology：** 本体の 38 個が「述べない・変わらない」です。外れるのは次の 15 個です。
+          - **述べる語彙 14 個：** `information_entity`、`sentence`、`word`、`definition`、`concept`、`language`、`natural_language`、`role`、`v_refer`、`v_agree` と、それを使う名前付きの限定など。シグネチャの上では syntax と同じ分類になります。
+          - **`v_design`：** 変化を持つ動詞が1つだけ ontology にあります。
+        - **std、exp、lang：** 4つの分類すべてにまたがります。この3つは「どの語を使うか」で分けた語彙の領域で、シグネチャで定義される層ではない、ということになります。
+
+        ## 読み取れること
+        - シグネチャ（refer と、pre / post の有無）だけで定義できる3つの分類があり、今の ontology → syntax → runtime の並びと大筋で一致します。
+          - 述べない・変わらない
+          - 述べる・変わらない
+          - 変わる
+        - 境界のずれの多くは、ontology に入っている「述べる」語彙（情報・語・定義・概念）です。
+        - `v_design` は、ontology に置かれた唯一の「変わる」語です。
+
+        ## 判断が要る点
+        1. **否定の限定の数え方：** 「変化の否定」を変化に数えるかどうかで、分類が大きく変わります。シグネチャからの分類として、どちらを正とするか決めてほしいです。私は除くのが妥当だと考えます。否定は「その変化が起きていない」ことを述べているだけだからです。
+        2. **計算の限り：** 「述べる」の判定は refer に落ちるかで見ています。体系に固有の行為（`system_act`、refer だけが持つ）を別扱いすると、結果が変わる可能性があります。今回はその区別を入れていません。
+
+        まだ何も変更していません。
+facts:
+- {is: v_say, from: session_model, to: 01M7MHQV16VWPZVBRQBNG9JBF3}
+- {is: exp.v_answer, from: 01M7MHQV16VWPZVBRQBNG9JBF3, to: 01M7MHP9K9CFDS64JM785KXJ4V}
+- {is: v_refer, from: 01M7MHQV16VWPZVBRQBNG9JBF3, to: syntax.with}
+- {is: v_refer, from: 01M7MHQV16VWPZVBRQBNG9JBF3, to: ontology.v_design}
+- {is: v_refer, from: 01M7MHQV16VWPZVBRQBNG9JBF3, to: ontology.natural_language}
+- {is: v_refer, from: 01M7MHQV16VWPZVBRQBNG9JBF3, to: ontology.word}
+- {is: v_refer, from: 01M7MHQV16VWPZVBRQBNG9JBF3, to: ontology.concept}
+- {is: v_refer, from: 01M7MHQV16VWPZVBRQBNG9JBF3, to: ontology.definition}
+- {is: v_refer, from: 01M7MHQV16VWPZVBRQBNG9JBF3, to: ontology.role}
+- {is: v_refer, from: 01M7MHQV16VWPZVBRQBNG9JBF3, to: syntax.not_before_from}
+- {is: v_refer, from: 01M7MHQV16VWPZVBRQBNG9JBF3, to: syntax.not_after_from}
+- {is: v_refer, from: 01M7MHQV16VWPZVBRQBNG9JBF3, to: syntax.individuals}
+- {is: v_refer, from: 01M7MHQV16VWPZVBRQBNG9JBF3, to: ontology.information_entity}
+- {is: v_refer, from: 01M7MHQV16VWPZVBRQBNG9JBF3, to: ontology.sentence}
+- {is: v_refer, from: 01M7MHQV16VWPZVBRQBNG9JBF3, to: ontology.language}
+- {is: v_refer, from: 01M7MHQV16VWPZVBRQBNG9JBF3, to: ontology.v_refer}
+- {is: v_refer, from: 01M7MHQV16VWPZVBRQBNG9JBF3, to: ontology.v_agree}
+- {is: v_refer, from: 01M7MHQV16VWPZVBRQBNG9JBF3, to: syntax.system_act}

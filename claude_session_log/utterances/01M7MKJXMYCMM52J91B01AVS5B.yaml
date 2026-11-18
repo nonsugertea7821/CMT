@@ -1,0 +1,44 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-17T11:16:59.678Z（UTC）
+individuals:
+  01M7MKJXMYCMM52J91B01AVS5B:
+    is: model_utterance
+    display: 発言 1066
+    val:
+      order: 1066
+      text: |
+        `state_relation` の扱いを観察から導き、claude/cscl にプッシュしました（adf8cc0）。
+
+        **観察（体系の中）**
+        - `holds`・`pre`・`post` に書かれた原子は 107 個あり、すべて基礎の関係でした。基礎の関係とは、基礎の節に並ぶ7つ（exists、same、refer、depend、part、after、involve）です。
+        - `state_relation` の肯定の使われ方は4つです。すべて syntax の中にあり、3つが述べる先（v_refer の終点）、1つが測られる先（v_measure の終点）です。どちらも型が any の端です。
+        - 生起体の型を持つ端には一度も来ていません。下位もありません。生起体の下に置く宣言を支える観察は、0 件でした。
+
+        **導いたこと**
+        - 状態の関係は「基礎の節の部分になるもの」です。限定は v_compose の始点で、相手は基礎の節です。
+        - これで v_compose の始点の型（持続体）から、根の下に置かれることが導けます。
+        - 使われているのは syntax だけなので、ontology から syntax へ移しました。
+
+        **取り下げたもの**
+        - 仮説 `h_state_relation_is_temporal_part`。新しい定義（持続体）と型が合わなくなり、観察もありませんでした。issue はまだ作っていません。
+
+        **検査の状態**
+        - 実行の検査は通ります。
+        - 型検査は法則 placed_deduced の違反が3件残っていて、まだ失敗します。`independent_continuant`、`subj.object`、`subj.goods` で、どれも (b) の本体で消える予定です。
+        - 状態の関係の定義をこう決めた観察は、まだコミットメッセージと YAML のコメントにしか書いていません。正式な記録（測定の族と観察、それを根拠にした決定）は、#89 のマージ後に claude/cross で、独立持続体の記録と一緒に加えます。
+
+        #89 はまだマージされていません。マージの通知が来たら、claude/cross で次の順に進めます。
+        1. 観察を記録し、h_ic_is_bearer を反証された仮説にする。
+        2. 2つの決定（独立持続体を除く、状態の関係を基礎の節の部分にする）を、観察を根拠にして加える。
+        3. (b) の書き換えをする。
+        4. claude/cscl の変更を取り込み、検査がすべて通る状態で PR を作る。
+facts:
+- {is: v_say, from: session_model, to: 01M7MKJXMYCMM52J91B01AVS5B}
+- {is: exp.v_answer, from: 01M7MKJXMYCMM52J91B01AVS5B, to: 01M7MKFTY54BBD62VS90BE1FSP}
+- {is: v_refer, from: 01M7MKJXMYCMM52J91B01AVS5B, to: syntax.state_relation}
+- {is: v_refer, from: 01M7MKJXMYCMM52J91B01AVS5B, to: syntax.holds}
+- {is: v_refer, from: 01M7MKJXMYCMM52J91B01AVS5B, to: syntax.pre}
+- {is: v_refer, from: 01M7MKJXMYCMM52J91B01AVS5B, to: syntax.post}
+- {is: v_refer, from: 01M7MKJXMYCMM52J91B01AVS5B, to: ontology.v_refer}
+- {is: v_refer, from: 01M7MKJXMYCMM52J91B01AVS5B, to: syntax.v_measure}
+- {is: v_refer, from: 01M7MKJXMYCMM52J91B01AVS5B, to: ontology.v_compose}
+- {is: v_refer, from: 01M7MKJXMYCMM52J91B01AVS5B, to: subj.goods}

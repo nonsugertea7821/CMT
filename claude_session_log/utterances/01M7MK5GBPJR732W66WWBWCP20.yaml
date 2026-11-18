@@ -1,0 +1,49 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-17T11:09:40.086Z（UTC）
+individuals:
+  01M7MK5GBPJR732W66WWBWCP20:
+    is: model_utterance
+    display: 発言 1056
+    val:
+      order: 1056
+      text: |
+        ご指示の形で両方を記録し、claude/cscl にプッシュしました（84440db）。
+
+        **1. シグネチャを暫定の決定として記録した**
+        - ontology に、動詞の端に来るものを表す形のノードを 23 個作りました。既にあった 5 つ（dependent、kind、participant、a、b）はそのまま使っています。
+        - lang に、端の型ごとの暫定の決定 `d_sig_<動詞>_<位置>` を 28 件置きました。中身は「この形は continuant（または occurrent）の下にある」です。
+          - 例：`d_sig_refer_from` は「述べるものは持続体の下にある」。
+        - 28 件とも、体系の上で中身が成り立つことを確かめました。状態は「暫定」で、決めた理由の観察はまだありません。
+
+        **2. 否定だけで定義された種類に、肯定の定義の候補を仮説として置いた**
+        - `h_ic_is_bearer`：依存するものは、独立持続体に依存する。
+        - `h_state_relation_is_temporal_part`：状態の関係は、過程の時間的な部分になる。
+        - どちらも未検証です。
+
+        **h_ic_is_bearer は、体系自身の書き方が反証しています**
+        全層の肯定の限定「…に依存する」は 58 個あります。その相手を、何の下にあるかで数えました。
+
+        | 依存される側 | 数 | 例 |
+        |---|---|---|
+        | 汎用依存持続体 | 51 | role → definition、cscl → system |
+        | 特定依存持続体 | 3 | disposition → quality |
+        | 独立持続体 | 3 | age → person |
+        | 持続体（形のノード） | 1 | relation_operator → dependent |
+
+        - 依存される側は、ほとんどが依存体（とくに情報）でした。したがって「独立持続体 ＝ 依存されるもの」は定義として成り立ちません。
+        - 独立持続体の肯定の定義は、別の差異から探す必要があります。
+        - この集計は、まだ観察として記録していません。
+
+        **状態**
+        - 法則 placed_deduced の違反 12 件は残っています。そのため claude/cscl の検査は失敗します。
+        - 失敗している間は、issue の下書き生成と同期テストも動きません。新しい 30 件の issue の文面も、まだ確かめられていません。
+        - claude/cscl には PR がなく、CI は main へのプッシュでしか動かないので、どこも赤にはしていません。#89 にも影響はありません。
+
+        **次に必要なこと**
+        1. 上の集計を、h_ic_is_bearer に反する観察として記録します。
+        2. 独立持続体と状態の関係の肯定の定義の候補を、体系の中で観察できる形で探します。たとえば、独立持続体なら「部分を持つ（v_compose の終点）」、状態の関係なら「holds の中身に来る」などです。候補ごとに、同じように数えて確かめます。
+
+        続けてよいですか。
+facts:
+- {is: v_say, from: session_model, to: 01M7MK5GBPJR732W66WWBWCP20}
+- {is: exp.v_answer, from: 01M7MK5GBPJR732W66WWBWCP20, to: 01M7MK232EFVF16S6KB4JB4CF0}
+- {is: v_refer, from: 01M7MK5GBPJR732W66WWBWCP20, to: ontology.v_compose}

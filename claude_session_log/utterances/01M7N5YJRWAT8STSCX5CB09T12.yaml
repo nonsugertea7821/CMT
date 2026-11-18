@@ -1,0 +1,72 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-17T16:37:56.124Z（UTC）
+individuals:
+  01M7N5YJRWAT8STSCX5CB09T12:
+    is: model_utterance
+    display: 発言 1274
+    val:
+      order: 1274
+      text: |
+        混同を見つける法則 **no_confusion** を足して、プッシュしました（5fdb211）。最上位の法則は検討までで、まだ入れていません。
+
+        ## 1. 法則 no_confusion
+
+        **規則**
+        - 歩みの pre が、位置 p の個体 b で破れたとします。
+        - p を新しい個体 c に替えると pre が成り立つなら、その歩みを混同（v∘R を v の名前で書いたもの）の候補として報告します。
+        - R の候補は、体系の語彙から取ります。c の種類と b の種類を結ぶ限定 `{of: [v_R, from], with: b の種類の上位}` のうち、b にいちばん近い上位と結ぶものだけです。私が選ぶものではありません。
+
+        **置き場所**
+        - runtime.yaml の law_given（`v_govern … runtime.run`）
+        - 実行器 runtime.py の `confusion()`
+        - 型検査器の LAWS_RUN
+
+        検査はすべて通っています。
+
+        **試した3つの場合**
+
+        | 場合 | 実行器の報告 |
+        |---|---|
+        | 在る結果ファイルを計算し直す | 混同の候補。R は **part**（c は結果ファイルの部分）か depend（c は測定値） |
+        | 在るプログラミング言語を設計する | 混同の候補。R は depend（c はその言語で書かれたコード・情報） |
+        | 採用前の決定を取り下げる | pre の破れだけで、混同の候補なし（ずらしても直らない） |
+
+        設計の場合、語彙から出てくる R は depend（言語で書かれたもの）だけで、「設計書がその言語について述べる（refer）」は出てきませんでした。設計書が作るものについて述べる、という関係は、今の語彙にはまだ書かれていません。
+
+        ## 2. 最上位の法則（検討）
+
+        **観察から演繹できるもの**
+
+        | 法則の候補 | 根拠 | 今の体系との合い方 |
+        |---|---|---|
+        | T1：個体の種類は持続体の下 | 宣言は減らない（h_open_runtime）。持続体の定義 same(self_t, self_t') | 1054/1054 |
+        | T2：pre か post を持つ動詞（自分か上位）は生起体の下 | 生起体 D2 の定義 ¬same(frame_t, frame_t+1) | 36/36 |
+        | T3：その動詞の from と to は持続体の下 | 端は宣言された名前で埋まる。その名前の種類は T1 で持続体 | 35/36。外れは v_compute（to: any） |
+
+        T1〜T3 は型検査として書けます。T3 を入れるには v_compute を直す必要があり、その道が今回できました。
+        - `any` は、v_design と見分けるためだけに置かれていました。
+        - 計算の後に成り立つ関係（例：post に depend(to, from)、つまり計算結果は計算したものに依存する）を足せば、式が別になります。そうすれば to を continuant にできます。
+
+        **まだ演繹できないもの**
+        - **静的な動詞 82（holds だけ）**：D2 ではフレームを変えないので生起体ではありません。根拠になる観察は増えています。
+          - 1つも限定されていない（0/82）
+          - 14 は生起体（入れ子の文）を端に取る
+          - 個体として宣言されることがない
+          - フレームの言葉では、静的な動詞は「フレームの中で述べられる文そのもの」にあたります。並べると、述べられる相手が持続体、述べられる文が状態（関係）、述べられる文の変化が生起体、という3つ組です。
+          - ただし前回の指摘「どんな法則が演繹されるか根拠が足りない」に対しては、まだ候補の段階です。3つ目の最上位を置くかどうかは、決めずに残します。
+        - **生起体の名詞 49 のうち、動的な動詞に届かない 35**：process、inference、concept、day・week などです。とくに concept は「語が引き起こす推論」で、D2 では作るもの（宣言）を持つように定義し直す必要があります。
+
+        **進め方の案**
+        1. v_compute の post に depend(to, from) を足し、to を continuant にする。
+        2. T1〜T3 を型検査に入れる。ここまでで、動的な側の最上位が法則で決まります。
+        3. 静的な動詞と、届かない名詞 35 は、別の観察（文として使われているか、端の型）を経てから決める。
+
+        1・2 をこの順で進めてよいか、1 の depend(to, from) という直し方でよいかを指示してください。
+facts:
+- {is: v_say, from: session_model, to: 01M7N5YJRWAT8STSCX5CB09T12}
+- {is: exp.v_answer, from: 01M7N5YJRWAT8STSCX5CB09T12, to: 01M7N5T0DQEXYDHVCR81G1Z9C2}
+- {is: v_refer, from: 01M7N5YJRWAT8STSCX5CB09T12, to: syntax.law_given}
+- {is: v_refer, from: 01M7N5YJRWAT8STSCX5CB09T12, to: syntax.v_govern}
+- {is: v_refer, from: 01M7N5YJRWAT8STSCX5CB09T12, to: runtime.run}
+- {is: v_refer, from: 01M7N5YJRWAT8STSCX5CB09T12, to: std.v_compute}
+- {is: v_refer, from: 01M7N5YJRWAT8STSCX5CB09T12, to: any}
+- {is: v_refer, from: 01M7N5YJRWAT8STSCX5CB09T12, to: ontology.v_design}

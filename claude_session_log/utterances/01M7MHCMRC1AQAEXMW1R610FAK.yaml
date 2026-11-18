@@ -1,0 +1,33 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-17T10:38:36.812Z（UTC）
+individuals:
+  01M7MHCMRC1AQAEXMW1R610FAK:
+    is: model_utterance
+    display: 発言 1003
+    val:
+      order: 1003
+      text: |
+        はい、シグネチャ（`signature`）が正確です。論理学では、関係の記号とその項数の宣言をシグネチャと呼びます。今の axiom の中身は、まさにそれです。
+        - 基礎の関係 exists／same／refer と、その項数（`arity`）
+        - 分類の軸（どの値を取るかの宣言）
+        - 規則の変数（var1〜var5）
+
+        厳密には、規則の変数はシグネチャではなく規則を書くための語です。ただ、別の層に分けるほどのものではないので、同じ層に置きます。
+
+        これで層の並びは次のようになります。
+
+        | 層 | 中身 |
+        |---|---|
+        | `signature` | 基礎の関係（exists / same / refer、それに新しく `use`）、分類の軸、規則の変数 |
+        | `axiom` | 基礎の関係の法則。今 ontology にある、推移性、反対称性、依存の端が在ることなど |
+        | `ontology` → `syntax` → `runtime` → `std` | 今と同じ |
+
+        - どの層も、`{is: use, from: 自分, to: 下の層}` と、自分より下の語だけで書けます。
+        - `axiom_layer` と `d_cscl_std_on_axiom` は、中身のある本当の公理の層を指すようになります。
+
+        公理の層を新しく作る (i) と、案の 1〜5 をまとめて claude/cross に積む進め方は、まだ返事をもらっていません。このまま進めてよければ、そう言ってください。
+facts:
+- {is: v_say, from: session_model, to: 01M7MHCMRC1AQAEXMW1R610FAK}
+- {is: exp.v_answer, from: 01M7MHCMRC1AQAEXMW1R610FAK, to: 01M7MHCC88FDRT63RJB2NY9PQR}
+- {is: v_refer, from: 01M7MHCMRC1AQAEXMW1R610FAK, to: syntax.arity}
+- {is: v_refer, from: 01M7MHCMRC1AQAEXMW1R610FAK, to: runtime.runtime}
+- {is: v_refer, from: 01M7MHCMRC1AQAEXMW1R610FAK, to: lang.axiom_layer}

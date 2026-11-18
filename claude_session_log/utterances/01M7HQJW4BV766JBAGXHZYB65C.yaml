@@ -1,0 +1,34 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-16T08:29:09.131Z（UTC）
+individuals:
+  01M7HQJW4BV766JBAGXHZYB65C:
+    is: model_utterance
+    display: 発言 825
+    val:
+      order: 825
+      text: |
+        はい、その方が良いと思います。表示と定義のずれが起きにくくなります。
+
+        **分担**
+        - **CI**（main への push 時）: exp.yaml と cscl 側ファイルから issue を作成・更新します。
+          - 仮説・決定ごとに1件作り、識別子を本文に埋め込んで、既存の issue と突き合わせます。
+          - 書き換えるのは本文の「定義」節（`<!-- def:begin -->`〜`<!-- def:end -->`）だけです。
+          - 状態ラベル（未検証/支持/反証/混合）、側ラベル（exp/cscl）、open/close を状態に合わせて付け替えます。
+          - 定義のハッシュが変わったら `説明が古い` ラベルを付けます。
+        - **Claude**: 「説明」節と「経緯」節を書きます。CI はこの2節に触りません。後から分かったことは追記かコメントで足します。
+
+        **気になる点が3つあります**
+        - **権限**: ワークフローに `permissions: issues: write` を足します。GITHUB_TOKEN で動き、新しい秘密情報は要りません。
+        - **一斉作成**: 仮説55件と決定17件で、初回に約70件が一度にできます。最初の1回は手動実行（workflow_dispatch）にして、dry-run で出力を確認してから本番、という順にします。
+        - **作成者の名前**: CI が作った issue は github-actions bot 名義になります。Claude が編集した部分は、あなたのアカウント名義（GitHub 連携）になります。
+
+        **進める順番**
+        1. type_checker を直します。いまは仮説・決定を exp 領域でしか読めないので、cscl 領域でも読めるようにします。参照語の検査（cscl の主張は axiom/std/cscl の語だけを参照する）も加えます。
+        2. cscl 側の主張ファイルを作り、言語設計の決定を書き込みます。
+        3. 同期スクリプト（`.github/scripts/`）とワークフローを作り、まず dry-run で出力を見てもらいます。
+        4. 実際に issue を作るのは、あなたの了承をもらってからです。説明と経緯は、そのあと数件ずつ書いて見てもらいます。
+
+        この方針で、claude/cross で 1. から始めます。
+facts:
+- {is: v_say, from: session_model, to: 01M7HQJW4BV766JBAGXHZYB65C}
+- {is: exp.v_answer, from: 01M7HQJW4BV766JBAGXHZYB65C, to: 01M7HQJF9TQB4PTX9W728JXP2V}
+- {is: v_refer, from: 01M7HQJW4BV766JBAGXHZYB65C, to: lang.type_checker}

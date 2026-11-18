@@ -1,0 +1,26 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-15T08:59:01.890Z（UTC）
+individuals:
+  01M7F6WVW290JB1123J5RZA7CN:
+    is: model_utterance
+    display: 発言 478
+    val:
+      order: 478
+      text: |
+        まだ手を付けていません。`spec/exp.yaml` には未着手の残り項目として、次の 3 つが積まれたままです。
+
+        - `b_write_subject_concepts_in_controlled_language`：実験で使う語（概念）を体系制御言語で書く
+        - `b_definitions_given_as_concept_expressions`：その定義を、日本語ではなく概念式としてモデルに与える
+        - `b_model_writes_concept_expressions`：モデルに概念式を書き出させる
+
+        優先順位は任されていましたが、ここまでは体系そのものの整備と層の比較実験（L20 と L4）を先にしていました。この 3 つは研究の主題に一番近い実験なので、先送りにする理由はありません。次はこれに取りかかります。
+
+        進め方は次の順にします。
+
+        1. **語を概念式で書く。** 実験で使っている 24 語を `exp` 領域の個体として書きます。後の 2 つの実験の前提で、GPU を使わないので L4 の計算と並行して進められます。
+        2. **概念式で与える。** 同じ設問で、定義を日本語で与えた場合と概念式で与えた場合の正答率を比べます。仮説 `h_controlled_language_raises_following` を確かめる実験です。
+        3. **概念式を書き出させる。** モデルが書いた概念式を `check_spec.py` で検査し、検査に通る割合を測ります。仮説 `h_model_can_write_controlled_language` を確かめる実験です。
+
+        1 はこのまま始めます。2 と 3 は、L4 の計算が終わって GPU が空いてから走らせます。
+facts:
+- {is: v_say, from: session_model, to: 01M7F6WVW290JB1123J5RZA7CN}
+- {is: exp.v_answer, from: 01M7F6WVW290JB1123J5RZA7CN, to: 01M7F6WGRC0K8ZTDV9EQKH673J}

@@ -1,0 +1,60 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-18T00:50:26.920Z（UTC）
+individuals:
+  01M7P24CZ8RND84CWDQ8SHE3PS:
+    is: model_utterance
+    display: 発言 1399
+    val:
+      order: 1399
+      text: |
+        できる部分とできない部分が分かれました。14件のうち5件は、直す側を規則から決められます。残る9件は、いまの体系の中には決める材料がありません。リポジトリには何も変更を残していません（試しに変えた箇所はすべて元に戻しました）。
+
+        **規則で決まる5件：候補の `relation_operator` が問題**
+        - 対象は `concept_vector`、`key_token_vector`、`common_vector_component`、`specific_vector_component`、`shift_unseen_by_layer` の5つで、候補はどれも `relation_operator` です。
+        - `monotone`（下位は上位に何かを足す）を含意で判定すると、違反は2件だけでした。
+          - `relation_operator` は上位の `state_shift` に何も足していません。`state_shift` が受け継ぐ「`std.model` に依存する」が、自分の「`dependent` に依存する」を含意するからです。
+          - つまり `relation_operator` は上位と同じもので、5件は「より具体的な候補がある」のではなく、候補の側に式が足りないことから起きています。
+        - `relation_operator` は、定義以外では体系のどこにも参照されていません。「含意で何も足さず、誰にも参照されない概念は消す」という規則なら、消すと決められます。
+        - もう1件、`exp.source_of_truth` も上位に何も足していません。これは14件とは別に見つかったものです。
+
+        **決められない9件：上位を移しても、どの法則も反応しない**
+        - 9件それぞれについて、v1 を候補 v2 の下へ1件ずつ機械的に移して型検査を走らせました。違反は9件とも0件でした。
+        - つまり、体系の法則は「移すのが正しい」とも「候補の式が足りない」とも言いません。
+        - 式の上では v1 は v2 の下位です。たとえば：
+          - `hour` は「`day` を測る量」、`money` は「過程を測る量」です。`day` が過程の下にあるので、式の上では `hour` は `money` の一種になります。
+          - `height` と `age`、`run`・`plan`・`attendance` と `verb_ref` も同じ形です。
+        - 移したときに起きる変化として観察できるのは、v1 が v2 の動詞の位置に入れるようになることだけでした。
+          - 例：`hour` が `v_sell` の売るもの（`money`）の位置に入れるようになる。
+          - これを禁じる法則も、それを使う事実も、いまの体系にはありません。
+
+        **帰納の限界**
+        - この9件で「移す」か「式を足す」かを分けるのは、`money` と `hour` を区別する情報です。その情報は今のところ名前にしかありません。
+        - 式と法則の中にない情報から判断を導くことはできません。ここが帰納できる範囲の境目だと思います。
+        - 逆に言えば、「式の上では区別がつかない」こと自体は、規則で検出できる観察です。
+
+        **次にやれること**
+        1. 5件は規則から決まるので、`relation_operator` を消します。`monotone` の判定も含意に替えます（`source_of_truth` が1件残ります）。
+        2. 9件は、規則が示すとおり機械的に移します。式の上では正しいからです。そのうえで、名前とずれるものは「区別する式が欠けている」と observation に記録し、式を足すかは別に決めます。
+        3. 「名前は違うのに、式の上では下位になる」組を数える測定を事前登録し、この9件を観察として記録します。そのあと、どう直すかを決めます。
+
+        私は 1 と 3 を勧めます。2 の「機械的に移す」は形式の上では一貫しますが、「`hour` は `money` の一種」がそのまま体系に入ってしまいます。
+facts:
+- {is: v_say, from: session_model, to: 01M7P24CZ8RND84CWDQ8SHE3PS}
+- {is: exp.v_answer, from: 01M7P24CZ8RND84CWDQ8SHE3PS, to: 01M7P2027KVC1M47GV4M6QVZGM}
+- {is: v_refer, from: 01M7P24CZ8RND84CWDQ8SHE3PS, to: exp.concept_vector}
+- {is: v_refer, from: 01M7P24CZ8RND84CWDQ8SHE3PS, to: exp.key_token_vector}
+- {is: v_refer, from: 01M7P24CZ8RND84CWDQ8SHE3PS, to: exp.common_vector_component}
+- {is: v_refer, from: 01M7P24CZ8RND84CWDQ8SHE3PS, to: exp.specific_vector_component}
+- {is: v_refer, from: 01M7P24CZ8RND84CWDQ8SHE3PS, to: exp.shift_unseen_by_layer}
+- {is: v_refer, from: 01M7P24CZ8RND84CWDQ8SHE3PS, to: exp.state_shift}
+- {is: v_refer, from: 01M7P24CZ8RND84CWDQ8SHE3PS, to: std.model}
+- {is: v_refer, from: 01M7P24CZ8RND84CWDQ8SHE3PS, to: ontology.dependent}
+- {is: v_refer, from: 01M7P24CZ8RND84CWDQ8SHE3PS, to: subj.hour}
+- {is: v_refer, from: 01M7P24CZ8RND84CWDQ8SHE3PS, to: subj.day}
+- {is: v_refer, from: 01M7P24CZ8RND84CWDQ8SHE3PS, to: subj.money}
+- {is: v_refer, from: 01M7P24CZ8RND84CWDQ8SHE3PS, to: subj.height}
+- {is: v_refer, from: 01M7P24CZ8RND84CWDQ8SHE3PS, to: subj.age}
+- {is: v_refer, from: 01M7P24CZ8RND84CWDQ8SHE3PS, to: runtime.run}
+- {is: v_refer, from: 01M7P24CZ8RND84CWDQ8SHE3PS, to: subj.plan}
+- {is: v_refer, from: 01M7P24CZ8RND84CWDQ8SHE3PS, to: subj.attendance}
+- {is: v_refer, from: 01M7P24CZ8RND84CWDQ8SHE3PS, to: syntax.verb_ref}
+- {is: v_refer, from: 01M7P24CZ8RND84CWDQ8SHE3PS, to: subj.v_sell}

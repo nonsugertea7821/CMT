@@ -1,0 +1,52 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-17T12:07:42.527Z（UTC）
+individuals:
+  01M7MPFS5ZA0QVK6P97JKG30MP:
+    is: model_utterance
+    display: 発言 1136
+    val:
+      order: 1136
+      text: |
+        手元に記録してある先行研究の観察からは、対称性の仮説にも (ii)（限定に「偽と述べる」読み方を入れること）にも、直接の根拠は得られません。ただし、記録の外の先行研究には関係するものがあります。
+
+        ## 記録してある先行研究からは得られない理由
+
+        記録してある先行研究は約 20 本です。主題はどれも「LLM が与えた定義や知識に従うか」です。例えば、再定義（Goworek、Stringli）、新語の獲得（WinoDict、CoLLEGe）、オントロジーを文脈に入れる（Babaei）、型検査で絞り込む（Poiroux）、関係の線形表現（Christ、Hernandez）などです。
+
+        観察として書き写したのは、正答率や類似度といったモデルの成績です。体系の中の否定の扱いや、体系の健全性を測ったものはありません。そのため、どの観察も、この 2 つの問いの支持にも反証にも使えません。
+
+        ## 記録の外に、関係する先行研究が 2 つある（未確認の点を含む）
+
+        **1. OOPS!（Poveda-Villalón ほか 2014）：観察**
+        - 693 個以上のオントロジーを調べて、よくある欠陥を一覧にした研究です。
+        - その中に P10「互いに素の宣言の欠落（missing disjointness）」があり、重要度は Critical に分類されています。
+        - 互いに素の宣言は否定の文です（「A であるものは B でない」）。この研究では、否定の文を欠くことが欠陥として扱われています。体系の対称性の崩れを欠陥とみなす、外部の例と言えるかもしれません。
+        - ただし、次の 2 点はまだ確かめていません。
+          - P10 がどれだけのオントロジーで見つかったかの数（論文には項目ごとの件数があるようですが、検索結果では見られませんでした）。
+          - Critical という格付けが、著者の判断なのか観察なのか。
+
+        **2. Gelfond & Lifschitz 1991：理論（観察ではない）**
+        - 論理プログラムに「失敗による否定」（`not`）と「古典否定」（`¬`）の 2 つを併置した研究です。cscl の「述べられていない」（neg）と「偽と述べる」（val false）に当たります。
+        - 著者たちは、常識的な知識の一部は古典否定があるほうが書きやすいと論じています。これは (ii) の方向の論拠です。ただし観察ではありません。
+        - 同じ論文は、古典否定は簡単な前処理で消せるとも述べています。¬p を新しい肯定の原子 p′ に置き換え、p と p′ が同時に成り立たない制約を置くやり方です。これを cscl に当てはめると、(ii) は文法を変えなくても、「否定の内容を持つ別の肯定の関係」で書ける可能性があります。
+        - ただし、cscl の今の否定動詞（`v_not_depend` など）は holds に neg（述べられていない）を使っています。古典否定の p′ にはなっていません。
+        - 私が覚えていた例（線路を渡る判断）がこの論文にあるかは、確認できていません。
+
+        ## 次の候補
+        - OOPS! の論文で P10 の件数を確かめ、先行研究として記録する（prior_work と観察）。
+        - Gelfond & Lifschitz の本文を読み、前処理による置き換えが cscl でどう書けるかを確かめる。
+
+        どちらから進めますか。
+
+        Sources:
+        - [OOPS! IJSWIS 2014（ideas.repec.org）](https://ideas.repec.org/a/igg/jswis0/v10y2014i2p7-34.html)
+        - [Validating ontologies with OOPS!（EKAW 2012 スライド）](https://pt.slideshare.net/MariaPovedaVillalon/validating-ontologies-with-oops-ekaw2012)
+        - [OOPS! on-line ontology diagnosis（スライド）](https://es.slideshare.net/semanticsconference/oops-online-ontology-diagnosis-by-maria-poveda)
+        - [The Current Landscape of Pitfalls in Ontologies](https://scitepress.org/Papers/2013/45179/pdf/index.html)
+        - [Gelfond & Lifschitz 1991（Springer）](https://link.springer.com/doi/10.1007/BF03037169)
+        - [Gelfond & Lifschitz 1991 PDF（UT Austin）](https://www.cs.utexas.edu/~vl/papers/clnegdd.pdf)
+facts:
+- {is: v_say, from: session_model, to: 01M7MPFS5ZA0QVK6P97JKG30MP}
+- {is: exp.v_answer, from: 01M7MPFS5ZA0QVK6P97JKG30MP, to: 01M7MPE50WV59WRH1V61X9CKVK}
+- {is: v_refer, from: 01M7MPFS5ZA0QVK6P97JKG30MP, to: syntax.not}
+- {is: v_refer, from: 01M7MPFS5ZA0QVK6P97JKG30MP, to: lang.v_not_depend}
+- {is: v_refer, from: 01M7MPFS5ZA0QVK6P97JKG30MP, to: exp.prior_work}

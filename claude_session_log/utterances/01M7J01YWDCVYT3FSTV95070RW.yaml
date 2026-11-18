@@ -1,0 +1,49 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-16T10:57:12.077Z（UTC）
+individuals:
+  01M7J01YWDCVYT3FSTV95070RW:
+    is: model_utterance
+    display: 発言 916
+    val:
+      order: 916
+      text: |
+        おっしゃる通りで、おかしいです。
+
+        型検査器（tc）は CSCL の言語の道具なので、exp の語彙を知っているべきではありません。今回の変更では、exp の語を tc のコードに直接書いてしまいました。
+        - `KINDS` に `prior_work` と `prior_claim`
+        - 複数を許す関係（`MANY`）に `prior_agreed` などの関係名
+        - `OPPOSITE` に `v_lower` と `v_not_lower` の組
+
+        もともとの tc にも同じ漏れがあります。`KINDS` の `hypothesis` / `observation`、`MANY` の `scope` / `evidence`、仮説の状態の検査などです。今回はそれを広げてしまいました。
+
+        **直し方の案（領域側で宣言し、tc は読むだけにする）**
+        1. **複数を許す関係:** 種類のノードに、例えば `many: true` を書けるようにする。tc は `MANY` の固定リストをやめ、この印を読む。
+        2. **反対の動詞:** 動詞のノードに、例えば `opposite: v_not_lower` を書けるようにする。`compare_claims` は、この宣言だけで反対かどうかを判断する。
+        3. **主張の比べ方:** tc には「2つの文の中身を、両端の上位・下位の関係と動詞で比べる」という、領域によらない処理だけを残す。
+           - どの関係（`prior_agreed` など）を、どの比較結果（同じ、反対）で確かめるかは、exp.yaml に書く。
+           - 例: 関係のノードに `derive: same` を持たせる。
+        4. **既存の漏れ:** `KINDS` などの既存の漏れは、同じ仕組みで後から移す。積み残しの「stage0 に固定された12個の名前を規則へ移す」と同じ作業です。
+
+        **今の状態**
+        - 検査は動いています。導き出した結果は次のとおりで、検査は通っています。
+          - Wang と `h_preceding_definitions_lower`: 同じ
+          - Liu と `h_distance_does_not_lower`: 反対
+          - Stringli と `h_collision_lowers_following`: 同じ
+          - WinoDict: どの仮説とも比べられない
+        - 書いていて分かったことが2つあり、手で付けた関係を外しました。
+          - WinoDict の「異なる」は、主張の形を書いてみると、こちらの仮説と比べられませんでした。
+          - Wang と `h_length_does_not_lower` の「同じ向き」は、要旨から裏付けられませんでした。
+        - 1〜3 の直しはまだ入れていません。この変更はまだコミットしていません。
+
+        1〜3 をこのまま PR #85 に入れて直してから push しますか？それとも、今の形をいったん push して、直しは別の PR にしますか？前者がよいと思います。
+facts:
+- {is: v_say, from: session_model, to: 01M7J01YWDCVYT3FSTV95070RW}
+- {is: exp.v_answer, from: 01M7J01YWDCVYT3FSTV95070RW, to: 01M7HZXV3698FNXFZYMRZ2CCR9}
+- {is: v_refer, from: 01M7J01YWDCVYT3FSTV95070RW, to: exp.prior_work}
+- {is: v_refer, from: 01M7J01YWDCVYT3FSTV95070RW, to: exp.prior_claim}
+- {is: v_refer, from: 01M7J01YWDCVYT3FSTV95070RW, to: exp.prior_agreed}
+- {is: v_refer, from: 01M7J01YWDCVYT3FSTV95070RW, to: exp.v_lower}
+- {is: v_refer, from: 01M7J01YWDCVYT3FSTV95070RW, to: exp.v_not_lower}
+- {is: v_refer, from: 01M7J01YWDCVYT3FSTV95070RW, to: std.hypothesis}
+- {is: v_refer, from: 01M7J01YWDCVYT3FSTV95070RW, to: exp.observation}
+- {is: v_refer, from: 01M7J01YWDCVYT3FSTV95070RW, to: std.scope}
+- {is: v_refer, from: 01M7J01YWDCVYT3FSTV95070RW, to: exp.evidence}

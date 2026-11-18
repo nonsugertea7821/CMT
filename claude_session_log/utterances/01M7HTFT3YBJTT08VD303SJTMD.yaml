@@ -1,0 +1,23 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-16T09:19:54.494Z（UTC）
+individuals:
+  01M7HTFT3YBJTT08VD303SJTMD:
+    is: model_utterance
+    display: 発言 891
+    val:
+      order: 891
+      text: |
+        詰まりの原因はこちらの設定ではなく、GitHub 側で runner の割り当てを待っている状態に見えます。
+
+        - **今の状態:** 手動実行した issues（run 43838001669、apply）は `queued` のままです。作られたのは 09:14:48 で、もう約5分たっています。
+        - **同時実行の制限は原因ではなさそう:** `issues.yml` には同時実行の制限（`concurrency: issues-sync`）があります。ただ、同じ group の直前の run（マージ時の push）は 09:13:44 に終わっていて、待たせているものは見当たりません。
+        - **マージ時の CI:** spec（新しいテストを含む）も issues の下書きも、マージ後の run はどちらも成功しています。
+
+        **どうするか**
+        - 数分待てば動くことが多いです。
+        - 10分以上動かなければ、その run をキャンセルして、もう一度 apply で手動実行してみてください。
+        - それでも動かないときは、GitHub Actions 側で障害が起きていないか、githubstatus.com で確かめるのがよいと思います。
+
+        動いて終わったら教えてください。結果を確かめてから、issue への書き込みを続けます。
+facts:
+- {is: v_say, from: session_model, to: 01M7HTFT3YBJTT08VD303SJTMD}
+- {is: exp.v_answer, from: 01M7HTFT3YBJTT08VD303SJTMD, to: 01M7HTFCJ4VRTEB08CVNZCGTSA}

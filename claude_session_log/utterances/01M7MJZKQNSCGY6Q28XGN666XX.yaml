@@ -1,0 +1,48 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-17T11:06:26.933Z（UTC）
+individuals:
+  01M7MJZKQNSCGY6Q28XGN666XX:
+    is: model_utterance
+    display: 発言 1053
+    val:
+      order: 1053
+      text: |
+        法則 1 を規則として実装しました。ただし、いまの体系はこの法則に反します（12 件）。そのため #89（claude/cross）には入れず、claude/cscl にプッシュしてあります（5cce09e）。claude/cscl には PR がなく、CI も main へのプッシュでしか動かないので、どこも赤にはしていません。
+
+        **法則 `placed_deduced`（syntax の law_rule で書いた。Python の検査ではない）**
+        - **根**：上位・形・位置の指定・状態のどれも持たないノードを根とします。全層で調べると、continuant と occurrent の2つだけになりました。説明文には頼っていません。
+        - **置かれる条件**：概念が根の下に置かれるのは、次のどちらかのときだけです。
+          - 肯定の限定や形が指す動詞の端の種類が、すでに置かれている。
+          - 根でない上位が、すでに置かれている。
+        - 根へ extends で宣言しただけでは置かれません。否定（示されていない）も、何も置きません。
+        - **求めること**：動詞でない概念は、すべて置かれていなければなりません。
+
+        **反するもの**
+        - `ontology.independent_continuant`：否定（依存すると示されていない）だけで定義されている。
+        - `ontology.state_relation`：否定（時間的な部分と示されていない）だけで定義されている。
+        - 領域 subj の10個は、すべて independent_continuant の下にある。
+          - `object`、`land`、`region` は independent_continuant の直下で、肯定の定義がそこを指していない。
+          - `land`、`region`、`warehouse` の限定は、端の型が自分自身である動詞（`v_located`、`v_store`）を指している。循環しているので、何も置かない。
+
+        **ここで決めなければならないこと（観察が要る）**
+        BFO も独立持続体を、上位「持続体」と否定の差異（どれにも依存しない）で定義しています。この否定は古典的な否定です。この体系では否定を「示されていない」と定義したので、BFO の定義をそのまま写すと何も導けません。閉世界を置いても、「依存しない」ことから持続体であることは導けないので、置き場所は決まりません。
+
+        したがって、independent_continuant と state_relation には、体系の中で観察できる肯定の差異が要ります。たとえば「依存の終点に来るもの」（担い手）が候補です。ただし、それが BFO の独立持続体と一致するかは、依存の終点に依存体も来られる点を含めて、確かめる必要があります。どれを採るかは私が決めずに、仮説として置き、観察で決めるべきだと考えます。
+
+        **2つ目（シグネチャの理由の記録）はまだ手を付けていません。** 記録する形を決める必要があるからです。
+        - 動詞の端の型ごとに暫定の決定を置くと、ontology だけで約20件の主張になり、それぞれが issue になります。
+        - 中身を一つの文で書くには、各位置を表す形のノード（例：`v_refer` の始点に来るもの）を新しく作り、それが continuant の下にあると述べる形になります。
+
+        次の2つを決めてください。
+        - この形（形のノードを作り、端の型ごとに暫定の決定を1件置く）で記録してよいですか。
+        - independent_continuant と state_relation の肯定の定義は、仮説として候補を置く形で進めてよいですか。
+facts:
+- {is: v_say, from: session_model, to: 01M7MJZKQNSCGY6Q28XGN666XX}
+- {is: exp.v_answer, from: 01M7MJZKQNSCGY6Q28XGN666XX, to: 01M7MJT62YZYYG5BDAQ0VXX9SQ}
+- {is: v_refer, from: 01M7MJZKQNSCGY6Q28XGN666XX, to: syntax.law_rule}
+- {is: v_refer, from: 01M7MJZKQNSCGY6Q28XGN666XX, to: subj.land}
+- {is: v_refer, from: 01M7MJZKQNSCGY6Q28XGN666XX, to: subj.region}
+- {is: v_refer, from: 01M7MJZKQNSCGY6Q28XGN666XX, to: subj.warehouse}
+- {is: v_refer, from: 01M7MJZKQNSCGY6Q28XGN666XX, to: subj.v_located}
+- {is: v_refer, from: 01M7MJZKQNSCGY6Q28XGN666XX, to: subj.v_store}
+- {is: v_refer, from: 01M7MJZKQNSCGY6Q28XGN666XX, to: syntax.state_relation}
+- {is: v_refer, from: 01M7MJZKQNSCGY6Q28XGN666XX, to: ontology.v_refer}

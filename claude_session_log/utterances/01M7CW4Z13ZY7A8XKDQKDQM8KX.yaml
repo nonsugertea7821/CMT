@@ -1,0 +1,64 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-14T11:12:44.067Z（UTC）
+individuals:
+  01M7CW4Z13ZY7A8XKDQKDQM8KX:
+    is: model_utterance
+    display: 発言 121
+    val:
+      order: 121
+      text: |
+        語彙を、いただいた構造（3本のツリーと概念式）に作り直しました。検査は通っており、わざと入れた6種類の誤りもすべて検出されることを確かめました。会社側の体系とは独立に、こちらで一から組んだものです。
+
+        ## 構成（`spec/ontology.yaml`）
+
+        | ツリー | 内容 | 件数 |
+        |---|---|---|
+        | 実体 | 最上位は BFO の持続体と生起体。その下に情報、人工物、質、役割、傾向性、過程を置く | 124 |
+        | 関係 | 各関係は、結ぶ実体の種類（始点と終点）と、述語論理による定義を持つ | 40 |
+        | 分類 | 軸は関係を抽象として見たもの。値は列挙、実体、数のいずれか | 軸 22 |
+
+        ## 概念式
+
+        実体は「上位の実体 [軸=値, …]」で書きます。式を持たないものは原始概念で、説明文が必須です。
+
+        ```
+        規則型の再定義     = definition[agreement_with_prior=differs, target=common_word][boundary_kind=numeric_threshold_or_calendar]
+        単一層の概念ベクトル = channel[placement=label_token_positions][layer_count=one]
+        一般の意味どおりの定義 = definition[relevance_to_question=irrelevant][agreement_with_prior=agrees]
+        ```
+
+        軸を整列した形を正規形とし、正規形が同じ実体は同一とみなします。
+
+        ## 検査で保証していること
+
+        確認のために入れた誤りと、検出の結果です。
+
+        | 入れた誤り | 検出 |
+        |---|---|
+        | 「下げる」の目的語に、質でない実体（用語集）を置く | 関係の終点の型に合わない |
+        | 2つの実体に同じ概念式を与える | 概念式が同じ |
+        | 軸に存在しない値を使う | その軸に値がない |
+        | 使えない軸で実体を分類する（用語集を「加える層の数」で分類） | 軸のもとになる関係の始点の型に合わない |
+        | 関係の定義に未定義の語を書く | 語が未定義 |
+        | 2つの実体に同じ表示語を与える | 同音異義 |
+
+        ## 私の解釈と、確認したい点
+
+        1. **「概念」を生起体（過程）に置きました。** これまでの「語を使うときに走る推論」という定義に従ったためです。対して「元の意味」は、モデルが持つ傾向性（持続体）に置いています。この置き方でよいかは、判断を仰ぎたい点です。
+        2. **関係の定義は、形だけを検査しています。** 使われている語が解決できるかは見ますが、式から何かを導出する推論はしていません。`raises(x, q) iff value(q, with(x)) gt value(q, without(x))` のような式は、今は人が読むための厳密な記述にとどまります。
+        3. **「関係は BFO の下に定義される」の読み方。** 関係のツリーは実体のツリーと別に持ち、各関係の始点と終点を BFO の種類で指定する、と解釈しました。関係そのものを BFO の実体として置く（たとえば関係を特定依存持続体の下に置く）意図であれば、作りが変わります。
+        4. **BFO は必要な範囲だけ取り込みました。** 時間領域や空間領域など、今回の内容で使わない枝は入れていません。
+
+        ## 使い方
+
+        ```
+        python tools/check_spec.py                 # 検査
+        python tools/check_spec.py --expr <実体>    # 概念式の正規形を表示
+        python tools/check_spec.py --show <識別子>  # 観察・仮説・決定を、参照を展開して表示
+        ```
+
+        実験は並行して進んでいます。E8（複数の層に薄く分けたベクトル）は 24概念中11概念まで学習が進みました。
+facts:
+- {is: v_say, from: session_model, to: 01M7CW4Z13ZY7A8XKDQKDQM8KX}
+- {is: exp.v_answer, from: 01M7CW4Z13ZY7A8XKDQKDQM8KX, to: 01M7CVWWQVH76DF8AJRG3N9CAG}
+- {is: v_refer, from: 01M7CW4Z13ZY7A8XKDQKDQM8KX, to: exp.common_word}
+- {is: v_refer, from: 01M7CW4Z13ZY7A8XKDQKDQM8KX, to: exp.label_token_positions}

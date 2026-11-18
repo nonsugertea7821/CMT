@@ -1,0 +1,38 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-17T10:08:35.391Z（UTC）
+individuals:
+  01M7MFNNHZCV6P4B51GQYCPAV9:
+    is: model_utterance
+    display: 発言 964
+    val:
+      order: 964
+      text: |
+        3文字の候補と、枠組みがいちばん近い候補を挙げます。
+
+        **枠組みとしていちばん近い: CoLLEGe（3文字ではない）**
+        - 論文: Teehan, Lake, Ren（NYU）2024、arXiv:2403.15362。
+        - 新しい概念の埋め込みを、少数の例文や定義から作ります。それを凍結した LLM（LLaMA）の埋め込み空間に入れます。
+        - 評価は3つの用法です。
+          - 言語推論（GRE）: 適用に当たります。
+          - 定義の生成（DefGen）: 暗唱や言い換えに当たります。
+          - スラング
+        - 課題ごとの追加学習なしに、これらの用法へ転移すると報告しています。
+        - 「定義から概念の表現を作って差し込み、複数の用法で測る」という枠組みは、この研究とほぼ同じです。
+
+        **3文字の候補**
+        - **CAV / GCAV**（Zhang ほか、AAAI 2025）: Concept Activation Vector を LLM の操舵に使う論文です。概念（毒性、感情、話題）のベクトルを対照的なプロンプトから学び、推論時に選んだ層へ足します。「概念ベクトルを層に足す」点は近いです。ただし対象は振る舞いの性質で、語の定義ではありません。
+        - **CAA**（Panickssery 2023）: 既に個体にしてあります。
+
+        **CoLLEGe だった場合の新規性の差**
+        1. CoLLEGe が扱うのは**新しい語**です。**既知の語の意味の上書き**（元の意味との衝突）は扱っていません。この研究の中心が、そのまま差になります。
+        2. CoLLEGe は用法への転移を「できた」と報告しています。この研究は単一層ベクトルで「用法どうしは転移しない」を支持しました。条件（新語か再定義か、入力埋め込みか残差への加算か）の違いとして比べる価値があり、先行研究の比較に乗せると「反対」が導かれる可能性があります。
+        3. 型付きの概念体系（CSCL）から定義を作る点と、一貫性を指標にする点は、引き続き差になります。
+
+        どちらでしたか。CoLLEGe なら最優先で個体にし、主張を書き写して仮説と機械的に比べます。
+
+        Sources:
+        - [CoLLEGe (arXiv:2403.15362)](https://arxiv.org/abs/2403.15362)
+        - [Controlling LLMs Through Concept Activation Vectors (arXiv:2501.05764)](https://arxiv.org/pdf/2501.05764)
+        - [同 AAAI 2025 版](https://ojs.aaai.org/index.php/AAAI/article/view/34778)
+facts:
+- {is: v_say, from: session_model, to: 01M7MFNNHZCV6P4B51GQYCPAV9}
+- {is: exp.v_answer, from: 01M7MFNNHZCV6P4B51GQYCPAV9, to: 01M7MFMY3EZ334RB268CFTEPB3}

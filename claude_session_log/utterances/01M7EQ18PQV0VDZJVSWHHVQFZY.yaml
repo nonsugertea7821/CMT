@@ -1,0 +1,47 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-15T04:21:48.887Z（UTC）
+individuals:
+  01M7EQ18PQV0VDZJVSWHHVQFZY:
+    is: model_utterance
+    display: 発言 375
+    val:
+      order: 375
+      text: |
+        全面禁止にしました。検査を通してプッシュ済みです（ノード411）。
+
+        ## 変えたこと
+
+        - **`mod` は単一**：`mod: {of: [...], with: ...}` か `mod: 修飾語` と書きます。並びで書くとエラーです。
+        - **法則 `single`**：1つのノードが足せる限定は1つだけです。`mod`・`val`・`cmp` を合わせて1つまでとしました。
+        - **2つ以上の限定の書き方**：階層を降りて1つずつ重ねるか、`extends` に上位を並べて AND にします。
+
+        ## 移行の結果
+
+        限定を2つ以上持っていた62個のノードを分割し、中間の概念を48個作りました。同じ上位で同じ限定を共有するものは、1つの中間の概念にまとめています。
+
+        移行で壊れたのは検査プログラムの3か所でした。役割の根拠、仮説の状態の読み取り、使える値の一覧が「直下の子」や「自分の修飾」を前提にしていたためです。上位の連鎖をたどる形に直しました。
+
+        ## 中間の概念の表示語は機械的に付けた
+
+        48個の表示語は、限定の式から機械的に組み立てたものです。日本語として不自然です。
+
+        | 識別子 | 表示語 |
+        |---|---|
+        | `definition_compose_from_system` | 体系へ部分になる定義 |
+        | `role_depend_from_redefinition` | 再定義へ依存する役割 |
+        | `passage_express_from_natural_language` | 自然言語へで書かれる文章 |
+
+        重複はなく検査は通りますが、自然な語があるものは付け直す必要があります。たとえば「再定義へ依存する役割」は「再定義による役割」と呼べます。一覧をお見せして付け直すか、私が案を作るか、必要なら言ってください。
+
+        ## 気づいたこと
+
+        仮説の状態が分かりやすい形になりました。以前は4つの状態が横並びでしたが、いまは「支持する観察がある仮説」「支持する観察がない仮説」の2つの中間の概念の下に、2つずつ分かれています。分割によって、隠れていた分類の軸が階層に現れた例です。
+facts:
+- {is: v_say, from: session_model, to: 01M7EQ18PQV0VDZJVSWHHVQFZY}
+- {is: exp.v_answer, from: 01M7EQ18PQV0VDZJVSWHHVQFZY, to: 01M7EPWA5J1YRKV3CNDW9X48FT}
+- {is: v_refer, from: 01M7EQ18PQV0VDZJVSWHHVQFZY, to: syntax.mod}
+- {is: v_refer, from: 01M7EQ18PQV0VDZJVSWHHVQFZY, to: syntax.val}
+- {is: v_refer, from: 01M7EQ18PQV0VDZJVSWHHVQFZY, to: syntax.cmp}
+- {is: v_refer, from: 01M7EQ18PQV0VDZJVSWHHVQFZY, to: syntax.extends}
+- {is: v_refer, from: 01M7EQ18PQV0VDZJVSWHHVQFZY, to: syntax.definition_compose_from_system}
+- {is: v_refer, from: 01M7EQ18PQV0VDZJVSWHHVQFZY, to: exp.role_depend_from_redefinition}
+- {is: v_refer, from: 01M7EQ18PQV0VDZJVSWHHVQFZY, to: syntax.passage_express_from_natural_language}

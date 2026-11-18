@@ -1,0 +1,60 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-15T05:07:25.982Z（UTC）
+individuals:
+  01M7ESMSMY3DQG65QWFM654P00:
+    is: model_utterance
+    display: 発言 401
+    val:
+      order: 401
+      text: |
+        どちらも原理的ではないと考えます。原理に合うのは、事実を「動詞の個体」として、位置に名前を付けて書く形です。いまの2つの書き方は、どちらもその略記にあたります。
+
+        ## 理由1：関係は実体である
+
+        この体系では最初から、関係は動詞（生起体）であり、両端 `from`・`to` を持つ実体だと決めています。そうすると、1つの事実は「ある動詞の、1回の成り立ち」です。つまり、その動詞を種類とする個体になります。
+
+        ```yaml
+        f1: {is: v_depend, from: role1, to: dec1}
+        ```
+
+        実行の記録の歩みは、すでにこれに近い形です（`[v_adopt, {from: sys1, to: dec1, new: role1}]`）。
+
+        ## 理由2：2つの書き方は、それぞれ別のものを省いている
+
+        - **式の文字列 `"depend(role1, dec1)"`**：構造が文字列の中に隠れています。読むには `syntax.formula` の正規表現が要ります。これは体系が自分で構文糖衣と定めたもので、正本ではなく、そこから導かれる表示です。
+        - **並び `[evidence, h1, o1]`**：何番目が始点かを、位置の順番という暗黙の約束に頼っています。位置（`from`・`to`）はノードなのに、名前で呼んでいません。関係の省略の一種です。
+
+        ## 理由3：`exp` の事実には、もっと大きな省略がある
+
+        `evidence`・`scope`・`layer` は動詞ではなく、名詞です。たとえば `evidence` は「仮説と一致する観察」という概念で、その中に動詞 `v_agree` とその位置が含まれています。`[evidence, h1, o1]` は、本来の事実を、名詞を使って縮めた書き方です。本来の事実は次のとおりです。
+
+        ```yaml
+        {is: v_agree, from: o1, to: h1}
+        ```
+
+        この縮め方は、名詞の定義から機械的に戻せます。`evidence` の式は `v_agree` とその位置を持っているからです。つまり名詞を使った書き方も、体系が定義できる構文糖衣です。
+
+        ## 提案
+
+        - **正本**：事実は、動詞の個体として位置に名前を付けて書く（`{is: 動詞, from: ..., to: ...}`）。`runs/` と `exp.yaml` の両方をこれに揃えます。
+        - **略記**：`"depend(a, b)"` と `[evidence, h, o]` は、`syntax` の節に構文糖衣として定義します。検査は、略記を正本の形に戻してから確かめます。
+        - **`holds`・`pre`・`post` の式は別扱い**：これは個体についての事実ではなく、位置（`from`・`to`・`new`）どうしの関係の型です。文字列の略記のままでよいと考えます。揃えるなら同じ形にできます。
+
+        確実でない点が1つあります。`layer: 28` のような数の事実は、動詞の個体として書くと「層が28個、モデルの部分になる」という意味になります。個数は事実そのものではなく、事実の個数の数え上げです。そのため、数は個体の軸の値（`val`）に置くほうが筋が通るかもしれません。ここは実際に書き換えたうえで判断したいと考えています。
+
+        この方針でよければ進めます。
+facts:
+- {is: v_say, from: session_model, to: 01M7ESMSMY3DQG65QWFM654P00}
+- {is: exp.v_answer, from: 01M7ESMSMY3DQG65QWFM654P00, to: 01M7ESM6E6QDC89T42RX8773SX}
+- {is: v_refer, from: 01M7ESMSMY3DQG65QWFM654P00, to: syntax.from}
+- {is: v_refer, from: 01M7ESMSMY3DQG65QWFM654P00, to: syntax.to}
+- {is: v_refer, from: 01M7ESMSMY3DQG65QWFM654P00, to: ontology.v_depend}
+- {is: v_refer, from: 01M7ESMSMY3DQG65QWFM654P00, to: exp.v_adopt}
+- {is: v_refer, from: 01M7ESMSMY3DQG65QWFM654P00, to: exp.evidence}
+- {is: v_refer, from: 01M7ESMSMY3DQG65QWFM654P00, to: std.scope}
+- {is: v_refer, from: 01M7ESMSMY3DQG65QWFM654P00, to: exp.layer}
+- {is: v_refer, from: 01M7ESMSMY3DQG65QWFM654P00, to: ontology.v_agree}
+- {is: v_refer, from: 01M7ESMSMY3DQG65QWFM654P00, to: syntax.holds}
+- {is: v_refer, from: 01M7ESMSMY3DQG65QWFM654P00, to: syntax.pre}
+- {is: v_refer, from: 01M7ESMSMY3DQG65QWFM654P00, to: syntax.post}
+- {is: v_refer, from: 01M7ESMSMY3DQG65QWFM654P00, to: syntax.new}
+- {is: v_refer, from: 01M7ESMSMY3DQG65QWFM654P00, to: syntax.val}

@@ -1,0 +1,57 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-17T23:22:10.662Z（UTC）
+individuals:
+  01M7NX2RV62740YPWMNAMNG12B:
+    is: model_utterance
+    display: 発言 1326
+    val:
+      order: 1326
+      text: |
+        偶然ではありませんでした。3つとも、コードと体系が同じものを同じ綴りで指していて、ただコードがそれを体系から読まずに自分で持っていました。私が確かめずに「偶然」と書いたのは誤りです。記録の注も訂正しました（d7dd752、push 済み、CI の5つの検査は通過）。
+
+        ## 3つの正体
+        - **kind**
+          - コードは、法則の個体が `is` で属する先を `l["kind"]` に入れています。
+          - 体系では、`属する`（ontology.is）の終点は `ontology.kind`（種類）です。
+          - つまり、コードの「kind」は体系の「種類」そのものです。
+        - **laws**
+          - コードは、`law_rule` と `law_given` を名前で挙げて、法則の集まり `O["laws"]` を作っています。
+          - 体系では、その2つは `syntax.laws` の下位で、ほかに下位はありません。
+          - つまり、コードは体系の分類（laws の下位はこの2つ）を、自分でもう一度書いていました。
+        - **type_checker**
+          - 体系（lang）は、`type_checker` を「型検査器」という人工物として述べています。
+          - これはあのコードのファイルそのものです。
+
+        ## なぜ名前の付け替えで見えなかったか
+        - コードは、この3つの語を YAML から読んでいません。だから YAML 側で名前を付け替えても、振る舞いは変わりません。
+        - これは混同の裏返しになっています。
+          - 混同は「1つの名前が2つのものを指す」ことでした。
+          - こちらは「1つのものを、体系とコードが別々に名付けていて、両者が結ばれていない」ことです。
+        - 結ばれていないので、片方だけが変わってずれる危険があります。
+
+        ## 実際にずれていた例
+        直前のコミット（cb8fbf9）で、私は `law_relation` を grammar の「法則の種類」に入れていました。しかし体系では、`law_relation` は laws の下位ではありません（「導いた関係」で、法則を組み立てる語）。これがまさに、分類をコードと文法で別々に書いたためのずれでした。
+
+        直したこと:
+        - `law_relation` を法則の種類から外し、法則を組み立てる語（rule_word）に移しました。
+        - grammar の法則の種類が `syntax.laws` の下位と等しいことを、型検査が確かめるようにしました。
+
+        ## 見つけ方の案
+        この種の重複は、名前の付け替えでは見えませんが、定義を変える変異でなら見える見込みです。
+        - 例えば `laws` の下位を1つ足してみます。コードが体系を読んでいれば、新しい種類の法則も法則として扱われるはずです。今のコードは名前で2つを挙げているので、扱いません。
+        - 同じように、`属する` の終点を変えてみれば kind の重複が見えます。
+
+        まだ直していないこと:
+        - `core_sections`（法則を集める所）は、今も2つの名前を挙げたままです。体系の分類から読む形にするには、Ontology を作る前に分類を引く必要があり、手を入れる場所がやや大きくなります。
+
+        次は、定義を変える変異を、名前の付け替えと同じ手順（先に登録してから実行）で走らせるのがよいと考えます。進めてよいですか。
+facts:
+- {is: v_say, from: session_model, to: 01M7NX2RV62740YPWMNAMNG12B}
+- {is: exp.v_answer, from: 01M7NX2RV62740YPWMNAMNG12B, to: 01M7NWZQBVCDEDACYGQ86X6CJM}
+- {is: v_refer, from: 01M7NX2RV62740YPWMNAMNG12B, to: ontology.is}
+- {is: v_refer, from: 01M7NX2RV62740YPWMNAMNG12B, to: ontology.kind}
+- {is: v_refer, from: 01M7NX2RV62740YPWMNAMNG12B, to: syntax.law_rule}
+- {is: v_refer, from: 01M7NX2RV62740YPWMNAMNG12B, to: syntax.law_given}
+- {is: v_refer, from: 01M7NX2RV62740YPWMNAMNG12B, to: syntax.laws}
+- {is: v_refer, from: 01M7NX2RV62740YPWMNAMNG12B, to: lang.type_checker}
+- {is: v_refer, from: 01M7NX2RV62740YPWMNAMNG12B, to: syntax.law_relation}
+- {is: v_refer, from: 01M7NX2RV62740YPWMNAMNG12B, to: syntax.rule_word}

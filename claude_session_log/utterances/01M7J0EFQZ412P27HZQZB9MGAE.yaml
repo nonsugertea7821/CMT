@@ -1,0 +1,274 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-16T11:04:02.559Z（UTC）
+individuals:
+  01M7J0EFQZ412P27HZQZB9MGAE:
+    is: session_summary
+    display: 発言 927
+    val:
+      order: 927
+      text: |
+        This session is being continued from a previous conversation that ran out of context. The summary below covers the earlier portion of the conversation.
+
+        <system-reminder>
+        <tools-used-before-summary>AskUserQuestion, Bash, Edit, Grep, Read, ReadNotifications, TaskStop, ToolSearch, WebFetch, WebSearch, Write, mcp__claude-code-remote__create_trigger, mcp__claude-code-remote__get_trigger, mcp__claude-code-remote__read_documentation, mcp__claude-code-remote__send_later, mcp__claude-code-remote__update_trigger, mcp__github__actions_get, mcp__github__actions_list, mcp__github__create_pull_request, mcp__github__issue_write, mcp__github__list_issues, mcp__github__list_pull_requests, mcp__github__pull_request_read, mcp__github__update_pull_request</tools-used-before-summary>
+        </system-reminder>
+        Summary:
+        1. Primary Request and Intent
+
+           **Standing rules**
+           - Repo nonsugertea7821/CMT is at /home/user/CMT.
+           - Reply in Japanese. Don't overclaim.
+           - Never use `git checkout` to restore files.
+           - Only one model process at a time. The model Python is /home/user/venv/bin/python.
+           - No background keep-alive loops.
+           - A stop hook requires changes to be committed and pushed.
+           - Commit trailer:
+             ```
+             Co-Authored-By: Claude [モデル名を伏せた] <[メールアドレスを伏せた]>
+             Claude-Session: https://claude.ai/code/session_015KRKt6TNJZ7ZsQmEknANXK
+             ```
+           - PR body ends with:
+             ```
+             🤖 Generated with [Claude Code](https://claude.com/claude-code)
+
+             https://claude.ai/code/session_015KRKt6TNJZ7ZsQmEknANXK
+             ```
+           - Branch policy: claude/cscl is for language-only work, claude/exp for experiment-only work, claude/cross for work spanning both.
+           - No personal info in issues.
+           - Outward-facing actions need confirmation.
+           - User feedback: "PRの状態は確認してから応答して" — always check PR state first.
+           - User feedback: "PRに問題を残さないでくれ" — don't open PRs with known leftover problems.
+           - User feedback: exp changes must not affect tc (the type checker).
+
+           **Current request ("よろしく")**
+           - Rebuild PR #86 so that tc contains only language checks.
+           - Move exp-specific checking into an exp-side module declared by the domain.
+           - Then merge main into PR #85 and convert it to the declarations ("先にtcを直して、それを同期して85を修正しよう").
+
+        2. Key Technical Concepts
+
+           **Layered CSCL**
+           - Layers: axiom, ontology, syntax, runtime, std.
+           - Domains: exp, subj, lang (cscl/design/claims.yaml).
+           - Nodes are stored as "layer.name".
+           - Grammar keys are declared in syntax.yaml `grammar:`. Every grammar word must also be a node.
+           - Kinds are defined by mod expressions. The law "specific" rejects two nodes with the same expression, so new kinds need distinct expressions.
+
+           **gather()**
+           - Stores facts on an individual under the relation name = short name of the other end's kind.
+           - Multiple facts per relation are allowed only for relations declared many.
+
+           **sync_issues sections**
+           - `obs` (観察の値) and `prior` (先行研究): generated, not hashed.
+           - `def`: hashed.
+           - Labels are now English: claim, hypothesis, decision, supported, refuted, mixed, untested, adopted, tentative, withdrawn, stale-explanation, exp, cscl.
+           - RENAME (Japanese → English) and DEFAULTS (GitHub default labels to delete) are handled in apply.
+
+        3. Files and Code Sections
+
+           **PR #83 (merged)**
+           - `.github/scripts/sync_issues.py`: added the obs section, built from type_checker.expand values.
+             - Symbols: SYM `{前に置かれる:<, 後ろに置かれる:>, ほぼ同じ位置にある:≈, 同じ位置にある:=, 前には置かれない:≥, 後ろには置かれない:≤}`, plus a G2c/G2k LEGEND line.
+             - update_body inserts or replaces the section before "## 定義".
+           - `test_sync_issues.py` is run in spec CI.
+
+           **PR #84 (merged)**
+           - English labels; RENAME map; DEFAULTS list; STALE = "stale-explanation"; KIND map 仮説→hypothesis, 決定→decision.
+           - Fake GitHub in the test handles PATCH/DELETE on /labels.
+
+           **PR #85 (open, branch claude/cross, commits f2a7aa1 and 813264c)**
+           - exp/src/exp.yaml:
+             - Kinds:
+               - `prior_work` (extends sentence_refer_from_hypothesis, mod {of:[v_expose,to]})
+               - `prior_claim` (extends sentence, mod {of:[v_refer,to], with: prior_work})
+               - `prior_agreed` (extends hypothesis, mod v_agree to)
+               - `prior_contrasted` (extends hypothesis, mod v_refer to)
+             - Verbs:
+               - `v_prior_same` (extends v_agree, from prior_work, to prior_agreed)
+               - `v_prior_differ` (extends v_refer, to prior_contrasted)
+               - `v_prior_method` (extends v_use, from hypothesis, to prior_work)
+               - `v_state` (extends v_refer, from prior_work, to prior_claim)
+             - New concepts:
+               - `preceding_distractors` (factor). `preceding_definitions` now extends it.
+               - `preceding_distractor_set`
+               - `context_following`. `redefinition_following` now extends it.
+             - 10 `pw_*` individuals (display "先行研究: …"):
+               - wang2025_proactive_interference, goworek2026_lexical_redefinition, stringli2025_inverse_redefinition, eisenschlos2023_winodict, xu2024_knowledge_conflicts, liu2024_lost_in_the_middle
+               - turner2023_activation_addition, panickssery2023_caa, todd2024_function_vectors, radevski2026_steering_tokens
+             - 4 `pwc_*` prior claims (wang, liu, stringli, eisenschlos), each with a v_refer content.
+               - Derived results: wang = same as h_preceding_definitions_lower; liu = opposite to h_distance_does_not_lower; stringli = same as h_collision_lowers_following; eisenschlos = none.
+             - Manual links removed: Liu–preceding, WinoDict–new_word, Wang–length.
+           - type_checker.py on #85 (the problem):
+             - KINDS has prior_work/prior_claim.
+             - MANY has the prior relation names.
+             - Contains OPPOSITE, compare_claims and check_prior.
+           - sync_issues.py on #85:
+             - PRIOR display map; "## 先行研究" section.
+             - v_prior lines are excluded from the hashed yaml so hashes don't change.
+
+           **PR #86 (draft, branch claude/cscl, commit 1400f87, based on main 9cdc055)**
+           - syntax.yaml:
+             - grammar.nodes += many, opposite, derive, via.
+             - New nodes:
+               - many (mod v_refer from kind, at count gt 1)
+               - opposite (with occurrent)
+               - derive (with rel)
+               - via (with occurrent, count 1)
+           - `many: true` declarations:
+             - std: scope
+             - syntax: any, domain, premise, derived, required
+             - ontology: information_entity
+             - exp: evidence, against, limitation, supersedes, basis, tests, metric
+           - type_checker.py:
+             - MANY constant removed; Ontology gets a `many` property: `{short(k) for k,n in self.N.items() if isinstance(n,dict) and n.get("many")}`. gather uses `T.many`.
+             - Added `compare_claims(T,a,b)`: same / opposite (via `opposite` attr, through ancestors) / other / None.
+             - Added `check_derived(D,T,name)`: for facts whose verb has `derive`/`via`, the result must be derivable.
+             - It is called after gather in load_domain.
+             - Node validation for opposite/via/derive.
+           - Verified: type check, runtime and sync test pass. A temporary negative test worked: derive failure was reported, and opposite was returned when declared.
+
+           **Refactor plan in progress (agreed with "よろしく")**
+           - In type_checker.py (1681 lines), these are exp-specific:
+             - KINDS (line ~289)
+             - LITERAL (line 293). Its exp names are result_file, row_collection, row_filter, condition_entry. The others (display, holds, pre, post, pattern, passage, val) are syntax.
+             - axes_of (423), load_domain (490)
+             - rows_of / stat / check_meaning / expand / check_claims (1239–1421)
+             - CLAIM_DOMAINS={"lang"} + check_sides (1441–1467)
+             - build() special-cases exp: `Dm["exp"]`, `T.Idom="exp"`, claims domains merging, `S = others["subj"]`, returns T,O,S,M,C.
+             - main(): --values, --show, --expr; summary counts observations/hypotheses.
+           - Plan:
+             - syntax: grammar.domain += `checker`; grammar.nodes += `literal`; nodes `checker` and `literal`.
+             - Mark `literal: true` on those kinds. tc uses a `T.literal` property instead of LITERAL.
+             - tc.build(): load every domain uniformly; register individuals in T.I/T.Isubj; gather plus check_derived for all; run the language checks.
+             - Then, for each domain with `checker:`, import the module and call `check(T, O, Dm)`.
+             - Move the exp functions to exp/src/exp_check.py (use `from type_checker import *` plus err/errors).
+             - exp_check.check does: sectioning by KINDS, axes_of, expand, check_claims, check_sides (claims in any domain with hypothesis/decision individuals, e.g. lang), and a summary string.
+             - Provide `exp_check.build()` returning the compatible T,O,S,M,C, plus values.
+             - Update callers to use it: sync_issues.py (build, expand), exp/experiments/render_expr.py and check_line.py (build()), display.py docstring.
+             - runtime.py imports only generic pieces.
+             - Idom: T.q falls back to `resolve(w, Idom or "axiom")`; check that None works.
+             - CI spec.yml runs type_checker.py, which will invoke the checkers.
+
+           **Issue bodies**
+           - #5–17 are written in the new format (with obs section).
+           - #18–59 and #61–77 are not written.
+           - Bodies are generated by the scratchpad build.py into bodies.json. These files are in a temp dir and may be lost.
+
+        4. Errors and fixes
+
+           **Earlier type-check errors (on #85)**
+           - specific-law collisions for v_prior_*: fixed by giving each verb a distinct extends/to-kind.
+           - "関係 sentence の事実が2つ以上ある": fixed via MANY on #85. That is now the many attr approach.
+           - prior_work expression collided with syntax.sentence_refer_from_sentence and then with sentence_refer_from_hypothesis: fixed with mod {of:[v_expose,to]}.
+
+           **Sync hash drift**
+           - The hash changed when v_prior lines appeared in the yaml details. Fixed by excluding those lines from the hashed yaml.
+
+           **Push to claude/cscl rejected**
+           - The remote held only an already-merged merge commit (a30f268). Force-with-lease push was done.
+
+           **Stuck Actions run**
+           - Run 43838001669 stayed queued and could not be cancelled (GitHub side). Bypassed by writing the bodies directly.
+
+           **User feedback**
+           - tc must not contain exp words.
+           - PRs must not leave known problems.
+           - Fixes go in a separate PR, done before #85.
+
+        5. Problem Solving
+           - Mechanical comparison with prior work works: the check derives same/opposite from claim content.
+           - The remaining architectural issue is that the exp semantics in tc must be moved out. This is in progress.
+
+        6. All user messages (this segment)
+           - "観察値はciで引っ張ってきても良いかもね observationとして"
+           - "よろしく" (create PR #83)
+           - "上手く手動で動かせないな、queueが詰まってるっぽい？"
+           - "キャンセルしたけどFailed to ...になったんだよね"
+           - "あとラベル名英語にしてほしいのと、デフォルトの要らないラベルを消し飛ばしてほしい"
+           - "ちなみにもうセッションレートリミットだからさすがにこっから作業は厳しいかな"
+           - "PRが84なのは何故？"
+           - "なるへそ"
+           - GPT analysis paste: "GPTに読ませたらこんな感じだった 何か含意はあるだろうか。と言うか、結構先行研究から得られるものが大きそうだね" (followed by a long GPT text)
+           - "目標に役立ちそうな先行研究をACLアンソロジーやarxivから探して個体化しよう"
+           - "先行研究であることが分かるように記録してね。"
+           - "先行研究の述べている主張と同じになるかを機械的に検査できないだろうか。"
+           - "よろしく" (implement the mechanical check)
+           - "expの変更がtcに影響するのおかしくね？"
+           - "修正は別のPRで"
+           - "先にtcを直して、それを同期して85を修正しよう"
+           - "いやPRに問題を残さないでくれ……？"
+           - "よろしく" (approve the full refactor plan)
+
+        7. Pending Tasks
+           - Complete the PR #86 refactor (tc = language only; exp checks in exp/src/exp_check.py via a domain `checker:` declaration; `literal` declarations; update callers). Then:
+             - verify the type check, runtime and sync test;
+             - commit and push to claude/cscl;
+             - update the PR #86 body with no leftover problems;
+             - mark it ready (not draft).
+           - After #86 merges:
+             - merge main into claude/cross;
+             - convert #85: remove its tc additions (KINDS entries, MANY names, OPPOSITE, check_prior);
+             - declare instead `many: true` on prior_agreed/prior_contrasted/prior_work/prior_claim, `opposite: v_lower` on v_not_lower, and `derive: same|opposite` with `via: v_state` on v_prior_same/v_prior_differ;
+             - update the #85 body.
+           - Write the remaining issue bodies (#18–59, #61–77).
+           - Older backlog:
+             - rerun E19/E3 seeds (the job was killed earlier);
+             - move 12 stage0-pinned names into rules;
+             - move the claim-status vocabulary to std;
+             - the refer/r_below count diffs;
+             - d_cscl_std_on_axiom.
+           - Possibly transcribe the remaining 6 papers' claims.
+
+        8. Current Work
+           - On branch claude/cscl (clean, at 1400f87, pushed). PR #86 is draft.
+           - I was reading type_checker.py to plan the move:
+             - build() (lines 1574–1642) and main() (1644–1681);
+             - check_sides and CLAIM_DOMAINS (1441–1467);
+             - the T.Idom/T.Isubj usages (lines 675, 900, 944, 1455–1458, 1588, 1611, 1619);
+             - the LITERAL kinds' locations;
+             - callers of build/expand.
+           - No refactor edits have been made yet.
+
+        9. Optional Next Step
+           - First, tell the user briefly in Japanese that the refactor is in progress.
+           - Then implement the agreed refactor on claude/cscl: create exp/src/exp_check.py with the moved functions and a `check(T,O,Dm)` entry plus `build()` compat; add `checker:` to exp.yaml and the syntax grammar; add the `literal` attribute; make tc.build() generic; update the callers.
+           - Quote from the conversation: the user said "よろしく" approving: "exp 固有の検査は、exp 側のモジュール（例: `exp/src/exp_check.py`）に移す。領域の yaml に、その領域の検査モジュールを宣言する（例: `checker: exp/src/exp_check.py`）。tc はそれを読み込んで呼ぶだけにする。"
+           - Then continue the user's sequence: "先にtcを直して、それを同期して85を修正しよう".
+
+        If you need specific details from before compaction (like exact code snippets, error messages, or content you generated), read the full transcript at: /root/.claude/projects/-home-user-CMT/e05d2140-ce91-515f-a5fb-e6251e13d406.jsonl
+        Continue the conversation from where it left off without asking the user any further questions. Resume directly — do not acknowledge the summary, do not recap what was happening, do not preface with "I'll continue" or similar. Pick up the last task as if the break never happened.
+
+        The messages after this summary are the most recent messages from before compaction, kept verbatim. The summary was written without seeing them, so something it says has not happened yet may already have happened in them.
+facts:
+- {is: v_say, from: session_model, to: 01M7J0EFQZ412P27HZQZB9MGAE}
+- {is: v_refer, from: 01M7J0EFQZ412P27HZQZB9MGAE, to: exp.prior_work}
+- {is: v_refer, from: 01M7J0EFQZ412P27HZQZB9MGAE, to: exp.sentence_refer_from_hypothesis}
+- {is: v_refer, from: 01M7J0EFQZ412P27HZQZB9MGAE, to: exp.v_expose}
+- {is: v_refer, from: 01M7J0EFQZ412P27HZQZB9MGAE, to: exp.prior_claim}
+- {is: v_refer, from: 01M7J0EFQZ412P27HZQZB9MGAE, to: ontology.v_refer}
+- {is: v_refer, from: 01M7J0EFQZ412P27HZQZB9MGAE, to: exp.prior_agreed}
+- {is: v_refer, from: 01M7J0EFQZ412P27HZQZB9MGAE, to: ontology.v_agree}
+- {is: v_refer, from: 01M7J0EFQZ412P27HZQZB9MGAE, to: exp.prior_contrasted}
+- {is: v_refer, from: 01M7J0EFQZ412P27HZQZB9MGAE, to: exp.v_prior_same}
+- {is: v_refer, from: 01M7J0EFQZ412P27HZQZB9MGAE, to: exp.v_prior_differ}
+- {is: v_refer, from: 01M7J0EFQZ412P27HZQZB9MGAE, to: exp.v_prior_method}
+- {is: v_refer, from: 01M7J0EFQZ412P27HZQZB9MGAE, to: exp.v_state}
+- {is: v_refer, from: 01M7J0EFQZ412P27HZQZB9MGAE, to: exp.preceding_distractors}
+- {is: v_refer, from: 01M7J0EFQZ412P27HZQZB9MGAE, to: exp.preceding_definitions}
+- {is: v_refer, from: 01M7J0EFQZ412P27HZQZB9MGAE, to: exp.preceding_distractor_set}
+- {is: v_refer, from: 01M7J0EFQZ412P27HZQZB9MGAE, to: exp.context_following}
+- {is: v_refer, from: 01M7J0EFQZ412P27HZQZB9MGAE, to: exp.redefinition_following}
+- {is: v_refer, from: 01M7J0EFQZ412P27HZQZB9MGAE, to: exp.new_word}
+- {is: v_refer, from: 01M7J0EFQZ412P27HZQZB9MGAE, to: ontology.information_entity}
+- {is: v_refer, from: 01M7J0EFQZ412P27HZQZB9MGAE, to: syntax.many}
+- {is: v_refer, from: 01M7J0EFQZ412P27HZQZB9MGAE, to: syntax.opposite}
+- {is: v_refer, from: 01M7J0EFQZ412P27HZQZB9MGAE, to: syntax.derive}
+- {is: v_refer, from: 01M7J0EFQZ412P27HZQZB9MGAE, to: syntax.via}
+- {is: v_refer, from: 01M7J0EFQZ412P27HZQZB9MGAE, to: exp.result_file}
+- {is: v_refer, from: 01M7J0EFQZ412P27HZQZB9MGAE, to: exp.row_collection}
+- {is: v_refer, from: 01M7J0EFQZ412P27HZQZB9MGAE, to: exp.row_filter}
+- {is: v_refer, from: 01M7J0EFQZ412P27HZQZB9MGAE, to: exp.condition_entry}
+- {is: v_refer, from: 01M7J0EFQZ412P27HZQZB9MGAE, to: syntax.literal}
+- {is: v_refer, from: 01M7J0EFQZ412P27HZQZB9MGAE, to: lang.type_checker}
+- {is: v_refer, from: 01M7J0EFQZ412P27HZQZB9MGAE, to: syntax.sentence_refer_from_sentence}
+- {is: v_refer, from: 01M7J0EFQZ412P27HZQZB9MGAE, to: exp.v_lower}
+- {is: v_refer, from: 01M7J0EFQZ412P27HZQZB9MGAE, to: exp.v_not_lower}

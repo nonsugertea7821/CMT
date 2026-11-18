@@ -1,0 +1,59 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-15T04:47:38.236Z（UTC）
+individuals:
+  01M7ERGHQWHM3ASW2GJKV15JYY:
+    is: model_utterance
+    display: 発言 391
+    val:
+      order: 391
+      text: |
+        両方とも入れて、検査を通してプッシュしました。測定値380、観察69、仮説37、決定17、残り項目20は変わっていません。
+
+        ## 1. 個体が持つ数
+
+        モデルの重みと層の数を戻しました。
+
+        ```yaml
+        model_15b: {is: open_weight_model, ja: Qwen2.5-1.5B-Instruct, weights: 1500000000, layer: 28}
+        model_4b:  {is: open_weight_model, ja: Qwen3-4B, weights: 4000000000}
+        ```
+
+        前回は「同じ `mod` の書き方で値を書く」と言いましたが、項目として書く形に変えました。`mod` は単一と決めたので、重みと層の2つを並べられないためです。個体の項目はもともと「この個体と関係するもの」を書く場所なので、値が数なら「それがいくつあるか」と読みます。
+
+        - **書ける項目は種類の式で決まります**：`layer` は「モデルの部分になるもの」と定義されているので、モデルの個体に書けます。設計の個体に `layer` を書くとエラーです。
+        - **種類の限定に入っているかを確かめます**：設問群は「設問が1つより多い」と限定されているので、個体に `question: 1` と書くとエラーです。
+
+        ## 2. 種類の式から個体を参照する
+
+        個体を「成員が1つの種類」として扱い、`with` に書けるようにしました。これで次のものを個体に移しました。
+
+        - **本設計**：`this_design: {is: model_design}`。`core` の `decision` は「設計の部分になる定義」に直し、特定の設計を名指ししなくなりました。「本設計の決定」（`design_decision`）は `exp` にあります。
+        - **選択肢6個**：`opt_yes: {is: option, val: {text: はい}}` など。設問形式の式は、これらの個体を参照しています。
+        - **設問群5個**：`g_sibling: {is: group_sibling}` など。
+
+        `core` の式から `exp` の個体を参照すると、エラーになります。
+
+        前回の説明に誤りが1つありました。設問群の上下を「部分の関係に直す」と言いましたが、不要でした。「新しい語の設問」は種類で、「兄弟概念の設問」「置換された用語の設問」はその下位の種類として正しく、個体はそれぞれに属するだけで済みます。
+
+        ## 残っていること
+
+        - **決定の個体は `design_decision` に属していません**：個体の `is` は1つで、いまは状態の種類（`dec_adopted` など）を指しているためです。個体が2つの種類に属する書き方（`is` を並べて AND にする）を足せば書けます。`extends` と同じ扱いなので、「並べない」という決まりとの関係で判断をいただきたい点です。
+        - **`core` に `question`・`verdict`・`experiment` などが残っています**：検査が使うノードから参照されているためです。
+
+        実験（L20 の学習）は動いています。
+facts:
+- {is: v_say, from: session_model, to: 01M7ERGHQWHM3ASW2GJKV15JYY}
+- {is: exp.v_answer, from: 01M7ERGHQWHM3ASW2GJKV15JYY, to: 01M7ER9SN4KCTMED2E7DPKJG9C}
+- {is: v_refer, from: 01M7ERGHQWHM3ASW2GJKV15JYY, to: exp.open_weight_model}
+- {is: v_refer, from: 01M7ERGHQWHM3ASW2GJKV15JYY, to: syntax.mod}
+- {is: v_refer, from: 01M7ERGHQWHM3ASW2GJKV15JYY, to: exp.layer}
+- {is: v_refer, from: 01M7ERGHQWHM3ASW2GJKV15JYY, to: syntax.with}
+- {is: v_refer, from: 01M7ERGHQWHM3ASW2GJKV15JYY, to: exp.model_design}
+- {is: v_refer, from: 01M7ERGHQWHM3ASW2GJKV15JYY, to: exp.decision}
+- {is: v_refer, from: 01M7ERGHQWHM3ASW2GJKV15JYY, to: exp.design_decision}
+- {is: v_refer, from: 01M7ERGHQWHM3ASW2GJKV15JYY, to: exp.group_sibling}
+- {is: v_refer, from: 01M7ERGHQWHM3ASW2GJKV15JYY, to: ontology.is}
+- {is: v_refer, from: 01M7ERGHQWHM3ASW2GJKV15JYY, to: exp.dec_adopted}
+- {is: v_refer, from: 01M7ERGHQWHM3ASW2GJKV15JYY, to: syntax.extends}
+- {is: v_refer, from: 01M7ERGHQWHM3ASW2GJKV15JYY, to: exp.question}
+- {is: v_refer, from: 01M7ERGHQWHM3ASW2GJKV15JYY, to: exp.verdict}
+- {is: v_refer, from: 01M7ERGHQWHM3ASW2GJKV15JYY, to: std.experiment}

@@ -1,0 +1,48 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-17T16:21:59.416Z（UTC）
+individuals:
+  01M7N51CFRKVHDD5PJYD3SPBFA:
+    is: model_utterance
+    display: 発言 1259
+    val:
+      order: 1259
+      text: |
+        「対象概念」という語は体系にはないので、ここでは「動詞の終点に来るもの」（ontology の o：`form: [p, to]`）の意味に取ります。違っていたら教えてください。
+
+        **今の体系では、その通り終点の概念として書かれています**
+        - 設計されるもの：`designed: {form: [v_design, to]}`
+        - 計算で得られた：`computed: {of: [v_compute, to]}`
+        - 使われ方も同じ形です。model_design は「設計の終点の情報」、passage_compute_to は「計算の終点の文章」として書かれています。
+
+        **ただし、前の話を足すと一段変わります**
+        作った後に depend・refer が成り立つなら、計算結果と設計書は**状態の関係**でも書けます。
+
+        - 計算結果：情報で、depend(self, 入力) が成り立つもの
+        - 設計書：情報で、refer(self, 作るもの) が成り立つもの
+
+        終点の概念（form）は、作る出来事の位置で定義しています。状態の関係での定義は、作った後のどのフレームでも成り立つので、宣言された持続体という先の演繹と合います。「計算結果は持続体」という結論にも、出来事を経由せずにたどり着けます。
+
+        **使われ方を見直して気づいた食い違い**
+        v_design の終点に来るものが、2通りに混ざっています。
+        - **作られるもの自体**：programming_language（設計される言語）
+        - **設計書**：model_design（設計の終点の情報で、モデル**について述べる**）
+
+        このとき、設計されるモデルは終点ではなく、refer の相手です。設計しても、モデルはまだ在りません。在るようになるのは設計書だけです。post の exists(to) と合うのは設計書の読みで、programming_language の読みは「設計＝作ること」になっていて、別の動詞が混ざっている可能性があります。
+
+        計算の側にも同じ構造があります。計算結果は終点で、入力は depend の相手です。
+
+        | | 終点（在るようになるもの） | 関係の相手 |
+        |---|---|---|
+        | 計算する | 計算結果 | 入力（depend） |
+        | 設計する | 設計書 | 作るもの（refer） |
+
+        なので、計算結果と設計書は「終点の概念」であると同時に、どちらも**情報**です。違いは、作った後に何と結ばれているかだけになります。設計の「対象」を作るもの（モデル）と考えるなら、そちらは終点ではなく、refer の相手の位置にあたります。
+
+        この表を観察として記録し、programming_language の扱い（設計書か、作ることか）を決めるところから進めるのがよいと考えます。
+facts:
+- {is: v_say, from: session_model, to: 01M7N51CFRKVHDD5PJYD3SPBFA}
+- {is: exp.v_answer, from: 01M7N51CFRKVHDD5PJYD3SPBFA, to: 01M7N50DXHE3D3B4B30DET8TBZ}
+- {is: v_refer, from: 01M7N51CFRKVHDD5PJYD3SPBFA, to: ontology.v_design}
+- {is: v_refer, from: 01M7N51CFRKVHDD5PJYD3SPBFA, to: std.v_compute}
+- {is: v_refer, from: 01M7N51CFRKVHDD5PJYD3SPBFA, to: exp.model_design}
+- {is: v_refer, from: 01M7N51CFRKVHDD5PJYD3SPBFA, to: exp.passage_compute_to}
+- {is: v_refer, from: 01M7N51CFRKVHDD5PJYD3SPBFA, to: exp.programming_language}

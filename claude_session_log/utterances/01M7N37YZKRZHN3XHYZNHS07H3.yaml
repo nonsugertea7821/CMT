@@ -1,0 +1,60 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-17T15:50:37.811Z（UTC）
+individuals:
+  01M7N37YZKRZHN3XHYZNHS07H3:
+    is: model_utterance
+    display: 発言 1219
+    val:
+      order: 1219
+      text: |
+        1 と 2 は記録して push しました（78e748a）。3 は導くところまで進め、まだ何も動かしていません。
+
+        **1. sys_layers の結果（登録した基準での判定は反証）**
+        `h_layers_signature` を反証として記録しました。観察は次の6件です。
+
+        | 観察 | 中身 |
+        |---|---|
+        | `o_sys_layers_not_all` | 一致は 104/202。反証の根拠 |
+        | `o_sys_layers_runtime_change` | runtime は 24 すべてが change |
+        | `o_sys_layers_syntax_mostly_change` | syntax は 104 のうち 80 が change |
+        | `o_sys_layers_syntax_change_via_neg` | 否定の辺をたどらなければ、syntax の change は 0 |
+        | `o_sys_layers_pos_higher` | 否定の辺をたどらない版は 177/202 で、登録した版より高い |
+        | `o_sys_layers_pos_not_all` | ただし、その版でも全部は一致しない |
+
+        **2. 否定は self でないこと（`h_neg_not_self`）**
+        - 中身は「否定の限定は、限定の動詞の成り立つ状態の指定（holds）に依存しない」です。シグネチャから使うのは same と self だけ、という読みです。
+        - `o_sys_layers_pos_higher` を根拠にして、状態は支持にしました。
+        - 観察を見た後に立てた仮説であることは、注に書きました。
+        - syntax の neg の定義に反映するかは、まだ決めていません。
+
+        **3. 外れた 25 個の扱い（導いたこと）**
+        - **分類は、たどる向きに単調。** A が B に届けば、A が届く範囲は B の範囲を含むので、A の分類は B 以上（still < refer < change）になります。
+          - だから、分類どおりに層を置けば、「定義は自分の層か下の層だけを参照する」が必ず成り立ちます。今の体系でも、単調でない辺は 0 でした。
+          - つまり、ontology・syntax・runtime の並びは、`LAYERS` に名前で書かなくても、シグネチャから計算できます。
+        - **外れた 25 個は、分類どおりに置き直せば上向きの参照を作りません。**
+          - ontology の情報と記述の語 14（concept、language、word、v_refer など）は、refer なので syntax へ移ります。ontology の still の語は、これらを参照していません。
+          - ontology.v_design は change なので runtime 側へ移ります。肯定で使っているのは exp の4つだけで、ontology.natural_language は否定でしか使っていません。
+          - runtime の state、halted、rewrite_rule など 6 は、refer なので syntax へ移ります。
+          - syntax の individuals と not_after_from など 3 は、still なので ontology へ移ります。
+        - **std・exp・lang・subj は、3つの分類すべてにまたがります。** これらは層ではなく、語彙の領域です。層とは別の軸だと読めます。
+
+        **3 の測り方の限り**
+        - 辺のたどり方に `form`（`individuals` の `form: [is, from]` など）が入っていません。
+        - not_after_from など3つは、否定の限定ではなく否定の動詞（holds に neg を持つ v_not_after など）による限定です。still に入ったのは、たどった先に refer も pre/post もないからです。
+
+        **決めてほしいこと**
+        1. 25 個を、分類どおりの層へ移してよいか。
+        2. 検査器の `LAYERS` のうち ontology・syntax・runtime の並びを、分類の計算に置き換えてよいか。std は領域として扱うことになります。
+        3. 2 の読み（否定は ¬same(self, ·)）を、syntax の neg の定義に入れるか。
+
+        どれも言語の層を変える変更なので、確認させてください。
+facts:
+- {is: v_say, from: session_model, to: 01M7N37YZKRZHN3XHYZNHS07H3}
+- {is: exp.v_answer, from: 01M7N37YZKRZHN3XHYZNHS07H3, to: 01M7N34VNTVFZZQNJ2SR6P09SZ}
+- {is: v_refer, from: 01M7N37YZKRZHN3XHYZNHS07H3, to: ontology.v_refer}
+- {is: v_refer, from: 01M7N37YZKRZHN3XHYZNHS07H3, to: ontology.v_design}
+- {is: v_refer, from: 01M7N37YZKRZHN3XHYZNHS07H3, to: ontology.natural_language}
+- {is: v_refer, from: 01M7N37YZKRZHN3XHYZNHS07H3, to: runtime.rewrite_rule}
+- {is: v_refer, from: 01M7N37YZKRZHN3XHYZNHS07H3, to: syntax.not_after_from}
+- {is: v_refer, from: 01M7N37YZKRZHN3XHYZNHS07H3, to: syntax.form}
+- {is: v_refer, from: 01M7N37YZKRZHN3XHYZNHS07H3, to: syntax.individuals}
+- {is: v_refer, from: 01M7N37YZKRZHN3XHYZNHS07H3, to: ontology.v_not_after}

@@ -1,0 +1,19 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-16T08:34:48.559Z（UTC）
+individuals:
+  01M7HQX7KF4GDX08B2A7R54AY4:
+    is: model_utterance
+    display: 発言 834
+    val:
+      order: 834
+      text: |
+        ［質問］axiom / ontology / runtime を名前空間として分けるとき、識別子の扱いをどちらにしますか？（いまは axiom の語は裸の名前、exp・subj・run の語は「領域.名前」で持っています。Python の型検査器には、ノード名の直書きが58箇所、axiom＋std の法則が131個あります）
+          - 接頭辞で完全に分ける (推奨): ontology の語は内部で ontology.continuant のように持つ。exp などのファイルでは裸で書けて、自分の領域 → v_use で使うと宣言した領域 → axiom の順に解決する。同じ名前を別の名前空間に置ける。変更は大きい（検査器の直書き、法則の移動、解決の規則）
+          - 所属だけで分ける: 名前は裸のまま1つの表に入れ、ノードごとにどの名前空間に属するかを記録する。向きの検査（axiom は ontology を参照しない）は法則 layered で確かめる。変更は小さいが、axiom・ontology・runtime の間では同じ名前を使えない
+        ［質問］いまの領域 run（run.executor, run.closed_world など）と axiom の runtime 節を、名前空間 runtime にまとめてよいですか？
+          - run を runtime に改名して統合 (推奨): run.* を runtime.* にし、runtime 節（world, pre_rule など）も runtime 名前空間のファイルへ移す。実行の記録の節名 run（exp/tests）は別の語なのでそのまま
+          - run のまま: 名前空間名は run のまま、runtime 節だけ移す
+facts:
+- {is: v_say, from: session_model, to: 01M7HQX7KF4GDX08B2A7R54AY4}
+- {is: exp.v_answer, from: 01M7HQX7KF4GDX08B2A7R54AY4, to: 01M7HQW2TJ0GE71C888YP0PXX7}
+- {is: v_refer, from: 01M7HQX7KF4GDX08B2A7R54AY4, to: ontology.continuant}
+- {is: v_refer, from: 01M7HQX7KF4GDX08B2A7R54AY4, to: runtime.pre_rule}

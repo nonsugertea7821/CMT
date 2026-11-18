@@ -1,0 +1,37 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-16T11:10:51.462Z（UTC）
+individuals:
+  01M7J0TZ26PV0XJJZEDD0343V5:
+    is: model_utterance
+    display: 発言 939
+    val:
+      order: 939
+      text: |
+        PR #85 に main を取り込み、先行研究の比較を #86 の宣言で書く形に直しました。tc には手を入れていません。
+
+        https://github.com/nonsugertea7821/CMT/pull/85
+
+        - **tc:** #85 で足していた部分（`KINDS`・`MANY`・`OPPOSITE`・`check_prior`）を外し、main の tc をそのまま使っています。#85 が変えるのは `exp.yaml` と `sync_issues.py` だけです。
+        - **exp.yaml の宣言:**
+          - 先行研究の4つの種類（`prior_work`・`prior_claim`・`prior_agreed`・`prior_contrasted`）に `many: true` を書きました。
+          - `v_not_lower` に `opposite: v_lower` を書きました。
+          - `v_prior_same` と `v_prior_differ` には、比べた結果をどう導くか（`derive`・`via`）を書きました。
+        - **確認:** 型検査・実行の検査・同期のテストは、ローカルではすべて通りました。この push の後の CI はまだ確認していません。
+        - **誤りを入れた確認:** どちらの場合も型検査が失敗として報告しました。
+          - Liu の関係を「同じ向き」に書き換えたとき。中身から導くと「反対」になるためです。
+          - `opposite: v_lower` を外したとき。導いた結果が「その他」になり、「異なる」と書いた関係と合わなくなるためです。
+        - **PR #85 の本文:** 「既知の問題」の節は、もう当てはまらないので消しました。確かめた内容を書き直しています。
+
+        主張をまだ書いていない6本の先行研究は、手で付けた関係のままで、中身から確かめていません。このことは PR に「範囲の限り」として書いてあります。
+facts:
+- {is: v_say, from: session_model, to: 01M7J0TZ26PV0XJJZEDD0343V5}
+- {is: exp.v_answer, from: 01M7J0TZ26PV0XJJZEDD0343V5, to: 01M7J0RYP6TH746F2GA2QFX85G}
+- {is: v_refer, from: 01M7J0TZ26PV0XJJZEDD0343V5, to: exp.prior_work}
+- {is: v_refer, from: 01M7J0TZ26PV0XJJZEDD0343V5, to: exp.prior_claim}
+- {is: v_refer, from: 01M7J0TZ26PV0XJJZEDD0343V5, to: exp.prior_agreed}
+- {is: v_refer, from: 01M7J0TZ26PV0XJJZEDD0343V5, to: exp.prior_contrasted}
+- {is: v_refer, from: 01M7J0TZ26PV0XJJZEDD0343V5, to: exp.v_not_lower}
+- {is: v_refer, from: 01M7J0TZ26PV0XJJZEDD0343V5, to: exp.v_lower}
+- {is: v_refer, from: 01M7J0TZ26PV0XJJZEDD0343V5, to: exp.v_prior_same}
+- {is: v_refer, from: 01M7J0TZ26PV0XJJZEDD0343V5, to: exp.v_prior_differ}
+- {is: v_refer, from: 01M7J0TZ26PV0XJJZEDD0343V5, to: syntax.derive}
+- {is: v_refer, from: 01M7J0TZ26PV0XJJZEDD0343V5, to: syntax.via}

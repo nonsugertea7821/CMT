@@ -1,0 +1,76 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-17T15:52:05.103Z（UTC）
+individuals:
+  01M7N3AM7F18W29R9HP41SA1EB:
+    is: model_utterance
+    display: 発言 1221
+    val:
+      order: 1221
+      text: |
+        観察を表にしました。値はどれも、78e748a の `exp/experiments/results/sys_layers.json` から取ったものです。
+
+        **表1: 層ごとの分類**
+        各セルは「否定の辺もたどる（登録した版）→ 否定の辺をたどらない（not self の読み）」です。
+
+        | 層 | ノード数 | still（述べない・変わらない） | refer（述べる・変わらない） | change（変わる） | 対応する分類 |
+        |---|---|---|---|---|---|
+        | ontology | 74 | 59 → 59 | 4 → 14 | 11 → **1** | still |
+        | syntax | 104 | 3 → 4 | 21 → **100** | 80 → **0** | refer |
+        | runtime | 24 | 0 → 0 | 0 → 6 | 24 → 18 | change |
+        | std | 28 | 0 → 1 | 6 → 6 | 22 → 21 | （層でない） |
+        | lang | 19 | 2 → 4 | 3 → 10 | 14 → 5 | （領域） |
+        | subj | 97 | 31 → 32 | 30 → 39 | 36 → 26 | （領域） |
+        | exp | 321 | 15 → 25 | 6 → 39 | 300 → 257 | （領域） |
+
+        **表2: 対応する分類との一致（ontology・syntax・runtime の 202 ノード）**
+
+        | 否定の読み | 一致 | 割合 |
+        |---|---|---|
+        | 否定の辺もたどる（登録した基準） | 104 | 0.515 |
+        | 否定は self についての「述べられていない」（refer に数える）※ | 172 | 0.851 |
+        | 否定は self と同じでない（same だけ。否定の辺をたどらない） | 177 | 0.876 |
+
+        ※ この行は、会話の中で一度だけ計算した値です。結果ファイルには入っていません。
+
+        **表3: 否定の辺をたどらない版でも外れる 25 個**
+
+        | 今の層 | 分類 | 個数 | ノード |
+        |---|---|---|---|
+        | ontology | refer | 14 | concept, definition, express_from_natural_language, information_entity, information_entity_compose_to_word, information_entity_express_from_natural_language, language, natural_language, refer_from_concept, role, sentence, v_agree, v_refer, word |
+        | ontology | change | 1 | v_design |
+        | runtime | refer | 6 | state, halted, rewrite_rule, refer_from_laws, refer_from_post, role_depend_from_rewrite_rule |
+        | syntax | still | 4 | individuals, not_after_from, not_before_from, not_compose_from_mod |
+
+        **表4: 記録した観察（claims.yaml）**
+
+        | 観察 | 中身 | 値 | 仮説との結び |
+        |---|---|---|---|
+        | `o_sys_layers_not_all` | 一致は全部ではない | agree 0.515 < 1.0 | h_layers_signature に反する |
+        | `o_sys_layers_runtime_change` | runtime はすべて change | 1.0 | なし |
+        | `o_sys_layers_syntax_mostly_change` | 否定の辺をたどると、syntax の大半が change | 0.769 > 0.5 | なし |
+        | `o_sys_layers_syntax_change_via_neg` | 否定の辺をたどらなければ、syntax の change は 0 | 0.0 | なし |
+        | `o_sys_layers_pos_higher` | 否定の辺をたどらない版のほうが一致が高い | 0.876 > 0.515 | h_neg_not_self を支持 |
+        | `o_sys_layers_pos_not_all` | その版でも全部は一致しない | 0.876 < 1.0 | なし |
+
+        **表から読めること**
+        - syntax が change に入るかどうかは、否定の辺だけで決まっています（80 → 0）。
+        - 否定の辺を外すと、ontology・syntax・runtime はそれぞれ still・refer・change にまとまります。外れは ontology の情報の語と、runtime の状態の語に集まります。
+        - std・lang・subj・exp は、どちらの版でも3つの分類にまたがります。
+facts:
+- {is: v_say, from: session_model, to: 01M7N3AM7F18W29R9HP41SA1EB}
+- {is: exp.v_answer, from: 01M7N3AM7F18W29R9HP41SA1EB, to: 01M7N3A6ASR7NM7J5FV4GBMN3P}
+- {is: v_refer, from: 01M7N3AM7F18W29R9HP41SA1EB, to: ontology.express_from_natural_language}
+- {is: v_refer, from: 01M7N3AM7F18W29R9HP41SA1EB, to: ontology.information_entity}
+- {is: v_refer, from: 01M7N3AM7F18W29R9HP41SA1EB, to: ontology.information_entity_compose_to_word}
+- {is: v_refer, from: 01M7N3AM7F18W29R9HP41SA1EB, to: ontology.information_entity_express_from_natural_language}
+- {is: v_refer, from: 01M7N3AM7F18W29R9HP41SA1EB, to: ontology.natural_language}
+- {is: v_refer, from: 01M7N3AM7F18W29R9HP41SA1EB, to: ontology.refer_from_concept}
+- {is: v_refer, from: 01M7N3AM7F18W29R9HP41SA1EB, to: ontology.v_agree}
+- {is: v_refer, from: 01M7N3AM7F18W29R9HP41SA1EB, to: ontology.v_refer}
+- {is: v_refer, from: 01M7N3AM7F18W29R9HP41SA1EB, to: ontology.v_design}
+- {is: v_refer, from: 01M7N3AM7F18W29R9HP41SA1EB, to: runtime.rewrite_rule}
+- {is: v_refer, from: 01M7N3AM7F18W29R9HP41SA1EB, to: runtime.refer_from_laws}
+- {is: v_refer, from: 01M7N3AM7F18W29R9HP41SA1EB, to: runtime.refer_from_post}
+- {is: v_refer, from: 01M7N3AM7F18W29R9HP41SA1EB, to: runtime.role_depend_from_rewrite_rule}
+- {is: v_refer, from: 01M7N3AM7F18W29R9HP41SA1EB, to: syntax.not_after_from}
+- {is: v_refer, from: 01M7N3AM7F18W29R9HP41SA1EB, to: syntax.not_before_from}
+- {is: v_refer, from: 01M7N3AM7F18W29R9HP41SA1EB, to: syntax.not_compose_from_mod}

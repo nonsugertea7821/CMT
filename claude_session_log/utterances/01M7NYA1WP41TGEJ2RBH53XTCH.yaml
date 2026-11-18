@@ -1,0 +1,34 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-17T23:43:37.878Z（UTC）
+individuals:
+  01M7NYA1WP41TGEJ2RBH53XTCH:
+    is: model_utterance
+    display: 発言 1351
+    val:
+      order: 1351
+      text: |
+        含意の作業の途中までをコミットして push しました（b72d36a）。ただし、含意はまだ法則 specific に効かせていません。効かせると違反が 14 件残るためです。今の状態で CI の5つの検査は通っています。
+
+        **この commit に入れたもの**
+        - **含意の規則**：同じ動詞の同じ位置を限定していて、一方の端が他方の下位なら、上位の限定も満たしたとみなす規則です。規則は書きましたが、specific はまだ字面の一致で比べています。
+        - **置き直した 8 組**：式どおり下位に移しました。
+          - 事例へ述べる文と仮説へ述べる文を、文へ述べる文の下に
+          - verbatim を value_part の下に
+          - new_kind を with の下に
+          - information_entity_refer_from_p を verb_ref の下に
+          - 事例を部分に持つ情報、state、domain の3つを passage の下に
+        - **見える領域に限る条件**：「より具体的な候補」を、自分の領域から見える概念だけに限りました。これで、syntax の語が exp の語の下に置けと言われるような、層の向きが逆の指摘は出なくなりました。
+
+        **残る 14 件**
+        直してから、specific の比べ方を含意に替える1行を入れます。どれも判断が要るものです。
+        - **上位の式が弱すぎる**：relation_operator（5件）、verb_ref（3件）、hypothesis、opposite、context_following
+        - **subj の単位**：money（2件）、age（1件）。円や歳の違いが表示語にしか書かれていません。
+
+        変数を runtime に移す件は、前の返答で聞いたことが残っています。型検査を runtime の実行の一つとみなすか、法則の評価の割り当て方だけを syntax の側で宣言するか、どちらがしっくりくるか教えてください。
+facts:
+- {is: v_say, from: session_model, to: 01M7NYA1WP41TGEJ2RBH53XTCH}
+- {is: exp.v_answer, from: 01M7NYA1WP41TGEJ2RBH53XTCH, to: 01M7NY30CFKF7WFW4DJH4ARQWJ}
+- {is: v_refer, from: 01M7NYA1WP41TGEJ2RBH53XTCH, to: syntax.value_part}
+- {is: v_refer, from: 01M7NYA1WP41TGEJ2RBH53XTCH, to: syntax.new_kind}
+- {is: v_refer, from: 01M7NYA1WP41TGEJ2RBH53XTCH, to: syntax.information_entity_refer_from_p}
+- {is: v_refer, from: 01M7NYA1WP41TGEJ2RBH53XTCH, to: syntax.verb_ref}
+- {is: v_refer, from: 01M7NYA1WP41TGEJ2RBH53XTCH, to: exp.context_following}

@@ -1,0 +1,19 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-16T11:18:39.519Z（UTC）
+individuals:
+  01M7J1984ZKD46EDMMJ8GYMBPD:
+    is: model_utterance
+    display: 発言 951
+    val:
+      order: 951
+      text: |
+        仕組みはありますが、いまは動いていません。main に push するたびに issue を更新する設定にはなっているものの、実際に issue を書く段は毎回スキップされています。
+
+        - **仕組み:** `.github/workflows/issues.yml` が main への push のたびに走ります。issue に書く段（`issue に書く`）が動くのは、次のどちらかのときだけです。
+          1. リポジトリ変数 `ISSUE_SYNC` が `on` のときの、main への push
+          2. 手動実行で `apply` にチェックを入れたとき
+        - **いまの状態:** #85 のマージで走った実行（run 43856520963）では、`issue に書く` が skipped でした。#86・#87 のときも同じです。`ISSUE_SYNC` が `on` になっていないと考えられます。そのため、#85 で増えた「先行研究」節は、まだどの issue にも書かれていません。
+
+        自動にするには、GitHub のリポジトリの Settings → Secrets and variables → Actions → Variables で、`ISSUE_SYNC` を `on` にしてください。以後は main にマージするたびに issue が更新されます。今回の分は、Actions の issues ワークフローを `apply` にチェックを入れて手動で実行すれば反映されます。
+facts:
+- {is: v_say, from: session_model, to: 01M7J1984ZKD46EDMMJ8GYMBPD}
+- {is: exp.v_answer, from: 01M7J1984ZKD46EDMMJ8GYMBPD, to: 01M7J18Q8N1N4N64N9HAEJMYAE}

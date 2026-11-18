@@ -1,0 +1,24 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-15T09:44:14.197Z（UTC）
+individuals:
+  01M7F9FMKN3W53XJVVW4KZWJ3S:
+    is: model_utterance
+    display: 発言 497
+    val:
+      order: 497
+      text: |
+        ありました。残り項目 `b_vectors_taught_from_concept_expressions` として、未着手のまま積んでいました。仮説 `h_controlled_language_raises_following` を確かめる項目の一つです。
+
+        新しい実験は作らず、既存の E3（概念ごとにベクトルを学習する実験）に選択肢 `--def-source expr` を足しました（6beac80、push 済み）。
+
+        - 学習で暗唱させる定義を、日本語の定義文ではなく、`subj.yaml` に書いたままの概念式にします。
+        - 評価で定義を設問の前に置く条件（near）でも、同じ概念式を使います。
+        - 学習の目的は、これまでと同じく定義の暗唱と適用例の二択の両方（defqa）です。日本語の定義で学習した結果とそのまま比べられます。
+        - 層は 8 にしました。これまでの単一層の結果で一番成績がよかった層です。
+
+        **実行の順番**
+        今の L4 が終わってから、E10 → E11 → 概念式で学習した E3（層 8）の順に自動で走ります。E3 は学習があるので一番重く、CPU では L4 と同じくらい（数時間）かかる見込みです。
+
+        結果は、日本語の定義で学習した L8 の結果と並べて `spec/exp.yaml` に記録します。
+facts:
+- {is: v_say, from: session_model, to: 01M7F9FMKN3W53XJVVW4KZWJ3S}
+- {is: exp.v_answer, from: 01M7F9FMKN3W53XJVVW4KZWJ3S, to: 01M7F9EQ1E04W3PQ0Z6DP0XYZD}

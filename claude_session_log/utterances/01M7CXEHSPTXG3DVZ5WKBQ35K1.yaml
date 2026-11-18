@@ -1,0 +1,77 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-14T11:35:26.774Z（UTC）
+individuals:
+  01M7CXEHSPTXG3DVZ5WKBQ35K1:
+    is: model_utterance
+    display: 発言 144
+    val:
+      order: 144
+      text: |
+        関係のツリーを作り直し、検査が通ったのでプッシュしました。原子関係は `from_to` の1つだけになりました。
+
+        ## 結果
+
+        | 区分 | 件数 |
+        |---|---|
+        | 原子関係 | 1（`from_to`） |
+        | 式だけで書けた関係 | 58 |
+        | 述語論理の定義を添えた合成関係 | 31 |
+
+        ## 関係の式
+
+        関係も実体と同じく「上位の関係 [軸=値, …]」で書いています。両端の種類（from と to）も式の一部です。
+
+        ```
+        depends_on   = from_to[from=continuant, to=continuant][existence=target_required]
+        inheres_in   = depends_on[specificity=specific_target]
+        part_of      = from_to[from=continuant, to=continuant][symmetry=antisymmetric, transitivity=transitive]
+        realized_in  = participates_in[from=specifically_dependent_continuant]
+        precedes     = from_to[from=occurrent, to=occurrent][symmetry=asymmetric, transitivity=transitive]
+        is_about     = from_to[from=generically_dependent_continuant, to=any, via=referring]
+        performed_by = from_to[from=occurrent, to=continuant][inverse_of=acts_in]
+        has_unit     = takes[from=information_entity, value_space=unit]
+        ```
+
+        ## 関係を分類する軸
+
+        述語論理の法則は、軸の値が持ちます。
+
+        | 軸 | 値と法則 |
+        |---|---|
+        | 存在の要請 | 始点があれば終点もある：`r(x, y) implies (exists(x) implies exists(y))` |
+        | 相手の特定 | 相手は1つに決まる：`r(x, y) and r(x, z) implies y eq z`／相手は替わってよい |
+        | 推移性 | 推移的：`r(x, y) and r(y, z) implies r(x, z)` |
+        | 対称性 | 対称的／非対称的／反対称的（それぞれ法則つき） |
+        | 関わり方 | する側、される側、入力になる側、出力になる側、道具になる側、届け先になる側、場になる側、形式を与える側 |
+        | 逆向きにした関係 | 値は関係：`r(x, y) iff V(y, x)` |
+        | 介する生起体 | 値は生起体：`r(x, y) iff exists p. instance_of(p, V) and involved_in(x, p) and involved_in(y, p)` |
+        | 値を取る軸 | 値は分類の軸：`r(x, v) iff takes(x, v) and instance_of(v, V)` |
+
+        ## この形にして分かったこと
+
+        - **依存の3分類が、関係の側から導かれるようになりました。** 「宿る」は「依存する」に「相手は1つに決まる」を付けたもので、汎用依存は「相手は替わってよい」を付けたものです。
+        - **動詞型の関係は、生起体を介する式になりました。** そのために生起体の種類（言及、照合、判定すること、置き換え、読み取り など）を実体のツリーに 11個加えています。
+        - **情報の並び順は、読み取りという生起体の順序から定義しました。** 「前に置かれる」は「それを読み取る処理が先に起きる」です。
+        - **検査は、式が同じ関係を拒否します。** 試しに `stage_of` の対称性を変えると、`precedes` と同じ式になるとして失敗しました。
+
+        わざと入れた7種類の誤り（原子関係を増やす、式が同じ、端が上位を狭めていない、軸にない値、実体に関係の軸を使う、法則に未定義の語、式も定義もない）は、すべて検出されました。
+
+        ## まだ底が抜けている箇所
+
+        正直に挙げます。
+
+        1. **定義を添えた 31個のうち、仮説と決定で使う 17個**（上げる、下げる、転移する など）は、`value`、`with`、`without`、`changed` といった、ツリーの外にある述語を使っています。これらは `from_to` に根ざしていません。
+        2. **`has_target` と `has_content` は、選言（または）で定義した寄せ集めです。** 「言及する、または受ける、または宿る」のように、私がこれまで曖昧に使い分けていたことが、定義にそのまま表れています。本来は用途ごとに別の関係に分けるべきです。
+        3. **「関わり方」の値（する側、される側 など）と「行為」の値（届ける、教える など）には法則がありません。** 表示語だけが意味を担っています。動詞の意味の底が、ここに残っています。
+        4. **値へ結ぶ関係（`takes`）の終点は「分類の値」です。** 2×2 の表の外にあるので、表には収まっていません。
+
+        次に手を入れるなら 2 が最も効果が大きいと考えます。曖昧な2つの関係を分解すると、実体の式の多くが正確になります。
+
+        実験の状況は、次の応答で確認して `spec/` に記録します。
+facts:
+- {is: v_say, from: session_model, to: 01M7CXEHSPTXG3DVZ5WKBQ35K1}
+- {is: exp.v_answer, from: 01M7CXEHSPTXG3DVZ5WKBQ35K1, to: 01M7CX5QT1JZCXVCCMXSG9BRD2}
+- {is: v_refer, from: 01M7CXEHSPTXG3DVZ5WKBQ35K1, to: ontology.specifically_dependent_continuant}
+- {is: v_refer, from: 01M7CXEHSPTXG3DVZ5WKBQ35K1, to: ontology.generically_dependent_continuant}
+- {is: v_refer, from: 01M7CXEHSPTXG3DVZ5WKBQ35K1, to: ontology.information_entity}
+- {is: v_refer, from: 01M7CXEHSPTXG3DVZ5WKBQ35K1, to: syntax.value}
+- {is: v_refer, from: 01M7CXEHSPTXG3DVZ5WKBQ35K1, to: syntax.with}

@@ -1,0 +1,32 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-16T05:15:29.669Z（UTC）
+individuals:
+  01M7HCG905QK924SPFMCQDE845:
+    is: model_utterance
+    display: 発言 677
+    val:
+      order: 677
+      text: |
+        付け替えました。check_spec と run_spec はどちらも通り、コミットしてプッシュ済みです（ce150c6）。
+
+        ```
+        state_shift（隠れ状態のずれ）
+        ├ concept_vector（概念ベクトル：語のトークン位置に依存）
+        │  ├ single_layer_vector（層1つに依存）
+        │  ├ multi_layer_vector（層が複数）
+        │  └ contrast_vector（定義文に依存）
+        └ key_token_vector（専用トークンに依存）
+        ```
+
+        - **何が変わったか:** これまで「接続手段（行為）」として定義していた5つのベクトルを、すべて「隠れ状態のずれ（情報）」の下に移しました。合わせて、限定の動詞を「関わらせる」から「依存する」に改めています。各実験の条件は「何を表すか」という関係でこれらのノードを指したままで、検査の上でも食い違いは出ていません。
+        - **落ちた情報:** 「教示（学習）で得られた」という区別は、ずれの側の木には今は入っていません。E3（学習あり）とE14（学習なし）を木の形で分けたくなったら、`taught_shift`（学習で得られたずれ）を一段挟むのが自然です。
+        - **残っているノード:** 元の上位だった `channel_involve_from_taught_vector` は、今は下位がなくなっていますが、検査は通るので残してあります。消すかどうかは指示に従います。
+facts:
+- {is: v_say, from: session_model, to: 01M7HCG905QK924SPFMCQDE845}
+- {is: exp.v_answer, from: 01M7HCG905QK924SPFMCQDE845, to: 01M7HCEWP19DSXXXARYNF582RP}
+- {is: v_refer, from: 01M7HCG905QK924SPFMCQDE845, to: exp.state_shift}
+- {is: v_refer, from: 01M7HCG905QK924SPFMCQDE845, to: exp.concept_vector}
+- {is: v_refer, from: 01M7HCG905QK924SPFMCQDE845, to: exp.single_layer_vector}
+- {is: v_refer, from: 01M7HCG905QK924SPFMCQDE845, to: exp.multi_layer_vector}
+- {is: v_refer, from: 01M7HCG905QK924SPFMCQDE845, to: exp.contrast_vector}
+- {is: v_refer, from: 01M7HCG905QK924SPFMCQDE845, to: exp.key_token_vector}
+- {is: v_refer, from: 01M7HCG905QK924SPFMCQDE845, to: exp.channel_involve_from_taught_vector}

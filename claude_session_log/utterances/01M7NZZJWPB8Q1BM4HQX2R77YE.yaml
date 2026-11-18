@@ -1,0 +1,55 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-18T00:12:51.990Z（UTC）
+individuals:
+  01M7NZZJWPB8Q1BM4HQX2R77YE:
+    is: model_utterance
+    display: 発言 1374
+    val:
+      order: 1374
+      text: |
+        はい、まだです。sys_special と同じ数え方で今のコードを数え直すと、コードが名前を挙げる語のうち、シグネチャでも文法でもないものが **41 語**残っています（前回の測定では 60 語）。結果ファイルは上書きせず、手元の一時ファイルに書きました。
+
+        **残っている 41 語の中身**
+
+        | まとまり | 語 | コードがしていること |
+        |---|---|---|
+        | ontology の語の意味 | continuant, occurrent, role, definition, quality, magnitude, specifically_dependent_continuant, v_depend, v_refer | 役割・質・指標などの検査が、これらの分類で分岐する |
+        | 基礎の関係 | after, part, refer, exists | 文の向き、部分の事実、存在の文などを、名前で読む |
+        | syntax・exp の語 | verb_ref, v_spell, syntax.v_collect, r_written, kind | 位置の型、綴り、集まりの事実などを、名前で作る・読む |
+        | 意味をコードが与える法則（law_given） | step, frame, halt, unique_names, no_confusion, part_fact_direction, part_display_explicit, named_mod, world_declared, definition_stratified | 法則の名前の表（LAWS_HERE, LAWS_RUN）で当てはめる |
+        | 層の名前 | ontology, syntax, std, exp, ontology.continuant, ontology.occurrent | 層の順の表（LAYERS）と、実行器の "exp" |
+        | モジュール名 | type_checker | import の名前（体系の type_checker ノードとは結ばれていない） |
+
+        減ったのは、any をシグネチャに移したことと、法則の種類と規則の語を文法の節から読むようにしたことによるものです。意味の本体（ontology の語、基礎の関係、law_given）は、まだほぼ手つかずです。
+
+        **先ほどの話とのつながり**
+        - law_given の 10 個のうち、step・frame・halt は「一つの評価」そのものです。
+        - after・exists・refer・part は、時間と基礎の関係です。
+        - 「論理・一つの評価・時間がシグネチャにない」という先ほどの指摘は、この表の中心と重なっています。
+        - シグネチャに入れるべき芯が決まれば、残りはそれと文法の語で書き直す、という順で減らせるはずです。
+
+        **sys_after の報告（中断した測定）**
+        - 手順は登録済みで（1b2a69c）、実行もしました。after を持つ動詞は 17 個で、端の種類で分けると、時間 1（v_happen_after）、並び 8、どちらでもない 8 でした。
+        - ただし、手順の「使われているか（used）」の列に誤りがありました。事実を集める範囲が、ライブラリの事実だけで、領域の事実を含んでいませんでした。そのため used が 0/17 と出ていますが、実際には v_come_after などを is に書いた事実が少なくとも 164 行あります。
+        - この結果はまだ記録していません。used の数え方を直した手順を登録し直し、走らせ直してから記録します。
+
+        **次の進め方の案**
+        1. sys_after を直して記録する。after が時間と並びのどちらに使われているかを見て、シグネチャの時間の芯を step と after のどちらにするか決める材料にする。
+        2. シグネチャに not・some と、時間の芯（step か after）を置く。
+        3. 表の上から順に、コードの名前の分岐を、シグネチャの語と規則に置き換えていく。
+
+        この順で進めてよいですか。
+facts:
+- {is: v_say, from: session_model, to: 01M7NZZJWPB8Q1BM4HQX2R77YE}
+- {is: exp.v_answer, from: 01M7NZZJWPB8Q1BM4HQX2R77YE, to: 01M7NZYRXXXG28SX1CW0W6GECS}
+- {is: v_refer, from: 01M7NZZJWPB8Q1BM4HQX2R77YE, to: ontology.specifically_dependent_continuant}
+- {is: v_refer, from: 01M7NZZJWPB8Q1BM4HQX2R77YE, to: ontology.v_depend}
+- {is: v_refer, from: 01M7NZZJWPB8Q1BM4HQX2R77YE, to: ontology.v_refer}
+- {is: v_refer, from: 01M7NZZJWPB8Q1BM4HQX2R77YE, to: syntax.verb_ref}
+- {is: v_refer, from: 01M7NZZJWPB8Q1BM4HQX2R77YE, to: exp.v_spell}
+- {is: v_refer, from: 01M7NZZJWPB8Q1BM4HQX2R77YE, to: syntax.v_collect}
+- {is: v_refer, from: 01M7NZZJWPB8Q1BM4HQX2R77YE, to: syntax.law_given}
+- {is: v_refer, from: 01M7NZZJWPB8Q1BM4HQX2R77YE, to: ontology.continuant}
+- {is: v_refer, from: 01M7NZZJWPB8Q1BM4HQX2R77YE, to: ontology.occurrent}
+- {is: v_refer, from: 01M7NZZJWPB8Q1BM4HQX2R77YE, to: lang.type_checker}
+- {is: v_refer, from: 01M7NZZJWPB8Q1BM4HQX2R77YE, to: exp.v_happen_after}
+- {is: v_refer, from: 01M7NZZJWPB8Q1BM4HQX2R77YE, to: ontology.v_come_after}

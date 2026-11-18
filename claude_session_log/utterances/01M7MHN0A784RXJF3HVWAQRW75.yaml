@@ -1,0 +1,70 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-17T10:43:10.791Z（UTC）
+individuals:
+  01M7MHN0A784RXJF3HVWAQRW75:
+    is: model_utterance
+    display: 発言 1012
+    val:
+      order: 1012
+      text: |
+        データで調べました。現在の層の境界は、シグネチャの論理式では切り出せません。一方で、シグネチャから定義できて、層とよく重なる分類が2つ見つかりました。
+
+        ## 調べ方
+        各ノードについて、その式が最終的にどの基礎の関係に落ちるかを計算しました。
+        - 自分と上位の限定・動詞をたどり、動詞の holds / pre / post まで下ります。
+        - 落ちた先の基礎の関係の組と、状態の変化（pre / post）を含むかどうかで、ノードを分類しました。
+        - 基礎の関係は7つです。exists、same、refer（今の axiom）と、depend、part、after、involve（ontology）。
+
+        ## 結果1：基礎の関係の組では、層は切れない
+        組は 40 種類ほどに分かれました。例えば一番多い「depend, part, refer」は、ontology、syntax、runtime、std、exp、lang のすべてに出ます。どの組をとっても、ほぼ複数の層にまたがります。今の層は、シグネチャで定義できる区分にはなっていません。
+
+        ## 結果2：2つの性質で分けると、層とよく重なる
+
+        | | ontology | syntax | runtime | std | exp | lang |
+        |---|---|---|---|---|---|---|
+        | refer なし・変化なし | **41** | 9 | 1 | 8 | 54 | 1 |
+        | refer あり・変化なし | 10 | **90** | 22 | 9 | 167 | 5 |
+        | 変化あり（pre / post） | 2 | **0** | 3 | 11 | 89 | 3 |
+
+        - **refer（について述べる）を含むか**で、ontology と syntax がほぼ分かれます。
+          - ontology は 53 のうち 41 が refer を含みません。
+          - syntax は 99 のうち 90 が refer を含みます。
+        - **状態の変化を含むか**で、syntax 以下と、それより上が分かれます。
+          - syntax には変化を含むものが1つもありません。
+          - 変化は runtime、std、exp に集まっています。
+
+        ## 外れたもの（層の誤りの候補）
+        - **ontology の中で refer を含む 10 個：** `information_entity`、`sentence`、`word`、`definition`、`language`、`v_refer`、`v_agree` など。
+          - 存在論の中に、「述べる」で定義される情報の語彙が混ざっています。
+          - 判定のとおりなら、syntax 側の分類に入ります。
+        - **syntax の中で refer を含まない 9 個：** `v_use`、`individuals`、`rel`、今回作った名前付きの限定のいくつか。
+        - **ontology の中で変化を含む 2 個：** `natural_language`、`v_design`。
+
+        ## まとめ
+        - シグネチャから定義できる分類として、少なくとも次の3つが取れます。
+          - 述べない・変わらない（ものの存在論）
+          - 述べる・変わらない（情報と記述）
+          - 変わる（過程・実行）
+        - 今の層は、この分類と大筋では合っています。ただ、境界にずれがあります。
+        - どちらも基礎の関係（refer と、pre / post の有無）だけで書けるので、上の層の名前を使わずに判定できます。
+
+        ## 限りと次の手
+        - この計算は、限定の動詞と上位だけをたどっています。`with` の先の概念までは追っていません。追うと分類が変わる可能性があるので、まず追った版で同じ表を作ります。
+        - 表が変わらなければ、この3分類を法則として書けるかを確かめます。
+        - 層をこの分類に合わせるかどうかは、その結果を見て決めてください。
+
+        まだ何も変更していません。
+facts:
+- {is: v_say, from: session_model, to: 01M7MHN0A784RXJF3HVWAQRW75}
+- {is: exp.v_answer, from: 01M7MHN0A784RXJF3HVWAQRW75, to: 01M7MHKEG54Y253BCB1RTV7KZ6}
+- {is: v_refer, from: 01M7MHN0A784RXJF3HVWAQRW75, to: ontology.information_entity}
+- {is: v_refer, from: 01M7MHN0A784RXJF3HVWAQRW75, to: ontology.sentence}
+- {is: v_refer, from: 01M7MHN0A784RXJF3HVWAQRW75, to: ontology.word}
+- {is: v_refer, from: 01M7MHN0A784RXJF3HVWAQRW75, to: ontology.definition}
+- {is: v_refer, from: 01M7MHN0A784RXJF3HVWAQRW75, to: ontology.language}
+- {is: v_refer, from: 01M7MHN0A784RXJF3HVWAQRW75, to: ontology.v_refer}
+- {is: v_refer, from: 01M7MHN0A784RXJF3HVWAQRW75, to: ontology.v_agree}
+- {is: v_refer, from: 01M7MHN0A784RXJF3HVWAQRW75, to: syntax.individuals}
+- {is: v_refer, from: 01M7MHN0A784RXJF3HVWAQRW75, to: syntax.rel}
+- {is: v_refer, from: 01M7MHN0A784RXJF3HVWAQRW75, to: ontology.natural_language}
+- {is: v_refer, from: 01M7MHN0A784RXJF3HVWAQRW75, to: ontology.v_design}
+- {is: v_refer, from: 01M7MHN0A784RXJF3HVWAQRW75, to: syntax.with}

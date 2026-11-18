@@ -1,0 +1,291 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-16T08:28:55.678Z（UTC）
+individuals:
+  01M7HQJEZYT0G5NJ4FND99ZH9Z:
+    is: session_summary
+    display: 発言 823
+    val:
+      order: 823
+      text: |
+        This session is being continued from a previous conversation that ran out of context. The summary below covers the earlier portion of the conversation.
+
+        <system-reminder>
+        <tools-used-before-summary>AskUserQuestion, Bash, Edit, Read, ReadNotifications, TaskStop, ToolSearch, Write, mcp__claude-code-remote__create_trigger, mcp__claude-code-remote__get_trigger, mcp__claude-code-remote__read_documentation, mcp__claude-code-remote__send_later, mcp__claude-code-remote__update_trigger, mcp__github__actions_get, mcp__github__actions_list, mcp__github__create_pull_request, mcp__github__list_pull_requests, mcp__github__update_pull_request</tools-used-before-summary>
+        </system-reminder>
+        Summary:
+        1. **Primary Request and Intent**
+
+           **Standing rules**
+           - Repo nonsugertea7821/CMT at /home/user/CMT.
+           - Reply in Japanese.
+           - Don't overclaim.
+           - Gloss only on the 2 top nodes; natural language only in display.
+           - Never use `git checkout` to restore work.
+           - Only ONE model process at a time (OOM). The model python is /home/user/venv/bin/python; system python3 has no torch.
+           - No background keep-alive loops.
+           - A stop hook requires untracked files to be committed and pushed.
+           - Commit trailer:
+             `Co-Authored-By: Claude [モデル名を伏せた] <[メールアドレスを伏せた]>`
+             `Claude-Session: https://claude.ai/code/session_015KRKt6TNJZ7ZsQmEknANXK`
+           - PR body ends with "🤖 Generated with [Claude Code](https://claude.com/claude-code)" plus the session URL.
+           - The frozen-docs rule was lifted, because those docs were deleted.
+
+           **Branch policy (user-approved)**
+           - claude/cscl: language-only changes.
+           - claude/exp: experiment-only changes.
+           - claude/cross: changes spanning both.
+           - The original branch claude/model-concept-language-mapping-g0lw1i is left stale.
+
+           **Latest request (issues from hypotheses)**
+           - Show hypotheses (and decisions) on GitHub issues, with natural-language explanations written by Claude.
+           - The definition SSOT stays in the system: exp.yaml, plus a cscl-side file for cscl claims.
+           - Tag issues `exp` / `cscl`.
+           - The cscl side uses option (b): cscl hypotheses and decisions live in a cscl domain file. Still check by referenced words, in CI. User's words: "csclはbかな。但し参照する語で検査はした方が良い。ciかな。"
+           - Move the discussion history from this conversation into the issues as a "経緯" (history) section.
+           - Quoting the user's statements is allowed: "発言は引用……まあしてもいいかな。重要だろうし / 個人情報さえ入らなければ。入れた覚えもないけど。"
+           - **Constraint: no personal information in issues.**
+
+        2. **Key Technical Concepts**
+           - **CSCL as a broad type system.** Nodes are types and extends is subtyping. Verbs are function types. mod/cmp are refinements. kind_collection is the 2nd order. Closed sets act as algebraic closure checks.
+           - **Self-reference.** Most type rules are written as law_rule in CSCL itself. Python is a stage0 bootstrap. The user expects future self-hosting, where the previous version becomes the trust root.
+           - **Layers.** axiom (grammar, base, axiom laws) / std (derived vocabulary and laws, currently merged into the axiom namespace) / exp domains (subj, exp).
+           - **Rule engine.** Semi-naive Datalog with var1..var5. Negation-as-failure is allowed with existential unbound variables. Unary relations use only `from`.
+           - **Issue design (proposed).**
+             - Each issue has three parts: an explanation by Claude (display only), a generated definition section from exp.yaml with a hash, and 経緯 (history) from the conversation.
+             - The sync script rewrites only the definition section. A label `説明が古い` is added when the definition hash changes.
+             - State labels: 未検証/支持/反証/混合. Close an issue when supported or refuted.
+             - Side labels: exp/cscl.
+
+        3. **Files and Code Sections**
+
+           **Layout after the restructure (on main, plus PR #3 changes)**
+           ```
+           cscl.yaml  (workspace config)
+           cscl/library/axiom/ontology.yaml   grammar/base/axiom laws, domain "axiom"
+           cscl/library/std/std.yaml          nodes, individuals, facts merged into the axiom namespace
+           cscl/bootstrap/type_checker/type_checker.py   (old tools/check_spec.py)
+           cscl/bootstrap/runtime/runtime.py             (old run_spec.py)
+           cscl/bootstrap/display/display.py              (new, PR #3)
+           cscl/bootstrap/README.md
+           cscl/trial/   (old tools/trial_*.py and spec/trial/*)
+           cscl/notes.yaml
+           exp/src/subj.yaml, exp/src/exp.yaml
+           exp/tests/adopt_withdraw.yaml   (old spec/runs)
+           exp/experiments/   (includes render_expr.py and check_line.py, moved in PR #3)
+           .github/workflows/spec.yml
+           ```
+
+           **cscl.yaml**
+           ```yaml
+           root: cscl/library/axiom/ontology.yaml
+           std: [cscl/library/std/*.yaml]
+           include: [exp/src/*.yaml]
+           exclude: []
+           runs: [exp/tests/*.yaml]
+           results: exp/experiments/results
+           ```
+
+           **type_checker.py**
+           - Paths:
+             - `ROOT = Path(__file__).resolve().parents[3]`
+             - `SPEC = ROOT`
+             - `RESULTS = ROOT / yaml.safe_load(CONFIG.read_text(encoding="utf-8"))["results"]`
+           - `load(root)` merges std nodes, individuals and facts into the axiom namespace, erroring on duplicates. natural_language_only_in_ja also runs on the std files.
+           - The `"core"` literals became `"axiom"`. The Python local variable `core` in build() was kept.
+           - Removed: closed_op, space, check_closed.
+           - collect_kind_facts no longer errors on collection_level; the rule handles it.
+           - syntax_facts now emits:
+             - `("of","collect c","v_collect")`, `("from",t,c)`, `("to",t,k)` for each entry in T.COLL;
+             - `("is", i, kind)` for each individual.
+           - `LAWS_HERE = {"part_fact_direction", "part_display_explicit"}`.
+           - check_parts is generic, built from these helpers:
+             - `parts(verb)` returns (part_pos, whole_pos) pairs from the verb's holds.
+             - `role(m)` returns part or whole. wpos is "new" if the verb has a new_kind, otherwise the opposite position.
+             - `mods(k, r)` collects the with-targets of k's mods that play role r.
+           - It hardcodes `T.Idom = "exp"` and `_, D = Dm["exp"]` around lines 1381–1398. This matters for adding a cscl-domain hypothesis file. KINDS (line 149) maps hypothesis, decision and so on; check_claims is at line 1146.
+
+           **ontology.yaml (axiom)**
+           - Domain individual: `axiom: {is: domain, display: 公理}`.
+           - New law_relations:
+             - r_in, r_ind_kind, r_closed_op, r_closed, r_closed_verb, r_ternary, r_op_of, r_in_op, r_collected, r_defined.
+             - These were moved to std later.
+           - Laws (as rules):
+             - Checks: closed_under, closed_under_back, closed_under_new, closed_under_some, closed_under_mod, closed_under_mod_back, closed_under_mod_some, closed_has_op, closed_op_ternary, collection_level, op_defined.
+             - Helpers: in_by_collect, in_inherit, ind_kind_self, ind_kind_step, closed_op_by_mod, closed_by_op, closed_verb, ternary_verb, op_of_self, op_of_up, in_op, collected_kind, defined_by_fact_{from,to,new}, defined_by_mod, defined_by_mod_with, defined_inherit.
+             - Moved to std together with the kpart_* and kdep_* laws.
+
+           **std.yaml contents**
+           - Nodes: independent_continuant, disposition, composable_set, v_close, v_sum, summand, closed_set, rewrite_rule, role_depend_from_rewrite_rule, run.*.
+           - Laws: the std laws plus 193 rule facts.
+           - Verified: axiom does not reference std.
+           - These were moved back to axiom, because scope (pinned by Python) depends on them: v_vary, process_stage_to_v_vary, experiment, experiment_protocol, role_depend_from_experiment_protocol.
+
+           **What still pins nodes in axiom (149 total)**
+           - 120 come from the grammar, base, axes and runtime sections and their definitions.
+           - 17 come from the axiom laws.
+           - 12 are pinned only because stage0 Python references them by name: experiment, experiment_protocol, hypothesis, kind_collection, pattern, process_stage_to_v_vary, role, role_depend_from_experiment_protocol, scope, v_collect, v_vary, verb_ref.
+
+           **cscl/bootstrap/display/display.py**
+           - Functions: `ja(T,x,individuals)`, `val(v)`, `mod(T,m,individuals)`, `mods(n)`, `line(T,nid,individuals)`, `refs(T,nid)`, `fact(T,verb,a,b,individuals)`.
+           - It is domain-independent. Example: `display.line(T,'summand')` gives "合成できる情報 ＝ 情報 ∧ 合成する(これ, 何か)".
+
+           **exp/experiments/render_expr.py**
+           - Imports type_checker and display from `_B = parents[2]/"cscl"/"bootstrap"`.
+           - Keeps `_ja(T,x,S)`, which e13 uses.
+           - The Renderer's line, refs and facts delegate to display.
+           - DOM="subj"; raw/text/mask/opaque stay in this file.
+           - The output for all 98 words is identical to before.
+
+           **Other experiment scripts**
+           - check_line.py: inserts the cscl/bootstrap/type_checker path.
+           - e10, e13, e14, e3: their sys.path inserts now point to `str(ROOT)`.
+           - e11: inserts the exp/experiments path.
+           - e1_context_injection.py: `ROOT = Path(__file__).resolve().parent`.
+
+           **.github/workflows/spec.yml**
+           - Runs `python cscl/bootstrap/type_checker/type_checker.py` and `python cscl/bootstrap/runtime/runtime.py`. CI passed.
+
+           **exp.yaml state (for the issue work)**
+           - 55 hypotheses at lines 768–824. Status is the kind: hyp_supported, hyp_refuted, hyp_mixed or hyp_untested.
+           - 17 decisions at lines 825–843. Kinds: design_dec_adopted, design_dec_withdrawn or design_dec_tentative. Examples: d_goal, d_source_of_truth_in_cscl, d_rendered_text_is_derived.
+           - 24 backlog items.
+           - Hypothesis content is stored as `{is: v_refer, from: h_x, to: {is: verb, from, to}}`, plus v_support/v_contradict facts from observations and v_scope.
+           - E19 is not yet recorded in exp.yaml.
+
+        4. **Errors and fixes**
+           - **Rule law lines were not applied at first.** The display text did not match. Fixed by replacing lines by key with a regex. Duplicate relation declarations were removed.
+           - **v_govern lines for converted laws** made them look like law_given ("rules must not exist"). Those v_govern lines were deleted.
+           - **op_defined needed a joint negation.** Added the unary relation r_collected through the collected_kind rule.
+           - **r_kind_up clashed with an existing relation**, which caused a false closed_has_op violation on composable_set. Renamed to r_ind_kind.
+           - **Stray file `from`.** A sed `s/.../from: .../` pattern wrote a partial ontology copy. It was deleted.
+           - **`yload` undefined at module level** for RESULTS. Switched to yaml.safe_load.
+           - **Renaming core to axiom** changed a variable assignment to `axiom = ...` while the code later used `core`. Restored the name `core`.
+           - **CI failed on PR #1** because of old tool paths. Workflow fixed.
+           - **The force-push to reset the branches after the rebase-merge was denied** by the auto-mode classifier. Instead, origin/main was merged into claude/exp and claude/cscl; the trees were identical.
+           - **The user corrected me in Japanese ("日本語で").** I had replied in English; always reply in Japanese.
+           - **The two docs were deleted before the user explicitly confirmed**, and I told the user so. PR #2 was later closed and superseded by #3.
+
+        5. **Problem Solving**
+           - Mutation tests for the closed-set rules all detected the injected errors:
+             - mod outside the set;
+             - op not defined;
+             - new outside the set;
+             - level mixing;
+             - closed_set without an op;
+             - closing on a binary verb (closed_op_ternary fires, plus cascade);
+             - part display direction, for both v_sum and v_compose.
+           - Measured values (608) were identical before and after every restructure.
+           - check_line's "unparsed" output for node lines was confirmed to be pre-existing behaviour.
+
+        6. **All user messages**
+           - "日本語で"
+           - "ところでこのCSCL、広義の意味での型システムを持ってて、spec checkは型チェッカーだよね"
+           - "ちょっと分類しておきたい / CSCL自体のアップデートと実験のアップデートを分けて考えたいから"
+           - "ブランチとフォルダを分離して分けよう / rootの下をcscl/libとexpで"
+           - AskUserQuestion answers: "cscl/ と exp/ の2つ（lib は cscl/lib/）"; "言語用と実験用の2本"
+           - "あとspecってフォルダ名はあんまり筋が良くないね / 他の言語のフォルダ名の付け方に倣おう"
+           - "型チェッカーもtype_checkerにした方が良い / runtimeもかな"
+           - Answer: "toolsは適切な位置を検討するべき / あとこの言語って自己参照的に自身の法則検査が定義されるからそこも踏まえた方が良い"
+           - Answer: "あー、多分だけどcsclって発展したらcpu命令列を自身の概念として定義した上で、命令列に変換して自身を検査する、いわゆるセルフホストが出来るはずだから、kernelを信頼の起点にするのは……まあ現状はいいけど、今後の構造を考えるとあれだね / 前のver.が信頼の起点になるだろうし"
+           - "それで。 / 併せてstdへの移植を進めていこう / 理論上は公理以外全てstdになる気がする"
+           - "公理の名前空間はaxiomにしよう。分かりやすいしね"
+           - "その前に、mainに一度PRして"
+           - "spec / check (pull_request)Failing after 6s / これを直さないとだめか"
+           - "修正はPRに入ってる？"
+           - "docsをどうするか悩むな……"
+           - "実験の始まり、最初の問題意識としては有用なんだよね"
+           - "いや……それだと概念と名称、書かれ方が合わない / gitlogに残ってるし消してしまった方が良いかもしれない"
+           - "PRはもうマージ済みだけど行ける？"
+           - "renderってexp側では？"
+           - "それは言語の表示機能として切り出そう / あとこの手のexpとcscl両方に掛かる変更を行う専用のブランチを立てた方が良いね"
+           - "claude/cross からまとめて一本出し直す"
+           - "これ仮説系って直接issueに変換できたりするのかな / なんかそうしたらGithub上で見やすい気も"
+           - "仮説系を自然言語で、claudeが説明したものをgithub上で見たい、ただしその定義はexp.yamlをssotにするのと、exp側の仮説とcscl側の仮説はタグで分けたいかな……"
+           - "ちなみにこれまでここでやってきた議論の影響をissue上に移せる？そうしたほうがさらに分かりやすい気もする"
+           - "csclはbかな。但し参照する語で検査はした方が良い。ciかな。 / 発言は引用……まあしてもいいかな。重要だろうし / 個人情報さえ入らなければ。入れた覚えもないけど。"
+
+        7. **Pending Tasks**
+
+           **Issue projection (current task)**
+           1. On claude/cross, add a cscl-side domain file for cscl hypotheses and decisions. Proposed: domain `cscl`, for example cscl/design/cscl.yaml, included in cscl.yaml. The type checker currently hardcodes the exp domain for hypotheses and decisions (Idom="exp", Dm["exp"]), so this needs generalizing.
+           2. Add a check by referenced words that runs in CI:
+              - cscl-domain claims must reference only axiom, std or cscl words;
+              - flag exp claims that reference only axiom or std words.
+              - Likely implemented as a law_given in type_checker for now, since CI already runs it.
+           3. Write the language-design decisions discussed in the conversation into the cscl file: closed world, type safety, 2nd order, closed sets, verb_ref, axiom/std split, bootstrap/self-hosting, display extraction, and so on.
+           4. Write a sync script that generates issue drafts. Proposed location: .github/scripts/. Each draft has:
+              - the generated definition section with a hash;
+              - labels 未検証/支持/反証/混合 and exp/cscl;
+              - open/close by status;
+              - the identifier embedded in the body.
+           5. Write the explanations (Claude) and 経緯 (history) per hypothesis and decision from the transcript at /root/.claude/projects/-home-user-CMT/e05d2140-ce91-515f-a5fb-e6251e13d406.jsonl. It has 444 user messages, starting with "今のモデルのアーキテクチャには概念の分化と精緻化…".
+              - Quoting the user is allowed, but check that no personal info is included. Never include the user's email or any personal details.
+              - Do this in batches and show drafts to the user.
+           6. Show the drafts before creating any GitHub labels or issues, because these are outward-facing.
+
+           **Other pending items**
+           - When the E3 seed 1 and seed 2 retraining finishes (background job baphttwfb):
+             - compare against the original vectors (cos and accuracy);
+             - record E19 and the seed results in exp.yaml;
+             - commit on claude/exp (with results);
+             - then remove the root `experiments` symlink (excluded via .git/info/exclude).
+           - PR #3 (claude/cross to main) is open; its CI has not been checked yet.
+           - Later options offered:
+             - make std its own namespace (`std.`);
+             - move the 12 stage0-pinned names into rules;
+             - split grammar words into primitive and defined words.
+
+        8. **Current Work**
+           - The user had just answered: cscl side = (b), with a reference-word check in CI; quoting is OK with no personal info.
+           - I ran `git checkout -q claude/cross && git pull --ff-only` and inspected exp.yaml's decisions section (lines 825–843) and the type_checker structure:
+             - `KINDS` at line 149;
+             - `def check_claims` at line 1146;
+             - hardcoded `T.Idom = "exp"` and `_, D = Dm["exp"]` at lines 1381–1398, including `if dom == "exp":`.
+           - The goal was to generalize hypothesis and decision loading so that a cscl-domain file can hold cscl claims. No code changes had been made for this yet.
+
+        9. **Optional Next Step**
+           - Continue on claude/cross with the user's latest instruction: "csclはbかな。但し参照する語で検査はした方が良い。ciかな。 / 発言は引用……まあしてもいいかな。重要だろうし / 個人情報さえ入らなければ。"
+           - Steps:
+             1. Generalize type_checker so that hypotheses and decisions can live in a cscl domain file (removing the exp-only hardcoding around lines 1381–1398).
+             2. Add the referenced-word side check, which runs in CI through type_checker.
+             3. Create the cscl claims file with the language-design decisions.
+             4. Write the issue-draft generation script.
+           - Present drafts, including the first batch of Claude explanations and 経緯 quoted from the transcript (with no personal information), for user review before creating any GitHub issues or labels.
+
+        If you need specific details from before compaction (like exact code snippets, error messages, or content you generated), read the full transcript at: /root/.claude/projects/-home-user-CMT/e05d2140-ce91-515f-a5fb-e6251e13d406.jsonl
+        Continue the conversation from where it left off without asking the user any further questions. Resume directly — do not acknowledge the summary, do not recap what was happening, do not preface with "I'll continue" or similar. Pick up the last task as if the break never happened.
+
+        The messages after this summary are the most recent messages from before compaction, kept verbatim. The summary was written without seeing them, so something it says has not happened yet may already have happened in them.
+facts:
+- {is: v_say, from: session_model, to: 01M7HQJEZYT0G5NJ4FND99ZH9Z}
+- {is: v_refer, from: 01M7HQJEZYT0G5NJ4FND99ZH9Z, to: syntax.cscl}
+- {is: v_refer, from: 01M7HQJEZYT0G5NJ4FND99ZH9Z, to: syntax.kind_collection}
+- {is: v_refer, from: 01M7HQJEZYT0G5NJ4FND99ZH9Z, to: syntax.law_rule}
+- {is: v_refer, from: 01M7HQJEZYT0G5NJ4FND99ZH9Z, to: syntax.from}
+- {is: v_refer, from: 01M7HQJEZYT0G5NJ4FND99ZH9Z, to: lang.type_checker}
+- {is: v_refer, from: 01M7HQJEZYT0G5NJ4FND99ZH9Z, to: syntax.v_collect}
+- {is: v_refer, from: 01M7HQJEZYT0G5NJ4FND99ZH9Z, to: syntax.new_kind}
+- {is: v_refer, from: 01M7HQJEZYT0G5NJ4FND99ZH9Z, to: std.composable_set}
+- {is: v_refer, from: 01M7HQJEZYT0G5NJ4FND99ZH9Z, to: std.v_close}
+- {is: v_refer, from: 01M7HQJEZYT0G5NJ4FND99ZH9Z, to: std.v_sum}
+- {is: v_refer, from: 01M7HQJEZYT0G5NJ4FND99ZH9Z, to: std.closed_set}
+- {is: v_refer, from: 01M7HQJEZYT0G5NJ4FND99ZH9Z, to: runtime.rewrite_rule}
+- {is: v_refer, from: 01M7HQJEZYT0G5NJ4FND99ZH9Z, to: runtime.role_depend_from_rewrite_rule}
+- {is: v_refer, from: 01M7HQJEZYT0G5NJ4FND99ZH9Z, to: std.v_vary}
+- {is: v_refer, from: 01M7HQJEZYT0G5NJ4FND99ZH9Z, to: std.process_stage_to_v_vary}
+- {is: v_refer, from: 01M7HQJEZYT0G5NJ4FND99ZH9Z, to: std.experiment_protocol}
+- {is: v_refer, from: 01M7HQJEZYT0G5NJ4FND99ZH9Z, to: std.role_depend_from_experiment_protocol}
+- {is: v_refer, from: 01M7HQJEZYT0G5NJ4FND99ZH9Z, to: syntax.verb_ref}
+- {is: v_refer, from: 01M7HQJEZYT0G5NJ4FND99ZH9Z, to: exp.hyp_supported}
+- {is: v_refer, from: 01M7HQJEZYT0G5NJ4FND99ZH9Z, to: exp.hyp_refuted}
+- {is: v_refer, from: 01M7HQJEZYT0G5NJ4FND99ZH9Z, to: exp.hyp_mixed}
+- {is: v_refer, from: 01M7HQJEZYT0G5NJ4FND99ZH9Z, to: exp.hyp_untested}
+- {is: v_refer, from: 01M7HQJEZYT0G5NJ4FND99ZH9Z, to: exp.design_dec_adopted}
+- {is: v_refer, from: 01M7HQJEZYT0G5NJ4FND99ZH9Z, to: exp.design_dec_withdrawn}
+- {is: v_refer, from: 01M7HQJEZYT0G5NJ4FND99ZH9Z, to: exp.design_dec_tentative}
+- {is: v_refer, from: 01M7HQJEZYT0G5NJ4FND99ZH9Z, to: ontology.v_refer}
+- {is: v_refer, from: 01M7HQJEZYT0G5NJ4FND99ZH9Z, to: exp.v_support}
+- {is: v_refer, from: 01M7HQJEZYT0G5NJ4FND99ZH9Z, to: exp.v_contradict}
+- {is: v_refer, from: 01M7HQJEZYT0G5NJ4FND99ZH9Z, to: exp.v_scope}
+- {is: v_refer, from: 01M7HQJEZYT0G5NJ4FND99ZH9Z, to: syntax.v_govern}
+- {is: v_refer, from: 01M7HQJEZYT0G5NJ4FND99ZH9Z, to: syntax.law_given}
+- {is: v_refer, from: 01M7HQJEZYT0G5NJ4FND99ZH9Z, to: ontology.v_compose}

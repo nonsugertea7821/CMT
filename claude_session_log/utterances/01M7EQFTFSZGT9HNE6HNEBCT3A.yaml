@@ -1,0 +1,66 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-15T04:29:45.849Z（UTC）
+individuals:
+  01M7EQFTFSZGT9HNE6HNEBCT3A:
+    is: model_utterance
+    display: 発言 381
+    val:
+      order: 381
+      text: |
+        実験は動いています（L20 の学習が進行中）。移動には着手せず、先にご質問に答えます。
+
+        ## 結論
+
+        その見方は正しいと考えます。`records` は不要で、消すべきです。ただし「`exp` は全部インスタンス」とまでは言えず、種類と個体が混ざっています。
+
+        ## `records` が余計である理由
+
+        いまは同じものを2か所で定義しています。
+
+        - **ノード側**：`observation` は「測定値について述べる、真の文」と式で定義されています。
+        - **`records` 側**：`observations: {is: observation, fields: [s, p, o, tolerance]}` と、個体が持つ項目を別に書いています。
+
+        クラスの定義が項目を決めるのが本来の姿です。項目を別の表で持つと、式と項目がずれても検査できません。実際、項目はどれも式から出せます。
+
+        | いまの項目 | 式での正体 |
+        |---|---|
+        | `s`, `p`, `o` | 文の中身。動詞 `p` の `from` と `to` を占める個体 |
+        | `status: hyp_supported` | 下位の種類への所属。`is: hyp_supported` と同じこと |
+        | `evidence`, `against` | `v_agree` の `to` を占める観察（否定つきかどうか） |
+        | `supersedes` | 動詞の個体（置き換える） |
+
+        実行の記録は、すでにこの形です（`individuals` に `is`、`facts` に `depend(role1, dec1)`）。`exp` の個体も「`is` と事実」だけで書けば、`records` は要らなくなり、書き方が1つに揃います。
+
+        ## 「`exp` はインスタンス」について
+
+        領域とインスタンスは別の軸です。プログラムが自分のクラスを持つのと同じで、領域 `exp` にも種類はあり得ます。分ける基準は「それ自体が個体を持つか」です。
+
+        - **個体**：`model_4b`（Qwen3-4B という1つの成果物）、個々の測定値・観察・仮説・決定。
+        - **種類**：`text_injection` や `def_and_examples` のような条件。実行のたびに個体が生じます。
+
+        いま `core` にある葉のノード283個のうち、かなりの数は前者で、種類ではなく個体として書くべきものです。つまり「`exp` へ移す」作業の中身は、識別子の付け替えよりも、種類と個体の仕分けになります。
+
+        ## 進め方の案
+
+        1. `records` を消し、`exp` の個体を「`is` と事実」で書き直す。項目は式から検査する。
+        2. 実験に固有のノードを、種類（領域 `exp` のノード）と個体に仕分けて移す。
+
+        1を先にすると、2で移す先の形が決まります。この順でよければ進めます。
+facts:
+- {is: v_say, from: session_model, to: 01M7EQFTFSZGT9HNE6HNEBCT3A}
+- {is: exp.v_answer, from: 01M7EQFTFSZGT9HNE6HNEBCT3A, to: 01M7EQ45N094SWXQSJ472W7F0V}
+- {is: v_refer, from: 01M7EQFTFSZGT9HNE6HNEBCT3A, to: exp.observation}
+- {is: v_refer, from: 01M7EQFTFSZGT9HNE6HNEBCT3A, to: ontology.s}
+- {is: v_refer, from: 01M7EQFTFSZGT9HNE6HNEBCT3A, to: ontology.p}
+- {is: v_refer, from: 01M7EQFTFSZGT9HNE6HNEBCT3A, to: ontology.o}
+- {is: v_refer, from: 01M7EQFTFSZGT9HNE6HNEBCT3A, to: syntax.from}
+- {is: v_refer, from: 01M7EQFTFSZGT9HNE6HNEBCT3A, to: syntax.to}
+- {is: v_refer, from: 01M7EQFTFSZGT9HNE6HNEBCT3A, to: exp.hyp_supported}
+- {is: v_refer, from: 01M7EQFTFSZGT9HNE6HNEBCT3A, to: exp.evidence}
+- {is: v_refer, from: 01M7EQFTFSZGT9HNE6HNEBCT3A, to: exp.against}
+- {is: v_refer, from: 01M7EQFTFSZGT9HNE6HNEBCT3A, to: ontology.v_agree}
+- {is: v_refer, from: 01M7EQFTFSZGT9HNE6HNEBCT3A, to: exp.supersedes}
+- {is: v_refer, from: 01M7EQFTFSZGT9HNE6HNEBCT3A, to: syntax.individuals}
+- {is: v_refer, from: 01M7EQFTFSZGT9HNE6HNEBCT3A, to: ontology.is}
+- {is: v_refer, from: 01M7EQFTFSZGT9HNE6HNEBCT3A, to: syntax.facts}
+- {is: v_refer, from: 01M7EQFTFSZGT9HNE6HNEBCT3A, to: exp.text_injection}
+- {is: v_refer, from: 01M7EQFTFSZGT9HNE6HNEBCT3A, to: exp.def_and_examples}

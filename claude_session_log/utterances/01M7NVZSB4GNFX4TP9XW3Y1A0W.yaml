@@ -1,0 +1,51 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-17T23:03:04.292Z（UTC）
+individuals:
+  01M7NVZSB4GNFX4TP9XW3Y1A0W:
+    is: model_utterance
+    display: 発言 1312
+    val:
+      order: 1312
+      text: |
+        前半の、法則 one_spelling を入れて `any` の混同を直すところまで終えました。CI の5つの検査はすべて通り、push 済みです。後半の特別扱いを移す作業にはまだ入っていません。
+
+        ## やったこと
+
+        1. **観察（01cd186 で手順を登録、b7edae2 で結果を記録）**
+           - 型検査が語を解決する所で、領域・書かれた語・解決先を記録して数えました。
+           - 領域と語の組 1307 のうち、解決先が2つあるのは syntax の `any` だけでした（限定の with では存在の数量化、動詞の端ではどのノードでもない語）。見込みどおりです。
+
+        2. **直したこと（f23c75b）**
+           - **法則 one_spelling**: 同じ領域で同じ綴りの語は、どこに書かれても同じものを指す、という法則です。書かれた語と解決先を書き方の事実（r_written）にし、規則で書きました。わざと食い違いを入れて、この法則が反応することを確かめてあります。
+           - **signature に `any` を置いた**: 説明は「自分が動く範囲そのもの。何も限定しない」です。same から導けない理由もファイルに書きました。
+           - **存在の数量化を `some` に改名**: grammar.logic、quant、実行器の pre_rule もあわせて変えました。
+           - **型検査の特別扱いを外した**: with の `any` を存在の数量化として読む扱いをやめました。シグネチャのノードは、領域を書かない名前で置くようにしました。
+
+        ## 直す途中で見つかった、混同の影響
+        - **exp の読み込みが、存在の数量化の性質を借りていた。**
+          - 端が any の動詞（例: v_denote）に事実を2つ以上書けていたのは、存在の数量化ノードの `many: true` を借りていたからでした。
+          - 改名すると exp の読み込みが「事実が2つ以上ある」で失敗したので分かりました。
+          - 今は `any` 自身に `many: true` を書いています。
+
+        **新しい事実を置いた結果で、まだ直していないこと**
+        - `open_runtime.py` と `sys_declaration.py` は、型を書かない新しい個体の種類を `T.resolve("any")` で決めていました。
+        - これまでこれは存在の数量化（文の種類）に解決されていたので、新しい個体が文の下に置かれていたことになります。
+        - 今は `any` に解決されます。
+        - これまでの観察（sys_confusion など）の結果にこれが効いたかは、確かめていません。
+
+        ## 判断したこと（違えば直します）
+        - `any` に、最上位の2つと同じく gloss（自然言語の説明）を持たせました。式では定義できない語だからです。
+        - 型検査には `any` の特別扱いが残っています。これは「特別扱いはシグネチャの語だけ」の範囲に入ります。
+
+        ## 次
+        計画の2つ目に進みます。型検査と実行器にある「シグネチャの外の語の特別扱い」の一覧を観察として登録し、易しい順に事実と規則へ移します。最初は v_spell、次に verb_ref です。
+
+        あわせて、上の新しい個体の件を再実行して確かめるかどうかを決めてください。文法の語（from・to・holds など）を許すかどうかも、まだ決めていただいていません。
+facts:
+- {is: v_say, from: session_model, to: 01M7NVZSB4GNFX4TP9XW3Y1A0W}
+- {is: exp.v_answer, from: 01M7NVZSB4GNFX4TP9XW3Y1A0W, to: 01M7NVNF0RMC6EP1K9GWA0BEYV}
+- {is: v_refer, from: 01M7NVZSB4GNFX4TP9XW3Y1A0W, to: any}
+- {is: v_refer, from: 01M7NVZSB4GNFX4TP9XW3Y1A0W, to: syntax.some}
+- {is: v_refer, from: 01M7NVZSB4GNFX4TP9XW3Y1A0W, to: runtime.pre_rule}
+- {is: v_refer, from: 01M7NVZSB4GNFX4TP9XW3Y1A0W, to: exp.v_denote}
+- {is: v_refer, from: 01M7NVZSB4GNFX4TP9XW3Y1A0W, to: exp.v_spell}
+- {is: v_refer, from: 01M7NVZSB4GNFX4TP9XW3Y1A0W, to: syntax.verb_ref}

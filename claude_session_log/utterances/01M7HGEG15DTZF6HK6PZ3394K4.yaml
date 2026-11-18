@@ -1,0 +1,50 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-16T06:24:25.637Z（UTC）
+individuals:
+  01M7HGEG15DTZF6HK6PZ3394K4:
+    is: model_utterance
+    display: 発言 726
+    val:
+      order: 726
+      text: |
+        種類の集まり（2階）を入れました。名前は「閉集合」を基に、表示名を**「合成について閉じた集合」**にしました。数学で「閉集合」とだけ言うと、位相の閉集合（境界を含む集合）を指すのが普通なので、何について閉じているかを書き添えています。「閉集合」だけにしたければ、1行で変えられます。検査（check_spec と run_spec）は通り、コミットして push 済みです（c5e188c）。
+
+        ## 入れたもの
+
+        - **ontology.yaml（core）:**
+          - `kind_collection`（種類の集まり）を置きました。成員は種類で、集まりの性質は下位には受け継がれません。
+          - `composable_set`（合成について閉じた集合）を、「合成できる情報の種類を成員にする集まり」と定義しました。
+          - 動詞 `v_collect`（成員の種類にする）を足しました。
+        - **ontology.yaml の法則:**
+          - `sum_closed`：合成する二つが同じ閉じた集合に属し、合成してできたものもその中に入ることを求めます。前の、位置の約束で決めていた sum_same_space を置き換えました。
+          - `collection_level`：種類の集まりそのものを成員にすることを禁じます（階を混ぜない）。
+        - **exp.yaml:**
+          ```yaml
+          residual_space: {is: composable_set, display: 残差の流れ}            # 個体（2階）
+          - {is: v_collect, from: residual_space, to: residual_vector}          # 事実
+          ```
+          残差の流れのベクトルは、普通の「合成できる情報」の種類に戻しました。
+
+        ## 確かめたこと
+
+        | 入れた誤り | 結果 |
+        |---|---|
+        | 合成の結果が集合の外の種類になる | 捕まりました（sum_closed） |
+        | 別の閉じた集合（語彙の点数）のベクトルと合成する | 捕まりました（sum_closed） |
+        | 合成が定義されていない種類を集合の中に置く | 捕まりました（sum_defined） |
+        | 種類の集まりそのものを成員にする | 捕まりました（collection_level） |
+
+        **下位に漏れないことも確かめました。** 隠れ状態は「残差の流れに属する」とだけ判定され、それ自身は閉じた集合として扱われません。閉じた集合として宣言されているのは、残差の流れのベクトルだけです。前回問題にした「隠れ状態も閉じていることになってしまう」漏れは、なくなりました。
+
+        途中で、既存の不具合も1つ直しました。法則 sum_defined が実際には何も確かめていませんでした。相手のない限定 `{of: [v_sum, from]}` を合成の定義として数えていたので、合成できる情報の下のどの種類も素通りしていたためです。
+
+        ## 残っていること
+
+        E16 の共通成分（概念ベクトルの集まりの平均）を、集まりの性質として書き直す作業は、まだしていません。今も「概念ベクトルの共通成分」という成員の種類として近似したままです。2階が入ったので、次にできる候補です。
+facts:
+- {is: v_say, from: session_model, to: 01M7HGEG15DTZF6HK6PZ3394K4}
+- {is: exp.v_answer, from: 01M7HGEG15DTZF6HK6PZ3394K4, to: 01M7HGD4H13GPYKBKHSXZJBTE9}
+- {is: v_refer, from: 01M7HGEG15DTZF6HK6PZ3394K4, to: syntax.kind_collection}
+- {is: v_refer, from: 01M7HGEG15DTZF6HK6PZ3394K4, to: std.composable_set}
+- {is: v_refer, from: 01M7HGEG15DTZF6HK6PZ3394K4, to: syntax.v_collect}
+- {is: v_refer, from: 01M7HGEG15DTZF6HK6PZ3394K4, to: exp.residual_vector}
+- {is: v_refer, from: 01M7HGEG15DTZF6HK6PZ3394K4, to: std.v_sum}

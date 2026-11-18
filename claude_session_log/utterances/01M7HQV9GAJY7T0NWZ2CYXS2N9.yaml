@@ -1,0 +1,46 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-16T08:33:44.970Z（UTC）
+individuals:
+  01M7HQV9GAJY7T0NWZ2CYXS2N9:
+    is: model_utterance
+    display: 発言 832
+    val:
+      order: 832
+      text: |
+        先に訂正です。PR #3 は 08:23 にマージ済みでした。確認せずに「PR #3 に入ります」と書いたのは誤りです。前回の commit（cf0bb3a、cscl 側の主張の領域と issue 同期）は PR #3 のマージより後に push したので、main には入っていません。claude/cross に残っているので、新しい PR が要ります。
+
+        axiom についてはご指摘のとおりだと思います。いまの axiom は、公理と存在論が混ざっています。
+
+        **数字で見た現状**
+        - axiom の名前空間（std を含む）のノードは 155 個です。extends を持たないのは 10 個だけです。
+        - その 10 個も `continuant`／`occurrent` は存在論の最上位（BFO 由来の選択）で、公理ではありません。
+        - 残る 145 個は、言語の公理から見ればすべて定義された概念です。動詞（v_depend など）、information_entity、hypothesis、experiment などが含まれます。
+
+        **分け方の案**
+
+        | 層 | 名前空間 | 中身 |
+        |---|---|---|
+        | 公理（`axiom.yaml`） | axiom | 文法（grammar）、基礎の関係（base: exists, depend, part, after, involve, same, refer）、軸（axes）、論理の語、実行時の意味論（runtime）、公理の法則。ノードは持たない（式の部品の語だけ） |
+        | 存在論（`ontology.yaml`） | ontology | continuant／occurrent を最上位に、extends で定義される概念すべて。動詞、情報、役割、文、仮説、実験など |
+        | std | （いまは axiom に合流） | 公理と存在論から導ける語彙と法則。どちらの名前空間に入れるかは、この分割の後で決め直す |
+
+        **詰める点**
+        1. **参照の解決**: exp と subj は存在論の語を裸で大量に書いています（`continuant`、`v_refer` など）。全部に `ontology.` を付けるのは現実的ではありません。そこで、自分の領域 → 使う領域（v_use で宣言したもの）→ axiom の順に探す規則にする案です。import と同じ考え方です。
+        2. **stage0 の Python が名前で固定しているノード 12 個**（hypothesis、scope、experiment、kind_collection など）は ontology に移ります。type_checker の側はこれらを `ontology.` 付きで参照するよう直します。
+        3. **最上位の gloss**: 「説明文を持つのは最上位の2つだけ」という規則は、ontology の最上位に付け替わります。
+        4. **完了の条件**: 分割の前後で、ノード数、法則の検出（書き換えテスト）、測定値 608 が変わらないことを確かめます。
+
+        **進め方**
+        - 言語だけの変更なので、作業ブランチは claude/cscl です。
+        - ただ、cf0bb3a の issue 同期は cross 側の変更で、lang の主張（例えば「std は axiom に依存する」）は今回の分割で中身が変わります。そこで、claude/cross の上に分割を積み、まとめて1本の PR にする案を考えています。
+
+        1 の解決規則（v_use で宣言した領域を探す）と、ブランチを claude/cross にまとめる案で進めてよいですか？
+facts:
+- {is: v_say, from: session_model, to: 01M7HQV9GAJY7T0NWZ2CYXS2N9}
+- {is: exp.v_answer, from: 01M7HQV9GAJY7T0NWZ2CYXS2N9, to: 01M7HQT6JD5NDY181K2KHJ4EQZ}
+- {is: v_refer, from: 01M7HQV9GAJY7T0NWZ2CYXS2N9, to: ontology.continuant}
+- {is: v_refer, from: 01M7HQV9GAJY7T0NWZ2CYXS2N9, to: ontology.occurrent}
+- {is: v_refer, from: 01M7HQV9GAJY7T0NWZ2CYXS2N9, to: ontology.v_depend}
+- {is: v_refer, from: 01M7HQV9GAJY7T0NWZ2CYXS2N9, to: ontology.information_entity}
+- {is: v_refer, from: 01M7HQV9GAJY7T0NWZ2CYXS2N9, to: ontology.v_refer}
+- {is: v_refer, from: 01M7HQV9GAJY7T0NWZ2CYXS2N9, to: syntax.kind_collection}
+- {is: v_refer, from: 01M7HQV9GAJY7T0NWZ2CYXS2N9, to: lang.type_checker}

@@ -1,0 +1,180 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-15T04:29:03.474Z（UTC）
+individuals:
+  01M7EQEH3JVZG3TJ472YQX0EDA:
+    is: session_summary
+    display: 発言 379
+    val:
+      order: 379
+      text: |
+        This session is being continued from a previous conversation that ran out of context. The summary below covers the earlier portion of the conversation.
+
+        <system-reminder>
+        <tools-used-before-summary>Bash, Read, ReadNotifications, ToolSearch, Write, mcp__claude-code-remote__create_trigger, mcp__claude-code-remote__get_trigger, mcp__claude-code-remote__read_documentation, mcp__claude-code-remote__update_trigger, mcp__github__actions_get, mcp__github__actions_list</tools-used-before-summary>
+        </system-reminder>
+        Summary:
+        1. Primary Request and Intent:
+           - User (Japanese speaker; **all replies in Japanese**) runs a personal research project in repo `nonsugertea7821/CMT` (branch `claude/model-concept-language-mapping-g0lw1i`, working dir `/home/user/CMT`; user recently added an MIT LICENSE commit — "コミット増えてても気にしないでね"). Premise: current LLMs lack concept differentiation/refinement, lineage memory and concept–language mapping; goal is to remove "design drift" and have long-term memory outside weights. Architecture: LLM interprets intent into concept expressions → controlled language (genus+differentia, no homonyms, canonical form = identity) → term server → typed graph with lineage → LLM generates implementation/tests → verification.
+           - Standing instructions: keep going proactively while a next move exists ("次の一手が出る限りは主体的に続けて"), hourly timer as safeguard; "やるべきことは全部やりたい。ただし順序はFableに任せる"; runtime not a concern; experiments in Japanese; do not bypass license terms (only switch models); when asked to judge, think independently of the user's remarks; the user has intuitions, not definitions — my role is to find structures consistent with them, build the logical argument and test them; "厳密性は検査に任せる方向で"; "足りないものは必要になったら足す方針".
+           - Documentation policy: prose drifts; the source of truth is the formal spec (体系 / 体系制御言語 / 概念式); natural language is a derived rendering. CI runs the checks; policy is "ミスってから直す".
+           - Naming fixed by user: 体系 (system), 体系制御言語 (language controlled by the system), 概念式 (part of what the system holds).
+           - Repo rules: commit and push to the designated branch; no PR unless asked; stop hook requires committing uncommitted changes (partial result JSONs get committed). Commit trailer: `Co-Authored-By: Claude [モデル名を伏せた] <[メールアドレスを伏せた]>` and `Claude-Session: https://claude.ai/code/session_015KRKt6TNJZ7ZsQmEknANXK`. No model identifiers in commits beyond that trailer.
+           - Requests made in this session (all acted on): finish self-description (layer 3: grammar words); `is`→`extends` with a logical argument; logic words and the meta layer as refinements of "について述べる" + axioms; executor as an interpreter defined by precedent, not limited to "LLM or checker"; "ja:, of: 等がノードになってなくないか？"; (1) stop listing multiple `mod` as AND, use `extends` as AND, enforce monotone growth of restrictions as a law; (2) namespaces (domains cut by type hierarchy, duplicates allowed across domains; measurements/experiment records can then live directly in the ontology); (3) execution strategy / runtime semantics / syntax sugar must be defined in the ontology, not hard-coded in run_spec (EBNF optional, "本筋からそれすぎるかも"); "複数並びは全面的に禁止。modは列挙ではなく単一とする"; "実験記録と測定結果をオントロジーに移す作業を優先".
+           - Deferred by user: semantic-IR/bytecode idea (`spec/notes.yaml`, "後々扱おう").
+
+        2. Key Technical Concepts:
+           - Experiments (CPU only; venv `/home/user/venv`; Qwen2.5-0.5B/1.5B-Instruct fp32, Qwen3-4B bfloat16 with `enable_thinking=False`): two-choice logit margin with both option orders; G2c conflict / G2k control items for 24 redefined common words; concept vectors injected at label token positions (def/qa/defqa objectives); E1–E9. New result this session, E9 (scratchpad) on 4B: rule-type direct 0.75 → cot 0.92 (9→11 of 12), remap-type 0.75 → 0.75, control remap 0.83→0.92, control rule 0.83→1.00; opposite of 1.5B (rule 0.33→0.25, remap 0.83→0.58).
+           - Ontology principles: only 持続体/生起体 primitive (only they have gloss); relations are entities (verbs with from/to); modification = occupying a position of a verb; classification = axis + value (values include functions); role = realizable depending on a definition; "について述べる" (refer) is the system's own act (undefinable, restrictable).
+           - This session's theory: `is` conflated kind–kind (inheritance without override = `extends`) and individual–kind (`is`); logic words reduce to refer + count axis + one axiom of distinction (truth has two distinct values); meta layer describable, residue = "application" (Lewis Carroll regress) and stratification requirement (Tarski; acyclic definitions); executor is a role (operational semantics/JVM/eval-apply/CPU/Futamura precedents); dynamic verbs (`pre`/`post`) are typed graph rewrite rules; abstract machine = state (facts about individuals), step, halt, frame law; not yet Turing complete (individuals declared up front → finite memory; no arithmetic).
+           - Concept lattice: restrictions accumulate down the hierarchy; identity = accumulated restriction set; multiple `extends` = AND (meet).
+           - Namespaces: `domain.name` ids, unqualified = `core`; per-domain uniqueness; layering via `uses`.
+
+        3. Files and Code Sections:
+           - `spec/ontology.yaml` (the system body; ~583+ lines). Top-level sections: `domains`, `base`, `laws`, `axes`, `nodes`, `records`, `runtime`, `syntax`, `grammar`. Current notation:
+             ```
+             verb root:    {ja, extends: occurrent, from, to, new_kind?, holds: [...] | pre: [...], post: [...]}
+             verb subkind: {ja, extends: <verb>, from?/to? narrowing, mod?}
+             form:         {ja, form: [verb, from|to|new]}
+             modifier:     {ja, extends: quality|realizable..., of: [verb, pos], neg?}
+             concept:      {ja, extends: G | [G1, G2] (AND), mod: <modifier_id> | {of:[verb,pos], with:, neg:, quant: all|any, at:{axis: value}}, val: {axis: v}, cmp: [{axis,a,b,rel}], axis:}
+             ```
+             Rules: `mod` is a single entry (not a list); a node adds at most one restriction among mod/val/cmp (law `single`); every grammar word is itself a node id.
+             ```
+             domains:
+               core: {ja: 核, uses: []}
+               run: {ja: 実行, uses: [core]}
+               exp: {ja: 実験, uses: [core, run]}
+             base: exists(arity 1); depend laws [end_exists]; part [transitive, antisymmetric]; after [transitive, asymmetric]; involve [end_exists]; refer system_act: true
+             laws: transitive, antisymmetric, asymmetric, end_exists (scope: base); truth_distinct (scope: axes); inherit, narrow, acyclic, monotone, specific, single (scope: nodes); unique_in_domain, layered (scope: domains); step, frame, halt (scope: run)   # each {ja, scope}
+             axes: count {source: any, value: number}, ratio {source: part}, order {source: after}, text {source: refer, value: literal}, truth {source: refer, value: [true, false]}
+             records: observations {is: observation, key: identifier, fields: [s,p,o,tolerance]}, hypotheses {is: hypothesis, ...}, decisions, backlog {is: backlog_item, fields: [identifier,tests,status]}, measurements {is: measurement_family, ...}, row_keys, meaning, value
+             runtime: {world: closed_world, pre_rule: all, post_rule: replace, law_check: every_step, binding: distinct, choice: recorded, progress: changes_state}
+             syntax: formula: {pattern: '(?P<not>not )?(?P<base>\w+)\((?P<from>\w+)(?:, (?P<to>\w+))?\)', value: [not, base, from, to]}
+             grammar:
+               grammar: [system, nodes, mod, cmp, base, axes, records, laws, run, position, rel, function, value, logic, runtime, syntax, domains, domain, individuals, grammar]
+               system: [domains, base, laws, axes, nodes, records, runtime, syntax, grammar]
+               nodes: [ja, gloss, extends, from, to, new_kind, holds, pre, post, form, of, neg, mod, val, cmp, axis]
+               mod: [of, with, neg, quant, at]; cmp: [axis, a, b, rel]; base: [ja, arity, laws, system_act]; axes: [ja, source, value]
+               records: [is, key, fields]; laws: [ja, scope]; run: [individuals, facts, steps, expect, halted]
+               position: [from, to, new]; rel: [same, differ]; function: [gt, ge, lt, le]; value: [number, literal]; logic: [not, all, any, between]
+               runtime: [world, pre_rule, post_rule, law_check, binding, choice, progress]; syntax: [formula]; domains: [ja, uses]; domain: [domain, individuals]; individuals: [is]
+             ```
+             Renames made (homonym removal): verb `before`/`after` → `pre`/`post`; axes `from`→`source`, `values`→`value`; laws `of`→`scope`. Grammar-word nodes renamed to the keyword itself (display_word→ja, genus_part→extends, position_part→position, modification_part→mod, negation→not, universal→all, existential→any, range_value→between, v_belong→is, individual→individuals, fact→facts, law→laws, field→fields, etc.). Run-domain nodes: `run.state` (ja 状態), `run.v_execute`, `run.executor`, `run.halted`, `run.steps`, `run.run`, `run.strategy`, `run.runtime`, `run.world`, `run.closed_world`, `run.pre_rule`, `run.post_rule`, `run.replace`, `run.law_check`, `run.every_step`, `run.binding`, `run.distinct`, `run.choice`, `run.recorded`, `run.progress`, `run.changes_state`. Other added nodes: section, base, axes, nodes, domain, domains, uses, syntax, formula, expression_part family, kind, participant, third_participant, state_relation, rewrite_rule, function, logic, gt/ge/lt/le, number, literal, source, key, expect, new, of. 48 mechanically generated intermediate concepts (ids like `definition_compose_from_system`, ja like 「体系へ部分になる定義」; hypothesis statuses now under `hypothesis_agree_to_evidence` / `hypothesis_agree_to_evidence_not`). Multi-parent nodes: `def_and_examples: {extends: [definition_text, examples_only]}`, `text_and_vector: {extends: [text_injection, concept_vector]}`. Last check: 「検査に成功: ノード 411（うち動詞の語根 46、役割 11）、基礎の関係 6、分類の軸 5、測定値 380、観察 69、仮説 37、決定 17、残り項目 20」.
+           - `spec/exp.yaml` (new; replaces deleted `spec/claims.yaml` and `spec/measurements.yaml`): `domain: exp` and `individuals:` with every record carrying `is:` — measurement families (`is: measurement_family`, block style with result_file, row_collection, axis, row_filter, row_keys, condition_entry, metric, meaning), observations `{is: observation, s: "<measurement id>", p: <comparison verb>, o: "<id>"|number, tolerance?}`, hypotheses `{is: hypothesis, s, p, o, scope, status: hyp_*, evidence, against, limitation, supersedes, note}`, decisions `{is: decision, ...}`, backlog `b_x: {is: backlog_item, tests: [...], status: item_*}`. E9 additions: family e9 model axis `{15b, 4b}`; observations `o_e9_scratchpad_above_direct_rule_4b`, `o_e9_scratchpad_like_direct_remap_4b`, `o_e9_scratchpad_not_below_direct_remap_control_4b`; hypotheses `h_scratchpad_raises_rule_following_4b` (hyp_supported), `h_scratchpad_lowers_remap_following_4b` (hyp_refuted); `b_e9_scratchpad` → item_done.
+           - `spec/runs/adopt_withdraw.yaml`:
+             ```
+             individuals: {sys1: {is: system}, dec1: {is: decision}, role1: {is: role}}
+             facts: ["exists(sys1)", "exists(dec1)", "exists(role1)"]
+             steps:
+               - [v_adopt, {from: sys1, to: dec1, new: role1}]
+               - [v_withdraw, {from: sys1, to: dec1, new: role1}]
+               - [v_adopt, {from: sys1, to: dec1, new: role1}]
+             expect: ["depend(role1, dec1)", "not depend(dec1, role1)"]
+             halted: false
+             ```
+           - `tools/check_spec.py`: `_Unique` YAML loader (duplicate keys error); `load`, `load_domain(name, T)` (groups individuals by `is` via `T.R`, returns `({"families":...}, C)`); constants `LAWS_HERE = {"truth_distinct","inherit","narrow","acyclic","monotone","specific","single","unique_in_domain","layered"}`, `LAWS_RUN = {"transitive","antisymmetric","asymmetric","end_exists","step","frame","halt"}`; class `Ontology` with `__init__` (wraps single `mod` into a list internally, errors on list mod / >1 restriction), `check_grammar` (words must resolve to nodes; laws declared↔implemented; truth_distinct; acyclic; runtime/syntax validation), `resolve(word, dom)`, `domain(nid)`, `refs(nid)`, `check_domains`, `parents`, `up`, `ancestors`, `is_concept`, `own`, `acc`, `check_hierarchy` (monotone, specific), `end`, `is_verb`, `spot_type`, `parent`, `is_a` (recursive over all parents), `grounding` (over ancestors), `kinds_of` (leaf descendants), `status_pattern` (over ancestors), `compare`, `expr`, etc.; `main` runs check, check_records, check_grammar, check_hierarchy, check_domains, then `M, C = load_domain("exp.yaml", T)`; options `--values`, `--show ID`, `--expr ID`.
+           - `tools/run_spec.py` (new): checks run records against rewrite rules. `FORMULA` read from `syntax.formula`; `IMPLEMENTED = {"world": {"closed_world"}, "pre_rule": {"all","any"}, "post_rule": {"replace"}, "law_check": {"every_step"}, "binding": {"distinct"}, "choice": {"recorded"}, "progress": {"changes_state"}}` (errors if runtime selects an unimplemented choice); class `Machine` (`fact_ok`, `holds`, `check_laws`, `bind`, `step`, `applicable`); output 「実行の検査に成功: 実行の記録 1、歩数 3」.
+           - `.github/workflows/spec.yml`: runs `python tools/check_spec.py` and `python tools/run_spec.py`.
+           - `spec/notes.yaml` (n1: semantic IR/bytecode idea, deferred); `spec/trial/` (records, not source); `docs/design.md`, `experiments/README.md` (frozen, still use old words).
+           - `experiments/`: e1…e9 scripts, `run_layers.sh`, `run_queue.sh`, `data/*.json`, `results/*.json` (`e9_Qwen3-4B.json` complete). Restart command: `cd /home/user/CMT/experiments && (PY=/home/user/venv/bin/python nohup setsid ./run_layers.sh 20 4 > /dev/null 2>&1 &)`.
+           - Scheduled task `trig_01Pi1SrY7ZCFTR657jdxZXyr` ("CMT 実験の継続確認", cron `27 * * * *`): prompt updated to the new layout (ontology.yaml, exp.yaml, runs/, both checkers).
+
+        4. Errors and fixes:
+           - Mapping-only grammar (words → nodes) was not what the user wanted ("ja: of:等がノードになってなくないか？") → made every keyword a node id and removed homonymous keywords.
+           - Name clashes when adding nodes: `state` ja duplicated `status`; `v_belong` identical to `p` → renamed/made subkind; later solved properly with the `run` domain.
+           - Python heredoc escaping broke two scripted edits (`["values"]` count assertion; regex-string replacement in run_spec) → reapplied with raw strings / index-based replacement.
+           - List `extends` crashed `parent`/`is_a` (unhashable list) → `parents`/`up` helpers, recursive `is_a`; verb-subkind check relaxed for multi-parent nodes.
+           - Push rejected (user's MIT license commit) → `git pull --rebase` then push.
+           - After splitting nodes, checker assumed direct children/own mods (roles' grounding, hypothesis status patterns, allowed values) → follow ancestor chains / leaf descendants.
+           - Container/worker restarts repeatedly kill the experiment process → restart `run_layers.sh 20 4` each time (training resumes from partial .pt).
+           - My earlier over-limitation "LLM か検査プログラムが実行役" corrected by user → executor defined as a role.
+           - Earlier user corrections still in force: don't treat "avoid redefining common words" as a solution; avoid vague words; gloss only for the two tops; don't demand definitions from the user; don't overclaim (e.g., "all tied to nodes").
+
+        5. Problem Solving:
+           - Solved: self-description layers 1–3; laws section with declared↔implemented cross-check; individual layer and executable rewrite checking; hierarchy laws (monotone, specific, single) with multi-parent AND; namespaces with layering; runtime semantics and formula syntax selected from the ontology; records unified into the ontology as individuals of domain `exp`; E9 4B recorded.
+           - Known limits (reported to user): implementations of laws/strategies live in checker code (ontology selects, code applies); logic-word and new-node definitions are coarse; syntax is regex, not EBNF; YAML container structure not described; intermediate concept display words are mechanical and unnatural; ~250 experiment-specific kinds still in `core`; not Turing complete yet (finite individuals, no arithmetic); `inherit`/`narrow` laws named after existing checks.
+           - Ongoing: single-layer vector runs (L20 defqa in progress, then L4) repeatedly interrupted.
+
+        6. All user messages:
+           - (From before this session, per earlier summary: the original problem statement and architecture; many ontology corrections; documentation policy; naming 体系/体系制御言語/概念式; "自己記述は最後までやっておいて。曖昧さが残るってことだから"; "チューリング完全性について議論しよう…"; doubt that "evidence", "s", "p" are defined; "それでいい。ただ今5hレートリミットがギリギリだから次のレートリミットでやろう…".)
+           - "述語論理はontology.yamlの定義自体を参照する「について述べる」の修飾で行けそうな気が少しする。というか、その辺りのメタ層はすべて「について述べる」を精緻化すれば解けるのでは？公理を作れば解決しそうな気もするが。あとisではなくextendsの方が概念に近いと思う。オブジェクト指向の継承とほぼイコールな気がする。勿論気がするだけ（直観）なのでそう言い切れる論理展開はしてほしい。"
+           - "実行器はインタプリタの性質を持ち、それは前例を調べればどう適用するべきかの含意があるはず。LLMか検査プログラムが、というのは不要な限定では。最終的にバイトコードとしてマシン語に持っていくなら必要不可欠な気も。"
+           - "よろしく。厳密性は検査に任せる方向で。"
+           - "ja: of:等がノードになってなくないか？"
+           - "これ気づいたんだが、オントロジーのmodを2つ以上並べてandにするのはやめた方が良いかもしれない。普通にextendsをANDで代用したほうがいいかも。型階層を降りるにしたがって限定の数が増えていくことを法則として強制する。そうしないと具体概念を抽象に置けてしまう。"
+           - "一応、さっきMITライセンスにしたのでコミット増えてても気にしないでね"
+           - "もう一つ思ったんだが、これでプログラムを書くってなると低次元の操作と高次元の操作で識別子が衝突するよな。名前空間の概念、一定の型階層でドメインを切ってドメイン間での識別子重複を許可する規則が必要かもしれない。"
+           - "すまんもう一つ気づいたが、run_specについて、これ実行戦略がハードコードされてるよな。実行戦略、実行時意味論、構文糖衣はそれ自体が概念を持っているからオントロジー側に定義されるのが正しい。これも追加。まとめる。1. (mod の複数並びをやめ extends を AND に、限定の単調増加を法則として強制) 2. (名前空間：一定の型階層でドメインを切ってドメイン間での識別子重複を許可する規則を追加。この規則が出来れば現在ファイルを分けている計測結果や実験記録も名前空間の下に直接オントロジーとして書ける) 3. (run_spec の実行戦略・実行時意味論をオントロジー側に定義。オントロジーを正として、そこから識別子または構文糖衣で引っ張ってきて定義したい。余裕があればEBNF化もやりたいけど、そこまで行くと本筋からそれすぎるかも。)"
+           - "複数並びは全面的に禁止。modは列挙ではなく単一とする"
+           - "実験記録と測定結果をオントロジーに移す作業を優先"
+           - (Local command outputs: `/autocompact` set to 200k then 300k; several stop-hook messages asking to commit uncommitted changes; repeated worker-restart notices.)
+
+        7. Pending Tasks:
+           - Keep experiments running (L20 defqa, then L4); record results in `spec/exp.yaml` when finished; continue the backlog items (`is: backlog_item`) including writing the 24 subject concepts as concept expressions and the controlled-language experiments.
+           - Proposed but not yet requested/confirmed: move the ~250 experiment-specific kinds from `core` into domain `exp`; rename the 48 mechanical intermediate display words; single-file vs per-domain-file layout (I chose per-domain files and offered to merge).
+           - Open from earlier: Turing-completeness discussion (dynamic individual creation, arithmetic; user to decide where universality lives — my recommendation: verbs only, definitions stay terminating); version/lineage records for concepts; EBNF (optional); semantic-IR note (deferred).
+           - Respond to hourly notifications via ReadNotifications; commit partial results when the stop hook asks.
+
+        8. Current Work:
+           The user's latest request was "実験記録と測定結果をオントロジーに移す作業を優先". I merged `spec/claims.yaml` and `spec/measurements.yaml` into `spec/exp.yaml` (domain `exp`, records as individuals with `is`), added `load_domain` and the duplicate-key loader to `tools/check_spec.py`, added domain `exp: {uses: [core, run]}` and grammar entries `domain: [domain, individuals]`, `individuals: [is]`, unified run-record individuals to `{id: {is: kind}}`, ran negative tests (unknown kind, duplicate id), and committed and pushed "Move measurements, observations, hypotheses, decisions and backlog into the ontology as individuals of the exp domain" (counts unchanged: 測定値380、観察69、仮説37、決定17、残り項目20). I also updated the hourly task's prompt to the new file layout and restarted the L20 vector run. I reported this to the user, noting that experiment-specific kinds remain in `core` and that moving them to `exp` is what I would do next.
+
+        9. Optional Next Step:
+           No further step is explicitly owed for the latest request; the record migration is complete and reported. The natural continuation, stated in my last report ("実験に固有の種類（…約250個のノード）は、`core` に残っています。…次にやるならこれだと考えています"), is to move experiment-specific nodes into domain `exp` — this should be confirmed with the user (or taken up under the standing "主体的に続けて" instruction) while continuing to keep the experiment queue alive and recording L20/L4 results in `spec/exp.yaml`.
+
+        If you need specific details from before compaction (like exact code snippets, error messages, or content you generated), read the full transcript at: /root/.claude/projects/-home-user-CMT/e05d2140-ce91-515f-a5fb-e6251e13d406.jsonl
+        Continue the conversation from where it left off without asking the user any further questions. Resume directly — do not acknowledge the summary, do not recap what was happening, do not preface with "I'll continue" or similar. Pick up the last task as if the break never happened.
+
+        The messages after this summary are the most recent messages from before compaction, kept verbatim. The summary was written without seeing them, so something it says has not happened yet may already have happened in them.
+facts:
+- {is: v_say, from: session_model, to: 01M7EQEH3JVZG3TJ472YQX0EDA}
+- {is: v_refer, from: 01M7EQEH3JVZG3TJ472YQX0EDA, to: ontology.is}
+- {is: v_refer, from: 01M7EQEH3JVZG3TJ472YQX0EDA, to: syntax.extends}
+- {is: v_refer, from: 01M7EQEH3JVZG3TJ472YQX0EDA, to: syntax.mod}
+- {is: v_refer, from: 01M7EQEH3JVZG3TJ472YQX0EDA, to: syntax.pre}
+- {is: v_refer, from: 01M7EQEH3JVZG3TJ472YQX0EDA, to: syntax.post}
+- {is: v_refer, from: 01M7EQEH3JVZG3TJ472YQX0EDA, to: syntax.base}
+- {is: v_refer, from: 01M7EQEH3JVZG3TJ472YQX0EDA, to: syntax.laws}
+- {is: v_refer, from: 01M7EQEH3JVZG3TJ472YQX0EDA, to: syntax.axes}
+- {is: v_refer, from: 01M7EQEH3JVZG3TJ472YQX0EDA, to: syntax.nodes}
+- {is: v_refer, from: 01M7EQEH3JVZG3TJ472YQX0EDA, to: runtime.runtime}
+- {is: v_refer, from: 01M7EQEH3JVZG3TJ472YQX0EDA, to: syntax.grammar}
+- {is: v_refer, from: 01M7EQEH3JVZG3TJ472YQX0EDA, to: syntax.new_kind}
+- {is: v_refer, from: 01M7EQEH3JVZG3TJ472YQX0EDA, to: syntax.system_act}
+- {is: v_refer, from: 01M7EQEH3JVZG3TJ472YQX0EDA, to: exp.backlog_item}
+- {is: v_refer, from: 01M7EQEH3JVZG3TJ472YQX0EDA, to: exp.measurement_family}
+- {is: v_refer, from: 01M7EQEH3JVZG3TJ472YQX0EDA, to: syntax.closed_world}
+- {is: v_refer, from: 01M7EQEH3JVZG3TJ472YQX0EDA, to: runtime.pre_rule}
+- {is: v_refer, from: 01M7EQEH3JVZG3TJ472YQX0EDA, to: runtime.post_rule}
+- {is: v_refer, from: 01M7EQEH3JVZG3TJ472YQX0EDA, to: runtime.law_check}
+- {is: v_refer, from: 01M7EQEH3JVZG3TJ472YQX0EDA, to: runtime.every_step}
+- {is: v_refer, from: 01M7EQEH3JVZG3TJ472YQX0EDA, to: runtime.changes_state}
+- {is: v_refer, from: 01M7EQEH3JVZG3TJ472YQX0EDA, to: syntax.from}
+- {is: v_refer, from: 01M7EQEH3JVZG3TJ472YQX0EDA, to: syntax.source}
+- {is: v_refer, from: 01M7EQEH3JVZG3TJ472YQX0EDA, to: syntax.value}
+- {is: v_refer, from: 01M7EQEH3JVZG3TJ472YQX0EDA, to: syntax.of}
+- {is: v_refer, from: 01M7EQEH3JVZG3TJ472YQX0EDA, to: std.scope}
+- {is: v_refer, from: 01M7EQEH3JVZG3TJ472YQX0EDA, to: syntax.expression_part}
+- {is: v_refer, from: 01M7EQEH3JVZG3TJ472YQX0EDA, to: ontology.third_participant}
+- {is: v_refer, from: 01M7EQEH3JVZG3TJ472YQX0EDA, to: syntax.state_relation}
+- {is: v_refer, from: 01M7EQEH3JVZG3TJ472YQX0EDA, to: runtime.rewrite_rule}
+- {is: v_refer, from: 01M7EQEH3JVZG3TJ472YQX0EDA, to: syntax.definition_compose_from_system}
+- {is: v_refer, from: 01M7EQEH3JVZG3TJ472YQX0EDA, to: exp.hypothesis_agree_to_evidence}
+- {is: v_refer, from: 01M7EQEH3JVZG3TJ472YQX0EDA, to: exp.hypothesis_agree_to_evidence_not}
+- {is: v_refer, from: 01M7EQEH3JVZG3TJ472YQX0EDA, to: exp.def_and_examples}
+- {is: v_refer, from: 01M7EQEH3JVZG3TJ472YQX0EDA, to: exp.definition_text}
+- {is: v_refer, from: 01M7EQEH3JVZG3TJ472YQX0EDA, to: exp.examples_only}
+- {is: v_refer, from: 01M7EQEH3JVZG3TJ472YQX0EDA, to: exp.text_and_vector}
+- {is: v_refer, from: 01M7EQEH3JVZG3TJ472YQX0EDA, to: exp.text_injection}
+- {is: v_refer, from: 01M7EQEH3JVZG3TJ472YQX0EDA, to: exp.concept_vector}
+- {is: v_refer, from: 01M7EQEH3JVZG3TJ472YQX0EDA, to: exp.result_file}
+- {is: v_refer, from: 01M7EQEH3JVZG3TJ472YQX0EDA, to: exp.row_collection}
+- {is: v_refer, from: 01M7EQEH3JVZG3TJ472YQX0EDA, to: exp.row_filter}
+- {is: v_refer, from: 01M7EQEH3JVZG3TJ472YQX0EDA, to: exp.condition_entry}
+- {is: v_refer, from: 01M7EQEH3JVZG3TJ472YQX0EDA, to: exp.hyp_supported}
+- {is: v_refer, from: 01M7EQEH3JVZG3TJ472YQX0EDA, to: exp.hyp_refuted}
+- {is: v_refer, from: 01M7EQEH3JVZG3TJ472YQX0EDA, to: exp.item_done}
+- {is: v_refer, from: 01M7EQEH3JVZG3TJ472YQX0EDA, to: exp.v_adopt}
+- {is: v_refer, from: 01M7EQEH3JVZG3TJ472YQX0EDA, to: exp.v_withdraw}
+- {is: v_refer, from: 01M7EQEH3JVZG3TJ472YQX0EDA, to: syntax.holds}
+- {is: v_refer, from: 01M7EQEH3JVZG3TJ472YQX0EDA, to: runtime.state}
+- {is: v_refer, from: 01M7EQEH3JVZG3TJ472YQX0EDA, to: ontology.p}
+- {is: v_refer, from: 01M7EQEH3JVZG3TJ472YQX0EDA, to: runtime.run}

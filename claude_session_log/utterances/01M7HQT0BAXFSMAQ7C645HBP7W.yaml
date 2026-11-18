@@ -1,0 +1,51 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-16T08:33:02.826Z（UTC）
+individuals:
+  01M7HQT0BAXFSMAQ7C645HBP7W:
+    is: model_utterance
+    display: 発言 830
+    val:
+      order: 830
+      text: |
+        claude/cross に push しました（cf0bb3a）。開いている PR #3 にそのまま入ります。GitHub の issue とラベルはまだ1件も作っていません。
+
+        **型検査器（type_checker）の変更**
+        - 仮説・決定を、exp 以外の領域にも置けるようにしました。
+        - 側を確かめる検査（`check_sides`）を加えました。既存の CI（spec）で毎回走ります。
+          - cscl 側の主張は、axiom（std を含む）と自分の領域の語だけを参照できます。
+          - exp 側の主張が axiom の語しか参照していなければ、誤りとして報告します。
+        - 書き換えテストで確かめました。cscl 側の主張に exp の語を入れると検出されます。exp 側の d_goal を axiom の語だけにすると、これも検出されます。
+        - 型検査と実行の検査はどちらも通っています。測定値は 608 のままです。
+
+        **cscl 側の主張ファイル（`cscl/design/claims.yaml`）**
+        - 領域名は `lang` にしました。`cscl` は axiom にある「概念体系制御言語」というノード名と衝突するためです。issue のラベルは `cscl` にしてあります。
+        - 中身はまだ下書きで、仮説1件と決定5件です。
+          - 仮説: セルフホスト
+          - 決定: 法則は CSCL で書く／閉世界／std は axiom に依存する／表示は体系から導かれる／信頼の起点は前の版（暫定）
+        - 状態の種類（採用済み・暫定・未検証など）は exp で定義されているので、いまは lang から exp を参照しています。この語彙を std に移すのは別の作業として残します。
+
+        **同期の仕組み**
+        - スクリプトは `.github/scripts/sync_issues.py`、ワークフローは `.github/workflows/issues.yml` です。
+        - 主張1つにつき issue を1件作ります。本文は 説明／定義／経緯 の3節です。
+          - スクリプトが書き換えるのは定義節だけです。
+          - 定義が変わったときに説明が書いてあれば、「説明が古い」ラベルを付けます。
+        - ラベルは 主張・exp/cscl・仮説/決定・状態 です。状態が支持・反証・採用・取り下げのものは close します。
+        - GitHub に書き込むのは次の2つの場合だけです。それ以外の実行では、下書きを成果物としてアップロードするだけです。
+          - 手動実行で `apply` を選んだとき
+          - main への push で、リポジトリ変数 `ISSUE_SYNC=on` が設定されているとき
+        - ローカルでは下書き 78 件（exp 72、cscl 6）を作るところまで確かめました。GitHub API に実際に書き込む部分（`--apply`）はまだ一度も動かしていないので、初回の実行で問題が出るかもしれません。
+
+        下書きの例は次の場所にあります。
+        - `/tmp/claude-0/-home-user-CMT/e05d2140-ce91-515f-a5fb-e6251e13d406/scratchpad/drafts/h_collision_lowers_following.md`
+        - `/tmp/claude-0/-home-user-CMT/e05d2140-ce91-515f-a5fb-e6251e13d406/scratchpad/drafts/d_cscl_std_on_axiom.md`
+
+        **次の段取り**
+        1. PR #3 をマージします。
+        2. Actions から issues ワークフローを手動実行し、`apply` を選びます。これで約78件の issue が一度にできます。
+        3. そのあと私が、説明と経緯を数件ずつ書いていきます。
+
+        cscl 側の決定の中身（上の5件）は、足したいものや直したいものがあれば先に言ってください。
+facts:
+- {is: v_say, from: session_model, to: 01M7HQT0BAXFSMAQ7C645HBP7W}
+- {is: exp.v_answer, from: 01M7HQT0BAXFSMAQ7C645HBP7W, to: 01M7HQKF2E8SBKZ26T714ZB49A}
+- {is: v_refer, from: 01M7HQT0BAXFSMAQ7C645HBP7W, to: lang.type_checker}
+- {is: v_refer, from: 01M7HQT0BAXFSMAQ7C645HBP7W, to: syntax.cscl}

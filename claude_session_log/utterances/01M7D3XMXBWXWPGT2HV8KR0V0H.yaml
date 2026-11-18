@@ -1,0 +1,27 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-14T13:28:32.939Z（UTC）
+individuals:
+  01M7D3XMXBWXWPGT2HV8KR0V0H:
+    is: model_utterance
+    display: 発言 194
+    val:
+      order: 194
+      text: |
+        CI を設定しました。プッシュのたびに `spec/` の検査が走ります。最初の実行は成功しています。
+
+        - **設定ファイル**: `.github/workflows/spec.yml`
+        - **実行内容**: `python tools/check_spec.py`（語彙の整合、測定値の再計算、観察の真偽、仮説と決定の型）
+        - **所要時間**: 約10秒
+        - **最初の実行**: https://github.com/nonsugertea7821/CMT/actions/runs/43599906267
+
+        ## 進め方の変更
+
+        方針に合わせて、これからは手元での検査をコミットの条件にしません。書いたらそのままプッシュし、CI が失敗したら直します。
+
+        CI が見るのは `spec/` の検査だけです。実験コード（`experiments/`）と、試験の記録（`spec/trial/`）は対象にしていません。
+
+        ## 実験の状況
+
+        E9（途中を書き出させる実験）が 1.5B モデルで走っていて、48問中20問まで進みました。途中経過を見るかぎり、予想に反して、書き出させた方が悪くなっている設問が目立ちます（たとえば規則型の衝突する設問で、即答のときより大きく誤答側に動いたものがあります）。全問が終わってから、型ごとに集計して `spec/` に記録します。
+facts:
+- {is: v_say, from: session_model, to: 01M7D3XMXBWXWPGT2HV8KR0V0H}
+- {is: exp.v_answer, from: 01M7D3XMXBWXWPGT2HV8KR0V0H, to: 01M7D3VY754DVWEZWMCND7832N}

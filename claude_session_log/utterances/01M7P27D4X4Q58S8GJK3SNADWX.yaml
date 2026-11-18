@@ -1,0 +1,48 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-18T00:52:05.405Z（UTC）
+individuals:
+  01M7P27D4X4Q58S8GJK3SNADWX:
+    is: model_utterance
+    display: 発言 1401
+    val:
+      order: 1401
+      text: |
+        ここでいう含意は、syntax.yaml の規則 `entail_by_with` 1本で決めています。考え方は「ある限定を満たすものは、もっと緩い限定も必ず満たす」です。
+
+        **規則の中身**
+        二つの限定 A と B が次をすべて満たすとき、A は B を含意します。
+        1. 同じ動詞の同じ位置を限定している（`r_same_slot`）。例：どちらも `v_refer` の `from`。
+        2. A の with の端が、B の with の端の下位にある（`r_ancestor`）。
+        3. どちらにも否定（neg）・数量（quant）・範囲（at）が付いていない。
+
+        **例**
+        - A は「`v_execute` について述べる」（`runtime.run` の限定）です。
+        - B は「`occurrent` について述べる」（`syntax.verb_ref` の限定）です。
+        - `v_execute` は `occurrent` の下位なので、A は B を含意します。
+
+        **持つ（`r_has`）との関係**
+        - `r_acc` は、自分で書いた式と、上位から受け継いだ式です。
+        - `r_has` は、`r_acc` に、そこから含意で導ける式を加えたものです。
+        - 上の例だと、`run` は「`occurrent` について述べる」を書いていません。それでも含意によって「持つ」ことになります。
+
+        **否定などを除いている理由**
+        - 否定が付くと向きが逆になります。「`occurrent` について述べない」なら「`v_execute` について述べない」は言えますが、逆は言えません。
+        - 数量や範囲（「2つ以上」など）が付いた場合も、単純に端を上位へ広げてよいかは決めていません。
+        - そのため、裸の限定だけを対象にしています。
+
+        **この含意の範囲**
+        - 見ているのは、限定の with の端の上下だけです。
+        - 動詞の上下（`v_execute` を限定したものが `v_refer` を限定したものを含意するか）は見ていません。
+        - 二つの式を組み合わせて別の式が出るような推論もしません。
+
+        前回の14件は、この規則のせいで出たものです。v1 の with の端（`day`）が、候補の with の端（`process`）の下位にあるので、v1 は候補の式を含意によって持つことになり、「候補の下に置け」と判定されました。
+facts:
+- {is: v_say, from: session_model, to: 01M7P27D4X4Q58S8GJK3SNADWX}
+- {is: exp.v_answer, from: 01M7P27D4X4Q58S8GJK3SNADWX, to: 01M7P273TW1C3Q5NXRQXQRQYJC}
+- {is: v_refer, from: 01M7P27D4X4Q58S8GJK3SNADWX, to: ontology.v_refer}
+- {is: v_refer, from: 01M7P27D4X4Q58S8GJK3SNADWX, to: syntax.from}
+- {is: v_refer, from: 01M7P27D4X4Q58S8GJK3SNADWX, to: runtime.v_execute}
+- {is: v_refer, from: 01M7P27D4X4Q58S8GJK3SNADWX, to: runtime.run}
+- {is: v_refer, from: 01M7P27D4X4Q58S8GJK3SNADWX, to: ontology.occurrent}
+- {is: v_refer, from: 01M7P27D4X4Q58S8GJK3SNADWX, to: syntax.verb_ref}
+- {is: v_refer, from: 01M7P27D4X4Q58S8GJK3SNADWX, to: subj.day}
+- {is: v_refer, from: 01M7P27D4X4Q58S8GJK3SNADWX, to: ontology.process}

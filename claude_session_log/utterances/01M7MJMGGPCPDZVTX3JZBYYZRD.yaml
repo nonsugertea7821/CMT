@@ -1,0 +1,63 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-17T11:00:23.190Z（UTC）
+individuals:
+  01M7MJMGGPCPDZVTX3JZBYYZRD:
+    is: model_utterance
+    display: 発言 1045
+    val:
+      order: 1045
+      text: |
+        どちらにもあたりません。「述べる/述べない」の境界は、continuant/occurrent とは交差しています。どちらの側にも continuant と occurrent の両方が入ります（シグネチャ分類のスクリプトで、ontology の各ノードの上位をたどって確かめました）。
+
+        | | continuant 側 | occurrent 側 |
+        |---|---|---|
+        | **述べない**（28） | continuant、SDC、GDC、realizable_entity、independent_continuant の上位 | occurrent、process、inference、基礎の動詞の大半（v_depend、v_compose、v_involve、v_express、v_come_after…） |
+        | **述べる**（24） | GDC：information_entity、language、word、sentence、definition<br>SDC：quality、role、magnitude、same、differ、disposition<br>independent_continuant | v_refer、v_agree、concept（inference の下） |
+
+        述べない側は、BFO の枠組みそのもの（持続体・生起体・依存の区別）と、基礎の関係の動詞です。言い換えると、何かについての文ではない「骨組み」です。
+
+        述べる側の24個は、述べるに行き着く経路で3つに分かれます。性質の違うものが混ざっています。
+
+        1. **本当に情報であるもの。** GDC の information_entity 系（言語・語・文・定義）と、動詞 v_refer、v_agree です。IAO の information content entity にあたり、「何かについてである」こと（aboutness）が定義の中にあります。continuant（GDC）が中心で、それを作り扱う動詞が occurrent です。
+        2. **定義を経由するもの。** `role` は「定義に依存する」（`with: definition`）と書かれているので述べる側に入ります。`disposition`、`magnitude`、`same`、`differ` は quality を経由して入ります。
+        3. **否定を経由するもの。** `quality`（関わられると示されていない）と `independent_continuant`（依存すると示されていない）です。前回、否定を「示されていない」＝事実への言及と定義し直したので、否定で定義した種類は機械的に述べる側に入ります。
+
+        3つ目は分類のゆがみであると同時に、前回の変更で表に出た問題です。
+
+        - ontology は v_presume で閉世界を置いていません。それなのに、質と独立持続体を否定で定義しています。
+        - 「示されていない」と読むと、ontology は開世界なので、何かが質に属するかは決められません。
+        - 法則 world_declared が見ているのは、否定を前提に使う法則だけです。否定の修飾語で定義したノードは見ていないので、これを見逃しています。
+
+        このため、述べる/述べないで ontology を分けるなら、先に3つ目を決める必要があります。選択肢は次のどちらかです。
+
+        - ontology に閉世界を置く。
+        - quality と independent_continuant を否定なしで定義し直す。
+
+        これを決めて3つ目を除くと、述べる側に残るのは主に GDC の情報エンティティと、それに述べる動詞・役割です。「情報の層」と呼べるまとまりで、continuant 寄りです（occurrent は動詞 v_refer、v_agree と concept だけ）。ただしこれは、述べるか否かという一つの区別でできたまとまりで、continuant/occurrent という別の軸とは対応しません。
+
+        ほかに気になる点が2つあります。
+
+        - `concept` が inference（process、occurrent）の下に置かれています。概念を「語が引き起こす推論」と定義しているためです。
+        - それに対して `definition` は GDC（continuant）です。
+
+        概念を continuant と occurrent のどちらに置くかは、層を分ける話とは別に検討の余地があります。
+facts:
+- {is: v_say, from: session_model, to: 01M7MJMGGPCPDZVTX3JZBYYZRD}
+- {is: exp.v_answer, from: 01M7MJMGGPCPDZVTX3JZBYYZRD, to: 01M7MJKCRN01FSGVP3APBWSXRF}
+- {is: v_refer, from: 01M7MJMGGPCPDZVTX3JZBYYZRD, to: ontology.realizable_entity}
+- {is: v_refer, from: 01M7MJMGGPCPDZVTX3JZBYYZRD, to: ontology.v_depend}
+- {is: v_refer, from: 01M7MJMGGPCPDZVTX3JZBYYZRD, to: ontology.v_compose}
+- {is: v_refer, from: 01M7MJMGGPCPDZVTX3JZBYYZRD, to: ontology.v_involve}
+- {is: v_refer, from: 01M7MJMGGPCPDZVTX3JZBYYZRD, to: ontology.v_express}
+- {is: v_refer, from: 01M7MJMGGPCPDZVTX3JZBYYZRD, to: ontology.v_come_after}
+- {is: v_refer, from: 01M7MJMGGPCPDZVTX3JZBYYZRD, to: ontology.information_entity}
+- {is: v_refer, from: 01M7MJMGGPCPDZVTX3JZBYYZRD, to: ontology.v_refer}
+- {is: v_refer, from: 01M7MJMGGPCPDZVTX3JZBYYZRD, to: ontology.v_agree}
+- {is: v_refer, from: 01M7MJMGGPCPDZVTX3JZBYYZRD, to: ontology.role}
+- {is: v_refer, from: 01M7MJMGGPCPDZVTX3JZBYYZRD, to: ontology.disposition}
+- {is: v_refer, from: 01M7MJMGGPCPDZVTX3JZBYYZRD, to: ontology.magnitude}
+- {is: v_refer, from: 01M7MJMGGPCPDZVTX3JZBYYZRD, to: ontology.same}
+- {is: v_refer, from: 01M7MJMGGPCPDZVTX3JZBYYZRD, to: ontology.differ}
+- {is: v_refer, from: 01M7MJMGGPCPDZVTX3JZBYYZRD, to: ontology.quality}
+- {is: v_refer, from: 01M7MJMGGPCPDZVTX3JZBYYZRD, to: syntax.v_presume}
+- {is: v_refer, from: 01M7MJMGGPCPDZVTX3JZBYYZRD, to: ontology.concept}
+- {is: v_refer, from: 01M7MJMGGPCPDZVTX3JZBYYZRD, to: ontology.definition}

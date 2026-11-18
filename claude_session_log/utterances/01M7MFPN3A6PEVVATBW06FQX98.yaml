@@ -1,0 +1,52 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-17T10:09:07.690Z（UTC）
+individuals:
+  01M7MFPN3A6PEVVATBW06FQX98:
+    is: model_utterance
+    display: 発言 966
+    val:
+      order: 966
+      text: |
+        おそらく **CycL** だと思います。Cyc プロジェクト（Lenat、Cycorp）の知識表現言語で、言語モデルではありません。比べる相手は、実験の側ではなく CSCL のほうになります。
+
+        **CycL の枠組み**（検索で見た Cyc の用語集による）
+        - 一階述語論理に、様相演算子と高階の量化を足した宣言的な言語です。
+        - 概念を定数として名付け、一般化・特殊化の階層に並べます。
+        - 一般的な規則を書いて、推論を支えます。
+        - 文の真偽は文脈に相対的で、その文脈を Microtheory として書きます。
+
+        **CSCL との対応**
+
+        | CycL | CSCL |
+        |---|---|
+        | 定数と、一般化・特殊化の階層（genls） | ノードと `extends` |
+        | 規則による推論 | 法則（`law_rule`）、実行器 |
+        | Microtheory（文脈） | 領域（exp, subj, lang）と `v_use` |
+        | 上位の存在論（Upper Ontology） | axiom / ontology の層 |
+
+        確かに、ほぼ同じ枠組みです。とくに「概念の体系を、型の付いた形式言語で書き、階層と規則で推論する」という骨格は、Cyc が 1980 年代からやってきたことそのものです。
+
+        **CSCL の新規性として残りそうなところ**
+        1. **目的が違う。** Cyc は、記号推論のための知識ベースです。CSCL の体系は、LLM に注入するための正本です。文章への変換（display）、概念ベクトル（`taught_vector`）、仮説の検証までを、一つの体系でつないでいます。
+        2. **概念を「式」で定義し、一意性を検査する。** 種類を上位と限定（`mod`）の式で書き、同じ式の2つのノードを法則で拒みます。動詞も、状態の関係（`holds` / `pre` / `post`）で定義します。CycL でここまで式の形を強制しているかは、要確認です。
+        3. **実験の主張そのものを、同じ言語で書いて機械的に検査する。** 観察、仮説、決定、先行研究との比較まで、同じ言語で書いています。
+        4. **自己記述。** 文法の語もノードとして書き（grammar）、検査器の規則も体系に置こうとしています（`d_cscl_laws_in_cscl`）。
+
+        **LLM との関係の先行研究**
+        Cyc と LLM の組み合わせについては、Lenat & Marcus（2023）「Getting from Generative AI to Trustworthy AI: What LLMs might learn from Cyc」があります。これは確認が必要です。CycL の体系を LLM に教えたり注入したりする研究があれば、それがいちばん近い競合になります。
+
+        **提案**
+        CycL・Cyc と Lenat & Marcus 2023 を、先行研究として個体にしたいと考えています。ただし、いまの先行研究の個体は exp の領域にあり、言語の主張（`d_cscl_*`、lang の仮説）とは比べられません。言語側の先行研究を置く場所（lang の領域にも先行研究の種類を置くか）を先に決める必要があります。claude/cross の作業になります。どうしますか。
+
+        Sources:
+        - [Cyc glossary](https://cyc.com/glossary/)
+        - [CycL sentence (Cyc glossary)](https://cyc.com/archives/glossary/cycl-sentence)
+facts:
+- {is: v_say, from: session_model, to: 01M7MFPN3A6PEVVATBW06FQX98}
+- {is: exp.v_answer, from: 01M7MFPN3A6PEVVATBW06FQX98, to: 01M7MFNZBARKW04S537SBVF9VW}
+- {is: v_refer, from: 01M7MFPN3A6PEVVATBW06FQX98, to: syntax.extends}
+- {is: v_refer, from: 01M7MFPN3A6PEVVATBW06FQX98, to: syntax.law_rule}
+- {is: v_refer, from: 01M7MFPN3A6PEVVATBW06FQX98, to: exp.taught_vector}
+- {is: v_refer, from: 01M7MFPN3A6PEVVATBW06FQX98, to: syntax.mod}
+- {is: v_refer, from: 01M7MFPN3A6PEVVATBW06FQX98, to: syntax.holds}
+- {is: v_refer, from: 01M7MFPN3A6PEVVATBW06FQX98, to: syntax.pre}
+- {is: v_refer, from: 01M7MFPN3A6PEVVATBW06FQX98, to: syntax.post}

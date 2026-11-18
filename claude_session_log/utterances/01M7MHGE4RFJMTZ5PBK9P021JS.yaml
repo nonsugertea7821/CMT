@@ -1,0 +1,53 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-17T10:40:41.112Z（UTC）
+individuals:
+  01M7MHGE4RFJMTZ5PBK9P021JS:
+    is: model_utterance
+    display: 発言 1007
+    val:
+      order: 1007
+      text: |
+        そうですね。前の案は二つの点で無意味でした。
+        - 判定に `concept_expression` や `grammar` のような、その層自身の語や上の層の語を使っていた。
+        - 層の判定で、層の名前そのものに依存していた。
+
+        判定に使う語が判定される側にあれば、循環します。層を判定する法則は、一番下の層の語だけで書かれていなければ意味がありません。
+
+        ## 言い直すと
+        - 層ごとの意味的な判定は置きません。置くのは、一般の法則が一つだけです。
+          - 定義が参照するのは、自分の層か、自分が使う層の語だけ。
+        - この法則は、一番下の語だけで書かれている必要があります。
+
+        ## 今の体系がこれを満たしていない箇所
+        1. **`layered` などの法則が、syntax の語で書かれている。**
+           - 法則 `layered`、`visible_use`、`visible_trans` は、`v_use`、`r_visible`、`domain` を使っています。どれも syntax の語です。
+           - 層を検査する法則が、検査される側の語で書かれていることになります。
+        2. **法則を書くための語そのものが、syntax にある。**
+           - 法則は `law_rule`、`v_assume`、`v_require`、`v_derive`、変数で書かれています。これらも syntax にあります。
+           - そのため、axiom の法則も ontology の法則も、上向きに参照しています。
+        3. **検査器が `LAYERS` を決め打ちしている。** これは 1 と 2 の欠けを、決め打ちで埋めているものです。
+
+        ## 直し方
+        一番下の層に置くものは、私の判断ではなく、「法則 `layered` を下の語だけで書けること」から決まります。
+        - 基礎の関係として、次の2つを足します。
+          - 使う（領域 → 領域）
+          - 属する領域（語 → 領域）
+        - 法則を書く仕組みも、一番下に置きます。
+          - 前提・導く・求めるを、基礎の関係にします。
+          - 変数もここに置きます。
+        - `layered`、`visible_*` を、基礎の関係 refer、使う、属する領域だけで書き直します。
+        - syntax の `v_use`、`law_rule` などは、それぞれ下の基礎の関係の上の語にします。ほかの動詞と同じ形です。
+        - 検査器は、層の並びを「使う」の事実から読みます。`LAYERS` と `v_use` の特別扱いは外します。
+        - 一番下の層の名前は signature のままにします。中身は、記号の宣言と規則を書く原始の語です。
+        - その上に、ontology から移した基礎の関係の法則を、公理の層として置きます。
+
+        この方針で claude/cross に積んでよいですか。
+facts:
+- {is: v_say, from: session_model, to: 01M7MHGE4RFJMTZ5PBK9P021JS}
+- {is: exp.v_answer, from: 01M7MHGE4RFJMTZ5PBK9P021JS, to: 01M7MHFTR409JK569YR2M643VM}
+- {is: v_refer, from: 01M7MHGE4RFJMTZ5PBK9P021JS, to: syntax.concept_expression}
+- {is: v_refer, from: 01M7MHGE4RFJMTZ5PBK9P021JS, to: syntax.grammar}
+- {is: v_refer, from: 01M7MHGE4RFJMTZ5PBK9P021JS, to: syntax.domain}
+- {is: v_refer, from: 01M7MHGE4RFJMTZ5PBK9P021JS, to: syntax.law_rule}
+- {is: v_refer, from: 01M7MHGE4RFJMTZ5PBK9P021JS, to: syntax.v_assume}
+- {is: v_refer, from: 01M7MHGE4RFJMTZ5PBK9P021JS, to: syntax.v_require}
+- {is: v_refer, from: 01M7MHGE4RFJMTZ5PBK9P021JS, to: syntax.v_derive}

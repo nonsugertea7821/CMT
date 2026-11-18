@@ -1,0 +1,38 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-16T05:14:20.033Z（UTC）
+individuals:
+  01M7HCE5015CW46H3DNHN0NDBF:
+    is: model_utterance
+    display: 発言 675
+    val:
+      order: 675
+      text: |
+        ベクトルの定義を spec/exp.yaml に入れ、check_spec が通りました（ノード 533→537）。コミットしてプッシュ済みです（b0d01c3）。
+
+        ```yaml
+        layer_output:  {display: 層の出力, extends: information_entity, mod: {of: [v_compute, to], with: layer}}
+        hidden_state:  {display: 隠れ状態, extends: layer_output, mod: {of: [v_depend, from], with: label_token_positions}}
+        state_shift:   {display: 隠れ状態のずれ, extends: information_entity, mod: {of: [v_compose, from], with: hidden_state}}
+        shift_unseen_by_layer: {display: 層から分けて見えない隠れ状態のずれ, extends: state_shift, mod: {of: [v_see, to], with: layer, neg: true}}
+        ```
+
+        下書きから二つ形を変えています。
+        - **層の出力を間に挟んだ:** 「限定は1ノードに1つ」という法則に引っかかったためです。隠れ状態は「層が計算する情報」と「語のトークン位置に依存する情報」の二つを持つので、`layer_output`（層の出力）を間に挟み、二段に分けました。
+        - **ずれと隠れ状態の向きを直した:** 下書きの書き方は、検査は通りますが「隠れ状態がずれの部分になる」と読める逆向きでした。「ずれが隠れ状態の部分になる」向きにしました。
+
+        既存の `concept_vector`（概念ベクトル）は「接続手段」の下に置いたままで、`state_shift` にはまだつないでいません。つなぐには上位を付け替える必要があり、ほかの族の記述に影響が出るので、付け替えるかは相談させてください。
+
+        前回挙げた二つの測定（|v|/|h| の比と、E3の v と near が作るずれとの cos）はまだ走らせていません。
+facts:
+- {is: v_say, from: session_model, to: 01M7HCE5015CW46H3DNHN0NDBF}
+- {is: exp.v_answer, from: 01M7HCE5015CW46H3DNHN0NDBF, to: 01M7HCC2BH46YN5W09K7RHV8BK}
+- {is: v_refer, from: 01M7HCE5015CW46H3DNHN0NDBF, to: exp.layer_output}
+- {is: v_refer, from: 01M7HCE5015CW46H3DNHN0NDBF, to: ontology.information_entity}
+- {is: v_refer, from: 01M7HCE5015CW46H3DNHN0NDBF, to: std.v_compute}
+- {is: v_refer, from: 01M7HCE5015CW46H3DNHN0NDBF, to: exp.hidden_state}
+- {is: v_refer, from: 01M7HCE5015CW46H3DNHN0NDBF, to: ontology.v_depend}
+- {is: v_refer, from: 01M7HCE5015CW46H3DNHN0NDBF, to: exp.label_token_positions}
+- {is: v_refer, from: 01M7HCE5015CW46H3DNHN0NDBF, to: exp.state_shift}
+- {is: v_refer, from: 01M7HCE5015CW46H3DNHN0NDBF, to: ontology.v_compose}
+- {is: v_refer, from: 01M7HCE5015CW46H3DNHN0NDBF, to: exp.shift_unseen_by_layer}
+- {is: v_refer, from: 01M7HCE5015CW46H3DNHN0NDBF, to: exp.v_see}
+- {is: v_refer, from: 01M7HCE5015CW46H3DNHN0NDBF, to: exp.concept_vector}

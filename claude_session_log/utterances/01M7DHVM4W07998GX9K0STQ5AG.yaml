@@ -1,0 +1,78 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-14T17:32:06.684Z（UTC）
+individuals:
+  01M7DHVM4W07998GX9K0STQ5AG:
+    is: model_utterance
+    display: 発言 278
+    val:
+      order: 278
+      text: |
+        その疑いは当たっています。確かめたところ、定義されていない語が3層ありました。前回「すべて体系のノードに結びついています」と書いたのは、言い過ぎでした。
+
+        ## 確認した結果
+
+        | 層 | 語の数 | ノードとして定義されているもの |
+        |---|---|---|
+        | 記録の項目名（evidence、s、p、o、status など） | 25 | 0 |
+        | 項目を体系に対応づけるための語（node、verb、position、values など） | 15 | 0 |
+        | 体系制御言語そのものの文法の語（is、mod、of、with、neg、from、to など） | 30 | 0 |
+
+        ## 何をしていて、何をしていなかったか
+
+        前回やったのは「対応づけ」です。たとえば `evidence` には、次のように書きました。
+
+        ```
+        evidence: {verb: [v_agree, to], with: observation}
+        ```
+
+        これは「evidence という項目は、仮説が『一致する』の終点を占め、始点に観察が来ることを表す」という対応です。検査は、この対応に出てくる動詞やノードが存在することを確かめています。
+
+        しかし、次の2つはしていません。
+
+        - **項目そのものを概念として定義すること。** 「根拠＝観察のうち、仮説と一致するもの」というノードは、体系にありません。`evidence` は対応表の見出しであって、概念式を持つ識別子ではありません。
+        - **対応づけに使った語を定義すること。** `verb`、`position`、`node` といった語の意味は、ファイルのコメントと検査ツールのコードにしか書かれていません。
+
+        ## さらに根の深い欠落
+
+        3つ目の層が、より本質的です。体系制御言語の文法そのものの語、つまり `is`（上位）、`mod`（修飾）、`of`（どの動詞のどの位置か）、`with`（もう一方の端の中身）、`neg`（否定）、`from`／`to`（始点と終点）は、体系の中でまったく定義されていません。体系は、自分がどう書かれているかを、自分では述べていません。
+
+        「修飾」「上位概念」「概念式」というノードは作りましたが、それらは `mod` や `is` という文法の語とは結びついていません。
+
+        ## どこまで定義できるか
+
+        3つの層は、事情が違います。
+
+        1. **記録の項目名**: 定義できます。大半は、すでにある動詞と位置で書けます。
+           ```
+           根拠（evidence）   = 観察のうち、仮説と一致するもの
+           反する観察（against） = 観察のうち、仮説と一致しないもの
+           根拠となる仮説（basis） = 仮説のうち、決定が依存するもの
+           ```
+           `s`、`p`、`o` は、仮説が述べている動詞と、その始点・終点に来るものです。
+
+        2. **対応づけの語**: 1 を定義すれば、不要になります。項目がノードであれば、「この項目はこのノードである」と直接書けて、対応づけ用の語彙を別に持つ必要がありません。
+
+        3. **文法の語**: ここは「について述べる」と同じ壁に当たる可能性があります。`mod` は修飾するという体系自身の行為、`is` は分類するという体系自身の行為です。以前、推測として「関係・分類・修飾は、体系が述べるときの3つの仕方ではないか」と書きましたが、それが正しければ、文法の語は体系の行為そのもので、定義はできず、限定だけができる、ということになります。
+
+        ## 進め方の案
+
+        1 と 2 は、いま直します。記録の項目 25個をノードとして定義し、対応づけの節を「項目＝ノード」という形に置き換えます。
+
+        3 は、どこまで書けるかを試す必要があります。文法の語を、体系の行為（述べる・修飾する・分類する）の限定として書けるかを試し、書けなかったものを報告します。
+
+        この順でよければ着手します。チューリング完全性の議論は、その後に戻ります。
+facts:
+- {is: v_say, from: session_model, to: 01M7DHVM4W07998GX9K0STQ5AG}
+- {is: exp.v_answer, from: 01M7DHVM4W07998GX9K0STQ5AG, to: 01M7DHTGD37JB7Q41Y2C4JBJTQ}
+- {is: v_refer, from: 01M7DHVM4W07998GX9K0STQ5AG, to: exp.evidence}
+- {is: v_refer, from: 01M7DHVM4W07998GX9K0STQ5AG, to: ontology.v_agree}
+- {is: v_refer, from: 01M7DHVM4W07998GX9K0STQ5AG, to: syntax.position}
+- {is: v_refer, from: 01M7DHVM4W07998GX9K0STQ5AG, to: ontology.is}
+- {is: v_refer, from: 01M7DHVM4W07998GX9K0STQ5AG, to: syntax.mod}
+- {is: v_refer, from: 01M7DHVM4W07998GX9K0STQ5AG, to: syntax.of}
+- {is: v_refer, from: 01M7DHVM4W07998GX9K0STQ5AG, to: syntax.with}
+- {is: v_refer, from: 01M7DHVM4W07998GX9K0STQ5AG, to: syntax.neg}
+- {is: v_refer, from: 01M7DHVM4W07998GX9K0STQ5AG, to: syntax.from}
+- {is: v_refer, from: 01M7DHVM4W07998GX9K0STQ5AG, to: syntax.to}
+- {is: v_refer, from: 01M7DHVM4W07998GX9K0STQ5AG, to: ontology.s}
+- {is: v_refer, from: 01M7DHVM4W07998GX9K0STQ5AG, to: ontology.p}
+- {is: v_refer, from: 01M7DHVM4W07998GX9K0STQ5AG, to: ontology.o}

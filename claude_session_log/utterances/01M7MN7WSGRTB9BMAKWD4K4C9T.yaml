@@ -1,0 +1,94 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-17T11:45:55.504Z（UTC）
+individuals:
+  01M7MN7WSGRTB9BMAKWD4K4C9T:
+    is: model_utterance
+    display: 発言 1107
+    val:
+      order: 1107
+      text: |
+        全ノードを象限に分けて数え、2つの対称性を実行器で確かめました。対称性は、文の読み方と歩みの層では例外なく成り立ちました。崩れているのは、neg を「偽」の代わりに使っている3か所（種類の定義、法則、世界の片側）です。体系は変えていません。数えた script は次の2つです。
+        - /tmp/claude-0/-home-user-CMT/e05d2140-ce91-515f-a5fb-e6251e13d406/scratchpad/quadrants.py
+        - /tmp/claude-0/-home-user-CMT/e05d2140-ce91-515f-a5fb-e6251e13d406/scratchpad/symmetry.py
+
+        ## 1. 象限ごとのノードの数
+
+        分け方は、各ノードが自分で足した定義の形で決めました。継承した定義で分けると、特定依存持続体の `at: {count: 1}` が下位すべてを「量」にしてしまうからです。
+        - **関係:** 動詞であること。
+        - **真偽:** 文か世界の下位であること、または真偽の軸を使うこと。
+        - **量:** 大きさか値の下位であること、または数の軸（count・amount・ratio・order）を使うこと。
+        - **質:** 肯定の限定を足していること、または質の下位か、端の形であること。
+
+        結果は次のとおりです（ノード 659、claude/cscl の状態）。
+
+        | 象限 | 数 | 例 |
+        |---|---|---|
+        | 質 | 338 | dependent、process、information_entity |
+        | 関係 | 116 | v_depend、v_compose、v_refer |
+        | 真偽・質 | 81 | sentence、definition、law_rule |
+        | 質・量 | 65 | specifically_dependent_continuant、magnitude、identifier |
+        | 真偽 | 22 | laws、closed_world、expect |
+        | 真偽・質・量 | 3 | any、lim_one_item |
+        | どこにも入らない | 34 | 下を見てください |
+
+        見えたこと:
+        - **関係（動詞）は、ほかの象限と重なりません。**
+        - **量は、単独では一度も現れません。** いつも質と一緒です。量は「何かの質の量」として現れています。
+        - **どこにも入らない34個は、2種類だけです。**
+          - 根の2つ（continuant と occurrent）。
+          - 自分の定義が否定だけの32個。例は「設計されない言語」（natural_language）、「日曜でない日」（business_day）です。親によって置かれ、そこに「〜でない」だけを足しています。カントの「制限性」にあたります。
+          - この32個の否定は、どれも「述べられていない」の意味で書かれています。ここが、真偽の対称性が問われる場所です。
+
+        ## 2. 対称性の確かめ
+
+        真と偽を入れ替える写像 σ を、状態・文・世界にまとめて当てました。
+        - **状態:** 述べた真偽を入れ替え、述べていない文はそのままにします。
+        - **文の読み方:** 真と偽を入れ替え、「述べられていない」はそのままにします。
+        - **世界:** 閉世界（述べていない文は偽）を、その鏡（述べていない文は真）に写します。world だけの世界（開世界）は動かしません。
+
+        | 確かめたこと | 数 | 食い違い |
+        |---|---|---|
+        | 読み方: 写す前の判定と、写した後の判定が入れ替わるか | 24,300 組 | 0 |
+        | 歩み: 動詞の pre・post も写すと、写した状態に移るか（動的な動詞すべて） | 360 回 | 0 |
+
+        **真偽の対称性（述語の側）:** 述べる層では成り立っています。真と述べた文と偽と述べた文は鏡の関係で、歩みもそれを保ちます。
+
+        **開世界と閉世界の対称性:**
+        - 開世界は σ で動かない、対称の中心です。
+        - 閉世界と、その鏡の世界（述べていない文は真）が、中心の両側に対で並びます。
+        - 閉世界は「開世界に、述べていない文は偽という文を足したもの」とも言えます。開世界と閉世界は、1つの文の有無でつながっています。
+
+        ## 3. 対称性が崩れているところ
+
+        1. **鏡の世界のノードがない**
+           体系にあるのは closed_world（`val: {truth: false}`）だけです。`val: {truth: true}` の世界はなく、実験の中でだけ置きました。3つの言語の層（runtime、std、syntax）は、どれも閉世界を前提に置いています。
+        2. **法則が片側だけを見る**
+           - 実行器は、法則を「真と述べた文」にだけ当てはめています。偽と述べた文は、法則に当たりません。前回、私が実装したときにこう作りました。
+           - 法則の否定は、どれも「述べられていない」の意味です（前提で43、求める文で5）。
+           - 法則 world_declared は、否定を前提に使う法則を閉世界にだけ許しています。
+        3. **種類の定義の否定が「偽」の鏡になっていない**
+           - 限定は肯定 398、否定 46 です。
+           - 否定で使う限定39種のうち26種は、肯定でも使われています。P と「P でない」の両方が現れているのに、「でない」は「述べられていない」の意味で、偽の鏡ではありません。
+        4. **動詞の古典否定の組が少ない**
+           116個のうち、古典否定の組になっているものは数個だけです。
+
+        ## 4. 次の候補
+
+        - **A. 観察として記録する。** 象限の数え上げと対称性の確かめを、検査として残し、観察に入れます。
+        - **B. 法則を対称にする。** 法則を σ で写した形でも当てはめ、偽と述べた文にも法則が働くようにします。
+        - **C. 否定の意味を見分ける。** 種類の定義と法則にある否定のうち、「偽」を意味するものを数えて見分けます。そのうえで、偽を述べる形（val false）に移すかを決めます。
+        - **D. 鏡の世界は、まだ置かない。** 使う領域がないからです。置くなら、まず仮説として記録します。
+
+        A から進めるのがよいと考えます。どれから進めるか指示してください。
+facts:
+- {is: v_say, from: session_model, to: 01M7MN7WSGRTB9BMAKWD4K4C9T}
+- {is: exp.v_answer, from: 01M7MN7WSGRTB9BMAKWD4K4C9T, to: 01M7MN40CZAY1VYZ6HEVMR0YWV}
+- {is: v_refer, from: 01M7MN7WSGRTB9BMAKWD4K4C9T, to: ontology.information_entity}
+- {is: v_refer, from: 01M7MN7WSGRTB9BMAKWD4K4C9T, to: ontology.v_depend}
+- {is: v_refer, from: 01M7MN7WSGRTB9BMAKWD4K4C9T, to: ontology.v_compose}
+- {is: v_refer, from: 01M7MN7WSGRTB9BMAKWD4K4C9T, to: ontology.v_refer}
+- {is: v_refer, from: 01M7MN7WSGRTB9BMAKWD4K4C9T, to: syntax.law_rule}
+- {is: v_refer, from: 01M7MN7WSGRTB9BMAKWD4K4C9T, to: ontology.specifically_dependent_continuant}
+- {is: v_refer, from: 01M7MN7WSGRTB9BMAKWD4K4C9T, to: syntax.closed_world}
+- {is: v_refer, from: 01M7MN7WSGRTB9BMAKWD4K4C9T, to: exp.lim_one_item}
+- {is: v_refer, from: 01M7MN7WSGRTB9BMAKWD4K4C9T, to: ontology.natural_language}
+- {is: v_refer, from: 01M7MN7WSGRTB9BMAKWD4K4C9T, to: subj.business_day}

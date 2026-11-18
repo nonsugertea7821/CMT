@@ -1,0 +1,48 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-16T08:02:06.184Z（UTC）
+individuals:
+  01M7HP1B78PVWKKD01ABBDBJ8Q:
+    is: model_utterance
+    display: 発言 778
+    val:
+      order: 778
+      text: |
+        フォルダを言語と実験に分けて、ブランチも 2 本作りました。どちらもプッシュ済みです。
+
+        **今の配置**
+        ```
+        cscl.yaml                 範囲の設定（workspace）
+        cscl/
+          library/core/ontology.yaml   文法・基礎・法則（型の規則もここに CSCL で書く）
+          library/std/std.yaml         標準の語彙
+          bootstrap/                   stage0（Python による最初の実装）
+            type_checker/  type_checker.py（旧 check_spec.py）、check_line.py
+            runtime/       runtime.py（旧 run_spec.py）
+            render/        render_expr.py
+          trial/  notes.yaml
+        exp/
+          src/          subj.yaml, exp.yaml
+          tests/        実行の記録（旧 spec/runs）
+          experiments/
+        docs/
+        ```
+
+        - **kernel ではなく bootstrap にしました。** セルフホストのご指摘を受けて、Rust の stage0 に倣っています。今の Python 実装は「最初の版」という位置づけで、将来は前の版が信頼の基点になる、と cscl/bootstrap/README.md に書きました。
+        - **tools は役割ごとに分けました。** 型検査の入口（check_line）は type_checker に、表示への変換は render に、言語設計の試行は trial に入れました。
+        - **std に移せたのは 8 つだけです。** 実験・傾向性・合成について閉じた集合などです。v_sum・閉集合・種類の集まり・役割・仮説は、法則か型検査器が参照しているので core に残りました。言語と標準の語彙の境目は、まだ薄いです。
+        - **動作は移動前と同じです。** 型検査、実行の検査、render、check_line は通ります。測定値 608 件は、移動前と完全に一致しました。
+
+        **ブランチ**
+        - `claude/cscl`（言語用）と `claude/exp`（実験用）を作りました。今はどちらも同じコミット（6cd2bc3）です。
+        - 言語の更新は claude/cscl で行い、claude/exp に取り込む（merge）運用を考えています。
+        - 今の作業ブランチ claude/model-concept-language-mapping-g0lw1i も同じコミットのまま残しています。
+
+        **注意**
+        - E3 の再学習（種 1）は、移動前に起動したのでまだ動いています。古いパスを使っているので、根に `experiments → exp/experiments` のシンボリックリンクを一時的に置きました。git には入れていません。学習が終わったら消します。
+        - docs/design.md と experiments/README.md は凍結しているので、中に出てくる旧パスは直していません。
+
+        次からは、言語の変更は claude/cscl、実験は claude/exp で作業する、でよいですか。
+facts:
+- {is: v_say, from: session_model, to: 01M7HP1B78PVWKKD01ABBDBJ8Q}
+- {is: exp.v_answer, from: 01M7HP1B78PVWKKD01ABBDBJ8Q, to: 01M7HNQJXF84S3DBABMXRV8ECF}
+- {is: v_refer, from: 01M7HP1B78PVWKKD01ABBDBJ8Q, to: lang.type_checker}
+- {is: v_refer, from: 01M7HP1B78PVWKKD01ABBDBJ8Q, to: std.v_sum}

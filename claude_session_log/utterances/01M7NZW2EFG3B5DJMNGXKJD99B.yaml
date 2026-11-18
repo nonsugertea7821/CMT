@@ -1,0 +1,43 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-18T00:10:56.847Z（UTC）
+individuals:
+  01M7NZW2EFG3B5DJMNGXKJD99B:
+    is: model_utterance
+    display: 発言 1368
+    val:
+      order: 1368
+      text: |
+        そのとおりで、三つともシグネチャになく、しかもコードが意味を与えています。確かめた箇所は次のとおりです。
+
+        | 種類 | いまの置き場所 | 意味を与えているコード |
+        |---|---|---|
+        | 論理演算（not, all, some, between） | syntax のノード | 規則を評価するコードの否定の扱い、実行器の `pre_rule` の all と some |
+        | 一つの評価（step, frame, halt） | runtime の law_given | 実行器（runtime.py）が名前で当てはめる |
+        | 時間の連続（after） | ontology の基礎の関係 | 型検査器が `"after"` を名前で読む（type_checker.py:1198, 1211） |
+
+        「コードが特別に扱ってよいのはシグネチャの語だけ」という原則から見ると、三つとも違反しています。論理学の側から見ても、一階述語論理で意味が固定されている論理の語は「等号、否定、量化」です。シグネチャに等号（same）だけがあるのは、半分しか揃っていない状態と言えます。
+
+        **体系の中で、もう導けているもの**
+        - all は「not と some」で定義されています（all は not の下位で、some を限定に持つ）。
+        - between は「後ろでない」「前でない」の組み合わせです。
+        - exists は same から導いています。
+
+        そうすると、導けない芯として残るのは次のものだけになりそうです。
+        - **論理**：same、not、some
+        - **時間**：after か step のどちらか一つ
+
+        **時間の芯をどちらにするか**
+        - **step を芯にする**：実行の中では、時間は評価の一歩一歩が並んだものです。after を「step をたどって行き着ける」として導けます（step の推移的閉包）。「一つの評価」が原始の語になり、時間はそこから生まれる、という形です。
+        - **after を芯にする**：順序を原始の語にして、step を「間に何もない直後」として導きます。
+        - 一つ引っかかる点があります。ontology の after は、v_come_after（後ろに置かれる）のように、文の中の並び（語順）にも使われています。step を芯にすると、語順の after は時間とは別のものになります。いまは語順と時間の順序が一つの after を共有していて、混同かもしれません。名前の付け替えや sys_spelling では見えなかった種類の混同です。
+
+        **次の一歩の案**
+        1. after がどこで語順の意味に、どこで時間の意味に使われているかを、観察で分けます。基礎の関係の after を使う動詞と、その端の種類（情報か過程か）で分けられるはずです。手順は先に登録します。
+        2. その結果を見てから、シグネチャに足すもの（same に加える not と some、それに step か after）を決めます。
+
+        1 から進めてよいですか。
+facts:
+- {is: v_say, from: session_model, to: 01M7NZW2EFG3B5DJMNGXKJD99B}
+- {is: exp.v_answer, from: 01M7NZW2EFG3B5DJMNGXKJD99B, to: 01M7NZV5BMSPQPGZV6GSPX6KC9}
+- {is: v_refer, from: 01M7NZW2EFG3B5DJMNGXKJD99B, to: runtime.pre_rule}
+- {is: v_refer, from: 01M7NZW2EFG3B5DJMNGXKJD99B, to: syntax.law_given}
+- {is: v_refer, from: 01M7NZW2EFG3B5DJMNGXKJD99B, to: ontology.v_come_after}

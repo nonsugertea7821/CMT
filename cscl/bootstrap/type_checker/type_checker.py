@@ -249,11 +249,34 @@ def uses_in(D, dom):
             and (f.get("is") == "syntax.v_use" or (f.get("is") == "v_use" and ("v_use" not in local or dom == "syntax")))]
 
 
+def merge_parts(D, name, read):
+    """領域のファイルが parts（部分ファイルの glob、ROOT から）を持てば、部分の個体と事実を1つの領域にまとめる。
+    部分は individuals と facts だけを持つ。大きい記録を1つのファイルに書かないための分け方で、意味は変えない。"""
+    if not isinstance(D, dict) or not D.get("parts"):
+        return D
+    for p in sorted(ROOT.glob(D["parts"])):
+        P = read(p) or {}
+        if set(P) - {"individuals", "facts"}:
+            err(f"{name} の部分 {p.relative_to(ROOT)}: individuals と facts のほかを書いている（{sorted(set(P) - {'individuals', 'facts'})}）")
+        for k, v in (P.get("individuals") or {}).items():
+            if k in (D.get("individuals") or {}):
+                err(f"{name} の部分 {p.relative_to(ROOT)}: 個体 {k} が、ほかでも定義されている")
+            D.setdefault("individuals", {})[k] = v
+        D.setdefault("facts", []).extend(P.get("facts") or [])
+    return D
+
+
+def read_file(name):
+    """体系のファイルを読む（領域のファイルは部分もまとめる）。"""
+    return merge_parts(yload((SPEC / name).read_text(encoding="utf-8")) or {}, name, lambda p: yload(p.read_text(encoding="utf-8")))
+
+
 def load(name):
     """公理（root）と言語の層（library）を読み、1つの体系 O にまとめる。
     ノードは「層.名前」、個体は名前のまま。層のファイルの中の語は、その層と使う層の順に解決する（scope_of）。"""
     if name != root_name():
-        return yaml.load((SPEC / name).read_text(encoding="utf-8"), Loader=_Unique)
+        return merge_parts(yaml.load((SPEC / name).read_text(encoding="utf-8"), Loader=_Unique), name,
+                           lambda p: yaml.load(p.read_text(encoding="utf-8"), Loader=_Unique))
     A = yaml.load((SPEC / name).read_text(encoding="utf-8"), Loader=_Unique)
     libs = [(str(p.relative_to(ROOT)), yaml.load(p.read_text(encoding="utf-8"), Loader=_Unique) or {}) for p in library_files()]
     LOCALS["signature"], USES["signature"] = set(A.get("nodes") or {}), uses_in(A, "signature")
@@ -346,7 +369,7 @@ def collect_kind_facts(T):
     （書かれていない文は示されていない。否定は法則の制約（v_require）で書く）。"""
     T.KF, T.COLL = [], {}
     for name, dom in lib_and_domain_files():   # 種類の集まり（2階）
-        for f in (yload((SPEC / name).read_text(encoding="utf-8")).get("facts") or []):
+        for f in (read_file(name).get("facts") or []):
             if isinstance(f, dict) and T.resolve(f.get("is"), dom) == "syntax.v_collect" and f.get("from") in T.I:
                 k = T.resolve(f.get("to"), dom) if isinstance(f.get("to"), str) else None
                 if k not in T.N or T.is_verb(k):
@@ -354,7 +377,7 @@ def collect_kind_facts(T):
                 else:
                     T.COLL[f["from"]] = k   # 段の検査は法則 collection_level（規則）
     for name, dom in lib_and_domain_files():
-        D = yload((SPEC / name).read_text(encoding="utf-8"))
+        D = read_file(name)
         for i, f in enumerate(D.get("facts") or []):
             if not isinstance(f, dict) or not isinstance(f.get("is"), str) or not is_kind_fact(f, T, dom, D.get("individuals") or {}):
                 continue
@@ -1259,7 +1282,7 @@ def register_domains(O):
     依存は領域ごとに宣言する（クレートが自分の依存を書くのと同じ）。使う領域の順に並べて返す。"""
     files = domain_files()
     for dom, name in files.items():
-        y = yload((SPEC / name).read_text(encoding="utf-8"))
+        y = read_file(name)
         me = (y.get("individuals") or {}).get(dom) or {}
         if me.get("is") != "domain":
             err(f"{name}: 領域 {dom} を、個体 {{is: domain}} として宣言していない")
@@ -1434,7 +1457,7 @@ def check_parts(T):
         return out
     m_ok = lambda m: isinstance(m, dict) and m.get("with") and not m.get("neg")
     for name, dom in lib_and_domain_files():
-        for f in yload((SPEC / name).read_text(encoding="utf-8")).get("facts") or []:
+        for f in read_file(name).get("facts") or []:
             if not isinstance(f, dict) or not isinstance(f.get("is"), str):
                 continue
             v = T.resolve(f["is"], dom)

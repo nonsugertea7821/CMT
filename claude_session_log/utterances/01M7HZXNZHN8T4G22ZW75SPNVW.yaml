@@ -1,0 +1,65 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-16T10:54:51.889Z（UTC）
+individuals:
+  01M7HZXNZHN8T4G22ZW75SPNVW:
+    is: model_utterance
+    display: 発言 911
+    val:
+      order: 911
+      text: |
+        できると思います。ただ、機械にできるのは**論理の形の比較まで**です。先行研究の主張を体系の形に書き写す作業は、人か私がやるしかありません。その前提で、こういう設計を考えました。
+
+        ## 案：先行研究の主張も、体系の文として書く
+        今は「同じ向き」「異なる」を手で付けています。これをやめて、先行研究の主張そのものを、こちらの仮説と同じ形で書きます。
+
+        ```yaml
+        pwc_wang2025_interference: {is: prior_claim}          # 先行研究の主張
+        - {is: v_state, from: pw_wang2025_proactive_interference, to: pwc_wang2025_interference}
+        - {is: v_refer, from: pwc_wang2025_interference,
+           to: {is: v_lower, from: preceding_interference, to: retrieval_accuracy}}
+        - {is: v_scope, from: kv_update_stream, to: pwc_wang2025_interference}
+        - {is: v_quote, from: pwc_wang2025_interference, at: {text: "retrieval accuracy declines ... as interference accumulates"}}  # 要旨の該当文
+        ```
+
+        そのうえで、検査器が次の規則で関係を**導き出します**。
+        - **同じ:** 動詞が同じで、両端の要因が同じか、一方が他方の下位概念のとき。
+          - 例: `preceding_definitions`（前に並ぶ定義）は、`preceding_interference`（先行する干渉）の一種。
+        - **反対:** 両端は対応しているが、動詞が対になっているとき。
+          - 対の例: `v_lower` と `v_not_lower`、`v_raise` と `v_lower`
+        - **範囲が違う:** 中身は一致するが、適用範囲（モデル、課題の形式）が違うとき。
+        - **比べられない:** 要因に共通の上位概念がないとき。
+
+        手で付けた `v_prior_same` や `v_prior_differ` が、導き出した結果と食い違えば検査を失敗させます。もしくは、手で付けるのをやめて、導き出した結果だけを issue に出します。
+
+        ## これで得られるもの
+        - 判断の根拠が、要旨の引用と書き写した形として残ります。そのため、後から監査できます。
+        - 種類の階層を整えると、結論が自動で変わります。
+          - 例: 「前に並ぶ定義」と「先行する干渉」の関係を書き足すと、比べられなかったものが「同じ」になります。
+        - 新しさの主張が明確になります。こちらの仮説のうち、どの先行研究とも「同じ」にならないものだけが、新規の候補として残ります。
+
+        ## 限界
+        - **書き写しは主観のままです。** 主観が入る場所が、「同じか異なるかのラベル」から「先行研究の主張の書き写し」に移るだけです。それでも、書き写しの方が小さい単位で、引用と並べて確かめられます。
+        - **比べられるのは主張の形だけです。** 先行研究の数値や統計の強さは比べられません。
+        - **要因の対応づけを書く必要があります。** 例えば `preceding_interference` という上位概念と、そこへの下位関係です。体系の語彙が増えます。
+
+        ## 実装の見積もり
+        - **体系に足すもの:**
+          - 種類 `prior_claim`
+          - 動詞 `v_state`, `v_quote`
+          - 対になる動詞の表
+        - **検査器に足すもの:** 導出の関数を1つ。
+        - **issue:** 「先行研究」節に、導き出した結果を出します。
+
+        規模は小さめです。まず今の10本のうち、要旨がはっきりしている4本（Wang、Liu、Stringli、WinoDict）で試すのが手頃だと思います。進めてよければ PR #85 に足します。
+facts:
+- {is: v_say, from: session_model, to: 01M7HZXNZHN8T4G22ZW75SPNVW}
+- {is: exp.v_answer, from: 01M7HZXNZHN8T4G22ZW75SPNVW, to: 01M7HZX2ZDV5HAB77MYNQFS6WH}
+- {is: v_refer, from: 01M7HZXNZHN8T4G22ZW75SPNVW, to: exp.prior_claim}
+- {is: v_refer, from: 01M7HZXNZHN8T4G22ZW75SPNVW, to: exp.v_state}
+- {is: v_refer, from: 01M7HZXNZHN8T4G22ZW75SPNVW, to: ontology.v_refer}
+- {is: v_refer, from: 01M7HZXNZHN8T4G22ZW75SPNVW, to: exp.v_lower}
+- {is: v_refer, from: 01M7HZXNZHN8T4G22ZW75SPNVW, to: exp.v_scope}
+- {is: v_refer, from: 01M7HZXNZHN8T4G22ZW75SPNVW, to: exp.preceding_definitions}
+- {is: v_refer, from: 01M7HZXNZHN8T4G22ZW75SPNVW, to: exp.v_not_lower}
+- {is: v_refer, from: 01M7HZXNZHN8T4G22ZW75SPNVW, to: exp.v_raise}
+- {is: v_refer, from: 01M7HZXNZHN8T4G22ZW75SPNVW, to: exp.v_prior_same}
+- {is: v_refer, from: 01M7HZXNZHN8T4G22ZW75SPNVW, to: exp.v_prior_differ}

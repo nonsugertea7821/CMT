@@ -1,0 +1,40 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-18T00:39:36.443Z（UTC）
+individuals:
+  01M7P1GHQV6W9WG8M2Z566PN1S:
+    is: model_utterance
+    display: 発言 1395
+    val:
+      order: 1395
+      text: |
+        型検査器から「式が … と同じ」の検査を外しました。重複の検出はすべて syntax.yaml の法則に移っています。push 済みです（4f2b7ec）。
+
+        **足した法則**
+        - **one_mod**：名前を付けた限定（`refer_from_post` など）について、同じ動詞の同じ位置を限定していて、with・neg・quant・at・extends・mod がすべて同じなら違反にします。
+        - **one_form**：`form` で同じ動詞の同じ位置に来るもの（`o` など）に、名前は1つだけとします。
+        - 前回の **one_name** と合わせて、概念・名前付きの限定・`form` の3種類を法則で見ています。
+
+        **コードで変えたこと**
+        - 型検査器が法則に渡す事実に、名前付きの限定の with・neg・quant・at を加えました。式の中に書いた限定と同じ語で渡しています。
+        - これは書き方の翻訳だけで、名前で特別扱いする箇所は増やしていません。
+
+        **確かめたこと**
+        コードの検査を外したあと、4種類の重複を一時的に入れて型検査器を走らせ、確認後に元へ戻しました。
+        - 同じ式の概念、上位を変えて書いた意味の同じ概念、`val` だけで決まる概念（`closed_world2`）：one_name が反応しました。
+        - 名前付きの限定の重複（`refer_from_post2`）：one_mod が反応しました。
+          - neg を付けた別物は、違反になりませんでした。
+        - `form` の重複（`o2`）：one_form が反応しました。
+        - 現在の体系では違反は0件で、型検査は約7秒です。
+
+        **途中で分かったこと**
+        - 外したコードの検査は、`form` の重複を捕まえていませんでした。比べる中身に `form` が入っていなかったためです。法則にしたことで、この穴も塞がりました。
+        - 外した検査と同じものが、`cscl/trial/` の試作スクリプト5本にも複製されています。古い試作なので触っていません。
+
+        **次の候補**
+        `specific` を含意（`r_has`）に切り替えると出る14件の違反の解消です。1件ずつ「より具体的な概念の下へ移す」か「別の概念として式を足す」かを決める必要があります。進めてよければ、各件を観察から分類した表を先に出します。
+facts:
+- {is: v_say, from: session_model, to: 01M7P1GHQV6W9WG8M2Z566PN1S}
+- {is: exp.v_answer, from: 01M7P1GHQV6W9WG8M2Z566PN1S, to: 01M7P1C2Z4HKHSFB78XC5FARAK}
+- {is: v_refer, from: 01M7P1GHQV6W9WG8M2Z566PN1S, to: runtime.refer_from_post}
+- {is: v_refer, from: 01M7P1GHQV6W9WG8M2Z566PN1S, to: syntax.form}
+- {is: v_refer, from: 01M7P1GHQV6W9WG8M2Z566PN1S, to: ontology.o}
+- {is: v_refer, from: 01M7P1GHQV6W9WG8M2Z566PN1S, to: syntax.val}

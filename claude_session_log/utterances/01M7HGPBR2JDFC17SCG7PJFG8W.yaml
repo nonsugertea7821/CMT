@@ -1,0 +1,58 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-16T06:28:43.394Z（UTC）
+individuals:
+  01M7HGPBR2JDFC17SCG7PJFG8W:
+    is: model_utterance
+    display: 発言 730
+    val:
+      order: 730
+      text: |
+        動詞を受け取る位置を、型としてはっきり区別しました。検査（check_spec と run_spec）は通り、コミットして push 済みです（c8f9cca）。
+
+        ## 変えたこと
+
+        ```yaml
+        verb_ref: {display: 動詞を指すもの, extends: information_entity, mod: {of: [v_refer, from], with: occurrent}}   # 位置の型
+        v_close:  {display: について閉じている, from: kind_collection, to: verb_ref, ...}
+        ```
+
+        位置の型が `verb_ref` なら、そこに来られるのは動詞そのものだけです。それ以外のものを置くと、型の誤りになります。
+
+        ## 確かめたこと
+
+        閉集合が閉じる相手に、動詞でないもの（合成できる情報の種類 `summand`）を置いてみました。
+
+        - 型の誤り「summand は動詞でない。v_close の to は動詞を受け取る」が出ました。
+        - 法則の誤り「二つから第三のものを作る動詞でない」も出ました。
+
+        二重に捕まります。
+
+        ## 途中で分かったこと
+
+        最初は逆向きの決まりも入れようとしました。「動詞は、動詞を受け取る位置にしか来られない」です。すると、既存の spec で20件が引っかかりました。
+
+        中身を見ると、どれも誤りではありませんでした。例えば次のようなものです。
+
+        - 「説明」は、理由を話す（`v_speak_reason`）の時間的な部分
+        - 「学習の損失」は、教示（`teaching`）を測る
+
+        これらは、生起体や「何でも」の位置に動詞を置き、**その動詞の出来事（1階）**を指しています。
+
+        そのため、決まりは片側だけにしました。動詞の置き方は2通りあります。
+
+        | 位置の型 | 動詞が指すもの | 階 |
+        |---|---|---|
+        | 生起体・何でも | その動詞の出来事 | 1階 |
+        | `verb_ref` | 動詞そのもの | 2階 |
+
+        閉集合と同じく、ここでも1階と2階の区別が、位置の型として現れた形です。
+facts:
+- {is: v_say, from: session_model, to: 01M7HGPBR2JDFC17SCG7PJFG8W}
+- {is: exp.v_answer, from: 01M7HGPBR2JDFC17SCG7PJFG8W, to: 01M7HGMEVYTZ71ZT2ARXJZF53P}
+- {is: v_refer, from: 01M7HGPBR2JDFC17SCG7PJFG8W, to: syntax.verb_ref}
+- {is: v_refer, from: 01M7HGPBR2JDFC17SCG7PJFG8W, to: ontology.information_entity}
+- {is: v_refer, from: 01M7HGPBR2JDFC17SCG7PJFG8W, to: ontology.v_refer}
+- {is: v_refer, from: 01M7HGPBR2JDFC17SCG7PJFG8W, to: std.v_close}
+- {is: v_refer, from: 01M7HGPBR2JDFC17SCG7PJFG8W, to: syntax.kind_collection}
+- {is: v_refer, from: 01M7HGPBR2JDFC17SCG7PJFG8W, to: std.summand}
+- {is: v_refer, from: 01M7HGPBR2JDFC17SCG7PJFG8W, to: exp.v_speak_reason}
+- {is: v_refer, from: 01M7HGPBR2JDFC17SCG7PJFG8W, to: exp.teaching}

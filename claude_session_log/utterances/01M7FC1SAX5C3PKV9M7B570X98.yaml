@@ -1,0 +1,17 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-15T10:29:06.013Z（UTC）
+individuals:
+  01M7FC1SAX5C3PKV9M7B570X98:
+    is: model_utterance
+    display: 発言 514
+    val:
+      order: 514
+      text: |
+        コンテナが再起動していて、実験が2本とも止まっていました。どちらも再開済みです。
+
+        - **L4 の層の実験**（`run_layers.sh 20 4`）：止まる前の途中結果から続きを計算します。
+        - **後続の実験**（`after_layers.sh`）：L4 が終わるのを待ってから、E10（概念式を与える）、E11（概念式で途中経過を書かせ、1行ずつ検査する）、E3（表示名を外した概念式を定義に使うベクトル化）を順に走らせます。
+
+        GPU がないので、全部終わるまで時間がかかります。結果が出たら `spec/exp.yaml` に測定値・観察・仮説の状態として記録し、コミットします。
+facts:
+- {is: v_say, from: session_model, to: 01M7FC1SAX5C3PKV9M7B570X98}
+- {is: exp.v_answer, from: 01M7FC1SAX5C3PKV9M7B570X98, to: 01M7FAWV1FRPTSHESWERRZKG0K}

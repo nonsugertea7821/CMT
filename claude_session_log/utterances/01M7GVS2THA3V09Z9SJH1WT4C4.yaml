@@ -1,0 +1,66 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-16T00:23:12.465Z（UTC）
+individuals:
+  01M7GVS2THA3V09Z9SJH1WT4C4:
+    is: model_utterance
+    display: 発言 636
+    val:
+      order: 636
+      text: |
+        (c) と、識別子を無意味にした概念式の両方を用意し、予定に入れました。どちらもまだ走らせておらず、結果はありません。走っているのは E12 で、まだ1語目の学習中です。
+
+        ## 識別子を無意味にした概念式（E10 の変種）
+
+        subj の種類・動詞・個体の名前を X01、X02… に置き換え、次のものだけを残します。
+
+        - core の識別子（`independent_continuant`、`v_compose` など）
+        - 式の構造のキー（`extends`、`mod`、`of`、`neg`、`at` など）
+        - 表示名は、語そのもの（顧客）と、設問に出てくる個体（日曜など）だけ
+
+        「識別はできるが意味を持たない名前」で、意味は core と構造だけが運ぶ、という整理の形です。「顧客」はこうなります。
+
+        ```
+        X01: {extends: occurrent, from: X02, to: X02, holds: [...]}
+        X02: {extends: independent_continuant, mod: {of: [v_perform, from]}}
+        ...
+        X08: {display: 顧客, extends: X07, mod: {of: [X01, to]}}
+        ```
+
+        **作っている途中で、これまでの渡し方の不具合が見つかりました。**
+        - 限定が参照する個体の行（`sunday: {is: weekday, display: 日曜}` など）が、出力から落ちていました。原因は、限定が並びで書かれている場合を読み飛ばしていたことです。
+        - E10・E11・E3-expr では、モデルは「sunday が日曜」という対応を見ていません。英語の識別子から推し量るしかありませんでした。
+        - 無意味化すると X05 が何なのか分からなくなるため、個体の行を出すように直しました。
+        - 既定の動作は変えていないので、これまでの結果の文字列はそのまま再現できます。これは実際に確かめました。
+
+        **比べる条件**
+        - none
+        - expr_masked_i：日本語の表示名を外した版に、個体の行を足したもの
+        - expr_opaque：それをさらに無意味化したもの
+
+        expr_masked_i と expr_opaque の差が、無意味化そのものの効果になります。
+
+        ## (c) E14：定義の有無による活性化の差をベクトルにする（学習なし）
+
+        学習用の適用例は境界の両側にありますが、モデルの既定の意味と並べた対にはなっていませんでした。そこで docs/design.md の案2の形で作ります。
+
+        - 同じ適用例を「定義あり」と「定義なし」で読ませます。
+        - 設問の中の語の位置で、第8層の出力の差を取り、例について平均します。
+        - これを「既定の意味から再定義した意味へずらす向き」と見なします。
+        - 評価の条件は none、near、vec×1／×2／×4（足す強さを変える）、near+vec×1 です。
+        - 前向き計算だけなので、数分で終わる見込みです。
+
+        ## 記録と予定
+
+        - spec/exp.yaml に仮説と残り項目をそれぞれ2つずつ足しました（h_contrast_vector_raises_following、h_opaque_expression_raises_following、b_e14_contrast_vector、b_e10_opaque_identifiers）。
+        - check_spec.py と run_spec.py は通り、コミット・プッシュ済みです。
+        - 10分ごとの再開の予約は、E12 → E13 → 無意味化した E10 → E14 の順に走らせる内容に書き換えました。モデルは一度に1本だけです。初回は 00:30 UTC です。
+        - 4つとも結果が出たら、まとめて spec/exp.yaml に記録して報告します。
+facts:
+- {is: v_say, from: session_model, to: 01M7GVS2THA3V09Z9SJH1WT4C4}
+- {is: exp.v_answer, from: 01M7GVS2THA3V09Z9SJH1WT4C4, to: 01M7GVJG2QQTBZ56SW5BXNQ579}
+- {is: v_refer, from: 01M7GVS2THA3V09Z9SJH1WT4C4, to: ontology.v_compose}
+- {is: v_refer, from: 01M7GVS2THA3V09Z9SJH1WT4C4, to: syntax.extends}
+- {is: v_refer, from: 01M7GVS2THA3V09Z9SJH1WT4C4, to: syntax.mod}
+- {is: v_refer, from: 01M7GVS2THA3V09Z9SJH1WT4C4, to: syntax.of}
+- {is: v_refer, from: 01M7GVS2THA3V09Z9SJH1WT4C4, to: syntax.neg}
+- {is: v_refer, from: 01M7GVS2THA3V09Z9SJH1WT4C4, to: syntax.at}
+- {is: v_refer, from: 01M7GVS2THA3V09Z9SJH1WT4C4, to: ontology.v_perform}

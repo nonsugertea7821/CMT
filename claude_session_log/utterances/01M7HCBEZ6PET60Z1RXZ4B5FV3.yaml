@@ -1,0 +1,68 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-16T05:12:51.942Z（UTC）
+individuals:
+  01M7HCBEZ6PET60Z1RXZ4B5FV3:
+    is: model_utterance
+    display: 発言 673
+    val:
+      order: 673
+      text: |
+        賛成です。今の spec では、`concept_vector` は「語のトークン位置に関わる接続手段」、つまりこちらから見た操作として定義されています。モデルの側から見てそれが何なのかは書かれていません。そこを押さえると、実験ごとの差の説明が一つの枠にまとまります。
+
+        ## モデルから見た「ベクトル」
+
+        モデルの中にあるのは、層 l・位置 i ごとの**隠れ状態 h(l, i)** だけです。各層は二つのことしかしません。注意機構で他の位置の h を読むことと、自分の位置の h を書き換えることです。
+
+        E3でやっているのは h(8, 語) を h + v に置き換えることです。後ろの層からは h + v しか見えず、足し算が行われたことは区別できません。ここから定義の要点が出ます。
+
+        > **ベクトル v とは、隠れ状態の空間でのずれである。モデルにとっては「その位置にその状態をもたらした、仮想の文脈」と区別がつかない。**
+
+        概念式の下書きです（まだ spec の検査は通していません）。
+
+        ```yaml
+        hidden_state:  {display: 隠れ状態, extends: information_entity,
+                        mod: [{of: [v_compute, to], with: layer}, {of: [v_depend, from], with: token_position}]}
+        state_shift:   {display: 隠れ状態のずれ, extends: information_entity,
+                        mod: {of: [v_compose, to], with: hidden_state}}        # h' = h + v の v
+        concept_vector:{display: 概念ベクトル, extends: state_shift,
+                        mod: {of: [v_depend, from], with: label_token_positions}}
+        # モデルは h' だけを見る：v を h と分けては見ない
+        - {is: v_see, from: layer, to: state_shift, neg: true}
+        ```
+
+        ## この定義から出る含意
+
+        **1. ベクトルは文脈から独立した「意味の部品」ではない。**
+        v は、語の既存のキー h という基準点と、それを読む後ろの層に対してだけ意味を持ちます。同じ v を別の語や別の位置に足せば、別のことが起きます。E12が効かなかった理由も一貫して説明できます。基準点が新しいトークンで、読み方が育っていない場所だったからです。
+
+        **2. 有効な v は「何かの文章で到達できる状態」へ導くものでなければならない。**
+        h + v が、モデルが普段の文章から作る状態の範囲を外れると、後ろの層は正しく読めません。E14は大きさ約50の、位置の影響による差を足しました。範囲の外に出て判断が壊れた、と読めます。E3は勾配で学習するので、読める範囲に留まるように最適化されます。
+
+        **3. 効くかどうかは、足す層より「後ろの層がどう読むか」で決まる。**
+        v の影響は、層9以降で他の位置が語の位置を注意で読むことでしか伝わりません。層14で対照側が壊れたのは、判断を組み立てる層に近すぎて、読み方そのものを乱したためと考えられます。
+
+        **4. 文章もベクトルも専用トークンも、同じ空間のどこへ着地するかの違いにすぎない。**
+        接続手段を形で比べるのをやめられます。手段ごとの h(8, 語) を測り、空間上で比べればよくなります。これまでの全実験を共通の尺度に載せられる見込みがあります。
+
+        **5. 概念式との橋渡しになる。**
+        概念式の「上位 ∧ 限定」が v の側でも合成的になっているなら、v(上位∧限定) ≈ f(v(上位), v(限定)) の形が成り立つはずです。既存の h_modifier_transfers_to_unseen_genus（限定が、見たことのない上位概念にも移る）が支持されているのは、その兆候かもしれません。
+
+        ## 定義から直接出る測定（学習不要で安い）
+
+        - **大きさの比 |v| / |h|:** E3、E12、E14で比べ、含意2を確かめます。
+        - **E3の v と、near が実際に作るずれとの cos:** 「v ＝ 定義文を圧縮した仮想の文脈」なのかを見ます。E3はnearより成績が良いので、文章では作れないずれを含んでいる可能性もあります。
+        - **ベクトルの入れ替え（前回の案）:** 含意1の、基準点に依存することを確かめます。
+        - **手段ごとの着地点の距離:** 含意4の共通尺度を作ります。
+
+        進め方として、下書きの定義を spec/exp.yaml に入れて検査を通し、上の測定のうち最初の二つから走らせるのを提案します。進めてよいですか。
+facts:
+- {is: v_say, from: session_model, to: 01M7HCBEZ6PET60Z1RXZ4B5FV3}
+- {is: exp.v_answer, from: 01M7HCBEZ6PET60Z1RXZ4B5FV3, to: 01M7HCA23ZKCKTCWNJKCV4PSCM}
+- {is: v_refer, from: 01M7HCBEZ6PET60Z1RXZ4B5FV3, to: exp.concept_vector}
+- {is: v_refer, from: 01M7HCBEZ6PET60Z1RXZ4B5FV3, to: exp.hidden_state}
+- {is: v_refer, from: 01M7HCBEZ6PET60Z1RXZ4B5FV3, to: ontology.information_entity}
+- {is: v_refer, from: 01M7HCBEZ6PET60Z1RXZ4B5FV3, to: std.v_compute}
+- {is: v_refer, from: 01M7HCBEZ6PET60Z1RXZ4B5FV3, to: ontology.v_depend}
+- {is: v_refer, from: 01M7HCBEZ6PET60Z1RXZ4B5FV3, to: exp.state_shift}
+- {is: v_refer, from: 01M7HCBEZ6PET60Z1RXZ4B5FV3, to: ontology.v_compose}
+- {is: v_refer, from: 01M7HCBEZ6PET60Z1RXZ4B5FV3, to: exp.label_token_positions}
+- {is: v_refer, from: 01M7HCBEZ6PET60Z1RXZ4B5FV3, to: exp.v_see}

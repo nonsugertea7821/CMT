@@ -1,0 +1,280 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-17T10:17:15.861Z（UTC）
+individuals:
+  01M7MG5HTN76QMNA7AWGP6KX8H:
+    is: session_summary
+    display: 発言 976
+    val:
+      order: 976
+      text: |
+        This session is being continued from a previous conversation that ran out of context. The summary below covers the earlier portion of the conversation.
+
+        <system-reminder>
+        <tools-used-before-summary>AskUserQuestion, Bash, Edit, Grep, Read, ReadNotifications, TaskStop, ToolSearch, WebFetch, WebSearch, Write, mcp__claude-code-remote__create_trigger, mcp__claude-code-remote__get_trigger, mcp__claude-code-remote__read_documentation, mcp__claude-code-remote__send_later, mcp__claude-code-remote__update_trigger, mcp__github__actions_get, mcp__github__actions_list, mcp__github__create_pull_request, mcp__github__issue_write, mcp__github__list_issues, mcp__github__list_pull_requests, mcp__github__pull_request_read, mcp__github__update_pull_request</tools-used-before-summary>
+        </system-reminder>
+        Summary:
+        1. Primary Request and Intent:
+
+           **Standing rules**
+           - Repo nonsugertea7821/CMT is at /home/user/CMT. Reply in Japanese. Don't overclaim.
+           - Never use `git checkout` to restore files.
+           - Only one model process at a time. The model Python is /home/user/venv/bin/python.
+           - No background keep-alive loops.
+           - A stop hook requires changes to be committed and pushed.
+           - Commit trailer:
+             ```
+             Co-Authored-By: Claude [モデル名を伏せた] <[メールアドレスを伏せた]>
+             Claude-Session: https://claude.ai/code/session_015KRKt6TNJZ7ZsQmEknANXK
+             ```
+           - PR body ends with:
+             ```
+             🤖 Generated with [Claude Code](https://claude.com/claude-code)
+
+             https://claude.ai/code/session_015KRKt6TNJZ7ZsQmEknANXK
+             ```
+           - Branches: claude/cscl = language only; claude/exp = experiment only; claude/cross = both.
+           - No personal info in issues. Outward-facing actions need confirmation.
+
+           **User feedback that still applies**
+           - "PRの状態は確認してから応答して"
+           - "PRに問題を残さないでくれ" — no known leftover or unverified items in PRs, including "範囲の限り"-style unverified things.
+           - exp changes must not affect tc. tc is language-only.
+
+           **Current request**
+           - "もうちょい別のソースを当たってみてもいいかも 主張だけじゃなくて観察も取る": consult paper bodies and other sources, and record prior works' observations (reported numbers), not only claims.
+           - This continues the novelty-oriented prior-work survey: "先行研究をこの研究の新規性という観点でさらに調べよう", then "既知の形式言語系をLLMに接続する研究全般を探すと含意があるかも", then "よろしく".
+
+        2. Key Technical Concepts:
+
+           **Checker architecture**
+           - cscl.yaml `checkers: {exp: exp/src/exp_check.py}`.
+           - tc build() loads all domains uniformly. check_all() imports the checkers and calls `check(T, O, Dm)`.
+           - type_checker.py sets `sys.modules.setdefault("type_checker", sys.modules[__name__])` so the shared `errors` list is used.
+           - `exp_check.build()` returns the compatible `(T, O, S, M, C)`.
+
+           **syntax grammar.nodes declarations**
+           - many, opposite, derive, via, verbatim.
+           - verbatim replaced the old LITERAL list.
+
+           **check_derived (after #87)**
+           - A derive fact whose start states nothing via the `via` verb is an error.
+
+           **compare_claims(T, a, b)**
+           - Returns same, opposite, other, or None.
+           - Compares through ancestors and uses the `opposite` declarations.
+
+           **Measurement families**
+           - Defined by facts: `v_file_of`, `v_rows_of`, `v_axis_of`, `v_value_of`, `v_denote`, `v_entry_of '{cond}'`, `v_metric_of`.
+           - `stat()` metrics: accuracy, order_robust_accuracy, logit_margin, judged_accuracy, mean_value.
+           - mean_value takes the mean over rows where `r[cond]` is numeric.
+           - Value IDs look like "族.軸の値.指標", e.g. e6_L8_nll.none.mean_value.
+
+           **Observations**
+           - Form: `{is: v_refer, from: o_x, to: {is: v_come_before|v_near|..., from: id, to: id, new: tol}}`.
+           - Observations are checked for truth.
+
+           **Project goal**
+           - d_goal: this_design v_raise redefinition_success.
+           - d_metric: cross_usage_consistency measures redefinition_success.
+
+        3. Files and Code Sections:
+
+           **cscl/bootstrap/type_checker/type_checker.py (main)**
+           - Language-only.
+           - Functions: build() → (T, O, Dm); check_domain(); checkers(); check_all(); main() with --expr.
+           - T.verbatim and T.many properties.
+           - gather stores `I[subj]["new"]`. exp_check renames it to tolerance.
+           - check_derived with the not-claims error (#87).
+
+           **exp/src/exp_check.py**
+           - Holds KINDS, RESULTS, rows_of, stat, axes_of, sections(), expand, check_claims, CLAIM_DOMAINS={"lang"}, check_sides, status_pattern(T, nid), check(), build(), and main with --values/--show.
+
+           **Callers**
+           - .github/scripts/sync_issues.py, exp/experiments/render_expr.py and check_line.py use exp_check.build().
+
+           **exp/src/exp.yaml (main after #85)**
+           - 10 pw_ works with pwc_ claims.
+           - Concepts: following_context (parent of following_definitions), behavior_expression, preceding_distractors, context_following.
+           - Derived relations:
+             - v_prior_same: wang→h_preceding_definitions_lower, stringli→h_collision_lowers_following, xu→h_collision_lowers_following
+             - v_prior_differ: liu→h_distance_does_not_lower, goworek→h_following_definitions_do_not_lower
+           - v_prior_method relations kept.
+
+           **PR #88 (open, branch claude/exp, commit 3b6e3e2, based on main 2f5c34e)**
+           - Added:
+             - v_not_transfer `opposite: v_transfer`
+             - concepts: task_performance, formalization_accuracy, traceability, structure_embedding, type_check_result
+           - 7 pw_ works with pwc_ claims:
+             - eyuboglu2025_cartridges: taught_vector raise task_performance
+             - teehan2024_college: v_transfer usage_apply→usage_define_paraphrase
+             - lenat2023_cyc: typed_graph raise traceability
+             - luo2024_knowla: structure_embedding raise task_performance
+             - coppolillo2025_kg_injection: structure_embedding raise task_performance
+             - babaei2025_ontotruth: text_injection raise task_performance
+             - poiroux2024_typecheck: type_check_result raise formalization_accuracy
+           - New hypothesis h_typecheck_feedback_raises_writing (hyp_untested): `{v_raise, from: type_check_result, to: formalization_accuracy}`.
+           - Derived relations:
+             - v_prior_differ teehan→h_apply_does_not_transfer_to_paraphrase
+             - v_prior_same poiroux→h_typecheck_feedback_raises_writing
+           - Verified:
+             - type check, runtime and sync tests all passed;
+             - no hash changes in the issue drafts;
+             - one new issue (the new hypothesis).
+             - CI not checked.
+
+        4. Errors and fixes:
+           - **Checker errors list.** The checker importing type_checker as a separate module would split the errors list. Fixed with sys.modules.setdefault and verified with a negative test.
+           - **Leftover exp words in tc.** status_pattern and tolerance were moved out of tc.
+           - **Merge conflict.** In type_checker.py when merging main into claude/cross. Resolved by taking main's version.
+           - **Unverified relations in #85.** The user objected to leaving unverified relations ("だからPRに問題を残さないでくれ"). I removed them, then transcribed all the claims.
+           - **derive leniency.** I mislabelled it a language rule change; it was a tc bug against syntax's derive definition. Fixed in #87.
+           - **PDF reading.** WebFetch can't read PDFs. Used pdftotext (/usr/bin/pdftotext) or pypdf (installed in the venv) on the saved PDFs in the scratchpad pdfs/ directory.
+
+        5. Problem Solving:
+
+           **Goal analysis.**
+           - Per-usage values:
+             - apply 0.79–0.83
+             - recite NLL 0.63 vs 2.70 without the vector
+             - paraphrase 0.54 (chance level)
+           - Usages don't transfer, but recite and apply coexist.
+           - Paraphrase was never a teacher.
+           - Proposed hypotheses (not yet registered):
+             - h_paraphrase_teacher_raises_paraphrase
+             - h_paraphrase_coexists_with_apply
+             - h_all_usage_teacher_raises_consistency
+
+           **Novelty findings.**
+           - No found work combines: a typed concept system as source of truth, intensional definitions, hidden-state injection, and evaluation on prior-meaning conflict plus cross-usage consistency.
+           - CycL ≈ CSCL in framework.
+           - CoLLEGe is the closest framework. Its concepts are unseen words, not redefinitions.
+
+        6. All user messages:
+           - "というかこれ検査モジュールの定義自体cscl.yamlに置くべきだよな"
+           - "マージ済み。"
+           - "だからPRに問題を残さないでくれ"
+           - "言語の規則の変更？"
+           - "よろしく" (the #87 fix)
+           - "85は主張の書き写し間で終わらせて"
+           - "issueのapplyって自動化してる？"
+           - (screenshot of the empty Actions variables page)
+           - "さて本題に戻るか……"
+           - "あー、目的に対してどう作用する？　近しいところまで来ている気がする、と言う直観を裏付けられる仮説が欲しいんだけど"
+           - "続けよう"
+           - "あと先行研究をこの研究の新規性という観点でさらに調べよう C...から始まるやつでほぼ同じ枠組みがあると聞いた"
+           - "3文字だった気がする"
+           - "cylだっけ？"
+           - "それをLLMに接続する、というかまあ 既知の形式言語系をLLMに接続する研究全般を探すと含意があるかも"
+           - "よろしく"
+           - "もうちょい別のソースを当たってみてもいいかも 主張だけじゃなくて観察も取る"
+
+        7. Pending Tasks:
+           - **Prior observations (current).** Record prior works' observations from paper bodies, on claude/exp. Either extend PR #88 or make a follow-up.
+           - **Paraphrase hypotheses.** Register the three paraphrase-usage hypotheses. This was proposed twice with no explicit approval yet.
+           - **Language-side prior work.** Decide where CycL / language-side prior works go (lang domain).
+           - **Issue bodies.** Write the remaining issue bodies (#18–59, #61–77).
+           - **Older backlog:**
+             - rerun the E19/E3 seeds;
+             - move the stage0-pinned names into rules;
+             - move the claim-status vocabulary to std;
+             - d_cscl_std_on_axiom.
+           - **User action.** The user is to set ISSUE_SYNC=on (I gave instructions).
+
+        8. Current Work:
+
+           **Data gathered from paper bodies**
+           - CoLLEGe (LLaMA-2 7B):
+             - GRE 4-shot (Table 1): CoLLEGe 44.5, Prompting 21.8, chance 8.1, real-word upper bound 75.
+             - DefGen BERTScore (Table 2): CoLLEGe 84.8, Prompting 82.5.
+             - Slang 4-shot (Table 5): 60.0 vs 53.8.
+           - Poiroux (Tables 6, 14):
+             - ProofNet# test, GPT-4o: greedy 31.0, Filter+Self-BLEU 45.1.
+             - Validation: no-filter+Self-BLEU 28.4, filter+Self-BLEU 44.8.
+           - Liu (Table 6, GPT-3.5-Turbo, 20 docs):
+             - by position: index0 75.8, index9 53.8, index19 63.2.
+             - closed-book 56.1 (Table 1).
+           - WinoDict (Table 2, PaLM 540B, Winograd 5-shot): WinoDict 78.6, original 95.6, human WinoDict 91.7.
+           - Stringli (FF/MC, Q3 Rs2): Llama 405B MC anchored 93.33% vs 70B 73.33%; Mistral Large 73.33% anchored.
+           - Goworek (Qwen2.5-14B-Instruct, 870 pairs):
+             - redefinition alone raised P(redefined) 0→59% and dropped P(original) 18→2%.
+             - the sentence-interaction numbers are only in figures.
+           - Babaei (Table 4, cosine similarity %):
+             - Qwen2.5-72B: Prompt(Q) 45.7 → RDF 60.3.
+             - Qwen2.5-0.5B: 39.7 → RDF 34.7 (lowered).
+           - Cartridges (MTOB chrF): self-study 33.5 vs next-token prediction 24.9. ICL numbers are only in figures.
+           - Wang: per-model numbers only in figures (llama-4-maverick "nearly 100%" at 2 keys, "below 5%" at 46 keys). I planned to skip numbers that aren't exact.
+           - Not fetched: KnowLA, Coppolillo, steering papers. Lenat and Xu have no data (position paper and survey).
+
+           **Planned design (not yet implemented)**
+           - Result files: exp/experiments/results/prior/<id>.json holding reported values, e.g. `{"reported": {"r": {"college": 0.445, ...}}}`.
+           - One measurement family per paper:
+             - v_file_of, v_rows_of [reported], an axis cond with axis values, v_entry_of '{cond}', v_metric_of mean_value (n=1).
+           - New kind prior_observation:
+             - extends observation; needs a unique expression;
+             - `many: true`.
+           - New verb v_report:
+             - extends v_refer;
+             - from prior_work, to prior_observation.
+           - Observations: e.g. college > prompting, filter > greedy, middle < last, winodict < original.
+           - Prior observations are NOT linked as evidence to our hypotheses, so hypothesis statuses don't change.
+           - Then verify:
+             - type check, runtime and sync test pass;
+             - issue hashes are unchanged;
+             - commit and push to claude/exp;
+             - update PR #88 or open a new PR;
+             - report in Japanese with sources.
+
+        9. Optional Next Step:
+           - Implement the prior-observation recording on claude/exp: result JSONs, families, the prior_observation kind, v_report, and observations with the numbers above.
+           - Then run type check, runtime and sync test, check hash invariance, commit, push, and update PR #88's body.
+           - This follows the user's latest request: "もうちょい別のソースを当たってみてもいいかも 主張だけじゃなくて観察も取る".
+           - Numbers that exist only in figures (Wang, Goworek's interaction effects, Cartridges' ICL) are not transcribed. The PR must not leave unverified items, so note this as a scope statement rather than as a claim.
+
+        If you need specific details from before compaction (like exact code snippets, error messages, or content you generated), read the full transcript at: /root/.claude/projects/-home-user-CMT/e05d2140-ce91-515f-a5fb-e6251e13d406.jsonl
+        Continue the conversation from where it left off without asking the user any further questions. Resume directly — do not acknowledge the summary, do not recap what was happening, do not preface with "I'll continue" or similar. Pick up the last task as if the break never happened.
+
+        The messages after this summary are the most recent messages from before compaction, kept verbatim. The summary was written without seeing them, so something it says has not happened yet may already have happened in them.
+facts:
+- {is: v_say, from: session_model, to: 01M7MG5HTN76QMNA7AWGP6KX8H}
+- {is: v_refer, from: 01M7MG5HTN76QMNA7AWGP6KX8H, to: lang.type_checker}
+- {is: v_refer, from: 01M7MG5HTN76QMNA7AWGP6KX8H, to: syntax.via}
+- {is: v_refer, from: 01M7MG5HTN76QMNA7AWGP6KX8H, to: syntax.opposite}
+- {is: v_refer, from: 01M7MG5HTN76QMNA7AWGP6KX8H, to: exp.v_file_of}
+- {is: v_refer, from: 01M7MG5HTN76QMNA7AWGP6KX8H, to: exp.v_rows_of}
+- {is: v_refer, from: 01M7MG5HTN76QMNA7AWGP6KX8H, to: exp.v_axis_of}
+- {is: v_refer, from: 01M7MG5HTN76QMNA7AWGP6KX8H, to: exp.v_value_of}
+- {is: v_refer, from: 01M7MG5HTN76QMNA7AWGP6KX8H, to: exp.v_denote}
+- {is: v_refer, from: 01M7MG5HTN76QMNA7AWGP6KX8H, to: exp.v_entry_of}
+- {is: v_refer, from: 01M7MG5HTN76QMNA7AWGP6KX8H, to: exp.v_metric_of}
+- {is: v_refer, from: 01M7MG5HTN76QMNA7AWGP6KX8H, to: exp.order_robust_accuracy}
+- {is: v_refer, from: 01M7MG5HTN76QMNA7AWGP6KX8H, to: exp.logit_margin}
+- {is: v_refer, from: 01M7MG5HTN76QMNA7AWGP6KX8H, to: exp.judged_accuracy}
+- {is: v_refer, from: 01M7MG5HTN76QMNA7AWGP6KX8H, to: exp.mean_value}
+- {is: v_refer, from: 01M7MG5HTN76QMNA7AWGP6KX8H, to: ontology.v_refer}
+- {is: v_refer, from: 01M7MG5HTN76QMNA7AWGP6KX8H, to: ontology.v_come_before}
+- {is: v_refer, from: 01M7MG5HTN76QMNA7AWGP6KX8H, to: exp.v_near}
+- {is: v_refer, from: 01M7MG5HTN76QMNA7AWGP6KX8H, to: exp.v_raise}
+- {is: v_refer, from: 01M7MG5HTN76QMNA7AWGP6KX8H, to: exp.redefinition_success}
+- {is: v_refer, from: 01M7MG5HTN76QMNA7AWGP6KX8H, to: exp.cross_usage_consistency}
+- {is: v_refer, from: 01M7MG5HTN76QMNA7AWGP6KX8H, to: exp.following_context}
+- {is: v_refer, from: 01M7MG5HTN76QMNA7AWGP6KX8H, to: exp.following_definitions}
+- {is: v_refer, from: 01M7MG5HTN76QMNA7AWGP6KX8H, to: exp.behavior_expression}
+- {is: v_refer, from: 01M7MG5HTN76QMNA7AWGP6KX8H, to: exp.preceding_distractors}
+- {is: v_refer, from: 01M7MG5HTN76QMNA7AWGP6KX8H, to: exp.context_following}
+- {is: v_refer, from: 01M7MG5HTN76QMNA7AWGP6KX8H, to: exp.v_prior_same}
+- {is: v_refer, from: 01M7MG5HTN76QMNA7AWGP6KX8H, to: exp.v_prior_differ}
+- {is: v_refer, from: 01M7MG5HTN76QMNA7AWGP6KX8H, to: exp.v_prior_method}
+- {is: v_refer, from: 01M7MG5HTN76QMNA7AWGP6KX8H, to: exp.v_not_transfer}
+- {is: v_refer, from: 01M7MG5HTN76QMNA7AWGP6KX8H, to: exp.v_transfer}
+- {is: v_refer, from: 01M7MG5HTN76QMNA7AWGP6KX8H, to: exp.task_performance}
+- {is: v_refer, from: 01M7MG5HTN76QMNA7AWGP6KX8H, to: exp.formalization_accuracy}
+- {is: v_refer, from: 01M7MG5HTN76QMNA7AWGP6KX8H, to: exp.structure_embedding}
+- {is: v_refer, from: 01M7MG5HTN76QMNA7AWGP6KX8H, to: exp.type_check_result}
+- {is: v_refer, from: 01M7MG5HTN76QMNA7AWGP6KX8H, to: exp.taught_vector}
+- {is: v_refer, from: 01M7MG5HTN76QMNA7AWGP6KX8H, to: exp.usage_apply}
+- {is: v_refer, from: 01M7MG5HTN76QMNA7AWGP6KX8H, to: exp.usage_define_paraphrase}
+- {is: v_refer, from: 01M7MG5HTN76QMNA7AWGP6KX8H, to: exp.typed_graph}
+- {is: v_refer, from: 01M7MG5HTN76QMNA7AWGP6KX8H, to: exp.text_injection}
+- {is: v_refer, from: 01M7MG5HTN76QMNA7AWGP6KX8H, to: exp.hyp_untested}
+- {is: v_refer, from: 01M7MG5HTN76QMNA7AWGP6KX8H, to: exp.prior_observation}
+- {is: v_refer, from: 01M7MG5HTN76QMNA7AWGP6KX8H, to: exp.v_report}
+- {is: v_refer, from: 01M7MG5HTN76QMNA7AWGP6KX8H, to: exp.prior_work}

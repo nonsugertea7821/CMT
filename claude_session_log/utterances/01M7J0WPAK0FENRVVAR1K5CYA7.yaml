@@ -1,0 +1,23 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-16T11:11:48.051Z（UTC）
+individuals:
+  01M7J0WPAK0FENRVVAR1K5CYA7:
+    is: model_utterance
+    display: 発言 941
+    val:
+      order: 941
+      text: |
+        すみません。確かめていないものを「範囲の限り」と書いて残していました。
+
+        **PR #85 の修正**
+        - 主張を書いていない先行研究の、「同じ向き」「異なる」の関係を 4 件外しました。Goworek ×2、Xu、Radevski の分です。
+        - これで #85 に残っている「同じ向き」「異なる」の関係は、Wang・Liu・Stringli の 3 件だけです。どれも主張の中身から導いた結果と一致することを、型検査が確かめています。
+        - 外した 6 本は、先行研究の個体と「手法の元」の関係だけを残しました。
+        - 型検査と同期のテストは、ローカルで通りました。push 後の CI はまだ見ていません。
+        - PR の本文も、この内容に合わせて書き直しました。
+
+        **main の tc に残っている穴**
+
+        いまの検査（#86 で main に入ったもの）は、先行研究に主張が書かれていないと、関係を確かめずに素通りさせます。だから、さっきの 4 件も検査を通っていました。主張がない場合は失敗にするべきだと考えます。これは言語の規則の変更なので、claude/cscl の別の PR で直したいと思います。進めてよいですか。
+facts:
+- {is: v_say, from: session_model, to: 01M7J0WPAK0FENRVVAR1K5CYA7}
+- {is: exp.v_answer, from: 01M7J0WPAK0FENRVVAR1K5CYA7, to: 01M7J0VK6G7FK04GDNB83B2N2B}

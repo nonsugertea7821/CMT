@@ -1,0 +1,21 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-15T10:09:31.369Z（UTC）
+individuals:
+  01M7FAXY79YR992RQH55MB61VZ:
+    is: model_utterance
+    display: 発言 512
+    val:
+      order: 512
+      text: |
+        改名は戻しました。exp の動詞はもとの `v_use`（使う）のままで、core の `v_use` は exp の中から `core.v_use` と領域を書いて参照します（3295bbb、push 済み）。
+
+        ```yaml
+        - {is: core.v_use, from: exp, to: core}
+        - {is: core.v_use, from: exp, to: run}
+        ```
+
+        - **原因:** 領域を書かない識別子は自分の領域から先に探すので、exp の中で `v_use` と書くと exp 自身の動詞になっていました。
+        - **検査器の変更:** `core.名前` と書かれた識別子を core の識別子として読むようにしました。ほかの領域の識別子は、もともと `exp.名前` の形で書けます。
+        - **確認:** 宣言された依存は、exp が core と run、subj が core として読み取られています。`check_spec.py` と `run_spec.py` は両方とも通っています。
+facts:
+- {is: v_say, from: session_model, to: 01M7FAXY79YR992RQH55MB61VZ}
+- {is: exp.v_answer, from: 01M7FAXY79YR992RQH55MB61VZ, to: 01M7FAWV1FRPTSHESWERRZKG0K}

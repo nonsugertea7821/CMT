@@ -1,0 +1,50 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-17T10:39:56.604Z（UTC）
+individuals:
+  01M7MHF2NW5KECWQ95DTC1WNY7:
+    is: model_utterance
+    display: 発言 1005
+    val:
+      order: 1005
+      text: |
+        そのとおりです。「別の層に分けるほどのものではない」は私の判断で、層の分け方としては誤りでした。どの層に属するかは、検査が事実から導ける法則で決めるべきです。そうでないと、層もまた検査器と人の判断に書かれたままになり、自己記述になりません。
+
+        ## 方針
+        各層に「その層に属する」ことの判定を、法則（law_rule）として書きます。そのうえで、次の法則を一つ置きます。
+        - どの語も、判定で導かれた層と、実際に置かれた層が一致すること
+
+        層の順序も、判定の中身から導きます。「下の層の語だけで定義できる」ことが、層が上にあることの意味になるからです。
+
+        ## 判定の案
+        | 層 | 属する条件 |
+        |---|---|
+        | signature | 何も参照せずに宣言される記号。基礎の関係（項数を持つ）と分類の軸（値の範囲を持つ） |
+        | 規則の言語 | 法則を書くための語。変数、前提・導く・求める（assume / derive / require）、法則の種類。参照するのは signature の記号だけ |
+        | axiom | 法則のうち、中身が基礎の関係だけで書かれているもの。ontology の推移性、反対称性、依存の端が在ること、など |
+        | ontology | 種類（ノード）のうち、基礎の関係と axiom の上に定義されるもの |
+        | syntax | 概念式や文法（grammar）について述べるもの |
+        | runtime, std | 同様に、参照する先と中身から決める |
+
+        ## この判定から出る帰結
+        - **変数の置き場：** 変数は「規則の中でだけ使われる」ので、signature ではなく規則の言語に属します。
+        - **規則の言語の位置：** axiom の法則は、変数と assume / require で書かれています。だから規則の言語は、axiom より下に来なければなりません。
+          - 今は、この語彙（`law_rule`、`v_assume`、`premise` など）が syntax にあります。axiom.yaml は、それを上向きに借りて書かれています。
+          - axiom.yaml の冒頭にある「書き方は syntax に従うが、意味は syntax に依存しない」は、この自己記述の欠けを表しています。
+        - **層の並び：** signature → 規則の言語 → axiom → ontology → syntax → runtime → std になります。
+        - **判定の書き方：** 判定そのものも、規則の言語で書きます。規則の言語は下にあるので、どの層の判定も上を参照せずに書けます。
+
+        ## 先に決めてほしいこと
+        1. **判定の中身：** 上の表の条件でよいか。
+        2. **規則の言語の扱い：** 独立した層にするか、それとも、判定の結果 signature と同じ層に入るならそれに従うか。
+           - これは判定の結果で決まるべきことなので、条件を確定してから判定を走らせ、層を決めることを勧めます。
+        3. **進め方：** 条件が決まったら、次の順で claude/cross に積みます。
+           - 判定の法則と、層の一致の法則を書き、検査器に当てる。
+           - 検査器から `LAYERS` の決め打ちと、`v_use` の特別扱いを外す。
+           - 判定が出した不一致を一つずつ直す。
+
+        まだ何も変更していません。条件の表に直すところがあれば、それを反映してから実装します。
+facts:
+- {is: v_say, from: session_model, to: 01M7MHF2NW5KECWQ95DTC1WNY7}
+- {is: exp.v_answer, from: 01M7MHF2NW5KECWQ95DTC1WNY7, to: 01M7MHEBNJE8BR6FKMP9ZEYQVC}
+- {is: v_refer, from: 01M7MHF2NW5KECWQ95DTC1WNY7, to: syntax.law_rule}
+- {is: v_refer, from: 01M7MHF2NW5KECWQ95DTC1WNY7, to: syntax.v_assume}
+- {is: v_refer, from: 01M7MHF2NW5KECWQ95DTC1WNY7, to: syntax.premise}

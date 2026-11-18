@@ -1,0 +1,61 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-17T11:28:45.436Z（UTC）
+individuals:
+  01M7MM8EVWSM5SDT94ZN7YES7Q:
+    is: model_utterance
+    display: 発言 1087
+    val:
+      order: 1087
+      text: |
+        体系を数えて確かめました。
+
+        **数えた結果**
+        - 動詞は117個、holds に否定を含む動詞は9個です。
+        - holds が肯定の動詞の古典否定（同じ原子を否定したもの）になっている組は5つあります。
+
+          | 否定の動詞 | 肯定の動詞 | opposite の宣言 |
+          |---|---|---|
+          | v_not_before | v_come_before | なし |
+          | v_not_after | v_come_after | なし |
+          | v_not_transfer | v_transfer | あり |
+          | v_not_depend | v_depend | あり |
+          | v_immune（exp、の影響を受けない） | v_depend | なし |
+
+        - 古典否定になっていない否定の動詞もあります。
+          - v_not_lower と v_not_raise は、「後ろにある」だけを否定し、「依存する」は肯定のまま残しています。肯定と否定の連言を否定すると「どちらかが成り立たない」になるので、古典否定ではありません。それなのに v_not_lower は `opposite: v_lower` を宣言しています。
+          - v_level と v_near は「どちらの向きにも後ろにない」で、ある1つの動詞の否定ではありません。
+        - 否定の動詞9個は、どれも1回以上使われています。
+
+        **この観察から分かること**
+        - v_not_depend と v_immune は、holds が同じで、同じ動詞の否定が2つあります。私が v_not_depend を加えたのは、すでにある v_immune を確かめなかったためです。lang の主張は exp の語を参照できないので、v_immune をそのまま使うこともできませんでした。
+        - 「全ての動詞が古典否定を対に持つ」は、今は成り立っていません。117個のうち4個（v_depend、v_transfer、v_come_before、v_come_after）だけです。
+        - 「否定された動詞は使われなければならない」は、今は9個すべてで成り立っています。
+
+        **どちらの読みか確かめたいこと**
+        おっしゃった文を、次の2つのどちらの意味で受け取ればよいでしょうか。
+
+        1. **すべての動詞が古典否定を対に持つ。**
+           - 否定は1つずつ定義せず、言語が肯定の動詞から導く（たとえば「（否定）」の動詞を体系が作る）ことになります。
+           - v_not_depend、v_immune、v_not_transfer、v_not_before、v_not_after は導かれる否定と重なるので、除くか、導かれたものに置き換えます。
+           - v_not_lower と v_not_raise は古典否定ではないので、別の動詞として残すことになります。その場合 v_not_lower の `opposite: v_lower` は誤りなので外します。
+        2. **否定の動詞は、定義するなら使われなければならない（法則にする）。**
+           - 今の体系はこれを満たしています。
+           - ただ、同じ否定が2つある（v_not_depend と v_immune）ことは、この法則では見つけられません。v_immune を ontology に移して v_not_depend を除く、といった整理を別にする必要があります。
+
+        もう1つの読みとして、「どの動詞も、古典否定を対に持つか、否定の動詞なら使われている」という1つの法則のつもりであれば、そう教えてください。
+facts:
+- {is: v_say, from: session_model, to: 01M7MM8EVWSM5SDT94ZN7YES7Q}
+- {is: exp.v_answer, from: 01M7MM8EVWSM5SDT94ZN7YES7Q, to: 01M7MM6XY4T8K8SZFRPBYKWTRT}
+- {is: v_refer, from: 01M7MM8EVWSM5SDT94ZN7YES7Q, to: ontology.v_not_before}
+- {is: v_refer, from: 01M7MM8EVWSM5SDT94ZN7YES7Q, to: ontology.v_come_before}
+- {is: v_refer, from: 01M7MM8EVWSM5SDT94ZN7YES7Q, to: ontology.v_not_after}
+- {is: v_refer, from: 01M7MM8EVWSM5SDT94ZN7YES7Q, to: ontology.v_come_after}
+- {is: v_refer, from: 01M7MM8EVWSM5SDT94ZN7YES7Q, to: exp.v_not_transfer}
+- {is: v_refer, from: 01M7MM8EVWSM5SDT94ZN7YES7Q, to: exp.v_transfer}
+- {is: v_refer, from: 01M7MM8EVWSM5SDT94ZN7YES7Q, to: lang.v_not_depend}
+- {is: v_refer, from: 01M7MM8EVWSM5SDT94ZN7YES7Q, to: ontology.v_depend}
+- {is: v_refer, from: 01M7MM8EVWSM5SDT94ZN7YES7Q, to: exp.v_immune}
+- {is: v_refer, from: 01M7MM8EVWSM5SDT94ZN7YES7Q, to: exp.v_not_lower}
+- {is: v_refer, from: 01M7MM8EVWSM5SDT94ZN7YES7Q, to: exp.v_not_raise}
+- {is: v_refer, from: 01M7MM8EVWSM5SDT94ZN7YES7Q, to: exp.v_lower}
+- {is: v_refer, from: 01M7MM8EVWSM5SDT94ZN7YES7Q, to: ontology.v_level}
+- {is: v_refer, from: 01M7MM8EVWSM5SDT94ZN7YES7Q, to: exp.v_near}

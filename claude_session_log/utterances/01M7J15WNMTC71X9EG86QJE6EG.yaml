@@ -1,0 +1,37 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-16T11:16:49.460Z（UTC）
+individuals:
+  01M7J15WNMTC71X9EG86QJE6EG:
+    is: model_utterance
+    display: 発言 949
+    val:
+      order: 949
+      text: |
+        PR #85 で、残り6本の先行研究の主張を書き写しました。これで10本すべての主張が体系に入っています。
+
+        https://github.com/nonsugertea7821/CMT/pull/85
+
+        **書き写したもの**
+        - Goworek、Xu、Turner、Panickssery、Todd、Radevski の6本です。要旨を取得し直して、それをもとに書きました。
+        - 主張を書くために、上位概念を2つ足しました。
+          - `following_context`（定義の後ろに置かれる文脈）。`following_definitions` の上位です。
+          - `behavior_expression`（狙った振る舞いの現れ）。操舵の論文が上げる対象です。
+
+        **全仮説と機械的に比べて、新しく導けた関係**
+        - Xu は `h_collision_lowers_following` と同じ向きでした。
+        - Goworek は `h_following_definitions_do_not_lower` と反対でした。
+
+        操舵の4本は、上げる対象が「狙った振る舞い」で、再定義への追従ではありません。そのため仮説とは比べられず、向きの関係は付けていません。手法の関係（「手法の元」）は残しています。
+
+        **確かめたこと**
+        - 型検査・実行の検査・同期のテストは通りました。
+        - #87 の修正（主張のない関係を誤りにする）を当てた tc でも、型検査は通りました。
+        - issue の定義のハッシュは、main と比べてどれも変わっていません。変わるのは「先行研究」節だけなので、マージしても「説明が古い」ラベルは付きません。
+        - この push の後の CI はまだ確認していません。
+
+        主張の書き写しは要旨によるもので、本文は読んでいません。
+facts:
+- {is: v_say, from: session_model, to: 01M7J15WNMTC71X9EG86QJE6EG}
+- {is: exp.v_answer, from: 01M7J15WNMTC71X9EG86QJE6EG, to: 01M7J11TFTJN2BP12J400JQQXN}
+- {is: v_refer, from: 01M7J15WNMTC71X9EG86QJE6EG, to: exp.following_context}
+- {is: v_refer, from: 01M7J15WNMTC71X9EG86QJE6EG, to: exp.following_definitions}
+- {is: v_refer, from: 01M7J15WNMTC71X9EG86QJE6EG, to: exp.behavior_expression}

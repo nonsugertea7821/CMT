@@ -1,0 +1,87 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-17T11:52:14.463Z（UTC）
+individuals:
+  01M7MNKEVZ3RYXN28VBRA9FSK3:
+    is: model_utterance
+    display: 発言 1112
+    val:
+      order: 1112
+      text: |
+        A（象限の数と対称性の確認を観察として記録すること）は終わりました。PR #93 に入れて、CI は成功しています。続けて制限性の観察結果をまとめます。
+
+        ## A：記録したもの（claude/cross e9142bd、PR #93）
+
+        新しいスクリプト `exp/experiments/sys_structure.py` が `sys_quadrants.json`（658 ノード）と `sys_symmetry.json`（1260 回の確かめ）を書きます。どちらも exp の族として加え、claims.yaml に次の観察を足しました。
+
+        | 観察 | 値 |
+        |---|---|
+        | `o_sys_quant_with_qual` 量だけの象限に入るノード | 0 |
+        | `o_sys_rel_disjoint` 関係と他の象限の両方に入るノード | 0 |
+        | `o_sys_unplaced_neg_only` どの象限にも入らないノードのうち、根でも否定だけのノードでもないもの | 0 |
+        | `o_sys_reading_symmetric` 真と偽を入れ替える写像 σ で文の読み方が一致した割合 | 1.0（900 回） |
+        | `o_sys_step_symmetric` σ で動詞の 1 歩が一致した割合 | 1.0（360 回） |
+
+        - 型検査、実行の検査、test_worlds、issue 同期の確認は、手元でも CI でもすべて成功しました。
+        - PR の説明には、取り込んだ 3 値の読み方と、記録の限界を書き足しました。限界は 2 つです。数は象限の分け方の規則しだいで変わること。σ で一致しても、体系の非対称がなくなったわけではないこと。
+        - 独立持続体を除いたので、どの象限にも入らないノードは前回の 34 から 32 になりました。内訳は根が 2 つと、否定だけのノードが 30 です。
+
+        ## 制限性：観察
+
+        象限と関係なく数えると、自分の定義が否定の限定だけのノードは 44 あります。
+
+        **1. 否定の限定は σ で変わらない**
+        - 修飾の書き方（mod）で使える指定は `of, with, neg, quant, at` だけで、`val` がありません。
+        - 書ける質は 2 種類です。
+          - 肯定：「R が真と述べられている」
+          - 否定の限定：「R が述べられていない」。読み方は UNSTATED です。
+        - σ をかけると、肯定は「R が偽と述べられている」に移ります。ところが、それを書く mod がありません。
+        - 「述べられていない」だけは σ で変わりません。
+        - カントの質の 3 つに当てはめると、こうなります。
+          - 肯定：書ける。
+          - 否定（偽と述べる）：書けない。
+          - 制限：書ける。真偽の入れ替えで変わらないのはこれだけ。
+
+        **2. 世界の前提で意味が分かれる**
+
+        閉世界を前提と述べている領域は syntax、runtime、std の 3 つだけです。
+
+        | 領域 | 世界 | 否定だけのノード | 肯定の対あり | うち同じ上位の兄弟 |
+        |---|---|---|---|---|
+        | syntax・runtime・std | 閉 | 5 | 4 | 3 |
+        | ontology | 開 | 4 | 2 | 2 |
+        | exp | 開 | 28 | 24 | 15 |
+        | subj | 開 | 7 | **0** | 0 |
+
+        - 閉世界の 5 つでは、「述べられていない」は偽と同じになります。カントの「否定」に潰れ、制限ではなくなります。
+        - 開世界の 39 では、本当の制限です。記録がないものも含みます。
+        - exp の 28 の多くは、記録の状態です。例：未検証の仮説（`hyp_untested`）、暫定の決定（`dec_tentative`）、未着手の項目（`item_queued`）。「述べられていない」と読むのが意図どおりに見えます。
+
+        **3. subj は 7 つとも肯定の対がない**
+        - 7 つは person、stock、dormant_agent、absent_person、business_day、weekday_base、weekday_day です。
+        - 例えば `business_day` は「日曜と述べられていない日」です。いまの読み方では、曜日が記録されていない日も営業日に入ります。
+        - 名前からは「偽」（古典否定）の意図が読めます。ただ、subj は世界の前提を述べていません。
+        - 2 の表で、意図と定義が食い違っている可能性が数の上で一番はっきり出ているのは subj です。
+
+        **4. 否定だけのノードでも、自分で場所を決められないとは限らない**
+        - 44 のうち 14 は、文や主張の下位なので真偽の象限に入ります。
+        - 一方、配置を導く法則（placed_by_mod_*）は、「mod が neg でない」ことを前提にしています。
+        - そのため、制限のノードの場所は、上位から継ぐ以外に導けません。
+
+        ## 次の候補
+
+        - (i) subj に世界の前提を述べるか、7 つを古典否定（偽）として書けるようにする。
+        - (ii) 「偽と述べる」質（mod の val）を入れて、σ で閉じた質の 3 つにする。
+        - (iii) 上の 1〜3 を観察として記録する（象限のときと同じ形）。
+
+        (ii) は文法を変えます。(i) は subj の意図を決めることになります。どちらも、先に (iii) で観察を固めてから決めるのが筋だと考えます。
+facts:
+- {is: v_say, from: session_model, to: 01M7MNKEVZ3RYXN28VBRA9FSK3}
+- {is: exp.v_answer, from: 01M7MNKEVZ3RYXN28VBRA9FSK3, to: 01M7MNB7P5DG2TQ6WM0DPF3SV2}
+- {is: v_refer, from: 01M7MNKEVZ3RYXN28VBRA9FSK3, to: syntax.val}
+- {is: v_refer, from: 01M7MNKEVZ3RYXN28VBRA9FSK3, to: exp.hyp_untested}
+- {is: v_refer, from: 01M7MNKEVZ3RYXN28VBRA9FSK3, to: exp.dec_tentative}
+- {is: v_refer, from: 01M7MNKEVZ3RYXN28VBRA9FSK3, to: exp.item_queued}
+- {is: v_refer, from: 01M7MNKEVZ3RYXN28VBRA9FSK3, to: subj.dormant_agent}
+- {is: v_refer, from: 01M7MNKEVZ3RYXN28VBRA9FSK3, to: subj.absent_person}
+- {is: v_refer, from: 01M7MNKEVZ3RYXN28VBRA9FSK3, to: subj.business_day}
+- {is: v_refer, from: 01M7MNKEVZ3RYXN28VBRA9FSK3, to: subj.weekday_base}
+- {is: v_refer, from: 01M7MNKEVZ3RYXN28VBRA9FSK3, to: subj.weekday_day}

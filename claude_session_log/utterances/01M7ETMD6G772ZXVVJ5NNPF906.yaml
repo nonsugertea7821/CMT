@@ -1,0 +1,47 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-15T05:24:41.808Z（UTC）
+individuals:
+  01M7ETMD6G772ZXVVJ5NNPF906:
+    is: model_utterance
+    display: 発言 422
+    val:
+      order: 422
+      text: |
+        I split the words inside the measurement families' axis and meaning settings out into individuals and facts. The pushed commit is d45ca95. The check passes, and all 380 measurements match the earlier values exactly, ids included.
+
+        **How it is written**
+        - Each axis is an individual, for example `e1_cond: {is: family_axis, val: {text: cond}}`. Each axis value is an individual too, for example `e1_cond_far_500: {is: axis_value, val: {text: far-500}}`. There are 165 of these.
+        - They are connected by facts with new verbs:
+          - `v_axis_of`: an axis is part of a family.
+          - `v_value_of`: a value is part of an axis.
+          - `v_denote`: what a value points to. For example, `far-500` points to `text_injection` and `glossary`.
+          - `v_spell`: how the value is written in the results file, such as `Qwen3-4B` or a list of row ids.
+        - Fixed numbers use the same form as counts on modifiers: `{is: v_compose, from: following_text, to: e1_cond_far_500, at: {count: 500}}`. Layer numbers are written as `at: {order: 8}`.
+        - I removed `v_meaning_of` and the 3 nodes that only existed for the nested data (`meaning`, `value_compose_from_meaning`, `identifier_refer_to_meaning`).
+
+        **Decisions to confirm**
+        - **`v_spell` under `v_denote`:** I first put it directly under "述べる". The `specific` law rejected that, because its ends are narrower than `v_denote`'s. "結果ファイルでの書き方として指す" reads as a kind of "指す", so I think this is the right place, but please check it.
+        - **Facts whose both positions hold individuals:** these are now read as being about the start point. Until now such a fact was an error.
+
+        **Negative tests**
+        These are all caught: an undefined target, an axis that belongs to no family, an axis attached to a model instead of a family, and a value moved to another axis.
+
+        **Still not done**
+        - **The kind of the other position is not checked in general.** When I tried checking it across all facts, every observation used as evidence failed, because as a kind it is not under `evidence`. I reverted that and only check axes inside the axis loader. Checking every fact would first need deciding how observation and evidence relate.
+        - **Some strings are still plain text.** `row_filter`, `row_keys`, the results-file name and the per-condition entry stay as template strings like `'{group}'`. `row_keys` names an axis by text, which could become a reference to the axis individual.
+
+        The previous commit, f342dd9, is already pushed: holds/pre/post are now written in the fact form, and the regex-based `syntax` is gone. In my earlier work I once used `git checkout` to restore uncommitted changes, and it reverted my own edits. This time I restored only from backups in the scratchpad. The L20 experiment is still running.
+facts:
+- {is: v_say, from: session_model, to: 01M7ETMD6G772ZXVVJ5NNPF906}
+- {is: exp.v_answer, from: 01M7ETMD6G772ZXVVJ5NNPF906, to: 01M7ET1ZYQTVJP4R10ZBF4ZA9B}
+- {is: v_refer, from: 01M7ETMD6G772ZXVVJ5NNPF906, to: exp.family_axis}
+- {is: v_refer, from: 01M7ETMD6G772ZXVVJ5NNPF906, to: exp.axis_value}
+- {is: v_refer, from: 01M7ETMD6G772ZXVVJ5NNPF906, to: exp.v_axis_of}
+- {is: v_refer, from: 01M7ETMD6G772ZXVVJ5NNPF906, to: exp.v_value_of}
+- {is: v_refer, from: 01M7ETMD6G772ZXVVJ5NNPF906, to: exp.v_denote}
+- {is: v_refer, from: 01M7ETMD6G772ZXVVJ5NNPF906, to: exp.text_injection}
+- {is: v_refer, from: 01M7ETMD6G772ZXVVJ5NNPF906, to: exp.glossary}
+- {is: v_refer, from: 01M7ETMD6G772ZXVVJ5NNPF906, to: exp.v_spell}
+- {is: v_refer, from: 01M7ETMD6G772ZXVVJ5NNPF906, to: ontology.v_compose}
+- {is: v_refer, from: 01M7ETMD6G772ZXVVJ5NNPF906, to: exp.following_text}
+- {is: v_refer, from: 01M7ETMD6G772ZXVVJ5NNPF906, to: exp.evidence}
+- {is: v_refer, from: 01M7ETMD6G772ZXVVJ5NNPF906, to: exp.row_filter}

@@ -1,0 +1,55 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-17T16:30:29.745Z（UTC）
+individuals:
+  01M7N5GYVHFVATAJHSRTMQ9XP6:
+    is: model_utterance
+    display: 発言 1269
+    val:
+      order: 1269
+      text: |
+        A を登録する前に、前提が崩れました。登録も記録もしていません。
+
+        **確かめたこと**
+        体系のすべての「在るようにする位置」（pre で ¬exists、post で exists）について、そこに置かれる種類と、その種類に属する個体を数えました。
+
+        | 動詞の位置 | 置かれる種類 | 個体 |
+        |---|---|---|
+        | v_design の to | programming_language, information_entity_design_to | this_design だけ |
+        | v_compute の to | weights, layer_output, type_check_result など 6 | 0 |
+        | v_learn の new | disposition_learned | 0 |
+        | v_speak の to | place_system | 0 |
+        | ほか 5 つの位置 | なし | 0 |
+
+        在るようにする位置に置かれる個体は、体系全体で **this_design の1つだけ**です。
+        - CSCL（syntax.cscl）は language の下にあり、programming_language ではないので、設計の終点には置かれていません。
+        - 混同に気づいた programming_language には、個体が1つもありません。
+        - git の履歴のコミットメッセージで「設計」が出るのは 3 回だけで、「〜を設計」「〜を計算」の形は 0 回でした。
+
+        このため、履歴から在るようになった時点を取っても、歩みは this_design を作る1つしかできません。F が破れる歩みは、データの上で起こりえません。
+
+        **選べる道**
+        1. **体系に、このリポジトリの実物を個体として足し、そのあとで履歴から観察する。**
+           - 例：cscl、型検査器の各版、決定の文書、型検査の結果。
+           - h_cscl_self_hosting（体系が自分を記述する）の方向と同じです。
+           - ただし、どの個体をどの種類に置くかは私たちが書くので、それを混同の観察より先に、別の作業として済ませる必要があります。
+        2. **種類の水準で、判定できる代わりの手がかりを観察する。**
+           - 例：同じ種類が2つの「在るようにする位置」に置かれている（二重に作られる）。
+           - 混同そのものではなく、その手がかりの観察になります。
+        3. **観察のデータを体系の外に求める。**
+           - 例：日本語の文で「設計する」「計算する」が何を目的語に取るか。
+           - 外のデータの出どころを決める必要があります。
+
+        私は 1 を勧めます。混同の定義は「個体について F が成り立たない」なので、個体が無いままでは観察できません。個体を足す作業は、ほかの法則（動的な動詞の端は持続体、など）の確かめにも使えます。どの道にするか指示してください。
+facts:
+- {is: v_say, from: session_model, to: 01M7N5GYVHFVATAJHSRTMQ9XP6}
+- {is: exp.v_answer, from: 01M7N5GYVHFVATAJHSRTMQ9XP6, to: 01M7N5FDEM5ENCMQBHX52GD0X3}
+- {is: v_refer, from: 01M7N5GYVHFVATAJHSRTMQ9XP6, to: ontology.v_design}
+- {is: v_refer, from: 01M7N5GYVHFVATAJHSRTMQ9XP6, to: exp.programming_language}
+- {is: v_refer, from: 01M7N5GYVHFVATAJHSRTMQ9XP6, to: exp.information_entity_design_to}
+- {is: v_refer, from: 01M7N5GYVHFVATAJHSRTMQ9XP6, to: std.v_compute}
+- {is: v_refer, from: 01M7N5GYVHFVATAJHSRTMQ9XP6, to: exp.layer_output}
+- {is: v_refer, from: 01M7N5GYVHFVATAJHSRTMQ9XP6, to: exp.type_check_result}
+- {is: v_refer, from: 01M7N5GYVHFVATAJHSRTMQ9XP6, to: std.v_learn}
+- {is: v_refer, from: 01M7N5GYVHFVATAJHSRTMQ9XP6, to: exp.disposition_learned}
+- {is: v_refer, from: 01M7N5GYVHFVATAJHSRTMQ9XP6, to: exp.v_speak}
+- {is: v_refer, from: 01M7N5GYVHFVATAJHSRTMQ9XP6, to: exp.place_system}
+- {is: v_refer, from: 01M7N5GYVHFVATAJHSRTMQ9XP6, to: syntax.cscl}

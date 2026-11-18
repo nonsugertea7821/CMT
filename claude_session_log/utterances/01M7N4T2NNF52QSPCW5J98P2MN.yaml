@@ -1,0 +1,61 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-17T16:17:59.989Z（UTC）
+individuals:
+  01M7N4T2NNF52QSPCW5J98P2MN:
+    is: model_utterance
+    display: 発言 1255
+    val:
+      order: 1255
+      text: |
+        原因は、`to: any` が v_compute を ontology.v_design と区別できる唯一の違いになっていることです。2つの動詞は pre・post がまったく同じで、型検査には「動詞の式が同じものを禁じる」法則があります。to を continuant に変えると、その法則で検査が失敗します。
+
+        **再現とスタックトレース**
+        v_compute の to を一時的に `continuant` に書き換え、型検査器の `err` に traceback を出す仕掛けを入れて走らせました。std.yaml は元に戻してあり、作業ツリーは変わっていません。
+
+        ```
+          File "type_checker.py", line 1519, in main
+            T, O, Dm, out = check_all()
+          File "type_checker.py", line 1510, in check_all
+            T, O, Dm = build()
+          File "type_checker.py", line 1495, in build
+            T.check()
+          File "type_checker.py", line 1120, in check
+            err(f"動詞の式が同じ: {ids}")
+
+        err: 動詞の式が同じ: ['ontology.v_design', 'std.v_compute']
+        ```
+
+        型検査器の該当箇所（type_checker.py:1113–1120）は、動詞の式を次の組で比べ、同じ組が2つ以上あれば誤りにします。
+
+        ```python
+        s = tuple(tuple(sorted(map(atom, n.get(k, [])))) for k in ("holds", "pre", "post")) + (n["from"], n["to"], n.get("new_kind"))
+        ```
+
+        2つの動詞の定義は次のとおりで、違うのは to だけです。
+
+        ```yaml
+        v_design:  {from: continuant, to: continuant, pre: [{is: exists, from: to, neg: true}], post: [{is: exists, from: to}]}
+        v_compute: {from: continuant, to: any,        pre: [{is: exists, from: to, neg: true}], post: [{is: exists, from: to}]}
+        ```
+
+        **履歴（git でさかのぼった結果）**
+        1. **11e0862（11/14、記法の試行）**：`compute: {from: continuant, to: any}` が初めて現れます。この時点ではまだ pre・post がありません。なぜ any にしたのかは、コミットにも周りの記述にも書かれていません。
+        2. **c78338e（11/14、動詞を状態の変化として書く試行）**：design と compute が同じ `before: not exists(to)`、`after: exists(to)` になりました。その結果が、所見 f4 として記録されています。
+           > 設計する と 計算する は、終点が持続体か何でもよいかの違いだけで区別されている
+           > → どのように行うか（様態）の違いは、この書き方では表せない
+        3. **c9895cf（11/14）**：「動詞の式が同じ」の検査が入りました。その時点から any を外すと検査が失敗する状態になり、9fca02b で std に移ったあともそのまま続いています。
+
+        **例外の cause**
+        - 根本：計算することと設計することの違いは、作り方（様態）にあります。今の書き方には、それを表す手段がありません。
+        - 直接：区別を残すために、終点の型の違い（continuant と any）で代わりに表しました。
+        - 帰結：「動詞の式が同じ」の法則によって、any が外せなくなっています。
+
+        つまり any は「計算の産物は持続体とは限らない」という内容の主張ではなく、区別を保つための置き換えです。前の返答で書いた演繹では、在るようにする位置にできるのは宣言された個体、つまり持続体です。それに従うと、2つの動詞は式として同じものになります。
+
+        このため、v_compute の to を continuant に直すだけでは済みません。「動的な動詞の端は持続体」の法則を入れる前に、v_design と v_compute の違いを何で書くかを決める必要があります。様態を表す手段を足すか、両者を1つにまとめるかなどが考えられます。どの方向にするかを指示してください。
+facts:
+- {is: v_say, from: session_model, to: 01M7N4T2NNF52QSPCW5J98P2MN}
+- {is: exp.v_answer, from: 01M7N4T2NNF52QSPCW5J98P2MN, to: 01M7N4R6QCAFCYAW7TJ54QQ00Q}
+- {is: v_refer, from: 01M7N4T2NNF52QSPCW5J98P2MN, to: std.v_compute}
+- {is: v_refer, from: 01M7N4T2NNF52QSPCW5J98P2MN, to: ontology.v_design}
+- {is: v_refer, from: 01M7N4T2NNF52QSPCW5J98P2MN, to: ontology.continuant}
+- {is: v_refer, from: 01M7N4T2NNF52QSPCW5J98P2MN, to: syntax.new_kind}

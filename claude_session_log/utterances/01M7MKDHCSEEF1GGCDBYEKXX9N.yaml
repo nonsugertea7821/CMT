@@ -1,0 +1,60 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-17T11:14:03.289Z（UTC）
+individuals:
+  01M7MKDHCSEEF1GGCDBYEKXX9N:
+    is: model_utterance
+    display: 発言 1061
+    val:
+      order: 1061
+      text: |
+        法則の漏れを直して claude/cscl にプッシュしました（7d96acb）。違反は 12 件から 4 件に減っています。(b) の本体は、#89 のマージを待って claude/cross で進めます。#89 はまだマージされていません（CI は成功、衝突なし）。
+
+        **法則の漏れを直した**
+        - 限定に書かれた動詞の上位の動詞の端も、置く根拠に数えるようにしました。
+          - 例：`v_located` は `v_compose` の下位なので、土地は「部分になるもの（持続体）」に置かれます。
+        - これで `land`、`region`、`warehouse`、`fruit`、`fish`、`stock`、`stored_goods` などが置かれました。前回これらを「循環で何も置かない」と書きましたが、それは誤りでした。原因は法則の漏れでした。
+        - 残った違反は、否定だけで定義されたものとその下位の4件です。
+          - `independent_continuant`
+          - `subj.object`（主体でないと示されていない）
+          - `subj.goods`（`v_sell` の終点の型が `object`）
+          - `state_relation`
+
+        **#89 のマージ後に claude/cross で行うこと（(b) の本体）**
+        1. ontology から `independent_continuant` を除く。
+        2. 肯定の限定で置かれているものは、上位を continuant に書き換える。
+           - `subj.agent`（行うもの）、`subj.land`、`subj.region`、`exp.operator`（設計するもの）
+        3. `subj.object` を除く。
+           - `v_sell` の終点の型を `component`（部分になるもの）にする。v_sell の前の状態が「売られるものは売り手の部分である」なので、そこから導けます。
+           - `goods`、`warehouse` の上位は continuant にする（肯定の限定で置かれる）。
+        4. 体系の端の集計（前回の表）を測定の族として記録する。観察として h_ic_is_bearer に反するものとして結び、反証された仮説にする。
+
+        **決めてもらう必要があること**
+        - **subj は実験の入力そのものです。** E10・E11・E13 は、subj.yaml の行をそのままモデルに与えています。
+          - 書き換えると、これらの実験を再実行したときの入力が変わります。
+          - 過去の結果ファイルには、そのとき与えた文面が残っています。記録は失われませんが、再現には過去の版の subj.yaml が要ります。
+          - この扱いでよいですか。
+        - **h_ic_is_bearer の中身が参照先を失います。** 中身は `independent_continuant` を参照しているので、除くと書けなくなります。
+          - 案：仮説は反証されたものとして、除く前の版で記録を確定する。その後で、「独立持続体の種類を除く」という決定に、同じ観察を根拠として付ける。
+        - **state_relation の方向が決まっていません。**
+          - (b) と同じく除くなら、`holds`、`base`、`arity` が述べる先を別のものに替える必要があります。
+          - いまの体系には、状態の関係を置ける肯定の端がありません。基礎の関係（depend、part など）は、ノードではないからです。
+facts:
+- {is: v_say, from: session_model, to: 01M7MKDHCSEEF1GGCDBYEKXX9N}
+- {is: exp.v_answer, from: 01M7MKDHCSEEF1GGCDBYEKXX9N, to: 01M7MKAK9RWHK48KT74FED4DY6}
+- {is: v_refer, from: 01M7MKDHCSEEF1GGCDBYEKXX9N, to: subj.v_located}
+- {is: v_refer, from: 01M7MKDHCSEEF1GGCDBYEKXX9N, to: ontology.v_compose}
+- {is: v_refer, from: 01M7MKDHCSEEF1GGCDBYEKXX9N, to: subj.land}
+- {is: v_refer, from: 01M7MKDHCSEEF1GGCDBYEKXX9N, to: subj.region}
+- {is: v_refer, from: 01M7MKDHCSEEF1GGCDBYEKXX9N, to: subj.warehouse}
+- {is: v_refer, from: 01M7MKDHCSEEF1GGCDBYEKXX9N, to: subj.fruit}
+- {is: v_refer, from: 01M7MKDHCSEEF1GGCDBYEKXX9N, to: subj.fish}
+- {is: v_refer, from: 01M7MKDHCSEEF1GGCDBYEKXX9N, to: subj.stock}
+- {is: v_refer, from: 01M7MKDHCSEEF1GGCDBYEKXX9N, to: subj.stored_goods}
+- {is: v_refer, from: 01M7MKDHCSEEF1GGCDBYEKXX9N, to: subj.goods}
+- {is: v_refer, from: 01M7MKDHCSEEF1GGCDBYEKXX9N, to: subj.v_sell}
+- {is: v_refer, from: 01M7MKDHCSEEF1GGCDBYEKXX9N, to: syntax.state_relation}
+- {is: v_refer, from: 01M7MKDHCSEEF1GGCDBYEKXX9N, to: subj.agent}
+- {is: v_refer, from: 01M7MKDHCSEEF1GGCDBYEKXX9N, to: exp.operator}
+- {is: v_refer, from: 01M7MKDHCSEEF1GGCDBYEKXX9N, to: ontology.component}
+- {is: v_refer, from: 01M7MKDHCSEEF1GGCDBYEKXX9N, to: syntax.holds}
+- {is: v_refer, from: 01M7MKDHCSEEF1GGCDBYEKXX9N, to: syntax.base}
+- {is: v_refer, from: 01M7MKDHCSEEF1GGCDBYEKXX9N, to: syntax.arity}

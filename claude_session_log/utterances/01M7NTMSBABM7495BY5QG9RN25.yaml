@@ -1,0 +1,47 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-17T22:39:35.274Z（UTC）
+individuals:
+  01M7NTMSBABM7495BY5QG9RN25:
+    is: model_utterance
+    display: 発言 1289
+    val:
+      order: 1289
+      text: |
+        端が入れ子になっている語根のうち3つを、広い方の動詞の下位に書き直しました。CI の5つの検査はすべて通り、コミット 65be3d7 として claude/cross に push 済みです。動詞の語根は 56 から 53 に減りました。
+
+        **書き直した語根**
+        - `subj.v_seated`（person→process）を `v_perform`（continuant→occurrent）の下位にしました。
+        - `syntax.v_collect`（kind_collection→continuant）を `v_refer`（continuant→any）の下位にしました。
+        - `std.v_close`（kind_collection→verb_ref）を `v_collect` の下位にしました。verb_ref は continuant の下にあるためです。ここは途中で既存の法則 `specific` が誤りを出したので、それに従って直しました。
+
+        **既存の法則 `specific` では、入れ子を一般には見つけられません**
+        `specific` が今回反応したのは偶然でした。
+        - 法則が比べる式の集まり（r_own / r_acc）には、端の種類が位置（from か to か）の区別なしに入ります。
+        - 今回は、v_refer の from: continuant と v_collect の to: continuant が同じ continuant として重なったので反応しました。
+        - 書き直す前は2つとも occurrent の直下にあり、入れ子なのに何も出ていませんでした。
+
+        そのため「狭い端を持ち、状態の式が同じ語根は、広い方の下位にする」を法則にするには、位置ごとに種類の包含を見る新しい法則が要ります。
+
+        **承認を待っている4組（変更していません）**
+        - design / compute: 違いが `any` だけで、本当の種差がありません。
+        - exp.v_rely（any→any）と ontology.v_depend（con→con）: 層の都合で、depend を exp の動詞の下位にできません。depend を広げるか、rely を depend にまとめるかになります。なお lang の決定 d_sig_depend_* が depend の端の種類を固定しています。
+        - exp.v_immune と lang.v_not_depend
+        - exp.v_not_transfer と lang.v_not_trigger
+
+        次は、位置ごとの包含を見る法則を入れて残りの入れ子を洗い出すのがよいと考えています。これで進めてよいですか。上の4組をどうするかも決めてください。
+facts:
+- {is: v_say, from: session_model, to: 01M7NTMSBABM7495BY5QG9RN25}
+- {is: exp.v_answer, from: 01M7NTMSBABM7495BY5QG9RN25, to: 01M7NTF8DCXQZY0ZM0X36317XS}
+- {is: v_refer, from: 01M7NTMSBABM7495BY5QG9RN25, to: subj.v_seated}
+- {is: v_refer, from: 01M7NTMSBABM7495BY5QG9RN25, to: ontology.v_perform}
+- {is: v_refer, from: 01M7NTMSBABM7495BY5QG9RN25, to: syntax.v_collect}
+- {is: v_refer, from: 01M7NTMSBABM7495BY5QG9RN25, to: syntax.kind_collection}
+- {is: v_refer, from: 01M7NTMSBABM7495BY5QG9RN25, to: ontology.v_refer}
+- {is: v_refer, from: 01M7NTMSBABM7495BY5QG9RN25, to: std.v_close}
+- {is: v_refer, from: 01M7NTMSBABM7495BY5QG9RN25, to: syntax.verb_ref}
+- {is: v_refer, from: 01M7NTMSBABM7495BY5QG9RN25, to: any}
+- {is: v_refer, from: 01M7NTMSBABM7495BY5QG9RN25, to: exp.v_rely}
+- {is: v_refer, from: 01M7NTMSBABM7495BY5QG9RN25, to: ontology.v_depend}
+- {is: v_refer, from: 01M7NTMSBABM7495BY5QG9RN25, to: exp.v_immune}
+- {is: v_refer, from: 01M7NTMSBABM7495BY5QG9RN25, to: lang.v_not_depend}
+- {is: v_refer, from: 01M7NTMSBABM7495BY5QG9RN25, to: exp.v_not_transfer}
+- {is: v_refer, from: 01M7NTMSBABM7495BY5QG9RN25, to: lang.v_not_trigger}

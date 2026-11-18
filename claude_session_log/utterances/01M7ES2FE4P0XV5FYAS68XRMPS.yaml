@@ -1,0 +1,52 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-15T04:57:25.700Z（UTC）
+individuals:
+  01M7ES2FE4P0XV5FYAS68XRMPS:
+    is: model_utterance
+    display: 発言 395
+    val:
+      order: 395
+      text: |
+        `core` の掃除と、AND を関係として明示する書き換えを終えました。検査を通してプッシュ済みで、測定値380、観察69、仮説37、決定17、残り項目20は変わっていません。
+
+        ## `core` の掃除
+
+        `core` に残っていた89ノード（観察・仮説・決定・測定の語彙と、設問・判定・結果ファイルなど）を `exp` へ移しました。
+
+        - **`ontology.yaml` は160ノード**：`core` と `run` で、BFO の区別、基礎の動詞、文法の語、実行の語と、そこから参照されるものだけです。
+        - **`exp.yaml` は種類252、個体179**：実行の記録（`runs/adopt_withdraw.yaml`）は `exp.decision`、`exp.v_adopt` と領域つきで書く形に直しました。
+
+        ## AND を並べない
+
+        `extends` の並びをやめ、並べるとエラーにしました。個体の `is` を並べてもエラーです。両方に当たるものは、「属する」の関係を明示して書きます。
+
+        ```yaml
+        text_and_vector: {ja: 文章と概念ベクトルの併用, extends: text_injection, mod: {of: [is, from], with: concept_vector}}
+        ```
+
+        「文章での注入のうち、概念ベクトルに属するもの」と読みます。`is` はすでにノードなので、新しい語は足していません。限定は1つのままで、法則 `single` に合います。
+
+        これで、前回残った決定の個体も書けました。「本設計の採用済みの決定」（`design_dec_adopted`）などの種類を3つ作り、決定17個はそこに属します。
+
+        ## 残っていること
+
+        - **個体の項目は並んだままです**：`model_15b` の `weights` と `layer`、仮説の `evidence` と `scope` などは、1つの個体に複数書かれています。これも AND の省略に当たります。関係を省かない形にするなら、実行の記録と同じく事実を1つずつ書く（`facts`）ことになります。影響が全個体に及ぶので、手を付けていません。ご判断ください。
+        - **`core` の見出しが古いままです**：「情報」「人工物」などの見出しの下に、数ノードずつ残っています。中身は正しく、並びの整理だけの問題です。
+
+        実験（L20 の学習）は動いています。
+facts:
+- {is: v_say, from: session_model, to: 01M7ES2FE4P0XV5FYAS68XRMPS}
+- {is: exp.v_answer, from: 01M7ES2FE4P0XV5FYAS68XRMPS, to: 01M7ERTWJRTVHCNKA7S84GWG88}
+- {is: v_refer, from: 01M7ES2FE4P0XV5FYAS68XRMPS, to: runtime.run}
+- {is: v_refer, from: 01M7ES2FE4P0XV5FYAS68XRMPS, to: exp.decision}
+- {is: v_refer, from: 01M7ES2FE4P0XV5FYAS68XRMPS, to: exp.v_adopt}
+- {is: v_refer, from: 01M7ES2FE4P0XV5FYAS68XRMPS, to: syntax.extends}
+- {is: v_refer, from: 01M7ES2FE4P0XV5FYAS68XRMPS, to: ontology.is}
+- {is: v_refer, from: 01M7ES2FE4P0XV5FYAS68XRMPS, to: exp.text_and_vector}
+- {is: v_refer, from: 01M7ES2FE4P0XV5FYAS68XRMPS, to: exp.text_injection}
+- {is: v_refer, from: 01M7ES2FE4P0XV5FYAS68XRMPS, to: exp.concept_vector}
+- {is: v_refer, from: 01M7ES2FE4P0XV5FYAS68XRMPS, to: exp.design_dec_adopted}
+- {is: v_refer, from: 01M7ES2FE4P0XV5FYAS68XRMPS, to: std.weights}
+- {is: v_refer, from: 01M7ES2FE4P0XV5FYAS68XRMPS, to: exp.layer}
+- {is: v_refer, from: 01M7ES2FE4P0XV5FYAS68XRMPS, to: exp.evidence}
+- {is: v_refer, from: 01M7ES2FE4P0XV5FYAS68XRMPS, to: std.scope}
+- {is: v_refer, from: 01M7ES2FE4P0XV5FYAS68XRMPS, to: syntax.facts}

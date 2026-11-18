@@ -1,0 +1,56 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-15T05:05:34.642Z（UTC）
+individuals:
+  01M7ESHCXJ1CKHKTEW4CPPX683:
+    is: model_utterance
+    display: 発言 399
+    val:
+      order: 399
+      text: |
+        個体の関係を事実に書き直し、見出しも整理しました。検査を通してプッシュ済みで、測定値380、観察69、仮説37、決定17、残り項目20は変わっていません。
+
+        ## 事実への書き換え
+
+        `exp.yaml` は、種類（`nodes`）、個体（`individuals`）、事実（`facts`）の3つの節になりました。
+
+        ```yaml
+        individuals:
+          model_15b: {is: open_weight_model, ja: Qwen2.5-1.5B-Instruct}
+          h_collision_lowers_following: {is: hyp_supported}
+        facts:
+          - [weights, model_15b, 1500000000]
+          - [layer, model_15b, 28]
+          - [s, h_collision_lowers_following, prior_collision]
+          - [evidence, h_collision_lowers_following, o_e1_redef_below_new_adjacent]
+        ```
+
+        - **1つの事実に1つの関係**：形は `[関係, 始点の個体, 終点]` です。仮説の根拠が5つあれば、事実も5つです。事実は752個になりました。
+        - **個体に書けるのは `is`・`ja`・`val` だけ**：個体に関係を書くとエラーです。
+        - **書ける関係は、これまでどおり種類の式から決まります**：設計の個体に `layer` を書くとエラーです。
+        - **1つしか持てない関係を2つ書くとエラー**：例えば同じモデルに `layer` を2つ書いた場合です。
+
+        検査は、事実を個体ごとに集めた形で読みます。
+
+        ## 見出しの整理
+
+        `ontology.yaml`（160ノード）は18の見出しに分けました。最上位、動詞（静的・大きさを比べる・動的）、文の骨組み、BFO の区別、修飾語、情報と言語、人工物とモデル、過程と実験、文法の語、値と関数、述語論理、個体と事実、実行、実行の戦略、構文糖衣、名前空間です。前回移したノードの残りの見出しと、廃止した `records` の説明も消しました。
+
+        `exp.yaml`（255ノード）は10の見出しに分けました。動詞、修飾語、語と定義、設問、接続手段と教示、使い方、モデルと設計、要因と指標、測定、観察・仮説・決定です。
+
+        ## 気になっている点
+
+        - **測定の族の設定は、終点に構造を持ったままです**：`[axis, e1, {model: {...}, group: [...]}]` のように、軸の展開の仕方を1つの値として書いています。これは族ごとの計算の設定で、関係の並びではないと判断しました。関係として分けるなら、軸ごとに個体を作ることになります。
+        - **事実の書き方が2通りあります**：`runs/` は `"depend(role1, dec1)"` という式の文字列、`exp.yaml` は `[関係, 始点, 終点]` の並びです。`exp` の終点には数や識別子の点が入るので、いまの式の構文（`\w+`）では書けないためです。どちらかに揃えるべきだと考えています。
+
+        実験（L20 の学習）は動いています。
+facts:
+- {is: v_say, from: session_model, to: 01M7ESHCXJ1CKHKTEW4CPPX683}
+- {is: exp.v_answer, from: 01M7ESHCXJ1CKHKTEW4CPPX683, to: 01M7ES9WAC30906ZQ8FDWW1CJK}
+- {is: v_refer, from: 01M7ESHCXJ1CKHKTEW4CPPX683, to: syntax.nodes}
+- {is: v_refer, from: 01M7ESHCXJ1CKHKTEW4CPPX683, to: syntax.individuals}
+- {is: v_refer, from: 01M7ESHCXJ1CKHKTEW4CPPX683, to: syntax.facts}
+- {is: v_refer, from: 01M7ESHCXJ1CKHKTEW4CPPX683, to: exp.open_weight_model}
+- {is: v_refer, from: 01M7ESHCXJ1CKHKTEW4CPPX683, to: exp.hyp_supported}
+- {is: v_refer, from: 01M7ESHCXJ1CKHKTEW4CPPX683, to: exp.prior_collision}
+- {is: v_refer, from: 01M7ESHCXJ1CKHKTEW4CPPX683, to: ontology.is}
+- {is: v_refer, from: 01M7ESHCXJ1CKHKTEW4CPPX683, to: syntax.val}
+- {is: v_refer, from: 01M7ESHCXJ1CKHKTEW4CPPX683, to: exp.layer}

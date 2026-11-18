@@ -1,0 +1,16 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-16T07:58:29.303Z（UTC）
+individuals:
+  01M7HNTQDQ330YTWGX7BE1QWA0:
+    is: model_utterance
+    display: 発言 774
+    val:
+      order: 774
+      text: |
+        ［質問］自己参照を踏まえた案です。型の規則の大半は library/core に CSCL 自身で書いてあり、Python 側は「規則を評価する評価器」と「規則で書けない法則（law_given）」だけです。そこで Python 側を信頼の基点（Lean や Coq の kernel に当たる部分）としてまとめ、tools は役割ごとに分けます。render_expr は表示への変換（コード生成に当たる）なので render、check_line は型検査の入口の一つなので type_checker に入れます。
+          - この案で進める: kernel = 規則の評価器（Facts, evaluate）と読み込み。type_checker と runtime は kernel の上で library/core の規則を当てる。core は自分自身の規則でも検査される。
+          - kernel を分けず type_checker に含める: 評価器と読み込みは type_checker の中に置き、runtime はそこから import する。ファイル分割が少なく、変更が小さい。
+facts:
+- {is: v_say, from: session_model, to: 01M7HNTQDQ330YTWGX7BE1QWA0}
+- {is: exp.v_answer, from: 01M7HNTQDQ330YTWGX7BE1QWA0, to: 01M7HNQJXF84S3DBABMXRV8ECF}
+- {is: v_refer, from: 01M7HNTQDQ330YTWGX7BE1QWA0, to: syntax.law_given}
+- {is: v_refer, from: 01M7HNTQDQ330YTWGX7BE1QWA0, to: lang.type_checker}

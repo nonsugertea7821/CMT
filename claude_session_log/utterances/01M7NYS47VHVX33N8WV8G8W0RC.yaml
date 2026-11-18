@@ -1,0 +1,39 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-17T23:51:51.803Z（UTC）
+individuals:
+  01M7NYS47VHVX33N8WV8G8W0RC:
+    is: model_utterance
+    display: 発言 1355
+    val:
+      order: 1355
+      text: |
+        表は、判断を入れずに観察から規則で分ける手順にし、先に登録してから作りました（登録は 4f2edbe、結果と観察の記録は 9dcafb3。push 済みで、CI の5つの検査も通っています）。
+
+        **分け方**
+        syntax と runtime の式が ontology の語をどの位置で使っているかを数え、次の規則で3つに分けました。
+        - **分類だけ**：上位（extends）の位置でしか使っていない。分類を上の層の側に移せる候補です。
+        - **書き直せる**：動詞としてだけ使っていて、その動詞が基礎の関係ちょうど1つで定義されている。基礎の関係で書き直せる候補です。
+        - **それ以外**：その層の式が、その語の意味を使っています。
+
+        **結果**
+
+        | 層 | 参照する語 | 分類だけ | 書き直せる | それ以外 |
+        |---|---|---|---|---|
+        | runtime | 11 | 5 | 4 | 2 |
+        | syntax | 27 | 3 | 2 | 22 |
+
+        - **runtime**：11 語のうち 9 語は外せる形をしていました。残る2つは次のとおりです。
+          - continuant：動詞の端の種類として使っています。
+          - v_come_before：after の端を入れ替えた定義なので、規則の「書き直せる」に当たりませんでした。
+        - **syntax**：22 語が「それ以外」です。s・p・o（文の位置）、kind、sentence、word、participant など、文法そのものの語が ontology にあり、syntax の式がその意味を使っています。
+        - **基礎の関係**：7 つのうち 6 つ（refer、depend、part、after、involve、exists）が ontology にあり、シグネチャには same しかありません。そのため「基礎の関係で書き直す」としても、書き直した先がまだ ontology にあります。
+
+        **読み**
+        - runtime は、基礎の関係をシグネチャに下ろせば、ほぼ ontology なしで書ける形です。runtime をシグネチャと syntax だけで書く案は、runtime の側では行けそうです。
+        - 組み替えの本体は syntax の側です。syntax は ontology の語の意味を実際に使っています。
+
+        **次の一歩の案**
+        syntax が「それ以外」で使う 22 語を出発点に、その語自身の定義が参照する ontology の語をたどって、閉じた集合を求めます。これも規則で導けます。その集合が「syntax の下に必要な ontology の核」で、シグネチャか syntax に下ろす語の候補になります。大きさを見れば、組み替えがどれだけ重いかが分かります。同じく手順を先に登録してから測ります。進めてよいですか。
+facts:
+- {is: v_say, from: session_model, to: 01M7NYS47VHVX33N8WV8G8W0RC}
+- {is: exp.v_answer, from: 01M7NYS47VHVX33N8WV8G8W0RC, to: 01M7NYEWQXGHRX0F9HHY0CE8N1}
+- {is: v_refer, from: 01M7NYS47VHVX33N8WV8G8W0RC, to: ontology.v_come_before}

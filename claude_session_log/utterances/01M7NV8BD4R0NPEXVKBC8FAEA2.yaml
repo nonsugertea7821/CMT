@@ -1,0 +1,73 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-17T22:50:16.356Z（UTC）
+individuals:
+  01M7NV8BD4R0NPEXVKBC8FAEA2:
+    is: model_utterance
+    display: 発言 1300
+    val:
+      order: 1300
+      text: |
+        手順を先にコミットしてから数え（7506b70）、結果を記録しました（cdcc458、push 済み、CI の5つの検査は通過）。語根は全部で 51 で、そのうち 17 に親になれる別の語根がありました。17 のどれも、その親の下には書かれていません。
+
+        ## 結果
+
+        | 項目 | 数 |
+        |---|---|
+        | 別の語根に包まれる（親になれる語根がある） | 17 |
+        | そのうち、親の式が真に小さい（式が同じでない） | 15 |
+        | そのうち、親が端に any を持つ | 14 |
+        | 包む語根がすでに上位にある | **0 / 17** |
+        | 上位にない親を、今の層から使える | 12 / 17 |
+
+        ## 見えたこと
+
+        **1. 式を持つ動詞はどれも、ほかの式を持つ動詞の下に書かれていない。**
+        - 語根はすべて occurrent のすぐ下にあり、ほかの語根の下で式を足す書き方は一度も使われていません。
+        - 原因は、下位の動詞が上位の式に原子を足す手段が文法にないことだと考えています。前回「文法上の穴になりそう」と言った点です。
+        - 確かめたのは「使われていない」ことまでです。書けないことはまだ確かめていません。
+
+        **2. 親が使えない層にあるのは 5 つで、どれも親のほうが上の層にある。**
+        - `ontology.v_depend`、`subj.v_begin`、`subj.v_end` の親は `exp.v_rely` です。
+        - `ontology.v_trigger` の親は `exp.v_transfer` です。
+        - `ontology.v_design` の親は `std.v_compute` です。
+        - 前回の見込みどおり、基礎の関係を動詞にしただけのもの（v_rely・v_transfer）が exp に置かれているせいで逆転しています。
+
+        **3. 意味の上でも筋の通る親子が出てきた。** これらは包含の判定から機械的に出たもので、狙って探したものではありません。
+        - 水準が同じ（v_level）は、「後でない」かつ「前でない」の下に入ります。
+        - 近い（v_near）は、水準が同じ（v_level）の下に入ります。
+        - 答える（v_answer）は、「後に来る」かつ「述べる」の下に入ります。
+        - 発話する（v_speak）は、設計する（v_design）の下に入ります。
+        - 教える（v_teach）は、触れさせる（v_expose）の下に入ります。
+        - 表す（v_express）は、依存する（v_depend）の下に入ります。
+
+        **4. 親が2つあるものがある。**
+        - v_answer や v_level の親は、互いに上下関係のない2つです。
+        - 今の文法は extends を並べることを禁じており、AND は「属する」（is）での限定で書くことになっています。この形をどう書くかも決める必要があります。
+
+        **注意**
+        包含は原子の集まりで見ただけで、法則を通した含みは入れていません。登録の前に、端に any を持つ動詞の式を見て、いくつかの親子を見込んでいました（手順の説明に書いてあります）。
+
+        ## 次の候補
+        - **A（文法）**: 下位の動詞が上位の式に原子を足せるようにします。式は上位すべての式と自分の原子の「かつ」になります。実行器もそれに合わせます。これで 12 組を親の下に書けるようになり、親が2つの場合もここで扱えます。
+        - **B（層）**: any→any で原子が1つの動詞（v_rely、v_transfer と、その否定 v_immune、v_not_transfer）を ontology に下ろします。残りの5つのうち4つが解けます。v_design と v_compute の組は、種差が書かれていない問題として残ります。
+
+        A を先にやるのがよいと考えます。B は A ができてから同じ書き方で下ろせるからです。どちらで進めますか。
+facts:
+- {is: v_say, from: session_model, to: 01M7NV8BD4R0NPEXVKBC8FAEA2}
+- {is: exp.v_answer, from: 01M7NV8BD4R0NPEXVKBC8FAEA2, to: 01M7NV52WNN7E9M6HD02WY72ZY}
+- {is: v_refer, from: 01M7NV8BD4R0NPEXVKBC8FAEA2, to: ontology.v_depend}
+- {is: v_refer, from: 01M7NV8BD4R0NPEXVKBC8FAEA2, to: subj.v_begin}
+- {is: v_refer, from: 01M7NV8BD4R0NPEXVKBC8FAEA2, to: subj.v_end}
+- {is: v_refer, from: 01M7NV8BD4R0NPEXVKBC8FAEA2, to: exp.v_rely}
+- {is: v_refer, from: 01M7NV8BD4R0NPEXVKBC8FAEA2, to: ontology.v_trigger}
+- {is: v_refer, from: 01M7NV8BD4R0NPEXVKBC8FAEA2, to: exp.v_transfer}
+- {is: v_refer, from: 01M7NV8BD4R0NPEXVKBC8FAEA2, to: ontology.v_design}
+- {is: v_refer, from: 01M7NV8BD4R0NPEXVKBC8FAEA2, to: std.v_compute}
+- {is: v_refer, from: 01M7NV8BD4R0NPEXVKBC8FAEA2, to: ontology.v_level}
+- {is: v_refer, from: 01M7NV8BD4R0NPEXVKBC8FAEA2, to: exp.v_near}
+- {is: v_refer, from: 01M7NV8BD4R0NPEXVKBC8FAEA2, to: exp.v_answer}
+- {is: v_refer, from: 01M7NV8BD4R0NPEXVKBC8FAEA2, to: exp.v_speak}
+- {is: v_refer, from: 01M7NV8BD4R0NPEXVKBC8FAEA2, to: exp.v_teach}
+- {is: v_refer, from: 01M7NV8BD4R0NPEXVKBC8FAEA2, to: exp.v_expose}
+- {is: v_refer, from: 01M7NV8BD4R0NPEXVKBC8FAEA2, to: ontology.v_express}
+- {is: v_refer, from: 01M7NV8BD4R0NPEXVKBC8FAEA2, to: exp.v_immune}
+- {is: v_refer, from: 01M7NV8BD4R0NPEXVKBC8FAEA2, to: exp.v_not_transfer}

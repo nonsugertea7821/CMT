@@ -1,0 +1,83 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-15T03:34:38.023Z（UTC）
+individuals:
+  01M7EMAW67GWE65TA67K0CNSR7:
+    is: model_utterance
+    display: 発言 372
+    val:
+      order: 372
+      text: |
+        3点とも検査に入れ、プッシュしました（ノード363）。順に報告します。なお、MIT ライセンスのコミットは取り込み済みです。
+
+        ## 1. `mod` の並びと `extends`
+
+        ご懸念は実データで確認できました。既存のノードに、より具体的な概念があるのに抽象的な位置に置かれていたものが10個ありました（例：「正本の取り決め」が「決定」の下ではなく「定義」の直下にあった）。
+
+        入れたものは次の3つです。
+
+        - **`extends` に複数の上位を並べられる**：並べたものは AND です。「定義文と適用例」は `extends: [定義文, 適用例だけ]` になりました。
+        - **法則 `monotone`**：階層を降りるたびに限定が増えること。
+        - **法則 `specific`**：自分の限定の一部だけで書ける概念が別にあれば、必ずその下に置くこと。限定がまったく同じなら同じ概念としてエラーにします。
+
+        10個はすべて置き直しました。
+
+        やっていないことが1つあります。`mod` を2つ以上並べる書き方そのものは禁止していません。まだ69個のノードが2つ以上並べています。禁止すると、中間の概念を69個ほど新しく作り、それぞれに表示語を付ける必要があります。機械的に名前を付けると語彙が荒れるので、止めてあります。法則 `specific` があるので、中間の概念が後から作られた時点で、下位は自動的にその下へ移すよう求められます。
+
+        **決めていただきたい点**：`mod` の複数並びを今すぐ全面禁止にするか、この「後から中間が出来たら強制的に降ろす」方式で進めるか、です。私は後者を推します。
+
+        ## 2. 名前空間
+
+        - **書き方**：識別子は `領域.名前` です。領域を書かなければ `core` です。
+        - **法則 `unique_in_domain`**：表示語は同じ領域の中だけで重複を禁じます。
+        - **法則 `layered`**：ノードが参照できるのは、自分の領域と、`uses` に挙げた領域だけです。循環する `uses` は書けません。
+        - **語の解決**：領域を書かない語は、その領域、`core`、ほかの領域にただ1つ、の順に探します。
+
+        実例として `run` 領域を作り、実行まわりの21ノードを移しました。`run.state` の表示語を「状態」に戻せました（`core` の `status` と同じ表示語ですが、領域が違うので通ります）。法則 `layered` が「`core` から `run` を参照している」と指摘してきたので、それに従って移した形です。
+
+        測定結果と実験記録を名前空間の下にオントロジーとして書く統合は、まだやっていません。`claims.yaml` と `measurements.yaml` は別ファイルのままです。
+
+        ## 3. 実行戦略と実行時の意味論
+
+        疑惑は当たっていました。`run_spec.py` に書き込まれていた決まりが7つありました。うち1つ（別々の位置には別の個体を割り当てる）は、私自身が意識せずに入れていたものです。
+
+        これらを `run` 領域のノードとして定義し、`runtime` の節で選択する形にしました。
+
+        | 語 | いまの選択 |
+        |---|---|
+        | `world`（書かれていない文の扱い） | 成り立たないとみなす |
+        | `pre_rule`（前の状態の確かめ方） | すべて成り立つこと |
+        | `post_rule`（後の状態の作り方） | 否定の文を取り除き、肯定の文を加える |
+        | `law_check`（法則を確かめる時点） | 1歩ごと |
+        | `binding`（個体の割り当て方） | 位置ごとに別の個体 |
+        | `choice`（動詞の選び方） | 実行の記録が与える |
+        | `progress`（当てはまるとみなす条件） | 前の状態が成り立ち、後の状態がまだ成り立っていない |
+
+        実行の検査は、実装のない選択が書かれていればエラーにします。
+
+        構文糖衣は、式の書き方（`not depend(new, to)` の形）を `syntax` の節に移し、両方の検査がそこから読むようにしました。部分の名前（`not`、`base`、`from`、`to`）はノードの識別子です。
+
+        限界は2つあります。
+
+        - 選択肢ごとの実装は検査プログラムの中にあります。体系が決めるのは「どれを選ぶか」までです。
+        - 書き方の定義は正規表現で、EBNF ではありません。YAML の構造そのもの（並びと対応表）も `syntax` には入っていません。EBNF 化は見送りました。
+
+        ## 実験
+
+        コンテナの再起動で止まっていた単一層（L20）のベクトル学習を再開しました。
+facts:
+- {is: v_say, from: session_model, to: 01M7EMAW67GWE65TA67K0CNSR7}
+- {is: exp.v_answer, from: 01M7EMAW67GWE65TA67K0CNSR7, to: 01M7EDDQCWCHSGCSFJA5CMJZ01}
+- {is: v_refer, from: 01M7EMAW67GWE65TA67K0CNSR7, to: syntax.mod}
+- {is: v_refer, from: 01M7EMAW67GWE65TA67K0CNSR7, to: syntax.extends}
+- {is: v_refer, from: 01M7EMAW67GWE65TA67K0CNSR7, to: runtime.run}
+- {is: v_refer, from: 01M7EMAW67GWE65TA67K0CNSR7, to: runtime.runtime}
+- {is: v_refer, from: 01M7EMAW67GWE65TA67K0CNSR7, to: syntax.world}
+- {is: v_refer, from: 01M7EMAW67GWE65TA67K0CNSR7, to: runtime.pre_rule}
+- {is: v_refer, from: 01M7EMAW67GWE65TA67K0CNSR7, to: runtime.post_rule}
+- {is: v_refer, from: 01M7EMAW67GWE65TA67K0CNSR7, to: runtime.law_check}
+- {is: v_refer, from: 01M7EMAW67GWE65TA67K0CNSR7, to: runtime.binding}
+- {is: v_refer, from: 01M7EMAW67GWE65TA67K0CNSR7, to: runtime.choice}
+- {is: v_refer, from: 01M7EMAW67GWE65TA67K0CNSR7, to: runtime.progress}
+- {is: v_refer, from: 01M7EMAW67GWE65TA67K0CNSR7, to: syntax.not}
+- {is: v_refer, from: 01M7EMAW67GWE65TA67K0CNSR7, to: syntax.base}
+- {is: v_refer, from: 01M7EMAW67GWE65TA67K0CNSR7, to: syntax.from}
+- {is: v_refer, from: 01M7EMAW67GWE65TA67K0CNSR7, to: syntax.to}

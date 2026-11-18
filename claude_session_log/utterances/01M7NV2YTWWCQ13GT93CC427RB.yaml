@@ -1,0 +1,57 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-17T22:47:19.644Z（UTC）
+individuals:
+  01M7NV2YTWWCQ13GT93CC427RB:
+    is: model_utterance
+    display: 発言 1297
+    val:
+      order: 1297
+      text: |
+        はい、ただし「同じ式を含む関係すべての親」という形でなら成り立ちます。
+
+        **理由**
+        - 動詞が表す関係は「from に置ける種類 × to に置ける種類のうち、式 F が成り立つ組」の集まりです。
+        - 端を狭めるか、F に条件を足すと、この集まりは小さくなります。
+        - だから any→any で式 F を持つ動詞は、F を含む式を持つ動詞すべての親になります。
+        - 式まで最も弱くすれば、文字どおり全ての関係の親です。体系にはそれがすでにあり、`ontology.p`（any→any、成り立つのは exists(from) と exists(to) だけ）がそれに当たります。
+
+        **今の体系で見えること（端に any を持つ動詞を一覧した結果）**
+        - any→any で原子が1つだけの動詞は4つあり、すべて exp にあります。
+          - `v_rely` = depend(from, to)
+          - `v_transfer` = depend(to, from)
+          - `v_immune` = ¬depend(from, to)
+          - `v_not_transfer` = ¬depend(to, from)
+        - これらは基礎の関係 depend そのもの（向きを逆にしたもの・否定したもの）を動詞にしただけで、種差を持ちません。最も情報の少ない動詞が、いちばん上の層にあることになります。v_rely と v_depend の組が解けなかったのは、この層の逆転のためです。
+        - 式を含むかどうかで見ると、ほかにも親子が見えます。
+          - `v_trigger`・`v_cause`・`v_raise`・`v_lower` は depend(to, from) を含むので、`v_transfer` の下に入ります。
+          - `v_measure`・`v_begin`・`v_end` は depend(from, to) を含むので、`v_rely` の下に入ります。
+          - `v_measure` は refer を含み、端も内側なので、`v_refer` の下にも入ります。
+        - `std.v_compute`（con→any）も同じように読めます。この `any` は、「在らなかったものを在るようにする」動詞すべての親として振る舞っています。v_compute は計算ではなく「作る」という類そのもので、計算の種差は書かれていない、という前の発見と同じ形です。
+
+        **ここから言えること（まだ確かめていない見込み）**
+        1. any→any で原子1つの動詞は、基礎の関係と同じ一番下の層に、関係・向き・否定ごとに1つずつ置くのが筋です。v_depend（con→con）はその下位になり、案Bが自然に出てきます。
+        2. 今回書いた法則 nested_ends は、式が同じ場合だけを扱う特別な場合です。一般には、親子の順序は「端が内側にあり、かつ式が相手の式を含む」で決まります。
+        3. 2 を法則にするには、下位の動詞が上位の式に原子を足せる（上位の式に足した分の両方が成り立つ）書き方が要ります。今の実行器は、いちばん近い上位の式だけを使い、式を積み上げないので、そこが文法上の穴になりそうです。この点はまだ確かめていません。
+
+        **注意**
+        ここで言う「含む」は、原子の集まりの包含で見ただけです。法則を通して出てくる含み（例えば depend_end_exists から exists が出る）まで入れると、親子はもっと増えます。
+
+        次の一手は、全ての語根について、式の包含と端の包含で親になれる語根を数え、今の extends とどれだけずれているかを観察することだと考えます。手順を先にコミットしてから数えますが、進めてよいですか。
+facts:
+- {is: v_say, from: session_model, to: 01M7NV2YTWWCQ13GT93CC427RB}
+- {is: exp.v_answer, from: 01M7NV2YTWWCQ13GT93CC427RB, to: 01M7NV1GSNADFEA6JEKH8QBG08}
+- {is: v_refer, from: 01M7NV2YTWWCQ13GT93CC427RB, to: ontology.p}
+- {is: v_refer, from: 01M7NV2YTWWCQ13GT93CC427RB, to: exp.v_rely}
+- {is: v_refer, from: 01M7NV2YTWWCQ13GT93CC427RB, to: exp.v_transfer}
+- {is: v_refer, from: 01M7NV2YTWWCQ13GT93CC427RB, to: exp.v_immune}
+- {is: v_refer, from: 01M7NV2YTWWCQ13GT93CC427RB, to: exp.v_not_transfer}
+- {is: v_refer, from: 01M7NV2YTWWCQ13GT93CC427RB, to: ontology.v_depend}
+- {is: v_refer, from: 01M7NV2YTWWCQ13GT93CC427RB, to: ontology.v_trigger}
+- {is: v_refer, from: 01M7NV2YTWWCQ13GT93CC427RB, to: exp.v_cause}
+- {is: v_refer, from: 01M7NV2YTWWCQ13GT93CC427RB, to: exp.v_raise}
+- {is: v_refer, from: 01M7NV2YTWWCQ13GT93CC427RB, to: exp.v_lower}
+- {is: v_refer, from: 01M7NV2YTWWCQ13GT93CC427RB, to: syntax.v_measure}
+- {is: v_refer, from: 01M7NV2YTWWCQ13GT93CC427RB, to: subj.v_begin}
+- {is: v_refer, from: 01M7NV2YTWWCQ13GT93CC427RB, to: subj.v_end}
+- {is: v_refer, from: 01M7NV2YTWWCQ13GT93CC427RB, to: ontology.v_refer}
+- {is: v_refer, from: 01M7NV2YTWWCQ13GT93CC427RB, to: std.v_compute}
+- {is: v_refer, from: 01M7NV2YTWWCQ13GT93CC427RB, to: any}

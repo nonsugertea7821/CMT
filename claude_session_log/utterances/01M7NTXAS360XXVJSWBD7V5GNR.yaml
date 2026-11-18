@@ -1,0 +1,58 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-17T22:44:15.267Z（UTC）
+individuals:
+  01M7NTXAS360XXVJSWBD7V5GNR:
+    is: model_utterance
+    display: 発言 1295
+    val:
+      order: 1295
+      text: |
+        ## 残り4組に `specific` が刺さらなかった理由
+
+        理由は2つあり、どちらか1つだけでも4組は検出されません。
+
+        1. **`specific` は概念にしか掛からない。** 規則 `concept_kind` は「自分で holds・pre を書くもの」を概念から外します。4組の8つはどれも自分で式を書く語根なので、最初から候補になりません。v_close に刺さったのは、書き直して holds を消したことで概念になったからです。
+        2. **端を名前でしか比べない。** 端の種類は位置（from か to か）の区別なしに名前のまま積まれ、包含も見ません。広い方の `any` は狭い方の `continuant` と別の名前なので、「相手にしかない式がある」と判定され、違反になりません。v_close のときも、v_refer の from: continuant と v_collect の to: continuant が名前だけで重なった偶然でした。
+
+        ## 進めたこと
+
+        - **位置ごとに包含を見る法則 `nested_ends` を書いた。** 状態の式が同じ語根どうしで、from・to・new_kind がどれも相手の内側にあるなら、自分で式を書かず相手の下位の動詞にする、という法則です。当てはめると、ちょうど残りの4組だけが引っかかり、ほかには何も出ませんでした。
+        - **2組はそのまま直せたので直した（コミット 7cfa3ab、push 済み、CI の5つの検査は通過）。** lang は exp を使う層なので、下位に書けます。
+          - `lang.v_not_depend` を `exp.v_immune` の下位にしました。
+          - `lang.v_not_trigger` を `exp.v_not_transfer` の下位にしました。
+        - **法則そのものはまだコミットしていない。** 残り2組が違反し CI が落ちるためです。パッチとして `/tmp/claude-0/-home-user-CMT/e05d2140-ce91-515f-a5fb-e6251e13d406/scratchpad/nested_ends.patch` に置き、作業ツリーは元に戻しました。
+
+        ## 決めてほしい2組
+
+        どちらも、狭い方が ontology にあり、広い方の std・exp を見られません。そのため「広い方の下位にする」直し方ができません。
+
+        **1. `ontology.v_depend`（con→con）と `exp.v_rely`（any→any）**
+        - v_rely の使われ方6件のうち3件は、端に生起体が来ます（例: usage_explain → text_injection）。v_rely の `any` は実際に必要です。
+        - 案A: ontology の v_depend の端を any に広げ、v_rely を v_depend にまとめる。lang の決定 d_sig_depend_* が depend の端の種類を固定しているので、その決定を見直すことになります。
+        - 案B: ontology に any→any の依存の動詞を置き、v_depend と v_rely をその下位にする。
+
+        **2. `ontology.v_design`（con→con）と `std.v_compute`（con→any）**
+        - v_compute の終点として使われているもの（層の出力・埋め込み・型検査の結果）は、どれも持続体です。`any` は使われていません。
+        - to を continuant に狭めると、式が v_design と同じになり、「動詞の式が同じ」の誤りが出ます。これは前に見た、種差が書かれていない問題そのものです。
+        - 計算に固有の関係（入力への依存など）を何で書くか決めないと解けません。前に試した depend(to, from) は、v_speak と式が同じになりました。
+
+        この2組の方針をもらえれば、法則のパッチと一緒に直してコミットします。
+facts:
+- {is: v_say, from: session_model, to: 01M7NTXAS360XXVJSWBD7V5GNR}
+- {is: exp.v_answer, from: 01M7NTXAS360XXVJSWBD7V5GNR, to: 01M7NTR56SRZ9RKPYWVJHH26KA}
+- {is: v_refer, from: 01M7NTXAS360XXVJSWBD7V5GNR, to: std.v_close}
+- {is: v_refer, from: 01M7NTXAS360XXVJSWBD7V5GNR, to: any}
+- {is: v_refer, from: 01M7NTXAS360XXVJSWBD7V5GNR, to: ontology.continuant}
+- {is: v_refer, from: 01M7NTXAS360XXVJSWBD7V5GNR, to: ontology.v_refer}
+- {is: v_refer, from: 01M7NTXAS360XXVJSWBD7V5GNR, to: syntax.v_collect}
+- {is: v_refer, from: 01M7NTXAS360XXVJSWBD7V5GNR, to: syntax.new_kind}
+- {is: v_refer, from: 01M7NTXAS360XXVJSWBD7V5GNR, to: lang.v_not_depend}
+- {is: v_refer, from: 01M7NTXAS360XXVJSWBD7V5GNR, to: exp.v_immune}
+- {is: v_refer, from: 01M7NTXAS360XXVJSWBD7V5GNR, to: lang.v_not_trigger}
+- {is: v_refer, from: 01M7NTXAS360XXVJSWBD7V5GNR, to: exp.v_not_transfer}
+- {is: v_refer, from: 01M7NTXAS360XXVJSWBD7V5GNR, to: ontology.v_depend}
+- {is: v_refer, from: 01M7NTXAS360XXVJSWBD7V5GNR, to: exp.v_rely}
+- {is: v_refer, from: 01M7NTXAS360XXVJSWBD7V5GNR, to: exp.usage_explain}
+- {is: v_refer, from: 01M7NTXAS360XXVJSWBD7V5GNR, to: exp.text_injection}
+- {is: v_refer, from: 01M7NTXAS360XXVJSWBD7V5GNR, to: ontology.v_design}
+- {is: v_refer, from: 01M7NTXAS360XXVJSWBD7V5GNR, to: std.v_compute}
+- {is: v_refer, from: 01M7NTXAS360XXVJSWBD7V5GNR, to: exp.v_speak}

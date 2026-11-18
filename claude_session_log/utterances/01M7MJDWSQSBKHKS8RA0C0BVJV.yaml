@@ -1,0 +1,75 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-17T10:56:46.391Z（UTC）
+individuals:
+  01M7MJDWSQSBKHKS8RA0C0BVJV:
+    is: model_utterance
+    display: 発言 1036
+    val:
+      order: 1036
+      text: |
+        「進めて」の5項目を claude/cross に入れてプッシュしました（b8d8c34）。型検査・実行検査・同期テストはすべて通っています。claude/cross にはまだ PR がないので、CI は走っていません。
+
+        **1. 否定を「示されていない」にした（syntax）**
+        - `neg` / `not` を、事実へ述べる修飾語 `refer_from_facts` で定義し直しました。偽であるとは、閉世界を前提に置いた領域でだけ言えます。
+        - 加えたもの：`world`、`closed_world`、`open_world`、動詞 `v_presume`（領域が前提として置く）。
+        - `grammar.runtime` から `world` を外しました。
+
+        **2. 閉世界を領域ごとの宣言にした**
+        - syntax・runtime・std の3領域が、それぞれ `{is: v_presume, from: 自分, to: closed_world}` と書いています。
+        - 新しい法則 `world_declared`：否定を前提に使う法則は、その領域が閉世界を置くときだけ当てはめます。
+        - 確かめたこと：std の宣言を外すと、std で否定を前提に使う法則がエラーになりました（出力の末尾で確認できた4件は closed_under_mod_back、closed_under_mod_some、op_defined、closed_op_by_mod）。
+        - 他の領域の前提を置く宣言や、1つの領域に2つの前提を置く宣言もエラーにしています。
+
+        **3. 実行器が runtime の前提を読むようにした**
+        - 開世界では、否定の pre や expect、halted を「決められない」と報告します。
+        - 書かれていない肯定の文は、どちらの世界でも成り立つとは言いません。
+        - 否定を前提に使う法則は、閉世界のときだけ当てはめます。
+        - 確かめたこと：runtime を一時的に open_world に変えると、adopt_withdraw.yaml が想定どおり「決められない」で失敗しました。元に戻すと通ります。
+
+        **4. 型検査器の否定の扱いを見直した**
+        - 上位・根拠・役割・部分の判定から否定の修飾語を外している処理は、「示されていない」と矛盾しないので、変えていません。示されていないものは上位でも根拠でもないからです。
+        - 「閉世界」を理由に挙げていたエラー文1つと、docstring・コメント3つの書き方だけ直しました。
+
+        **5. シグネチャの分類表を作り直した**
+        否定の修飾語は、動詞自身の関係ではなく `refer` を足すものとし、否定の先の `with` は追わない形にしました。
+
+        | | ontology | syntax | runtime | std | exp | lang |
+        |---|---|---|---|---|---|---|
+        | refer有/動 | 0 | 0 | 17 | 17 | 218 | 5 |
+        | refer有/静 | 24 | **102** | 6 | 6 | 56 | 4 |
+        | refer無/動 | 1 | 0 | 1 | 4 | 10 | 0 |
+        | refer無/静 | 28 | 2 | 0 | 1 | 26 | 0 |
+
+        - 前の表で syntax の 67 個が「動」になっていたのは、`natural_language` の否定（「設計されていない」）を通じて `v_design` の変化が流れ込んでいたためでした。その影響は消え、syntax は 104 個中 102 個が refer有/静 になりました。例外は `individuals` と `v_use` だけです。
+        - ontology は、refer無/静（28）と refer有/静（24：information_entity、sentence、word、definition、language など）にほぼ半々で分かれます。層を分ける候補として見る価値がありそうですが、まだ判断はしていません。
+
+        **途中で直したこと**
+        - claims の `runtime` が、同じ名前の節ノード runtime.runtime に解決されていました。いまは名前ではなく型で決めます。同じ名前の種類と個体があれば、動詞のその位置に当てはまる方を取ります。
+
+        **気をつけてほしい点**
+        - d_cscl_closed_world の中身が変わったので、同期すると issue の定義が変わります。下書きで差分が出たのはこれだけです。
+        - 既存の穴：法則 `specific` は from と to の値を位置で区別していません。そのため `v_presume` を `v_depend` の下に置けず、`v_refer` の下にしました。
+        - 層の問題はまだ残っています。
+          - ontology/axiom が syntax の語 `domain` と `v_use` を使っていて、法則 layered はこれを捕まえません。
+          - LAYERS がコードに直書きされています。
+          - `uses_in` が `v_use` を特別扱いしています。
+          - lang が exp に依存しています。
+
+        claude/cross の PR（2つのコミット：named_mod と今回の変更）を作ってよいですか。PR #88（claude/exp）とは exp.yaml で衝突する可能性があります。
+facts:
+- {is: v_say, from: session_model, to: 01M7MJDWSQSBKHKS8RA0C0BVJV}
+- {is: exp.v_answer, from: 01M7MJDWSQSBKHKS8RA0C0BVJV, to: 01M7MJ097PDFB7C4HSBK5GE8MV}
+- {is: v_refer, from: 01M7MJDWSQSBKHKS8RA0C0BVJV, to: syntax.neg}
+- {is: v_refer, from: 01M7MJDWSQSBKHKS8RA0C0BVJV, to: syntax.not}
+- {is: v_refer, from: 01M7MJDWSQSBKHKS8RA0C0BVJV, to: syntax.refer_from_facts}
+- {is: v_refer, from: 01M7MJDWSQSBKHKS8RA0C0BVJV, to: syntax.world}
+- {is: v_refer, from: 01M7MJDWSQSBKHKS8RA0C0BVJV, to: syntax.closed_world}
+- {is: v_refer, from: 01M7MJDWSQSBKHKS8RA0C0BVJV, to: syntax.v_presume}
+- {is: v_refer, from: 01M7MJDWSQSBKHKS8RA0C0BVJV, to: syntax.with}
+- {is: v_refer, from: 01M7MJDWSQSBKHKS8RA0C0BVJV, to: ontology.natural_language}
+- {is: v_refer, from: 01M7MJDWSQSBKHKS8RA0C0BVJV, to: ontology.v_design}
+- {is: v_refer, from: 01M7MJDWSQSBKHKS8RA0C0BVJV, to: syntax.individuals}
+- {is: v_refer, from: 01M7MJDWSQSBKHKS8RA0C0BVJV, to: ontology.information_entity}
+- {is: v_refer, from: 01M7MJDWSQSBKHKS8RA0C0BVJV, to: runtime.runtime}
+- {is: v_refer, from: 01M7MJDWSQSBKHKS8RA0C0BVJV, to: ontology.v_depend}
+- {is: v_refer, from: 01M7MJDWSQSBKHKS8RA0C0BVJV, to: ontology.v_refer}
+- {is: v_refer, from: 01M7MJDWSQSBKHKS8RA0C0BVJV, to: syntax.domain}

@@ -1,0 +1,35 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-15T05:43:08.249Z（UTC）
+individuals:
+  01M7EVP5PS3JBCWD68SYR87HD2:
+    is: model_utterance
+    display: 発言 438
+    val:
+      order: 438
+      text: |
+        はい、そう読みました。どちらも「その仮説が誤っているかもしれない」という中身なので、事実として書き、プッシュしました（76d22af）。検査は通っています。仮説は 37 から 38 になりました。
+
+        **書き方**
+        - 動詞を1つ足しました。`v_challenge`（疑いを向ける）で、始点は `doubt`（仮説へ疑いを向ける文）、終点は仮説です。
+        - 観察でも仮説でも、文であれば疑いを向けられます。
+        - 状態の判定（支持・反証）には入れていません。反証ではなく「可能性」の段階だからです。
+
+        **1件目: 数の照合**
+        - 対象は `h_scratchpad_raises_rule_following`（途中経過を書き出すと、規則型の再定義への追従が上がる）で、15B では反証済みです。
+        - これに、新しい仮説 `h_number_comparison_lowers_rule_following` が疑いを向けます。
+          - 中身: 数の大小の照合（新しいノード `number_comparison`）が、追従を下げる。
+          - 適用範囲: 15B、規則型、途中経過の書き出し。
+          - 状態: 未検証。目で読んだだけなので、留保「数値化していない」を付けています。
+        - つまり「反証されたのは、条件の読み取りではなく数の照合でつまずいたからかもしれない」という形です。
+
+        **2件目: 注意の薄まり**
+        - 既にある観察 `o_e7_head_of_55_no_drop`（55個の定義の先頭に置いても落ちない）が、`h_attention_causes_preceding_effect`（前に並ぶ定義による低下は注意機構による）に疑いを向けます。
+
+        否定の検査として、モデルの個体を疑いの位置に置くと落ちることを確かめました。
+
+        1件目で疑われる側は既に反証済みなので、厳密には「反証の判定そのものへの疑い」です。今の書き方では、疑いの対象を仮説の主張と判定とで分けていません。分ける必要が出たら足します。
+facts:
+- {is: v_say, from: session_model, to: 01M7EVP5PS3JBCWD68SYR87HD2}
+- {is: exp.v_answer, from: 01M7EVP5PS3JBCWD68SYR87HD2, to: 01M7EVJX2PGMT1M184QFFZFJCC}
+- {is: v_refer, from: 01M7EVP5PS3JBCWD68SYR87HD2, to: exp.v_challenge}
+- {is: v_refer, from: 01M7EVP5PS3JBCWD68SYR87HD2, to: exp.doubt}
+- {is: v_refer, from: 01M7EVP5PS3JBCWD68SYR87HD2, to: exp.number_comparison}

@@ -1,0 +1,48 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-16T08:36:58.418Z（UTC）
+individuals:
+  01M7HR16DJS8WYN496H9S17FPJ:
+    is: model_utterance
+    display: 発言 838
+    val:
+      order: 838
+      text: |
+        ご指摘のとおりで、二重に混ざっていました。axiom の名前空間にあるノード（std を含む）を、実際に1つずつ分類してみました。
+
+        **分け方の案（下ほど上の層に依存する）**
+
+        | 層 | 中身 | 数 |
+        |---|---|---|
+        | **axiom** | ノードを持たない。base の関係7つ（exists, depend, part, after, involve, same, refer）、axes、grammar の語の並び、文法だけに関わる法則 | 0 |
+        | **ontology** | continuant／occurrent、依存持続体・質・役割・過程・情報・人工物などの上位分類、base の関係に直接対応する動詞（v_depend, v_compose, v_refer, v_come_after など）、is／p | 40 |
+        | **syntax**（仮称） | CSCL が自分の書き方について述べる語。expression_part 以下（extends, mod, from, holds…）、法則（laws, law_rule…）、節（section, base, nodes…）、値と関数、論理の語、domain, v_use, kind_collection, verb_ref, display, gloss など | 77 |
+        | **runtime** | いまの run.* と runtime 節、書き換えの規則、実行器 | 23 |
+        | **std** | ontology の上に定義される一般の概念。仮説、実験、適用範囲、モデル、重み、推論、概念、閉集合、合成、測る・計算する・学習する など | 36 |
+
+        分類の一覧（ノードごと）はこちらに置きました。
+        `/tmp/claude-0/-home-user-CMT/e05d2140-ce91-515f-a5fb-e6251e13d406/scratchpad/split.md`
+
+        **決めたい点が3つあります**
+        1. **文法の語の置き場所**
+           - いまは「grammar に並べた語は、すべてノードであること」を axiom が求めています。この語の説明（`extends` は「上位の指定」で、情報の一種、など）は ontology の上に定義されるので、axiom が上の層を参照することになります。
+           - 案: axiom の grammar はただの語の並びにします。それぞれの語に概念を与えるのは syntax 層の役目にして、「grammar の語はすべて syntax で定義されている」という検査は syntax 側に置きます。
+        2. **言語学的な概念（language, word, sentence, definition, passage, natural_language）の層**
+           - syntax が使うので（display は word の一種、laws は sentence の一種）、std ではなく syntax 側に置く必要があります。上の表の数はこれを std に数えています。
+        3. **依存の順番**
+           - axiom → ontology → syntax → runtime → std → exp/subj/lang、で良いか確認させてください。
+           - いまの std にある閉集合（closed_set）は kind_collection（syntax）の下位なので、std は syntax より上の層になります。
+
+        この3点と一覧の分類で問題なければ、この順番で移します。移したあとで、ノード数、法則の書き換えテスト、測定値 608 が変わらないことを確かめます。
+facts:
+- {is: v_say, from: session_model, to: 01M7HR16DJS8WYN496H9S17FPJ}
+- {is: exp.v_answer, from: 01M7HR16DJS8WYN496H9S17FPJ, to: 01M7HQZKBKS2JF3W7BHB7Y5X0E}
+- {is: v_refer, from: 01M7HR16DJS8WYN496H9S17FPJ, to: ontology.v_depend}
+- {is: v_refer, from: 01M7HR16DJS8WYN496H9S17FPJ, to: ontology.v_compose}
+- {is: v_refer, from: 01M7HR16DJS8WYN496H9S17FPJ, to: ontology.v_refer}
+- {is: v_refer, from: 01M7HR16DJS8WYN496H9S17FPJ, to: ontology.v_come_after}
+- {is: v_refer, from: 01M7HR16DJS8WYN496H9S17FPJ, to: syntax.expression_part}
+- {is: v_refer, from: 01M7HR16DJS8WYN496H9S17FPJ, to: syntax.law_rule}
+- {is: v_refer, from: 01M7HR16DJS8WYN496H9S17FPJ, to: syntax.kind_collection}
+- {is: v_refer, from: 01M7HR16DJS8WYN496H9S17FPJ, to: syntax.verb_ref}
+- {is: v_refer, from: 01M7HR16DJS8WYN496H9S17FPJ, to: syntax.extends}
+- {is: v_refer, from: 01M7HR16DJS8WYN496H9S17FPJ, to: ontology.natural_language}
+- {is: v_refer, from: 01M7HR16DJS8WYN496H9S17FPJ, to: std.closed_set}

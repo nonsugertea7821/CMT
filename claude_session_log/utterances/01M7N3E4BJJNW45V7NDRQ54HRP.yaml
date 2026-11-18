@@ -1,0 +1,80 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-17T15:53:59.922Z（UTC）
+individuals:
+  01M7N3E4BJJNW45V7NDRQ54HRP:
+    is: model_utterance
+    display: 発言 1224
+    val:
+      order: 1224
+      text: |
+        外れた 25 個を調べると、散らばっているのではなく、ほとんどが同じ所から来ていました。
+
+        **1. 外れの根は、ontology の3つの動詞だけ**
+
+        ontology の語のうち、refer を holds に持つのは `v_refer`（述べる）と `v_agree`（一致する）の2つだけです。pre/post を持つのは `v_design`（設計する）だけです。外れ 25 個のうち 21 個は、たどるとこの3つのどれかに行き着きます。
+
+        | 外れ | 届く道筋（いちばん短いもの） |
+        |---|---|
+        | ontology.v_refer、v_agree | 自分が refer を持つ |
+        | ontology.information_entity | → v_refer（限定 `{of: [v_refer, from]}`） |
+        | ontology.language、natural_language | → information_entity → v_refer |
+        | ontology.word、concept、sentence など 7 | → information_entity の下位 → v_refer |
+        | ontology.definition、role、refer_from_concept | → v_refer |
+        | runtime.state、halted | → information_entity → v_refer |
+        | runtime.rewrite_rule、refer_from_post、refer_from_laws、role_depend_from_rewrite_rule | → v_refer |
+        | ontology.v_design | 自分が pre/post を持つ |
+
+        - 「refer の分類」とは、事実上「v_refer か v_agree に届く」ことです。ontology の 14 と runtime の 6 の外れは、どちらも v_refer をどこに置くかという、ひとつの問いに帰着します。
+        - refer はシグネチャ（axiom）の基礎の関係で、`system_act: true` の印が付いています。それを使う動詞 v_refer だけが ontology にあり、情報・言語・語・概念の語彙がすべてその上に立っています。
+        - runtime.state は「事実を部分に持つ情報」と定義されています。定義そのものには変化がなく、記述の語です。halted は state の下位です。
+
+        **2. v_design は、ontology の中で唯一の「変わる」語**
+
+        - pre/post は「在らない → 在る」で、ほかの生まれる動詞と同じ形です。
+        - 肯定で使っているのは exp の4つだけです。ontology の中では、natural_language（設計されていない言語）が否定で使っているだけです。
+        - 否定を not self と読むと、ontology は v_design の変化を持ち込まずに済みます。そのため、v_design は ontology の中で、ほかの語とつながらない場所にあります。
+
+        **3. syntax の still 4 個は性質が違う**
+
+        | ノード | 定義 | still になる理由 |
+        |---|---|---|
+        | not_compose_from_mod | v_compose の否定の限定（neg） | not self の読みでは、使うのは same と self だけ |
+        | not_before_from、not_after_from | 否定の動詞 v_not_before / v_not_after の限定 | holds が after の否定だけで、refer に届かない |
+        | individuals | `form: [is, from]` だけ | 測り方の限り。辺のたどり方に form を入れていない。たどれば ontology.is → ontology.kind に行くが、まだ測っていない |
+
+        - 前の3つは「否定だけで書かれた限定」です。述べも変わりもしない分類に入るのは、2 の読みからの帰結どおりです。
+        - individuals は、測り方を直してから判断する必要があります。
+
+        **まとめ**
+        - 外れは 25 個ありますが、問いは3つに縮みます。
+          1. v_refer（と v_agree）は ontology か、それとも refer の分類か。これで外れの 20 個が決まります。
+          2. v_design は ontology に置くか、変化の分類か。
+          3. 否定だけで書かれた限定は、syntax に置くか。
+        - どれもシグネチャから計算した分類と、今の置き場の食い違いです。1 については、「述べる」を存在論の語として置いたことが、層の境界を一つの語に集めている、と読めます。
+
+        ここまでは観察だけで、まだ何も変えていません。この3つの問いを一つずつ演繹していくか、まず individuals の測り方を直して表を取り直すか、どちらから進めますか。
+facts:
+- {is: v_say, from: session_model, to: 01M7N3E4BJJNW45V7NDRQ54HRP}
+- {is: exp.v_answer, from: 01M7N3E4BJJNW45V7NDRQ54HRP, to: 01M7N3CVE18GGFAY1YXNVY5SFB}
+- {is: v_refer, from: 01M7N3E4BJJNW45V7NDRQ54HRP, to: ontology.v_refer}
+- {is: v_refer, from: 01M7N3E4BJJNW45V7NDRQ54HRP, to: ontology.v_agree}
+- {is: v_refer, from: 01M7N3E4BJJNW45V7NDRQ54HRP, to: ontology.v_design}
+- {is: v_refer, from: 01M7N3E4BJJNW45V7NDRQ54HRP, to: ontology.information_entity}
+- {is: v_refer, from: 01M7N3E4BJJNW45V7NDRQ54HRP, to: ontology.language}
+- {is: v_refer, from: 01M7N3E4BJJNW45V7NDRQ54HRP, to: ontology.natural_language}
+- {is: v_refer, from: 01M7N3E4BJJNW45V7NDRQ54HRP, to: ontology.word}
+- {is: v_refer, from: 01M7N3E4BJJNW45V7NDRQ54HRP, to: ontology.definition}
+- {is: v_refer, from: 01M7N3E4BJJNW45V7NDRQ54HRP, to: ontology.refer_from_concept}
+- {is: v_refer, from: 01M7N3E4BJJNW45V7NDRQ54HRP, to: runtime.state}
+- {is: v_refer, from: 01M7N3E4BJJNW45V7NDRQ54HRP, to: runtime.rewrite_rule}
+- {is: v_refer, from: 01M7N3E4BJJNW45V7NDRQ54HRP, to: runtime.refer_from_post}
+- {is: v_refer, from: 01M7N3E4BJJNW45V7NDRQ54HRP, to: runtime.refer_from_laws}
+- {is: v_refer, from: 01M7N3E4BJJNW45V7NDRQ54HRP, to: runtime.role_depend_from_rewrite_rule}
+- {is: v_refer, from: 01M7N3E4BJJNW45V7NDRQ54HRP, to: syntax.system_act}
+- {is: v_refer, from: 01M7N3E4BJJNW45V7NDRQ54HRP, to: syntax.not_compose_from_mod}
+- {is: v_refer, from: 01M7N3E4BJJNW45V7NDRQ54HRP, to: ontology.v_compose}
+- {is: v_refer, from: 01M7N3E4BJJNW45V7NDRQ54HRP, to: syntax.not_before_from}
+- {is: v_refer, from: 01M7N3E4BJJNW45V7NDRQ54HRP, to: syntax.not_after_from}
+- {is: v_refer, from: 01M7N3E4BJJNW45V7NDRQ54HRP, to: ontology.v_not_before}
+- {is: v_refer, from: 01M7N3E4BJJNW45V7NDRQ54HRP, to: ontology.v_not_after}
+- {is: v_refer, from: 01M7N3E4BJJNW45V7NDRQ54HRP, to: ontology.is}
+- {is: v_refer, from: 01M7N3E4BJJNW45V7NDRQ54HRP, to: ontology.kind}

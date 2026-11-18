@@ -1,0 +1,47 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-17T10:20:18.856Z（UTC）
+individuals:
+  01M7MGB4H8Q8X0XXTCA45KP1GG:
+    is: model_utterance
+    display: 発言 981
+    val:
+      order: 981
+      text: |
+        先行研究の観察を、論文の表と本文から書き写して #88 に足しました。CI は2つとも成功しています。
+
+        **何を足したか**
+        - 種類 `prior_observation`（観察の一種）と、動詞 `v_report`（先行研究 → 観察）を足しました。
+        - 報告値は `exp/experiments/results/prior/` の結果ファイル9本に置きました。出典の表・節は各ファイルの `_source` に書いてあります。
+        - 測定の族は1本に1つ（`pr_*`）で、値は既存の `mean_value` で読みます。
+        - 観察は16件で、検査ではどれも成り立ちます。
+
+        **主な観察**
+
+        | 先行研究 | 観察 |
+        |---|---|
+        | CoLLEGe | GRE で 44.5% > プロンプト 21.8%。実在の語の 75% には届かない |
+        | Poiroux | 型検査で絞る 45.1% > greedy 31.0% |
+        | Liu | 中央 53.8% は、先頭 75.8%、末尾 63.2%、文書なし 56.1% のどれより低い |
+        | WinoDict | 新語に置き換えると 78.6%。元の 95.6% より低い |
+        | Stringli | 覚えた値に引きずられる割合は、405B 93.3% > 70B 73.3%（大きいモデルほど引きずられる） |
+        | Goworek | 再定義で、求めた語 0% → 59%、元の語 18% → 2% |
+        | Babaei Giglou | オントロジーの公理を入れると、72B は 45.7 → 60.3 に上がり、0.5B は 39.7 → 34.7 に下がる |
+        | Cartridges | self-study 33.5 > 次トークン予測 24.9 |
+
+        観察は仮説の根拠に繋いでいないので、仮説の状態は変わりません。
+
+        **入れなかった値**
+        数値が図にしかないもの（Wang、Goworek の文どうしの影響、Cartridges の文脈内学習の値）は、読み取り値になるので入れていません。PR 本文には、書き写す範囲として書きました。
+
+        **確かめたこと**
+        - 型検査、実行の検査、同期のテストは成功しました。
+        - 観察の向きを1つ逆にすると、検査が失敗します。
+        - 観察を足す前後で、生成される issue の本文は変わりません。
+
+        **途中で直したこと**
+        最初の push では結果ファイルが入らず、CI が落ちました。手元の `.git/info/exclude` で除外されていたためです。ファイルを強制的に追加し直し、CI の成功を確認しました。
+facts:
+- {is: v_say, from: session_model, to: 01M7MGB4H8Q8X0XXTCA45KP1GG}
+- {is: exp.v_answer, from: 01M7MGB4H8Q8X0XXTCA45KP1GG, to: 01M7MFZ2NAX6B7HYKPJ6EAK784}
+- {is: v_refer, from: 01M7MGB4H8Q8X0XXTCA45KP1GG, to: exp.prior_observation}
+- {is: v_refer, from: 01M7MGB4H8Q8X0XXTCA45KP1GG, to: exp.v_report}
+- {is: v_refer, from: 01M7MGB4H8Q8X0XXTCA45KP1GG, to: exp.mean_value}

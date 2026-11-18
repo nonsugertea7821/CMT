@@ -1,0 +1,32 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-17T11:14:49.464Z（UTC）
+individuals:
+  01M7MKEYFRXMW3DRHTAEB1RPTQ:
+    is: model_utterance
+    display: 発言 1063
+    val:
+      order: 1063
+      text: |
+        了解しました。subj の扱いはこのとおりにし、h_ic_is_bearer は案どおりに進めます。
+
+        #89 はまだマージされていません（main は 2f5c34e のまま）。マージされると通知が来るので、そこで claude/cross を main から作り直し、次の順に進めます。
+
+        1. 端の集計を測定の族として記録する。
+           - 集計のスクリプトと結果ファイルを置き、観察「依存される側は、ほとんどが独立持続体でない」を加えます。
+           - この観察を h_ic_is_bearer に反するものとして結び、反証された仮説にします。この時点では、まだ独立持続体を除く前の版です。
+        2. 「独立持続体の種類を除く」という決定を加え、同じ観察を根拠にする。
+        3. (b) の書き換えをする。
+           - 除くもの：`independent_continuant`、`subj.object`
+           - 上位を continuant にするもの：agent、land、region、operator、goods、warehouse
+           - `v_sell` の終点の型を `component` にする。
+        4. claude/cscl にある法則 placed_deduced とシグネチャの記録を、claude/cross に取り込む。
+
+        ただし `state_relation` の扱いがまだ決まっていません。このままだと法則の違反が1件残り、新しい PR の CI は赤になります。前回挙げたとおり、除くなら `holds`・`base`・`arity` が述べる先を何に替えるかを決める必要があります。マージまでに方向を決めてもらえれば、そこまで含めて1つの PR にします。
+facts:
+- {is: v_say, from: session_model, to: 01M7MKEYFRXMW3DRHTAEB1RPTQ}
+- {is: exp.v_answer, from: 01M7MKEYFRXMW3DRHTAEB1RPTQ, to: 01M7MKEGJ45NA0JQRCZ5VK2Y47}
+- {is: v_refer, from: 01M7MKEYFRXMW3DRHTAEB1RPTQ, to: subj.v_sell}
+- {is: v_refer, from: 01M7MKEYFRXMW3DRHTAEB1RPTQ, to: ontology.component}
+- {is: v_refer, from: 01M7MKEYFRXMW3DRHTAEB1RPTQ, to: syntax.state_relation}
+- {is: v_refer, from: 01M7MKEYFRXMW3DRHTAEB1RPTQ, to: syntax.holds}
+- {is: v_refer, from: 01M7MKEYFRXMW3DRHTAEB1RPTQ, to: syntax.base}
+- {is: v_refer, from: 01M7MKEYFRXMW3DRHTAEB1RPTQ, to: syntax.arity}

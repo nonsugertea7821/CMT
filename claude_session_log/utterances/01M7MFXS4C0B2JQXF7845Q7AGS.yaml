@@ -1,0 +1,40 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-17T10:13:01.196Z（UTC）
+individuals:
+  01M7MFXS4C0B2JQXF7845Q7AGS:
+    is: model_utterance
+    display: 発言 971
+    val:
+      order: 971
+      text: |
+        先行研究7本を個体にし、主張を書き写して仮説と機械的に比べました。PR #88 にまとめています。
+
+        https://github.com/nonsugertea7821/CMT/pull/88
+
+        **加えた7本**
+        - **枠組みが近いもの:** Cartridges、CoLLEGe。
+        - **形式の体系を LLM につなぐもの:**
+          - Lenat & Marcus（Cyc）
+          - KnowLA、Coppolillo（KG を埋め込みにして入れる）
+          - Babaei Giglou（オントロジーの公理をプロンプトに入れる）
+          - Poiroux（型検査で形式化を絞る）
+
+        **比較で導けた関係**
+        - **CoLLEGe は `h_apply_does_not_transfer_to_paraphrase` と反対でした。**
+          - CoLLEGe は、新しい語の埋め込みが用法をまたいで効く、と報告しています。私たちの結果は、単一層ベクトルでは適用から言い換えへ転移しない、でした。
+          - 条件が3点違います。新語か再定義か、入力埋め込みか残差への加算か、メタ学習した生成器か一語ごとの学習か。
+          - この食い違いは「言い換えの用法が足りない」という見立てとつながるので、いちばん調べる価値があります。
+        - **Poiroux は、新しい仮説 `h_typecheck_feedback_raises_writing`（型検査の結果を返すと、書いた CSCL の正しさが上がる）と同じ向きでした。**
+
+        ほかの5本は、主張が対象にしているもの（課題の成績、推論をたどれること）が、私たちの仮説の対象と違います。そのため比べられず、向きの関係は付けていません。
+
+        **確かめたこと**
+        - 型検査・実行の検査・同期のテストは、ローカルで通りました。
+        - issue の定義のハッシュは変わりません。変わるのは、上の仮説1件の「先行研究」節だけです。新しく増える issue は、新しい仮説の1件だけです。
+        - PR を作った後の CI は、まだ確認していません。
+
+        主張の書き写しは要旨によるもので、本文は読んでいません。
+
+        前に提案した、言い換えの用法についての仮説3つは、まだ登録していません。CoLLEGe との反対が、その検証の動機を強めています。続けて登録してよいですか。
+facts:
+- {is: v_say, from: session_model, to: 01M7MFXS4C0B2JQXF7845Q7AGS}
+- {is: exp.v_answer, from: 01M7MFXS4C0B2JQXF7845Q7AGS, to: 01M7MFSM1A24D9ZA9FHEJZ5JTY}

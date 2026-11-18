@@ -1,0 +1,18 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-16T08:08:58.103Z（UTC）
+individuals:
+  01M7HPDXFQXEXAAAM9VXZFZZT2:
+    is: model_utterance
+    display: 発言 795
+    val:
+      order: 795
+      text: |
+        直しました。いまは CI が通っています。
+
+        失敗していた理由は、CI の設定（.github/workflows/spec.yml）が古いパスの `tools/check_spec.py` と `tools/run_spec.py` を呼んでいたことです。フォルダを分けたときに、ここを直し忘れていました。体系の検査そのものが失敗していたわけではありません。
+
+        直さないとだめか、については、直すべきでした。このままだと、main に取り込んだ後も、push のたびに CI が失敗し続けます。
+
+        CI の設定は言語側の基盤なので、claude/cscl で新しいパスに直しました。それを claude/exp に取り込んで push しています。新しい実行では、型検査も実行の記録の検査も成功しました。PR #1 のチェックも、この実行の結果に置き換わるはずです。
+facts:
+- {is: v_say, from: session_model, to: 01M7HPDXFQXEXAAAM9VXZFZZT2}
+- {is: exp.v_answer, from: 01M7HPDXFQXEXAAAM9VXZFZZT2, to: 01M7HPCDNAJPP8CT5SM4ARMXPD}

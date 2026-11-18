@@ -1,0 +1,68 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-14T23:04:58.809Z（UTC）
+individuals:
+  01M7E4X45SR03D98YD23EVDJ50:
+    is: model_utterance
+    display: 発言 317
+    val:
+      order: 317
+      text: |
+        ご指摘のとおりでした。前回は「語 → ノード」の対応表を置いただけで、`ja` や `of` という語そのものはノードではありませんでした。記録の項目は「項目名＝ノードの識別子」にしたのに、文法の語だけ別の扱いになっていました。直して、検査を通し、プッシュ済みです（ノード343）。
+
+        ## 直した内容
+
+        - **文法の語はすべてノードの識別子**：`ja`、`gloss`、`extends`、`of`、`with`、`neg`、`mod`、`val`、`cmp`、`quant`、`at` などは、その名前のノードが定義されています。節の名前（`base`、`axes`、`nodes`、`records`、`grammar`、`laws`）や、`gt`／`ge`／`lt`／`le`、`not`／`all`／`any`／`between`、`number`／`literal` も同じです。
+        - **対応表を廃止**：`grammar` の節は、節ごとに使える語を並べるだけになりました。並んだ語がノードでなければ検査がエラーにします。
+
+        ## 同音異義が見つかったので改名したもの
+
+        語をノードにしたところ、同じ語が別の意味で使われている箇所が3つ出ました。
+
+        | 以前の語 | 問題 | 改名 |
+        |---|---|---|
+        | 動詞の `before`／`after` | 基礎の関係 `after`（後ろにある）と同じ語 | `pre`／`post` |
+        | 軸の `from` | 位置の `from`（始点）と同じ語 | `source` |
+        | 軸の `values` | ノード `value` と単複だけが違う | `value` |
+        | 法則の `of` | 修飾の `of`（位置の指定）と同じ語 | `scope` |
+
+        ノードと動詞・修飾の `from`／`to`／`new` は、位置そのものを指す1つの意味に揃えました。`from: continuant` は「始点の位置に来るものは持続体」と読みます。
+
+        ## 残っていること
+
+        - **新しいノードの定義は粗い**：検査は「未定義でない・重複しない・型が合う」までしか見ていません。たとえば `gt` は「後ろに置かれる、の始点を占める関数」と書いただけです。
+        - **凍結した文書は古い語のまま**：`docs/design.md` などは `before`／`after` のままです。正本ではない扱いなので触っていません。
+facts:
+- {is: v_say, from: session_model, to: 01M7E4X45SR03D98YD23EVDJ50}
+- {is: exp.v_answer, from: 01M7E4X45SR03D98YD23EVDJ50, to: 01M7E4RTMCM8V9K59CGVR6PFJE}
+- {is: v_refer, from: 01M7E4X45SR03D98YD23EVDJ50, to: syntax.of}
+- {is: v_refer, from: 01M7E4X45SR03D98YD23EVDJ50, to: syntax.gloss}
+- {is: v_refer, from: 01M7E4X45SR03D98YD23EVDJ50, to: syntax.extends}
+- {is: v_refer, from: 01M7E4X45SR03D98YD23EVDJ50, to: syntax.with}
+- {is: v_refer, from: 01M7E4X45SR03D98YD23EVDJ50, to: syntax.neg}
+- {is: v_refer, from: 01M7E4X45SR03D98YD23EVDJ50, to: syntax.mod}
+- {is: v_refer, from: 01M7E4X45SR03D98YD23EVDJ50, to: syntax.val}
+- {is: v_refer, from: 01M7E4X45SR03D98YD23EVDJ50, to: syntax.cmp}
+- {is: v_refer, from: 01M7E4X45SR03D98YD23EVDJ50, to: syntax.quant}
+- {is: v_refer, from: 01M7E4X45SR03D98YD23EVDJ50, to: syntax.at}
+- {is: v_refer, from: 01M7E4X45SR03D98YD23EVDJ50, to: syntax.base}
+- {is: v_refer, from: 01M7E4X45SR03D98YD23EVDJ50, to: syntax.axes}
+- {is: v_refer, from: 01M7E4X45SR03D98YD23EVDJ50, to: syntax.nodes}
+- {is: v_refer, from: 01M7E4X45SR03D98YD23EVDJ50, to: syntax.grammar}
+- {is: v_refer, from: 01M7E4X45SR03D98YD23EVDJ50, to: syntax.laws}
+- {is: v_refer, from: 01M7E4X45SR03D98YD23EVDJ50, to: syntax.gt}
+- {is: v_refer, from: 01M7E4X45SR03D98YD23EVDJ50, to: syntax.ge}
+- {is: v_refer, from: 01M7E4X45SR03D98YD23EVDJ50, to: syntax.lt}
+- {is: v_refer, from: 01M7E4X45SR03D98YD23EVDJ50, to: syntax.le}
+- {is: v_refer, from: 01M7E4X45SR03D98YD23EVDJ50, to: syntax.not}
+- {is: v_refer, from: 01M7E4X45SR03D98YD23EVDJ50, to: syntax.all}
+- {is: v_refer, from: 01M7E4X45SR03D98YD23EVDJ50, to: any}
+- {is: v_refer, from: 01M7E4X45SR03D98YD23EVDJ50, to: syntax.between}
+- {is: v_refer, from: 01M7E4X45SR03D98YD23EVDJ50, to: syntax.number}
+- {is: v_refer, from: 01M7E4X45SR03D98YD23EVDJ50, to: syntax.literal}
+- {is: v_refer, from: 01M7E4X45SR03D98YD23EVDJ50, to: syntax.pre}
+- {is: v_refer, from: 01M7E4X45SR03D98YD23EVDJ50, to: syntax.post}
+- {is: v_refer, from: 01M7E4X45SR03D98YD23EVDJ50, to: syntax.from}
+- {is: v_refer, from: 01M7E4X45SR03D98YD23EVDJ50, to: syntax.source}
+- {is: v_refer, from: 01M7E4X45SR03D98YD23EVDJ50, to: syntax.value}
+- {is: v_refer, from: 01M7E4X45SR03D98YD23EVDJ50, to: std.scope}
+- {is: v_refer, from: 01M7E4X45SR03D98YD23EVDJ50, to: syntax.to}
+- {is: v_refer, from: 01M7E4X45SR03D98YD23EVDJ50, to: syntax.new}

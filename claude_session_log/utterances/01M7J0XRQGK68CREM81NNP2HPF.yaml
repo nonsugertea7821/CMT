@@ -1,0 +1,22 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-16T11:12:23.280Z（UTC）
+individuals:
+  01M7J0XRQGK68CREM81NNP2HPF:
+    is: model_utterance
+    display: 発言 943
+    val:
+      order: 943
+      text: |
+        言語の規則の変更ではありません。tc の実装が言語の規則に従っていない、という不具合です。言い方を間違えました。
+
+        - **規則:** syntax.yaml の `derive` の定義には、もともと「この動詞の事実は、中身の比較から導けなければならない」と書いてあります。主張が書かれていなければ、何からも導けません。したがって規則のとおりなら、検査は失敗になるはずです。
+        - **実装:** tc の `check_derived`（`cscl/bootstrap/type_checker/type_checker.py:427`）は、始点が何も述べていないときは確かめずに通します。docstring にも「確かめない」と書き、`if claims and ...` の条件で素通りさせています。
+        - **原因:** #86 で私がこう書きました。主張をまだ書いていない6本の関係を通すためでした。規則のほうではなく、実装を都合に合わせてしまっていました。
+
+        直すのは tc の実装だけです。この素通りをやめて、導けない事実はすべて失敗にします。いまの #85 には主張から導いた関係しか残っていないので、この修正を入れても #85 の検査は通るはずです。
+
+        claude/cscl でこの修正の PR を出してよいですか。
+facts:
+- {is: v_say, from: session_model, to: 01M7J0XRQGK68CREM81NNP2HPF}
+- {is: exp.v_answer, from: 01M7J0XRQGK68CREM81NNP2HPF, to: 01M7J0XD9C8QWK060V3MQ9YM52}
+- {is: v_refer, from: 01M7J0XRQGK68CREM81NNP2HPF, to: syntax.derive}
+- {is: v_refer, from: 01M7J0XRQGK68CREM81NNP2HPF, to: lang.type_checker}

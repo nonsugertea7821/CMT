@@ -1,0 +1,36 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-17T10:59:43.288Z（UTC）
+individuals:
+  01M7MJK9HRP2QRS249C993CYWA:
+    is: model_utterance
+    display: 発言 1043
+    val:
+      order: 1043
+      text: |
+        #88 を閉じて、claude/cross に統合しました。統合した PR は #89 です（https://github.com/nonsugertea7821/CMT/pull/89）。
+
+        **統合でしたこと**
+        - claude/exp を claude/cross にマージしました（コミット 5a61af4）。
+        - 衝突は exp.yaml の `concept_vector` の1か所だけでした。名前を付けた修飾語 `depend_from_label_token_positions` を使う形で解消しています。
+        - マージすると、法則 `named_mod` がエラーを出しました。#88 で加えた `unseen_relation` と既存の `unseen_genus` が、同じ限定（教えられたと示されていない）を足していたためです。修飾語 `not_teach_from` を作って、両方からそれを使うようにしました。
+        - 型検査・実行検査・同期テストは、ローカルではすべて通っています。
+
+        **issue の下書き（main と比べた差分）**
+        想定どおりのものだけでした。
+        - 定義が変わるのは `d_cscl_closed_world` だけです。
+        - `h_apply_does_not_transfer_to_paraphrase` に「先行研究」節が増えます。これは #88 から来たものです。
+        - 新しい仮説3つの issue が増えます。
+
+        **GitHub 上の操作**
+        - #88 には、統合先と統合で変えた点を書いたコメントを付けてから閉じました。
+        - #89 の本文には、named_mod、否定と閉世界、#88 の統合、残っている問題（`specific` の穴と層の問題）を書きました。
+
+        **CI**
+        今回のプッシュで CI の check は2回動きました。1回目は成功しています。2回目はまだ実行中で、結果は出ていません。#89 の通知を受け取るよう登録したので、失敗したら知らせが来ます。
+facts:
+- {is: v_say, from: session_model, to: 01M7MJK9HRP2QRS249C993CYWA}
+- {is: exp.v_answer, from: 01M7MJK9HRP2QRS249C993CYWA, to: 01M7MJGD8XRMHNKRB2J7YPBQWV}
+- {is: v_refer, from: 01M7MJK9HRP2QRS249C993CYWA, to: exp.concept_vector}
+- {is: v_refer, from: 01M7MJK9HRP2QRS249C993CYWA, to: exp.depend_from_label_token_positions}
+- {is: v_refer, from: 01M7MJK9HRP2QRS249C993CYWA, to: exp.unseen_relation}
+- {is: v_refer, from: 01M7MJK9HRP2QRS249C993CYWA, to: exp.unseen_genus}
+- {is: v_refer, from: 01M7MJK9HRP2QRS249C993CYWA, to: exp.not_teach_from}

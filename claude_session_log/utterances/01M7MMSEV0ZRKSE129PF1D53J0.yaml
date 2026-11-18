@@ -1,0 +1,55 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-17T11:38:02.464Z（UTC）
+individuals:
+  01M7MMSEV0ZRKSE129PF1D53J0:
+    is: model_utterance
+    display: 発言 1100
+    val:
+      order: 1100
+      text: |
+        いいえ、exists・not・refer の3つだけにはなりません。ただし、真偽と否定と世界、つまり論理の部分はその3つに収まります。シグネチャは消えず、「述べられる文」の条件として残ります。今の体系の法則を並べて確かめました（体系は変えていません）。
+
+        **1. 論理の部分は、exists・refer・not と same に収まる**
+        - 真偽は refer の値（公理の真偽の軸）です。
+        - 偽と述べることは、refer が false を持つことです。
+        - not は、refer がないこと（記録についての文）です。基礎の関係ではありません。
+        - 世界は、述べていない文に真偽を述べるかどうかの文です。
+        - **same は残ります。** 法則 part_antisymmetric は same を導き、unique_names のような名前の法則も same を使います。これは exists・refer・not からは作れません。公理の層は、もともと exists・same・refer の3つです。
+
+        **2. ものの関係（depend・part・after・involve）は残る**
+        法則を並べると、どれも自分自身を使っています。
+
+        | 関係 | 法則 |
+        |---|---|
+        | part | 推移（part∧part ⇒ part）、反対称（両向きなら same） |
+        | after | 推移、非対称（after(a,b) ⇒ not after(b,a)） |
+        | depend | exists(x) ∧ depend(x,y) ⇒ exists(y) |
+        | involve | exists(x) ∧ involve(x,y) ⇒ exists(y) |
+
+        推移や反対称は、その関係自身がなければ書けないので、exists・refer・not には落とせません。
+
+        **3. シグネチャが残る理由**
+        depend と involve は、法則の形がまったく同じです。違いはシグネチャにしかありません。
+
+        | | 始点 | 終点 |
+        |---|---|---|
+        | v_depend | 持続体 | 持続体 |
+        | v_involve | 生起体 | 持続体 |
+
+        つまり、法則が区別しないことを、シグネチャが区別しています。シグネチャを除くと、この2つは見分けられなくなります。
+
+        **4. 「述べる」の見方では、シグネチャは「述べられる条件」になる**
+        - V(a, b) を真とも偽とも述べるには、a と b が V の端に合っていなければなりません。シグネチャは、真偽より前の、文として述べられるかの条件です。
+        - 「述べられていない」には条件がありません。
+        - refer 自身の終点は `any`（何でも）です。何を述べられるかの制限は、述べられる側の各動詞のシグネチャが持っています。
+
+        **ここから出てくる候補（まだ変えていません）**
+        1. involve は「始点が生起体である depend」として導けるかもしれません。法則の形が同じで、シグネチャの始点だけが違うからです。仮説として記録し、使われ方を数えて確かめるのが筋だと考えます。
+        2. after_asymmetric の結論「not after(b,a)」は、今の読み方では「述べられていない」です。閉世界では「偽」と同じですが、world だけの世界で非対称を言うには「偽と述べる」（val false）が要ります。ただ、法則にはまだ val を書けません。
+
+        1 を仮説として調べるか、2 の法則での「偽」を先に扱うか、指示してください。
+facts:
+- {is: v_say, from: session_model, to: 01M7MMSEV0ZRKSE129PF1D53J0}
+- {is: exp.v_answer, from: 01M7MMSEV0ZRKSE129PF1D53J0, to: 01M7MMQR1CJTW40HV4WJPS6RS2}
+- {is: v_refer, from: 01M7MMSEV0ZRKSE129PF1D53J0, to: ontology.v_depend}
+- {is: v_refer, from: 01M7MMSEV0ZRKSE129PF1D53J0, to: ontology.v_involve}
+- {is: v_refer, from: 01M7MMSEV0ZRKSE129PF1D53J0, to: any}

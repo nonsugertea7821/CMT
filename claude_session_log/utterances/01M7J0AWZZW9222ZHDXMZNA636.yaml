@@ -1,0 +1,32 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-16T11:02:05.055Z（UTC）
+individuals:
+  01M7J0AWZZW9222ZHDXMZNA636:
+    is: model_utterance
+    display: 発言 924
+    val:
+      order: 924
+      text: |
+        すみません、その通りです。問題を残したまま PR を出すべきではありませんでした。#86 は draft に戻しました。
+
+        確認したところ、型検査器（tc）に残っている領域の語は `KINDS` だけではありませんでした。exp の意味を前提にした検査が、まとまった量で tc に入っています（約1680行のうち、ざっと400行）。
+        - `KINDS` と `CLAIM_DOMAINS`: 仮説・観察・決定などを節に分ける部分
+        - 測定の族の扱い: `axes_of`, `rows_of`, `stat`, `expand`。結果ファイルを読んで測定値を計算する部分です。
+        - `check_claims`: 仮説の状態と根拠の対応や、留保「差が1問以内」などを確かめる部分
+        - `check_sides`、`LITERAL` の `result_file` など
+
+        `many` を宣言にしたのと同じやり方では、全部は移せません。
+
+        **直し方の案（#86 をこの形に作り直す）**
+        - tc には言語の検査だけを残す。例えば、ノード・個体・事実の形、法則、`many`、`compare_claims`、`check_derived`。
+        - exp 固有の検査は、exp 側のモジュール（例: `exp/src/exp_check.py`）に移す。
+        - 領域の yaml に、その領域の検査モジュールを宣言する（例: `checker: exp/src/exp_check.py`）。tc はそれを読み込んで呼ぶだけにする。こうすれば、exp を変えても tc のコードは変わらない。
+        - `build()` が返すもの（節の C や測定値）を使っている呼び出し側も直す。sync_issues、runtime、表示などです。
+
+        かなり大きな作り直しなので、今のセッションの残りでは最後まで終わらないかもしれません。途中で止まっても、draft のままなのでマージされる心配はありません。
+
+        この方針で進めてよいですか？
+facts:
+- {is: v_say, from: session_model, to: 01M7J0AWZZW9222ZHDXMZNA636}
+- {is: exp.v_answer, from: 01M7J0AWZZW9222ZHDXMZNA636, to: 01M7J0A31C92BKS969NMHE7ASZ}
+- {is: v_refer, from: 01M7J0AWZZW9222ZHDXMZNA636, to: exp.result_file}
+- {is: v_refer, from: 01M7J0AWZZW9222ZHDXMZNA636, to: syntax.many}

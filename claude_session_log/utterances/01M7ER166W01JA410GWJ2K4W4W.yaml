@@ -1,0 +1,53 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-15T04:39:14.908Z（UTC）
+individuals:
+  01M7ER166W01JA410GWJ2K4W4W:
+    is: model_utterance
+    display: 発言 386
+    val:
+      order: 386
+      text: |
+        2つの手順とも終わり、検査を通してプッシュしました。測定値380、観察69、仮説37、決定17、残り項目20は移行前と同じです。
+
+        ## 手順1：`records` の廃止
+
+        - **項目の表をなくしました**：ある種類の個体に書ける項目は、種類の式から決まります。規則は2つです。
+          - `s`・`p`・`o` は、その種類が「について述べる」の始点に来るもの（文）であれば書けます。
+          - それ以外の項目は、その項目か下位に「その種類のものとの関係で限定されたノード」があれば書けます。
+        - **`status` の項目をなくしました**：仮説・決定・残り項目は、状態を表す下位の種類に直接属します（`is: hyp_supported`）。根拠の有無と種類が食い違えば、これまでどおりエラーになります。
+        - **定義の抜けが見つかりました**：`supersedes`（置き換えられた文）は、どの文に置き換えられたかを式に持っていませんでした。測定の族の項目（結果ファイル、行の限定など）も、族との関係が式にありませんでした。どちらも式を足しました（13ノード）。
+
+        否定の試験として、観察に `evidence` を書く、残り項目に `tolerance` を書く、の2つがエラーになることを確かめました。
+
+        ## 手順2：種類と個体の仕分け
+
+        - **`exp.yaml` が種類と個体の両方を持ちます**：`nodes` に領域 `exp` の種類167個、`individuals` に個体167個です。`ontology.yaml` は250ノード（`core` と `run`）になりました。
+        - **`core` に残す基準**：体系の文法の語、検査が名前で参照するノード、BFO の区別、およびそこから参照されるものです。`core` から `exp` を参照するとエラーになります。
+        - **モデルを個体にしました**：`model_15b` と `model_4b` は、種類ではなく `is: open_weight_model` の個体です。
+        - **領域の中では領域名を書きません**：`exp.yaml` の中の識別子は、読み込むときに `exp.名前` に直します。個体の識別子がノードと重なるとエラーにします。
+
+        ## 残っていること
+
+        - **落とした情報**：モデルの重みの数と層の数は、種類の限定として書かれていました（1.5B は層が28、など）。個体にしたとき、これを書く場所がなくなり、いまは体系にありません。個体について数を述べる事実の書き方が要ります。
+        - **個体にしていないもの**：`this_design`（本設計）や設問群（`g_redef_conflict` など）は、1つしかないので本来は個体です。ただし `decision` の式が `this_design` を参照しており、種類の定義から個体を参照する書き方がまだないため、種類のまま残しました。
+        - **`core` に混ざっているもの**：`question`・`verdict`・`experiment` などは、検査が使うノードから参照されているため `core` に残っています。観察・仮説・決定の語彙を別の領域に切り出せば、`core` はさらに小さくなります。
+        - **実験**：L20 の学習は動いています。定期確認の文面は、新しい構成に合わせて書き換えました。
+
+        次は、個体について数を述べる事実の書き方を足して、落としたモデルの情報を戻すのがよいと考えています。種類の定義から個体を参照する書き方も、同じ仕組みで扱えるはずです。
+facts:
+- {is: v_say, from: session_model, to: 01M7ER166W01JA410GWJ2K4W4W}
+- {is: exp.v_answer, from: 01M7ER166W01JA410GWJ2K4W4W, to: 01M7EQJ1HR5MVY7ET44WAJW8A1}
+- {is: v_refer, from: 01M7ER166W01JA410GWJ2K4W4W, to: ontology.s}
+- {is: v_refer, from: 01M7ER166W01JA410GWJ2K4W4W, to: ontology.p}
+- {is: v_refer, from: 01M7ER166W01JA410GWJ2K4W4W, to: ontology.o}
+- {is: v_refer, from: 01M7ER166W01JA410GWJ2K4W4W, to: exp.hyp_supported}
+- {is: v_refer, from: 01M7ER166W01JA410GWJ2K4W4W, to: exp.supersedes}
+- {is: v_refer, from: 01M7ER166W01JA410GWJ2K4W4W, to: exp.evidence}
+- {is: v_refer, from: 01M7ER166W01JA410GWJ2K4W4W, to: exp.tolerance}
+- {is: v_refer, from: 01M7ER166W01JA410GWJ2K4W4W, to: syntax.nodes}
+- {is: v_refer, from: 01M7ER166W01JA410GWJ2K4W4W, to: syntax.individuals}
+- {is: v_refer, from: 01M7ER166W01JA410GWJ2K4W4W, to: runtime.run}
+- {is: v_refer, from: 01M7ER166W01JA410GWJ2K4W4W, to: exp.open_weight_model}
+- {is: v_refer, from: 01M7ER166W01JA410GWJ2K4W4W, to: exp.decision}
+- {is: v_refer, from: 01M7ER166W01JA410GWJ2K4W4W, to: exp.question}
+- {is: v_refer, from: 01M7ER166W01JA410GWJ2K4W4W, to: exp.verdict}
+- {is: v_refer, from: 01M7ER166W01JA410GWJ2K4W4W, to: std.experiment}

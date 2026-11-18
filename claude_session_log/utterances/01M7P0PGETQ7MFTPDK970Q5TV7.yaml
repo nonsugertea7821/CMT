@@ -1,0 +1,44 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-18T00:25:23.162Z（UTC）
+individuals:
+  01M7P0PGETQ7MFTPDK970Q5TV7:
+    is: model_utterance
+    display: 発言 1391
+    val:
+      order: 1391
+      text: |
+        「一つのものに複数の綴りがある」を見つける法則 `one_name` を syntax.yaml に入れ、push しました（eb22622）。
+
+        **法則の中身**
+        - 二つの概念が、含意を含めて互いに相手の式をすべて持つなら、同じものの別名とみなして違反にします。
+        - 比べる組は2種類に絞りました。全部の組を比べると計算が膨らむからです。
+          - 同じ上位を持つ兄弟
+          - 一方の上位の下にある別の概念（`r_near`。向きは問いません）
+        - 型検査は約6秒です。
+
+        **確かめたこと**（一時的に重複を入れ、確認後に元へ戻しました）
+        - 現在の体系では違反は0件です。
+        - 同じ式の兄弟（`state2` を `state` と同じ書き方で追加）：`one_name` が反応しました。コードの「式が同じ」の検査も反応します。
+        - 上位を変えて書いた、意味が同じ概念（`state2: extends information_entity, with: facts`）：`one_name` が反応しました。コードの検査は捕まえません。
+          - `facts` は `sentence` の下位なので、`passage` の式は含意で導けます。
+          - 最初は兄弟だけを比べていたため、これを見逃していました。比べる組を `r_near` まで広げて捕まえられるようにしました。
+
+        **コードの検査はまだ外せません**
+        - コードの「式が … と同じ」は、概念 528 個に加えて、名前付きの限定（`of`）57 個と `form` 33 個も見ています。
+        - `one_name` が見るのは概念だけです。
+        - 置き換えるには、限定と `form` にも同じ種類の法則が要ります。
+
+        **残っている課題**
+        - `specific` を含意（`r_has`）に切り替えると14件の違反が出ます。その解消は、まだ手を付けていません。
+        - 限定と `form` の重複を法則で捕まえることも、まだです。
+
+        次は、限定と `form` にも同じ法則を広げて、コードの「式が同じ」の検査を外すところまで進めるつもりです。
+facts:
+- {is: v_say, from: session_model, to: 01M7P0PGETQ7MFTPDK970Q5TV7}
+- {is: exp.v_answer, from: 01M7P0PGETQ7MFTPDK970Q5TV7, to: 01M7P0G45PVNKYME7T3C2NN04C}
+- {is: v_refer, from: 01M7P0PGETQ7MFTPDK970Q5TV7, to: runtime.state}
+- {is: v_refer, from: 01M7P0PGETQ7MFTPDK970Q5TV7, to: ontology.information_entity}
+- {is: v_refer, from: 01M7P0PGETQ7MFTPDK970Q5TV7, to: syntax.facts}
+- {is: v_refer, from: 01M7P0PGETQ7MFTPDK970Q5TV7, to: ontology.sentence}
+- {is: v_refer, from: 01M7P0PGETQ7MFTPDK970Q5TV7, to: syntax.passage}
+- {is: v_refer, from: 01M7P0PGETQ7MFTPDK970Q5TV7, to: syntax.of}
+- {is: v_refer, from: 01M7P0PGETQ7MFTPDK970Q5TV7, to: syntax.form}

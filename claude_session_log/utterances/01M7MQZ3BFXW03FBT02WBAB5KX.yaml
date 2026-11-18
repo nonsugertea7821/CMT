@@ -1,0 +1,58 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-17T12:33:33.039Z（UTC）
+individuals:
+  01M7MQZ3BFXW03FBT02WBAB5KX:
+    is: model_utterance
+    display: 発言 1167
+    val:
+      order: 1167
+      text: |
+        仮説 h_open_declaration（時間を含む実行では宣言の範囲が開き、各時点では宣言 ＝ 存在で閉じる）を登録して確かめました。判定は**反証**です。
+
+        ## 手順
+        - 仮説と手順は、実行する前に 48473d3 で登録しました。登録の前に試したのは、(a) の記録が今の実行器で通ることだけです。
+        - 生まれる動詞2つ（`std.v_learn`、`exp.v_see`）と消える動詞1つ（`std.v_freeze`）を含む同じ3歩を、2つの書き方で実行しました。
+          - (a) 今の書き方：名前を先にすべて宣言し、在ることは `exists` で述べる。
+          - (b) 宣言を歩みで足し、取り消す書き方。exp の中だけで作り、tc には触れていません。
+        - 支持の条件は、次の3つがすべて成り立つことです。
+          1. (b) がすべて歩める。
+          2. 各歩みの後の状態が (a) と一致する。
+          3. 宣言されていない名前を含む文が残らない。
+
+        ## 結果
+        | 確かめたこと | 結果 |
+        |---|---|
+        | (b) がすべて歩める | 成り立つ（3歩とも） |
+        | 各歩みの後の状態が (a) と一致 | 成り立つ |
+        | 宣言されていない名前を含む文が残らない | **成り立たない**（`v_freeze` の後） |
+
+        - `v_freeze` で r1 の宣言を取り消すと、`depend(r1, sys1)` と `refer(r1, dec1)` が残ります。
+        - 「生まれる」は「宣言を足す」と読めましたが、「消える」は「宣言を取り消す」とは読めませんでした。
+        - (a) でも同じ2文は「在らないものについての文」として残ります。ただし法則 depend_end_exists は始点が在るときしか縛らないので、今の体系では違反になりません。在らなくなったものについての文がどうなるかを、体系は何も決めていない、ということです。
+
+        判定には使わない観察も1つ記録しました。(b) では最後の状態でも、新しい名前を使う歩みが42通り当てはまります。宣言が開いていると、「もう歩めない」状態には来ません。前に私は「止まるかどうかが決められなくなる」と予想しましたが、実際には「決して止まらない」と決まる形でした。
+
+        ## 弱さ
+        - 記録は1つ（3歩）だけです。
+        - 反証されたのは「消えることを宣言の取り消しと読む」書き方です。宣言の範囲が時間で開くこと自体は、否定されていません。
+
+        ## 次に決めること
+        在らなくなったものについての文の扱いが、次の論点になります。
+        - 消えるときに、そのものについての文もいっしょに消えるとする。今の frame の法則（動詞が触れなかった文は変わらない）とぶつかります。
+        - 消えたものについての文は、真偽ではなく「過去の文」として残るとする。時間を文に入れることになります。
+
+        ## 記録したもの
+        - `cscl/design/claims.yaml`
+          - 仮説 `h_open_declaration`（反証）と、確かめの項目 `b_open_declaration`（済み）。
+          - 観察4つ。反する根拠として結んだのは `o_sys_declaration_dangling` だけです。成り立った2条件は、基準が「すべて成り立てば支持」なので支持には結ばず、観察として残しました。
+          - 語 `declared_scope`。
+        - `exp/src/exp.yaml`：族 `sys_declaration`。
+        - `exp/experiments/results/sys_declaration.json`：結果ファイル。
+
+        結果は 929a71b にコミットして push しました。PR #93 の本文も更新し、CI は通っています。
+facts:
+- {is: v_say, from: session_model, to: 01M7MQZ3BFXW03FBT02WBAB5KX}
+- {is: exp.v_answer, from: 01M7MQZ3BFXW03FBT02WBAB5KX, to: 01M7MQQSZBMJSX8BPC0KF07GWF}
+- {is: v_refer, from: 01M7MQZ3BFXW03FBT02WBAB5KX, to: std.v_learn}
+- {is: v_refer, from: 01M7MQZ3BFXW03FBT02WBAB5KX, to: exp.v_see}
+- {is: v_refer, from: 01M7MQZ3BFXW03FBT02WBAB5KX, to: std.v_freeze}
+- {is: v_refer, from: 01M7MQZ3BFXW03FBT02WBAB5KX, to: lang.declared_scope}

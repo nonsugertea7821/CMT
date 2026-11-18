@@ -1,0 +1,54 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-17T15:57:02.109Z（UTC）
+individuals:
+  01M7N3KP8XPTT5RFDP0FFHAGCN:
+    is: model_utterance
+    display: 発言 1227
+    val:
+      order: 1227
+      text: |
+        層の名前を axiom から signature に変えました（554f815、push 済み）。
+
+        **名前の変更**
+        - 変えたもの:
+          - ファイル: `cscl/library/signature/signature.yaml`
+          - 中身: `domain: signature`、個体 `signature`、ontology の `v_use` の行き先
+          - 設定: cscl.yaml の root
+          - 検査器: type_checker.py と exp_check.py の層の名前
+          - 説明: README とコメント
+        - 型検査、実行の検査、世界の対称性の確認、issue 同期の確認は、すべて成功しました。
+        - 変えなかったもの:
+          - lang の `axiom_layer`（公理の層）と、決定 `d_cscl_std_on_axiom`。これらは「公理の層」という概念についての言語の主張なので、扱いはあとで決めます。
+          - 過去の実験スクリプト（sys_soundness.py など）の `"axiom"`。過去の版を読むのに使っているので、残しました。
+
+        ---
+
+        **演繹 1: v_refer は ontology にあってよいか**
+
+        前提:
+        - **P1（シグネチャの事実）:** 基礎の関係のうち、`system_act: true`（体系そのものの行為）の印を持つのは refer だけです。シグネチャ自身が、体系の行為（refer）と世界の関係（exists、same、depend、part、after、involve）を分けています。
+        - **P2（あなたの要件）:** 層は、シグネチャの上の論理式で判定できなければならない。
+        - **P3（定理）:** 分類は、定義の辺をたどる向きに単調です。A が B に届けば、A の分類は B 以上になります。
+
+        導き:
+        1. 「定義の辺をたどって system_act の関係に届くか」は、シグネチャの印だけで書ける式です（P1）。
+        2. ontology.v_refer は holds に refer を持つので、この式で真になります。P3 により、v_refer を通して定義される語もすべて真になります。information_entity、language、word、concept、definition、role などです。
+        3. P2 のもとで ontology と syntax を分けられる式は、今のシグネチャでは 1 しかありません。
+        4. したがって、取れる道は2つだけです。
+           - **(a)** ontology は「system_act に届かない層」。v_refer と、それで定義される 14 個は ontology に置けず、refer の分類の層（syntax）へ移ります。runtime の state など 6 個も、同じ理由で syntax へ移ります。
+           - **(b)** ontology と syntax は、シグネチャでは区別できない。だから1つの層にする。
+        5. (a) と (b) のどちらかを、論理だけで選ぶことはできません。「シグネチャが与える区別は、層として実現する」という前提を足せば (a) になります。観察（ontology の 59/74 が still、syntax の 100/104 が refer）は、今の分け方が (a) にほぼ沿っていることを示しています。
+
+        **演繹の途中で出た問題: change の分類はシグネチャで書けていない**
+        - 「変わる」の判定は、定義に pre/post があるかで見ています。pre/post は syntax の文法の語で、シグネチャの印ではありません。
+        - syntax と runtime の境界を syntax の語で判定するのは、あなたが前に指摘した「その層自身の名前を使う検査」と同じ形で、P2 を満たしません。
+        - 候補は、シグネチャにあるものだけで書くことです。「変わる」は「ある文の真偽が、前と後で異なる」と言い換えられます。これは真偽の軸 truth（シグネチャ）、refer（シグネチャ）、後ろにあること after で書けそうです。ただ、after は今は ontology の基礎の関係です。これは演繹 2 の課題になります。
+
+        **決めてほしいこと**
+        演繹 1 の分かれ道で、(a)（シグネチャが与える区別を層にする）と (b)（区別できないので1つの層にする）のどちらを前提に進めますか。
+facts:
+- {is: v_say, from: session_model, to: 01M7N3KP8XPTT5RFDP0FFHAGCN}
+- {is: exp.v_answer, from: 01M7N3KP8XPTT5RFDP0FFHAGCN, to: 01M7N3GYVVYMXF6CJNNAGFTY0N}
+- {is: v_refer, from: 01M7N3KP8XPTT5RFDP0FFHAGCN, to: lang.axiom_layer}
+- {is: v_refer, from: 01M7N3KP8XPTT5RFDP0FFHAGCN, to: ontology.v_refer}
+- {is: v_refer, from: 01M7N3KP8XPTT5RFDP0FFHAGCN, to: syntax.system_act}
+- {is: v_refer, from: 01M7N3KP8XPTT5RFDP0FFHAGCN, to: ontology.information_entity}

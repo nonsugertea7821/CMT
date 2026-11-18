@@ -1,0 +1,67 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-16T06:05:39.258Z（UTC）
+individuals:
+  01M7HFC41TD3HMD5J43HJX4CRR:
+    is: model_utterance
+    display: 発言 706
+    val:
+      order: 706
+      text: |
+        「種類どうしの事実」のことだと受け取って説明します（「編集」は打ち間違いかと思いました）。
+
+        ## 今の spec にある2つの書き方
+
+        1. **限定（mod）**：種類を定義するときに付けます。1つの種類に1つだけです。
+           ```yaml
+           state_shift: {extends: information_entity, mod: {of: [v_sum, from], with: shifted_hidden_state}}
+           ```
+           これは「ずれとは、何かと合わせると h′ になるものだ」という定義の一部です。関係は1本だけで、相手も1つしか名指せません。
+
+        2. **事実（facts）**：個体について書きます。
+           ```yaml
+           - {is: v_compose, from: layer, to: model_15b, at: {count: 28}}
+           ```
+           どちらかの位置に、具体的な個体（ここでは model_15b）が要ります。検査がそう決めています。
+
+        ## 何が書けないか
+
+        「h と v を合わせると h′ になる」は、特定の1回の計算の話ではありません。種類 h、v、h′ のあいだに一般に成り立つ関係です。
+
+        - 限定では書けません。限定は1つまでで、相手も1つしか名指せないからです。
+        - 事実でも書けません。個体が1つも出てこないからです。
+
+        前回、「合わせる」を1行で書こうとして検査に止められたのは、このためです。
+
+        ## 「種類どうしの事実を許す」とは
+
+        事実の位置に、個体の代わりに種類を置けるよう文法を広げる、ということです。
+
+        ```yaml
+        - {is: v_sum, from: hidden_state, to: state_shift, new: shifted_hidden_state}   # h' = h ⊕ v
+        - {is: v_depend, from: hidden_state, to: state_shift, neg: true}                 # h は注入に依存しない（否定の錨）
+        ```
+
+        意味は「その種類に属するどの個体についても成り立つ」とします。こうすると、次のことができるようになります。
+
+        - 3つの項を1行で書け、部分の関係も依存の関係も、そこから導けます。
+        - 限定の席を使わないので、h′ の「h を部分に持つ」を、生成順序の錨と一緒に残せます。
+        - 否定の錨（h は注入したものに依存しない）を書けます。前回捕まらなかった「h の一種が h′ に依存する」という誤りも、これで矛盾になります。
+
+        ## 代わりに決める必要があること
+
+        **読み方を1つに決める必要があります。** 種類どうしの事実は「全てについて」とも「あるものについて」とも読めます。今の限定は「ある」の読み方です（合わせる相手は問わない）。事実の方は「全て」と決めておかないと、否定の錨が効きません。
+
+        **検査の扱いも広げる必要があります。** 事実の検査は今、「どちらかの位置に個体がある」ことを前提に、型を確かめたり、測定値として登録したりしています。種類が来る場合を分けて扱う必要があります。
+
+        **影響の範囲:** core の文法（grammar の facts 節）と check_spec の事実の読み取りに手が入ります。既存の404件の事実は個体についての事実なので、そのまま変わりません。
+
+        進めるかどうかは、決めてもらえれば対応します。
+facts:
+- {is: v_say, from: session_model, to: 01M7HFC41TD3HMD5J43HJX4CRR}
+- {is: exp.v_answer, from: 01M7HFC41TD3HMD5J43HJX4CRR, to: 01M7HFBR2YFVCBQB33WPHWZ1V0}
+- {is: v_refer, from: 01M7HFC41TD3HMD5J43HJX4CRR, to: exp.state_shift}
+- {is: v_refer, from: 01M7HFC41TD3HMD5J43HJX4CRR, to: ontology.information_entity}
+- {is: v_refer, from: 01M7HFC41TD3HMD5J43HJX4CRR, to: std.v_sum}
+- {is: v_refer, from: 01M7HFC41TD3HMD5J43HJX4CRR, to: exp.shifted_hidden_state}
+- {is: v_refer, from: 01M7HFC41TD3HMD5J43HJX4CRR, to: ontology.v_compose}
+- {is: v_refer, from: 01M7HFC41TD3HMD5J43HJX4CRR, to: exp.hidden_state}
+- {is: v_refer, from: 01M7HFC41TD3HMD5J43HJX4CRR, to: ontology.v_depend}

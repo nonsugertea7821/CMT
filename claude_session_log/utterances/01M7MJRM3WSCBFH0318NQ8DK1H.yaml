@@ -1,0 +1,51 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-17T11:02:37.948Z（UTC）
+individuals:
+  01M7MJRM3WSCBFH0318NQ8DK1H:
+    is: model_utterance
+    display: 発言 1049
+    val:
+      order: 1049
+      text: |
+        おっしゃるとおりです。前の回答の「概念を continuant と occurrent のどちらに置くかは検討の余地がある」は誤りでした。体系の中で調べると、置き場所は論理で決まっていました。
+
+        **調べ方**
+        ontology の各ノードについて、定義（限定 `of` と形 `form`）が自分を置く動詞の端を集めました。その端の型（from/to）から continuant と occurrent のどちらになるかを導き、宣言されている上位と照らしました。
+
+        **概念は occurrent に決まる**
+        - 概念の定義は「語が引き起こすもの」です。これは `v_trigger` の終点で、その型は occurrent です。
+        - 上位の推論も、`v_perform` の終点と `v_stage` の終点（どちらも occurrent）に置かれます。
+        - したがって、この定義のもとで概念が continuant になる余地はありません。問えるとすれば「定義が正しいか」だけで、それは観察で決めることです。
+
+        **定義から導けるもの**
+        - ontology のノードは、ほぼすべて導けました。導いた結果は宣言された上位と一致し、矛盾はありませんでした。
+        - 例外の `perform_to` は、私のスクリプトの扱いの誤りです。修飾語の `of` は、修飾される側への制約なので、修飾語自身の位置としては数えてはいけませんでした。
+        - 述べる側が continuant になるのも論理の帰結です。`v_refer` の始点の型が continuant なので、述べるもの（情報・言語・文・語・定義）は必ず continuant になります。
+
+        **導けず、宣言だけで置かれているもの**
+
+        | どこ | 何が恣意的か | 観察の記録 |
+        |---|---|---|
+        | continuant と occurrent | 説明文（gloss）しかない。区別は動詞の端の型を通じてしか表れない | なし |
+        | 動詞の端の型（例：`v_refer` の from が continuant、`v_trigger` の to が occurrent） | 上の導出はすべてここから来る。実質的に、これが体系の前提になっている | なし |
+        | 動詞がすべて occurrent であること | holds（成り立つ状態）だけを持つ静的な動詞も含めて、宣言で occurrent の下に置かれている | なし |
+        | `state_relation` | 否定（「時間的な部分と示されていない」）だけで定義されている。否定は何も示さないので、occurrent に置く根拠が定義の中にない | なし |
+        | `independent_continuant` | 同じく否定（「依存すると示されていない」）だけで、continuant への宣言だけで置かれている | なし |
+
+        claims にも exp にも、これらを決めた理由の観察は記録されていません。恣意性が残っているのは、ノードの分類ではなく、動詞のシグネチャと根の2つのほうです。
+
+        **提案**
+        1. **法則にする。** 「上位の宣言は、定義が置く動詞の端の型から導けるものと一致しなければならない。導けないノードは、根だけである」という法則です。そうすると、`state_relation` と `independent_continuant` は、否定以外の定義を持つまでエラーになります。
+        2. **シグネチャの理由を記録する。** 動詞の端の型ごとに、何を見てそう決めたのかを観察として残します。観察のないものは、仮説の状態として扱います。
+
+        この2つを進めてよいですか。
+facts:
+- {is: v_say, from: session_model, to: 01M7MJRM3WSCBFH0318NQ8DK1H}
+- {is: exp.v_answer, from: 01M7MJRM3WSCBFH0318NQ8DK1H, to: 01M7MJQ0C8AZZH6ZF013MVEKBZ}
+- {is: v_refer, from: 01M7MJRM3WSCBFH0318NQ8DK1H, to: syntax.of}
+- {is: v_refer, from: 01M7MJRM3WSCBFH0318NQ8DK1H, to: syntax.form}
+- {is: v_refer, from: 01M7MJRM3WSCBFH0318NQ8DK1H, to: ontology.v_trigger}
+- {is: v_refer, from: 01M7MJRM3WSCBFH0318NQ8DK1H, to: ontology.v_perform}
+- {is: v_refer, from: 01M7MJRM3WSCBFH0318NQ8DK1H, to: ontology.v_stage}
+- {is: v_refer, from: 01M7MJRM3WSCBFH0318NQ8DK1H, to: ontology.perform_to}
+- {is: v_refer, from: 01M7MJRM3WSCBFH0318NQ8DK1H, to: ontology.v_refer}
+- {is: v_refer, from: 01M7MJRM3WSCBFH0318NQ8DK1H, to: syntax.state_relation}

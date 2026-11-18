@@ -1,0 +1,58 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-17T15:59:55.861Z（UTC）
+individuals:
+  01M7N3RZYNGX2X12TXWCM7V4MD:
+    is: model_utterance
+    display: 発言 1233
+    val:
+      order: 1233
+      text: |
+        signature を self と same の2つにしました（ba43976、push 済み）。そのうえで、層の分け方を前と比べました。
+
+        **変えたこと**
+        - signature に残したのは、基礎の関係 `same` と、変数 `self`（限定の暗黙の端）だけです。
+        - exists は ontology の基礎の関係にし、same と行き来する法則を2つ置きました。
+          - `exists_self_same`: 在るものは、自分と同じである。
+          - `self_same_exists`: 自分と同じであるものは、在る。
+          - 実行器の pre・post が exists を使うので、基礎の関係としては残しています。意味は法則で same に結び付けました。
+          - 実行器で、exists(a) から same(a, a) が導かれることを確かめました。
+        - refer（system_act の印も一緒に）、分類の軸 count・amount・text・truth、規則の変数 var1〜5 は、ontology へ移しました。
+        - 型検査、実行の検査、世界の対称性の確認、issue 同期の確認は、すべて成功しました。
+
+        **比べた結果**
+        - **前（signature に exists・same・refer）:** 「refer に届くか」はシグネチャの式で書けました。ontology と syntax をほぼ分けられ、否定の辺をたどらない版で 177/202 が一致しました。
+        - **今（signature に self・same）:** refer は ontology の語になったので、「refer に届くか」はもうシグネチャの式ではありません。self と same だけで書ける区別は、限定が肯定（v(self, X)）か、否定（¬same(self, S)）かの2つだけです。
+        - そこからシグネチャで決まる分け方は、否定の辺の数による層別（stratification）になります。Apt 1988 の層別と同じものです。
+
+        **否定の層別と、今の層**
+        各ノードについて、定義の辺をたどって通る否定の辺の数の最大を数えました。これは記録に残していない試算で、仮説の登録はしていません。
+
+        | 層 | 否定 0 | 否定 1 | 否定 2 以上 |
+        |---|---|---|---|
+        | ontology | **58** | 16 | 0 |
+        | syntax | 24 | **75** | 5 |
+        | runtime | 4 | **20** | 0 |
+        | std | 9 | 19 | 0 |
+        | lang | 2 | 17 | 1 |
+        | subj | 21 | 68 | 8 |
+        | exp | 64 | 217 | 40 |
+
+        - ontology は、ほぼ否定 0 にまとまります。syntax と runtime は、ほぼ否定 1 です。
+        - この層別で分かれるのは、ontology と「それより上」までです。syntax と runtime は分かれません。
+        - ontology のうち否定 1 に入る 16 個（word、concept、definition、role、natural_language、quality など）は、前の表で refer に入った 14 個と 8 個が重なります。重なりの多くは natural_language（設計されていない言語）の否定から来ています。
+
+        **ここから導けること**
+        - signature が self と same だけなら、シグネチャで決まる層は否定の層別だけです。今の3つの層（ontology、syntax、runtime）は、シグネチャだけでは決まりません。
+        - refer（体系の行為）と変化（pre/post）による区別は、どちらも ontology か syntax の語で書かれます。だから、これは「下の層の語で上の層を判定する」形になります。
+
+        **決めてほしいこと**
+        前の論点の「上の層の名前を使う検査は無意味」に照らすと、ありうる道は2つです。
+        - **(a)** 層の判定は、シグネチャに限らず「判定される層より下の語だけ」を使ってよい、とする。ontology の refer で syntax を判定し、syntax の pre/post で runtime を判定します。
+        - **(b)** 層は、シグネチャで決まる否定の層別だけにする。syntax と runtime は同じ層になります。
+
+        どちらで進めますか。
+facts:
+- {is: v_say, from: session_model, to: 01M7N3RZYNGX2X12TXWCM7V4MD}
+- {is: exp.v_answer, from: 01M7N3RZYNGX2X12TXWCM7V4MD, to: 01M7N3N709EDR7YEPF26TT6MXV}
+- {is: v_refer, from: 01M7N3RZYNGX2X12TXWCM7V4MD, to: ontology.same}
+- {is: v_refer, from: 01M7N3RZYNGX2X12TXWCM7V4MD, to: syntax.system_act}
+- {is: v_refer, from: 01M7N3RZYNGX2X12TXWCM7V4MD, to: ontology.natural_language}

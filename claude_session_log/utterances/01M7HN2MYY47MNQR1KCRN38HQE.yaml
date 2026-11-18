@@ -1,0 +1,310 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-16T07:45:20.350Z（UTC）
+individuals:
+  01M7HN2MYY47MNQR1KCRN38HQE:
+    is: session_summary
+    display: 発言 750
+    val:
+      order: 750
+      text: |
+        This session is being continued from a previous conversation that ran out of context. The summary below covers the earlier portion of the conversation.
+
+        <system-reminder>
+        <tools-used-before-summary>Bash, Edit, Read, ReadNotifications, TaskStop, ToolSearch, Write, mcp__claude-code-remote__create_trigger, mcp__claude-code-remote__get_trigger, mcp__claude-code-remote__read_documentation, mcp__claude-code-remote__send_later, mcp__claude-code-remote__update_trigger, mcp__github__actions_get, mcp__github__actions_list</tools-used-before-summary>
+        </system-reminder>
+        Summary:
+        1. Primary Request and Intent:
+           - **Standing rules:**
+             - Repo nonsugertea7821/CMT, branch `claude/model-concept-language-mapping-g0lw1i`, at /home/user/CMT. Commit and push there; no PR unless asked.
+             - spec/ is the source of truth. docs/design.md and experiments/README.md are frozen. spec/trial/ is not source.
+             - Gloss only on the 2 top nodes; natural language only in display.
+             - Don't overclaim.
+             - Never use `git checkout` to restore work.
+             - Reply in Japanese.
+             - No background keep-alive loops.
+             - Only ONE model process at a time (OOM).
+             - The model python is `/home/user/venv/bin/python`; system python3 has no torch.
+             - Commit trailer:
+               `Co-Authored-By: Claude [モデル名を伏せた] <[メールアドレスを伏せた]>`
+               `Claude-Session: https://claude.ai/code/session_015KRKt6TNJZ7ZsQmEknANXK`
+             - A stop hook requires untracked files to be committed and pushed.
+           - **This session, in order:**
+             - Implement v_sum (part ≡ sum).
+             - Fix generation order.
+             - Allow kind-to-kind facts. Under the closed-world assumption they are read as universal; negatives become constraints.
+             - Type safety for sum (summand, same space).
+             - Error when a kind sits in a space without a composition defined.
+             - Speed up the checker. The user suggested Rust; I made algorithmic fixes instead.
+             - Concerned about "space vs relation/axis" confusion.
+             - Rename: v_sum display 「合成する」, the set 「合成可能集合」, later 「合成について閉じた集合」.
+             - Introduce the 2nd order (kind collections as individuals).
+             - The user noted that 「〇〇について」 is a modifier, so a superordinate 閉集合 must exist. Done (closed_set, plus v_close with v_sum).
+             - Verb-typed position: 「動詞を受け取るべきだ」. Done (verb_ref).
+             - Back to the main topic. Run E17 (sense difference), then E18 (format transfer). Both have results.
+             - List the concerns. Done.
+             - The user said 「よろしく」 to the top priorities: neutral control (E19) and reproducibility (E3 retrain with random init). Both are running.
+             - Latest: 「合わせて12を進めるか」, i.e. also do concern 12 (remove name-dependence in the checker: space()/closed_op by v_close name, check_parts special-casing v_sum) by moving the logic into law_rules.
+
+        2. Key Technical Concepts:
+           - **Model and setup:** Qwen2.5-1.5B-Instruct, layer 8. Groups G2c (conflicting redefinition) and G2k (control), n=24 each, 24 concepts. Binary choice with margin and order-robust "both".
+           - **Vectors:**
+             - E3 vector v_c is trained with defqa.
+             - Training is deterministic (zero init, full batch, Adam).
+             - The training QA (data/train_qa_ja.json) is 4 items per concept, balanced (2 はい / 2 いいえ), with no identical overlap with eval. It uses the same yes/no template.
+             - v = m + s (m is the mean over concepts, s = v − m).
+           - **CSCL laws:**
+             - law_rule entries in ontology.yaml use v_assume / v_derive / v_require over syntax_facts. Relations come from base, nodes and law_relation. Variables var1..var5 (5 exist).
+             - r_ancestor(x,y) means y is an ancestor of x.
+             - law_given entries are implemented in Python (LAWS_HERE).
+           - **Closed world:** a kind-level fact means "for all members". Negative kind facts are forbidden (use constraints).
+           - **2nd order:** kind_collection individuals collect a kind via v_collect. A collection's properties are not inherited by subkinds.
+           - **Semi-naive evaluation:** facts are added per delta, with compiled atoms.
+
+        3. Files and Code Sections:
+
+           **spec/ontology.yaml (core)**
+           - Verbs:
+             ```yaml
+             v_collect: {display: 成員の種類にする, extends: occurrent, from: kind_collection, to: continuant, holds: [{is: refer, from: from, to: to}]}
+             verb_ref: {display: 動詞を指すもの, extends: information_entity, mod: {of: [v_refer, from], with: occurrent}}
+             v_close: {display: について閉じている, extends: occurrent, from: kind_collection, to: verb_ref, holds: [{is: refer, from: from, to: to}]}
+             v_sum: {display: 合成する, extends: occurrent, from: summand, to: summand, new_kind: summand,
+                     holds: [{is: part, from: from, to: new}, {is: part, from: to, to: new}, {is: depend, from: new, to: from}, {is: depend, from: new, to: to}]}
+             ```
+           - Nodes:
+             ```yaml
+             summand: {display: 合成できる情報, extends: information_entity, mod: {of: [v_sum, from]}}
+             kind_collection: {display: 種類の集まり, extends: information_entity, mod: {of: [v_collect, from]}}
+             closed_set: {display: 閉集合, extends: kind_collection, mod: {of: [v_close, from]}}
+             composable_set: {display: 合成について閉じた集合, extends: closed_set, mod: {of: [v_close, from], with: v_sum}}
+             ```
+           - The `facts` grammar node display changed to 「個体か種類についての文（種類についての文は、その種類のすべてについて）」.
+           - Law relations: r_kpart, r_kdep.
+           - Law rules for parts:
+             - kpart_by_sum_part (mod [v_sum, from] with X gives r_kpart(this, X)) and kpart_by_sum_whole.
+             - kpart_by_sum_fact_from and kpart_by_sum_fact_to (of(t,v_sum), from/to(t,var2), new(t,var3) give r_kpart(var2,var3)).
+             - kpart_by_compose_fact.
+           - Law rules for dependence:
+             - kdep_by_mod and kdep_by_sum.
+             - kdep_by_sum_fact_from and kdep_by_sum_fact_to.
+             - kdep_by_depend_fact.
+             - kdep_inherit, kdep_transitive.
+             - kdep_antisymmetric (require same).
+           - law_given entries (each with a v_govern fact pointing to concept_expression): closed_under, collection_level, op_defined. These replaced sum_same_space / sum_closed / sum_defined.
+           - Laws whose display text was changed from 合わせ… to 合成… wording.
+
+           **spec/exp.yaml**
+           - Nodes:
+             ```yaml
+             residual_vector: {display: 残差の流れのベクトル, extends: summand, mod: {of: [v_depend, from], with: model}}
+             layer_output: {... extends: residual_vector, mod: {of: [v_compute, to], with: layer}}
+             state_shift: {display: 隠れ状態のずれ, extends: residual_vector, mod: {of: [v_sum, from], with: shifted_hidden_state}}
+             shifted_hidden_state: {display: ずれを足した隠れ状態, extends: residual_vector, mod: {of: [v_compose, to], with: hidden_state}}
+             common_vector_component: {extends: state_shift, mod: {of: [v_sum, from], with: concept_vector}}
+             specific_vector_component: {extends: state_shift, mod: {of: [v_depend, from], with: word}}
+             ```
+           - Individual: `residual_space: {is: composable_set, display: 残差の流れ}`.
+           - Facts at the top of `facts:`:
+             ```yaml
+             - {is: v_collect, from: residual_space, to: residual_vector}
+             - {is: v_sum, from: layer_output, to: state_shift, new: shifted_hidden_state}   # h' = h ⊕ v（足す位置を語に限ったものが hidden_state）
+             - {is: v_sum, from: common_vector_component, to: specific_vector_component, new: concept_vector}
+             ```
+           - E17:
+             - Families e17 (items: group, cond with values none / full / md 'm+d' / d / mdswap 'm+d_swap'; accuracy, order_robust_accuracy) and e17g (rows [concepts], cond cos_own / cos_other, mean_value).
+             - h_specific_agrees_with_sense_difference: hyp_refuted, with 5 contradicting observations o_e17_*.
+           - E18:
+             - Families e18 (items: group, cond none / full / specific / common / swapped; accuracy, logit_margin) and e18u (rows [usage], cond, logit_margin).
+             - New hypothesis h_vector_transfers_beyond_choice_format: hyp_mixed, with v_refer {v_transfer, from single_layer_vector, to question_format}.
+             - Observations:
+               - o_e18_usage_full_above_swapped: support.
+               - o_e18_usage_common_above_none: unlinked.
+               - o_e18_usage_specific_near_common: tol 0.2, contradict.
+               - o_e18_statement_full_level_none_conflict: tol 0.05, contradict.
+
+           **tools/check_spec.py**
+           - `_FAST = CSafeLoader`; `_Unique(_FAST)`.
+           - `yload()` caches YAML text and returns a deepcopy. All yaml.safe_load calls are replaced by yload.
+           - `compile_atoms`, `_match(cs, i, F, V, b, first=None)`, and a semi-naive `evaluate`. Output was verified identical to the old version.
+           - `is_kind_fact`: gather skips kind facts.
+           - `collect_kind_facts(T)` (called in build before T.check()):
+             - Builds T.COLL from v_collect facts (with the collection_level check).
+             - Builds T.KF (type check via spot_type; neg forbidden).
+             - Calls check_closed(T).
+           - `syntax_facts` emits kind facts as ("of", "kind_fact j", verb) plus ("from"/"to"/"new", t, kind).
+           - `closed_op(T,c)` reads mod [v_close, from] by name. `space(T,k,op="v_sum")` finds the nearest COLL kind whose collection is_a closed_set with closed_op == op. `check_closed(T)` implements closed_under and op_defined generally over verbs.
+           - check_parts:
+             - mods() includes `["v_sum","from"]` by name and requires `m.get("with")` (bug fix).
+             - The display check includes v_sum.
+           - Mod `with` check: if the end type is_a verb_ref, the with must be a verb. The reverse rule (a verb only in a verb_ref position) was removed because 20 legit 1st-order uses exist.
+           - LAWS_HERE = {part_fact_direction, part_display_explicit, closed_under, collection_level, op_defined}.
+
+           **experiments/data/sense_pairs_ja.json**
+           - 24 words × 3 new-sense and 3 old-sense sentences, written by me.
+
+           **experiments/e17_sense_difference.py**
+           - d_c = mean h(new) − mean h(old) at L8, centered. Compares cos with s.
+           - Intervention: m + d̃ scaled to |s|.
+           - Output results/e17_Qwen2.5-1.5B-Instruct_L8.json.
+
+           **experiments/e18_format_transfer.py**
+           - A: declarative statements with logp_after(right) − logp_after(wrong), no chat template.
+           - B: usage pairs, logp of new minus old from the word onward. Δ is measured vs none.
+           - Output e18_..._L8.json with keys items, usage, summary, usage_summary.
+
+           **experiments/e19_neutral_control.py (new)**
+           - Conds: none, own, swapped, rand0-4 (random direction, norm |v_c|), m+rand0-4 (m + random, norm |s_c|). Averages and ranges are reported.
+           - Output results/e19_Qwen2.5-1.5B-Instruct_L8.json.
+
+           **experiments/e3_concept_vectors.py**
+           - train_vector takes `init=None`.
+           - New args `--seed` (random init direction, seeded by seed*1000+concept index) and `--init-norm` (default 10).
+
+        4. Errors and fixes:
+           - **Kind-level v_sum facts** were rejected at first ("no individual"). I first used the mod form, then implemented kind facts.
+           - **Position new** cannot take `with`. I used v_compose to for h′.
+           - **Anchor conflict:** the single mod forced trading "h part of h′" for the anchor. Kind facts resolved this.
+           - **"h の一種が h′ に依存"** is correctly not an error under the universal reading. I had earlier called it a limitation.
+           - **sum_defined flagged layer_output.** Changed the sum fact to from: layer_output.
+           - **sum_defined was vacuous** (it counted summand's with-less mod). Fixed.
+           - **KeyError 'with' in check_parts mods()** on with-less mods. Fixed.
+           - **The reverse verb_ref rule** flagged 20 legit uses. Removed.
+           - **A positional "space" definition** let closure leak to subkinds. Fixed via the 2nd order.
+           - **E17 first run:** no torch. Used /home/user/venv/bin/python.
+           - **E18** timed out at 590s. Re-ran in the background.
+           - **A link from o_e18_usage_common_above_none to h_common_component_transfers_to_unseen** made the checker derive "supported". The link was removed as inappropriate.
+           - **Wrong claim about E18-A:** I had said G2c correct answers are mostly negative. Actually G2c has はい 15 / いいえ 9, so the prior favors affirmative statements. Corrected to the user.
+
+        5. Problem Solving — results:
+           - **Speedup:** check_spec went from ~14s to ~1.4s. Mutation tests give the same violation sets.
+           - **Mutation tests:** all passed for these cases:
+             - parts and dependence: whole/part swap, h depends on h′, h′ part of v;
+             - types: summing with layer, different closed set, result outside the set, orphan kind;
+             - level and verb typing: level mixing, closed_set without an op, closing on a binary verb, non-verb in verb_ref.
+           - **E17:**
+             - cos(s, d̃) own +0.005, other −0.000, perm p 0.21, rank mean 12.0, rank-1 count 0.
+             - Intervention: G2c none 0.38, full 0.79, m+d 0.54, d 0.62, m+d_swap 0.58; G2k 0.75 / 0.92 / 0.54 / 0.54 / 0.46. Margins collapse to ~0.
+           - **E18-A** (accuracy):
+             - G2c: none 0.71, full 0.67, specific 0.67, common 0.71, swapped 0.67.
+             - G2k: none 0.38, full 0.46, specific 0.46, common 0.33, swapped 0.33.
+             - Full raises the margin by about +0.5 in both groups.
+           - **E18-B Δ** (proportion of pairs up):
+             - full +2.11 (0.64), specific +1.69, common +1.58, swapped −0.01.
+             - Bootstrap by word: full−swapped +2.12 [0.65, 3.55]; common−none +1.58 [0.88, 2.28]; specific−common +0.11 [−1.30, 1.59].
+           - **Concerns listed:**
+             1. power / one model / one training;
+             2. post-hoc tolerances and links;
+             3. swapped is not a neutral control;
+             4. sentences written by me, with stylistic cues;
+             5. E17 scaling ×1.75;
+             6. single layer and mean-vector orthogonality;
+             7. "二択の鍵" is speculation;
+             8. my past interpretation errors;
+             9. the hastily added spec extensions;
+             10. E16 m is still a member-kind approximation;
+             11. closed sets are not split by layer;
+             12. name-dependence in the checker.
+             - Priority was 3 and 1.
+
+        6. All user messages:
+           - "それで"
+           - "生成順序を固定しよう"
+           - "種類同士の編集とは"
+           - "この体系は閉世界仮説だよね\nどちらにすべきかは導かれるのでは"
+           - "よろしく"
+           - "それもやってしまおう\n型安全は大事だ"
+           - "あと同じ分類なのに合成が定義されてないのも多分コンパイルエラーだね"
+           - "それとだんだんデータ量が増えてきてpythonが残念ながら実行時間になってきてるから\nrustとか高速な手続き言語に移行したほうがいいかも\nあと空間って関係と軸の類義じゃない？混同してないか気になる"
+           - "よろしく"
+           - "表示名は合成可能集合かな\nsumは合成で"
+           - "入れたらどうなるか直観できるように示して"
+           - "入れてOK"
+           - "あととなると名前は閉集合かな……"
+           - "上位の概念があることを疑っている\n〇〇について、は限定だから"
+           - "そうだね、動詞を受け取るべきだ"
+           - "これで整理はおわりかな\nで、本題なんだっけ"
+           - "よろしく。結果まで出して"
+           - "よろしく"
+           - "気がかりに感じていることを洗い出して"
+           - "よろしく"
+           - "合わせて12を進めるか"
+
+        7. Pending Tasks:
+           - **Background job baphttwfb** runs E19, then E3 retraining with `--seed 1` and `--seed 2` (`--tag _defqa_s1` / `_defqa_s2`, objective defqa, layer 8). When it finishes:
+             - report E19 (own vs rand vs m+rand vs swapped);
+             - compare seed vectors with the original (cos, and the accuracy printed by the e3 eval);
+             - record families, observations and hypotheses in spec/exp.yaml;
+             - run check_spec and run_spec, commit (including results files), and push.
+           - **Concern 12, in progress:** move closed_under, op_defined (and possibly collection_level) into law_rules in ontology.yaml over syntax facts, and make check_parts generic via verb holds instead of the "v_sum" name. Then re-run the mutation tests, check, commit and push.
+           - **Offered, not started:** E17 at the original scale (concern 5), style-controlled usage sentences (concern 4), and E16 m as a 2nd-order property (concern 10).
+
+        8. Current Work:
+           - I had just started concern 12. Plan, as I said to the user: 「閉じていること（closed_under）と合成が定義されていること（op_defined）を、Python の手続きではなく ontology.yaml の規則（law_rule）として書きます。check_parts が v_sum を名前で特別扱いしている所は、動詞の holds（「始点は new の部分」）から読むようにします。」
+           - Last tool output, inspecting the rule language:
+             - The `is` node exists (`is: {display: 属する, extends: p, to: kind}`).
+             - There are 5 variables.
+             - The ancestor rules use r_parent/r_ancestor.
+             - check_laws evaluates law_rules over `Facts(self.syntax_facts())`.
+           - Design planned:
+             1. Emit additional syntax facts: individual-to-kind facts (v_collect) as fact rows with of/from/to, and ("is", individual, kind).
+             2. Law relations:
+                - r_in(k, c): from a v_collect fact, plus inheritance down r_ancestor.
+                - r_closed_op(c, V): from is(c, K) and a mod of K or its ancestor with of v_close / with V.
+                - r_defined(k, V).
+             3. Rules:
+                - require r_in(to-kind, c) when from is in c for an op-V fact;
+                - require r_in(new, c) likewise;
+                - require r_defined(k, V) for kinds in c, with the directly collected kind exempt.
+             4. collection_level possibly via a require-same trick.
+             5. Remove Python check_closed/space accordingly.
+           - Constraint: rules only have var1..var5 and "same" for equality.
+
+        9. Optional Next Step:
+           - Continue concern 12 per the user's 「合わせて12を進めるか」: implement the law_rules for closed_under and op_defined (and syntax-fact emission for collection facts and individual kinds), and make check_parts derive part-of from verb holds instead of the "v_sum" name. Then re-run the earlier mutation tests (outside the set, different set, orphan kind, level mixing, op not ternary) to confirm identical detection, then check_spec, run_spec, commit and push.
+           - When the background task baphttwfb notifies completion, report the E19 and seed-retrain results, and record them in spec.
+
+        If you need specific details from before compaction (like exact code snippets, error messages, or content you generated), read the full transcript at: /root/.claude/projects/-home-user-CMT/e05d2140-ce91-515f-a5fb-e6251e13d406.jsonl
+        Continue the conversation from where it left off without asking the user any further questions. Resume directly — do not acknowledge the summary, do not recap what was happening, do not preface with "I'll continue" or similar. Pick up the last task as if the break never happened.
+
+        The messages after this summary are the most recent messages from before compaction, kept verbatim. The summary was written without seeing them, so something it says has not happened yet may already have happened in them.
+facts:
+- {is: v_say, from: session_model, to: 01M7HN2MYY47MNQR1KCRN38HQE}
+- {is: v_refer, from: 01M7HN2MYY47MNQR1KCRN38HQE, to: std.v_sum}
+- {is: v_refer, from: 01M7HN2MYY47MNQR1KCRN38HQE, to: std.closed_set}
+- {is: v_refer, from: 01M7HN2MYY47MNQR1KCRN38HQE, to: std.v_close}
+- {is: v_refer, from: 01M7HN2MYY47MNQR1KCRN38HQE, to: syntax.verb_ref}
+- {is: v_refer, from: 01M7HN2MYY47MNQR1KCRN38HQE, to: syntax.law_rule}
+- {is: v_refer, from: 01M7HN2MYY47MNQR1KCRN38HQE, to: syntax.v_assume}
+- {is: v_refer, from: 01M7HN2MYY47MNQR1KCRN38HQE, to: syntax.v_derive}
+- {is: v_refer, from: 01M7HN2MYY47MNQR1KCRN38HQE, to: syntax.v_require}
+- {is: v_refer, from: 01M7HN2MYY47MNQR1KCRN38HQE, to: syntax.law_relation}
+- {is: v_refer, from: 01M7HN2MYY47MNQR1KCRN38HQE, to: syntax.law_given}
+- {is: v_refer, from: 01M7HN2MYY47MNQR1KCRN38HQE, to: syntax.kind_collection}
+- {is: v_refer, from: 01M7HN2MYY47MNQR1KCRN38HQE, to: syntax.v_collect}
+- {is: v_refer, from: 01M7HN2MYY47MNQR1KCRN38HQE, to: ontology.information_entity}
+- {is: v_refer, from: 01M7HN2MYY47MNQR1KCRN38HQE, to: ontology.v_refer}
+- {is: v_refer, from: 01M7HN2MYY47MNQR1KCRN38HQE, to: syntax.new_kind}
+- {is: v_refer, from: 01M7HN2MYY47MNQR1KCRN38HQE, to: std.composable_set}
+- {is: v_refer, from: 01M7HN2MYY47MNQR1KCRN38HQE, to: syntax.facts}
+- {is: v_refer, from: 01M7HN2MYY47MNQR1KCRN38HQE, to: syntax.v_govern}
+- {is: v_refer, from: 01M7HN2MYY47MNQR1KCRN38HQE, to: syntax.concept_expression}
+- {is: v_refer, from: 01M7HN2MYY47MNQR1KCRN38HQE, to: exp.residual_vector}
+- {is: v_refer, from: 01M7HN2MYY47MNQR1KCRN38HQE, to: ontology.v_depend}
+- {is: v_refer, from: 01M7HN2MYY47MNQR1KCRN38HQE, to: exp.layer_output}
+- {is: v_refer, from: 01M7HN2MYY47MNQR1KCRN38HQE, to: std.v_compute}
+- {is: v_refer, from: 01M7HN2MYY47MNQR1KCRN38HQE, to: exp.state_shift}
+- {is: v_refer, from: 01M7HN2MYY47MNQR1KCRN38HQE, to: exp.shifted_hidden_state}
+- {is: v_refer, from: 01M7HN2MYY47MNQR1KCRN38HQE, to: ontology.v_compose}
+- {is: v_refer, from: 01M7HN2MYY47MNQR1KCRN38HQE, to: exp.hidden_state}
+- {is: v_refer, from: 01M7HN2MYY47MNQR1KCRN38HQE, to: exp.common_vector_component}
+- {is: v_refer, from: 01M7HN2MYY47MNQR1KCRN38HQE, to: exp.concept_vector}
+- {is: v_refer, from: 01M7HN2MYY47MNQR1KCRN38HQE, to: exp.specific_vector_component}
+- {is: v_refer, from: 01M7HN2MYY47MNQR1KCRN38HQE, to: exp.order_robust_accuracy}
+- {is: v_refer, from: 01M7HN2MYY47MNQR1KCRN38HQE, to: exp.mean_value}
+- {is: v_refer, from: 01M7HN2MYY47MNQR1KCRN38HQE, to: exp.hyp_refuted}
+- {is: v_refer, from: 01M7HN2MYY47MNQR1KCRN38HQE, to: exp.logit_margin}
+- {is: v_refer, from: 01M7HN2MYY47MNQR1KCRN38HQE, to: exp.hyp_mixed}
+- {is: v_refer, from: 01M7HN2MYY47MNQR1KCRN38HQE, to: exp.v_transfer}
+- {is: v_refer, from: 01M7HN2MYY47MNQR1KCRN38HQE, to: exp.single_layer_vector}
+- {is: v_refer, from: 01M7HN2MYY47MNQR1KCRN38HQE, to: exp.question_format}
+- {is: v_refer, from: 01M7HN2MYY47MNQR1KCRN38HQE, to: syntax.with}
+- {is: v_refer, from: 01M7HN2MYY47MNQR1KCRN38HQE, to: ontology.is}

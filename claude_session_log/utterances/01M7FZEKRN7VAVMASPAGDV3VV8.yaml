@@ -1,0 +1,27 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-15T16:08:09.237Z（UTC）
+individuals:
+  01M7FZEKRN7VAVMASPAGDV3VV8:
+    is: model_utterance
+    display: 発言 555
+    val:
+      order: 555
+      text: |
+        E10が終わり、結果のJSONをコミット・プッシュしました。
+
+        E10は、語の定義を3通りの形で渡したときに、モデルが定義に従って答えられるかを測る実験です。数字は正解率で、問題数は G2c・G2k とも24問です。
+
+        | 渡し方 | G2c | G2k | 全体 |
+        |---|---|---|---|
+        | なし（none） | 0.38 | 0.75 | 0.56 |
+        | 自然文の定義（near） | 0.58 | 0.75 | 0.67 |
+        | 概念式（expr） | 0.58 | 0.67 | 0.62 |
+        | 概念式・伏せ字（expr_masked） | 0.54 | 0.62 | 0.58 |
+
+        - **G2c:** 概念式でも、何も渡さない場合より上がり、自然文の定義と同じ水準でした。
+        - **G2k:** 概念式を渡すと、何も渡さない場合より下がりました。
+        - **全体:** 概念式は自然文の定義に届いていません。
+
+        今はE11が動いていて、そのあとE3の概念式版に進みます。E10の結果は、この2つと合わせて `spec/exp.yaml` に記録します。次の再開は16:10（UTC）に予約しました。
+facts:
+- {is: v_say, from: session_model, to: 01M7FZEKRN7VAVMASPAGDV3VV8}
+- {is: exp.v_answer, from: 01M7FZEKRN7VAVMASPAGDV3VV8, to: 01M7FPW8Y1T8TD1HH00VFW8AQW}

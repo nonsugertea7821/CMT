@@ -1,0 +1,43 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-17T16:01:56.905Z（UTC）
+individuals:
+  01M7N3WP59Z7QEN3YV10M7TFMQ:
+    is: model_utterance
+    display: 発言 1235
+    val:
+      order: 1235
+      text: |
+        導けそうです。ontology の2つの最上位の説明文（gloss）は、どちらも self と same で書き直せます。持続体（continuant）は形が一致し、生起体（occurrent）は読み方が2つに分かれます。
+
+        **持続体（continuant）**
+        - gloss は「時間を通じて同一性を保って存在するもの」です。
+        - フレーム t の self を self_t と書くと、これは ∀t, t'. same(self_t, self_t') になります。どのフレームでも自分と同じであるもの、ということです。
+        - フレームの宣言は減らない（前に確かめた h_open_runtime）ので、一度宣言された self は、後のどのフレームでも same が成り立ちます。
+        - 体系の事実とも合います。1052 個の個体は、すべて持続体の下にあります。限定の self の位置に来るのは、持続体だけです。
+
+        **生起体（occurrent）**
+        gloss は「時間の中で起こり、展開するもの」です。self と same での書き方は2つあり、今の体系で食い違います。
+
+        | | 生起体の導き方 | 当てはまる動詞 | 今の体系との一致 |
+        |---|---|---|---|
+        | D1 | 限定 λself. v(self, X) の v（self を限定するもの） | 動詞すべて（118） | 一致する（動詞 118/118 が生起体の下にある） |
+        | D2 | 前後のフレームを同じでなくするもの（¬same(frame_t, frame_t+1)） | pre/post を持つ動的な動詞だけ（16） | 合わない。静的な動詞約 100 個（依存する、部分になる など）も生起体の下にある |
+
+        - D2 は gloss（展開する）をそのまま書いたものです。実行器の法則 progress（changes_state: 歩みは状態を変える）とも同じ形です。
+        - D2 を取ると、静的な動詞は生起体ではなく関係になります。BFO でも、依存や部分は関係で、生起体ではありません。
+        - D1 は今の体系の書き方と一致します。ただ、gloss の「展開する」は使っていません。
+
+        **体系の中のほかの事実**
+        - 動詞で持続体の下にあるものは、0 です。
+        - 生起体の下にある名詞が 50 個あります。process、inference、payment、delivery などです。どれも個体を持ちません。D1・D2 のどちらでも「生起体を名前で呼んだもの」として読めます。
+        - ただし、ontology.concept（概念）がこの 50 個の中にあり、生起体の下に置かれています。これは別に確かめる必要があります。
+
+        **層の話とのつながり**
+        - 持続体と生起体の区別は、self（と、フレームをまたぐ same）から決まります。シグネチャで決まる区別が、否定の層別のほかにもう1つ増えます。
+        - D2 を取ると、静的と動的の区別は、前の分類の still/refer と change の境界と同じ所に来ます。つまり、syntax と runtime の境界をシグネチャから導ける見込みが出てきます。
+
+        まだ何も変更していません。生起体を D1 と D2 のどちらで導くかを決めてもらえれば、それを仮説として登録して、体系の事実と照らし合わせます。
+facts:
+- {is: v_say, from: session_model, to: 01M7N3WP59Z7QEN3YV10M7TFMQ}
+- {is: exp.v_answer, from: 01M7N3WP59Z7QEN3YV10M7TFMQ, to: 01M7N3V5GGP996P0ZABFR5GC0Y}
+- {is: v_refer, from: 01M7N3WP59Z7QEN3YV10M7TFMQ, to: runtime.changes_state}
+- {is: v_refer, from: 01M7N3WP59Z7QEN3YV10M7TFMQ, to: ontology.concept}

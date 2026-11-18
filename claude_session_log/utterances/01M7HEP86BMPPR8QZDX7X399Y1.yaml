@@ -1,0 +1,80 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-16T05:53:42.603Z（UTC）
+individuals:
+  01M7HEP86BMPPR8QZDX7X399Y1:
+    is: model_utterance
+    display: 発言 698
+    val:
+      order: 698
+      text: |
+        その直観は当たっていると思います。今の問題の根は、部分を定義していない原始的な関係のまま使っていることにあります。
+
+        ## 今どうなっているか
+
+        `v_compose` は「始点が部分、終点が全体」という役の区別を持っています。しかしその区別は約束で決めているだけで、何かから導かれてはいません。部分について法則が与えているのは、推移的であることと反対称であることくらいです。
+
+        反対称は「互いに部分なら同じもの」としか言いません。互いに部分だと書かない限り、どちらが全体かを決める材料にはなりません。前回の「独立した文」とは、この自由度のことでした。
+
+        ## 全体と部分を概念式で定義すると
+
+        全体を「部分を合わせてできる第三のもの」と定義します。
+
+        ```yaml
+        v_sum: {display: 合わせる, extends: occurrent, from: continuant, to: continuant, new_kind: continuant,
+                holds: [{is: part, from: from, to: new}, {is: part, from: to, to: new},
+                        {is: depend, from: new, to: from}, {is: depend, from: new, to: to}]}
+        # 部分 ≡ 何かと合わせると全体になるもの:  part(x, y) ⇔ ∃z. sum(x, z) = y
+        ```
+
+        この形には、向きの誤りを書きようがないという性質があります。
+
+        - 合わせる二つ（始点と終点）は対等なので、入れ替えても意味は変わりません。
+        - 全体は新しく生まれる第三の項（new）です。部分と同じ席には入れられません。
+
+        前回の限界は、部分と全体を入れ替えても spec 全体が矛盾なく成り立ってしまうことでした。この定義では、二つの部分の入れ替えは本当に何も変えないので無害です。一方、全体は別の席にあるので、部分と取り違えるという入れ替えがそもそも書けません。
+
+        ## 定理になる
+
+        隠れ状態のずれなら、こう書けます。
+
+        ```yaml
+        - {is: v_sum, from: hidden_state, to: state_shift, new: shifted_hidden_state}   # h' = h ⊕ v
+        ```
+
+        ここから、部分であることが定理として導かれます。
+
+        - part(state_shift, shifted_hidden_state)
+        - part(hidden_state, shifted_hidden_state)
+        - 全体 h' は、h と v の両方に依存する
+
+        もし誰かが別の場所に「h' は v の部分である」と書けば、part(v, h') と part(h', v) が同時に成り立ちます。反対称によって v と h' は同じものになるはずですが、二つは別のものです。ここで矛盾が出ます。向きは検査で確かめる対象から、証明で導かれるものに変わります。
+
+        付随して分かったことがあります。最初の下書きの「ずれは隠れ状態の部分」は、厳密には不正確でした。v は元の h の部分ではなく、足した後の h' の部分です。全体を定義すると、この区別を書かざるを得なくなります。
+
+        ## 既存の書き方との関係
+
+        - **「X の部分である」という限定:** 「何かと合わせると X になる」（∃z. sum(this, z) = X）の略記として残せます。その結果、部分であることは原始的な関係ではなく、合わせることから導かれる関係になります。
+        - **既存の事実404件:** 合わせる相手を書いていない存在の主張として、そのまま読めます。
+        - **新しい錨:** 合わせる相手が分かっている箇所（h' = h ⊕ v や、v = m ⊕ s の共通成分と固有成分）は、`v_sum` で書けば向きが定理で固定されます。
+
+        ## 残る限界（正直に）
+
+        合わせるものと全体の取り違えは、別の形でまだ起こり得ます。例えば「v と h' を合わせると h になる」と書くような誤りです。
+
+        これは「全体は部分に依存する」から、h が h' に依存すると導かれる点で捕まえられます。h は層の出力として、h' より先に定まっている（h' に依存しない）と別に書いておけば、ここで食い違いが出ます。生成の順序という錨が一つ要りますが、`v_compose` の向きとは違い、モデルの中の計算の順序という実際の事実に結びついた錨です。
+
+        ## 進め方の案
+
+        1. ontology.yaml の core に、`v_sum` と「部分 ≡ 合わせると全体になる」の法則を足します。
+        2. exp.yaml で、ずれ（h' = h ⊕ v）と、共通成分・固有成分（v = m ⊕ s）を `v_sum` で書き直します。
+        3. 逆向きの文をわざと足し、矛盾として捕まることを確かめます。
+
+        core に手を入れるので、進めてよいか確認させてください。
+facts:
+- {is: v_say, from: session_model, to: 01M7HEP86BMPPR8QZDX7X399Y1}
+- {is: exp.v_answer, from: 01M7HEP86BMPPR8QZDX7X399Y1, to: 01M7HEMZF309XTK1493WP1FJ23}
+- {is: v_refer, from: 01M7HEP86BMPPR8QZDX7X399Y1, to: ontology.v_compose}
+- {is: v_refer, from: 01M7HEP86BMPPR8QZDX7X399Y1, to: std.v_sum}
+- {is: v_refer, from: 01M7HEP86BMPPR8QZDX7X399Y1, to: syntax.new_kind}
+- {is: v_refer, from: 01M7HEP86BMPPR8QZDX7X399Y1, to: exp.hidden_state}
+- {is: v_refer, from: 01M7HEP86BMPPR8QZDX7X399Y1, to: exp.state_shift}
+- {is: v_refer, from: 01M7HEP86BMPPR8QZDX7X399Y1, to: exp.shifted_hidden_state}

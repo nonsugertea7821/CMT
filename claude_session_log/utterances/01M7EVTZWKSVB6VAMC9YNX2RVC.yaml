@@ -1,0 +1,29 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-15T05:45:46.131Z（UTC）
+individuals:
+  01M7EVTZWKSVB6VAMC9YNX2RVC:
+    is: model_utterance
+    display: 発言 442
+    val:
+      order: 442
+      text: |
+        実験は再開して、動いています。
+
+        **再開した経緯**
+        - コンテナが再起動していて、L20 の実行が 05:29 に止まっていました。
+        - 学習済みの 13 概念は途中結果に残っていたので、そこから再開しました。
+        - 残りは L20 の 11 概念（約1時間）、その評価と e6、そのあとの L4 です。
+
+        **待つ間に進めたい項目**
+        `b_write_subject_concepts_in_controlled_language` に着手したいと考えています。題材の概念（顧客・未成年・週など、ベクトルを学習した 24 概念）を概念式で書く項目です。ただし、体系に関わる判断が2つあるので、確認させてください。
+
+        1. **置き場所**: 新しい領域 `subj`（題材）を作り、`spec/subj.yaml` に置きます。使う領域は core だけです。実験の領域 exp とは分けます。題材は、実験で使う「業務の世界」の語なので、実験そのものの語とは別の層だと考えています。
+        2. **単位のある量**: 24 概念のうち、大口注文（10 個以上）と都市部（人口 1 万人以上）は、今ある `count` の軸で書けます。赤字（利益が目標額を下回る）も、比較の `cmp` で書けます。しかし、未成年（25 歳未満）・無料（月額 500 円以下）・夜間（15 時〜翌 6 時）・午前・大人（150cm 以上）・遅延（3 日以上）は、単位のある量です。今の軸（個数・割合・順番・文字列・真偽）では書けません。
+           - 案: 軸 `quantity`（量、値は数）を core に足し、単位はノード（`year`, `yen`, `hour`, `cm`, `day`）として、量の修飾の中で指します。例: 未成年 = 人のうち、年齢が `at: {quantity: {lt: 25}, unit: year}` のもの。
+
+        この2点でよければ、そのまま書き始めます。
+facts:
+- {is: v_say, from: session_model, to: 01M7EVTZWKSVB6VAMC9YNX2RVC}
+- {is: exp.v_answer, from: 01M7EVTZWKSVB6VAMC9YNX2RVC, to: 01M7EVQMRGBS2JHH8Z8C2EX83D}
+- {is: v_refer, from: 01M7EVTZWKSVB6VAMC9YNX2RVC, to: syntax.cmp}
+- {is: v_refer, from: 01M7EVTZWKSVB6VAMC9YNX2RVC, to: subj.hour}
+- {is: v_refer, from: 01M7EVTZWKSVB6VAMC9YNX2RVC, to: subj.day}

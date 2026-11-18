@@ -1,0 +1,54 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-17T22:24:52.154Z（UTC）
+individuals:
+  01M7NSSTXTCBPZN2DJWQF7TAB0:
+    is: model_utterance
+    display: 発言 1278
+    val:
+      order: 1278
+      text: |
+        ご指摘の通りでした。v_speak（発話する）にだけ、計算結果や設計書にあたる「作られたもの」の概念がありません。さらに、モデルが書く文章は、計算の側の名前で書かれていました。
+
+        **在るようにする動詞ごとの「作られたもの」の概念**
+
+        | 動詞 | 作られたものを表す一般の概念 | 個別の種類 |
+        |---|---|---|
+        | 計算する | computed（計算で得られた） | 重み、層の出力、型検査の結果、計算する先の文章 など 6 |
+        | 設計する | designed（設計されるもの）、design_to | プログラミング言語、設計する先の情報 |
+        | 学習する | learned（学習で得られた） | 学習で得られた傾向性 |
+        | 判定する | — | verdict（判定） |
+        | 教える | — | taught_vector |
+        | **発話する** | **なし** | place_system（システムプロンプト。運用者が発話する）だけ |
+
+        v_speak には下位の動詞が2つあり、終点の種類を絞っています（定義文を発話する → definition_text、理由を発話する → reason）。ただし definition_text（定義からなる文章）も reason（判定について述べる文）も、**発話と関係なく定義されています**。発話の産物として定義されているのは、place_system だけです。
+
+        **モデルが書く文章の置き場所**
+        - 計算の側：`passage_express_from_natural_language_compute_to`（計算する先の、自然言語で書かれる文章）。その下に rendered_text（自然言語に変換した文）があります。
+        - 発話の側：scratchpad（途中経過の書き出し）と usage_explain（説明）は、「理由を発話する」の時間的な部分として書かれています。
+
+        つまり、モデルが自然言語の文章を出すことは、体系の中で「計算する」とも「発話する」とも書かれています。そして「発話されたもの」にあたる概念は、計算の側の名前「計算する先の自然言語の文章」で存在しています。
+
+        **読み取れること**
+        v_compute と v_speak の式が同じになったのは偶然ではなく、モデルについては同じ出来事を2つの名前で書いていた可能性があります。これは同じ（same）の1つ目の向き（見分けがつかないなら同じ）の側の問題で、`any` が隠していたのはこの重なりでした。対称性が崩れているのは、発話の産物が計算の側に吸収されているから、と読めます。
+
+        **ただし、まだ弱い観察です**
+        - 例は数個で、ほぼ exp 領域の語だけです。
+        - 人（運用者）の発話は place_system の1例しかありません。人の発話と計算が同じかどうかは、この体系からは言えません。
+
+        ここからは、次の2つのどちらかになると考えます。
+        - 「作られたものの概念」が、在るようにする動詞ごとに対になっているか（対称性）を、観察として正式に記録する。
+        - 発話する・計算するの重なりを、混同の法則（no_confusion）と同じ形で調べる。
+
+        どちらで進めるか指示してください。
+facts:
+- {is: v_say, from: session_model, to: 01M7NSSTXTCBPZN2DJWQF7TAB0}
+- {is: exp.v_answer, from: 01M7NSSTXTCBPZN2DJWQF7TAB0, to: 01M7NSRJ42H4783DRZC159D2DR}
+- {is: v_refer, from: 01M7NSSTXTCBPZN2DJWQF7TAB0, to: exp.v_speak}
+- {is: v_refer, from: 01M7NSSTXTCBPZN2DJWQF7TAB0, to: exp.design_to}
+- {is: v_refer, from: 01M7NSSTXTCBPZN2DJWQF7TAB0, to: exp.taught_vector}
+- {is: v_refer, from: 01M7NSSTXTCBPZN2DJWQF7TAB0, to: exp.place_system}
+- {is: v_refer, from: 01M7NSSTXTCBPZN2DJWQF7TAB0, to: exp.definition_text}
+- {is: v_refer, from: 01M7NSSTXTCBPZN2DJWQF7TAB0, to: exp.passage_express_from_natural_language_compute_to}
+- {is: v_refer, from: 01M7NSSTXTCBPZN2DJWQF7TAB0, to: exp.rendered_text}
+- {is: v_refer, from: 01M7NSSTXTCBPZN2DJWQF7TAB0, to: exp.usage_explain}
+- {is: v_refer, from: 01M7NSSTXTCBPZN2DJWQF7TAB0, to: std.v_compute}
+- {is: v_refer, from: 01M7NSSTXTCBPZN2DJWQF7TAB0, to: any}

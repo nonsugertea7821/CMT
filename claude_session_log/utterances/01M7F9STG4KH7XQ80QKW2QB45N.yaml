@@ -1,0 +1,29 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-15T09:49:47.908Z（UTC）
+individuals:
+  01M7F9STG4KH7XQ80QKW2QB45N:
+    is: model_utterance
+    display: 発言 502
+    val:
+      order: 502
+      text: |
+        表示名の語を `ja` から `display` に改名しました（e845f0b、push 済み）。`check_spec.py` と `run_spec.py` は両方とも通っています。
+
+        **改名した範囲**
+        - `ontology.yaml`、`exp.yaml`、`subj.yaml` の表示名の項目と、文法の語の並びです。表示語のノード自体も `display` に改めました。
+        - 法則 `unique_in_domain` の規則が参照していた関係も改めました。
+        - 検査器の中の扱いも合わせました。
+        - `docs/design.md` などの凍結した文書と、`spec/trial/` 関係のスクリプトには手を付けていません。
+
+        改名のあと、わざと違反を入れて検査器にかけてみました。表示名の重複は `unique_in_domain` が、表示名以外の項目に書いた日本語は「自然言語は display にだけ書く」という検査が、それぞれ検出しました。
+
+        **マスクの扱い**
+        日本語は表示名にだけ置く、という当初の方針に合わせて、表示名を外した式を標準にしました。
+
+        - E11 と、概念式で学習する E3 には、語そのもの以外の表示名を外した式を渡します。識別子はそのまま見えています。
+        - E10 だけは、表示名を残した条件と外した条件を並べて比べます。表示名を外しても成績が落ちないかを確かめる対照です。
+
+        L4 → E10 → E11 → 概念式で学習する E3（層 8）の順に、自動で走るのを待っています。
+facts:
+- {is: v_say, from: session_model, to: 01M7F9STG4KH7XQ80QKW2QB45N}
+- {is: exp.v_answer, from: 01M7F9STG4KH7XQ80QKW2QB45N, to: 01M7F9QEZNS5DKKRXM45F2HS3E}
+- {is: v_refer, from: 01M7F9STG4KH7XQ80QKW2QB45N, to: syntax.display}

@@ -1,0 +1,29 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-18T00:52:56.058Z（UTC）
+individuals:
+  01M7P28YKTPYNE63F6Z1W7WHT6:
+    is: model_utterance
+    display: 発言 1403
+    val:
+      order: 1403
+      text: |
+        そうですね。含意を入れると、`monotone` と `specific` は同じ順序を反対側から見たものになります。
+
+        - **monotone**：下へ降りたら、限定が増えなければならない。
+        - **specific**：限定が増えている（相手の式をすべて持つ）なら、その相手の下に置かなければならない。
+
+        「式を持つ」を `r_acc`（書いた式と受け継いだ式）で判定していると、両方とも書き方の違いに引きずられます。
+
+        - 書き方が違うだけで実質は何も足していない子が、`monotone` をすり抜けます（`relation_operator`）。
+        - 実質は下位なのに、書き方が違うので `specific` が見逃します（9件）。
+
+        `r_has`（含意も含めて持つ）に替えると、両方が同じ意味の上で判定するようになります。さきほど見つかった違反は、どちらもこのずれでした。
+
+        - `monotone` 側：`relation_operator` と `source_of_truth`。
+        - `specific` 側：14件。そのうち5件は `relation_operator` から来ています。
+
+        ついでに言うと、`one_name` は同じ順序で両方向に含意しあう組、つまり同値のものを捕まえています。三つとも「含意による順序」についての法則です。
+
+        このまま進めるなら、`monotone` を `r_has` に替えて `relation_operator` を消し、9件は観察として事前登録してから記録します。
+facts:
+- {is: v_say, from: session_model, to: 01M7P28YKTPYNE63F6Z1W7WHT6}
+- {is: exp.v_answer, from: 01M7P28YKTPYNE63F6Z1W7WHT6, to: 01M7P28PF62J30HJ19BTXRNMS1}

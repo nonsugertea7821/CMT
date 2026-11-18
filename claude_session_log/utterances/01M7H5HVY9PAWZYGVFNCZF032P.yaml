@@ -1,0 +1,24 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-16T03:14:01.801Z（UTC）
+individuals:
+  01M7H5HVY9PAWZYGVFNCZF032P:
+    is: model_utterance
+    display: 発言 663
+    val:
+      order: 663
+      text: |
+        E12、E13、E10-opaqueは終わり、E14はベクトルを作り終えて評価の途中です。1分後に再開するよう予約し直してあります。
+
+        | 実験 | 条件 | G2c 正答率 | G2k 正答率 |
+        |---|---|---|---|
+        | E12 | none / tok0 / tok / word+tok | 0.38 / 0.50 / 0.46 / 0.50 | 0.75 / 0.75 / 0.71 / 0.75 |
+        | E13 | none / near / symbolic / symbolic_mod | 0.39 / 0.61 / 0.43 / 0.52 | 0.74 / 0.74 / 0.74 / 0.78 |
+        | E10-opaque | none / expr_masked_i / expr_opaque | 0.38 / 0.58 / 0.67 | 0.75 / 0.62 / 0.58 |
+
+        - **E12（専用キー）:** ほぼ効いていません。学習したキー（tok）が、学習前の初期値のまま置き換えただけの条件（tok0）を上回っていません。
+        - **E13（事実を聞いて帰属は体系で決める）:** symbolicはnearより低く、G2kでは選択肢の順序を入れ替えると答えが変わる問題が多く出ました（両方正しいのは0.13）。上位概念の問いが不安定なようで、上位の問いを外したsymbolic_modの方がよい結果でした。
+        - **E10-opaque（識別子の無意味化）:** G2cではexpr_opaqueが最良でした。一方G2kでは下がっています。
+
+        E14で作った差分ベクトルは、どの語でも各例と平均の cos が1.00、大きさが約40〜58でした。語の意味より、定義文を前に付けたことによる位置の影響を拾っている疑いがあります。
+facts:
+- {is: v_say, from: session_model, to: 01M7H5HVY9PAWZYGVFNCZF032P}
+- {is: exp.v_answer, from: 01M7H5HVY9PAWZYGVFNCZF032P, to: 01M7GVJG2QQTBZ56SW5BXNQ579}

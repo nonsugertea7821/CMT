@@ -1,0 +1,57 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-16T06:11:16.642Z（UTC）
+individuals:
+  01M7HFPDH24A1KK4PGCTQG95F5:
+    is: model_utterance
+    display: 発言 710
+    val:
+      order: 710
+      text: |
+        種類どうしの事実を書けるようにしました。h′ = h ⊕ v と v = m ⊕ s は1行ずつの事実になり、部分の関係も生成の順序も、その事実から導かれます。検査（check_spec と run_spec）は通り、コミットして push 済みです（9ea1eae）。
+
+        ## 変えたこと
+
+        - **check_spec:** 位置が全部種類の事実を、種類どうしの事実として受け付けます。否定で書くとエラーにしました。閉世界では否定は制約で書くからです。
+        - **ontology.yaml（core）:** 種類どうしの事実から関係を導く規則を足しました。
+          - 合わせる事実から、合わせた二つが全体の部分であること、全体が二つに依存することを導きます。
+          - 種類どうしの「部分になる」「依存する」の事実も、同じように部分と依存を導きます。
+          - 事実の定義は「個体か種類についての文（種類についての文は、その種類のすべてについて）」に直しました。
+        - **exp.yaml:**
+          ```yaml
+          - {is: v_sum, from: hidden_state, to: state_shift, new: shifted_hidden_state}                    # h' = h ⊕ v
+          - {is: v_sum, from: common_vector_component, to: specific_vector_component, new: concept_vector}   # v = m ⊕ s
+          ```
+          h′ の限定は、前回の代償だった「h に依存する」から「h を部分に持つ」に戻しました。生成の順序は、この事実から導かれるようになったからです。
+
+        ## 逆向きをわざと入れて確かめたこと
+
+        | 入れた誤り | 結果 |
+        |---|---|
+        | 全体と部分を取り違える（h′ ⊕ v = h） | 捕まりました（依存の反対称に反する） |
+        | h が h′ に依存する | 捕まりました（依存の反対称に反する） |
+        | h′ は v の部分 | 捕まりました（部分の反対称に反する） |
+        | 否定を事実で書く | 書けないとエラーになりました |
+        | 事実 h′ = h ⊕ v を消してから「h が h′ に依存」 | 通りました |
+
+        最後の行は対照です。捕まえているのが、新しく書いた事実から導いた順序だと分かります。
+
+        いずれも確かめた後、spec は元に戻してあります。
+
+        ## 前回漏れた「h の一種が h′ に依存する」
+
+        これは**捕まりません。そして、捕まえるべきではない**、という結論になりました。「すべてについて」と読むと、「h のある一種（例えば注入より後の層の隠れ状態）が h′ に依存する」は正しい文です。注入した後の層の状態は、実際に h′ に依存しています。
+
+        本当の誤りは「h そのものが h′ に依存する」ことで、こちらは捕まります。前回これを限界として挙げたのは、誤りでした。そのため、生成の順序のための追加の制約は入れていません。
+
+        ## 残る点
+
+        型の検査はゆるいままです。例えば「h と層を合わせる」と書いても通ります。`v_sum` の始点と終点の型が、continuant としか決まっていないからです。同じ種類の量どうししか合わせられない、と決めるには、「合わせられるもの」の種類を別に定義する必要があります。
+facts:
+- {is: v_say, from: session_model, to: 01M7HFPDH24A1KK4PGCTQG95F5}
+- {is: exp.v_answer, from: 01M7HFPDH24A1KK4PGCTQG95F5, to: 01M7HFFW7ZBMMBD7EVDCWEAREC}
+- {is: v_refer, from: 01M7HFPDH24A1KK4PGCTQG95F5, to: std.v_sum}
+- {is: v_refer, from: 01M7HFPDH24A1KK4PGCTQG95F5, to: exp.hidden_state}
+- {is: v_refer, from: 01M7HFPDH24A1KK4PGCTQG95F5, to: exp.state_shift}
+- {is: v_refer, from: 01M7HFPDH24A1KK4PGCTQG95F5, to: exp.shifted_hidden_state}
+- {is: v_refer, from: 01M7HFPDH24A1KK4PGCTQG95F5, to: exp.common_vector_component}
+- {is: v_refer, from: 01M7HFPDH24A1KK4PGCTQG95F5, to: exp.specific_vector_component}
+- {is: v_refer, from: 01M7HFPDH24A1KK4PGCTQG95F5, to: exp.concept_vector}

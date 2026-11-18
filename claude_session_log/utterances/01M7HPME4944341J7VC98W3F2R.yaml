@@ -1,0 +1,26 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-16T08:12:31.753Z（UTC）
+individuals:
+  01M7HPME4944341J7VC98W3F2R:
+    is: model_utterance
+    display: 発言 801
+    val:
+      order: 801
+      text: |
+        そうですね。中身を見直すと、design.md は単なる古い設計メモではありませんでした。目的、現行モデルの診断、設計原則、全体構成、実験計画が書いてあり、プロジェクト全体（CMT）の出発点になっています。言語と実験のどちらか一方に属するものでもありません。
+
+        なので、archive にしまうより、次の扱いがよいと思います。
+
+        - **docs/design.md は今の場所（根の docs/）に置いたままにする。** 根は cscl と exp の上なので、両方の出発点を置く場所として合っています。凍結もそのまま続けます。
+        - **本文には手を入れず、docs/README.md を新しく一枚足す。** そこに道案内を書きます。
+          - design.md は最初の問題意識と計画。今の用語・配置との対応（spec/ → cscl/library と exp/src、check_spec → type_checker、core → axiom など）。
+          - 言語の今の姿は cscl/、実験の今の姿は exp/ を見る。
+          - 正本は cscl.yaml の範囲の体系。
+        - **exp/experiments/README.md も同じ扱いにする。** E1 から始まる実験の記録として凍結し、今の状況は exp.yaml（観察・仮説）を正とします。
+
+        これなら、design.md の §10・§11（実験から得た設計変更、進捗）が古くなっていく問題も、「当時の記録」として読めば済みます。現状を知りたいときは、道案内から体系へ誘導できます。
+
+        docs/README.md を書いてよければ、claude/exp で作って PR に入れます。
+facts:
+- {is: v_say, from: session_model, to: 01M7HPME4944341J7VC98W3F2R}
+- {is: exp.v_answer, from: 01M7HPME4944341J7VC98W3F2R, to: 01M7HPM19BZ3ZDS0X5FTHNSZVV}
+- {is: v_refer, from: 01M7HPME4944341J7VC98W3F2R, to: lang.type_checker}

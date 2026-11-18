@@ -1,0 +1,65 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-17T10:08:08.708Z（UTC）
+individuals:
+  01M7MFMVG44YA1QRV56GHSK0GA:
+    is: model_utterance
+    display: 発言 962
+    val:
+      order: 962
+      text: |
+        「C で始まる、ほぼ同じ枠組み」は、おそらく **Cartridges**（Eyuboglu, Ehrlich, Arora, Ré ほか。arXiv:2506.06266、ICLR 2026）です。名前を聞いただけなので、違っていたら教えてください。ここに書く内容は、要旨とその要約からのもので、本文は読んでいません。
+
+        **Cartridges の枠組み**
+        - コーパスごとに、小さな KV キャッシュ（Cartridge）を事前にオフラインで学習します。推論時にはそれを差し込みます。
+        - コーパスで次トークン予測を学ばせるだけでは、文脈に全文を置く場合（ICL）に届きません。そこで「self-study」を使います。コーパスについての多様な合成の会話を作り、文脈蒸留で学習する方法です。
+        - これで ICL と同等の性能になり、メモリは 38.6 分の 1 になります。複数の Cartridge は、再学習なしで組み合わせられます。
+
+        **この研究と重なるところ**
+
+        | | Cartridges | この研究 |
+        |---|---|---|
+        | 何を事前に学習するか | コーパス → KV キャッシュ | 定義 → 概念ベクトル（`taught_vector`） |
+        | どう使うか | 推論時に差し込む | 推論時に差し込む |
+        | 何と比べるか | 文脈に置く場合（ICL） | 文章で与える場合（`text_injection`） |
+        | 組み合わせ | 合成できる | `vector_count` を下げない（支持済み） |
+        | 教え方の要点 | 多様な問いで教える（self-study） | 暗唱と適用例を教師にする |
+
+        学習した表現を差し込むという大枠は、確かにほぼ同じです。
+
+        **新規性として残りそうなところ**
+        1. **元の意味との衝突。** Cartridges が扱うのは新しい内容（コーパス）です。この研究は、既に知っている語の意味を上書きします（`prior_collision`）。衝突が追従を下げることは、Stringli・Xu と一致し、この研究の中心の課題です。
+        2. **用法をまたいだ一貫性を指標にしていること。** 用法どうしは転移しない（暗唱⇄適用⇄言い換え）ことを、仮説として示しました。Cartridges の評価は課題の性能で、この切り分けはしていないはずです（要確認）。
+        3. **概念の単位と、型付きの体系。** 単位がコーパスではなく概念1つで、ベクトルの元が CSCL で型検査された定義です。
+        4. **注入の形。** KV の接頭ではなく、残差の流れへの単一層の加算です。成分を共通成分と固有成分に分ける分析も、この研究にしかありません。
+
+        **さっきの仮説への含意**
+        self-study の要点は、多様な問いで教えると汎化する、というものです。そうだとすると、「言い換えを教師にしていない」ことが一貫性を止めている、という読みを後押しします。仮説 3（全用法の教師で一貫性が上がる）の、外からの根拠になりえます。逆に、新規性の主張としては「多様な用法で教える」こと自体は新しくない、ということでもあります。新規性は 1〜3 に寄せるべきです。
+
+        **ほかに見つかった関連**
+        - **RippleEdits**（Cohen ほか 2023）と ChainEdit 2025: 知識を編集したとき、論理的に導かれる別の事実まで変わるかを測ります。私たちの「用法をまたぐ一貫性」に近い問いです。
+        - **Memorizing is Not Enough**（2025）: 注入した知識は孤立しやすい、という主張です。用法が転移しないことと同じ向きです。
+        - **AutoLexSteer**（2026）: 語義単位の操舵ベクトルです。
+        - **CONTXT**（2026）: 少数の例から作る文脈ベクトルによる操舵です。
+
+        **次の作業として提案すること**
+        1. Cartridges・RippleEdits・Memorizing is Not Enough を個体にし、要旨から主張を書き写して、仮説と機械的に比べます。
+        2. 新規性 1〜3 を、決定または仮説として体系に書きます。
+        3. 先ほど提案した3つの仮説を、未検証として登録します。
+
+        進めてよければ、claude/exp ブランチで 1 と 3 からやります。
+
+        Sources:
+        - [Cartridges (arXiv:2506.06266)](https://arxiv.org/abs/2506.06266)
+        - [Cartridges (ICLR 2026)](https://iclr.cc/virtual/2026/poster/10011902)
+        - [Evaluating the Ripple Effects of Knowledge Editing (TACL)](https://direct.mit.edu/tacl/article/doi/10.1162/tacl_a_00644/120576/Evaluating-the-Ripple-Effects-of-Knowledge-Editing)
+        - [ChainEdit (arXiv:2507.08427)](https://arxiv.org/pdf/2507.08427)
+        - [Memorizing is Not Enough](https://www.researchgate.net/publication/390405486_Memorizing_is_Not_Enough_Deep_Knowledge_Injection_Through_Reasoning)
+        - [AutoLexSteer (arXiv:2609.06879)](https://arxiv.org/abs/2609.06879)
+        - [Context is All You Need / CONTXT (arXiv:2604.04364)](https://arxiv.org/abs/2604.04364)
+        - [In-context Vectors (arXiv:2311.06668)](https://arxiv.org/pdf/2311.06668)
+facts:
+- {is: v_say, from: session_model, to: 01M7MFMVG44YA1QRV56GHSK0GA}
+- {is: exp.v_answer, from: 01M7MFMVG44YA1QRV56GHSK0GA, to: 01M7MFK90PBAJYBWTATNG13PP6}
+- {is: v_refer, from: 01M7MFMVG44YA1QRV56GHSK0GA, to: exp.taught_vector}
+- {is: v_refer, from: 01M7MFMVG44YA1QRV56GHSK0GA, to: exp.text_injection}
+- {is: v_refer, from: 01M7MFMVG44YA1QRV56GHSK0GA, to: exp.vector_count}
+- {is: v_refer, from: 01M7MFMVG44YA1QRV56GHSK0GA, to: exp.prior_collision}

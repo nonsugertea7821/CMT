@@ -1,0 +1,59 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-17T15:28:17.379Z（UTC）
+individuals:
+  01M7N1Z1Z306CBJR5DMQ5NTB1J:
+    is: model_utterance
+    display: 発言 1186
+    val:
+      order: 1186
+      text: |
+        結論から言うと、self はすでに、どの限定にも隠れたシグネチャとして入っています。それを明示すると、定義は「不動点」になります。そのとき安全かどうかは、self が否定を通るかどうかで決まります。体系で確かめました（体系は変えていません）。
+
+        ## 1. self は、すでにどの限定にも入っている
+        限定 `{of: [v, 端], with: X}` は、「この概念自身が、動詞 v の『端』の位置に来る」という意味です。たとえば `{of: [v_depend, from], with: X}` は「X に依存するもの」です。λ式で書くと λself. v(self, X) になります。
+
+        つまり `of` の2つ目の要素（from か to）は、self の位置を指定するシグネチャです。限定するとは、シグネチャの片方の端に self を入れることだと言えます。
+
+        ## 2. self を `with` の側にも置くと、定義は不動点になる
+        self が `with` にも来ると、C = { x | v(x, C) } という、自分を使って自分を定義する形になります。
+
+        体系には、自分を直接指すノードはありません。ただ、前回見つけた循環 7 つは、まさにこの形を2つ以上のノードに分けたものでした。中身を確かめると、7 つすべてが**1つの関係を両端から書いたもの**です。
+
+        | 循環 | 一方の定義 | もう一方の定義 |
+        |---|---|---|
+        | pre ↔ post | pre: post の前に来る | post: pre の後に来る |
+        | axis ↔ value | axis: value から組み立てる | value: axis の部分になる |
+        | law_rule ↔ premise | law_rule: premise を前提に置く | premise: law_rule の前提になる |
+        | word ↔ sentence | word: sentence の部分になる | sentence: word から成る |
+        | base ↔ state_relation | base: state_relation を述べる | state_relation: base の部分になる |
+        | system ↔ cscl ↔ 概念式 | system: 概念式から成る | 概念式: cscl で書かれ、cscl は system に依存する |
+        | model ↔ weights | model: weights から成る | weights: model の部分（経由あり） |
+
+        つまりこれらは、「関係 R(A, B) が1つあり、A も B も、その端にいることだけで定義されている」という形です。対になった概念を、1つの関係のシグネチャが定義しています。self をシグネチャにすると、こうした対は2つの名前の循環ではなく、1つの宣言として書けるようになります。そして、system ↔ cscl の循環は、体系が自分自身を記述する、という自己記述の構造そのものです。lang に未検証で残っている h_cscl_self_hosting は、ここに当たります。
+
+        ## 3. 危ないのは、self が否定を通るとき
+        - **7 つの循環は、すべて肯定です。** 否定の限定を通る辺は1本もありません。単調な定義なので、不動点は必ず存在します（Knaster–Tarski の定理）。名前で止めても、展開して求めても、定まります。
+        - **self が否定を通ると**、C = { x | ¬v(x, C) } になります。これは Russell の逆理の形です。真偽の軸で同じことをすると、「この文は偽である」という嘘つきの文になります。不動点がないこともあり、展開が止まりません。おっしゃる停止性の問題は、ここで起きます。
+        - **体系の現状:**
+          - 法則の規則には、すでに守りがあります。`strata()`（type_checker.py:556）は、否定の前提を通る循環を層に分けられないとしてはじきます。
+          - 定義（限定の `with`）には、この確かめがありません。今の7つが肯定なのは、偶然そうなっているだけです。
+
+        ## 含意
+        - self をシグネチャに入れてよいのは、**self が肯定の位置にだけ現れるとき**です。法則の層分けと同じ条件を、定義にも課すことになります。
+        - そうすると、4つの象限の扱いも整理できます。
+          - 関係は、self を端に置くことで概念を定義する側に回ります。
+          - 量は、self を端に置いても数えられるだけで、循環を作りません。
+          - 真偽は、self と組むと嘘つきの文になります。ここだけは、self と同時に使うことを禁じる必要があります。
+
+        ## 進め方の案
+        - **観察として記録する。** 「定義の循環は 7 つで、どれも1つの関係を両端から書いたもので、否定を含まない」。これはもう見てしまった事実なので、仮説ではなく観察として置きます。
+        - **法則の候補を置く。** 「定義の循環は否定を通ってはならない」（定義の層分け）。根拠は、上の観察と、Russell の逆理・Knaster–Tarski の定理です。観察だけでは「起きていない」としか言えないので、法則にする理由は理論の側にあります。この点はあなたの判断が要ります。
+
+        記録だけ進めるか、法則まで置くか、どうしますか。
+facts:
+- {is: v_say, from: session_model, to: 01M7N1Z1Z306CBJR5DMQ5NTB1J}
+- {is: exp.v_answer, from: 01M7N1Z1Z306CBJR5DMQ5NTB1J, to: 01M7N1XBG0P7EX14RPK6RJ7CJ5}
+- {is: v_refer, from: 01M7N1Z1Z306CBJR5DMQ5NTB1J, to: ontology.v_depend}
+- {is: v_refer, from: 01M7N1Z1Z306CBJR5DMQ5NTB1J, to: syntax.of}
+- {is: v_refer, from: 01M7N1Z1Z306CBJR5DMQ5NTB1J, to: syntax.with}
+- {is: v_refer, from: 01M7N1Z1Z306CBJR5DMQ5NTB1J, to: syntax.law_rule}
+- {is: v_refer, from: 01M7N1Z1Z306CBJR5DMQ5NTB1J, to: syntax.state_relation}

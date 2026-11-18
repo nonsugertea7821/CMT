@@ -1,0 +1,53 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-15T05:13:44.047Z（UTC）
+individuals:
+  01M7ET0AVFZ1Z0PV253305T2FJ:
+    is: model_utterance
+    display: 発言 405
+    val:
+      order: 405
+      text: |
+        事実は、`exp.yaml` と `runs/` のどちらでも「位置に名前を付けた動詞の個体」として書く形に揃えました。検査を通してプッシュ済みで、測定値380、観察69、仮説37、決定17、残り項目20は変わっていません。
+
+        ## 新しい書き方
+
+        ```yaml
+        facts:
+          - {is: v_support, from: o_e1_redef_below_new_adjacent, to: h_collision_lowers_following}
+          - {is: v_scope, from: model_4b, to: h_collision_lowers_following}
+          - {is: v_refer, from: h_collision_lowers_following, to: {is: v_lower, from: prior_collision, to: redefinition_following}}
+          - {is: v_compose, from: layer, to: model_15b, at: {count: 28}}
+        ```
+
+        - **関係は動詞だけ**：`evidence` のような名詞を関係に使うのをやめ、動詞を16個足しました（`v_support`、`v_scope` など）。どれも中心の動詞の下位で、端の種類を狭めて定義しています（例：「支持する」は「一致する」の下位で、始点が支持する観察、終点が仮説）。
+        - **事実が何についてのものかは、動詞の端から決まります**：個体は、その位置の種類に当たらなければなりません。観察を測定の族への支持に使うと、エラーになります。
+        - **文の中身は主張されません**：仮説が述べる中身は、`v_refer` の終点に同じ形で置きます。事実の一覧には入りますが、成り立つとは扱いません。
+        - **数は `at` で書きます**：修飾の書き方（`at: {count: ...}`）と同じです。前回の懸念「個数は事実の数え上げ」への答えになっています。この形は「層という種類のものが28個、部分になる」と読めるからです。設問群に `count: 1` を書くと、種類の限定（1より多い）に反するエラーになります。
+        - **実行の記録も同じ形**：状態は `{is: depend, from: role1, to: dec1}`、否定は `neg: true`、歩みは `{is: exp.v_adopt, from: ..., to: ..., new: ...}` です。
+
+        否定の試験として、位置の種類に合わない事実、知らない語、旧形式の並びがエラーになることを確かめました。支持を反証に変えると、仮説の状態が `hyp_mixed` に変わるべきだというエラーも出ます。
+
+        ## 揃えきれていない点
+
+        - **実行の記録の状態は、動詞ではなく基礎の関係で書いています**：`exists` には対応する動詞がありません（端を1つしか持たないため）。状態は動詞の定義の下にある最下層の事実なので、基礎の関係で書くのが妥当だと判断しました。ただし `is` に基礎の関係を書けるのは、実行の記録の中だけです。
+        - **構文糖衣はまだ定義していません**：前回は「略記を `syntax` に定義する」と言いましたが、正本の形に書き直したので、ファイルの中に略記は残っていません。`holds`・`pre`・`post` の式の文字列（`"depend(from, to)"`）は、位置どうしの関係の型として残しています。
+        - **測定の族の設定の中身は、構造のままです**：`v_meaning_of` などの終点は、入れ子の値（`{model: {...}, group: {...}}`）です。中の語は検査していますが、事実には分けていません。
+
+        実験（L20 の学習）は動いています。
+facts:
+- {is: v_say, from: session_model, to: 01M7ET0AVFZ1Z0PV253305T2FJ}
+- {is: exp.v_answer, from: 01M7ET0AVFZ1Z0PV253305T2FJ, to: 01M7ESNMR77QJHJTAX5JPZMP82}
+- {is: v_refer, from: 01M7ET0AVFZ1Z0PV253305T2FJ, to: exp.v_support}
+- {is: v_refer, from: 01M7ET0AVFZ1Z0PV253305T2FJ, to: exp.v_scope}
+- {is: v_refer, from: 01M7ET0AVFZ1Z0PV253305T2FJ, to: ontology.v_refer}
+- {is: v_refer, from: 01M7ET0AVFZ1Z0PV253305T2FJ, to: exp.v_lower}
+- {is: v_refer, from: 01M7ET0AVFZ1Z0PV253305T2FJ, to: exp.prior_collision}
+- {is: v_refer, from: 01M7ET0AVFZ1Z0PV253305T2FJ, to: exp.redefinition_following}
+- {is: v_refer, from: 01M7ET0AVFZ1Z0PV253305T2FJ, to: ontology.v_compose}
+- {is: v_refer, from: 01M7ET0AVFZ1Z0PV253305T2FJ, to: exp.evidence}
+- {is: v_refer, from: 01M7ET0AVFZ1Z0PV253305T2FJ, to: syntax.at}
+- {is: v_refer, from: 01M7ET0AVFZ1Z0PV253305T2FJ, to: exp.v_adopt}
+- {is: v_refer, from: 01M7ET0AVFZ1Z0PV253305T2FJ, to: exp.hyp_mixed}
+- {is: v_refer, from: 01M7ET0AVFZ1Z0PV253305T2FJ, to: ontology.is}
+- {is: v_refer, from: 01M7ET0AVFZ1Z0PV253305T2FJ, to: syntax.holds}
+- {is: v_refer, from: 01M7ET0AVFZ1Z0PV253305T2FJ, to: syntax.pre}
+- {is: v_refer, from: 01M7ET0AVFZ1Z0PV253305T2FJ, to: syntax.post}

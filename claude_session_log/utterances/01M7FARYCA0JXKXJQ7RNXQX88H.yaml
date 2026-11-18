@@ -1,0 +1,39 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-15T10:06:47.690Z（UTC）
+individuals:
+  01M7FARYCA0JXKXJQ7RNXQX88H:
+    is: model_utterance
+    display: 発言 507
+    val:
+      order: 507
+      text: |
+        三つとも直しました（6589113、push 済み）。`check_spec.py` と `run_spec.py` は両方とも通っています。
+
+        **1. 領域の依存は、各領域が自分で宣言する（Cargo のクレートと同じ形）**
+        - `exp.yaml` と `subj.yaml` は、それぞれ自分の領域を `{is: domain}` の個体として宣言し、使う領域を `v_use` の事実として持ちます。
+        - `ontology.yaml` に残したのは、そのファイルの中にある領域 core と run の宣言だけです。
+        - 検査器は、宣言された依存の順に領域ファイルを読みます。依存が循環していれば誤りになります。
+        - 依存を宣言していない領域の種類を参照すると、法則 layered が検出します。subj から exp の種類をわざと参照させて、引っかかることを確かめました。
+        - `exp` 領域にも同じ名前の動詞 `v_use`（使う）があり、core の `v_use` とぶつかっていました。exp の側を `v_utilize`（用いる）に改名しています。
+
+        **2. 読む範囲は `cscl.yaml` で定める（tsconfig と同じ形）**
+        リポジトリの直下に置きました。検査器と実行器は、ここに書かれた範囲だけを読みます。
+
+        ```yaml
+        root: spec/ontology.yaml     # 本体（core と run）
+        include: [spec/*.yaml]       # 領域のファイル（最上位に domain を持つもの）
+        exclude: [spec/notes.yaml]
+        runs: [spec/runs/*.yaml]
+        ```
+
+        `spec/trial/` はこの範囲の外なので、これまでどおり読まれません。
+
+        **3. 名前を CSCL に**
+        - 設定ファイルの名前は `cscl.yaml` にしました。
+        - 体系の中の表示名は「概念体系制御言語」に改め、`ontology.yaml` の冒頭に正式名 CSCL（Concept System Control Language）を書き添えました。
+        - 凍結している `docs/design.md` には手を付けていないので、そちらには旧い名前の「体系制御言語」が残っています。
+        - 1 時間ごとの定期確認の文面にも旧い名前が残っています。食い違うのは名前だけで、作業の手順には影響しません。
+
+        実験は、L4 の計算が続いていて、E10 → E11 → 概念式で学習する E3 の順に待機しています。
+facts:
+- {is: v_say, from: session_model, to: 01M7FARYCA0JXKXJQ7RNXQX88H}
+- {is: exp.v_answer, from: 01M7FARYCA0JXKXJQ7RNXQX88H, to: 01M7FAJ671MHM6QT9JC8X4RQ86}

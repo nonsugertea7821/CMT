@@ -1,0 +1,64 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-17T10:36:53.364Z（UTC）
+individuals:
+  01M7MH9FQMMCNCHRNSNTYMA7FN:
+    is: model_utterance
+    display: 発言 999
+    val:
+      order: 999
+      text: |
+        ご指摘のとおりでした。層を分けたとき、下の層が自分を領域として書くのに、上の層の語を使っています。検査はそれを見逃しています。「自己記述してない」はこのことだと思います。まだ直していません。
+
+        ## 見つかったこと
+        1. **axiom と ontology が、上の層の語を使っている。**
+           - `axiom: {is: domain}` と `ontology: {is: domain}` の `domain` は、syntax で定義された語です。
+           - ontology.yaml の `{is: v_use, from: ontology, to: axiom}` の `v_use` も、syntax の語です。
+           - 層は axiom → ontology → syntax の順なので、どちらも上向きの参照です。
+        2. **法則 `layered` が、これを捕まえていない。**
+           - 個体の種類（`is:`）と事実の動詞は、層をまたいで解決されています。読み込むと `syntax.domain` と `syntax.v_use` になります。
+           - 層の検査はそこを見ていません。
+        3. **層の構造が、体系ではなく検査器に書かれている。**
+           - 層の並び：`LAYERS = ("axiom", "ontology", "syntax", "runtime", "std")` と書いています。
+           - 使う関係を読む部分（`uses_in`）：`syntax.v_use` という名前を決め打ちで読み、syntax だけ特別扱いしています。
+           - 層の並びは cscl.yaml の library にも書かれていて、二重になっています。
+           - 本来は、v_use の事実から層の並びが導かれるべきです。
+           - 層の並びと v_use の事実は、今は同じ並びなので矛盾はしていません。ただ、それを確かめている箇所はありません。
+        4. **関連して、lang が exp を使っている。**
+           - 言語の主張（claims.yaml）が、実験の領域の `decision`、`dec_*`、`hyp_untested` を使っています。
+           - これは既知の積み残し（状態の語彙を std へ移す）です。言語の領域が実験の領域に依存するのも、層の誤りです。
+
+        ## 直し方の案
+        1. **(a)**
+           - 層を自分で述べるための語（`domain` と `v_use`）を axiom に移し、どの層も上を見ずに自分を書けるようにします。
+           - 検査器は、層の並びを v_use の事実から読みます。`LAYERS` の決め打ちと、`uses_in` の特別扱いをなくします。
+           - 法則 `layered` を、個体の種類と事実の動詞にも当てます。
+        2. **(b)** 状態の語彙（`decision`、`dec_*`、`hyp_*`、そのための `evidence`、`against`、`observation` など）を std へ移し、lang が exp を使わないようにします。
+
+        (a) で `domain` を移す先は、axiom を勧めます。axiom は「在る・述べる・同じである」を置く層なので、「領域」と「使う」もそこが自然です。ontology に置くと、axiom 自身がまだ上を参照してしまいます。
+
+        ## 済んだこと（claude/cross に push 済み、PR はまだ）
+        - 名前を付けた限定を中身に展開して、ほかの限定と同じように検査します。
+        - 名前を付けた限定が、`with` と `at` を持てるようにしました。
+        - 新しい法則 `named_mod` を足しました。同じ限定が2か所以上に出たら、名前を付けた限定にするという規則です。
+          - 該当した 44 組を名前付きの限定にしました。置き場は、使う概念のうち一番下の層です。
+          - 書き方は名前付きに変わりましたが、限定の中身は変わっていません。
+          - 規則に反する例が誤りになることも確かめました。
+        - 重みの誤りは (b) のとおり直しました。限定を `learned` から `computed`（`v_compute` の to）に変えています。
+        - 型検査、実行の検査、同期のテストは、どれも成功しました。
+        - 生成した issue の本文は変わりません。
+
+        (a) と (b) のどちらも進めてよいか、`domain` と `v_use` の移し先を axiom にしてよいかを教えてください。進めてよければ同じブランチに積み、PR を作ります。
+facts:
+- {is: v_say, from: session_model, to: 01M7MH9FQMMCNCHRNSNTYMA7FN}
+- {is: exp.v_answer, from: 01M7MH9FQMMCNCHRNSNTYMA7FN, to: 01M7MH7RRNJSZ532CZ2SAVP37Z}
+- {is: v_refer, from: 01M7MH9FQMMCNCHRNSNTYMA7FN, to: syntax.domain}
+- {is: v_refer, from: 01M7MH9FQMMCNCHRNSNTYMA7FN, to: syntax.v_use}
+- {is: v_refer, from: 01M7MH9FQMMCNCHRNSNTYMA7FN, to: exp.decision}
+- {is: v_refer, from: 01M7MH9FQMMCNCHRNSNTYMA7FN, to: exp.hyp_untested}
+- {is: v_refer, from: 01M7MH9FQMMCNCHRNSNTYMA7FN, to: exp.evidence}
+- {is: v_refer, from: 01M7MH9FQMMCNCHRNSNTYMA7FN, to: exp.against}
+- {is: v_refer, from: 01M7MH9FQMMCNCHRNSNTYMA7FN, to: exp.observation}
+- {is: v_refer, from: 01M7MH9FQMMCNCHRNSNTYMA7FN, to: syntax.with}
+- {is: v_refer, from: 01M7MH9FQMMCNCHRNSNTYMA7FN, to: syntax.at}
+- {is: v_refer, from: 01M7MH9FQMMCNCHRNSNTYMA7FN, to: std.learned}
+- {is: v_refer, from: 01M7MH9FQMMCNCHRNSNTYMA7FN, to: std.computed}
+- {is: v_refer, from: 01M7MH9FQMMCNCHRNSNTYMA7FN, to: std.v_compute}

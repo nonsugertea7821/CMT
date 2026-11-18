@@ -1,0 +1,66 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-16T07:53:32.722Z（UTC）
+individuals:
+  01M7HNHNSJBR4GP4HR8CGXY8ZC:
+    is: model_utterance
+    display: 発言 764
+    val:
+      order: 764
+      text: |
+        分けるなら、軸を二つにすると整理しやすいと思います。一つは **どの層の更新か**（言語なのか実験なのか）、もう一つは **言語の中で何をする規則か** です。
+
+        ## 1. 層の分類
+
+        | 層 | 中身 | 置き場所 |
+        |---|---|---|
+        | **A. CSCL の言語** | 書き方（文法）、型付けの規則、意味の規則、実行の意味、検査器 | ontology.yaml の grammar・base・laws、tools/check_spec.py、tools/run_spec.py |
+        | **B. 標準の語彙** | どの領域でも使う上位の種類と動詞（持続体・生起体、部分になる、依存する、合成する、閉集合、種類の集まり など） | ontology.yaml の nodes |
+        | **C. 領域：題材** | 実験で定義を与える語 | subj.yaml |
+        | **D. 領域：実験** | 実験の対象のモデル（残差の流れ、概念ベクトル など）、測定の族、観察、仮説、決定 | exp.yaml、experiments/ |
+
+        境目が曖昧な所が二つあります。
+
+        - **B は言語そのものではありません。** ただ、全領域が共有するので、変えると影響は言語の変更に近いです。「標準ライブラリ」として A と分けておくのがよいと思います。
+        - **観察が仮説を支持するかの判定（check_claims など）** は、仕組みとしては言語側です。ただ、実験という使い方のためにあります。A の中の「検証層」と呼んで、実験の中身（D）とは分けるのがよいと思います。
+
+        ## 2. 言語（A）の中の役割の分類
+        - **構文**：事実の形、使える語、識別子の重複、自然言語は表示だけ。
+        - **型付け**：
+          - 階層：parent / ancestor / acyclic / inherit_* / narrow_* / kind_up / below
+          - 限定：monotone / single / specific
+          - 領域の参照：layered / visible / unique_in_domain
+          - 真偽の軸：truth_*
+          - 閉集合と段：closed_* / op_defined / collection_level
+          - 動詞の型：位置の型検査（種類どうしの事実、occupies）、verb_ref
+        - **意味の公理（推論と整合性）**：part / after / kpart / kdep の推移性・反対称性、depend_end_exists、生成の順序（kdep_by_sum など）
+        - **lint（書き方の質）**：part_display_explicit（表示名の向き）
+        - **実行の意味**：step / frame / halt / unique_names（run_spec）
+        - **検証層**：族・観察・許容幅・仮説の判定（Python の check_claims まわり）
+
+        ## 3. このセッションの更新を当てはめると
+        - **A（言語）**：
+          - 種類どうしの事実を閉世界で読むこと、否定の禁止
+          - 合成の型安全（閉集合、op_defined）
+          - 2 階（種類の集まり）、閉集合、verb_ref
+          - 生成の順序の規則（kdep_*）
+          - 検査器の高速化と、名前依存の除去（懸念12）。この二つは言語仕様を変えない「実装の更新」
+        - **B（標準の語彙）**：v_sum（合成する）、summand、kind_collection、closed_set、composable_set
+        - **D（実験）**：
+          - E17・E18・E19 と、seed を変えた再学習
+          - exp.yaml の residual_vector などのモデル化と residual_space
+          - 族・観察・仮説の追加
+
+        ## 分けておくための提案
+        1. **コミットを層ごとに分ける。** メッセージの先頭に `[CSCL]` / `[lib]` / `[exp]` を付けます。1 コミットに混ぜません。今日のコミット（945a868）は言語と E19 の結果が混ざっていました。
+        2. **法則に役割の印を付ける。** 例として `role: typing | axiom | lint | runtime | evidence` を付け、検査器が一覧を出せるようにします。
+        3. **言語の変更には版を付ける。** ontology.yaml に `cscl_version` を置き、実験の記録には、どの版の言語で書いたかを残します。言語を変えたときに、実験側の記述が壊れていないかを追えるようになります。
+
+        どこまでやりますか。特に 2（法則への役割の印）は spec の書き方を増やすので、先に確認したいです。
+facts:
+- {is: v_say, from: session_model, to: 01M7HNHNSJBR4GP4HR8CGXY8ZC}
+- {is: exp.v_answer, from: 01M7HNHNSJBR4GP4HR8CGXY8ZC, to: 01M7HNGK3FP4K7M2TY951JN5VW}
+- {is: v_refer, from: 01M7HNHNSJBR4GP4HR8CGXY8ZC, to: syntax.verb_ref}
+- {is: v_refer, from: 01M7HNHNSJBR4GP4HR8CGXY8ZC, to: std.v_sum}
+- {is: v_refer, from: 01M7HNHNSJBR4GP4HR8CGXY8ZC, to: syntax.kind_collection}
+- {is: v_refer, from: 01M7HNHNSJBR4GP4HR8CGXY8ZC, to: std.closed_set}
+- {is: v_refer, from: 01M7HNHNSJBR4GP4HR8CGXY8ZC, to: std.composable_set}
+- {is: v_refer, from: 01M7HNHNSJBR4GP4HR8CGXY8ZC, to: exp.residual_vector}

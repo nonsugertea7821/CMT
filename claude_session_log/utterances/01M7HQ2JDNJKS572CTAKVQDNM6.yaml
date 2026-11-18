@@ -1,0 +1,21 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-16T08:20:14.901Z（UTC）
+individuals:
+  01M7HQ2JDNJKS572CTAKVQDNM6:
+    is: model_utterance
+    display: 発言 809
+    val:
+      order: 809
+      text: |
+        render_expr.py と check_line.py を exp/experiments/ に移して、claude/exp に push しました。この変更は PR #2 に入っています。
+
+        - **言語側に残したもの：** cscl/bootstrap は、型検査器（type_checker/）と実行器（runtime/）だけになりました。
+        - **パスの直し：** 実験のスクリプトは、二つを同じフォルダから読むように直しました。二つの側は、型検査器を cscl/bootstrap/type_checker から読みます。
+        - **確認：** 型検査は通ります。renderer と行の検査器も、読み込んで初期化できることを確かめました。
+
+        **気になる点**
+        - 本来は言語の表示機能として持っていてよいもの（体系を自然言語の文に変換する部分）も、今は render_expr の中に実験用の作りのまま入っています。
+        - 将来、docs を体系から生成するなら、subj に固定しない表示への変換を、改めて言語側に作ることになると思います。
+facts:
+- {is: v_say, from: session_model, to: 01M7HQ2JDNJKS572CTAKVQDNM6}
+- {is: exp.v_answer, from: 01M7HQ2JDNJKS572CTAKVQDNM6, to: 01M7HQ19SW8MET5WT06588E2AW}
+- {is: v_refer, from: 01M7HQ2JDNJKS572CTAKVQDNM6, to: lang.type_checker}

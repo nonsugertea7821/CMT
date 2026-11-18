@@ -1,0 +1,25 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-15T08:22:37.536Z（UTC）
+individuals:
+  01M7F4T6Q0F5Z3HFRHX5RQD3J6:
+    is: model_utterance
+    display: 発言 472
+    val:
+      order: 472
+      text: |
+        作業を再開しました。コンテナの再起動で実験も止まっていたので、`run_layers.sh 20 4` をもう一度起動しました。L20 はすでに終わっていて、L4 は途中保存した状態（`.partial.pt`）から続きを計算しています。
+
+        **報告：メタ法則を再帰の規則で定義しました（cb384d1、push 済み）**
+        - **仕組み:** 仕様の書き方そのものを事実に変換し（`syntax_facts`）、その上で否定を段階的に扱う推論規則を評価します。全部で 51 本の規則です。
+        - **規則に置き換えた検査:** acyclic、single、monotone、specific、unique_in_domain、layered、narrow、parents_unordered、truth などです。Python 側の対応する検査は削除しました。
+        - **確認:** わざと違反を入れた試験で、これらの法則がそれぞれ違反を検出することを確かめました。
+        - **残した前提:** unique_names、step、frame、halt の 4 つと、規則を繰り返し適用して結果を出す処理そのものです。規則を適用する手順まで規則で書くと際限がなくなるので、ここだけは前提として残しています。
+        - **代わりに増えたもの:** 名前が同じであることを表す基本関係 `same` を追加しました。検査にかかる時間は約 8 秒に延びました。
+        - **既知の制限:**
+          - 修飾語の集計で、from 側と to 側の区別が失われています。現在の仕様では以前と同じ結果になることを確認済みです。
+          - 「式が同じ」かどうかの一意性検査と「表示語がない」検査は、まだ Python 側に残っています。
+
+        次は、L20 の結果（e3 と e6）を `spec/exp.yaml` に測定値と観察として記録し、結果の JSON と一緒に commit します。
+facts:
+- {is: v_say, from: session_model, to: 01M7F4T6Q0F5Z3HFRHX5RQD3J6}
+- {is: exp.v_answer, from: 01M7F4T6Q0F5Z3HFRHX5RQD3J6, to: 01M7EW74ZK8W4PS7F504DW2ME3}
+- {is: v_refer, from: 01M7F4T6Q0F5Z3HFRHX5RQD3J6, to: ontology.same}

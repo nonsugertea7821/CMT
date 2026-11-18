@@ -1,0 +1,41 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-17T23:28:35.844Z（UTC）
+individuals:
+  01M7NXEH04N6R8XPKVFDGEEA1B:
+    is: model_utterance
+    display: 発言 1332
+    val:
+      order: 1332
+      text: |
+        定義を変える変異（語 w の子を1つ w から外し、w の親に付け替える）を、手順を先に登録してから実行しました。手順の登録は 191c424、結果と観察の記録は 38887c8 で、どちらも push 済みです。CI の5つの検査はすべて通っています。
+
+        **結果**
+        - コードが名前を挙げる語（test）：11語中9語で振る舞いが変わりました。
+        - 陰性の対照（neg）：3語とも変わりませんでした。
+        - 飛ばした行はありません。
+
+        **どの検査が誤りを出したか**
+        実行後に出力の違いを1つずつ見て分けました。この分け方は登録していないので、その旨を記録に書いています。
+        - **コードが分類を読んでいた語**：definition（役割の根拠）、magnitude（指標）、role、v_depend、v_refer。これらは重複ではなく、コードは体系の分類を読んでいました。
+        - **法則か型が分類を読んでいた語**：v_collect（法則 specific）、world（v_presume の終点の型）。v_depend と v_refer では、法則 placed_deduced も誤りを出しました。
+        - **laws**：前回入れた等しさの検査が誤りを出しました。これは、コードの鍵の集合・文法・laws の下位の三つが等しいかを見る検査です。コードが law_given を名前で集めるやり方自体は変わっていません（予想どおり）。それでも、この重複は検査で見えるようになっています。
+
+        **変わらなかった語：2つ**
+        - **type_checker**：体系が述べる型検査器を、コードは一度も読んでいません。名前の付け替えで見つけた「体系と結ばれていない重複」が、定義の変異でも確かめられました。
+        - **quality**：コードが「質」を確かめるのは axis を持つ語だけで、外した子の adopted は axis を持ちません。分類を読んでいないのではなく、今回外した子に、その検査が当たらなかっただけです。
+
+        **新しく分かった穴**
+        role の子を外しても誤りは出ず、役割の数が 14 から 13 に減るだけでした。役割の検査は「役割に分類されたもの」にだけかかり、何かが役割であることを求める法則はありません。そのため、分類から外れると、検査から黙って外れます。
+
+        **残っていること**
+        - core_sections がまだ law_rule と law_given を名前で挙げています。laws の下位から読むように変えるのが次の候補です。
+        - role が黙って検査から外れる穴を、法則で塞げるかどうか。
+facts:
+- {is: v_say, from: session_model, to: 01M7NXEH04N6R8XPKVFDGEEA1B}
+- {is: exp.v_answer, from: 01M7NXEH04N6R8XPKVFDGEEA1B, to: 01M7NX40SBWW1CDDK8PT9PRW3F}
+- {is: v_refer, from: 01M7NXEH04N6R8XPKVFDGEEA1B, to: ontology.v_depend}
+- {is: v_refer, from: 01M7NXEH04N6R8XPKVFDGEEA1B, to: ontology.v_refer}
+- {is: v_refer, from: 01M7NXEH04N6R8XPKVFDGEEA1B, to: syntax.v_collect}
+- {is: v_refer, from: 01M7NXEH04N6R8XPKVFDGEEA1B, to: syntax.v_presume}
+- {is: v_refer, from: 01M7NXEH04N6R8XPKVFDGEEA1B, to: syntax.law_given}
+- {is: v_refer, from: 01M7NXEH04N6R8XPKVFDGEEA1B, to: lang.type_checker}
+- {is: v_refer, from: 01M7NXEH04N6R8XPKVFDGEEA1B, to: syntax.law_rule}

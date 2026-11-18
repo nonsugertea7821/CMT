@@ -1,0 +1,48 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-15T05:40:04.701Z（UTC）
+individuals:
+  01M7EVGJEX29C8K03483RADRA1:
+    is: model_utterance
+    display: 発言 434
+    val:
+      order: 434
+      text: |
+        3つともプッシュしました。検査と実行の検査はどちらも通ります。測定値 380 は前と同じ値のままです。
+
+        **1. 事実のもう一方の位置を、(a) で検査するようにした（e36e556）**
+        - 役割の位置は、占めるだけで満たされます。
+        - 役割でない種類は、その動詞の位置で定義された分（修飾と `cmp`）を外して、残った種類に属していれば満たされます。例: `evidence` から外すと観察が残り、`basis` から外すと仮説が残ります。
+        - これで定義の誤りが1つ見つかりました。取り下げた決定（`dec_withdrawn`）が、取り下げられた文（`withdrawn_sentence`）の下にありませんでした。今は「取り下げられた文のうち、決定であるもの」と書いています。
+        - 否定の検査として、仮説を根拠の位置に、決定を根拠となる仮説の位置に置くと、どちらも落ちることを確かめました。
+
+        **2. `row_keys` の雛形を、軸の個体についての事実にした（e36e556）**
+        - `{is: v_keys_of, from: '{group}-#', to: e1type_type}` と書きます。
+        - 使われなくなった `row_keys` 関係のノード3つは外しました。
+
+        **3. `v_annotate` を外し、自然言語は `ja` だけにした（2717e62）**
+        - 注記 18 件と、`v_annotate`・`note` を外しました。
+        - ほとんどは、既にある事実の言い直しでした（留保・状態の種類・残り項目・測定値）。
+        - 検査を足しました。`ja` の外に自然言語があると落ちます。
+        - ただし例外を3つ置いています。ここはご判断ください。
+          - 最上位2つの gloss
+          - 選択肢の字（「はい」「当たる」など）
+          - `v_spell` の書き方（甲種/乙種、規則 など）
+
+          後の2つは意味の記述ではなく、モデルの出力や結果ファイルと照合する字そのものなので、値として残しました。
+
+        **外したことで失われた中身（2件）**
+        - `h_scratchpad_raises_rule_following`: 書き出した文を読むと、条件の読み取りではなく、数の大小の照合を誤っている。
+        - `h_attention_causes_preceding_effect`: 定義を先頭に置くと正答が落ちないことは、単純な注意の薄まりでは説明できない。
+
+        どちらも、事実にするには新しい種類が要ります（誤りの種類、反する考察）。ここは「必要になったら足す」方針に従い、まだ足していません。
+
+        YAML のコメント（`#` の行）には、まだ自然言語の説明が残っています。検査は読まない部分ですが、これも許さない方がよければ削ります。L20 の実験は続いています。
+facts:
+- {is: v_say, from: session_model, to: 01M7EVGJEX29C8K03483RADRA1}
+- {is: exp.v_answer, from: 01M7EVGJEX29C8K03483RADRA1, to: 01M7EV6BMZTP57HD14T3ET7XR9}
+- {is: v_refer, from: 01M7EVGJEX29C8K03483RADRA1, to: syntax.cmp}
+- {is: v_refer, from: 01M7EVGJEX29C8K03483RADRA1, to: exp.evidence}
+- {is: v_refer, from: 01M7EVGJEX29C8K03483RADRA1, to: exp.basis}
+- {is: v_refer, from: 01M7EVGJEX29C8K03483RADRA1, to: exp.dec_withdrawn}
+- {is: v_refer, from: 01M7EVGJEX29C8K03483RADRA1, to: exp.withdrawn_sentence}
+- {is: v_refer, from: 01M7EVGJEX29C8K03483RADRA1, to: exp.v_keys_of}
+- {is: v_refer, from: 01M7EVGJEX29C8K03483RADRA1, to: exp.v_spell}

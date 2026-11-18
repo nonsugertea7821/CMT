@@ -1,0 +1,31 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-16T08:42:26.191Z（UTC）
+individuals:
+  01M7HRB6GFP7JTTARMEX1VZKGY:
+    is: model_utterance
+    display: 発言 848
+    val:
+      order: 848
+      text: |
+        上位概念ではないと思います。
+
+        - **BFO では**: 人工物は最上位の分類にありません。CCO などの中位の存在論で定義される概念です。しかも多くの場合、物質的なもの（独立持続体）の側に置かれます。
+        - **いまの体系では**: 人工物は「汎用依存持続体」の直下にあります。これは重みやモデルのような情報の成果物を念頭に置いた、この実験向けの置き方です。上位の分類としては筋がよくありません。
+        - **ontology に来た理由**: さっきの一般化で「推論＝計算する人工物が行う過程」としたため、推論に引っ張られて ontology に入っただけでした。人工物そのものが上位だからではありません。
+
+        **直し方の案**
+        - ontology の推論は「何かが行う過程」とし、行い手を限定しません（`inference: {extends: process, mod: {of: [v_perform, to]}}`）。概念は「語が引き起こす推論」のままです。
+        - 人工物、計算する人工物、計算する（v_compute）は std に移します。モデル、重み、モデルの推論と同じ層です。
+
+        こうすると ontology は 50 個になります。中身は次のとおりで、機械学習の語は入りません。
+        - 最上位の2つ（持続体、生起体）と、依存持続体・質・役割・過程などの上位分類
+        - base の関係に対応する動詞
+        - 言語・文・語・定義・概念・推論
+        - 設計する（v_design）。自然言語の定義（設計されていない言語）に使っているため
+
+        この形で直してよいですか？
+facts:
+- {is: v_say, from: session_model, to: 01M7HRB6GFP7JTTARMEX1VZKGY}
+- {is: exp.v_answer, from: 01M7HRB6GFP7JTTARMEX1VZKGY, to: 01M7HRAVEK5TNRHPV8X04V0ZX7}
+- {is: v_refer, from: 01M7HRB6GFP7JTTARMEX1VZKGY, to: ontology.v_perform}
+- {is: v_refer, from: 01M7HRB6GFP7JTTARMEX1VZKGY, to: std.v_compute}
+- {is: v_refer, from: 01M7HRB6GFP7JTTARMEX1VZKGY, to: ontology.v_design}

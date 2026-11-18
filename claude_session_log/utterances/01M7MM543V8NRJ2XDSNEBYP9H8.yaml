@@ -1,0 +1,22 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-17T11:26:56.123Z（UTC）
+individuals:
+  01M7MM543V8NRJ2XDSNEBYP9H8:
+    is: model_utterance
+    display: 発言 1084
+    val:
+      order: 1084
+      text: |
+        PR #93 を直してプッシュしました（コミット 5611ac5）。手元の型検査、実行の記録の検査、issue 同期の確認はすべて通りました。新しいコミットの CI はまだ結果が出ていないので、結果が届いたら確かめて報告します。
+
+        - **h_ic_is_bearer の中身:** lang（claims.yaml）に否定の動詞 `v_not_depend`（に依存しない）を定義し、中身をそれで書きました。形は exp の `v_not_transfer` と同じで、holds に neg を持ち、`opposite: v_depend` で肯定の動詞と組にしています。
+          - 中身は `{is: v_not_depend, from: depended, to: continuant}` です。
+          - issue の下書きでは「に依存しない(依存されるもの, 持続体)」と出ます。
+          - 反する観察2件と「反証された」は変わりません。
+        - **型検査器と sync_issues:** 前に入れた neg の扱いを取り除き、main と同じに戻しました（差分なし）。
+        - **PR の本文:** neg を読み落としていたのを直した、という記述を消し、否定の動詞で書いたことを書き加えました。
+facts:
+- {is: v_say, from: session_model, to: 01M7MM543V8NRJ2XDSNEBYP9H8}
+- {is: exp.v_answer, from: 01M7MM543V8NRJ2XDSNEBYP9H8, to: 01M7MM3NGH3DQSEDCRY4GZT1TP}
+- {is: v_refer, from: 01M7MM543V8NRJ2XDSNEBYP9H8, to: lang.v_not_depend}
+- {is: v_refer, from: 01M7MM543V8NRJ2XDSNEBYP9H8, to: exp.v_not_transfer}
+- {is: v_refer, from: 01M7MM543V8NRJ2XDSNEBYP9H8, to: ontology.v_depend}

@@ -1,0 +1,131 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-15T15:07:18.610Z（UTC）
+individuals:
+  01M7FVZ6PJ9WTR4KC44WT1AWRM:
+    is: session_summary
+    display: 発言 543
+    val:
+      order: 543
+      text: |
+        This session is being continued from a previous conversation that ran out of context. The summary below covers the earlier portion of the conversation.
+
+        <system-reminder>
+        <tools-used-before-summary>Bash, Read, ReadNotifications, TaskStop, ToolSearch, Write, mcp__claude-code-remote__create_trigger, mcp__claude-code-remote__get_trigger, mcp__claude-code-remote__read_documentation, mcp__claude-code-remote__send_later, mcp__claude-code-remote__update_trigger, mcp__github__actions_get, mcp__github__actions_list</tools-used-before-summary>
+        </system-reminder>
+        Summary:
+        1. Primary Request and Intent:
+           - **Language and setup**
+             - The user is Japanese-speaking. **All replies must be in Japanese.**
+             - Repo `nonsugertea7821/CMT`, branch `claude/model-concept-language-mapping-g0lw1i`, working dir `/home/user/CMT`.
+             - This is personal research on an ontology-based controlled language named **CSCL (Concept System Control Language、概念体系制御言語)**.
+           - **Standing rules**
+             - Commit and push to the branch. No PR unless asked.
+             - The spec (`spec/`) is the source of truth.
+             - `docs/design.md` and `experiments/README.md` are frozen. `spec/trial/` is not source.
+             - Gloss only on the 2 top nodes.
+             - Natural language only in `display`.
+             - Don't overclaim.
+             - **Never use `git checkout` to restore uncommitted work.** (A checkout attempt was also denied by the auto-mode classifier.)
+           - **Commit trailer**
+             `Co-Authored-By: Claude [モデル名を伏せた] <[メールアドレスを伏せた]>`
+             `Claude-Session: https://claude.ai/code/session_015KRKt6TNJZ7ZsQmEknANXK`
+           - **This stretch**
+             - Keep the experiments running: L4 defqa (run_layers), then after_layers.sh, which runs E10, E11 and E3 with `--def-source expr`.
+             - The user accepted that this will take days.
+             - The user rejected background keep-alive loops (token cost).
+             - The user chose to resume every 10 minutes.
+
+        2. Key Technical Concepts:
+           - **Container lifecycle:** the container is reclaimed when no turn is running, so background processes die. Partial results are saved per concept (`.partial.pt`), so restarts resume.
+           - **Harness limits**
+             - Foreground Bash runs at most 10 minutes.
+             - Background tasks run at most 2 hours.
+             - Standalone or chained sleeps are blocked. A conditional `until` wait with `timeout` is allowed.
+           - **Scheduled tasks**
+             - Cron minimum interval is 1 hour.
+             - A 10-minute cadence is done with self-rescheduling `send_later`.
+           - **Training time:** an L4 defqa concept takes about 300–380 s.
+
+        3. Files and Code Sections:
+           - **experiments/run_layers.sh**
+             - Loops over layers: e3_concept_vectors (`--steps 30 --objective defqa --tag _defqa`, log `results/e3_defqa_L$L.log`), then e6_cross_use (log `results/e6_defqa_L$L.log`).
+             - Should now be invoked with `4` only.
+           - **experiments/e3_concept_vectors.py:** resumes from `results/{run_name}.partial.pt` and saves after each concept.
+           - **experiments/results/e3_Qwen2.5-1.5B-Instruct_L20_defqa.json:** gained `"def_source": "ja"`. Committed in 4ccacbb.
+           - **experiments/results/e6_cross_use_defqa_L20.json:** float noise from a re-eval. Committed as "Re-evaluated L20 cross-use (float noise only)".
+           - **Per-wake command used**
+             ```
+             cd /home/user/CMT/experiments; pgrep -f run_layers >/dev/null || (PY=/home/user/venv/bin/python nohup setsid ./run_layers.sh 4 > /dev/null 2>&1 &); pgrep -f after_layers >/dev/null || (PY=/home/user/venv/bin/python nohup setsid ./after_layers.sh > /dev/null 2>&1 &); f=results/e3_defqa_L4.log; sleep 5; n0=$(tr '\r' '\n' < $f | grep -c '\[train\]'); timeout 560 bash -c "until [ \$(tr '\r' '\n' < $f | grep -c '\[train\]') -gt $n0 ]; do sleep 10; done"; tr '\r' '\n' < $f | grep train | tail -1
+             ```
+             Run as a foreground Bash call with timeout 600000.
+
+        4. Errors and fixes:
+           - **Experiments never progressed between hourly checks:** cause was container reclamation. Fixed by working in-turn plus the 10-minute send_later chain.
+           - **Long sleeps blocked:** both `sleep 590` alone and chained sleeps were blocked. Fixed by using the conditional `until` loop with `timeout`.
+           - **Cron `*/10` rejected:** minimum interval is 1 hour. Fixed with the `send_later` chain.
+           - **Background keep-alive wait (brn9f1t3y):** the user said 「トークンコスト使うからやめよう」. I stopped it with TaskStop.
+           - **`git checkout` + pkill attempt denied:** I committed the noise diff instead.
+           - **run_layers "20 4" was rerunning L20 needlessly:** switched to `4` in the prompts.
+
+        5. Problem Solving:
+           - L4 concepts done so far, 18 of about 22:
+             - 午前
+             - 顧客
+             - (one more)
+             - 在庫
+             - 売上
+             - 夜間
+             - 大人
+             - 大口注文
+             - 完了
+             - 家族
+             - 平日
+             - 新規
+             - 未成年
+             - 果物
+             - 欠席
+             - 無料
+             - 社員
+             - 管理者 (377 s)
+           - After the L4 e3 finishes, e6 for L4 runs. Then after_layers.sh runs E10, E11 and E3-expr, which will also take many wakes.
+
+        6. All user messages:
+           - "要するに作業している扱いにすればいいってことでしょ？sleepで\n40hのsleepを組んだらいけないかな"
+           - "いやそれはトークンコスト使うからやめよう"
+           - "10msleepを連鎖させることはできる？再帰的に"
+           - "まあ数日かけてやるしかないか\nとりあえず10mのsleepは組もう"
+           - "というか、10m sleepを組んで10m毎に作業再開すればいいのでは"
+
+        7. Pending Tasks:
+           - **Each 10-minute wake**
+             - Restart run_layers.sh 4 / after_layers.sh if they are down.
+             - Run one conditional wait (at most about 10 minutes).
+             - Reschedule the same message via send_later (delay 1 min, since the wait already used about 10 minutes).
+             - Reply briefly in Japanese.
+           - **When L4 (e3 + e6) finishes**
+             - Record the L4 measurements in spec/exp.yaml, like L20.
+             - Update b_single_layer_20_and_4, h_layer14_lowers_control and h_single_layer_does_not_reach_shared.
+             - Commit the result JSONs.
+           - **When E10, E11 and E3-expr finish**
+             - Record them as measurement families, observations and hypothesis statuses.
+             - Related items: b_definitions_given_as_concept_expressions, b_model_writes_concept_expressions, b_vectors_taught_from_concept_expressions, b_write_subject_concepts_in_cscl, h_cscl_raises_following, h_model_can_write_cscl.
+           - Then stop rescheduling.
+           - Run check_spec.py and run_spec.py, then commit and push.
+           - The hourly task trig_01Pi1SrY7ZCFTR657jdxZXyr is still active (prompt updated). When it fires during the chain, just acknowledge briefly.
+
+        8. Current Work:
+           - The latest wake notification (fired 15:06:43 UTC, trigger trig_01Q7FU9wmHLufCzREjoCoPHq) was read but not yet acted on.
+           - Its text: 「10分ごとの再開です。run_layers.sh 4 と after_layers.sh が動いていなければ再開し（cd /home/user/CMT/experiments && (PY=/home/user/venv/bin/python nohup setsid ./run_layers.sh 4 > /dev/null 2>&1 &) など）、次の語の学習が終わるまで最長10分待つ条件待ちを1回だけ実行してください。最後に、この同じメッセージを send_later で予約し直してください（実験がすべて終わったら予約せず、結果を spec/exp.yaml に記録してください）。返答は短く。」
+
+        9. Optional Next Step:
+           - Run the per-wake command (restart if needed, then the conditional wait).
+           - Call `mcp__claude-code-remote__send_later` (delay_minutes 1, name "CMT 10分ごとの再開", initiation human_schedule) with the same message text.
+           - Reply briefly in Japanese with the newly trained concept.
+           - When L4 training is done, the log will show e6 starting instead of new [train] lines. Then adjust the wait condition (e.g. wait on e6/after_layers progress) and start recording the L4 results in spec/exp.yaml.
+
+        If you need specific details from before compaction (like exact code snippets, error messages, or content you generated), read the full transcript at: /root/.claude/projects/-home-user-CMT/e05d2140-ce91-515f-a5fb-e6251e13d406.jsonl
+        Continue the conversation from where it left off without asking the user any further questions. Resume directly — do not acknowledge the summary, do not recap what was happening, do not preface with "I'll continue" or similar. Pick up the last task as if the break never happened.
+
+        The messages after this summary are the most recent messages from before compaction, kept verbatim. The summary was written without seeing them, so something it says has not happened yet may already have happened in them.
+facts:
+- {is: v_say, from: session_model, to: 01M7FVZ6PJ9WTR4KC44WT1AWRM}
+- {is: v_refer, from: 01M7FVZ6PJ9WTR4KC44WT1AWRM, to: syntax.display}

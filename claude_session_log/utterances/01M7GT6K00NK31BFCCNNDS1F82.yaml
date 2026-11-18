@@ -1,0 +1,73 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-15T23:55:37.856Z（UTC）
+individuals:
+  01M7GT6K00NK31BFCCNNDS1F82:
+    is: model_utterance
+    display: 発言 606
+    val:
+      order: 606
+      text: |
+        関連概念をたどって展開して渡していました。単一の行だけではありません。ただし展開したのは題材の領域（spec/subj.yaml）の中だけで、上位の体系（spec/ontology.yaml）の概念は名前だけ出して定義を付けていません。
+
+        ## 渡し方（tools/render_expr.py の `Renderer.text`）
+
+        E10 の expr・expr_masked、E11、E3-expr の暗唱の教師と near は、すべてこの関数で作った文字列です。
+
+        1. 語の種類（例えば「顧客」）から始めて、`extends`（上位）、`mod` の `with`（相手）と動詞、`from`／`to` を幅優先でたどります。
+        2. たどるのは subj の種類だけです。上位の体系の種類（`independent_continuant`、`occurrent`、`definition`、`role` など）や `v_perform` のような動詞は、名前は行の中に出ますが、その定義の行は付きません。
+        3. たどった種類に触れる個体の行と事実の行も足します。
+        4. 行は subj.yaml に書いたままの YAML 形式で、整形はしません。
+        5. 長さは 273〜1054 字でした。
+
+        ## 実例（「顧客」、mask=True で渡した形）
+
+        ```
+        v_contract: {extends: occurrent, from: agent, to: agent, holds: [{is: depend, from: new, to: from}, {is: depend, from: new, to: to}]}
+        agent: {extends: independent_continuant, mod: {of: [v_perform, from]}}
+        person: {extends: agent, mod: {of: [v_compose, to], with: agent, neg: true}}
+        organization: {extends: agent, mod: {of: [v_compose, to], with: person, at: {count: {gt: 1}}}}
+        statute: {extends: definition, mod: {of: [v_refer, from], with: organization}}
+        legal_personality: {extends: role, mod: {of: [v_depend, from], with: statute}}
+        corporation: {extends: organization, mod: {of: [v_depend, to], with: legal_personality}}
+        customer: {display: 顧客, extends: corporation, mod: {of: [v_contract, to]}}
+        ```
+
+        mask なし（E10 の expr）では、各行に `display: 主体` のような表示名が入ります。
+
+        ## 前回の含意への影響
+
+        - **「表示名を外したもの」の中身が説明と違いました。** mask で外れるのは日本語の表示名だけで、`agent`、`person`、`corporation` といった英語の識別子は残っています。前回「モデルは記号の構造より自然言語の手がかりを使っている」と書きましたが、実際は「日本語の名前を英語の識別子に置き換えた比較」でした。純粋な記号だけの条件ではありません。
+        - **定義の末端が閉じていません。** 上位の体系の概念は名前だけなので、モデルが体系として読める形にはなっていません。
+        - **展開すると長くなります。** 最終的に知りたい「顧客＝契約の相手方である法人」は最後の1行です。その前に7行の前提が並ぶので、短い設問の前に長い構造を置く形になりました。
+
+        つまり、E10・E11 で概念式が効かなかったのが CSCL という書き方のせいなのか、この渡し方（YAML のまま、部分的に展開、長い）のせいなのかは、まだ切り分けられていません。
+
+        ## 切り分けるなら
+
+        次の3つの渡し方を比べると分かります。
+
+        - **(a) 単一の行だけ:** `customer` の行だけを渡す。
+        - **(b) 今回の展開:** subj の中だけ展開する。
+        - **(c) 完全な展開:** 上位の体系まで展開し、末端を閉じる。
+
+        あわせて、YAML のままの形と、render_expr にある `名前 ＝ 上位 ∧ 動詞(これ, 相手)` の1行形式（`line()`）も比べると、書式の影響も見られます。やりますか？
+facts:
+- {is: v_say, from: session_model, to: 01M7GT6K00NK31BFCCNNDS1F82}
+- {is: exp.v_answer, from: 01M7GT6K00NK31BFCCNNDS1F82, to: 01M7GT5N8DR393JHG8S4M0MQCF}
+- {is: v_refer, from: 01M7GT6K00NK31BFCCNNDS1F82, to: syntax.extends}
+- {is: v_refer, from: 01M7GT6K00NK31BFCCNNDS1F82, to: syntax.mod}
+- {is: v_refer, from: 01M7GT6K00NK31BFCCNNDS1F82, to: syntax.with}
+- {is: v_refer, from: 01M7GT6K00NK31BFCCNNDS1F82, to: syntax.from}
+- {is: v_refer, from: 01M7GT6K00NK31BFCCNNDS1F82, to: syntax.to}
+- {is: v_refer, from: 01M7GT6K00NK31BFCCNNDS1F82, to: ontology.occurrent}
+- {is: v_refer, from: 01M7GT6K00NK31BFCCNNDS1F82, to: ontology.definition}
+- {is: v_refer, from: 01M7GT6K00NK31BFCCNNDS1F82, to: ontology.role}
+- {is: v_refer, from: 01M7GT6K00NK31BFCCNNDS1F82, to: ontology.v_perform}
+- {is: v_refer, from: 01M7GT6K00NK31BFCCNNDS1F82, to: subj.v_contract}
+- {is: v_refer, from: 01M7GT6K00NK31BFCCNNDS1F82, to: ontology.v_compose}
+- {is: v_refer, from: 01M7GT6K00NK31BFCCNNDS1F82, to: ontology.v_refer}
+- {is: v_refer, from: 01M7GT6K00NK31BFCCNNDS1F82, to: subj.legal_personality}
+- {is: v_refer, from: 01M7GT6K00NK31BFCCNNDS1F82, to: ontology.v_depend}
+- {is: v_refer, from: 01M7GT6K00NK31BFCCNNDS1F82, to: subj.agent}
+- {is: v_refer, from: 01M7GT6K00NK31BFCCNNDS1F82, to: subj.person}
+- {is: v_refer, from: 01M7GT6K00NK31BFCCNNDS1F82, to: subj.corporation}
+- {is: v_refer, from: 01M7GT6K00NK31BFCCNNDS1F82, to: subj.customer}

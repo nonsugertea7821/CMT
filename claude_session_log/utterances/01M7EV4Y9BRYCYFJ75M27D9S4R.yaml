@@ -1,0 +1,31 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-15T05:33:43.595Z（UTC）
+individuals:
+  01M7EV4Y9BRYCYFJ75M27D9S4R:
+    is: model_utterance
+    display: 発言 427
+    val:
+      order: 427
+      text: |
+        前回の報告で「まだ残っている」とした2点です。
+
+        **1. 事実の、もう一方の位置の種類を確かめていない**
+        - 事実の主語は、動詞のその位置の種類に当たる個体で決めています。
+        - もう一方の位置に個体が来ても、その種類が動詞の端に合うかは見ていません。たとえば `v_support` では、観察 `o_…` は `evidence` の位置にいますが、種類としては `evidence` の下にありません。
+        - すべての事実でこれを確かめると、根拠として使っている観察がすべて落ちます。そのため、今は軸の読み込みの中でだけ確かめています。
+        - 直す方向は2つあります。
+          - (a) `evidence` を「`v_support` の始点を占めるもの」という役割と読み、位置を占めればその役割になる、とする。
+          - (b) 観察を `evidence` の下に置く。
+        - 私の推奨は (a) です。役割は、位置を占めることで決まるもので、種類として最初から持つものではないからです。そのうえで、全体の検査は「位置の種類が役割なら、占めることで満たされる」とします。
+
+        **2. 字のまま残っている雛形**
+        - `row_filter`（`{group: '{group}'}`）、`row_keys`（`{axis: type, pattern: …}`）、結果ファイルの名前、条件ごとの記録は、雛形の文字列のままです。
+        - このうち `row_keys` の `axis: type` は軸を名前で指しています。これは軸の個体（例: `e1type_type`）への参照にすべきもので、まずここから直します。
+        - 他の3つは結果ファイルの書式なので、雛形の文字列として残すのが妥当だと考えています。
+
+        1 を (a) で進めてよいか、ご判断ください。2 の `row_keys` は、このまま進めます。
+facts:
+- {is: v_say, from: session_model, to: 01M7EV4Y9BRYCYFJ75M27D9S4R}
+- {is: exp.v_answer, from: 01M7EV4Y9BRYCYFJ75M27D9S4R, to: 01M7EV4MQ1PTBK0XRWAMA98N90}
+- {is: v_refer, from: 01M7EV4Y9BRYCYFJ75M27D9S4R, to: exp.v_support}
+- {is: v_refer, from: 01M7EV4Y9BRYCYFJ75M27D9S4R, to: exp.evidence}
+- {is: v_refer, from: 01M7EV4Y9BRYCYFJ75M27D9S4R, to: exp.row_filter}

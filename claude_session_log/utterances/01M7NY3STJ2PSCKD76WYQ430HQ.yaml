@@ -1,0 +1,38 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-17T23:40:13.010Z（UTC）
+individuals:
+  01M7NY3STJ2PSCKD76WYQ430HQ:
+    is: model_utterance
+    display: 発言 1350
+    val:
+      order: 1350
+      text: |
+        はい、変数は runtime が持つべき概念だと思います。根拠は体系の中にもう書かれています。
+
+        **runtime にはすでに「割り当て」がある**
+        - runtime の binding は「位置への個体の割り当て方」で、その下位の distinct は「位置ごとに別の個体を割り当てる」です。
+        - 変数とは、この割り当てを受ける場所のことです。変数の意味は割り当て方とセットでしか決まらず、それを書く場所は runtime です。
+
+        **いまは型検査のコードが割り当て方を黙って持っている**
+        - 法則の規則を評価するとき、var1 と var2 に同じ個体が入ることを許しています。distinct ではない割り当て方です。
+        - そのため、規則には毎回 `same(var1,var2) neg` を書いて別であることを求めています。
+        - つまり、法則の評価がどの割り当て方で動くかは体系のどこにも書かれておらず、コードだけが知っています。
+        - var6 が黙って定数になったのも同じ根から来ています。何が割り当てを受けるかを、宣言された名前の表で決めているからです。
+
+        **any と数で書けば、層の向きが合う**
+        - syntax（runtime より下の層）は意味を知らなくてよく、「何も限定しない端（any）に番号が付いたもの」という形だけを書けば足ります。any はシグネチャの語で、番号は amount の軸です。
+        - その形に「割り当てを受ける」という意味を与えるのが runtime の binding になります。
+        - こうすると var1〜var5 の宣言は要らず、数の上限もなく、宣言されていない名前が定数になることもなくなります。変数か定数かは、名前の表ではなく形で決まります。
+
+        **一つ決める必要があること**
+        - この形にすると、「法則を確かめること」自体が runtime の意味論で体系の事実の上を走る、ということになります。いまは型検査が runtime より前に、runtime を知らずに法則を評価しています。
+        - 型検査を runtime の実行の一つとみなすのか、それとも法則の評価だけは割り当て方を別に（syntax の側で）宣言するのか。ここは層の切り方の判断なので、どちらがしっくりくるか聞かせてください。
+
+        **いま止めている作業**
+        - 含意の作業は途中で止めています。作業ツリーは直しかけのままで、まだコミットしていません。
+        - ここまでに、同じ式の 7 組を置き直し、候補を「自分の領域から見える概念」に限り、domain を passage の下に置きました。残る違反は 14 件です。
+        - 残りは、上位の式が弱すぎるもの（relation_operator、hypothesis、verb_ref、opposite、context_following）と、subj の単位（money、age）で、どれも判断が要ります。
+facts:
+- {is: v_say, from: session_model, to: 01M7NY3STJ2PSCKD76WYQ430HQ}
+- {is: exp.v_answer, from: 01M7NY3STJ2PSCKD76WYQ430HQ, to: 01M7NY30CFKF7WFW4DJH4ARQWJ}
+- {is: v_refer, from: 01M7NY3STJ2PSCKD76WYQ430HQ, to: syntax.verb_ref}
+- {is: v_refer, from: 01M7NY3STJ2PSCKD76WYQ430HQ, to: exp.context_following}

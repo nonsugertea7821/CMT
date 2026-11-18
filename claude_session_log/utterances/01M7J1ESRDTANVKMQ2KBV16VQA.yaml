@@ -1,0 +1,25 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-16T11:21:41.389Z（UTC）
+individuals:
+  01M7J1ESRDTANVKMQ2KBV16VQA:
+    is: model_utterance
+    display: 発言 955
+    val:
+      order: 955
+      text: |
+        本題に戻るなら、先行研究との比較で見えてきたことを、次の実験に落とすのがよいと思います。
+
+        **比較で見えたこと**
+        - **Goworek（反対）:** 後ろに置く文脈は再定義への追従を変える、という主張です。私たちの `h_following_definitions_do_not_lower`（後ろの定義は下げない）は支持済みなので、食い違っています。ただし私たちが測ったのは、後ろに無関係な定義を並べる操作だけです。Goworek のように、後の文が意味を弱めたり逆にしたりする場合は、まだ測っていません。この差が、仮説の適用範囲（`scope`）として書くべきものです。
+        - **Liu（反対）:** 中ほどにある情報では成績が下がる、という主張です。私たちの `h_distance_does_not_lower`（距離は下げない）と反対です。これも適用範囲の問題か、距離の取り方の違いの可能性があります。
+        - **Wang・Stringli・Xu（同じ）:** 前に並ぶ情報が多いほど下がること、元の意味との衝突が追従を下げることは、先行研究と一致しました。
+
+        **次の候補**
+        1. **Goworek 型の実験を足す（推奨）。** 定義の後ろに、意味を「保つ・弱める・逆にする」文を置き、追従の変化を測ります。仮説 `h_following_definitions_do_not_lower` の適用範囲を確かめる、いちばん直接の手です。結果ファイルと測定の族を足せば、既存の検査にそのまま乗ります。
+        2. **E19 と E3 の種の再実行。** 以前、ジョブが止められて途中で終わっています。
+        3. **言語側の積み残し。** stage0 に固定された12の名前を規則に移すこと、主張の状態の語彙を std に移すことなどです。
+
+        1 から進めてよければ、まず実験の設計（条件、対象モデル、測る指標）を書いて見せます。
+facts:
+- {is: v_say, from: session_model, to: 01M7J1ESRDTANVKMQ2KBV16VQA}
+- {is: exp.v_answer, from: 01M7J1ESRDTANVKMQ2KBV16VQA, to: 01M7J1EFQY6KQ5J6CVG95BJTGA}
+- {is: v_refer, from: 01M7J1ESRDTANVKMQ2KBV16VQA, to: std.scope}

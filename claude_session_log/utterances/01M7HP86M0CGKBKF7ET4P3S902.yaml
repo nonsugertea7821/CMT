@@ -1,0 +1,51 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-16T08:05:50.848Z（UTC）
+individuals:
+  01M7HP86M0CGKBKF7ET4P3S902:
+    is: model_utterance
+    display: 発言 788
+    val:
+      order: 788
+      text: |
+        公理以外を std へ移し、公理の名前空間を `axiom` に改名しました。claude/cscl でコミットし、claude/exp に取り込んで、どちらもプッシュ済みです。
+
+        **今回やったこと**
+        - **std に移したもの：**
+          - 合成（v_sum、summand、v_close）
+          - 閉集合、種類の集まりの法則
+          - 種類としての部分・依存の法則（kpart_*、kdep_*）
+          - rewrite_rule と run.* の種類
+          - 法則は 59 個体、規則の事実 193 行を移しました。
+        - **axiom は std を一つも参照していません。** 依存は std → axiom の一方向だけで、これは確かめました。
+        - **改名したもの：** 領域 `core` を `axiom`、フォルダを `cscl/library/axiom` にしました。名前空間が変わるので、exp と subj の「使う領域」の宣言も合わせて直しています。
+        - **結果は変わっていません。** 型検査も実行の検査も通り、測定値 608 件は移動前と一致しました。
+
+        **axiom にまだ 149 ノード残っている理由**
+
+        | 残っている理由 | 数 |
+        |---|---|
+        | 文法・基礎・軸・実行の節の語と、その定義をたどったもの | 120 |
+        | 公理の法則が使う語（v_assume、law_rule、run.state など） | 17 |
+        | stage0（Python）が名前で参照しているだけ | 12 |
+
+        - **120 が大きいのは、文法の語（from、of、display など）自体が体系のノードだからです。** その定義を extends でたどると、持続体・質・情報など上位の階層がまるごと公理側に入ります。ここをさらに減らすには、文法の語を「定義を持たない原始語」と「原始語から定義する語」に分ける必要があります。CSCL の設計の判断になるので、まだ手を付けていません。
+        - **stage0 の 12 は、検査器の Python がその名前を直接使っているためです。** 対象は 2 階の検査（kind_collection、v_collect、verb_ref）と、仮説の判定（hypothesis、scope、pattern と、実験の種類の連なり）です。これらを規則に書き直せば std に移せます。懸念12の続きにあたる作業です。
+
+        **気になっている点**
+        - **std はまだ axiom と同じ名前空間に読み込んでいます。** 「公理の名前空間」と言うなら、std は独立した名前空間（`std.`）にするのが筋です。ただ、std の規則の中の語を名前空間付きで解決する必要があり、読み込みの変更がやや大きくなります。
+        - **作業ブランチは今 claude/exp です。** 元の claude/model-concept-language-mapping-g0lw1i は、分離した時点のまま止めています。
+
+        次はどれから進めますか。
+        - std を独立した名前空間にする
+        - stage0 が名前で参照している 12 個を規則に移す
+        - 文法の語を原始語と定義される語に分ける
+facts:
+- {is: v_say, from: session_model, to: 01M7HP86M0CGKBKF7ET4P3S902}
+- {is: exp.v_answer, from: 01M7HP86M0CGKBKF7ET4P3S902, to: 01M7HP63BEK6QSCV9SNC06J95H}
+- {is: v_refer, from: 01M7HP86M0CGKBKF7ET4P3S902, to: std.v_sum}
+- {is: v_refer, from: 01M7HP86M0CGKBKF7ET4P3S902, to: std.v_close}
+- {is: v_refer, from: 01M7HP86M0CGKBKF7ET4P3S902, to: runtime.rewrite_rule}
+- {is: v_refer, from: 01M7HP86M0CGKBKF7ET4P3S902, to: syntax.v_assume}
+- {is: v_refer, from: 01M7HP86M0CGKBKF7ET4P3S902, to: syntax.law_rule}
+- {is: v_refer, from: 01M7HP86M0CGKBKF7ET4P3S902, to: syntax.kind_collection}
+- {is: v_refer, from: 01M7HP86M0CGKBKF7ET4P3S902, to: syntax.v_collect}
+- {is: v_refer, from: 01M7HP86M0CGKBKF7ET4P3S902, to: syntax.verb_ref}

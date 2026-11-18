@@ -1,0 +1,41 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-17T11:25:38.647Z（UTC）
+individuals:
+  01M7MM2REQEK6ZNSDA5RX9NY1M:
+    is: model_utterance
+    display: 発言 1080
+    val:
+      order: 1080
+      text: |
+        はい。`h_ic_is_bearer` の中身に、私が `neg` を書きました。
+
+        ```yaml
+        - {is: v_refer, from: h_ic_is_bearer, to: {is: v_depend, from: depended, to: continuant, neg: true}}
+        ```
+
+        確かめたところ、v_refer の終点の文に neg を書いているのは、体系の中でこの1か所だけです。前の返答には誤りが2つありました。
+
+        1. **「gather の読み落としを直した」というのは言い過ぎでした。** 体系ではこれまで、中身を否定するときは否定の動詞を定義してきました。例は exp の `v_not_transfer`（に転移しない）と `v_not_lower`（を下げない）です。どちらも holds に neg を持ち、`opposite` で肯定の動詞と組になっています。gather が中身の neg を読まなかったのは、その使い方がなかったからと考えるほうが自然で、不具合とは言えません。
+        2. **意味も合っていません。** この言語の neg は「示されていない」です。この書き方では、中身が「依存されるものが持続体に依存することは、示されていない」という、記述についての文になります。言いたかったのは「依存されるものは、何にも依存しない」という、もの自体についての文です。
+
+        **直し方の提案**
+        既存の形にならって、否定の動詞を定義し、それで中身を書きます。
+
+        ```yaml
+        v_not_depend: {display: に依存しない, extends: occurrent, from: continuant, to: continuant,
+                       holds: [{is: depend, from: from, to: to, neg: true}], opposite: v_depend}
+        - {is: v_refer, from: h_ic_is_bearer, to: {is: v_not_depend, from: depended, to: continuant}}
+        ```
+
+        あわせて、型検査器と sync_issues に入れた neg の扱いは元に戻します。v_not_depend を置く場所は lang（claims.yaml）がよいと考えます。この仮説を述べるためだけに要る語だからです。
+
+        この形で PR #93 を直してよいですか。
+facts:
+- {is: v_say, from: session_model, to: 01M7MM2REQEK6ZNSDA5RX9NY1M}
+- {is: exp.v_answer, from: 01M7MM2REQEK6ZNSDA5RX9NY1M, to: 01M7MM2233AKW4WZSMHANSYF5J}
+- {is: v_refer, from: 01M7MM2REQEK6ZNSDA5RX9NY1M, to: syntax.neg}
+- {is: v_refer, from: 01M7MM2REQEK6ZNSDA5RX9NY1M, to: ontology.v_refer}
+- {is: v_refer, from: 01M7MM2REQEK6ZNSDA5RX9NY1M, to: ontology.v_depend}
+- {is: v_refer, from: 01M7MM2REQEK6ZNSDA5RX9NY1M, to: exp.v_not_transfer}
+- {is: v_refer, from: 01M7MM2REQEK6ZNSDA5RX9NY1M, to: exp.v_not_lower}
+- {is: v_refer, from: 01M7MM2REQEK6ZNSDA5RX9NY1M, to: syntax.opposite}
+- {is: v_refer, from: 01M7MM2REQEK6ZNSDA5RX9NY1M, to: lang.v_not_depend}

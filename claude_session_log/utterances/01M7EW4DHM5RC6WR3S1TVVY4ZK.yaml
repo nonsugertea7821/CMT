@@ -1,0 +1,57 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-15T05:50:55.028Z（UTC）
+individuals:
+  01M7EW4DHM5RC6WR3S1TVVY4ZK:
+    is: model_utterance
+    display: 発言 444
+    val:
+      order: 444
+      text: |
+        **1. 領域の限定はノードにできるか**
+
+        できます。むしろそうするべきです。種類 `domain`（領域）は既にノードとしてあります。core・run・exp はその個体で、`uses` はその間の関係なので、事実で書けます。
+
+        ```yaml
+        individuals:
+          core: {is: domain, ja: 核}
+          run:  {is: domain, ja: 実行}
+          exp:  {is: domain, ja: 実験}
+        facts:
+          - {is: v_use, from: run, to: core}
+          - {is: v_use, from: exp, to: core}
+          - {is: v_use, from: exp, to: run}
+        ```
+
+        - これで `domains` という特別な節と、ノード `domains`・`uses` が要らなくなります。
+        - 法則 `layered` は、この事実を読むようにします。
+        - ontology.yaml 自身にも individuals と facts の節が要ります。core の個体（領域）を持つためです。
+
+        **2. 法則は自己記述できるか**
+
+        一部はできますが、全部はできません。分けて考えます。
+
+        | 法則 | 自己記述 | 理由 |
+        |---|---|---|
+        | どの法則がどの関係に掛かるか（`part` に `transitive` など） | できる | 法則を個体にし、事実で書けばよい |
+        | 基礎の関係の法則（`transitive`, `asymmetric`, `antisymmetric`, `end_exists`） | 関係ごとならできる | 下を参照 |
+        | ノードと領域の法則（`inherit`, `narrow`, `monotone`, `specific`, `single`, `acyclic`, `unique_in_domain`, `layered`） | 原理上は一部できるが、重い | 下を参照 |
+        | 実行の法則（`step`, `frame`, `halt`） | できない | 下を参照 |
+
+        - **基礎の関係の法則**: 関係を固定し、位置の語を変数として、規則の形で書けます。たとえば「`part` は推移的」は、`part(a,b)` と `part(b,c)` が成り立てば `part(a,c)` も成り立つ、です。これは動詞の pre/post と同じ形です。ただし「任意の関係 R について推移的」と書くと、関係の上を量化することになり、高階になります。原始言語であるこの体系では避けるべきなので、関係ごとに書きます。また、反対称性には同一性の関係（`a` と `b` が同じ）が要ります。今の基礎の関係にはないので、足す必要があります。
+        - **ノードと領域の法則**: 体系が自分の書き方（extends・mod などのノード）について述べる、メタの法則です。文法の語はノードなので原理上は書けますが、階層をたどる再帰が要るので重くなります。
+        - **実行の法則**: 「規則を当てはめる」こと自体を規則で書いても、その規則を当てはめる者が別に要ります（亀とアキレスの問題）。少なくとも1つは、実行器が外から与えるしかありません。
+
+        **提案**
+        - (i) 領域を個体と事実にする。
+        - (ii) 法則を個体にし、何に掛かるかを事実で書く（`base` の `laws: [...]` と `scope` を置き換える）。
+        - (iii) 基礎の関係の法則を、関係ごとの規則として書き、検査はハードコードではなくそれを読む。
+        - (iv) メタの法則と実行の法則は、個体として名前を置き、その意味は検査と実行器が与えるものとして残す。
+
+        (iv) で外に残す部分があることは、明示しておきます。(i)〜(iv) で進めてよいですか。前回伺った題材の領域 `subj` と量の軸の件も、この後に続けます。実験は L20 を実行中です。
+facts:
+- {is: v_say, from: session_model, to: 01M7EW4DHM5RC6WR3S1TVVY4ZK}
+- {is: exp.v_answer, from: 01M7EW4DHM5RC6WR3S1TVVY4ZK, to: 01M7EW3A6BQ9DZBEB1HKBM0B0D}
+- {is: v_refer, from: 01M7EW4DHM5RC6WR3S1TVVY4ZK, to: syntax.domain}
+- {is: v_refer, from: 01M7EW4DHM5RC6WR3S1TVVY4ZK, to: ontology.a}
+- {is: v_refer, from: 01M7EW4DHM5RC6WR3S1TVVY4ZK, to: ontology.b}
+- {is: v_refer, from: 01M7EW4DHM5RC6WR3S1TVVY4ZK, to: syntax.base}
+- {is: v_refer, from: 01M7EW4DHM5RC6WR3S1TVVY4ZK, to: std.scope}

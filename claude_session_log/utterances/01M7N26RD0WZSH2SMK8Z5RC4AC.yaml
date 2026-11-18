@@ -1,0 +1,41 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-17T15:32:29.728Z（UTC）
+individuals:
+  01M7N26RD0WZSH2SMK8Z5RC4AC:
+    is: model_utterance
+    display: 発言 1191
+    val:
+      order: 1191
+      text: |
+        定義の循環を観察として記録し、法則 `definition_stratified`（定義の循環は否定の限定を通らない）を置きました。
+
+        **前回の私の説明に誤りがありました。** 「7つの循環はすべて1つの関係を両端から書いたもの」と言いましたが、測ると 5/7 でした。次の2つは違います。
+        - base ↔ state_relation：refer と part の2つの関係を使っている。
+        - system ↔ cscl ↔ 概念式：depend と part の2つの関係を使っている。
+
+        ## 観察（`exp/experiments/sys_cycles.py`、族 `sys_cycles`）
+        定義の辺（上位、名前を付けた修飾語、限定の with）をたどると、循環は 7 つでした。
+
+        | 観察 | 値 |
+        |---|---|
+        | `o_sys_cycles_positive`：否定の限定を通る循環 | 0 / 7 |
+        | `o_sys_cycles_mostly_one_relation`：1つの基礎の関係を両端から書いたもの | 5 / 7 |
+        | `o_sys_cycles_mostly_syntax`：syntax の層にあるもの | 5 / 7 |
+
+        ## 法則 `syntax.definition_stratified`
+        - 型検査器の `check_definition_stratified` が当てはめます。循環を見つける処理は観察のスクリプトと同じものを使うので、法則と観察で循環の数え方は食い違いません。
+        - 循環の1辺を手元で一時的に否定にすると、検査が失敗することを確かめました。
+        - 今の体系には違反が1件もありません。この法則は、これから足す定義が否定を通る循環（Russell の逆理の形）を作るのを防ぐためのものです。
+
+        ## 主張
+        - 仮説 `h_definition_positive`（支持）と、決定 `d_definition_stratified`（採用済み）を置きました。
+        - **この仮説は、観察を見た後に立てたものです。事前に登録したものではありません。** 主張の注にそう書きました。
+        - 法則にする主な理由は、観察ではなく理論です（Russell の逆理、Knaster–Tarski の定理、法則の規則にすでにある層分けと同じ条件）。注には書きましたが、先行研究として体系に記録する形（prior_work）にはしていません。
+
+        c2de856 にコミットして push しました。PR #93 の本文も更新し、CI は通っています。
+
+        h_open_declaration は手を付けていません。前回提案した (i) フレームの区切り方と (ii) 巻き戻しで何を戻すか、が決まっていないからです。「基準が真偽の軸と宣言の軸を取り違えていた」という注もまだ足していません。
+facts:
+- {is: v_say, from: session_model, to: 01M7N26RD0WZSH2SMK8Z5RC4AC}
+- {is: exp.v_answer, from: 01M7N26RD0WZSH2SMK8Z5RC4AC, to: 01M7N20VX6EN6V5P44TVPCRNSQ}
+- {is: v_refer, from: 01M7N26RD0WZSH2SMK8Z5RC4AC, to: syntax.state_relation}
+- {is: v_refer, from: 01M7N26RD0WZSH2SMK8Z5RC4AC, to: exp.prior_work}

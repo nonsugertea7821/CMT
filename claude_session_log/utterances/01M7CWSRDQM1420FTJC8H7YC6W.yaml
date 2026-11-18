@@ -1,0 +1,70 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-14T11:24:05.431Z（UTC）
+individuals:
+  01M7CWSRDQM1420FTJC8H7YC6W:
+    is: model_utterance
+    display: 発言 130
+    val:
+      order: 130
+      text: |
+        原子関係を整理しました。原子関係は 61個から 50個になり、合成だった 11個には述語論理の定義を与えました。「原子関係の識別子はアンダースコア1個まで」は検査の規則にしてあり、破ると失敗します。
+
+        ## 行ったこと
+
+        **文法上の飾りを取ったもの**（1つの関係を指していたもの）
+
+        | 変更前 | 変更後 | 表示語 |
+        |---|---|---|
+        | is_located_in | located_in | の中にある |
+        | is_borne_by | inheres_in | に宿る |
+        | is_realized_in | realized_in | の中で実現される |
+        | is_component_of、is_part_of_expression | part_of | の部分である |
+        | is_followed_by、is_counted_on_side、is_positioned_to_word | precedes | の前にある |
+        | is_performed_by | performed_by | が行う |
+        | has_speech_act | has_force | という言語行為である |
+
+        別々に作っていた関係が、同じ1つの原子関係にまとまった箇所もあります（`part_of`、`precedes`）。
+
+        **合成として定義したもの**（11個）
+
+        ```
+        follows(x, y)              iff precedes(y, x)
+        has_prior_meaning(w, d)    iff instance_of(d, prior_meaning) and has_target(d, w)
+        agrees_with_prior(i, d)    iff instance_of(d, prior_meaning) and agrees_with(i, d)
+        has_weight_state(a, q)     iff exists w. instance_of(w, weights) and part_of(w, a) and has_state(w, q)
+        has_parameter_count(m, n)  iff exists w. instance_of(w, weights) and part_of(w, m) and has_count(w, n)
+        has_layer_total(m, n)      iff exists l. instance_of(l, layer) and part_of(l, m) and has_count(l, n)
+        has_weight_access(m, w)    iff instance_of(w, weights) and part_of(w, m) and exposes(m, w)
+        has_experimental_role(q, r) iff instance_of(r, role) and inheres_in(r, q)
+        has_intermediate_output(p, i) iff output_of(i, p) and exists v. instance_of(v, verdict) and output_of(v, p) and precedes(i, v)
+        is_used_in_training(x, t)  iff instance_of(t, teaching) and input_of(x, t)
+        shows_original_word(r, w)  iff substitutes(r, w) and exists n. delivers(r, n) and part_of(w, n)
+        ```
+
+        最後の例は、定義することで中身がはっきりした例です。「元の語が見える改名」とは、置き換え後の語が元の語を部分として含むこと（「P社員」が「社員」を含む）だと書けました。
+
+        ## 現在の原子関係（50個）
+
+        - **枝をまとめる節（5個）**: effect_relation、transfer_relation、structural_relation、design_relation、attribute_relation
+        - **BFO 系（8個）**: depends_on、inheres_in、realized_in、grounded_in、extends_over、is_about、part_of、located_in
+        - **順序（1個）**: precedes
+        - **情報（9個）**: has_unit、written_in、has_force、spoken_by、occupied_by、judged_against、relevant_to、agrees_with、bounded_by
+        - **入出力と使用（5個）**: persists、input_of、output_of、used_for、used_by
+        - **汎用の属性（10個）**: has_target、has_content、has_options、has_task、has_function、has_origin、has_state、has_count、has_quantity、has_method
+        - **過程（5個）**: attributed_to、performed_by、triggered_by、has_action、answers_in
+        - **接続手段（7個）**: exposes、delivers、delivers_into、substitutes、taught_by、acts_at、installed_with
+
+        ## 手順上の誤りの報告
+
+        途中で、検査に失敗した状態の `spec/` を一度コミットしてプッシュしてしまいました。検査の成否を確かめずに次のコマンドへ進む書き方をしていたためです。直後に修正版をプッシュし、いまは検査に成功しています。失敗の内容は、関係と分類の軸で同じ識別子を使っていた衝突 7件でした（軸の側を `location`、`performer` などの名詞に改名して解消）。以後は、検査が成功したときだけコミットする形にしています。
+
+        ## まだ粗いと考える点
+
+        - **`has_◯◯` 型がまだ 10個あります。** `has_unit`、`has_options`、`has_task`、`has_function`、`has_origin` などは、アンダースコア1個の規則は満たしますが、「持つ」と名詞の合成とも読めます。規則の趣旨からすると、これらも原子ではない可能性があります。
+        - **`has_target` と `has_content` は、始点も終点も「すべての実体」のままです。** 型の検査が効かない逃げ道になっています。
+
+        `has_◯◯` 型も合成とみなして分解するべきかどうか、判断を聞かせてください。
+facts:
+- {is: v_say, from: session_model, to: 01M7CWSRDQM1420FTJC8H7YC6W}
+- {is: exp.v_answer, from: 01M7CWSRDQM1420FTJC8H7YC6W, to: 01M7CWNPJ1CBS4GJ1814DMKX1K}
+- {is: v_refer, from: 01M7CWSRDQM1420FTJC8H7YC6W, to: exp.prior_meaning}
+- {is: v_refer, from: 01M7CWSRDQM1420FTJC8H7YC6W, to: ontology.performer}

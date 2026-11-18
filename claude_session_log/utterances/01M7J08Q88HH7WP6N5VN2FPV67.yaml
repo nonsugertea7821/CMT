@@ -1,0 +1,44 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-16T11:00:53.640Z（UTC）
+individuals:
+  01M7J08Q88HH7WP6N5VN2FPV67:
+    is: model_utterance
+    display: 発言 922
+    val:
+      order: 922
+      text: |
+        型検査器（tc）の修正を PR #86 にしました: https://github.com/nonsugertea7821/CMT/pull/86（ブランチは claude/cscl）
+
+        **中身**
+        - **複数を許す関係:** tc の固定の一覧 `MANY` を消しました。代わりに、種類のノードに書いた `many: true` を読みます。宣言は各層（std, syntax, ontology）と exp に移しました。
+        - **中身の比較を言語の仕組みにした:** syntax に3つの指定を足しました。
+          - `opposite`: 反対の動詞の組
+          - `derive`: 導けるべき比較の結果（same か opposite）
+          - `via`: 比べる中身を述べる動詞
+        - **tc の処理:** tc に残したのは、領域の語を持たない処理だけです。
+          - `compare_claims`: 両端の上位・下位の関係と、`opposite` の宣言で比べる
+          - `check_derived`: `derive` を持つ動詞の事実が、比較から導けるかを確かめる
+        - **確かめたこと:** 型検査、実行の検査、同期のテストは通りました。試しの宣言を一時的に入れてみました。
+          - 導けない事実を、検査が失敗として報告した
+          - `opposite` を書くと「反対」、書かないと「別」と判定した
+
+        **残り**
+        - `KINDS`（検査が節に分ける種類）など、tc にはまだ領域の語が残っています。この PR では移していません。
+
+        **push について**
+        - 古い claude/cscl は、main に取り込み済みのマージコミットだけでした。なので、force-with-lease で上書きしました。
+
+        #86 をマージしてもらえれば、#85（claude/cross）を main に追いつかせます。そのうえで、tc に直接書いた exp の語を外し、exp.yaml の宣言に置き換えます。宣言の中身は次のとおりです。
+        - 関係する種類に `many: true` を書く
+        - `v_not_lower` に `opposite: v_lower` を書く
+        - `v_prior_same` と `v_prior_differ` に `derive` と `via: v_state` を書く
+facts:
+- {is: v_say, from: session_model, to: 01M7J08Q88HH7WP6N5VN2FPV67}
+- {is: exp.v_answer, from: 01M7J08Q88HH7WP6N5VN2FPV67, to: 01M7J04C6S3NDNSTN0QJA94AC3}
+- {is: v_refer, from: 01M7J08Q88HH7WP6N5VN2FPV67, to: syntax.opposite}
+- {is: v_refer, from: 01M7J08Q88HH7WP6N5VN2FPV67, to: syntax.derive}
+- {is: v_refer, from: 01M7J08Q88HH7WP6N5VN2FPV67, to: syntax.via}
+- {is: v_refer, from: 01M7J08Q88HH7WP6N5VN2FPV67, to: exp.v_not_lower}
+- {is: v_refer, from: 01M7J08Q88HH7WP6N5VN2FPV67, to: exp.v_lower}
+- {is: v_refer, from: 01M7J08Q88HH7WP6N5VN2FPV67, to: exp.v_prior_same}
+- {is: v_refer, from: 01M7J08Q88HH7WP6N5VN2FPV67, to: exp.v_prior_differ}
+- {is: v_refer, from: 01M7J08Q88HH7WP6N5VN2FPV67, to: exp.v_state}

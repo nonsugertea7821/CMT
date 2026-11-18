@@ -1,0 +1,47 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-17T12:23:08.086Z（UTC）
+individuals:
+  01M7MQC11PW26DE5VYF6CM2QBY:
+    is: model_utterance
+    display: 発言 1153
+    val:
+      order: 1153
+      text: |
+        シグネチャの話に戻りました。前回止まっていたのは「`d_sig_*` 28件のうち27件が暫定で、決めた理由の観察がない」という点です。まず各動詞の端に実際に何が来ているかを、体系全体で数えました。数えただけで、体系は変えていません。
+
+        ## 端に来ているもの（基礎の動詞15個、下位の動詞も含む）
+
+        | 動詞 | 端 | 宣言 | 件数 | 持続体 / 生起体 / その他 | 実際の共通の上位 |
+        |---|---|---|---|---|---|
+        | depend | from / to | 持続体 | 75 / 72 | すべて持続体 | （continuant） |
+        | compose | from / to | 持続体 | 56 / 64 | すべて持続体 | （continuant） |
+        | refer | to | **any** | 114 | 87 / 23 / 4 | — |
+        | stage | from / to | 生起体 | 12 / 13 | すべて生起体 | occurrent / process |
+        | involve | from → to | 生起体 → 持続体 | 9 / 9 | 宣言どおり | process / — |
+        | come_after | from / to | 持続体 | 12 / 11 | すべて持続体 | **dependent** |
+        | agree, express | 両端 | 持続体 | 7〜12 | すべて持続体 | **information_entity など** |
+        | perform, trigger, design, come_before | — | — | 1〜5 | — | — |
+        | level, not_before.to, not_after.to | — | — | **0** | — | — |
+
+        ## わかったこと
+        1. **「使われ方が宣言に合う」ことは、理由になりません。** 型検査器は、端の型に合わない使い方をはじくので、合っているのは当たり前です。理由として数えられないので、シグネチャの観察は別の形で取る必要があります。
+        2. **観察で理由づけできる形は、今のところ次の3つです。**
+           - **広さが要る（使われ方が両方の根にまたがる）:** refer.to が `any` なのは、持続体と生起体の両方が実際に来ているからです。これは観察になります。
+           - **区別が要る（法則が同じ形で、シグネチャだけが違う）:** depend と involve がこれに当たります。前回見たとおりです。
+           - **他の案が反証された:** d_sig_depend_to は、独立持続体の案を反証して採用済みにしました。今これで裏づけがあるのは、この1件だけです。
+        3. **観察が足りない端もあります。**
+           - **宣言が使われ方より広い:** come_after、agree、express などです。宣言は持続体ですが、来ているのは dependent や information_entity だけです。根の水準（持続体か生起体か）で決めたのか、より狭く決めるべきなのかが、まだ決まっていません。
+           - **使われていない、またはほとんど使われていない:** level、not_before.to、not_after.to は0件です。trigger、design、perform は数件です。これらは観察から決めることができず、仮説の状態のままです。
+
+        ついでに見つけた欠けがあります。claims.yaml で、d_sig_depend_from の事実が2行重複しています。
+
+        ## 進め方の案
+        - **(1) 粒度を決める。** シグネチャを「根の水準で決めるもの」と定めます。その場合、要る観察は「両方の根が来るか」だけになり、上の表がそのまま観察になります。
+        - **(2) 狭める方向を調べる。** 共通の上位まで狭めた場合に、壊れる使い方や法則があるかを数えます。
+        - **(3) 使われていない端の扱いを決める。** 観察がないものは仮説へ戻すか、動詞ごと外すかを決めます。
+
+        私は (1) を先に決めるのがよいと考えます。粒度が決まらないと、何を観察すれば理由になるのかが定まらないからです。どこから進めるか教えてください。
+facts:
+- {is: v_say, from: session_model, to: 01M7MQC11PW26DE5VYF6CM2QBY}
+- {is: exp.v_answer, from: 01M7MQC11PW26DE5VYF6CM2QBY, to: 01M7MQ7G7009XEGCYTN3SAJQZT}
+- {is: v_refer, from: 01M7MQC11PW26DE5VYF6CM2QBY, to: ontology.information_entity}
+- {is: v_refer, from: 01M7MQC11PW26DE5VYF6CM2QBY, to: any}

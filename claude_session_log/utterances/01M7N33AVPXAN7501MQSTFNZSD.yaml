@@ -1,0 +1,61 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-17T15:48:06.134Z（UTC）
+individuals:
+  01M7N33AVPXAN7501MQSTFNZSD:
+    is: model_utterance
+    display: 発言 1217
+    val:
+      order: 1217
+      text: |
+        はい。self を置くと、否定は真偽ではなく同一性（same）で書けます。
+
+        **導き**
+        - 限定は `λself. v(self, X)` です。これが定める概念を S と書くと、S = {s | v(s, X)} です。
+        - 否定の限定 `λself. ¬v(self, X)` は、「self は S のどれとも同じでない」と言い換えられます。式にすると ∀s ∈ S. ¬same(self, s) です。
+        - こう書くと、真偽の軸がいらなくなります。
+          - 「偽と述べる」と「述べられていない」の区別（閉世界か開世界か）が問題になりません。
+          - 定義が言っているのは、「self は肯定の側の何ものでもない」という同一性の区別だけだからです。
+        - 否定の定義がシグネチャから使うのは、same と self だけです。v の中身（pre/post での変化や refer）は持ち込みません。v は、S を名指すための名前として出てくるだけです。
+        - 定義の循環との関係も合います。否定が循環を通ると C = {x | x は C のどれとも同じでない} になり、self と self が同じでないことになって矛盾します。これは Russell の逆理で、法則 definition_stratified が禁じている形と同じです。
+
+        **測った結果に当てはめると**
+        この読みは、否定の辺をたどらず same だけを数えることになり、sys_layers の比較版 `*_pos` と一致します。
+
+        | 否定の読み | ontology・syntax・runtime の一致 |
+        |---|---|
+        | 否定の先の v の中身までたどる（登録した基準） | 104/202（判定は反証） |
+        | 否定は self についての「述べられていない」（refer） | 172/202 |
+        | 否定は「self と同じでない」（same だけ。`*_pos`） | **177/202** |
+
+        最後の読みでも外れる 25 個は、次のとおりです。
+        - **ontology で refer に入るもの（14）:** concept、definition、information_entity、language、natural_language、role、sentence、word、v_refer、v_agree など。情報と記述の語です。
+        - **ontology で change に入るもの（1）:** v_design。
+        - **runtime で refer に入るもの（6）:** state、halted、rewrite_rule、refer_from_laws、refer_from_post、role_depend_from_rewrite_rule。
+        - **syntax で still に入るもの（4）:** individuals と、否定の限定に名前を付けたもの3つ（not_after_from、not_before_from、not_compose_from_mod）。
+          - この3つは、中身が「self と同じでない」だけになります。そのため、述べない・変わらないの側に入ります。
+
+        **扱いの注意**
+        - 登録した基準での判定は反証です。これは変えません。
+        - 「否定は not self」の読みは、結果を見た後に出てきたものです。この読みで支持とするなら、h_definition_positive と同じく「観察の後に立てた仮説」と明記して扱います。
+        - 結果ファイルはまだコミットしていません。
+
+        **次の手（提案）**
+        1. sys_layers の結果を、登録した基準どおり反証として記録します。比較版と外れたノードは観察として残します。
+        2. 「否定の限定は、self との同一性の区別（¬same）だけをシグネチャから使う」を、観察の後の仮説として立てます。この読みを、言語の定義（syntax の neg）に反映するかを検討します。
+        3. 外れた 25 個（情報の語、v_design、runtime の状態の語、syntax の個体と名前付きの否定）を、層の置き場の誤りとして直すか、分類のほうを見直すか。これは 1 と 2 の観察から導きます。
+
+        この順で進めてよいですか。
+facts:
+- {is: v_say, from: session_model, to: 01M7N33AVPXAN7501MQSTFNZSD}
+- {is: exp.v_answer, from: 01M7N33AVPXAN7501MQSTFNZSD, to: 01M7N32EP17QH4HBXM000R4WVF}
+- {is: v_refer, from: 01M7N33AVPXAN7501MQSTFNZSD, to: ontology.information_entity}
+- {is: v_refer, from: 01M7N33AVPXAN7501MQSTFNZSD, to: ontology.natural_language}
+- {is: v_refer, from: 01M7N33AVPXAN7501MQSTFNZSD, to: ontology.v_refer}
+- {is: v_refer, from: 01M7N33AVPXAN7501MQSTFNZSD, to: ontology.v_agree}
+- {is: v_refer, from: 01M7N33AVPXAN7501MQSTFNZSD, to: ontology.v_design}
+- {is: v_refer, from: 01M7N33AVPXAN7501MQSTFNZSD, to: runtime.rewrite_rule}
+- {is: v_refer, from: 01M7N33AVPXAN7501MQSTFNZSD, to: runtime.refer_from_laws}
+- {is: v_refer, from: 01M7N33AVPXAN7501MQSTFNZSD, to: runtime.refer_from_post}
+- {is: v_refer, from: 01M7N33AVPXAN7501MQSTFNZSD, to: runtime.role_depend_from_rewrite_rule}
+- {is: v_refer, from: 01M7N33AVPXAN7501MQSTFNZSD, to: syntax.not_after_from}
+- {is: v_refer, from: 01M7N33AVPXAN7501MQSTFNZSD, to: syntax.not_before_from}
+- {is: v_refer, from: 01M7N33AVPXAN7501MQSTFNZSD, to: syntax.not_compose_from_mod}

@@ -1,0 +1,211 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-15T10:28:55.026Z（UTC）
+individuals:
+  01M7FC1EKJXF452CDVBTWGHTZD:
+    is: session_summary
+    display: 発言 513
+    val:
+      order: 513
+      text: |
+        This session is being continued from a previous conversation that ran out of context. The summary below covers the earlier portion of the conversation.
+
+        <system-reminder>
+        <tools-used-before-summary>Bash, Read, ReadNotifications, ToolSearch, Write, mcp__claude-code-remote__create_trigger, mcp__claude-code-remote__get_trigger, mcp__claude-code-remote__read_documentation, mcp__claude-code-remote__update_trigger, mcp__github__actions_get, mcp__github__actions_list</tools-used-before-summary>
+        </system-reminder>
+        Summary:
+        1. Primary Request and Intent:
+           - **Language and setup**
+             - The user is Japanese-speaking. **All replies must be in Japanese.**
+             - Repo `nonsugertea7821/CMT`, branch `claude/model-concept-language-mapping-g0lw1i`, working dir `/home/user/CMT`.
+             - This is personal research on an ontology-based controlled language, now formally named **CSCL (Concept System Control Language、概念体系制御言語)**.
+           - **Standing instructions**
+             - Work proactively. The hourly scheduled task trig_01Pi1SrY7ZCFTR657jdxZXyr is a safeguard.
+             - Commit and push to the branch. No PR unless asked.
+             - The spec is the source of truth. Strictness is left to the checker.
+             - `docs/design.md` and `experiments/README.md` are frozen. `spec/trial/` is not source.
+             - Gloss only on the 2 top nodes.
+             - Natural language only in display names (key now `display`).
+             - Don't overclaim.
+             - Never use `git checkout` to restore uncommitted work. Use scratchpad backups at `/tmp/claude-0/-home-user-CMT/e05d2140-ce91-515f-a5fb-e6251e13d406/scratchpad`.
+           - **Commit trailer**
+             `Co-Authored-By: Claude [モデル名を伏せた] <[メールアドレスを伏せた]>`
+             `Claude-Session: https://claude.ai/code/session_015KRKt6TNJZ7ZsQmEknANXK`
+           - **Requests this session, in order**
+             - Record the L20 results. Done.
+             - Run the "give and write CSCL" experiments. Delegated priority; no GPU, so slow is OK.
+             - The user's intended procedure: pass expressions as-is, have the model write its reasoning in expressions, and check each line.
+             - Also vectorize the concept expressions themselves.
+             - Mask display names, for the Japanese-only purpose. Visible identifiers are fine because they are part of the hypothesis.
+             - Rename `ja` → `display`.
+             - Domain dependencies are declared per domain file, like crates or tsconfig.
+             - File scope is defined by a config file, like tsconfig.
+             - Name the language CSCL, with identifiers to match (self-referential node).
+             - Cross-domain identifier collisions are allowed, so don't rename; use qualified references.
+
+        2. Key Technical Concepts:
+           - **Facts:** verb individuals `{is, from, to, new, at, neg}`. Qualify/resolve: local names get the `dom.` prefix; `core.X` now means core's X.
+           - **Domains**
+             - Each domain file declares `<dom>: {is: domain, display: ...}` in its individuals and `{is: v_use, from: dom, to: X}` facts (exp uses `core.v_use` because exp has its own `v_use`).
+             - `register_domains` loads files in dependency (topological) order and detects cycles.
+             - Law `layered` checks references.
+           - **cscl.yaml:** root/include/exclude/runs globs.
+           - **New axis** `amount` (量, source any, value number). Node `axis: amount` on magnitudes. Values use function forms `{lt: 25}`, `{between: [a, b]}`.
+           - **Individuals in `with`** are allowed (sunday, honshu, tomato).
+           - **Renderer:** emits raw subj.yaml lines for the concept and its reachable subj nodes, verbs, individuals and facts. Masking removes `display:` except the target's own and individuals'.
+           - **LineChecker:** checks model-written lines in three forms:
+             - individual `名前: {is: 種類}`
+             - fact `{is: 動詞, from, to, neg}` (ends checked via is_a or occupies)
+             - membership `{is: is, from, to}`
+           - **Experiments**
+             - E10: none / near (ja) / expr / expr_masked, two-choice logits.
+             - E11: masked expressions; direct vs write (generate expression lines, check them, then answer).
+             - E3 `--def-source expr` (masked) with defqa at L8.
+
+        3. Files and Code Sections:
+           - **spec/subj.yaml (new)**
+             - Domain subj, with individual `subj: {is: domain, display: 題材}` and fact `{is: v_use, from: subj, to: core}`.
+             - Verbs: v_contract, v_employ, v_place, v_store, v_allocate, v_pay, v_approve, v_classify, v_live, v_weekday_of (extends v_measure), v_located, v_begin/v_end (from process, to any, differing `after` direction), v_sell (dynamic, one line), v_register (extends v_involve from service to person), v_seated.
+             - Nodes for all 24 G2 words, among them customer, employee, minor, adult, family, admin, stock, fruit, fish, new_order, large_order (count ≥10 via v_allocate), sales, free_plan, deficit, completed, delay, absence, urban, domestic, business_day, weekday_day, week, morning, night. Plus helper nodes.
+             - Individuals: sunday, monday, thursday, honshu, tomato, sweet_potato, shrimp, squid, shellfish.
+             - Facts: v_classify facts.
+           - **spec/ontology.yaml**
+             - Axis `amount` added. Key `ja` → `display`; node `display: {display: 表示語, ...}`.
+             - Grammar lists use `display`.
+             - Rule `unique_in_domain` uses `is: display`.
+             - The exp/subj domain declarations and their v_use facts were removed (core, run and run→core remain).
+             - `controlled_language` → `cscl` (display 概念体系制御言語); `information_entity_express_from_cscl`.
+             - The header names CSCL.
+           - **spec/exp.yaml**
+             - Added L20 axis values and facts.
+             - Added observations o_e6_layer20_paraphrase_below_chance and o_e3_layer20_keeps_control.
+             - Added `exp: {is: domain, display: 実験}` and facts `{is: core.v_use, from: exp, to: core}`, `{is: core.v_use, from: exp, to: run}`.
+             - exp's own verb `v_use` (使う) is kept.
+             - Renamed ids: h_cscl_raises_following, h_model_can_write_cscl, d_source_of_truth_in_cscl, b_write_subject_concepts_in_cscl.
+           - **cscl.yaml (new, repo root)**
+             ```
+             # CSCL（Concept System Control Language、概念体系制御言語）の体系の範囲。
+             # 体系の範囲。tsconfig の include / exclude、Cargo の workspace members に当たる。...
+             root: spec/ontology.yaml
+             include: [spec/*.yaml]
+             exclude: [spec/notes.yaml]
+             runs: [spec/runs/*.yaml]
+             ```
+           - **tools/check_spec.py**
+             - Bug fix: `AX[axis]['source']`.
+             - New functions:
+               - `CONFIG`, `config()`, `in_scope(key)`, `root_name()`
+               - `domain_files()`
+               - `register_domains(O)` (returns `[(dom, filename)]` in topological order)
+               - `build()` → `(T, O, S, M, C)`, generic over domain files; exp is handled by load_domain, the others through gather and `T.Isubj` domain mapping.
+             - `qualify` handles the `core.` prefix.
+             - The `ja` → `display` key is used everywhere.
+             - `main()` calls `build()`.
+           - **tools/run_spec.py:** uses `register_domains`, `merge_domain` for every domain, `in_scope("runs")`, `load(root_name())`.
+           - **tools/render_expr.py (new):** `Renderer` with `text(word, mask=False)`, `raw(local)`, `refs()` (follows extends, with, of-verb, from/to/new_kind), `by_ja` map.
+           - **tools/check_line.py (new):** `LineChecker.check(lines)` and `extract(text)`.
+           - **experiments/e10_expression_given.py (new):** conditions none, near, expr, expr_masked. Output `results/e10_<model>.json`.
+           - **experiments/e11_expression_scratchpad.py (new):** masked expressions; direct vs write; max_new_tokens 200; resumable. Output `results/e11_<model>.json`.
+           - **experiments/e3_concept_vectors.py:** `--def-source {ja,expr}`; expr uses `R.text(c, mask=True)`.
+           - **experiments/after_layers.sh (new):** waits for run_layers.sh, then runs:
+             - e10
+             - e11
+             - `e3_concept_vectors.py --layer 8 --objective defqa --def-source expr --tag _exprdefqa`
+
+        4. Errors and fixes:
+           - **Checker KeyError 'from' in the axis message:** changed to 'source'. The amount axis source was then set to any.
+           - **subj modeling errors found by the checker:** process-bearer issues fixed via v_measure; duplicate expressions; narrow_to; layered for individuals, fixed with the Isubj domain map; role grounding fixed by making permission depend on access_rule; v_register direction; v_begin/v_end identical, fixed with differing `after`; week order axis fixed via v_begin.
+           - **Renderer:** fact names were unqualified; a regex matched unrelated facts, fixed with yaml-based from/to matching; multi-line yaml entries were truncated, fixed by making v_sell one line.
+           - **The exp-local `v_use` shadowed core `v_use`:** I first renamed it to v_utilize. The user said cross-domain collisions are allowed, so I reverted and added `core.` qualification.
+           - **Wrong first design:** a semi-formal renderer. The user said to pass expressions as-is, so it now emits raw lines.
+           - **L4 run died twice after container restarts:** restarted both times.
+
+        5. Problem Solving:
+           - All checks pass: 「検査に成功: ノード 528（うち動詞の語根 51、役割 14）、基礎の関係 7、分類の軸 6、測定値 400、観察 71、仮説 38、決定 17、残り項目 20」 and 「実行の検査に成功: 実行の記録 1、歩数 3」.
+           - Negative tests passed:
+             - duplicate display → unique_in_domain
+             - gloss and natural language in a non-display key
+             - domain cycle
+             - undeclared cross-domain reference → layered
+           - Caveats told to the user:
+             - English identifiers still carry meaning (accepted by the user).
+             - Approximations remain: ownership is modeled via `part`.
+             - The hourly task prompt still uses the old names.
+
+        6. All user messages (non-tool):
+           - "作業中に使用量の上限に達しましたが、現在はリセットされています。中断したところから続けてください。"
+           - "そういえば与え、書き出させる言語をこの体系制御言語にする実験はいつだ？優先順位は任せていた気がするが"
+           - "GPUはこの環境に無いので時間はかかるよ\nまあよろしく"
+           - "不自然さは必要な修飾の見落としだと思う"
+           - "よろしく"
+           - "式をそのまま渡す話だよ？"
+           - "式をそのまま渡して、推論過程でも式で書かせる。各式の正しさは検査する、って手順の印象だったけど\n\n記憶が間違っているのだろうか"
+           - "概念式そのもののベクトル化、も一応観察対象ではあると思うけど。なかったっけ、実験"
+           - "表示名をマスクしてもいいかもね"
+           - "いやまあ概念式は厳格に形式化された識別子があることによって正答率が上がる仮説だから、まあ識別子が見えること自体は良いと思ってる\n表示名をマスクするのは日本語に限定する当初の目的に照らしたもの。あとそもそも"表示名"の概念に"ja"が結びついてるのは筋悪いんじゃないのとは思ってる。普通に"display"が正しい気が。"
+           - "useとかlayerの件、これってrustでいうところのクレートとターゲット、tsで言うところのtsconfigとimportの関係だよね\nオントロジーファイル内に直書きは違くね？"
+           - "チェッカーの見つけ方もtsconfigで定義するよね\nどこまでがリポジトリ範囲か"
+           - "あとこの言語はCMTをそのまま名前にするとまずいよ\nConcept System Control Language（概念体系制御言語）で、CSCLが正式名だ"
+           - "多分識別子も合わせた方が良いね\n自己言及してるノードがあるはず"
+           - "領域間で識別子被りは許容されてるはずだけど"
+
+        7. Pending Tasks:
+           - Ensure run_layers (L4) and after_layers.sh are running. Restart if a container restart killed them.
+             - Restart command: `cd /home/user/CMT/experiments && (PY=/home/user/venv/bin/python nohup setsid ./run_layers.sh 20 4 > /dev/null 2>&1 &)`
+             - Also `(PY=/home/user/venv/bin/python nohup setsid ./after_layers.sh > /dev/null 2>&1 &)`.
+             - Note: the L4 partial is resumable.
+           - When L4 finishes:
+             - Record the L4 measurements in exp.yaml (like L20).
+             - Update `b_single_layer_20_and_4` and the related hypotheses (h_layer14_lowers_control, h_single_layer_does_not_reach_shared).
+             - Commit the results JSON.
+           - When E10, E11 and E3-expr finish:
+             - Record them as measurement families, observations and hypothesis statuses in exp.yaml.
+             - Related backlog items: b_definitions_given_as_concept_expressions, b_model_writes_concept_expressions, b_vectors_taught_from_concept_expressions, b_write_subject_concepts_in_cscl.
+             - Related hypotheses: h_cscl_raises_following, h_model_can_write_cscl.
+             - New measurement families and axes may be needed.
+           - Possibly mention or ask about updating the hourly task prompt's old names (体系制御言語, file layout). Not done.
+
+        8. Current Work:
+           - The last completed step was commit 3295bbb, "Revert the exp verb rename; reach the core verb from exp as core.v_use".
+           - Verified domains: `{'core': uses [], 'run': ['core'], 'exp': ['core','run'], 'subj': ['core']}`.
+           - Reported to the user in Japanese.
+           - Then a scheduled-task notification (10:27 UTC) was read, telling me to continue and restart the experiment if stopped. No action was taken yet before this summary.
+
+        9. Optional Next Step:
+           - Per the scheduled task ("CMT の実験作業が止まっていたら再開してください"), check `pgrep -af "run_layers|after_layers"` and the L4 log.
+           - Restart run_layers.sh 20 4 and after_layers.sh if they are not running.
+           - Then wait for results and record them in spec/exp.yaml.
+
+        If you need specific details from before compaction (like exact code snippets, error messages, or content you generated), read the full transcript at: /root/.claude/projects/-home-user-CMT/e05d2140-ce91-515f-a5fb-e6251e13d406.jsonl
+        Continue the conversation from where it left off without asking the user any further questions. Resume directly — do not acknowledge the summary, do not recap what was happening, do not preface with "I'll continue" or similar. Pick up the last task as if the break never happened.
+
+        The messages after this summary are the most recent messages from before compaction, kept verbatim. The summary was written without seeing them, so something it says has not happened yet may already have happened in them.
+facts:
+- {is: v_say, from: session_model, to: 01M7FC1EKJXF452CDVBTWGHTZD}
+- {is: v_refer, from: 01M7FC1EKJXF452CDVBTWGHTZD, to: syntax.display}
+- {is: v_refer, from: 01M7FC1EKJXF452CDVBTWGHTZD, to: syntax.with}
+- {is: v_refer, from: 01M7FC1EKJXF452CDVBTWGHTZD, to: subj.v_contract}
+- {is: v_refer, from: 01M7FC1EKJXF452CDVBTWGHTZD, to: subj.v_employ}
+- {is: v_refer, from: 01M7FC1EKJXF452CDVBTWGHTZD, to: subj.v_place}
+- {is: v_refer, from: 01M7FC1EKJXF452CDVBTWGHTZD, to: subj.v_store}
+- {is: v_refer, from: 01M7FC1EKJXF452CDVBTWGHTZD, to: subj.v_allocate}
+- {is: v_refer, from: 01M7FC1EKJXF452CDVBTWGHTZD, to: subj.v_pay}
+- {is: v_refer, from: 01M7FC1EKJXF452CDVBTWGHTZD, to: subj.v_approve}
+- {is: v_refer, from: 01M7FC1EKJXF452CDVBTWGHTZD, to: subj.v_classify}
+- {is: v_refer, from: 01M7FC1EKJXF452CDVBTWGHTZD, to: subj.v_live}
+- {is: v_refer, from: 01M7FC1EKJXF452CDVBTWGHTZD, to: subj.v_weekday_of}
+- {is: v_refer, from: 01M7FC1EKJXF452CDVBTWGHTZD, to: syntax.v_measure}
+- {is: v_refer, from: 01M7FC1EKJXF452CDVBTWGHTZD, to: subj.v_located}
+- {is: v_refer, from: 01M7FC1EKJXF452CDVBTWGHTZD, to: subj.v_begin}
+- {is: v_refer, from: 01M7FC1EKJXF452CDVBTWGHTZD, to: subj.v_end}
+- {is: v_refer, from: 01M7FC1EKJXF452CDVBTWGHTZD, to: subj.v_sell}
+- {is: v_refer, from: 01M7FC1EKJXF452CDVBTWGHTZD, to: subj.v_register}
+- {is: v_refer, from: 01M7FC1EKJXF452CDVBTWGHTZD, to: ontology.v_involve}
+- {is: v_refer, from: 01M7FC1EKJXF452CDVBTWGHTZD, to: subj.v_seated}
+- {is: v_refer, from: 01M7FC1EKJXF452CDVBTWGHTZD, to: subj.new_order}
+- {is: v_refer, from: 01M7FC1EKJXF452CDVBTWGHTZD, to: subj.large_order}
+- {is: v_refer, from: 01M7FC1EKJXF452CDVBTWGHTZD, to: subj.free_plan}
+- {is: v_refer, from: 01M7FC1EKJXF452CDVBTWGHTZD, to: subj.business_day}
+- {is: v_refer, from: 01M7FC1EKJXF452CDVBTWGHTZD, to: subj.weekday_day}
+- {is: v_refer, from: 01M7FC1EKJXF452CDVBTWGHTZD, to: syntax.cscl}
+- {is: v_refer, from: 01M7FC1EKJXF452CDVBTWGHTZD, to: syntax.information_entity_express_from_cscl}
+- {is: v_refer, from: 01M7FC1EKJXF452CDVBTWGHTZD, to: syntax.new_kind}
+- {is: v_refer, from: 01M7FC1EKJXF452CDVBTWGHTZD, to: subj.access_rule}

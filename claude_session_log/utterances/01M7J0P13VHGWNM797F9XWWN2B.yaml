@@ -1,0 +1,37 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-16T11:08:09.723Z（UTC）
+individuals:
+  01M7J0P13VHGWNM797F9XWWN2B:
+    is: model_utterance
+    display: 発言 934
+    val:
+      order: 934
+      text: |
+        tc を言語の検査だけに作り直し、PR #86 を更新してレビュー可能な状態（Draft 解除）にしました。
+
+        https://github.com/nonsugertea7821/CMT/pull/86
+
+        **ご指摘への対応:** 検査モジュールの宣言は、ご指摘どおり `cscl.yaml` に置きました。`checkers: {exp: exp/src/exp_check.py}` という形です。領域の yaml とその文法には何も足していません。
+
+        **変えたこと**
+        - **exp の検査:** `exp/src/exp_check.py` に移しました。移したのは、測定値の展開、観察・仮説・決定の検査、どちらの側の主張かの検査、仮説の状態の決まり方、許容幅の読み替えなどです。
+        - **tc:** どの領域も同じに読み、言語の検査だけをします。そのあと `checkers` に書いたモジュールの `check()` を呼びます。tc の中には exp の語が残っていないことを点検しました。
+        - **値をそのまま持つ関係:** 固定の一覧をやめ、種類に `verbatim: true` と書いて宣言する形にしました。
+        - **呼び出し側:** `sync_issues.py`、`render_expr.py`、`check_line.py` は `exp_check.build()` を使うように変えました。
+        - **使い方の変更:** 測定値の一覧（`--values`）と項目の表示（`--show`）は、`python exp/src/exp_check.py` から使う形になりました。tc に残るのは `--expr` だけです。
+
+        **確かめたこと**
+        - **件数:** 型検査は通り、測定値・観察・仮説・決定・残り項目の件数は移す前と同じでした。ノードは `verbatim` の分だけ 1 増えています。
+        - **ほかの検査:** 実行の検査と同期のテストも通りました。
+        - **issue の本文:** 同期で生成される下書きは、移す前とバイト単位で同じです。したがって、マージしても issue に「説明が古い」ラベルは付きません。
+        - **誤りの報告:** exp_check の中でわざと誤りを入れると、tc がそれを失敗として報告しました。
+        - **CI:** 2 本のうち 1 本は成功し、もう 1 本は返信時点でまだ実行中です。
+
+        #86 をマージしていただければ、続けて #85 を main に追いつかせます。そのうえで、#85 で tc に足していた部分を外し、宣言（`many`・`opposite`・`derive`・`via`）に置き換えます。
+facts:
+- {is: v_say, from: session_model, to: 01M7J0P13VHGWNM797F9XWWN2B}
+- {is: exp.v_answer, from: 01M7J0P13VHGWNM797F9XWWN2B, to: 01M7J0BCPW6N946C4J9CGTZR45}
+- {is: v_refer, from: 01M7J0P13VHGWNM797F9XWWN2B, to: syntax.verbatim}
+- {is: v_refer, from: 01M7J0P13VHGWNM797F9XWWN2B, to: syntax.many}
+- {is: v_refer, from: 01M7J0P13VHGWNM797F9XWWN2B, to: syntax.opposite}
+- {is: v_refer, from: 01M7J0P13VHGWNM797F9XWWN2B, to: syntax.derive}
+- {is: v_refer, from: 01M7J0P13VHGWNM797F9XWWN2B, to: syntax.via}

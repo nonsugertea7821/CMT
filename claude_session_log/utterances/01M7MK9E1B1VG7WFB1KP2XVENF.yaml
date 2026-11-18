@@ -1,0 +1,61 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-17T11:11:48.779Z（UTC）
+individuals:
+  01M7MK9E1B1VG7WFB1KP2XVENF:
+    is: model_utterance
+    display: 発言 1058
+    val:
+      order: 1058
+      text: |
+        候補を体系の中で調べました。結論から言うと、いまの動詞の語彙には、独立持続体を肯定で区別できる端がありません。状態の関係を確かめる観察もありません。コミットはしていません（分析だけで、作業ツリーは claude/cscl で変更なし）。
+
+        **1. 動詞の端に来るものの内訳**
+        全層の肯定の限定（`mod`）と種類どうしの事実から、各端に何が来ているかを数えました。
+
+        | 端 | n | 独立持続体 | 汎用依存体 | 特定依存体 | 生起体 |
+        |---|---|---|---|---|---|
+        | v_depend の終点（依存される） | 71 | 11 | 55 | 3 | – |
+        | v_compose の終点（部分を持つ） | 63 | 5 | 58 | – | – |
+        | v_compose の始点（部分になる） | 55 | 7 | 46 | 1 | – |
+        | v_involve の終点（関わる） | 7 | 3 | 3 | 1 | – |
+        | v_depend の始点（依存する） | 74 | **2** | 20 | 52 | – |
+
+        - 候補に挙げた「部分を持つ」「関わる」も、「依存される」と同じく、情報（汎用依存体）が多数を占めます。独立持続体だけが来る端は、subj の小さいもの（v_contract の終点 2件、v_sell の終点 1件など）しかありません。
+        - **h_ic_is_bearer には反証が出ています。** 依存される側 71 件のうち、独立持続体は 11 件だけです。
+        - **否定の定義と食い違う書き方がありました。** v_depend の始点（依存する側）に、独立持続体が2つ来ています（person、family）。
+          - たとえば family は、`v_live`（住む）の始点で、v_live は v_depend の下です。そのため、住むことが依存として書かれ、人が依存するものになっています。
+          - 独立持続体の定義は「依存すると示されていない」です。否定を「示されていない」と読むので、この食い違いは検査に引っかかりません。古典的な否定なら矛盾です。
+
+        **2. 状態の関係**
+        - `state_relation` は、どの動詞の端にも来ていません。
+        - 現れるのは、syntax の記述（`holds`、`base`、`arity`）が述べる先としてだけです。
+        - したがって h_state_relation_is_temporal_part には、支持も反証もありません。体系の中に観察の材料がありません。
+
+        **3. ここから言えること**
+        独立持続体を肯定で置くには、いまの語彙にない区別が要ります。考えられる方向は3つです。
+
+        - **(a) 新しい基礎の関係を足す。** たとえば「担う（bearer of）」です。ただし基礎の関係は導けない原始なので、加えること自体の観察が要ります。
+        - **(b) 独立持続体の種類を廃し、肯定の端で決まるものだけを残す。** 主体（v_perform の始点）、部分を持つもの、などです。subj の `object`、`land`、`region` もそれぞれ肯定の定義に書き直します。
+        - **(c) 否定の定義を、ontology に閉世界を置いたうえで「依存しない」と読む。** ただしこれも根の下に置く理由にはならないので、法則 placed_deduced は通りません。さらに family・person の食い違いが矛盾として表に出ます。
+
+        (b) が、いまの体系の論理と観察からいちばん無理なく出てくる方向だと考えます。独立持続体という区別は、体系の中で一度も肯定に使われていないからです。
+
+        次の2つを決めてください。
+        - どの方向で進めますか。
+        - 反証の記録は claude/cross で行います（lang の仮説と exp の測定の族の両方が要るため）。#89 をマージしてから行う順序でよいですか。
+facts:
+- {is: v_say, from: session_model, to: 01M7MK9E1B1VG7WFB1KP2XVENF}
+- {is: exp.v_answer, from: 01M7MK9E1B1VG7WFB1KP2XVENF, to: 01M7MK6N5H6ZFXN4BD980G9HHD}
+- {is: v_refer, from: 01M7MK9E1B1VG7WFB1KP2XVENF, to: syntax.mod}
+- {is: v_refer, from: 01M7MK9E1B1VG7WFB1KP2XVENF, to: ontology.v_depend}
+- {is: v_refer, from: 01M7MK9E1B1VG7WFB1KP2XVENF, to: ontology.v_compose}
+- {is: v_refer, from: 01M7MK9E1B1VG7WFB1KP2XVENF, to: ontology.v_involve}
+- {is: v_refer, from: 01M7MK9E1B1VG7WFB1KP2XVENF, to: subj.v_contract}
+- {is: v_refer, from: 01M7MK9E1B1VG7WFB1KP2XVENF, to: subj.v_sell}
+- {is: v_refer, from: 01M7MK9E1B1VG7WFB1KP2XVENF, to: subj.v_live}
+- {is: v_refer, from: 01M7MK9E1B1VG7WFB1KP2XVENF, to: syntax.state_relation}
+- {is: v_refer, from: 01M7MK9E1B1VG7WFB1KP2XVENF, to: syntax.holds}
+- {is: v_refer, from: 01M7MK9E1B1VG7WFB1KP2XVENF, to: syntax.base}
+- {is: v_refer, from: 01M7MK9E1B1VG7WFB1KP2XVENF, to: syntax.arity}
+- {is: v_refer, from: 01M7MK9E1B1VG7WFB1KP2XVENF, to: ontology.v_perform}
+- {is: v_refer, from: 01M7MK9E1B1VG7WFB1KP2XVENF, to: subj.land}
+- {is: v_refer, from: 01M7MK9E1B1VG7WFB1KP2XVENF, to: subj.region}

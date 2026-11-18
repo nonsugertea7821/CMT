@@ -1,0 +1,287 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-17T15:40:18.578Z（UTC）
+individuals:
+  01M7N2N28JVT9YB5Q8XX3FN2C9:
+    is: session_summary
+    display: 発言 1200
+    val:
+      order: 1200
+      text: |
+        This session is being continued from a previous conversation that ran out of context. The summary below covers the earlier portion of the conversation.
+
+        <system-reminder>
+        <tools-used-before-summary>AskUserQuestion, Bash, Edit, Grep, Read, ReadNotifications, TaskStop, ToolSearch, WebFetch, WebSearch, Write, mcp__claude-code-remote__create_trigger, mcp__claude-code-remote__delete_trigger, mcp__claude-code-remote__get_trigger, mcp__claude-code-remote__read_documentation, mcp__claude-code-remote__send_later, mcp__claude-code-remote__subscribe_pr_activity, mcp__claude-code-remote__update_trigger, mcp__github__actions_get, mcp__github__actions_list, mcp__github__add_issue_comment, mcp__github__create_pull_request, mcp__github__get_job_logs, mcp__github__issue_write, mcp__github__list_issues, mcp__github__list_pull_requests, mcp__github__pull_request_read, mcp__github__update_pull_request</tools-used-before-summary>
+        </system-reminder>
+        Summary:
+        1. Primary Request and Intent
+
+           **Standing rules (from before, still in force)**
+           - Repo nonsugertea7821/CMT at /home/user/CMT. Reply in Japanese. Don't overclaim.
+           - Never use `git checkout` to restore files.
+           - Run only one model process at a time. Python is /home/user/venv/bin/python.
+           - No background keep-alive loops.
+           - The stop hook requires changes to be committed and pushed.
+           - Commit trailer:
+             ```
+             Co-Authored-By: Claude [モデル名を伏せた] <[メールアドレスを伏せた]>
+             Claude-Session: https://claude.ai/code/session_015KRKt6TNJZ7ZsQmEknANXK
+             ```
+           - The PR body ends with:
+             ```
+             🤖 Generated with [Claude Code](https://claude.com/claude-code)
+
+             https://claude.ai/code/session_015KRKt6TNJZ7ZsQmEknANXK
+             ```
+           - Branches:
+             - claude/cscl = language only
+             - claude/exp = experiment only
+             - claude/cross = both (current, PR #93)
+           - No personal info in issues.
+           - Outward-facing actions need confirmation.
+           - "PRの状態は確認してから応答して" / "PRに問題を残さないでくれ".
+           - exp changes must not affect tc.
+           - Results JSON and exp/experiments scripts need `git add -f`.
+           - Preregistration: commit the hypothesis plus the procedure script before running. Disclose any pre-checks and fixes.
+
+           **User principle**
+           "概念体系は「検討」するものではなく「演繹」するものだ…何故そう決めたのか、観察が無ければならない。"
+
+           **This segment's thread**
+           - Back to signatures, then declaration = existence.
+           - Time opens declaration.
+           - Correction: frames are closed; openness is in the time direction; v_freeze is truth-axis only; the dangling condition belongs to stack rewind.
+           - Restriction vs signature; self as signature.
+           - Record and place law definition_stratified.
+           - Fetch theorems as pw.
+           - Observe frames.
+           - **Latest:** "全部を最初に宣言しない実行器を作ればいいんじゃないか？開世界仮説で" — build an executor that does not declare everything up front, under the open-world assumption.
+
+        2. Key Technical Concepts
+
+           **Declaration and existence**
+           - The type checker gives `exists` to every declared node, so for kinds, declaration = existence (domain closure).
+           - The runtime pre-declares all individuals and treats `exists` as a truth-axis fluent.
+           - 10 dynamic verbs create or remove existence: 9 creators, 1 remover (std.v_freeze).
+
+           **Two kinds of openness**
+           - Truth axis: closed_world vs world.
+           - Declaration (domain) axis.
+           - User: each frame is closed; the time direction is open; frame diffs only grow; v_freeze is truth-axis only; rewind is the only way to undeclare.
+
+           **Pre/post readings**
+           - pre: 6 true, 0 false, 12 unstated.
+           - post: 24 true, 0 false, 5 unstated.
+           - The world never decided anything in the existing run record.
+
+           **Restriction and signature**
+           - The mod grammar `[of, with, neg, quant, at]` = relation / concept / truth / quantity.
+           - Named restrictions are qualities (54 of 57; the other 3 are role or disposition).
+           - self is the implicit end of every mod (λself. v(self, X)).
+
+           **Definition cycles (7, all positive)**
+           - Fixed points; Russell's paradox if a cycle goes through negation; Knaster–Tarski; stratification (`strata()` already guards laws).
+           - Law definition_stratified added.
+
+           **exp_check rules**
+           - Hypothesis status is derived from v_support / v_contradict. Support plus contradict → hyp_mixed, so partial-condition observations stay unlinked.
+           - Prior work pattern: `pw_*` is `exp.prior_work`; `pwc_*` is `exp.prior_claim`; link with `exp.v_state` and a v_refer content. `exp.v_prior_same` requires the pwc content to equal the hypothesis content (check_derived).
+
+        3. Files and Code Sections (all on claude/cross; pushed unless noted)
+
+           **cscl/bootstrap/type_checker/type_checker.py**
+           - Added `definition_stratified` to LAWS_HERE.
+           - Added three functions:
+             - `definition_edges(T)`: edges from extends, named mods and with, each with a neg flag.
+             - `definition_cycles(edges)`: iterative Tarjan SCCs.
+             - `check_definition_stratified(T)`: error if a negated edge lies inside a cycle. It is called after `check_named_mod(T)`.
+
+           **cscl/library/syntax/syntax.yaml**
+           - Added:
+             ```yaml
+             definition_stratified: {is: law_given, display: 定義の循環は否定の限定を通らない（自分を限定するものは肯定の位置にだけ現れる）}
+             ```
+           - Added `- {is: v_govern, from: definition_stratified, to: concept_expression}`.
+
+           **cscl/design/claims.yaml**
+           - Lang nodes:
+             - `declared_scope` (quality, mod `syntax.refer_from_individuals`)
+             - `definition_cycle` (quality, mod `{of: [v_refer, from], with: definition}`)
+           - h_open_declaration:
+             - `h_open_declaration: exp.hyp_refuted`, `b_open_declaration: exp.item_done`.
+             - Comments carry the procedure, the result, and the user's note that the criterion conflated the truth and declaration axes.
+             - Content: `{is: v_depend, from: declared_scope, to: runtime.steps}`.
+             - Observations: o_sys_declaration_steps_ok, o_sys_declaration_states_same, o_sys_declaration_dangling (v_contradict), o_sys_declaration_never_halts.
+           - Definition cycles:
+             - `h_definition_positive: exp.hyp_supported` (stated after the observation; disclosed) and `d_definition_stratified: lang_dec_adopted` (v_ground → h).
+             - Content: `{is: v_not_depend, from: definition_cycle, to: syntax.not}`.
+             - Observations: o_sys_cycles_positive (v_support), o_sys_cycles_mostly_one_relation, o_sys_cycles_mostly_syntax.
+           - Prior work:
+             - pw_russell1902_paradox / pwc_russell1902_negative_self (v_prior_same)
+             - pw_apt1988_stratified / pwc_apt1988_stratified (v_prior_same)
+             - pw_tarski1955_fixpoint / pwc_tarski1955_monotone (summary only)
+           - Frame observations:
+             - o_sys_frame_declared_never_grows / never_shrinks (v_level 0.0)
+             - o_sys_frame_creates_over_removes
+             - o_sys_frame_removal_truth_only (1.0)
+             - o_sys_frame_exists_shrinks (>0)
+             - o_sys_frame_about_absent (>0)
+           - Known leftover: a duplicate fact line for d_sig_depend_from (not fixed).
+
+           **exp/src/exp.yaml**
+           - Families added in the standard pattern (v_file_of, v_rows_of [rows], v_axis_of, v_value_of / v_spell, v_entry_of '{cond}', v_metric_of mean_value):
+
+             | Family | Conds |
+             |---|---|
+             | sys_declaration | b_ok, same_state, dangling, a_applicable, b_fresh_applicable, supported |
+             | sys_cycles | neg, same_relation, in_syntax |
+             | sys_frames | creates, removes, truth_only, declared_grows, declared_shrinks, exists_grows, exists_shrinks, about_absent |
+
+           **exp/experiments/sys_declaration.py**
+           - Contains RECORD (sys1 system, dec1 exp.decision, r1 realizable_entity, q1 quality; steps std.v_learn, exp.v_see, std.v_freeze) and the `Declared(rt.Machine)` class.
+           - Result: steps ok, states same, dangling 2 after freeze, a_applicable 53, b_fresh 42 → refuted.
+
+           **exp/experiments/sys_cycles.py**
+           - Uses `tc.definition_edges` / `definition_cycles`.
+           - Result: 7 cycles, neg 0, same_relation 5, in_syntax 5. The non-same cycles are base↔state_relation and system↔cscl↔concept_expression.
+
+           **exp/experiments/sys_frames.py**
+           - verb_rows and step_rows over exp/tests plus the sys_declaration RECORD.
+           - Result:
+
+             | Measure | Count |
+             |---|---|
+             | creates | 9/16 |
+             | removes | 1/16 |
+             | truth_only | 1/1 |
+             | declared_grows / declared_shrinks | 0/6 / 0/6 |
+             | exists_grows | 2/6 |
+             | exists_shrinks | 1/6 |
+             | about_absent | 1/6 |
+
+           **exp/experiments/open_runtime.py — just written; not committed, not run, not registered**
+           - Docstring holds the preregistered procedure for h_open_runtime.
+           - `OpenMachine(rt.Machine)` with world "world":
+             - It declares new names only at creation positions: pre `exists` neg and post `exists` true for that position. The kind is new_kind for `new`, the end type otherwise.
+             - It never undeclares and keeps `frames`.
+             - `halted_false_decided()` checks `applicable()`, then tries fresh names at creation positions.
+           - `initial_only(run)` keeps only the individuals stated to exist in the first facts.
+           - `run_one` writes step rows (ok, declared_grows, declared_shrinks, grows_by_creation) and a run row (run_ok, halted_false_decided).
+           - It writes sys_open_runtime.json with a summary row `supported`.
+           - Criterion: supported iff all of
+             1. records run without error and every expect is decidable and true;
+             2. declarations never shrink;
+             3. growth happens only by creation;
+             4. `halted: false` records are decided false.
+
+             2 and 3 follow from the construction; the empirical part is 1 and 4.
+           - The `others` position computation in `halted_false_decided` is convoluted and should be simplified or verified before registering.
+
+           **Commits this segment**
+           - 48473d3: prereg h_open_declaration
+           - 929a71b: its result
+           - c2de856: cycles and the law
+           - cf64f4c: pw theorems
+           - c252871: frames
+
+           PR #93 body is updated through the frames section. CI is green at c252871.
+
+        4. Errors and fixes
+           - Overclaim: "only v_design requires a declared-but-nonexistent thing". A grep found 10 verbs, so I did not register that hypothesis.
+           - Overclaim: "open world v_design halts". Reading runtime.holds showed the unstated reading is world-independent.
+           - Mixed-status error on h_open_declaration (hyp_refuted vs derived hyp_mixed). Removed the v_support links of the partial conditions and noted why.
+           - named_mod conflict: definition_cycle duplicated exp.definition_text's mod. Changed it to `{of: [v_refer, from], with: definition}`.
+           - Overclaim: "all 7 cycles are one relation from both ends". The measurement showed 5/7; disclosed.
+           - User correction: the h_open_declaration criterion conflated the truth and declaration axes. Added a note, kept the verdict, and proposed (i) and (ii).
+           - User said "うーんちょっと違うか" to my WORLDS-law proposal and redirected to signatures.
+
+        5. Problem Solving
+           - Signature grounds: conformance is circular. Valid grounds are width needed (refer.to=any), distinction needed (depend vs involve), and refuted alternative (depend.to).
+           - Unused ends: level, not_before.to, not_after.to.
+           - Frame model:
+             - Current runtime: declarations fixed, existence non-monotone.
+             - User's model: declarations monotone across frames, truth axis free.
+           - Open decisions:
+             - (i) Frame boundary: per step, or only declaring steps?
+             - (ii) What a rewind restores: declarations only, or truth too?
+
+        6. All user messages (this segment)
+           - "うーんちょっと違うか\nまった、一旦シグネチャに戻ろう"
+           - "述べていない文の扱いをまったく試していない、というか\n\n「宣言が存在を導く」ゆえに、宣言されていないものは存在すらできないのがオントロジーの正体では"
+           - "それで"
+           - "待って、時間が絡んだ瞬間に宣言レベルでは開世界化するということでは？"
+           - "そうする"
+           - "いや違う違う違う\n各フレームで宣言された者が次のフレームで消えることはあってはならないんだ、何故なら前回のフレームにおける存在論は「閉じている」\n\nつまるところ検証条件が間違ってる、\nv_freezeが成立するのは「スタックリワインド」の時だ\nどう言えばいいのかな\n「開いている」のは時間方向だ。特定のフレームから次のフレームの概念差分が常に増大し続ける事が証明条件なんだよ\nv_freezeは真偽の軸でしか操作してないとも言えるはずだ\n証明しようとした「宣言されていない名前を含む文が残らない」のはスタックリワインド操作をした時の話のはずだ"
+           - "抑、概念を限定によって特殊化する推論と定義するなら、「限定」できないものは概念より上、シグネチャである可能性が高い。\n\n関係、真偽、量、質は限定できないだろう。何かを限定して導くには自身を限定するものが何であるかを自分自身をシグネチャとして述べなければならない。\n\n自己言及的な問題、停止性につながる循環。おっと。待て待て。一つ含意がある。\n\n自分を限定するものについて述べれば定義できる？"
+           - "selfがシグネチャになるとどうなるだろうか"
+           - "記録して、法則も置く"
+           - "pwとして定理をとってきて\n\nそれからフレームの問題の観察を行う"
+           - "全部を最初に宣言しない実行器を作ればいいんじゃないか？開世界仮説で"
+
+        7. Pending Tasks
+           - Build the open-world executor that does not pre-declare names (latest request). Open_runtime.py is written; registration, commit, run and recording remain.
+           - Decisions (i) frame boundary and (ii) rewind semantics remain open; the executor does not handle rewind.
+           - Minor: duplicate fact `d_sig_depend_from` in claims.yaml.
+
+        8. Current Work
+           Right after the user's "全部を最初に宣言しない実行器を作ればいいんじゃないか？開世界仮説で", I replied "作ります…exp の中に作ります…前と同じく、仮説と手順を先に登録してから実行します" and wrote exp/experiments/open_runtime.py, which holds OpenMachine and the preregistered h_open_runtime procedure. Nothing has been added to claims.yaml yet, and nothing is committed or run. The working tree has only that untracked file.
+
+        9. Optional Next Step
+           Continue the user's latest request ("全部を最初に宣言しない実行器を作ればいいんじゃないか？開世界仮説で"):
+           1. Review and simplify `halted_false_decided` in open_runtime.py, without running the experiment.
+           2. Add to cscl/design/claims.yaml: `h_open_runtime: {is: exp.hyp_untested}` and `b_open_runtime: {is: exp.item_queued}`, with comments describing the procedure. Content could be e.g. `{is: v_depend, from: declared_scope, to: runtime.steps}`, or reuse declared_scope.
+           3. Run the checks (type_checker, runtime, test_worlds, test_sync_issues), then commit as the preregistration with `git add -f` and push.
+           4. Run `/home/user/venv/bin/python exp/experiments/open_runtime.py`.
+           5. Add family sys_open_runtime (conds ok, declared_grows, declared_shrinks, grows_by_creation, run_ok, halted_false_decided, supported) to exp.yaml, plus observations and the status in claims. Commit and push.
+           6. Update the PR #93 body (keep the footer), confirm CI, and report in Japanese.
+
+        If you need specific details from before compaction (like exact code snippets, error messages, or content you generated), read the full transcript at: /root/.claude/projects/-home-user-CMT/e05d2140-ce91-515f-a5fb-e6251e13d406.jsonl
+        Continue the conversation from where it left off without asking the user any further questions. Resume directly — do not acknowledge the summary, do not recap what was happening, do not preface with "I'll continue" or similar. Pick up the last task as if the break never happened.
+
+        The messages after this summary are the most recent messages from before compaction, kept verbatim. The summary was written without seeing them, so something it says has not happened yet may already have happened in them.
+facts:
+- {is: v_say, from: session_model, to: 01M7N2N28JVT9YB5Q8XX3FN2C9}
+- {is: v_refer, from: 01M7N2N28JVT9YB5Q8XX3FN2C9, to: std.v_freeze}
+- {is: v_refer, from: 01M7N2N28JVT9YB5Q8XX3FN2C9, to: syntax.closed_world}
+- {is: v_refer, from: 01M7N2N28JVT9YB5Q8XX3FN2C9, to: exp.v_support}
+- {is: v_refer, from: 01M7N2N28JVT9YB5Q8XX3FN2C9, to: exp.v_contradict}
+- {is: v_refer, from: 01M7N2N28JVT9YB5Q8XX3FN2C9, to: exp.hyp_mixed}
+- {is: v_refer, from: 01M7N2N28JVT9YB5Q8XX3FN2C9, to: exp.prior_work}
+- {is: v_refer, from: 01M7N2N28JVT9YB5Q8XX3FN2C9, to: exp.prior_claim}
+- {is: v_refer, from: 01M7N2N28JVT9YB5Q8XX3FN2C9, to: exp.v_state}
+- {is: v_refer, from: 01M7N2N28JVT9YB5Q8XX3FN2C9, to: ontology.v_refer}
+- {is: v_refer, from: 01M7N2N28JVT9YB5Q8XX3FN2C9, to: exp.v_prior_same}
+- {is: v_refer, from: 01M7N2N28JVT9YB5Q8XX3FN2C9, to: lang.type_checker}
+- {is: v_refer, from: 01M7N2N28JVT9YB5Q8XX3FN2C9, to: syntax.law_given}
+- {is: v_refer, from: 01M7N2N28JVT9YB5Q8XX3FN2C9, to: syntax.v_govern}
+- {is: v_refer, from: 01M7N2N28JVT9YB5Q8XX3FN2C9, to: syntax.concept_expression}
+- {is: v_refer, from: 01M7N2N28JVT9YB5Q8XX3FN2C9, to: lang.declared_scope}
+- {is: v_refer, from: 01M7N2N28JVT9YB5Q8XX3FN2C9, to: syntax.refer_from_individuals}
+- {is: v_refer, from: 01M7N2N28JVT9YB5Q8XX3FN2C9, to: lang.definition_cycle}
+- {is: v_refer, from: 01M7N2N28JVT9YB5Q8XX3FN2C9, to: exp.hyp_refuted}
+- {is: v_refer, from: 01M7N2N28JVT9YB5Q8XX3FN2C9, to: exp.item_done}
+- {is: v_refer, from: 01M7N2N28JVT9YB5Q8XX3FN2C9, to: ontology.v_depend}
+- {is: v_refer, from: 01M7N2N28JVT9YB5Q8XX3FN2C9, to: runtime.steps}
+- {is: v_refer, from: 01M7N2N28JVT9YB5Q8XX3FN2C9, to: exp.hyp_supported}
+- {is: v_refer, from: 01M7N2N28JVT9YB5Q8XX3FN2C9, to: lang.lang_dec_adopted}
+- {is: v_refer, from: 01M7N2N28JVT9YB5Q8XX3FN2C9, to: exp.v_ground}
+- {is: v_refer, from: 01M7N2N28JVT9YB5Q8XX3FN2C9, to: lang.v_not_depend}
+- {is: v_refer, from: 01M7N2N28JVT9YB5Q8XX3FN2C9, to: syntax.not}
+- {is: v_refer, from: 01M7N2N28JVT9YB5Q8XX3FN2C9, to: ontology.v_level}
+- {is: v_refer, from: 01M7N2N28JVT9YB5Q8XX3FN2C9, to: exp.v_file_of}
+- {is: v_refer, from: 01M7N2N28JVT9YB5Q8XX3FN2C9, to: exp.v_rows_of}
+- {is: v_refer, from: 01M7N2N28JVT9YB5Q8XX3FN2C9, to: exp.v_axis_of}
+- {is: v_refer, from: 01M7N2N28JVT9YB5Q8XX3FN2C9, to: exp.v_value_of}
+- {is: v_refer, from: 01M7N2N28JVT9YB5Q8XX3FN2C9, to: exp.v_spell}
+- {is: v_refer, from: 01M7N2N28JVT9YB5Q8XX3FN2C9, to: exp.v_entry_of}
+- {is: v_refer, from: 01M7N2N28JVT9YB5Q8XX3FN2C9, to: exp.v_metric_of}
+- {is: v_refer, from: 01M7N2N28JVT9YB5Q8XX3FN2C9, to: exp.mean_value}
+- {is: v_refer, from: 01M7N2N28JVT9YB5Q8XX3FN2C9, to: exp.decision}
+- {is: v_refer, from: 01M7N2N28JVT9YB5Q8XX3FN2C9, to: ontology.realizable_entity}
+- {is: v_refer, from: 01M7N2N28JVT9YB5Q8XX3FN2C9, to: std.v_learn}
+- {is: v_refer, from: 01M7N2N28JVT9YB5Q8XX3FN2C9, to: exp.v_see}
+- {is: v_refer, from: 01M7N2N28JVT9YB5Q8XX3FN2C9, to: syntax.state_relation}
+- {is: v_refer, from: 01M7N2N28JVT9YB5Q8XX3FN2C9, to: syntax.new_kind}
+- {is: v_refer, from: 01M7N2N28JVT9YB5Q8XX3FN2C9, to: syntax.new}
+- {is: v_refer, from: 01M7N2N28JVT9YB5Q8XX3FN2C9, to: ontology.v_design}
+- {is: v_refer, from: 01M7N2N28JVT9YB5Q8XX3FN2C9, to: exp.definition_text}
+- {is: v_refer, from: 01M7N2N28JVT9YB5Q8XX3FN2C9, to: exp.hyp_untested}
+- {is: v_refer, from: 01M7N2N28JVT9YB5Q8XX3FN2C9, to: exp.item_queued}

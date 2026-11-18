@@ -1,0 +1,22 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-16T11:13:32.104Z（UTC）
+individuals:
+  01M7J0ZVY88X7MZJCZ8KPSVAWV:
+    is: model_utterance
+    display: 発言 945
+    val:
+      order: 945
+      text: |
+        素通りをやめる修正の PR を出しました。
+
+        https://github.com/nonsugertea7821/CMT/pull/87
+
+        - **修正:** `check_derived` は、始点の先行研究が主張を何も述べていない関係を誤りにします。誤りの文は「…は v_state で何も述べていないので、中身から導けない」です。変えたのは tc のこの部分だけです。
+        - **ローカルでの確認:** main の上で、型検査・実行の検査・同期のテストは通りました。CI はまだ確認していません。
+        - **#85 との組み合わせ:** #85 の exp.yaml をこの修正の上に載せても、型検査は通りました。#85 には主張から導いた関係しか残っていないためです。
+        - **誤りを入れた確認:** 主張を書いていない Xu の「同じ向き」の関係を一時的に足すと、型検査は上の誤りの文で失敗しました。
+
+        #87 と #85 は別々のファイルを変えているので、どちらを先にマージしても構いません。
+facts:
+- {is: v_say, from: session_model, to: 01M7J0ZVY88X7MZJCZ8KPSVAWV}
+- {is: exp.v_answer, from: 01M7J0ZVY88X7MZJCZ8KPSVAWV, to: 01M7J0YCXGTY75NV7VNYW5Z177}
+- {is: v_refer, from: 01M7J0ZVY88X7MZJCZ8KPSVAWV, to: exp.v_state}

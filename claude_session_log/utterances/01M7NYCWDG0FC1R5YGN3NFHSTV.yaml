@@ -1,0 +1,56 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-17T23:45:10.576Z（UTC）
+individuals:
+  01M7NYCWDG0FC1R5YGN3NFHSTV:
+    is: model_utterance
+    display: 発言 1353
+    val:
+      order: 1353
+      text: |
+        行けそうですが、先に崩すべきなのは runtime ではなく syntax です。いまの依存を数えたので、その結果から説明します（登録した測定ではなく、手早く見ただけです）。
+
+        **いまの依存**
+
+        | 層 | 参照している下の層の語 |
+        |---|---|
+        | syntax | ontology の語 27、signature の語 1（any） |
+        | runtime | ontology の語 11、syntax の語 10 |
+
+        いまの層の順は signature → ontology → syntax → runtime → std です。runtime が signature と syntax だけを知るには、syntax も ontology を知らない必要があります。syntax が ontology を知っていれば、runtime も間接に知ることになるからです。つまり、層の順を signature → syntax → runtime → ontology → … に組み替える話になります。
+
+        **runtime が使う ontology の語 11 個**
+        - **基礎の関係で書き直せそうな動詞**：v_refer は refer、v_compose は part、v_come_after と v_come_before は after で書けそうです。v_depend は要検討です。
+        - **分類のための語**：continuant、occurrent、information_entity、quality、role、definition。runtime の概念が「何の一種か」を言うためだけに使っています。
+          - runtime の中は、syntax の語（passage、section）の下に置けば足りるかもしれません。
+          - 「戦略は定義の一種」のような分類は、上の層の ontology が後から言う形が考えられます。ただし、いまの書き方では上位は子の側（extends）に書くので、上の層から下の層の語を分類する書き方は、文法に新しく要ります。
+
+        **syntax が使う ontology の語 27 個**
+        中身は、大きく3種類に分かれます。
+        - **もともと文法の語に近い**：s、p、o（文の位置）、kind、sentence、word、participant、third_participant。syntax かシグネチャに下ろすのが自然です。
+        - **基礎の関係で書けそうな動詞**：v_refer、v_compose、v_come_after など。
+        - **分類のための語**：continuant、occurrent、quality、magnitude、concept、definition、language など。
+
+        **こうなれば bootstrap が見えてくる**
+        - 土台のコード（.py）は、signature・syntax・runtime だけを翻訳すれば足ります。
+        - 法則の評価は runtime の実行の一つになります。変数は any と番号で書き、割り当て方は runtime の binding が与えます。
+        - ontology から上は、その言語で書いたライブラリになり、検査もその言語の上の実行になります。
+        - これまで探してきた「コードが体系に書かずに持っている意味」は、原理的に signature と syntax の語にしか残らなくなります。この方向の行き着く形です。
+
+        **次の一歩**
+        syntax と runtime が使う ontology の語 38 個を、次のどれかに一つずつ分けた表を作るのがよいと考えます。
+        - 下ろす（syntax かシグネチャへ）
+        - 基礎の関係で書き直す
+        - 分類を上の層の側に移す
+
+        表ができれば、組み替えの量と、文法に新しく要る書き方（上の層から分類する形）が見えます。分け方の基準を先に登録してから作業します。進めてよいですか。
+
+        止めている含意の 14 件は、この組み替えで上位の概念の置き場所自体が動く可能性があるので、組み替えの方針が決まってから直すほうが無駄がありません。
+facts:
+- {is: v_say, from: session_model, to: 01M7NYCWDG0FC1R5YGN3NFHSTV}
+- {is: exp.v_answer, from: 01M7NYCWDG0FC1R5YGN3NFHSTV, to: 01M7NYA58ZWYWV2835FR9HSMM4}
+- {is: v_refer, from: 01M7NYCWDG0FC1R5YGN3NFHSTV, to: ontology.v_refer}
+- {is: v_refer, from: 01M7NYCWDG0FC1R5YGN3NFHSTV, to: ontology.v_compose}
+- {is: v_refer, from: 01M7NYCWDG0FC1R5YGN3NFHSTV, to: ontology.v_come_after}
+- {is: v_refer, from: 01M7NYCWDG0FC1R5YGN3NFHSTV, to: ontology.v_come_before}
+- {is: v_refer, from: 01M7NYCWDG0FC1R5YGN3NFHSTV, to: ontology.v_depend}
+- {is: v_refer, from: 01M7NYCWDG0FC1R5YGN3NFHSTV, to: ontology.information_entity}
+- {is: v_refer, from: 01M7NYCWDG0FC1R5YGN3NFHSTV, to: ontology.third_participant}

@@ -1,0 +1,74 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-17T22:56:23.536Z（UTC）
+individuals:
+  01M7NVKHZGTZPQ93ES50MCJ154:
+    is: model_utterance
+    display: 発言 1306
+    val:
+      order: 1306
+      text: |
+        特別扱いをシグネチャの語だけに許すと、シグネチャの外にある語の意味は、すべて事実と規則で書くことになります。そうなれば `any` のような混同も、法則から見えるようになります。代わりに、今コードが意味を与えている所を全部書き直す必要があり、規則の言葉で書けない所が表に出ます。
+
+        型検査と実行器のコードから、ノード名と同じ文字列を機械的に拾って分類しました。この拾い方は文字列の一致だけを見ているので、変数名との偶然の一致は除き、コードの中で組み立てた名前は拾えていません。
+
+        ## 今の特別扱い（意味を与えているもの）
+
+        | 層 | 語 | 扱い |
+        |---|---|---|
+        | signature | same（4か所） | 許される |
+        | 基礎の関係 | exists | same から導けるので、same を通せば許される |
+        | 基礎の関係 | refer、after、part | same から導けないので**反する** |
+        | ontology | continuant・occurrent（TOPS、「動詞は生起体の下」）、role、definition、quality、magnitude、specifically_dependent_continuant、v_depend、v_refer | **反する** |
+        | syntax | any（8か所）、verb_ref、v_collect、closed_world | **反する** |
+        | exp | v_spell（type_checker.py:1198） | **反する**。土台のコードが領域の語を知っていて、今の層の決まりにも反している |
+        | 意味を検査が与える法則（law_given） | 10個 | unique_names（名前の違う個体は same でない）は signature の話なので許される。残り 9 個は**反する** |
+
+        `from`・`to`・`holds` のような文法の語は数えていません。これらは「意味を与える」のでなく「書き方を読む」もので、型検査はすでに syntax の grammar と突き合わせています。ここを許すかどうかは、私の判断ではなくあなたに決めてほしい点です。
+
+        ## そうするとどうなるか（見込み）
+
+        **1. 混同が法則から必ず見えるようになる。**
+        シグネチャの外の意味が、すべて事実か規則になるからです。`any` の混同は、コードの中で解決先が分かれていたせいで、法則からは見えませんでした。こういう隠れ場所がなくなります。
+
+        **2. law_given 9 個を規則（law_rule）に直すことになる。**
+        - 直しやすいもの: part_fact_direction など。
+        - 今の規則の言葉では書けないもの:
+          - definition_stratified: 循環をたどる必要があります。
+          - no_confusion: 「新しい個体 c を置いてみる」という仮定が必要です。
+        - 書けないものが出てくること自体が成果です。規則の言葉に何が足りないかが分かります。
+
+        **3. 最上位（持続体・生起体）を signature の語で定義することになる。**
+        - TOPS としてコードに書かれているので、反する語に入ります。
+        - 前に置いた定義は次のとおりで、どちらも「フレーム t の self」を使います。
+          - 持続体: ∀t,t'. same(self_t, self_t')
+          - 生起体: ¬same(frame_t, frame_t+1)
+        - そのため、signature に「フレームの次」を置く必要が出てくる見込みです。
+        - そうなると、実行器の step・frame・halt は、そのフレームの意味として signature 側の法則になります。実行の法則と最上位の定義が、同じ所から出てくることになります。
+        - 前に頼まれた「最上位の分類を演繹する」に、ここでつながります。
+
+        **4. この決まり自体を機械的に検査できる。**
+        今回の拾い出しを CI の検査にすれば、「土台のコードに、signature の外の語の文字列がない」ことを確かめられます。
+
+        ## 結果として見込まれる signature
+        {self, same, any, フレームの次}。ただし、最後の1つはまだ候補です。
+
+        ## 進め方の案
+        1. 先に合意した「綴りの一意」の法則を入れ、`any` が引っかかることを確かめます。
+        2. 今回の一覧を観察として記録します（見込みを先にコミットします）。そのうえで、反する所を1つずつ事実と規則に移します。易しい順に進めます: v_spell、verb_ref、quality・magnitude、role、law_given、最後に最上位。
+
+        この順で進めてよいですか。あわせて、文法の語を許すかどうかを決めてください。
+facts:
+- {is: v_say, from: session_model, to: 01M7NVKHZGTZPQ93ES50MCJ154}
+- {is: exp.v_answer, from: 01M7NVKHZGTZPQ93ES50MCJ154, to: 01M7NVHA1FBAMD192ZW3P3Z4TZ}
+- {is: v_refer, from: 01M7NVKHZGTZPQ93ES50MCJ154, to: any}
+- {is: v_refer, from: 01M7NVKHZGTZPQ93ES50MCJ154, to: ontology.specifically_dependent_continuant}
+- {is: v_refer, from: 01M7NVKHZGTZPQ93ES50MCJ154, to: ontology.v_depend}
+- {is: v_refer, from: 01M7NVKHZGTZPQ93ES50MCJ154, to: ontology.v_refer}
+- {is: v_refer, from: 01M7NVKHZGTZPQ93ES50MCJ154, to: syntax.verb_ref}
+- {is: v_refer, from: 01M7NVKHZGTZPQ93ES50MCJ154, to: syntax.v_collect}
+- {is: v_refer, from: 01M7NVKHZGTZPQ93ES50MCJ154, to: syntax.closed_world}
+- {is: v_refer, from: 01M7NVKHZGTZPQ93ES50MCJ154, to: exp.v_spell}
+- {is: v_refer, from: 01M7NVKHZGTZPQ93ES50MCJ154, to: syntax.law_given}
+- {is: v_refer, from: 01M7NVKHZGTZPQ93ES50MCJ154, to: syntax.from}
+- {is: v_refer, from: 01M7NVKHZGTZPQ93ES50MCJ154, to: syntax.to}
+- {is: v_refer, from: 01M7NVKHZGTZPQ93ES50MCJ154, to: syntax.holds}
+- {is: v_refer, from: 01M7NVKHZGTZPQ93ES50MCJ154, to: syntax.law_rule}

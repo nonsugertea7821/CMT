@@ -1,0 +1,51 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-17T23:33:15.405Z（UTC）
+individuals:
+  01M7NXQ20DMXVN56GEN0ANGPKA:
+    is: model_utterance
+    display: 発言 1341
+    val:
+      order: 1341
+      text: |
+        法則の集め方は、文法から読むように直しました（d2 の変更、push 済み）。役割から黙って外れる穴のほうは、法則を書いてみたら 25 件の違反が出たので、入れずに止めています。
+
+        **1. 法則の集め方（済み）**
+        - 型検査の core_sections は、これまで law_rule と law_given を名前で挙げて法則を集めていました。
+        - これを、文法の laws に書かれた種類から読むように変えました。文法の laws と体系の laws の下位が等しいことは、前回入れた検査が確かめます。
+        - CI の5つの検査はすべて通っています。
+
+        **2. 役割から外れても気づかない穴（止めている）**
+        - **原因**：法則 specific は、限定を書いた字面がまったく同じときしか比べていませんでした。consolidation_target の限定は「rule_consolidation に依存する」、role の限定は「definition に依存する」です。rule_consolidation は definition の下位なので、前者は後者を満たしますが、字面が違うので見落としていました。
+        - **書いた規則**：同じ動詞の同じ位置で、端が下位の限定は、端が上位の限定を含む、とする規則です。否定・数量・範囲の付いた限定は対象から外しました。これで、外した役割は捕まえられるようになりました。
+        - **副作用**：既存の体系で specific の違反が 25 件出ました。例は次のとおりです。
+
+        | 違反した語 | 下に置くべきとされた語 | 式が区別していないこと |
+        |---|---|---|
+        | hour | money | 「日を測る」は「過程を測る」に含まれる。円かどうかは表示語にしかない |
+        | height | age | 「（年齢の否定の付いた）人に依存する」は「人に依存する」に含まれる |
+        | concept_vector など5つ | relation_operator | relation_operator の限定が「dependent に依存する」だけで広すぎる |
+        | definition, backlog_item | hypothesis | |
+        | domain | passage, definition_text | |
+        | new_kind | with | |
+        | verbatim | value_part | |
+
+          ほかに run・plan・attendance などで、計 25 件です。どれも、式が区別していない差を、表示語や分類の置き場所だけが持っていると見えます。ただし 25 件すべてを中身まで確かめたわけではありません。
+
+        - 一つ見つかったこと：規則に var6 と書いたとき、宣言されていない変数が黙って定数として扱われました。これも検査で止まらない穴です。
+
+        **ここで決めていただきたいこと**
+        - **A**：含意の規則を入れて、25 件の差を一つずつ式に書き足す（たとえば money は「円で測る」を式にする）。原則に沿う方向ですが、量が多く、置き場所の判断も含みます。
+        - **B**：規則はまだ入れず、25 件の一覧を観察として記録するだけにする。
+
+        規則の差分は /tmp/claude-0/-home-user-CMT/e05d2140-ce91-515f-a5fb-e6251e13d406/scratchpad/entail_by_with.patch に残しています。作業ツリーは元に戻してあります。
+facts:
+- {is: v_say, from: session_model, to: 01M7NXQ20DMXVN56GEN0ANGPKA}
+- {is: exp.v_answer, from: 01M7NXQ20DMXVN56GEN0ANGPKA, to: 01M7NXG2J4EESMFTT3PBWKTRSQ}
+- {is: v_refer, from: 01M7NXQ20DMXVN56GEN0ANGPKA, to: syntax.law_rule}
+- {is: v_refer, from: 01M7NXQ20DMXVN56GEN0ANGPKA, to: syntax.law_given}
+- {is: v_refer, from: 01M7NXQ20DMXVN56GEN0ANGPKA, to: exp.consolidation_target}
+- {is: v_refer, from: 01M7NXQ20DMXVN56GEN0ANGPKA, to: exp.rule_consolidation}
+- {is: v_refer, from: 01M7NXQ20DMXVN56GEN0ANGPKA, to: exp.concept_vector}
+- {is: v_refer, from: 01M7NXQ20DMXVN56GEN0ANGPKA, to: exp.backlog_item}
+- {is: v_refer, from: 01M7NXQ20DMXVN56GEN0ANGPKA, to: exp.definition_text}
+- {is: v_refer, from: 01M7NXQ20DMXVN56GEN0ANGPKA, to: syntax.new_kind}
+- {is: v_refer, from: 01M7NXQ20DMXVN56GEN0ANGPKA, to: syntax.value_part}

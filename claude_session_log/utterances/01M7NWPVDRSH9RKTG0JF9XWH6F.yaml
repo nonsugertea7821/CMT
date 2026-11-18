@@ -1,0 +1,65 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-17T23:15:40.088Z（UTC）
+individuals:
+  01M7NWPVDRSH9RKTG0JF9XWH6F:
+    is: model_utterance
+    display: 発言 1321
+    val:
+      order: 1321
+      text: |
+        変異による確かめは、ねらいどおりに働きました。ただし、名前で分岐していることは見つけられても、その分岐が文法として正当かどうかまでは見分けられません。結果は記録して push 済みです（a7a0a32、CI の5つの検査は通過）。
+
+        ## 結果
+
+        | 組 | 振る舞いが変わった数 | 見込み |
+        |---|---|---|
+        | 陽性の対照（文法の語 holds・extends・verbatim・many） | 4 / 4 | 変わる（そのとおり） |
+        | 陰性の対照（コードに名前が出てこない言語の層の語） | 0 / 14 | 変わらない（そのとおり） |
+        | 調べる語 | 43 / 51 | — |
+
+        **変わらなかった 8 語**
+        - kind・laws・type_checker: コードの中の辞書の鍵やモジュール名と、綴りが偶然一致しただけでした。
+        - part・refer: 基礎の関係です。コードは名前を挙げていますが、今の入力では振る舞いの違いとして表に出ませんでした。確かめは片側だけなので、依存していないとは言えません。
+        - r_written・variable・world: 同じく、今の入力では表に出ませんでした。
+
+        **exp について**
+        振る舞いは変わりましたが、違った行はどれも元の出力のどこかにありました。並びか数の違いと見られますが、中身はまだ見ていません。
+
+        ## 分かったこと
+        変わった 43 語には、性質の違う2種類が混ざっていました。
+
+        1. **文法として読むべき語**
+           - 規則を書く語: v_assume・v_derive・v_require・law_rule など。
+           - 実行器の選択の名: replace・every_step など。実行器は、この名前の選択に対して「この検査に実装がない」と言って止まりました。
+           - どちらも、機械語に翻訳する側が知っているべき語です。
+        2. **意味をコードが持ってしまっている語**
+           - continuant・occurrent・role・quality・magnitude・definition・v_depend・v_refer・v_spell・verb_ref・v_collect と、law_given の各法則です。
+
+        ## ここから出てくる基準
+        「振る舞いが名前に依存する語（変異で見つかる語）は、syntax が文法として宣言した語か、シグネチャの語に限る」という形にすれば、機械的に確かめられます。今は 1 の語の多くが grammar に宣言されていないので、どちらに当たるかを変異では区別できません。
+
+        ## 次の案
+        1. **1 の語を grammar に宣言する。**
+           - 規則を書く語は、grammar の新しい節に並べます。
+           - 実行器の選択の名は、grammar.runtime の各項目の値として並べます。
+           - こうすれば、文法が自分自身で定義されている、というあなたの見方が、ファイルの上でもそのとおりになります。
+        2. **変異の確かめを CI の検査にする。**
+           - 「変異で依存が見つかった語 ⊆ grammar ∪ シグネチャ」を確かめます。
+           - 語の数に比例して時間がかかります。今回は約 80 語で 7 分ほどでした。全部を毎回やるか、コードが名前を挙げた語に絞るかを決める必要があります。
+        3. **2 の語を、易しい順に事実と規則へ移す。** 前に決めた順（v_spell から）です。移したら、その語の変異で振る舞いが変わらなくなることを確かめます。
+
+        1 から進めてよいですか。
+facts:
+- {is: v_say, from: session_model, to: 01M7NWPVDRSH9RKTG0JF9XWH6F}
+- {is: exp.v_answer, from: 01M7NWPVDRSH9RKTG0JF9XWH6F, to: 01M7NWD37SW9MV9AXDFZNFDVTH}
+- {is: v_refer, from: 01M7NWPVDRSH9RKTG0JF9XWH6F, to: lang.type_checker}
+- {is: v_refer, from: 01M7NWPVDRSH9RKTG0JF9XWH6F, to: syntax.v_assume}
+- {is: v_refer, from: 01M7NWPVDRSH9RKTG0JF9XWH6F, to: syntax.v_derive}
+- {is: v_refer, from: 01M7NWPVDRSH9RKTG0JF9XWH6F, to: syntax.v_require}
+- {is: v_refer, from: 01M7NWPVDRSH9RKTG0JF9XWH6F, to: syntax.law_rule}
+- {is: v_refer, from: 01M7NWPVDRSH9RKTG0JF9XWH6F, to: runtime.every_step}
+- {is: v_refer, from: 01M7NWPVDRSH9RKTG0JF9XWH6F, to: ontology.v_depend}
+- {is: v_refer, from: 01M7NWPVDRSH9RKTG0JF9XWH6F, to: ontology.v_refer}
+- {is: v_refer, from: 01M7NWPVDRSH9RKTG0JF9XWH6F, to: exp.v_spell}
+- {is: v_refer, from: 01M7NWPVDRSH9RKTG0JF9XWH6F, to: syntax.verb_ref}
+- {is: v_refer, from: 01M7NWPVDRSH9RKTG0JF9XWH6F, to: syntax.v_collect}
+- {is: v_refer, from: 01M7NWPVDRSH9RKTG0JF9XWH6F, to: syntax.law_given}

@@ -1,0 +1,50 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-18T00:14:40.422Z（UTC）
+individuals:
+  01M7P02WS6MJCHBGFDFMGE6X26:
+    is: model_utterance
+    display: 発言 1377
+    val:
+      order: 1377
+      text: |
+        after の観察を記録しました（da36571、push 済み）。
+
+        **sys_after の結果**
+        - 手順は 1b2a69c で登録して一度走らせましたが、used の数え方に誤りがありました。563e920 で直して登録し直し、その結果を記録しています。
+        - after を持つ動詞は 17 個です。
+          - 端が両方とも過程（時間の順序）：1（v_happen_after）
+          - 端が両方とも持続するもの（並び）：8
+          - どちらでもない：8
+          - 事実で実際に使われている：11
+        - ここからは実行後の読みで、登録していません。after は三つの意味に使われていました。
+          - 値の大小：観察の「平均値が 0.5 の後ろ」は v_come_after で書いています。
+          - 文の並び。
+          - 時間：v_cause・v_trigger・v_begin・v_end は、時間の順序です。ただし端が any や continuant なので、端の種類だけでは時間と見分けられませんでした。
+
+        **ここで決める必要があること**
+        シグネチャに足す時間の芯について、観察からは二通りに読めます。
+
+        - **(a) after は、話題に依らない一つの順序とみる（推奨）**
+          - after についての法則は、非対称と推移の二つだけで、順序の公理そのものです。
+          - 値の大小・並び・時間のどれでも、この二つは同じように成り立ちます。v_level（どちらも後ろでない）も、値なら「同じ値」、時間なら「同時」として同じ形で読めます。
+          - そうすると、これは混同ではなく、形式的な関係（先行研究の話の 2）の典型です。
+          - after をシグネチャに置き、時間は「過程どうしの after」として導きます。step・frame・halt も、状態どうしの after の上の規則として書ける見込みがあります。これは、実行の意味論を体系の中に書く bootstrap の方向です。
+        - **(b) 分ける**
+          - 時間の順序は step から作り、値の大小や並びは別の順序にします。
+          - 法則が同じものを分けることになるので、観察からの根拠は弱いと考えます。
+
+        **どちらでも出る問題**
+        - not と some をシグネチャに下ろす件です。いまの not と some は、「示されていない文を述べる文」のように、syntax の語（facts, participant）を使って定義されています。
+        - シグネチャのノードは上の層を参照できず、表示語と説明しか持てません。そのため、シグネチャには語だけを置き、その意味の説明を syntax の側から付ける書き方が要ります。
+        - これは前に出た「上の層から下の層の語を分類する」書き方と同じものです。今の文法には、この書き方がありません。
+
+        (a) で進めてよいですか。よければ、まず after とその二つの法則をシグネチャに移します。not と some は、その書き方をどう足すかを先に相談させてください。
+facts:
+- {is: v_say, from: session_model, to: 01M7P02WS6MJCHBGFDFMGE6X26}
+- {is: exp.v_answer, from: 01M7P02WS6MJCHBGFDFMGE6X26, to: 01M7P00JGP82K3P4KZEGGJ96J6}
+- {is: v_refer, from: 01M7P02WS6MJCHBGFDFMGE6X26, to: exp.v_happen_after}
+- {is: v_refer, from: 01M7P02WS6MJCHBGFDFMGE6X26, to: ontology.v_come_after}
+- {is: v_refer, from: 01M7P02WS6MJCHBGFDFMGE6X26, to: exp.v_cause}
+- {is: v_refer, from: 01M7P02WS6MJCHBGFDFMGE6X26, to: ontology.v_trigger}
+- {is: v_refer, from: 01M7P02WS6MJCHBGFDFMGE6X26, to: subj.v_begin}
+- {is: v_refer, from: 01M7P02WS6MJCHBGFDFMGE6X26, to: subj.v_end}
+- {is: v_refer, from: 01M7P02WS6MJCHBGFDFMGE6X26, to: ontology.v_level}

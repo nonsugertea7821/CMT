@@ -1,0 +1,179 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-16T01:48:10.780Z（UTC）
+individuals:
+  01M7H0MNMWPF7K7KNA8ED42KGK:
+    is: session_summary
+    display: 発言 650
+    val:
+      order: 650
+      text: |
+        This session is being continued from a previous conversation that ran out of context. The summary below covers the earlier portion of the conversation.
+
+        <system-reminder>
+        <tools-used-before-summary>Bash, Edit, Read, ReadNotifications, TaskStop, ToolSearch, Write, mcp__claude-code-remote__create_trigger, mcp__claude-code-remote__get_trigger, mcp__claude-code-remote__read_documentation, mcp__claude-code-remote__send_later, mcp__claude-code-remote__update_trigger, mcp__github__actions_get, mcp__github__actions_list</tools-used-before-summary>
+        </system-reminder>
+        Summary:
+        1. Primary Request and Intent:
+           - **Standing rules (from earlier):**
+             - Repo nonsugertea7821/CMT, branch `claude/model-concept-language-mapping-g0lw1i`, dir /home/user/CMT. Commit and push there; no PR unless asked.
+             - spec/ is the source of truth. docs/design.md and experiments/README.md are frozen. spec/trial/ is not source.
+             - Gloss only on the 2 top nodes; natural language only in display.
+             - Don't overclaim.
+             - Never use `git checkout` to restore work.
+             - Reply in Japanese.
+             - The user rejected background keep-alive loops (token cost) and accepted 10-minute send_later wake chains taking days.
+             - Only ONE model process at a time (two cause OOM).
+           - **Commit trailer:**
+             `Co-Authored-By: Claude [モデル名を伏せた] <[メールアドレスを伏せた]>`
+             `Claude-Session: https://claude.ai/code/session_015KRKt6TNJZ7ZsQmEknANXK`
+           - **This session's user requests, in order:**
+             - Asked for the diff since the last comment and the implications of the observations; answered.
+             - Asked how CSCL was passed (fully expanded vs single line); answered: BFS within subj only, upper-ontology names not expanded, raw YAML lines, 273–1054 chars.
+             - Asked whether direct vectorization of the fully expanded definition had been considered; answered no (all were design option 3, a learned vector) and proposed A/B/C.
+             - Framed redefinition as disambiguation of a polysemous term; I gave implications (selection rather than injection, the difference matters, a prediction about known vs novel senses).
+             - Said the model only holds mid-hierarchy abstract concepts with non-unique mixed display-name keys, and asked why lower concrete concepts can't be handled; I gave reasons and options (a) dedicated key, (b) symbolic membership outside the model, (c) boundary/difference teaching.
+             - Said "aを優先し、bも試す"; then "cもまあ試すか" plus the idea to make all non-core identifiers meaningless, keeping only core operators ("識別可能(ただし無意味、意味はcoreの論理演算子のみが運ぶ)").
+           - **Required at the end of the current chain:**
+             - When the E12, E13, E10-opaque and E14 JSONs exist, record them in spec/exp.yaml as families and observations:
+               - E12: family e12, conds none/tok0/tok/word+tok.
+               - E13: family e13, conds none/near/symbolic/symbolic_mod.
+               - E10-opaque: family e10o, conds none/expr_masked_i/expr_opaque.
+               - E14: family e14, conds none/near/vec×1/vec×2/vec×4/near+vec×1.
+             - Update the four hypotheses and four backlog items.
+             - Run check_spec and run_spec, commit, push, report. Stop rescheduling.
+
+        2. Key Technical Concepts:
+           - CSCL concept expressions from spec/subj.yaml; tools/render_expr.py Renderer.
+           - The "core" domain is ontology.yaml identifiers with no domain prefix.
+           - Measurement families in spec/exp.yaml:
+             - Declarations: v_file_of, v_rows_of [items], v_axis_of, v_value_of, v_denote, v_filter_of {group:'{group}'}, v_entry_of '{cond}', v_metric_of accuracy/order_robust_accuracy.
+             - Observations: v_refer to v_come_before/v_come_after/v_level, linked by v_support/v_contradict to hypotheses.
+             - Hypothesis kinds: hyp_supported, hyp_refuted, hyp_mixed, hyp_untested. Items: item_queued, item_done.
+           - check_spec stat(): list-valued cond entries are averaged (margin, both); the rows collection may be top-level (E11 JSON).
+           - E12: textual-inversion-style special token per concept; an additive delta hook on embed_tokens; lr 0.002 (embedding norm ~1); token budget 256 for memory.
+           - E13: genus + modifier yes/no fact questions; membership decided by conjunction with neg applied symbolically.
+           - E14: contrast vector = mean over training QA of [h_L8(def + q) − h_L8(q)] at the last word occurrence; untrained.
+           - Opaque rendering: non-core subj names → X01…; display names kept only for the word and individuals.
+
+        3. Files and Code Sections:
+           - **spec/exp.yaml** (committed):
+             - Recorded E10, E11, E3-expr:
+               - Families e10 (file e10_Qwen2.5-1.5B-Instruct.json, rows [items]) and e11 (top-level rows); conds as above.
+               - e3_run_L8_exprdefqa added to the e3 family.
+               - Observations: o_e10_expr_above_none_conflict (support), o_e10_expr_below_none_control (contradict), o_e11_write_below_direct_conflict (contradict), o_e3_expr_teacher_raises_conflict (support).
+               - h_cscl_raises_following set to hyp_mixed. Four CSCL items set to item_done. h_model_can_write_cscl left untested (no metric for the pass rate).
+             - Added nodes:
+               - dedicated_token (extends identifier)
+               - key_token_vector
+               - symbolic_membership
+               - contrast_vector
+               - opaque_expression (mod {of:[v_compose,to], with: hidden_word})
+             - Added hypotheses (all hyp_untested): h_dedicated_key_raises_following, h_symbolic_membership_raises_following, h_contrast_vector_raises_following, h_opaque_expression_raises_following.
+             - Added items (all item_queued): b_e12_dedicated_key, b_e13_fact_then_symbolic, b_e14_contrast_vector, b_e10_opaque_identifiers, with v_refer/v_check relations.
+             - Check passes: nodes 533, hypotheses 42, items 24, observations 77.
+           - **experiments/e3_concept_vectors.py:** `train_vector(..., qa=None, budget=1024)`; groups split when `(len(cur)+1)*lens[i] > budget`.
+           - **experiments/e12_dedicated_key.py** (new):
+             - EmbedInjector(Injector) hooks `model.model.embed_tokens`.
+             - Tokens `<概念NN>`; resize_token_embeddings; each new row initialized to the mean of the word's token embeddings.
+             - Trains with `train_vector(r, inj, toks[c], defs[c], steps, lr, "defqa", q_replaced, args.budget)`. Defaults: steps 30, lr 0.002, budget 256.
+             - Writes `results/e12_Qwen2.5-1.5B-Instruct{tag}.json`; partial save at `.partial.pt`.
+           - **experiments/e13_fact_then_symbolic.py** (new):
+             - Items use PAT `^(.+)は、(.+)に当たるか。$` (46 of 48; the 2 週 items are excluded).
+             - `condition(R, nid)` returns (genus display, condition text, neg). It handles the mod list, attributes stated as amounts, v_depend to → 「対象は{other}を持つ」, and v_measure from → 「対象は{other}を表す」.
+             - Conds: none, near, symbolic, symbolic_mod. Output: `results/e13_Qwen2.5-1.5B-Instruct.json`.
+           - **experiments/e14_contrast_vector.py** (new):
+             - Capture hook at layer 8; vector built as described in section 2.
+             - Conds: none, near, vec×1/2/4, near+vec×1. Output: `results/e14_Qwen2.5-1.5B-Instruct_L8.json`.
+           - **tools/render_expr.py:**
+             - `text(word, mask=False, opaque=False, inds=False)`.
+             - inds=True fixes individual lines that were dropped because mod is a list. The default reproduces old outputs (verified identical to the stored E10 strings).
+             - opaque replaces subj names with X01… .
+           - **experiments/e10_expression_given.py:** `--conds`, `--tag`, new conds expr_masked_i and expr_opaque; output `e10_{model}{tag}.json`.
+           - **Commits pushed:**
+             - ab7f4c7 — record of E10, E11, E3-expr
+             - bad39da — E12/E13
+             - 048928b — opaque/E14
+
+        4. Errors and fixes:
+           - Committing the E3-expr log failed because the path is gitignored; committed the JSON only.
+           - E12 smoke run OOM: added the budget parameter (256).
+           - E12 loss diverged at lr 0.01 (1.85 → 8.37): set lr to 0.002 (1.85 → 0.39).
+           - E13: `mod` is a list, so it now takes element [0]; handled the 国内への配送 phrasing by asserting the concept is contained in the phrase; 2 週 items skipped.
+           - Spec error for opaque_expression's mod (v_involve from needs an occurrent): switched to v_compose to.
+           - Renderer bug found: individuals were omitted in all earlier E10/E11/E3-expr runs. Fixed behind the inds flag; reported to the user.
+           - The E12 process had died once (container restart); the wake restarted it from the partial save.
+
+        5. Problem Solving — results:
+           - **E3-expr:**
+             - G2c: none 0.38, vec 0.75, near 0.54, near+vec 0.75.
+             - G2k: none 0.75, vec 0.92, near 0.62, near+vec 0.58.
+           - **E12 progress (24 concepts, ~5–6 min each), 13 done:**
+             - 午前, 営業日, 国内, 在庫, 売上, 夜間, 大人, 大口注文 (loss stalled at 0.96), 完了, 家族, 平日, 新規, 未成年.
+
+        6. All user messages:
+           - "前回コメントからの差分と\n観察から読み取れる含意は？"
+           - "CSCLの渡し方はどうしていた？　関連概念を全て展開したのか、単一の行だけ渡したのか"
+           - "CSCLの完全展開定義を直接ベクトル化するのは検討した？"
+           - "再定義はモデルが元から持っている「多義(複数の概念式が該当する)用語」に一つの概念式を定義して多義性を除くことだと考えると、重要な含意がある"
+           - "extendsの階層の途中の抽象概念しかモデルは持っていないし、持ち方は複数の表示名が混在してキーとなるため一意でない可能性\n下層の具象概念を扱わせる事ができない理由は？"
+           - "aを優先し、bも試す"
+           - "cもまあ試すか\nE10 で日本語の表示名を外したときに残っていた英語の識別子も、モデルにとっては別のキーの集まり\n\nこれは無意味化で解決する可能性もあるな\ncore以外の識別子を全て無意味化して論理演算子だけ残すのも良さそうだ\n識別可能(ただし無意味、意味はcoreの論理演算子のみが運ぶ)という整理\n効く可能性もある"
+
+        7. Pending Tasks:
+           - Continue the 10-minute wake chain in the order E12 → E13 → E10-opaque → E14.
+           - Then record all four in spec/exp.yaml, update the hypotheses and items, run check_spec and run_spec, commit, push and report. Stop rescheduling.
+
+        8. Current Work:
+           - The latest wake (trig_01CNzzWNZxM2RaFd7mWs6N4v, 01:44 UTC) was read but its step was not executed.
+           - Per-wake command (foreground Bash, timeout 600000):
+             ```
+             cd /home/user/CMT/experiments; f=results/e12.log; pgrep -f 'e1[0-4]_' >/dev/null || { (nohup setsid /home/user/venv/bin/python e12_dedicated_key.py --model Qwen/Qwen2.5-1.5B-Instruct > $f 2>&1 &); echo restarted; }; sleep 3; n0=$(tr '\r' '\n' < $f | grep -c '\[train\]'); timeout 540 bash -c "until [ \$(tr '\r' '\n' < $f | grep -c '\[train\]') -gt $n0 ]; do sleep 10; done"; tr '\r' '\n' < $f | grep train | tail -1
+             ```
+           - Then call send_later with delay_minutes 1, name "CMT 10分ごとの再開（E12〜E14）", initiation human_schedule, and the same message text as the wake (the full E12→E14 steps 1–5 message).
+           - Reply briefly in Japanese, e.g. 「E12: 「X」済み（N秒）、24語中14語。」.
+           - After E12 prints model=, follow steps 2–4:
+             - E13 → results/e13.log
+             - E10 with `--conds none expr_masked_i expr_opaque --tag _opaque` → results/e10_opaque.log
+             - E14 `--layer 8` → results/e14.log
+
+        9. Optional Next Step:
+           - Execute the wake step for trig_01CNzzWNZxM2RaFd7mWs6N4v: run the per-wake command above, wait for the 14th E12 concept, then reschedule the same message via send_later and reply briefly. The wake text says: "results/e12.log に model= 行がなければ: 動いていなければ … で再開（途中保存から）。[train] 行が1つ増えるまで最長9分の条件待ちを1回。… まだ残っていれば、このメッセージを send_later（1分後、名前「CMT 10分ごとの再開（E12〜E14）」）で予約し直す。"
+
+        If you need specific details from before compaction (like exact code snippets, error messages, or content you generated), read the full transcript at: /root/.claude/projects/-home-user-CMT/e05d2140-ce91-515f-a5fb-e6251e13d406.jsonl
+        Continue the conversation from where it left off without asking the user any further questions. Resume directly — do not acknowledge the summary, do not recap what was happening, do not preface with "I'll continue" or similar. Pick up the last task as if the break never happened.
+
+        The messages after this summary are the most recent messages from before compaction, kept verbatim. The summary was written without seeing them, so something it says has not happened yet may already have happened in them.
+facts:
+- {is: v_say, from: session_model, to: 01M7H0MNMWPF7K7KNA8ED42KGK}
+- {is: v_refer, from: 01M7H0MNMWPF7K7KNA8ED42KGK, to: exp.v_file_of}
+- {is: v_refer, from: 01M7H0MNMWPF7K7KNA8ED42KGK, to: exp.v_rows_of}
+- {is: v_refer, from: 01M7H0MNMWPF7K7KNA8ED42KGK, to: exp.v_axis_of}
+- {is: v_refer, from: 01M7H0MNMWPF7K7KNA8ED42KGK, to: exp.v_value_of}
+- {is: v_refer, from: 01M7H0MNMWPF7K7KNA8ED42KGK, to: exp.v_denote}
+- {is: v_refer, from: 01M7H0MNMWPF7K7KNA8ED42KGK, to: exp.v_filter_of}
+- {is: v_refer, from: 01M7H0MNMWPF7K7KNA8ED42KGK, to: exp.v_entry_of}
+- {is: v_refer, from: 01M7H0MNMWPF7K7KNA8ED42KGK, to: exp.v_metric_of}
+- {is: v_refer, from: 01M7H0MNMWPF7K7KNA8ED42KGK, to: exp.order_robust_accuracy}
+- {is: v_refer, from: 01M7H0MNMWPF7K7KNA8ED42KGK, to: ontology.v_refer}
+- {is: v_refer, from: 01M7H0MNMWPF7K7KNA8ED42KGK, to: ontology.v_come_before}
+- {is: v_refer, from: 01M7H0MNMWPF7K7KNA8ED42KGK, to: ontology.v_come_after}
+- {is: v_refer, from: 01M7H0MNMWPF7K7KNA8ED42KGK, to: ontology.v_level}
+- {is: v_refer, from: 01M7H0MNMWPF7K7KNA8ED42KGK, to: exp.v_support}
+- {is: v_refer, from: 01M7H0MNMWPF7K7KNA8ED42KGK, to: exp.v_contradict}
+- {is: v_refer, from: 01M7H0MNMWPF7K7KNA8ED42KGK, to: exp.hyp_supported}
+- {is: v_refer, from: 01M7H0MNMWPF7K7KNA8ED42KGK, to: exp.hyp_refuted}
+- {is: v_refer, from: 01M7H0MNMWPF7K7KNA8ED42KGK, to: exp.hyp_mixed}
+- {is: v_refer, from: 01M7H0MNMWPF7K7KNA8ED42KGK, to: exp.hyp_untested}
+- {is: v_refer, from: 01M7H0MNMWPF7K7KNA8ED42KGK, to: exp.item_queued}
+- {is: v_refer, from: 01M7H0MNMWPF7K7KNA8ED42KGK, to: exp.item_done}
+- {is: v_refer, from: 01M7H0MNMWPF7K7KNA8ED42KGK, to: exp.dedicated_token}
+- {is: v_refer, from: 01M7H0MNMWPF7K7KNA8ED42KGK, to: exp.key_token_vector}
+- {is: v_refer, from: 01M7H0MNMWPF7K7KNA8ED42KGK, to: exp.symbolic_membership}
+- {is: v_refer, from: 01M7H0MNMWPF7K7KNA8ED42KGK, to: exp.contrast_vector}
+- {is: v_refer, from: 01M7H0MNMWPF7K7KNA8ED42KGK, to: exp.opaque_expression}
+- {is: v_refer, from: 01M7H0MNMWPF7K7KNA8ED42KGK, to: ontology.v_compose}
+- {is: v_refer, from: 01M7H0MNMWPF7K7KNA8ED42KGK, to: exp.hidden_word}
+- {is: v_refer, from: 01M7H0MNMWPF7K7KNA8ED42KGK, to: exp.v_check}
+- {is: v_refer, from: 01M7H0MNMWPF7K7KNA8ED42KGK, to: ontology.v_depend}
+- {is: v_refer, from: 01M7H0MNMWPF7K7KNA8ED42KGK, to: syntax.v_measure}
+- {is: v_refer, from: 01M7H0MNMWPF7K7KNA8ED42KGK, to: syntax.mod}
+- {is: v_refer, from: 01M7H0MNMWPF7K7KNA8ED42KGK, to: ontology.v_involve}

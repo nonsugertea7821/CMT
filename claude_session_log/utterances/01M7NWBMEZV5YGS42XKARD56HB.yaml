@@ -1,0 +1,25 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-17T23:09:32.511Z（UTC）
+individuals:
+  01M7NWBMEZV5YGS42XKARD56HB:
+    is: model_utterance
+    display: 発言 1318
+    val:
+      order: 1318
+      text: |
+        Sounds right. The mutation test is now running in the background (about 80 words × ~5s each, roughly 7 minutes).
+
+        Design: every occurrence of a word is renamed in the YAML (e.g. `role` → `mut_role`), the checker and runtime are run, the name is mapped back in the output, and the result is compared with the unmutated baseline. A pure translator should behave the same after renaming. If behavior changes, the .py is branching on that name.
+
+        - **Positive controls** (expected to change): grammar words `holds`, `extends`, `verbatim`, `many`.
+        - **Negative controls** (expected not to change): library nodes whose names never appear in the .py source.
+        - **Test set**: the 55 "outside" words from the previous scan.
+
+        This is one-directional: a change proves name-dependence, but no change doesn't prove independence (the current inputs may just not trigger it). It also catches names built with f-strings, which the static scan missed. The procedure was committed before running (5fcb47a). I'll report when it finishes.
+facts:
+- {is: v_say, from: session_model, to: 01M7NWBMEZV5YGS42XKARD56HB}
+- {is: exp.v_answer, from: 01M7NWBMEZV5YGS42XKARD56HB, to: 01M7NW936XVS65WH6HFE5CEB5K}
+- {is: v_refer, from: 01M7NWBMEZV5YGS42XKARD56HB, to: ontology.role}
+- {is: v_refer, from: 01M7NWBMEZV5YGS42XKARD56HB, to: syntax.holds}
+- {is: v_refer, from: 01M7NWBMEZV5YGS42XKARD56HB, to: syntax.extends}
+- {is: v_refer, from: 01M7NWBMEZV5YGS42XKARD56HB, to: syntax.verbatim}
+- {is: v_refer, from: 01M7NWBMEZV5YGS42XKARD56HB, to: syntax.many}

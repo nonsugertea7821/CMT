@@ -1,0 +1,284 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-16T05:55:26.237Z（UTC）
+individuals:
+  01M7HESDCXDFPRQQK1JHG146R9:
+    is: session_summary
+    display: 発言 700
+    val:
+      order: 700
+      text: |
+        This session is being continued from a previous conversation that ran out of context. The summary below covers the earlier portion of the conversation.
+
+        <system-reminder>
+        <tools-used-before-summary>Bash, Edit, Read, ReadNotifications, TaskStop, ToolSearch, Write, mcp__claude-code-remote__create_trigger, mcp__claude-code-remote__get_trigger, mcp__claude-code-remote__read_documentation, mcp__claude-code-remote__send_later, mcp__claude-code-remote__update_trigger, mcp__github__actions_get, mcp__github__actions_list</tools-used-before-summary>
+        </system-reminder>
+        Summary:
+        1. Primary Request and Intent:
+           - **Standing rules:**
+             - Repo nonsugertea7821/CMT, branch `claude/model-concept-language-mapping-g0lw1i`, at /home/user/CMT. Commit and push there; no PR unless asked.
+             - spec/ is the source of truth. docs/design.md and experiments/README.md are frozen. spec/trial/ is not source.
+             - Gloss only on the 2 top nodes; natural language only in display.
+             - Don't overclaim.
+             - Never use `git checkout` to restore work.
+             - Reply in Japanese.
+             - No background keep-alive loops.
+             - Only ONE model process at a time (OOM).
+             - Commit trailer:
+               `Co-Authored-By: Claude [モデル名を伏せた] <[メールアドレスを伏せた]>`
+               `Claude-Session: https://claude.ai/code/session_015KRKt6TNJZ7ZsQmEknANXK`
+           - **This session's requests:**
+             - Finish the E12→E13→E10-opaque→E14 chain and record it in spec. Done; the chain is stopped.
+             - Compare all results and draw implications. Done.
+             - Think about why E3 works. Done.
+             - Define "vector" in CSCL as the LLM sees it. Done.
+             - Re-parent concept_vector. Done.
+             - Run measurements E15. Done.
+             - Record E15 and the next implications. Done.
+             - Run E16. Done.
+             - Write the implications as hypotheses and observations ("今ものすごく直前まで来ている気がするから"). Done.
+             - Add laws for reversed part-of expressions ("全部よろしく"). Done.
+             - Explain the "principled limit". Done.
+             - Latest: the user's intuition that whole and part should be defined by concept expressions so that direction becomes a theorem ("定理になる直観"). I proposed the design and asked permission to change core. Awaiting the answer.
+
+        2. Key Technical Concepts:
+           - **Model and setup:** Qwen2.5-1.5B-Instruct. Groups G2c (conflicting redefinition) and G2k (control), n=24 each. Binary-choice logit margins, with order-robust accuracy ("both").
+           - **E3:** a layer-8 vector added at the word's token positions, trained with defqa. G2c 0.75–0.79, G2k 0.92. The only method that raised both groups.
+           - **CSCL spec mechanics:**
+             - nodes take `extends` plus a single `mod` (law single).
+             - `mod {of: [v_compose, from], with: X}` means the node is part of X; `to` means the node has X as a part.
+             - Families are declared with v_file_of / v_rows_of / v_axis_of / v_value_of / v_denote / v_filter_of / v_entry_of / v_metric_of (accuracy, order_robust_accuracy, mean_value).
+             - Observations use v_refer to v_come_before / v_come_after / v_level / v_near (new: tol), linked by v_support / v_contradict.
+             - Hypothesis states: hyp_supported / refuted / mixed / untested.
+           - **Laws:**
+             - law_rule entries in ontology.yaml use v_assume / v_derive / v_require over syntax facts (mod, of, position, with, neg, extends, r_ancestor …).
+             - law_given entries are implemented in check_spec (LAWS_HERE), each with a v_govern fact.
+           - **Reversal limit:** a reversed part-of statement that is independent of the rest of the spec is undetectable, since it is an automorphism-like swap. The fix is anchors or definitions.
+           - **Proposed v_sum:** two parts that are symmetric, plus a whole that is the new third term. part(x,y) ⇔ ∃z sum(x,z)=y. Direction then becomes a theorem through antisymmetry.
+
+        3. Files and Code Sections:
+           - **experiments/e12_dedicated_key.py, e13_fact_then_symbolic.py, e14_contrast_vector.py**
+             - Run and finished.
+             - In e14, condition keys were renamed from vec×N to vecN and from near+vec×1 to near+vec1, because the spec checker flags × as natural language. The JSON result was renamed to match.
+           - **experiments/e15_vector_geometry.py (new)**
+             - Measures:
+               - |v|/|h| at L8 on the word position;
+               - cos between v_E3 and Δnear = h(def+q)−h(q), both raw and centered;
+               - a swap of E3 vectors, shifting the concept list by 1.
+             - Outputs `results/e15_Qwen2.5-1.5B-Instruct_L8.json`, with keys:
+               - items: per-item rows with group, cos_raw, cos_centered, cos_own_minus_other, own, swapped;
+               - concepts: per-concept ratios e3, e3x, e14, e12, near;
+               - size, cos, e3_offdiag_cos, summary.
+             - Uses `word_state(r, layer, body, label)` via output_hidden_states[layer+1] at the last occurrence of the word.
+           - **experiments/e16_common_specific.py (new)**
+             - Decomposes v_c = m + s_c (m is the mean over concepts). Conds: none, full, common, specific.
+             - Outputs `results/e16_Qwen2.5-1.5B-Instruct_L8_defqa.json`, with items rows and norms.
+           - **spec/exp.yaml — nodes added or changed:**
+             - Families e12, e13, e10o, e14, e15, e15c, e15r, e16, with their axes and values.
+             - New nodes:
+               ```yaml
+               layer_output: {display: 層の出力, extends: information_entity, mod: {of: [v_compute, to], with: layer}}
+               hidden_state: {display: 隠れ状態, extends: layer_output, mod: {of: [v_depend, from], with: label_token_positions}}
+               state_shift: {display: 隠れ状態のずれ, extends: information_entity, mod: {of: [v_compose, from], with: hidden_state}}
+               shift_unseen_by_layer: {display: 層から分けて見えない隠れ状態のずれ, extends: state_shift, mod: {of: [v_see, to], with: layer, neg: true}}
+               verdict_stability: {display: 選択肢の順序に対する判定の安定, extends: quality_measure_to, mod: {of: [v_depend, from], with: verdict_pair}}
+               sense_difference_vector: {display: 語の意味の候補どうしの差のベクトル, extends: concept_vector, mod: {of: [v_depend, from], with: prior_meaning}}
+               ```
+             - Re-parented:
+               ```yaml
+               concept_vector: {extends: state_shift, mod: {of: [v_depend, from], with: label_token_positions}}
+               single_layer_vector / multi_layer_vector: mod {of: [v_depend, from], with: layer, at: {count: ...}}
+               contrast_vector: mod {of: [v_depend, from], with: definition_text}
+               key_token_vector: {extends: state_shift, mod: {of: [v_depend, from], with: dedicated_token}}
+               swapped_concept_vector: {extends: concept_vector, mod: {of: [v_depend, from], with: word, neg: true}}
+               common_vector_component: {extends: concept_vector, mod: {of: [v_compose, from], with: concept_vector}}
+               specific_vector_component: {extends: concept_vector, mod: {of: [v_depend, from], with: word}}
+               ```
+             - channel_involve_from_taught_vector now has no children; it was left in place.
+           - **spec/exp.yaml — hypothesis states:**
+             - h_dedicated_key_raises_following: refuted
+             - h_symbolic_membership_raises_following: mixed
+             - h_contrast_vector_raises_following: refuted
+             - h_opaque_expression_raises_following: mixed
+             - h_swapped_vector_lowers_control: supported
+             - h_vector_agrees_with_text_shift: refuted
+             - h_specific_component_raises_following: supported
+             - h_common_component_lowers_control: refuted
+             - h_common_component_raises_stability: supported
+             - h_specific_component_not_raise_stability: mixed
+             - h_full_vector_raises_stability_beyond_specific: supported
+             - Untested:
+               - h_text_shift_raises_stability
+               - h_specific_agrees_with_sense_difference
+               - h_specific_composes_from_expression
+               - h_common_component_transfers_to_unseen
+               - h_attention_carries_text_route
+           - **spec/exp.yaml — items:** the 4 items b_e12…, b_e13…, b_e14…, b_e10_opaque… are item_done.
+           - **spec/ontology.yaml (laws added):**
+             - The law relation r_kpart.
+             - The law_rules kpart_by_mod_from / kpart_by_mod_to:
+               - assume: mod(v1,v2), of(v2,v_compose), position(v2,from|to), with(v2,v3), ¬neg(v2,v4);
+               - derive: r_kpart(v1,v3), or r_kpart(v3,v1) for `to`.
+             - kpart_transitive.
+             - kpart_inherit: r_ancestor(v1,v3) ∧ r_kpart(v3,v2) → r_kpart(v1,v2).
+             - kpart_antisymmetric: requires same.
+             - The law_given entries part_fact_direction and part_display_explicit, with v_govern facts pointing to concept_expression.
+           - **Displays renamed (13), in ontology.yaml, exp.yaml and subj.yaml:**
+             - へ部分になる → の部分である
+             - から部分になる → を部分に持つ
+             - から時間的な部分になる → を時間的な部分に持つ
+           - **tools/check_spec.py:**
+             - `LAWS_HERE = {"part_fact_direction", "part_display_explicit"}`.
+             - New `check_parts(T)`, called after `T.check_laws()` in build().
+             - It reads facts from root_name() and domain_files(). It resolves verbs that are v_compose or its sub-verbs.
+             - It errors if a part-of fact (a part of b) conflicts with the mods: b's kind is declared part of a's kind, or a's kind is declared to have b's kind as a part.
+             - Display check: rejects vague phrases (PART_VAGUE), and rejects an explicit phrase whose direction is opposite to the mod's position (PART_WORDS).
+           - **Commits pushed:**
+             - 9590509 — E12/E13/E10o JSON
+             - 9763220 — record of 4 experiments
+             - b0d01c3 — vector def
+             - ce150c6 — re-parent
+             - efb5877 — E15
+             - f31c3f7 — E15 record
+             - 6a74eed — E16
+             - 468286d — hypotheses/observations
+             - 8b31dc9 — laws
+
+        4. Errors and fixes:
+           - **× in condition names:** the checker flagged × as natural language. Renamed vec×→vec in the script, the JSON and the spec.
+           - **Multiple mods (law single):** split by adding an intermediate node, layer_output.
+           - **state_shift direction:** the draft `[v_compose, to]` was reversed; changed to from. This was the trigger for the laws discussion.
+           - **common_vector_component:** the first version had the same expression as swapped_concept_vector, which the law "specific" rejects. Changed to compose-from concept_vector.
+             - I later wrongly told the user it might be reversed. On audit it is correct, and I acknowledged the mistake.
+           - **Law 1 first form** ("every individual must have a supporting fact") gave about 300 false violations, because mods are existential claims. Changed it to a contradiction-only form.
+           - **Earlier E12 claim:** I had said the E12 vector was "too small (~0.4)". That was wrong: relative to the embedding, the ratio is 0.45. Corrected to the user.
+           - **Earlier E14 claim:** I had said E14 broke because "the vector was too big". That was wrong: it is the same size as the real near shift; the failure is a shift inconsistent with the context. Corrected.
+
+        5. Problem Solving — key results:
+           - **E12:** G2c none 0.38, tok0 0.50, tok 0.46, word+tok 0.50; G2k 0.75 / 0.75 / 0.71 / 0.75.
+           - **E13:** G2c none 0.39, near 0.61, symbolic 0.43, symbolic_mod 0.52; G2k 0.74 / 0.74 / 0.74 (both 0.13) / 0.78.
+           - **E10o:** G2c none 0.38, masked_i 0.58, opaque 0.67; G2k 0.75 / 0.62 / 0.58.
+           - **E14:** vectors had cos=1.00 across examples and |v|≈50. vec1: G2c 0.54 (both 0.17), G2k 0.46; the margins collapse to about 0.
+           - **E15:**
+             - |v|/|h|: E3 0.165, E3x 0.150, E14 0.331, near actual 0.326, E12 (vs embedding) 0.45.
+             - cos(v_E3, Δnear) ≈ 0, both raw and centered.
+             - E3 offdiag cos 0.192.
+             - Swap: G2c own 0.79 vs swapped 0.54; G2k 0.92 vs 0.62, below none 0.75.
+           - **E16:** norms full 25.2, common 11.9, specific 22.1.
+             - G2c: none 0.38 / full 0.79 / common 0.58 / specific 0.75; both 0.29 / 0.71 / 0.50 / 0.38.
+             - G2k: 0.75 / 0.92 / 0.75 / 0.79; both 0.50 / 0.88 / 0.71 / 0.33.
+           - **Label-prior baseline:** G2c 0.92, G2k 0.08. E3 raises G2k anyway, so it is not a label shortcut.
+           - **Interpretation:**
+             - Text and the vector take different routes. Text works through attention to the definition, with a generic shift of the word's state. The vector rewrites the word's state.
+             - The specific component carries the content. The common component stabilizes the verdict against option order.
+             - Both are needed together.
+           - **Mutation tests:** the new laws fired on an injected cycle, a reversed display and a reversed fact. The spec was restored from the scratchpad backup.
+
+        6. All user messages:
+           - "これまでの実験結果を比較して示唆を取る"
+           - "E3がき効いてそうな理由を考えたい"
+           - "そもそもベクトルとは何か概念式で厳密に定義した方が良いかも\nベクトルだけだとまだ抽象だから、このLLMが見ている「ベクトル」の概念を押さえて含意を得たい"
+           - "1回検査を通して"
+           - "付け替えていいよ\n精緻化しただけの話"
+           - "何を測るんだっけ"
+           - "よろしく" (run E15)
+           - "記録して次考えるべき含意を取る"
+           - "よろしく" (run E16)
+           - "あ、それらは仮説と観察として書いておいてね\n今ものすごく直前まで来ている気がするから"
+           - "あと順序が逆になってる概念式があるのは気がかり\n法則が足りないかも"
+           - "全部よろしく"
+           - "原理的な限界とは"
+           - "全体、部分を概念式で定義してないのが問題かも\n定理になる直観"
+           - Note: the wake-chain trigger notifications earlier in the session were scheduled-task prompts, not user messages.
+
+        7. Pending Tasks:
+           - Awaiting the user's approval to implement the v_sum proposal in core (step list below).
+           - Previously offered, not yet accepted:
+             - The flip-coverage test (reverse each compose mod and see whether the check fails).
+             - The sense-difference experiment, which needs natural sentences for 24 words in the target and the prior sense; I offered to draft them.
+             - The optional stronger display law.
+
+        8. Current Work:
+           - Last assistant message: I proposed defining whole and part via concept expressions.
+             ```yaml
+             v_sum: {display: 合わせる, extends: occurrent, from: continuant, to: continuant, new_kind: continuant,
+                     holds: [{is: part, from: from, to: new}, {is: part, from: to, to: new},
+                             {is: depend, from: new, to: from}, {is: depend, from: new, to: to}]}
+             # 部分 ≡ 何かと合わせると全体になるもの: part(x, y) ⇔ ∃z. sum(x, z) = y
+             - {is: v_sum, from: hidden_state, to: state_shift, new: shifted_hidden_state}   # h' = h ⊕ v
+             ```
+           - Argument: the two parts are symmetric, so swapping them is harmless. The whole occupies a distinct generated slot, so a reversal cannot be written. A reversed statement elsewhere contradicts antisymmetry, so direction becomes a theorem.
+           - Noted: the shift is part of h′, not of the original h, so the earlier draft was imprecise.
+           - Existing mods "X の部分である" stay as shorthand for ∃z sum(this,z)=X, and the 404 existing facts remain valid.
+           - Residual risk: swapping a part with the whole inside v_sum, which an anchor on generation order (h does not depend on h′) would catch.
+           - Proposed steps:
+             1. Add v_sum and the part ≡ sum law to the ontology.yaml core.
+             2. Rewrite h′ = h ⊕ v and v = m ⊕ s in exp.yaml using v_sum.
+             3. Inject a reversal and confirm it is caught as a contradiction.
+           - I asked: "core に手を入れるので、進めてよいか確認させてください。"
+
+        9. Optional Next Step:
+           - Wait for the user's confirmation. If approved, implement the three steps: add v_sum and the part definition law to spec/ontology.yaml core; express state_shift as h′ = h ⊕ v and the common/specific components as v = m ⊕ s in spec/exp.yaml; mutation-test that a reversal is caught. Then run check_spec and run_spec, commit and push.
+
+        If you need specific details from before compaction (like exact code snippets, error messages, or content you generated), read the full transcript at: /root/.claude/projects/-home-user-CMT/e05d2140-ce91-515f-a5fb-e6251e13d406.jsonl
+        Continue the conversation from where it left off without asking the user any further questions. Resume directly — do not acknowledge the summary, do not recap what was happening, do not preface with "I'll continue" or similar. Pick up the last task as if the break never happened.
+
+        The messages after this summary are the most recent messages from before compaction, kept verbatim. The summary was written without seeing them, so something it says has not happened yet may already have happened in them.
+facts:
+- {is: v_say, from: session_model, to: 01M7HESDCXDFPRQQK1JHG146R9}
+- {is: v_refer, from: 01M7HESDCXDFPRQQK1JHG146R9, to: exp.concept_vector}
+- {is: v_refer, from: 01M7HESDCXDFPRQQK1JHG146R9, to: syntax.extends}
+- {is: v_refer, from: 01M7HESDCXDFPRQQK1JHG146R9, to: syntax.mod}
+- {is: v_refer, from: 01M7HESDCXDFPRQQK1JHG146R9, to: ontology.v_compose}
+- {is: v_refer, from: 01M7HESDCXDFPRQQK1JHG146R9, to: syntax.to}
+- {is: v_refer, from: 01M7HESDCXDFPRQQK1JHG146R9, to: exp.v_file_of}
+- {is: v_refer, from: 01M7HESDCXDFPRQQK1JHG146R9, to: exp.v_rows_of}
+- {is: v_refer, from: 01M7HESDCXDFPRQQK1JHG146R9, to: exp.v_axis_of}
+- {is: v_refer, from: 01M7HESDCXDFPRQQK1JHG146R9, to: exp.v_value_of}
+- {is: v_refer, from: 01M7HESDCXDFPRQQK1JHG146R9, to: exp.v_denote}
+- {is: v_refer, from: 01M7HESDCXDFPRQQK1JHG146R9, to: exp.v_filter_of}
+- {is: v_refer, from: 01M7HESDCXDFPRQQK1JHG146R9, to: exp.v_entry_of}
+- {is: v_refer, from: 01M7HESDCXDFPRQQK1JHG146R9, to: exp.v_metric_of}
+- {is: v_refer, from: 01M7HESDCXDFPRQQK1JHG146R9, to: exp.order_robust_accuracy}
+- {is: v_refer, from: 01M7HESDCXDFPRQQK1JHG146R9, to: exp.mean_value}
+- {is: v_refer, from: 01M7HESDCXDFPRQQK1JHG146R9, to: ontology.v_refer}
+- {is: v_refer, from: 01M7HESDCXDFPRQQK1JHG146R9, to: ontology.v_come_before}
+- {is: v_refer, from: 01M7HESDCXDFPRQQK1JHG146R9, to: ontology.v_come_after}
+- {is: v_refer, from: 01M7HESDCXDFPRQQK1JHG146R9, to: ontology.v_level}
+- {is: v_refer, from: 01M7HESDCXDFPRQQK1JHG146R9, to: exp.v_near}
+- {is: v_refer, from: 01M7HESDCXDFPRQQK1JHG146R9, to: exp.v_support}
+- {is: v_refer, from: 01M7HESDCXDFPRQQK1JHG146R9, to: exp.v_contradict}
+- {is: v_refer, from: 01M7HESDCXDFPRQQK1JHG146R9, to: exp.hyp_supported}
+- {is: v_refer, from: 01M7HESDCXDFPRQQK1JHG146R9, to: syntax.law_rule}
+- {is: v_refer, from: 01M7HESDCXDFPRQQK1JHG146R9, to: syntax.v_assume}
+- {is: v_refer, from: 01M7HESDCXDFPRQQK1JHG146R9, to: syntax.v_derive}
+- {is: v_refer, from: 01M7HESDCXDFPRQQK1JHG146R9, to: syntax.v_require}
+- {is: v_refer, from: 01M7HESDCXDFPRQQK1JHG146R9, to: syntax.law_given}
+- {is: v_refer, from: 01M7HESDCXDFPRQQK1JHG146R9, to: syntax.v_govern}
+- {is: v_refer, from: 01M7HESDCXDFPRQQK1JHG146R9, to: std.v_sum}
+- {is: v_refer, from: 01M7HESDCXDFPRQQK1JHG146R9, to: exp.layer_output}
+- {is: v_refer, from: 01M7HESDCXDFPRQQK1JHG146R9, to: ontology.information_entity}
+- {is: v_refer, from: 01M7HESDCXDFPRQQK1JHG146R9, to: std.v_compute}
+- {is: v_refer, from: 01M7HESDCXDFPRQQK1JHG146R9, to: exp.hidden_state}
+- {is: v_refer, from: 01M7HESDCXDFPRQQK1JHG146R9, to: ontology.v_depend}
+- {is: v_refer, from: 01M7HESDCXDFPRQQK1JHG146R9, to: exp.label_token_positions}
+- {is: v_refer, from: 01M7HESDCXDFPRQQK1JHG146R9, to: exp.state_shift}
+- {is: v_refer, from: 01M7HESDCXDFPRQQK1JHG146R9, to: exp.shift_unseen_by_layer}
+- {is: v_refer, from: 01M7HESDCXDFPRQQK1JHG146R9, to: exp.v_see}
+- {is: v_refer, from: 01M7HESDCXDFPRQQK1JHG146R9, to: exp.verdict_stability}
+- {is: v_refer, from: 01M7HESDCXDFPRQQK1JHG146R9, to: exp.quality_measure_to}
+- {is: v_refer, from: 01M7HESDCXDFPRQQK1JHG146R9, to: exp.verdict_pair}
+- {is: v_refer, from: 01M7HESDCXDFPRQQK1JHG146R9, to: exp.sense_difference_vector}
+- {is: v_refer, from: 01M7HESDCXDFPRQQK1JHG146R9, to: exp.prior_meaning}
+- {is: v_refer, from: 01M7HESDCXDFPRQQK1JHG146R9, to: exp.single_layer_vector}
+- {is: v_refer, from: 01M7HESDCXDFPRQQK1JHG146R9, to: exp.multi_layer_vector}
+- {is: v_refer, from: 01M7HESDCXDFPRQQK1JHG146R9, to: exp.contrast_vector}
+- {is: v_refer, from: 01M7HESDCXDFPRQQK1JHG146R9, to: exp.definition_text}
+- {is: v_refer, from: 01M7HESDCXDFPRQQK1JHG146R9, to: exp.key_token_vector}
+- {is: v_refer, from: 01M7HESDCXDFPRQQK1JHG146R9, to: exp.dedicated_token}
+- {is: v_refer, from: 01M7HESDCXDFPRQQK1JHG146R9, to: exp.swapped_concept_vector}
+- {is: v_refer, from: 01M7HESDCXDFPRQQK1JHG146R9, to: exp.common_vector_component}
+- {is: v_refer, from: 01M7HESDCXDFPRQQK1JHG146R9, to: exp.specific_vector_component}
+- {is: v_refer, from: 01M7HESDCXDFPRQQK1JHG146R9, to: exp.channel_involve_from_taught_vector}
+- {is: v_refer, from: 01M7HESDCXDFPRQQK1JHG146R9, to: exp.item_done}
+- {is: v_refer, from: 01M7HESDCXDFPRQQK1JHG146R9, to: syntax.concept_expression}
+- {is: v_refer, from: 01M7HESDCXDFPRQQK1JHG146R9, to: syntax.new_kind}
+- {is: v_refer, from: 01M7HESDCXDFPRQQK1JHG146R9, to: exp.shifted_hidden_state}

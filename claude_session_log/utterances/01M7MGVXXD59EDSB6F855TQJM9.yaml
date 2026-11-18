@@ -1,0 +1,65 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-17T10:29:29.133Z（UTC）
+individuals:
+  01M7MGVXXD59EDSB6F855TQJM9:
+    is: model_utterance
+    display: 発言 990
+    val:
+      order: 990
+      text: |
+        先行研究の記録と仮説の追加は #88 に入れました。CI も通っています。言語の更新は、言語の中身を決める問題に当たったので、変更を戻して止めています。
+
+        ## 記録したもの（claude/exp、#88）
+        - **先行研究3本と、その主張：** Park et al. 2025（階層の直交）、Hernandez et al. 2024（関係の線形演算子）、Christ et al. 2025（演算子は関係ではなく性質を取り出す）。
+        - **観察2件（Christ）：**
+          - 拡張データでの忠実度 0.42 は、多数派ベースライン 0.30 より高い。
+          - 算術の見ていない関係では 0.96 で、一般の関係より高い。
+        - **書かなかった観察：**
+          - Park は数値が図にしかないので、観察はありません。
+          - Hernandez（47 関係のうち 48% で LRE が忠実、CEO 関係は 6% 以下）は、比べる相手のある値がないので入れていません。
+        - **新しい仮説（未検証）：**
+          - `h_qualification_vector_transfers_to_unseen_genus`：限定（mod）の差分ベクトル（下位 − 上位）は、学習していない上位概念にも移る。
+          - `h_qualification_teacher_raises_following`：差分ベクトルを教師にすると、再定義に従う度合いが上がる。
+        - **既存の近い仮説：** `h_modifier_transfers_to_unseen_genus`（E4、支持済み）があります。ただしこれは語の修飾についてで、収束した例は1組だけです。新しい仮説はこれを言語の限定に一般化したものです。
+        - **先行研究との関係：** 機械的な比較で導ける関係はありませんでした。Hernandez と Christ の対象は関係の演算子なので、言語の限定とは別の概念として書きました。似ているというだけで仮説に繋ぐことはしていません。
+
+        ## 言語側で見つかったこと
+        名前を付けた限定（`learned`、`hidden` など）は、限定として型検査されていません。
+
+        **現状**
+        - 限定の書き方は2通りあります。
+          - その場に書く限定：`mod: {of: ..., with: ...}`
+          - 名前を付けた限定：`mod: learned`
+        - 名前を付けた限定は、検査の多くの箇所で読み飛ばされています。
+        - 名前を付けた限定は `with` を持てません。そのため、相手のある限定には名前を付けられません。
+        - その場に書いた限定は 349 あります。そのうち、同じ中身が2か所以上に出るものが 44 組あります。
+
+        **試したこと**
+        名前を付けた限定を、中身に展開して同じように検査させてみました。すると、`std.weights`（mod: learned）で誤りが1件出ました。
+        - `learned` は `v_learn` の new です。
+        - その種類は傾向性（realizable_entity）です。
+        - 重みは人工物なので、そこに来られません。
+
+        この変更は、まだ push していません。
+
+        ## 決めてほしいこと
+        1. **名前を付けた限定を、中身に展開して検査するか。**
+           私はそうすべきだと考えます。限定を一つの単位にするという話の前提になるからです。
+        2. **重みの不整合をどう直すか。**
+           - (a) `v_learn` の new の種類を広げる（学習は、傾向性も人工物も作る）。
+           - (b) 重みの限定を、別の動詞にする。
+        3. **同じ限定の扱いをどうするか。**
+           同じ中身の限定が2か所以上に出たら名前を付けることを、規則にするか。
+           - 規則にすると、44 組を名前付きの限定に直すことになります。
+           - その限定が `with` を持てるようにする必要があります。
+           - 言語と実験の両方に触れるので、作業は claude/cross になります。
+
+        1 は進めてよいか、2 は (a) か (b) か、3 は規則にするかを教えてください。
+facts:
+- {is: v_say, from: session_model, to: 01M7MGVXXD59EDSB6F855TQJM9}
+- {is: exp.v_answer, from: 01M7MGVXXD59EDSB6F855TQJM9, to: 01M7MGMXJJ9QEMC1VXQEHV8HX9}
+- {is: v_refer, from: 01M7MGVXXD59EDSB6F855TQJM9, to: std.learned}
+- {is: v_refer, from: 01M7MGVXXD59EDSB6F855TQJM9, to: exp.hidden}
+- {is: v_refer, from: 01M7MGVXXD59EDSB6F855TQJM9, to: syntax.with}
+- {is: v_refer, from: 01M7MGVXXD59EDSB6F855TQJM9, to: std.weights}
+- {is: v_refer, from: 01M7MGVXXD59EDSB6F855TQJM9, to: std.v_learn}
+- {is: v_refer, from: 01M7MGVXXD59EDSB6F855TQJM9, to: ontology.realizable_entity}

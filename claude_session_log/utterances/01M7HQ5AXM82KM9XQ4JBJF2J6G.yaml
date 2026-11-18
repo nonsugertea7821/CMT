@@ -1,0 +1,28 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-16T08:21:45.524Z（UTC）
+individuals:
+  01M7HQ5AXM82KM9XQ4JBJF2J6G:
+    is: model_utterance
+    display: 発言 813
+    val:
+      order: 813
+      text: |
+        表示への変換を言語側に切り出しました。両方にまたがる変更用のブランチ `claude/cross` を作り、そこに push してあります。
+
+        **表示の切り出し**
+        - **言語側：** `cscl/bootstrap/display/display.py` を新しく作りました。中身は、種類の行（表示名 ＝ 上位 ∧ 限定）、限定、事実を表示する関数です。領域によらず使えて、たとえば axiom の summand も「合成できる情報 ＝ 情報 ∧ 合成する(これ, 何か)」と出せます。
+        - **実験側：** `render_expr.py` は、display を使って subj の語の文字列を組み立てるだけになりました。mask と opaque の切り替えや、subj.yaml に書いたままの行を出す処理は、実験の道具なので exp に残しています。
+        - **確認：** 98 語のすべての出力が、切り出す前と完全に一致しました（mask、opaque、inds の組み合わせも含む）。これで過去の実験の入力が再現できます。
+
+        **ブランチの使い分け**
+        - `claude/cscl`：言語だけの変更
+        - `claude/exp`：実験だけの変更
+        - `claude/cross`：両方にまたがる変更
+
+        `claude/cross` は `claude/exp` の今の先端から作ったので、PR #2 の変更（docs の削除、render_expr と check_line の移動）も含んでいます。それらも両方にまたがる変更でした。
+
+        **PR について**
+        - PR #2（claude/exp から main）は開いたままです。
+        - `claude/cross` の PR はまだ出していません。PR #2 を先にマージするか、PR #2 を閉じて `claude/cross` からまとめて一本出し直すか、どちらにしますか。
+facts:
+- {is: v_say, from: session_model, to: 01M7HQ5AXM82KM9XQ4JBJF2J6G}
+- {is: exp.v_answer, from: 01M7HQ5AXM82KM9XQ4JBJF2J6G, to: 01M7HQ3QX3GFVZYD1V8WSXD6HX}

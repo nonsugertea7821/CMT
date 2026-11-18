@@ -1,0 +1,40 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-17T15:43:21.837Z（UTC）
+individuals:
+  01M7N2TN7DEYCYJSD53ZGQZBMQ:
+    is: model_utterance
+    display: 発言 1206
+    val:
+      order: 1206
+      text: |
+        名前を最初に全部宣言しない実行器を、開世界の前提で exp の中に作り、確かめました。判定は**支持**です。ただし確かめた範囲は狭く、支持は弱いです。tc には触れていません。
+
+        **実行器のしくみ**（`exp/experiments/open_runtime.py` の `OpenMachine`）
+        - 世界は world です。述べていない文には真偽を与えません。
+        - 最初に宣言するのは、最初に在る個体だけです。
+        - 歩みがまだ宣言されていない名前を名指したら、その歩みで宣言します。ただし「在るようにする位置」に置かれた名前に限ります。これは、pre で exists が述べられておらず、post で真になる位置です。それ以外の位置に未宣言の名前が来たら誤りにします。
+        - 宣言は取り消しません。v_freeze は真偽の軸の exists を取り除くだけです。
+        - フレームは1歩ごとに記録します。巻き戻しはまだ扱っていません。
+
+        **進め方と結果**
+        - 実行の前に、仮説 h_open_runtime と手順を登録しました（b979fcf）。登録前に確かめたのは、スクリプトが構文として読めることだけです。
+        - 仮説の中身は「宣言の範囲は状態（真偽の文の集まり）に依存しない」と書きました。
+        - 記録は2つ、合わせて6歩です。すべてエラーなく歩め、expect も決められて成り立ちました。
+        - フレームごとの宣言は `{dec1, sys1}` → `+r1` → `+q1` → そのままでした。宣言は一度も減っていません。
+        - 増えたのは std.v_learn と exp.v_see の2歩で、どちらも在るようにする歩みでした。v_freeze の後も r1 の宣言は残っています。
+
+        **支持が弱い理由**
+        - 記録が2つしかありません。そのうち adopt_withdraw は、名前を足す歩みを含みません。
+        - 「宣言が減らない」と「増えるのは在るようにする歩みだけ」は、実行器の作りからほぼ決まります。経験的に確かめたと言えるのは、歩めることと halted の判定だけです。
+        - halted: false を書いた記録は1つだけです。その記録では今ある名前だけで当てはまる歩みが見つかったので、新しい名前を試す部分は一度も使われていません。
+
+        結果は a8165db で push 済みです。claims と exp.yaml にも記録し、PR #93 の本文に節と注意書きを足しました。CI は通っています。
+
+        残っているのは次の2つです。
+        - 巻き戻しをどう扱うか。宣言だけ戻すのか、真偽も戻すのか。
+        - 名前を足す歩みを含む実行の記録を増やすこと。
+facts:
+- {is: v_say, from: session_model, to: 01M7N2TN7DEYCYJSD53ZGQZBMQ}
+- {is: exp.v_answer, from: 01M7N2TN7DEYCYJSD53ZGQZBMQ, to: 01M7N2HC4RZZTE6RK5X293NVV9}
+- {is: v_refer, from: 01M7N2TN7DEYCYJSD53ZGQZBMQ, to: std.v_freeze}
+- {is: v_refer, from: 01M7N2TN7DEYCYJSD53ZGQZBMQ, to: std.v_learn}
+- {is: v_refer, from: 01M7N2TN7DEYCYJSD53ZGQZBMQ, to: exp.v_see}

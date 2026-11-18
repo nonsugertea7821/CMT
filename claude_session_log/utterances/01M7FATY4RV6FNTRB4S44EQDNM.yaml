@@ -1,0 +1,25 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-15T10:07:52.984Z（UTC）
+individuals:
+  01M7FATY4RV6FNTRB4S44EQDNM:
+    is: model_utterance
+    display: 発言 509
+    val:
+      order: 509
+      text: |
+        ありました。体系の中でこの言語自身を表すノード `controlled_language`（概念体系制御言語）です。識別子を正式名に合わせて `cscl` にしました（b8d5af4、push 済み）。`check_spec.py` と `run_spec.py` は両方とも通っています。
+
+        識別子が変わったのは次のとおりです。
+
+        - **`ontology.yaml`:** `controlled_language` を `cscl` に、それに依存する種類 `information_entity_express_from_controlled_language` を `information_entity_express_from_cscl` にしました。概念式の定義（概念式は CSCL で書かれる）の中の参照も合わせています。
+        - **`exp.yaml`:** 名前に含んでいた個体の識別子を合わせました。
+          - 仮説 `h_cscl_raises_following`、`h_model_can_write_cscl`
+          - 決定 `d_source_of_truth_in_cscl`
+          - 残り項目 `b_write_subject_concepts_in_cscl`
+          - これらを参照している事実も合わせて改めています。
+
+        `spec/trial/` と凍結した文書には、旧い識別子が残っています。
+facts:
+- {is: v_say, from: session_model, to: 01M7FATY4RV6FNTRB4S44EQDNM}
+- {is: exp.v_answer, from: 01M7FATY4RV6FNTRB4S44EQDNM, to: 01M7FAT3HQBP130DFE7TM34R63}
+- {is: v_refer, from: 01M7FATY4RV6FNTRB4S44EQDNM, to: syntax.cscl}
+- {is: v_refer, from: 01M7FATY4RV6FNTRB4S44EQDNM, to: syntax.information_entity_express_from_cscl}

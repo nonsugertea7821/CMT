@@ -1,0 +1,40 @@
+# 領域 claude_session_log（Claude Code のセッションの記録）。発言を例外なく、原文と事実で持つ。
+# 発言は1つずつ utterances/<ULID>.yaml に置く（parts）。作り方と規則は claude_session_log/build.py。手で書き換えない（作り直す）。
+# 発言 1419（利用者 411、Claude 984、要約 24）。
+domain: claude_session_log
+parts: claude_session_log/utterances/*.yaml
+nodes:
+  utterance:
+    display: 発言
+    extends: syntax.passage_express_from_natural_language
+    mod:
+      of: [exp.v_speak, to]
+    many: true
+  user_utterance:
+    display: 利用者の発言
+    extends: utterance
+    mod:
+      of: [exp.v_speak, to]
+      with: subj.person
+  model_utterance:
+    display: Claude の発言
+    extends: utterance
+    mod:
+      of: [exp.v_speak, to]
+      with: std.model
+  session_summary:
+    display: 文脈が尽きたときの要約
+    extends: model_utterance
+    mod:
+      of: [v_refer, from]
+      with: utterance
+  v_say: {display: 発言する, extends: exp.v_speak, to: utterance}
+individuals:
+  claude_session_log: {is: domain, display: Claude Code のセッションの記録}
+  session_user: {is: subj.person, display: 利用者}
+  session_model: {is: std.model, display: Claude}
+facts:
+- {is: syntax.v_use, from: claude_session_log, to: exp}
+- {is: syntax.v_use, from: claude_session_log, to: subj}
+- {is: syntax.v_use, from: claude_session_log, to: std}
+- {is: syntax.v_use, from: claude_session_log, to: runtime}

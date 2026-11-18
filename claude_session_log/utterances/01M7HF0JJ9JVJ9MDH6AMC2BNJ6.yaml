@@ -1,0 +1,56 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-16T05:59:20.905Z（UTC）
+individuals:
+  01M7HF0JJ9JVJ9MDH6AMC2BNJ6:
+    is: model_utterance
+    display: 発言 702
+    val:
+      order: 702
+      text: |
+        core に「合わせる」（`v_sum`）を入れ、部分であることをそこから導くようにしました。検査（check_spec と run_spec）は通り、コミットして push 済みです（138974d）。ただし、提案した書き方のままでは入らなかった所が2つあります。
+
+        ## 入れたもの
+
+        - **ontology.yaml（core）:** `v_sum`（合わせる）を足しました。合わせる二つ（from と to）はどちらも、新しくできる第三のもの（new）の部分になり、new は二つに依存します。
+        - **部分の定義を規則として追加:**
+          - `kpart_by_sum_part`：「合わせて X になる」と限定した種類は、X の部分です。合わせる相手が何かは問いません。∃z. sum(x, z) = X をそのまま書いたものです。
+          - `kpart_by_sum_whole`：全体の側から書いた場合の規則です。
+        - **向きが定理になる仕組み:** 上の二つから導いた部分の関係を、既にある推移性と反対称性に合流させました。向きは、ここから導かれる結果になります。
+
+        ## exp.yaml の書き直し
+
+        | 種類 | 書き方 | 意味 |
+        |---|---|---|
+        | `state_shift`（v） | 合わせると `shifted_hidden_state` になる | h′ = h ⊕ v |
+        | `shifted_hidden_state`（h′、新設） | `hidden_state` を部分に持つ | |
+        | `common_vector_component`（m） | 合わせると `concept_vector` になる | v = m ⊕ s |
+
+        前回気づいた不正確さも直しました。v は元の h の部分ではなく、足した後の h′ の部分です。
+
+        あわせて、共通成分と固有成分の上位を、`concept_vector` から `state_shift` に付け替えました。どちらもベクトルを合わせて作る材料で、概念ベクトルそのものではないからです。
+
+        ## 逆向きをわざと入れて確かめたこと
+
+        3つとも捕まりました。確かめた後、spec は元に戻してあります。
+
+        1. 「h′ は v の部分」と書く → 反対称に反する、と出ました（state_shift と shifted_hidden_state）。
+        2. 「概念ベクトルは共通成分の部分」と書く → 反対称に反する、と出ました。
+        3. 表示名を「…を部分に持つずれ」と逆向きにする → 表示名の法則（part_display_explicit）に反する、と出ました。
+
+        ## 提案と違う点
+
+        - **「合わせる」は事実としては書けませんでした。** 事実は個体についてしか書けない決まりなので、h, v, h′ のような種類どうしの和は書けません。そこで種類の限定（mod）の形で書いています。その代わり、三つの項を一度に名指す「h′ = h ⊕ v」という形にはなっていません。
+        - **全体の側から「合わせると」と書けませんでした。** 文法上、位置 new には限定を付けられないためです。h′ の側は、これまでの略記「h を部分に持つ」（v_compose）のままです。向きを固めているのは、部分の側からの限定と反対称です。
+        - **部分の側の規則は始点（from）だけです。** 合わせる二つは対等なので、from だけで書いても表せることは減りません。
+        - **生成の順序の錨（h は h′ に依存しない）はまだ入れていません。** そのため、「v と h′ を合わせると h になる」という形の取り違えは、まだ捕まりません。
+
+        次は、v_sum の三つの項を一度に書ける形（文法で new への限定を許すか、種類どうしの事実を許すか）か、生成の順序の錨を入れることが考えられます。どちらも core の文法に関わるので、進める前に確認させてください。
+facts:
+- {is: v_say, from: session_model, to: 01M7HF0JJ9JVJ9MDH6AMC2BNJ6}
+- {is: exp.v_answer, from: 01M7HF0JJ9JVJ9MDH6AMC2BNJ6, to: 01M7HEQNAHDVM9A8ASJW57BDCF}
+- {is: v_refer, from: 01M7HF0JJ9JVJ9MDH6AMC2BNJ6, to: std.v_sum}
+- {is: v_refer, from: 01M7HF0JJ9JVJ9MDH6AMC2BNJ6, to: exp.state_shift}
+- {is: v_refer, from: 01M7HF0JJ9JVJ9MDH6AMC2BNJ6, to: exp.shifted_hidden_state}
+- {is: v_refer, from: 01M7HF0JJ9JVJ9MDH6AMC2BNJ6, to: exp.hidden_state}
+- {is: v_refer, from: 01M7HF0JJ9JVJ9MDH6AMC2BNJ6, to: exp.common_vector_component}
+- {is: v_refer, from: 01M7HF0JJ9JVJ9MDH6AMC2BNJ6, to: exp.concept_vector}
+- {is: v_refer, from: 01M7HF0JJ9JVJ9MDH6AMC2BNJ6, to: ontology.v_compose}

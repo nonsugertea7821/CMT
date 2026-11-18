@@ -1,0 +1,68 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-17T23:06:24.171Z（UTC）
+individuals:
+  01M7NW5WHBGK8ZG68EV9EQBX1S:
+    is: model_utterance
+    display: 発言 1316
+    val:
+      order: 1316
+      text: |
+        その見方で決まりだと思います。文法の語は syntax が定義していて、コードはそれを読んで実行しているだけなので、特別扱いには数えません。
+
+        ## 基準の言い直し
+        「特別扱いはシグネチャだけ」を、次のように言い直します。
+
+        - **コードが名前で分岐してよい語**
+          - signature の語: 式で書けない原始の語なので、機械が直接持つしかありません。
+          - syntax と runtime が定義した語: 原文の言語のキーワードや命令に当たります。翻訳するには読む必要があります。
+        - **それ以外の語に名前で分岐するのは、コードが体系に書かれていない意味を持っていることになる。**
+          - 翻訳であれば、YAML の定義を変えたとき、コードの振る舞いも変わるはずです。
+          - 名前で分岐していると、定義を変えても振る舞いは変わりません。
+
+        ## 観察の結果（fe5df29 に記録、push 済み）
+        手順は先に登録してあります（7ffb337）。型検査と実行器が名を挙げた語は 128 でした。内訳はシグネチャ 3、文法 66、どちらでもない 60 です。
+
+        60 のうち一字の 5 を除いた 55 を、語の領域で分けると次のとおりです。この分け方は実行の後に決めたもので、そのことも記録に書きました。
+
+        | 分類 | 数 | 新しい基準で |
+        |---|---|---|
+        | syntax の語（law_rule、v_assume、variable、world、verb_ref、v_collect など） | 15 | 原則として許される。ただし下の注意を参照 |
+        | runtime の語（replace、every_step など） | 5 | 許される |
+        | ontology の語（continuant、occurrent、role、definition、quality、magnitude など） | 15 | **移す** |
+        | 基礎の関係（after、part、refer、exists） | 4 | **移す**。exists は same から導けるので、same を通せばよい |
+        | exp の語（v_spell） | 1 | **移す** |
+        | 意味を検査が与える法則（law_given） | 10 | **移す**。下の注意を参照 |
+        | 層の名・偶然の一致 | 6 | 対象外 |
+
+        ontology から v_spell までの 20 語と、law_given の 10 個が移す対象です。
+
+        ## 注意: 領域だけでは決まらないもの
+
+        **1. law_given は syntax の語だが、意味の抜け穴として置かれている。**
+        - syntax 自身が「この法則の意味は検査（コード）が与える」と宣言している語です。
+        - これは「コードは翻訳に過ぎない」と矛盾します。
+        - 規則（law_rule）に直すのが基本です。例外は unique_names で、same についての法則なので signature 側に置けます。
+
+        **2. verb_ref・v_collect・closed_world は syntax の語でも、コードの振る舞いが定義から出てくるとは限らない。**
+        - verb_ref の場合: コードは「この位置には動詞そのものが来る」として扱っています。
+        - これが syntax の verb_ref の定義から導けるかどうかは、1つずつ確かめる必要があります。
+
+        ## 次
+        移す対象を、易しい順に事実と規則へ移していきます。
+        1. v_spell: 「終点の種類が verbatim なら、自然言語を書ける」という、すでにある宣言で置き換えます。
+        2. 基礎の関係 4 つ: exists は same を通す形にし、残り 3 つは使い方を確かめます。
+        3. ontology の語 15: role・quality・magnitude などです。
+        4. law_given 10: 規則に直します。
+        5. 最上位（continuant・occurrent）: 最後に回します。
+
+        1 から進めます。
+facts:
+- {is: v_say, from: session_model, to: 01M7NW5WHBGK8ZG68EV9EQBX1S}
+- {is: exp.v_answer, from: 01M7NW5WHBGK8ZG68EV9EQBX1S, to: 01M7NW3CG1Z7DW9VKZH1TS9DBK}
+- {is: v_refer, from: 01M7NW5WHBGK8ZG68EV9EQBX1S, to: syntax.law_rule}
+- {is: v_refer, from: 01M7NW5WHBGK8ZG68EV9EQBX1S, to: syntax.v_assume}
+- {is: v_refer, from: 01M7NW5WHBGK8ZG68EV9EQBX1S, to: syntax.verb_ref}
+- {is: v_refer, from: 01M7NW5WHBGK8ZG68EV9EQBX1S, to: syntax.v_collect}
+- {is: v_refer, from: 01M7NW5WHBGK8ZG68EV9EQBX1S, to: runtime.every_step}
+- {is: v_refer, from: 01M7NW5WHBGK8ZG68EV9EQBX1S, to: exp.v_spell}
+- {is: v_refer, from: 01M7NW5WHBGK8ZG68EV9EQBX1S, to: syntax.law_given}
+- {is: v_refer, from: 01M7NW5WHBGK8ZG68EV9EQBX1S, to: syntax.closed_world}

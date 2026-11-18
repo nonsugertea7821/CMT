@@ -1,0 +1,44 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-17T16:19:38.921Z（UTC）
+individuals:
+  01M7N4X399T3K2MVVXMCMY6SPB:
+    is: model_utterance
+    display: 発言 1257
+    val:
+      order: 1257
+      text: |
+        「作り方」は前の返答で私が使った言葉で、元は c78338e の所見にある「様態（どのように行うか）」です。ただ、今の体系では動詞は「前と後の状態の差」でしか書けません。差に現れないものは、体系の中では無いのと同じです。なので「作り方」が意味を持つなら、**作った後の状態の違い**として現れるはずです。その観点で、2つの動詞が体系の中でどう使われているかを見ました。
+
+        **使われ方の観察**
+
+        | | v_design（設計する） | v_compute（計算する） |
+        |---|---|---|
+        | 始点（from）に来るもの | operator（運用者。実験の取り決めを設計する） | model・layer・attention（人工物）。typed_graph・concept_expression（情報） |
+        | 終点（to）に来るもの | programming_language、decision、model_design（モデル**について述べる**設計） | layer_output（層の出力）、structure_embedding、type_check_result、passage |
+        | 否定 | natural_language は設計されない | — |
+
+        **読み取れる違い（候補で、まだ確かめていません）**
+        - **計算する**：産物は始点で決まります。層の出力は層に依存し、型検査の結果は概念式から決まります。同じ入力なら同じ出力になる、つまり計算した後に depend(to, from) が成り立ちます。
+        - **設計する**：産物は始点から決まるのではありません。産物は別の何か（作られるモデル、プログラム、取り決め）**について述べるもの**です。model_design は v_refer でモデルを指しています。設計した後には refer(to, …) が成り立ちます。
+
+        この読みでは、「作り方」とは**作った後に、産物が何と関係を持つか**です。計算なら産物は入力に依存し、設計なら産物は作られるものについて述べます。どちらも基礎の関係（depend、refer）を post に足すだけで書けて、様態という新しい手段は要りません。式が違うものになるので、v_compute の `to: any` も不要になり、to を continuant にできます。
+
+        **根拠が弱いところ**
+        - 使用例は、計算が6つほど、設計が5つほどしかありません。
+        - 「同じ入力なら同じ出力」は、体系の中では確かめていません。実験のモデルは温度などで出力が変わる場合もあります。
+        - 設計の post に refer を足すと、相手（何について述べるか）が第三の位置（new など）に要ります。今の v_design の端は2つだけです。
+
+        次に進めるなら、この区別を使われ方の観察として記録します。そのうえで v_compute・v_design の post に depend・refer を足した案を作り、検査が通るかと、ほかの動的な動詞が同じ形で区別できるかを見たいと考えています。進めてよいか教えてください。
+facts:
+- {is: v_say, from: session_model, to: 01M7N4X399T3K2MVVXMCMY6SPB}
+- {is: exp.v_answer, from: 01M7N4X399T3K2MVVXMCMY6SPB, to: 01M7N4W95SZKS7PVW0MAFF7ZEG}
+- {is: v_refer, from: 01M7N4X399T3K2MVVXMCMY6SPB, to: ontology.v_design}
+- {is: v_refer, from: 01M7N4X399T3K2MVVXMCMY6SPB, to: std.v_compute}
+- {is: v_refer, from: 01M7N4X399T3K2MVVXMCMY6SPB, to: exp.typed_graph}
+- {is: v_refer, from: 01M7N4X399T3K2MVVXMCMY6SPB, to: syntax.concept_expression}
+- {is: v_refer, from: 01M7N4X399T3K2MVVXMCMY6SPB, to: exp.programming_language}
+- {is: v_refer, from: 01M7N4X399T3K2MVVXMCMY6SPB, to: exp.model_design}
+- {is: v_refer, from: 01M7N4X399T3K2MVVXMCMY6SPB, to: exp.layer_output}
+- {is: v_refer, from: 01M7N4X399T3K2MVVXMCMY6SPB, to: exp.structure_embedding}
+- {is: v_refer, from: 01M7N4X399T3K2MVVXMCMY6SPB, to: exp.type_check_result}
+- {is: v_refer, from: 01M7N4X399T3K2MVVXMCMY6SPB, to: ontology.natural_language}
+- {is: v_refer, from: 01M7N4X399T3K2MVVXMCMY6SPB, to: ontology.v_refer}

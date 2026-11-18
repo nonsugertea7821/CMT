@@ -1,0 +1,62 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-14T22:36:56.159Z（UTC）
+individuals:
+  01M7E39RYZ2GHRS4B08M60ZMJ8:
+    is: model_utterance
+    display: 発言 304
+    val:
+      order: 304
+      text: |
+        自己記述の第3層まで終わり、検査を通してプッシュ済みです（ノード312）。
+
+        ## 第3層でやったこと
+
+        - **文法の語をノードにした**：`is`、`mod`、`of`、`with`、`neg` など、体系制御言語の書き方の語を36個のノードとして定義しました。
+        - **対応づけを体系に書いた**：`ontology.yaml` に `grammar` の節を足し、どの語がどのノードに当たるかを書きました。
+        - **検査が体系から読む**：検査プログラムが内部に持っていた語の一覧を消し、`grammar` の節から読むようにしました。語を1つ抜く、位置を1つ抜く、などの否定テスト4件はすべて検出されました。
+
+        ## 書けなかったもの
+
+        1. **述語論理の語**：`not`、`all`、`any`、`true`、`false`、`between` の6語は、体系の外の語として `logic` に並べただけで、定義していません。
+        2. **入れ物の構造**：「並び」「対応表」というYAMLの構造そのものは、ノードにしていません。
+        3. **語の働き**：`is` が「上位の指定」だという名前は付きましたが、`is` と書くと性質が引き継がれる、という働きは検査プログラムの中にあります。体系には書かれていません。
+        4. **近似にとどまる定義**：`neg`（真偽の軸で値が偽）、`quant`（2つ以上のものについて述べる）、`same`／`differ`、`arity` は、検査は通りますが意味を十分に絞れていません。
+        5. **循環**：`grammar` の節自身の語は、`grammar` の節の中で自分を指しています。「について述べる」と同じく、体系自身の行為なので解けないと見ています。
+
+        ## チューリング完全性の議論へ
+
+        3番目がそのまま議論の入口です。いまの体系は「何であるか」は自分で書けますが、「書かれたものをどう動かすか」は外の検査プログラムが持っています。欠けているものは4つです。
+
+        | 欠けているもの | いまの状態 |
+        |---|---|
+        | 個体と状態 | 種類の定義だけがある。「この注文」「いまの値」を置く場所がない |
+        | 実行の意味 | 動詞の `before`／`after` は書き換え規則の形だが、適用する主体が体系の中にない |
+        | 際限のない繰り返し | 定義の参照は循環を禁じているので、必ず止まる |
+        | 算術 | 数は分類の値で、比較はできるが足し算がない |
+
+        `mod` と `neg` で NAND が作れるので、止まる範囲の論理はすべて書けます。足りないのは記憶と繰り返しです。版管理は「前の版を読んで次の版を書く」操作なので、記憶に当たります。繰り返すのは LLM です。つまり「体系＝テープ、LLM＝ヘッド」という形になります。
+
+        私の推奨は、定義の側は必ず止まるままに保ち、万能性は動詞（状態の書き換え）の側だけに置くことです。定義が止まらなくなると、同一性の判定と検査ができなくなるためです。
+
+        ここで決めていただきたいのは、万能性をどこに置くかです。動詞の側だけに置く案でよいか、定義の側にも持たせたいかを教えてください。
+
+        ## 実験
+
+        E9（下書きをさせる）の4Bは48問中47問まで進んでいます。終わり次第、結果を `spec/` に記録します。その後は単一層（L20、L4）の実行に進みます。
+facts:
+- {is: v_say, from: session_model, to: 01M7E39RYZ2GHRS4B08M60ZMJ8}
+- {is: exp.v_answer, from: 01M7E39RYZ2GHRS4B08M60ZMJ8, to: 01M7DHXKXPEYF9W3K8APD17RBJ}
+- {is: v_refer, from: 01M7E39RYZ2GHRS4B08M60ZMJ8, to: ontology.is}
+- {is: v_refer, from: 01M7E39RYZ2GHRS4B08M60ZMJ8, to: syntax.mod}
+- {is: v_refer, from: 01M7E39RYZ2GHRS4B08M60ZMJ8, to: syntax.of}
+- {is: v_refer, from: 01M7E39RYZ2GHRS4B08M60ZMJ8, to: syntax.with}
+- {is: v_refer, from: 01M7E39RYZ2GHRS4B08M60ZMJ8, to: syntax.neg}
+- {is: v_refer, from: 01M7E39RYZ2GHRS4B08M60ZMJ8, to: syntax.grammar}
+- {is: v_refer, from: 01M7E39RYZ2GHRS4B08M60ZMJ8, to: syntax.not}
+- {is: v_refer, from: 01M7E39RYZ2GHRS4B08M60ZMJ8, to: syntax.all}
+- {is: v_refer, from: 01M7E39RYZ2GHRS4B08M60ZMJ8, to: any}
+- {is: v_refer, from: 01M7E39RYZ2GHRS4B08M60ZMJ8, to: syntax.between}
+- {is: v_refer, from: 01M7E39RYZ2GHRS4B08M60ZMJ8, to: syntax.logic}
+- {is: v_refer, from: 01M7E39RYZ2GHRS4B08M60ZMJ8, to: syntax.quant}
+- {is: v_refer, from: 01M7E39RYZ2GHRS4B08M60ZMJ8, to: ontology.same}
+- {is: v_refer, from: 01M7E39RYZ2GHRS4B08M60ZMJ8, to: ontology.differ}
+- {is: v_refer, from: 01M7E39RYZ2GHRS4B08M60ZMJ8, to: syntax.arity}

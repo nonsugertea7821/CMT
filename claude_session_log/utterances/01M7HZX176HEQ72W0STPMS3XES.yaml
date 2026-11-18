@@ -1,0 +1,62 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-16T10:54:30.630Z（UTC）
+individuals:
+  01M7HZX176HEQ72W0STPMS3XES:
+    is: model_utterance
+    display: 発言 909
+    val:
+      order: 909
+      text: |
+        先行研究10本を exp.yaml に個体として記録し、PR #85 にしました: https://github.com/nonsugertea7821/CMT/pull/85
+
+        **先行研究と分かるように記録した方法**
+        - 新しい種類 `prior_work`（先行研究）を作り、10本ともこの種類にしました。
+        - 識別子は `pw_` で始まり、表示語は「先行研究: 」で始まります。表示語には著者、年、題名、所在（arXiv 番号や ACL Anthology の ID）を入れました。
+        - 主張との関係は3通りに分けました。
+          - 同じ向きの結果を先に報告した
+          - 異なる結果を報告した
+          - 手法の元
+        - issue には、CI が「先行研究」節を作ります。この節は定義のハッシュに入れていません。なので、記録しても既存の説明に stale-explanation は付きません。
+        - 型検査、実行の検査、同期のテストは手元ですべて通りました。
+
+        **目標に効きそうなもの**
+        - **Wang & Sun 2025, Unable to Forget**（[arXiv:2506.08184](https://arxiv.org/abs/2506.08184)）
+          - 前に並ぶ情報が後の検索を妨げる現象（順向干渉）を LLM で示した研究です。入力の長さをそろえても、精度は下がりました。
+          - E7 の `h_preceding_definitions_lower` とかなり近い内容です。E7 で新しいと言えるのは、次の2点になりそうです。
+            - キーと値の更新ではなく、定義への追従で同じことが起きる
+            - 後ろに並ぶ定義では下がらない
+        - **Liu et al. 2024, Lost in the Middle**（[TACL](https://aclanthology.org/2024.tacl-1.9/)）
+          - 入力の先頭と末尾は有利だという結果です。E7 では末尾に置くと悪かったので、「異なる」として記録しました。
+        - **Goworek & Dubossarsky 2026**（[LUHME 2026](https://aclanthology.org/2026.luhme-1.17/)）
+          - 実在を確かめました。この研究では、再定義の後ろにある文が効果を変えます。E7 では後ろの定義は効かなかったので、「異なる」として記録しました。
+        - **Stringli et al. 2025**（[Findings of ACL 2025](https://arxiv.org/abs/2502.12821)）
+          - よく知られた定数を再定義させると、大きいモデルほど従わなくなる、という結果です。`h_collision_lowers_following` と同じ向きです。
+        - **WinoDict**（[arXiv:2209.12153](https://arxiv.org/abs/2209.12153)）
+          - 合成した新しい語では精度が落ちました。こちらの `h_new_word_immune`（新しい語は満点）とは逆の結果です。
+        - **Radevski et al. 2026**（[ACL 2026](https://aclanthology.org/2026.acl-long.1435/)）
+          - 合成のための専用トークンで、学習していない組み合わせへの転移を示しました。E4 の修飾の転移と同じ向きです。
+        - **手法の元として記録したもの**
+          - ActAdd（[arXiv:2308.10248](https://arxiv.org/abs/2308.10248)）
+          - CAA（[arXiv:2312.06681](https://arxiv.org/abs/2312.06681)）
+          - Function Vectors（[arXiv:2310.15213](https://arxiv.org/abs/2310.15213)）
+        - **Xu et al. 2024**（[arXiv:2403.08319](https://arxiv.org/abs/2403.08319)）
+          - knowledge conflict（文脈と事前知識の衝突）のサーベイです。`h_collision_lowers_following` と同じ向きです。
+
+        **注意**
+        - 「同じ向き」「異なる」の判断は、要旨から読んだものです。本文は精読していません。
+        - Representation Engineering（Zou et al.）は、論文そのものを検索で確かめられなかったので、今回は入れていません。
+
+        Sources:
+        - [Unable to Forget (arXiv:2506.08184)](https://arxiv.org/abs/2506.08184)
+        - [Lexical Redefinition Reveals Context-Sensitive Instruction Following](https://aclanthology.org/2026.luhme-1.17/)
+        - [Pitfalls of Scale (arXiv:2502.12821)](https://arxiv.org/html/2502.12821v2)
+        - [WinoDict](https://huggingface.co/papers/2209.12153)
+        - [Knowledge Conflicts for LLMs: A Survey](https://arxiv.org/abs/2403.08319v2)
+        - [Lost in the Middle](https://aclanthology.org/2024.tacl-1.9/)
+        - [Activation Addition](https://arxiv.org/abs/2308.10248v4)
+        - [Contrastive Activation Addition](https://arxiv.org/html/2312.06681v4)
+        - [Function Vectors](https://arxiv.org/abs/2310.15213v1)
+        - [Compositional Steering with Steering Tokens](https://aclanthology.org/2026.acl-long.1435/)
+facts:
+- {is: v_say, from: session_model, to: 01M7HZX176HEQ72W0STPMS3XES}
+- {is: exp.v_answer, from: 01M7HZX176HEQ72W0STPMS3XES, to: 01M7HZPQMETXPHN0ACSVWNH4DW}
+- {is: v_refer, from: 01M7HZX176HEQ72W0STPMS3XES, to: exp.prior_work}

@@ -1,0 +1,35 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-16T07:52:19.998Z（UTC）
+individuals:
+  01M7HNFERYWFFFFXRPBGF9KSBT:
+    is: model_utterance
+    display: 発言 762
+    val:
+      order: 762
+      text: |
+        はい、広い意味ではそう言えます。check_spec がやっていることの多くは、型検査器と同じ構造をしています。
+
+        ## 型システムとして見たときの対応
+        - **型** はノード（種類）です。extends が部分型の関係に当たり、`is_a` が部分型の判定です。
+        - **項** は個体と事実です。個体は `is: 種類` で型を付けます。事実 `{is: 動詞, from, to, new}` は、動詞を関数の型として持つ適用のようなものです。
+        - **関数の型** は動詞の from / to / new_kind です。位置の型（spot_type）に、来る種類が当たるかを確かめるのは、引数の型検査そのものです。種類どうしの事実の型検査や、`occupies`（役割は位置を占めることで決まる）がそれに当たります。
+        - **精緻型・限定** は mod（`of / with`）と cmp です。基の型に条件を足して、下位の型を作ります。monotone（降りるたびに限定が増える）は、部分型がきちんと狭くなることの検査です。
+        - **高階・種（kind）の層** は 2 階の kind_collection と v_collect です。collection_level は、型の段を混ぜないための「種の検査」に近いものです。verb_ref は「動詞を受け取る位置」なので、型の上の型を受け取る位置に当たります。
+        - **代数的な構造の検査** は closed_under と op_defined です。閉集合 c の中の型 A, B について、合成 A ⊕ B も c に入ることを確かめます。つまり、演算が型の上で閉じているかの検査で、型クラスのインスタンス検査に似ています。
+
+        ## 普通の型検査器と違うところ
+        - **規則が言語の中にある。** 型付けの規則の多くを ontology.yaml の law_rule として書き、検査器はそれを評価しているだけです。今回の 12 で、Python で手書きしていた部分がさらに減りました。性格としては、Datalog の上に書いた型システムに近いです。
+        - **閉世界で読む。** 書かれていない事実は成り立たないとして読みます。普通の型システムは「導けない＝誤り」ですが、ここでは「書いていない＝偽」を前提に、否定を制約として検査しています。
+        - **型の正しさ以上のものも見ている。** 表示名の向き（part_display_explicit）や、観察が仮説を支持するか（hyp_* の導出）も検査しています。前者は lint、後者は「証明の検査」に近く、型検査とは言いにくい部分です。
+        - **健全性は証明していない。** 型検査器と呼ぶなら「検査を通った体系では何が保証されるか」を言えるべきです。今は、規則が意図どおりに働くことを、わざと誤りを入れて確かめる変異テストで示しているだけです。規則の集まりが何を保証するかは、形式的には示していません。ここを言い過ぎないようにしたいです。
+
+        なので、「CSCL は広い意味の型システムを持ち、check_spec はその型検査器（と lint、証明検査が少し混ざったもの）」という言い方が正確だと思います。
+
+        この見方で整理し直す（たとえば規則を「型付け」「lint」「推論」に分類する）なら、やりますか。
+facts:
+- {is: v_say, from: session_model, to: 01M7HNFERYWFFFFXRPBGF9KSBT}
+- {is: exp.v_answer, from: 01M7HNFERYWFFFFXRPBGF9KSBT, to: 01M7HNF0YFJ86BEBT0873AXNPB}
+- {is: v_refer, from: 01M7HNFERYWFFFFXRPBGF9KSBT, to: syntax.new_kind}
+- {is: v_refer, from: 01M7HNFERYWFFFFXRPBGF9KSBT, to: syntax.kind_collection}
+- {is: v_refer, from: 01M7HNFERYWFFFFXRPBGF9KSBT, to: syntax.v_collect}
+- {is: v_refer, from: 01M7HNFERYWFFFFXRPBGF9KSBT, to: syntax.verb_ref}
+- {is: v_refer, from: 01M7HNFERYWFFFFXRPBGF9KSBT, to: syntax.law_rule}
