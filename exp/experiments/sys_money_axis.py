@@ -14,13 +14,17 @@
 判定: after で errors 0、v_money 0、sales_ok 1、money_has_amount 1、V は before の V から money の組を除いたものと同じ。
   5つとも満たせば「軸の1歩の分化で、money の過大拡張が規則だけで止まった」とする。満たさないものは、その内容を書いて外れとする。
 登録の前に分かっていること: sys_money_unit の before と after。見込み: 5つとも満たす。
+訂正（after を測ったあと）: after は errors 2 で外れた。誤りは「領域のファイルに axes を書けない（grammar.domain にない）」と、
+  そのため yen が軸として読まれず「axis yen は数の軸でない」。操作の前提（領域に軸を書ける）が成り立っていなかった。
+  after の結果はそのまま記録する。次に、領域のファイルにも axes を書けるようにし（grammar.domain と、領域を読むコード）、
+  今の体系の導いた文が変わらないことを確かめてから、同じ操作をして同じ判定で測り直す（引数 after2）。
 
 行（sys_money_axis_before.json / sys_money_axis_after.json）:
   "summary 要約": errors, V, v_money, sales_ok, absorbs_money, money_has_amount
   "V x→y":        1（違反の組の一覧）
 
 使い方:
-  python exp/experiments/sys_money_axis.py before|after
+  python exp/experiments/sys_money_axis.py before|after|after2
 """
 import collections
 import contextlib
@@ -67,5 +71,5 @@ def main(label):
 
 
 if __name__ == "__main__":
-    assert sys.argv[1:] in (["before"], ["after"])
+    assert sys.argv[1:] in (["before"], ["after"], ["after2"])
     main(sys.argv[1])
