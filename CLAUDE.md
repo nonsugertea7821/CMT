@@ -13,6 +13,10 @@
 3. 測って、観察を体系に書き、仮説を `v_support` か `v_contradict` で結ぶ。解釈は commit のメッセージと PR の本文に書く。
 4. ec が通り、状態が支持・反証・mixed のどれかになったら、Draft を外す（確認の合図。承認でもマージでもない）。外れて訂正し、未検証のまま残るなら Draft のまま。
 5. 利用者が確認してマージする。Claude はマージしない。main への push で sync が状態を読み、issue を閉じる。
+   - 例外: ワークフロー auto-merge（`.github/scripts/auto_merge.py`）は、条件を満たす PR を自動でマージする。
+     条件は、範囲の内のファイルだけを触り、状態が未検証から支持か反証になり、事前登録が結果より前にあり、訂正がなく、tc と ec が通ること。
+     訂正・mixed・評価器や文法の変更は手で見る。前提は仮説 `h_auto_merge_uncorrected`。
+   - 自動マージに乗せるため、事前登録の commit はスクリプトだけを触り、結果ファイルは後の commit で足す。
 
 ## 体系のファイル（cscl.yaml, cscl/library, cscl/design, exp/src の yaml）
 - コメントを足さない。定義に効く内容は式で書く。経緯と解釈は commit のメッセージと会話に書く。
