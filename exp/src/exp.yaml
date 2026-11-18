@@ -1909,6 +1909,12 @@ individuals:
   b_example_lowers_followup: {is: item_queued}
   h_contrast_lowers_followup: {is: hyp_untested}
   b_contrast_lowers_followup: {is: item_queued}
+  h_ja_text_needs_prosody: {is: hyp_untested}
+  b_ja_text_needs_prosody: {is: item_queued}
+  h_mod_fixes_prosody: {is: hyp_untested}
+  b_mod_fixes_prosody: {is: item_queued}
+  h_ambiguity_calls_prosody: {is: hyp_untested}
+  b_ambiguity_calls_prosody: {is: item_queued}
 facts:
   - {is: v_collect, from: residual_space, to: residual_vector}
   - {is: v_sum, from: layer_output, to: state_shift, new: shifted_hidden_state}
@@ -5196,3 +5202,9 @@ facts:
   - {is: v_check, from: b_example_lowers_followup, to: h_example_lowers_followup}
   - {is: v_refer, from: h_contrast_lowers_followup, to: {is: v_lower, from: contrast_in_utterance, to: followup_question}}
   - {is: v_check, from: b_contrast_lowers_followup, to: h_contrast_lowers_followup}
+  - {is: v_refer, from: h_ja_text_needs_prosody, to: {is: v_depend, from: lang.ja_text, to: prosodic_phrase}}
+  - {is: v_check, from: b_ja_text_needs_prosody, to: h_ja_text_needs_prosody}
+  - {is: v_refer, from: h_mod_fixes_prosody, to: {is: v_depend, from: prosodic_phrase, to: syntax.mod}}
+  - {is: v_check, from: b_mod_fixes_prosody, to: h_mod_fixes_prosody}
+  - {is: v_refer, from: h_ambiguity_calls_prosody, to: {is: v_depend, from: prosodic_phrase, to: lang.ja_ambiguity}}
+  - {is: v_check, from: b_ambiguity_calls_prosody, to: h_ambiguity_calls_prosody}
