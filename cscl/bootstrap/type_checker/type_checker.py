@@ -1136,7 +1136,7 @@ class Ontology:
                     other = {"from": "to", "to": "from"}.get(pos)
                     if other is None:
                         err(f"{where}: 位置 new には with を付けられない")
-                    elif verb == "ontology.is":   # 「属する」の終点は、種類そのもの（その成員ではない）
+                    elif verb == "ontology.is" and other == "to":   # 「属する」の終点は、種類そのもの（その成員ではない）
                         if m["with"] not in N or not self.is_concept(m["with"]):
                             err(f"{where}: {m['with']} は種類でない")
                     elif self.is_a(self.end(verb, other), "verb_ref"):   # 動詞を受け取る位置: 来るのは動詞そのもの

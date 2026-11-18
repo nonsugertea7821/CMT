@@ -21,13 +21,18 @@
 登録の前に分かっていること: sys_meet（V 6、そのうち verb_ref が 3 組）。
 見込み: 3つとも満たし、V は 3（position→opposite, backlog_item→hypothesis, control_preservation→context_following が残る）。
   opposite も動詞そのものを指すが、この操作では変えない（position も種類の側を指すので、opposite だけ変えても組の意味が定まらない）。
+訂正（after を測ったあと）: after は errors 1 で外れた（V 3、v_verb_ref 0、new_V 0）。誤りは「syntax.verb_ref.mod[0]:
+  ontology.occurrent は種類でない」。型検査が is（属する）の限定を名前で読むところ（「属する」の終点は種類そのもの）が、
+  with が終点の側にあるとき（of: [is, from]）だけでなく、始点の側にあるとき（of: [is, to]。with は成員の種類）にも当てはまっていた。
+  型検査を、with が終点の側にあるときだけに直す（今の体系の導いた文は変わらないことを確かめた）。同じ操作をして、同じ判定で
+  測り直す（引数 after2）。after の結果はそのまま記録する。
 
 行（sys_kind_ref_<引数>.json）:
   "summary 要約": errors, V, v_verb_ref, new_V
   "V x→y":        1
 
 使い方:
-  python exp/experiments/sys_kind_ref.py before|after
+  python exp/experiments/sys_kind_ref.py before|after|after2
 """
 import collections
 import contextlib
@@ -76,5 +81,5 @@ def main(label):
 
 
 if __name__ == "__main__":
-    assert sys.argv[1:] in (["before"], ["after"])
+    assert sys.argv[1:] in (["before"], ["after"], ["after2"])
     main(sys.argv[1])
