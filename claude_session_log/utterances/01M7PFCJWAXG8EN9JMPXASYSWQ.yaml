@@ -1,0 +1,37 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-18T04:42:06.602Z（UTC）
+individuals:
+  01M7PFCJWAXG8EN9JMPXASYSWQ:
+    is: model_utterance
+    display: 発言 1627
+    val:
+      order: 1627
+      text: |
+        h_individual_depth は支持になりました。PR #144 の Draft を外したので、確認してマージしてください。あなたを assign 済みです。文法（syntax.yaml）を変えるので、自動マージの対象にはなりません。
+
+        **やったこと**
+        - 個体の深さを「個体が属する種類とその上位の数」と読みました。これは種類の深さ + 1 にあたります。
+        - 材料は既存の法則の関係 `r_ind_kind` で、`is` から導かれます。sys_count_atom で入れた個数の限定もそのまま使えたので、新しい関係は要りませんでした。
+        - 足したのは法則 2 つ（`deep_end_ind`、`shallow_ends_ind`）だけです。
+        - 手順を先に commit し、before、操作と after、観察の順に commit しました。訂正はありません。
+
+        **結果**
+        - after は登録した判定をすべて満たしました。mismatch 0、未分類 0（個体の端を持つ 14 概念がすべて分類された）、changed 0、extra 0、errors 0、ec_errors 0 です。
+        - 新たに浅いとされたのは 3 概念です。subj.domestic、subj.fruit_category、subj.seafood_category で、端がそれぞれ honshu、tomato、shrimp です。
+
+        **解釈**
+        - 種類の深さは上位（extends）の数で、個体の深さは属する種類（is）の数です。上位関係と所属関係の違いが、数える関係の違いとしてそのまま出ました。
+        - 限界が二つあります。
+          - スクリプトと法則を同じ読みで作ったので、一致はほぼ見込みどおりでした。確かめられたのは、式で書けること、法則の層を壊さないこと、個体の端がすべて分類されることです。
+          - 「+1 するか」は今のデータでは区別できません。どちらの読みでも、14 概念の分類は同じになります。
+
+        **ほかに変えたこと**
+        - CLAUDE.md の流れに「PR では利用者を assignee にする」を足しました。
+
+        次の h_hierarchy_in_object は、このブランチがマージされてから main から切ります。
+facts:
+- {is: v_say, from: session_model, to: 01M7PFCJWAXG8EN9JMPXASYSWQ}
+- {is: exp.v_answer, from: 01M7PFCJWAXG8EN9JMPXASYSWQ, to: 01M7PF3YARP6MEQS0YSTY0GB3N}
+- {is: v_refer, from: 01M7PFCJWAXG8EN9JMPXASYSWQ, to: ontology.is}
+- {is: v_refer, from: 01M7PFCJWAXG8EN9JMPXASYSWQ, to: subj.domestic}
+- {is: v_refer, from: 01M7PFCJWAXG8EN9JMPXASYSWQ, to: subj.fruit_category}
+- {is: v_refer, from: 01M7PFCJWAXG8EN9JMPXASYSWQ, to: subj.seafood_category}
