@@ -1492,6 +1492,17 @@ individuals:
   e4_cond_none: {is: axis_value, val: {text: none}}
   e4_cond_text: {is: axis_value, val: {text: text}}
   e4_cond_vec: {is: axis_value, val: {text: vec}}
+  e23: {is: measurement_family}
+  e23_split: {is: family_axis, val: {text: split}}
+  e23_split_train: {is: axis_value, val: {text: train}}
+  e23_split_test: {is: axis_value, val: {text: test}}
+  e23_cond: {is: family_axis, val: {text: cond}}
+  e23_cond_none: {is: axis_value, val: {text: 'none'}}
+  e23_cond_text: {is: axis_value, val: {text: text}}
+  e23_cond_qual: {is: axis_value, val: {text: qual}}
+  e23_own: {is: measurement_family}
+  e23_own_cond: {is: family_axis, val: {text: cond}}
+  e23_own_cond_own: {is: axis_value, val: {text: own}}
   e22: {is: measurement_family}
   e22_split: {is: family_axis, val: {text: split}}
   e22_split_train: {is: axis_value, val: {text: train}}
@@ -1753,6 +1764,8 @@ individuals:
   o_e7_15_definitions_no_drop: {is: observation}
   o_e4_modifier_transfers_in_converged_pair: {is: observation}
   o_e4_pair1_training_failed: {is: observation}
+  o_e23_own_below_threshold: {is: observation}
+  o_e23_qual_robust_level_zero: {is: observation}
   o_e22_qual_above_none: {is: observation}
   o_e22_qual_robust_above_none: {is: observation}
   o_e8_paraphrase_like_single_layer: {is: observation}
@@ -2283,6 +2296,33 @@ facts:
   - {is: v_filter_of, from: {pair: '{pair}', split: '{split}'}, to: e4}
   - {is: v_entry_of, from: '{cond}', to: e4}
   - {is: v_metric_of, from: e4, to: accuracy}
+  - {is: v_file_of, from: 'e23_Qwen2.5-1.5B-Instruct_L8.json', to: e23}
+  - {is: v_rows_of, from: [items], to: e23}
+  - {is: v_axis_of, from: e23_split, to: e23}
+  - {is: v_value_of, from: e23_split_train, to: e23_split}
+  - {is: v_denote, from: e23_split_train, to: seen_genus}
+  - {is: v_value_of, from: e23_split_test, to: e23_split}
+  - {is: v_denote, from: e23_split_test, to: unseen_genus}
+  - {is: v_axis_of, from: e23_cond, to: e23}
+  - {is: v_value_of, from: e23_cond_none, to: e23_cond}
+  - {is: v_denote, from: e23_cond_none, to: no_channel}
+  - {is: v_value_of, from: e23_cond_text, to: e23_cond}
+  - {is: v_denote, from: e23_cond_text, to: text_injection}
+  - {is: v_denote, from: e23_cond_text, to: definition_text}
+  - {is: v_value_of, from: e23_cond_qual, to: e23_cond}
+  - {is: v_denote, from: e23_cond_qual, to: qualification_vector}
+  - {is: v_filter_of, from: {split: '{split}'}, to: e23}
+  - {is: v_entry_of, from: '{cond}', to: e23}
+  - {is: v_metric_of, from: e23, to: accuracy}
+  - {is: v_metric_of, from: e23, to: order_robust_accuracy}
+  - {is: v_file_of, from: 'e23_Qwen2.5-1.5B-Instruct_L8.json', to: e23_own}
+  - {is: v_rows_of, from: [items], to: e23_own}
+  - {is: v_axis_of, from: e23_own_cond, to: e23_own}
+  - {is: v_value_of, from: e23_own_cond_own, to: e23_own_cond}
+  - {is: v_denote, from: e23_own_cond_own, to: concept_vector}
+  - {is: v_filter_of, from: {split: train}, to: e23_own}
+  - {is: v_entry_of, from: '{cond}', to: e23_own}
+  - {is: v_metric_of, from: e23_own, to: accuracy}
   - {is: v_file_of, from: 'e22_Qwen2.5-1.5B-Instruct_L8.json', to: e22}
   - {is: v_rows_of, from: [items], to: e22}
   - {is: v_axis_of, from: e22_split, to: e22}
@@ -4846,6 +4886,8 @@ facts:
   - {is: v_refer, from: o_e7_15_definitions_no_drop, to: {is: v_near, from: e7.redef.gl15.accuracy, to: e7.redef.sys1.accuracy, new: 0.05}}
   - {is: v_refer, from: o_e4_modifier_transfers_in_converged_pair, to: {is: v_come_after, from: e4.p3.test.vec.accuracy, to: e4.p3.test.text.accuracy}}
   - {is: v_refer, from: o_e4_pair1_training_failed, to: {is: v_near, from: e4.p1.train.vec.accuracy, to: 0.5, new: 0.01}}
+  - {is: v_refer, from: o_e23_own_below_threshold, to: {is: v_come_before, from: e23_own.own.accuracy, to: 0.75}}
+  - {is: v_refer, from: o_e23_qual_robust_level_zero, to: {is: v_near, from: e23.test.qual.order_robust_accuracy, to: 0.0, new: 0.01}}
   - {is: v_refer, from: o_e22_qual_above_none, to: {is: v_come_after, from: e22.test.qual.accuracy, to: e22.test.none.accuracy}}
   - {is: v_refer, from: o_e22_qual_robust_above_none, to: {is: v_come_after, from: e22.test.qual.order_robust_accuracy, to: e22.test.none.order_robust_accuracy}}
   - {is: v_support, from: o_e22_qual_above_none, to: h_qualification_vector_transfers_to_unseen_genus}
