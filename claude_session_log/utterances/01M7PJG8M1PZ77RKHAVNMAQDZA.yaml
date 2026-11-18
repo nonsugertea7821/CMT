@@ -1,0 +1,53 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-18T05:36:32.897Z（UTC）
+individuals:
+  01M7PJG8M1PZ77RKHAVNMAQDZA:
+    is: model_utterance
+    display: 発言 1666
+    val:
+      order: 1666
+      text: |
+        アフィンの類比から仮説を三つ立て、`cscl/design/claims.yaml` に未検証として登録しました。
+        - 中身を表すノードを三つ足しました：`name_choice`（識別子の選び）、`frame_trace`（後の状態の痕跡）、`any_limitation`（何でもを端に持つ限定）。
+        - tc と ec は通っています。
+        - commit 702414b を `claude/model-concept-language-mapping-g0lw1i` に push しました。
+
+        ## 1. `h_renaming_invariant`：same（集合の段）から
+
+        - **中身**：型検査器は識別子の選びに依存しない。
+        - **類比**：Erlangen の見方で、シグネチャはどんな置き換えでも保たれる段（same だけ）です。それより上の名前は、付け替えても判定が変わらないはずです。
+        - **確かめ方**：シグネチャと文法の外の識別子を、一対一に付け替えて型検査を走らせます。誤りが付け替えのとおりに対応するかを見ます。
+        - **ねらい**：CLAUDE.md の「名前で読んでよいのは、シグネチャと文法の語だけ」を、「付け替えても変わらない」という測れる形にしたものです。
+        - **見込み**：今は反証です。前に洗い出した、ontology の名前を読む検査（occurrent、quality、role など）があるためです。`h_placement_in_laws` が支持されれば、こちらも支持に変わるはずです。
+
+        ## 2. `h_w_from_frames`：any が w を決めていないことから
+
+        - **中身**：最上位の置き場は、後の状態の痕跡（フレームの変化）に依存する。
+        - **類比**：静的な座標（修飾）は w のない (x, y) で、持続体と生起体は区別できません。`sys_above_sound` で 941 組に根拠がなかったのがその表れです。w は次の痕跡から決まると読みます。
+          - pre と post を持つ（二つの状態の差、w = 0）→ 生起体
+          - 宣言されて残り続ける（w = 1）→ 持続体
+          - holds だけを持つ → 点でも変位でもない、第三の関係
+        - **`h_tops_derivable` との違い**：あちらは持続体と生起体の二つに分けて判定し、静的な動詞のところで外れました。こちらは静的な動詞を第三の類として分けます。
+
+        ## 3. `h_any_not_vacuous`：any が零の条件という読みから
+
+        - **中身**：何でもを端に持つ限定は、位置の指定（of）に依存する。
+        - **類比の直し**：前の説明で「any は零の条件」と言いましたが、二つの場合を分ける必要がありました。
+          - 値としての any（`from: any` など）は、何も言っていません。
+          - 限定としての any（`{of: [v, 位置], with: any}`）は、「その動詞のその位置に、何かがある」と言っています。
+        - **確かめ方**：with: any の限定ごとに、それを持たない概念があるかを数えます。あれば、限定としての any は空間全体ではなく、射影が空でないという条件です。
+
+        ## 確かめる順番
+
+        1. **`h_any_not_vacuous`**：数えるだけで済み、類比の土台（any の読み）を最初に固められます。
+        2. **`h_w_from_frames`**：`sys_tops` と `sys_verbs` の材料を三つの類で読み直します。
+        3. **`h_renaming_invariant`**：`h_placement_in_laws` と組で、前後を比べるのがよいと思います。
+
+        登録したまだ main に入っていない仮説は、全部で 8 件になりました。内訳は次のとおりです。
+        - `h_above_closed`、`h_above_individual`、`h_placement_in_laws`、`h_above_sound`
+        - 今回の 3 件
+        - `claude/h_above_sound` 側で反証済みの `h_above_sound` は、上の 4 件に含めています。
+
+        登録のブランチの PR を立てて、issue にする段に進めますか？
+facts:
+- {is: v_say, from: session_model, to: 01M7PJG8M1PZ77RKHAVNMAQDZA}
+- {is: exp.v_answer, from: 01M7PJG8M1PZ77RKHAVNMAQDZA, to: 01M7PJCP3296QA5TWHTX7V8W60}
