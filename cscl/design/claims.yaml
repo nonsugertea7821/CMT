@@ -153,8 +153,8 @@ individuals:
   b_prior_claim_ends_resolved: {is: exp.item_queued}
   h_readings_many: {is: exp.hyp_untested}
   b_readings_many: {is: exp.item_queued}
-  h_law_names_grammar: {is: exp.hyp_untested}
-  b_law_names_grammar: {is: exp.item_queued}
+  h_law_names_grammar: {is: exp.hyp_refuted}
+  b_law_names_grammar: {is: exp.item_done}
   h_checker_words_in_grammar: {is: exp.hyp_untested}
   b_checker_words_in_grammar: {is: exp.item_queued}
   h_tops_from_primitives: {is: exp.hyp_supported}
@@ -350,6 +350,9 @@ individuals:
   o_sys_individual_scope_by_kind_undeterminable: {is: exp.observation}
   o_sys_given_laws_with_markers: {is: exp.observation}
   o_sys_given_laws_without_markers: {is: exp.observation}
+  o_sys_law_names_other: {is: exp.observation}
+  o_sys_law_names_law: {is: exp.observation}
+  o_sys_law_names_grammar_words: {is: exp.observation}
   o_sys_reading_ends_resolved_accepted: {is: exp.observation}
   o_sys_reading_ends_resolved_overwritten: {is: exp.observation}
   o_sys_plural_from_asym: {is: exp.observation}
@@ -695,6 +698,10 @@ facts:
   - {is: v_refer, from: o_sys_given_laws_with_markers, to: {is: v_level, from: sys_given_laws_as_rules.n_with_markers.mean_value, to: 4}}
   - {is: v_refer, from: o_sys_given_laws_without_markers, to: {is: v_level, from: sys_given_laws_as_rules.n_without_markers.mean_value, to: 1}}
   - {is: exp.v_contradict, from: o_sys_given_laws_with_markers, to: h_given_laws_as_rules}
+  - {is: v_refer, from: o_sys_law_names_other, to: {is: v_level, from: sys_law_names_grammar.n_other.mean_value, to: 12}}
+  - {is: v_refer, from: o_sys_law_names_law, to: {is: v_level, from: sys_law_names_grammar.n_law.mean_value, to: 10}}
+  - {is: v_refer, from: o_sys_law_names_grammar_words, to: {is: v_level, from: sys_law_names_grammar.n_grammar.mean_value, to: 72}}
+  - {is: exp.v_contradict, from: o_sys_law_names_other, to: h_law_names_grammar}
   - {is: v_refer, from: o_sys_reading_ends_resolved_accepted, to: {is: v_level, from: sys_reading_ends_resolved.n_accepted.mean_value, to: 20}}
   - {is: v_refer, from: o_sys_reading_ends_resolved_overwritten, to: {is: v_level, from: sys_reading_ends_resolved.n_multi_accepted.mean_value, to: 7}}
   - {is: exp.v_contradict, from: o_sys_reading_ends_resolved_accepted, to: h_reading_ends_resolved}
