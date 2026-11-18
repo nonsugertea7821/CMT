@@ -172,6 +172,9 @@ individuals:
   r_verb: {is: law_relation, display: 動詞である}
   r_placed: {is: law_relation, display: 定義から根の下に置かれる}
   r_near: {is: law_relation, display: 上位の下にある別の概念である（見えるかを問わない）}
+  r_pair: {is: law_relation, display: 比べる組である（兄弟か、上位の下にある別の概念）}
+  r_lacks: {is: law_relation, display: 相手の式のどれかを（含意によっても）持たない}
+  r_differ: {is: law_relation, display: どちらかが相手の式のどれかを持たない}
   r_candidate: {is: law_relation, display: 具体的な候補である}
   r_missing: {is: law_relation, display: 候補の式が欠けている}
   r_same_slot: {is: law_relation, display: 同じ動詞の同じ位置の限定である}
@@ -232,6 +235,13 @@ individuals:
   monotone: {is: law_rule, display: 階層を降りるたびに限定が増える}
   parents_unordered: {is: law_rule, display: 上位に並べた2つは、上下の関係にない}
   sees: {is: law_rule, display: 別の概念のうち、自分の領域から見えるものが候補}
+  sibling: {is: law_rule, display: 同じ上位を持つ別の概念は、比べる組}
+  lacks: {is: law_rule, display: 組の相手の式のうち、自分が持たないものがある}
+  pair_near: {is: law_rule, display: 上位の下にある別の概念は、比べる組}
+  pair_back: {is: law_rule, display: 比べる組は向きを問わない}
+  differ_left: {is: law_rule, display: 自分が相手の式を欠くなら、2つは違う}
+  differ_right: {is: law_rule, display: 相手が自分の式を欠くなら、2つは違う}
+  one_name: {is: law_rule, display: 互いに相手の式を（含意によっても）持つ組は、同じものの別の名前なので置かない}
   specific_candidate: {is: law_rule, display: 上位の下にあり、互いに上下でない別の概念}
   qualified_by_neg: {is: law_rule, display: 否定の付いた限定}
   qualified_by_quant: {is: law_rule, display: 数量の付いた限定}
@@ -464,6 +474,26 @@ facts:
   - {is: v_assume, from: parents_unordered, to: {is: r_parent, from: var1, to: var2}}
   - {is: v_assume, from: parents_unordered, to: {is: r_parent, from: var1, to: var3}}
   - {is: v_require, from: parents_unordered, to: {is: r_ancestor, from: var2, to: var3, neg: true}}
+  - {is: v_assume, from: sibling, to: {is: r_parent, from: var1, to: var3}}
+  - {is: v_assume, from: sibling, to: {is: r_parent, from: var2, to: var3}}
+  - {is: v_assume, from: sibling, to: {is: r_concept, from: var1}}
+  - {is: v_assume, from: sibling, to: {is: r_concept, from: var2}}
+  - {is: v_assume, from: sibling, to: {is: same, from: var1, to: var2, neg: true}}
+  - {is: v_derive, from: sibling, to: {is: r_pair, from: var1, to: var2}}
+  - {is: v_assume, from: pair_near, to: {is: r_near, from: var1, to: var2}}
+  - {is: v_derive, from: pair_near, to: {is: r_pair, from: var1, to: var2}}
+  - {is: v_assume, from: pair_back, to: {is: r_near, from: var2, to: var1}}
+  - {is: v_derive, from: pair_back, to: {is: r_pair, from: var1, to: var2}}
+  - {is: v_assume, from: lacks, to: {is: r_pair, from: var1, to: var2}}
+  - {is: v_assume, from: lacks, to: {is: r_acc, from: var2, to: var3}}
+  - {is: v_assume, from: lacks, to: {is: r_has, from: var1, to: var3, neg: true}}
+  - {is: v_derive, from: lacks, to: {is: r_lacks, from: var1, to: var2}}
+  - {is: v_assume, from: differ_left, to: {is: r_lacks, from: var1, to: var2}}
+  - {is: v_derive, from: differ_left, to: {is: r_differ, from: var1, to: var2}}
+  - {is: v_assume, from: differ_right, to: {is: r_lacks, from: var2, to: var1}}
+  - {is: v_derive, from: differ_right, to: {is: r_differ, from: var1, to: var2}}
+  - {is: v_assume, from: one_name, to: {is: r_pair, from: var1, to: var2}}
+  - {is: v_require, from: one_name, to: {is: r_differ, from: var1, to: var2}}
   - {is: v_assume, from: specific_candidate, to: {is: r_parent, from: var1, to: var3}}
   - {is: v_assume, from: specific_candidate, to: {is: r_ancestor, from: var2, to: var3}}
   - {is: v_assume, from: specific_candidate, to: {is: r_concept, from: var1}}
