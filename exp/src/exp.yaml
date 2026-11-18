@@ -1108,6 +1108,31 @@ individuals:
   sys_individual_scope_by_kind_cond_n_kind_ok: {is: axis_value, val: {text: n_kind_ok}}
   sys_individual_scope_by_kind_cond_n_said: {is: axis_value, val: {text: n_said}}
   sys_individual_scope_by_kind_cond_n_determinable: {is: axis_value, val: {text: n_determinable}}
+  sys_reading_ends_resolved: {is: measurement_family}
+  sys_reading_ends_resolved_cond: {is: family_axis, val: {text: cond}}
+  sys_reading_ends_resolved_cond_subject_kind: {is: axis_value, val: {text: subject_kind}}
+  sys_reading_ends_resolved_cond_n_refer: {is: axis_value, val: {text: n_refer}}
+  sys_reading_ends_resolved_cond_mutated: {is: axis_value, val: {text: mutated}}
+  sys_reading_ends_resolved_cond_rejected: {is: axis_value, val: {text: rejected}}
+  sys_reading_ends_resolved_cond_n_formulas: {is: axis_value, val: {text: n_formulas}}
+  sys_reading_ends_resolved_cond_n_mutants: {is: axis_value, val: {text: n_mutants}}
+  sys_reading_ends_resolved_cond_n_rejected: {is: axis_value, val: {text: n_rejected}}
+  sys_reading_ends_resolved_cond_n_accepted: {is: axis_value, val: {text: n_accepted}}
+  sys_reading_ends_resolved_cond_n_unmutated: {is: axis_value, val: {text: n_unmutated}}
+  sys_reading_ends_resolved_cond_n_multi: {is: axis_value, val: {text: n_multi}}
+  sys_reading_ends_resolved_cond_n_multi_accepted: {is: axis_value, val: {text: n_multi_accepted}}
+  sys_plural_from: {is: measurement_family}
+  sys_plural_from_cond: {is: family_axis, val: {text: cond}}
+  sys_plural_from_cond_subject_kind: {is: axis_value, val: {text: subject_kind}}
+  sys_plural_from_cond_from_rejected: {is: axis_value, val: {text: from_rejected}}
+  sys_plural_from_cond_to_rejected: {is: axis_value, val: {text: to_rejected}}
+  sys_plural_from_cond_asym: {is: axis_value, val: {text: asym}}
+  sys_plural_from_cond_n_formulas: {is: axis_value, val: {text: n_formulas}}
+  sys_plural_from_cond_n_from_rejected: {is: axis_value, val: {text: n_from_rejected}}
+  sys_plural_from_cond_n_to_rejected: {is: axis_value, val: {text: n_to_rejected}}
+  sys_plural_from_cond_n_asym: {is: axis_value, val: {text: n_asym}}
+  sys_plural_from_cond_n_top_list_from: {is: axis_value, val: {text: n_top_list_from}}
+  sys_plural_from_cond_n_top_list_to: {is: axis_value, val: {text: n_top_list_to}}
   sys_case_frame_formula: {is: measurement_family}
   sys_case_frame_formula_cond: {is: family_axis, val: {text: cond}}
   sys_case_frame_formula_cond_errors: {is: axis_value, val: {text: errors}}
@@ -4016,6 +4041,58 @@ facts:
   - {is: v_spell, from: sys_individual_scope_by_kind_cond_n_determinable, to: n_determinable}
   - {is: v_entry_of, from: '{cond}', to: sys_individual_scope_by_kind}
   - {is: v_metric_of, from: sys_individual_scope_by_kind, to: mean_value}
+  - {is: v_file_of, from: sys_reading_ends_resolved.json, to: sys_reading_ends_resolved}
+  - {is: v_rows_of, from: [rows], to: sys_reading_ends_resolved}
+  - {is: v_axis_of, from: sys_reading_ends_resolved_cond, to: sys_reading_ends_resolved}
+  - {is: v_value_of, from: sys_reading_ends_resolved_cond_subject_kind, to: sys_reading_ends_resolved_cond}
+  - {is: v_spell, from: sys_reading_ends_resolved_cond_subject_kind, to: subject_kind}
+  - {is: v_value_of, from: sys_reading_ends_resolved_cond_n_refer, to: sys_reading_ends_resolved_cond}
+  - {is: v_spell, from: sys_reading_ends_resolved_cond_n_refer, to: n_refer}
+  - {is: v_value_of, from: sys_reading_ends_resolved_cond_mutated, to: sys_reading_ends_resolved_cond}
+  - {is: v_spell, from: sys_reading_ends_resolved_cond_mutated, to: mutated}
+  - {is: v_value_of, from: sys_reading_ends_resolved_cond_rejected, to: sys_reading_ends_resolved_cond}
+  - {is: v_spell, from: sys_reading_ends_resolved_cond_rejected, to: rejected}
+  - {is: v_value_of, from: sys_reading_ends_resolved_cond_n_formulas, to: sys_reading_ends_resolved_cond}
+  - {is: v_spell, from: sys_reading_ends_resolved_cond_n_formulas, to: n_formulas}
+  - {is: v_value_of, from: sys_reading_ends_resolved_cond_n_mutants, to: sys_reading_ends_resolved_cond}
+  - {is: v_spell, from: sys_reading_ends_resolved_cond_n_mutants, to: n_mutants}
+  - {is: v_value_of, from: sys_reading_ends_resolved_cond_n_rejected, to: sys_reading_ends_resolved_cond}
+  - {is: v_spell, from: sys_reading_ends_resolved_cond_n_rejected, to: n_rejected}
+  - {is: v_value_of, from: sys_reading_ends_resolved_cond_n_accepted, to: sys_reading_ends_resolved_cond}
+  - {is: v_spell, from: sys_reading_ends_resolved_cond_n_accepted, to: n_accepted}
+  - {is: v_value_of, from: sys_reading_ends_resolved_cond_n_unmutated, to: sys_reading_ends_resolved_cond}
+  - {is: v_spell, from: sys_reading_ends_resolved_cond_n_unmutated, to: n_unmutated}
+  - {is: v_value_of, from: sys_reading_ends_resolved_cond_n_multi, to: sys_reading_ends_resolved_cond}
+  - {is: v_spell, from: sys_reading_ends_resolved_cond_n_multi, to: n_multi}
+  - {is: v_value_of, from: sys_reading_ends_resolved_cond_n_multi_accepted, to: sys_reading_ends_resolved_cond}
+  - {is: v_spell, from: sys_reading_ends_resolved_cond_n_multi_accepted, to: n_multi_accepted}
+  - {is: v_entry_of, from: '{cond}', to: sys_reading_ends_resolved}
+  - {is: v_metric_of, from: sys_reading_ends_resolved, to: mean_value}
+  - {is: v_file_of, from: sys_plural_from.json, to: sys_plural_from}
+  - {is: v_rows_of, from: [rows], to: sys_plural_from}
+  - {is: v_axis_of, from: sys_plural_from_cond, to: sys_plural_from}
+  - {is: v_value_of, from: sys_plural_from_cond_subject_kind, to: sys_plural_from_cond}
+  - {is: v_spell, from: sys_plural_from_cond_subject_kind, to: subject_kind}
+  - {is: v_value_of, from: sys_plural_from_cond_from_rejected, to: sys_plural_from_cond}
+  - {is: v_spell, from: sys_plural_from_cond_from_rejected, to: from_rejected}
+  - {is: v_value_of, from: sys_plural_from_cond_to_rejected, to: sys_plural_from_cond}
+  - {is: v_spell, from: sys_plural_from_cond_to_rejected, to: to_rejected}
+  - {is: v_value_of, from: sys_plural_from_cond_asym, to: sys_plural_from_cond}
+  - {is: v_spell, from: sys_plural_from_cond_asym, to: asym}
+  - {is: v_value_of, from: sys_plural_from_cond_n_formulas, to: sys_plural_from_cond}
+  - {is: v_spell, from: sys_plural_from_cond_n_formulas, to: n_formulas}
+  - {is: v_value_of, from: sys_plural_from_cond_n_from_rejected, to: sys_plural_from_cond}
+  - {is: v_spell, from: sys_plural_from_cond_n_from_rejected, to: n_from_rejected}
+  - {is: v_value_of, from: sys_plural_from_cond_n_to_rejected, to: sys_plural_from_cond}
+  - {is: v_spell, from: sys_plural_from_cond_n_to_rejected, to: n_to_rejected}
+  - {is: v_value_of, from: sys_plural_from_cond_n_asym, to: sys_plural_from_cond}
+  - {is: v_spell, from: sys_plural_from_cond_n_asym, to: n_asym}
+  - {is: v_value_of, from: sys_plural_from_cond_n_top_list_from, to: sys_plural_from_cond}
+  - {is: v_spell, from: sys_plural_from_cond_n_top_list_from, to: n_top_list_from}
+  - {is: v_value_of, from: sys_plural_from_cond_n_top_list_to, to: sys_plural_from_cond}
+  - {is: v_spell, from: sys_plural_from_cond_n_top_list_to, to: n_top_list_to}
+  - {is: v_entry_of, from: '{cond}', to: sys_plural_from}
+  - {is: v_metric_of, from: sys_plural_from, to: mean_value}
   - {is: v_file_of, from: sys_layers_exists_change.json, to: sys_layers_exists_change}
   - {is: v_rows_of, from: [rows], to: sys_layers_exists_change}
   - {is: v_axis_of, from: sys_layers_exists_change_cond, to: sys_layers_exists_change}

@@ -145,10 +145,10 @@ individuals:
   b_given_laws_as_rules: {is: exp.item_queued}
   h_individual_scope_by_kind: {is: exp.hyp_refuted}
   b_individual_scope_by_kind: {is: exp.item_done}
-  h_plural_from: {is: exp.hyp_untested}
-  b_plural_from: {is: exp.item_queued}
-  h_reading_ends_resolved: {is: exp.hyp_untested}
-  b_reading_ends_resolved: {is: exp.item_queued}
+  h_plural_from: {is: exp.hyp_refuted}
+  b_plural_from: {is: exp.item_done}
+  h_reading_ends_resolved: {is: exp.hyp_refuted}
+  b_reading_ends_resolved: {is: exp.item_done}
   h_prior_claim_ends_resolved: {is: exp.hyp_untested}
   b_prior_claim_ends_resolved: {is: exp.item_queued}
   h_readings_many: {is: exp.hyp_untested}
@@ -346,6 +346,12 @@ individuals:
   o_sys_layers_unhardcode_rename: {is: exp.observation}
   o_sys_individual_scope_by_kind_named: {is: exp.observation}
   o_sys_individual_scope_by_kind_undeterminable: {is: exp.observation}
+  o_sys_reading_ends_resolved_accepted: {is: exp.observation}
+  o_sys_reading_ends_resolved_overwritten: {is: exp.observation}
+  o_sys_plural_from_asym: {is: exp.observation}
+  o_sys_plural_from_from_rejected: {is: exp.observation}
+  o_sys_plural_from_to_rejected: {is: exp.observation}
+  o_sys_plural_from_top_list_from: {is: exp.observation}
   o_sys_layers_neg_dual_violations: {is: exp.observation}
   o_sys_layers_neg_dual_movable: {is: exp.observation}
   o_sys_layers_neg_dual_errors: {is: exp.observation}
@@ -680,6 +686,14 @@ facts:
   - {is: v_refer, from: o_sys_individual_scope_by_kind_named, to: {is: v_level, from: sys_individual_scope_by_kind.n_accepted.mean_value, to: 428}}
   - {is: v_refer, from: o_sys_individual_scope_by_kind_undeterminable, to: {is: v_level, from: sys_individual_scope_by_kind.n_determinable.mean_value, to: 4}}
   - {is: exp.v_contradict, from: o_sys_individual_scope_by_kind_named, to: h_individual_scope_by_kind}
+  - {is: v_refer, from: o_sys_reading_ends_resolved_accepted, to: {is: v_level, from: sys_reading_ends_resolved.n_accepted.mean_value, to: 20}}
+  - {is: v_refer, from: o_sys_reading_ends_resolved_overwritten, to: {is: v_level, from: sys_reading_ends_resolved.n_multi_accepted.mean_value, to: 7}}
+  - {is: exp.v_contradict, from: o_sys_reading_ends_resolved_accepted, to: h_reading_ends_resolved}
+  - {is: v_refer, from: o_sys_plural_from_asym, to: {is: v_level, from: sys_plural_from.n_asym.mean_value, to: 175}}
+  - {is: v_refer, from: o_sys_plural_from_from_rejected, to: {is: v_level, from: sys_plural_from.n_from_rejected.mean_value, to: 307}}
+  - {is: v_refer, from: o_sys_plural_from_to_rejected, to: {is: v_level, from: sys_plural_from.n_to_rejected.mean_value, to: 132}}
+  - {is: v_refer, from: o_sys_plural_from_top_list_from, to: {is: v_level, from: sys_plural_from.n_top_list_from.mean_value, to: 113}}
+  - {is: exp.v_contradict, from: o_sys_plural_from_asym, to: h_plural_from}
   - {is: v_refer, from: o_sys_layers_neg_dual_violations, to: {is: v_level, from: sys_layers_neg_dual.n_violations.mean_value, to: 0}}
   - {is: v_refer, from: o_sys_layers_neg_dual_movable, to: {is: v_level, from: sys_layers_neg_dual.movable.mean_value, to: 1.0}}
   - {is: v_refer, from: o_sys_layers_neg_dual_errors, to: {is: v_level, from: sys_layers_neg_dual.errors.mean_value, to: 0}}
