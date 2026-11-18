@@ -1,0 +1,201 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-18T01:20:47.881Z（UTC）
+individuals:
+  01M7P3VZ89W7B45ZH7NTC2VM84:
+    is: session_summary
+    display: 発言 1443
+    val:
+      order: 1443
+      text: |
+        This session is being continued from a previous conversation that ran out of context. The summary below covers the earlier portion of the conversation.
+
+        <system-reminder>
+        <tools-used-before-summary>AskUserQuestion, Bash, Edit, Grep, Read, ReadNotifications, Skill, TaskStop, ToolSearch, WebFetch, WebSearch, Write, mcp__claude-code-remote__create_trigger, mcp__claude-code-remote__delete_trigger, mcp__claude-code-remote__get_trigger, mcp__claude-code-remote__read_documentation, mcp__claude-code-remote__send_later, mcp__claude-code-remote__subscribe_pr_activity, mcp__claude-code-remote__update_trigger, mcp__github__actions_get, mcp__github__actions_list, mcp__github__add_issue_comment, mcp__github__create_pull_request, mcp__github__get_job_logs, mcp__github__issue_write, mcp__github__list_issues, mcp__github__list_pull_requests, mcp__github__pull_request_read, mcp__github__update_pull_request</tools-used-before-summary>
+        </system-reminder>
+        Summary:
+        1. Primary Request and Intent
+
+        **Standing rules (still in force)**
+        - Repo nonsugertea7821/CMT at /home/user/CMT. Reply in Japanese. Don't overclaim.
+        - Never use `git checkout` to restore files. Restore with `git show HEAD:f > f`. No stash, no checkout of old commits. Switching branches with `git switch` was used.
+        - Run only one model process at a time. Python is /home/user/venv/bin/python.
+        - No background keep-alive loops.
+        - The environment's stop hook requires commits to be pushed.
+        - Commit trailer:
+          ```
+          Co-Authored-By: Claude [モデル名を伏せた] <[メールアドレスを伏せた]>
+          Claude-Session: https://claude.ai/code/session_015KRKt6TNJZ7ZsQmEknANXK
+          ```
+        - Branches:
+          - Main work on claude/cross: `git push -q origin claude/cross`.
+          - Session log on claude/session-log.
+        - PRs: create only when asked; assign nonsugertea7821; body ends with the 🤖 Generated with Claude Code line plus the session URL. Leave no problems on a PR.
+        - No personal info in issues or pushed artifacts (email redacted). No model identifiers in pushed artifacts or commit messages except the trailer. Outward-facing actions need confirmation.
+        - exp changes must not affect tc. Results JSON and exp scripts need `git add -f`.
+        - Preregistration: commit the procedure before running; disclose corrections; tables are deduced from observation.
+        - "ciはgithub側に任せて": don't run the CI checks locally.
+
+        **User principles**
+        - Deduce from observation.
+        - Laws must be formula-detectable.
+        - Grammar is defined by syntax; code only translates.
+        - Name-dispatch only for signature and grammar words.
+        - Ideally, decisions themselves are induced by rules.
+
+        **User requests this period**
+        - Hook automation of the session log: hook auto-pushes; log stays on the separate branch. Done.
+        - "個人情報が混ざると怖いからそこだけフィルターしといてもいいかも？…記録するかClaude側で選んでもいいかも。セーフガード的な。" Done.
+        - "本題に戻ろうか", then "進めて": run the preregistered observation of the 9 specific violations. In progress.
+
+        2. Key Technical Concepts
+
+        **Session-log hook**
+        - Stop hook with `asyncRewake: true`: async; exit 2 wakes Claude with stderr.
+        - Builds in the worktree `.git/session-log-worktree`, guarded by an flock on `.git/session-log.lock`.
+        - Retry loop up to 3 times: fetch, reset --hard origin, build, commit, push.
+
+        **build.py behavior**
+        - Incremental build: existing ULID files are never rewritten or deleted.
+        - `order` continues from the max found by `ORDER = re.compile(r"^(?:    val: \{|      )order: (\d+)", re.M)`.
+        - Always redacted:
+          - SECRET: private key blocks, sk-, gh[pousr]_, github_pat_, xox, AKIA, AIza, Bearer, token=[秘密の文字列を伏せた]
+          - MAIL, CARD, PHONE (JP formats)
+          - MODEL (model names)
+        - SUSPECT words cause a hold: 住所, 本名, 氏名, 生年月日, 誕生日, 電話番号, 携帯番号, パスワード, 暗証番号, 口座, マイナンバー, 保険証, 免許証, 旅券, パスポート, クレジットカード, 〒, `\d{3}-\d{4}`, password, passwd, address, phone.
+        - SUSPECT is matched on text with `[…を伏せた]` markers removed.
+        - Held utterances are not written; build exits 2.
+        - `decisions.yaml` holds `{ULID: {decision: keep|withhold, reason}}`. Withheld utterances are skipped and are not v_answer targets.
+
+        **Law machinery**
+        - `tc.build()` → `T, O, _`.
+        - `F = tc.Facts(T.syntax_facts())`; `tc.evaluate(tc.law_rules(O), F, tc.variables(O))` adds derived facts into `F.by[rel]`.
+        - Relation directions:
+          - `r_ancestor(a, b)`: b is an ancestor of a.
+          - `r_parent(a, b)`: b is the parent of a.
+          - `r_candidate(x, y)`: x should go under y.
+        - Violation of specific under r_has: every `r_acc(y, m)` has `r_has(x, m)`, so "missing" is empty by definition.
+
+        3. Files and Code Sections
+
+        **claude_session_log/build.py (branch claude/session-log, edited in the worktree)**
+        - Usage:
+          - `build.py <transcript>` or `build.py -` (stdin hook JSON)
+          - `build.py --decide ULID keep|withhold reason`
+          - `build.py --pending <transcript>`
+        - The header comment documents the redaction and hold rules.
+        - The domain yaml header now reads: "発言を、原文と事実で持つ（伏せた所と、差し控えた発言を除く）".
+        - Commits: 87e376e (incremental), 341482f (PII/hold plus order fix).
+
+        **.claude/hooks/session_log.sh (claude/cross)**
+        - Modes:
+          - Default: Stop, reading stdin JSON.
+          - `--decide <ULID> keep|withhold <reason>`
+          - `--pending`: finds the transcript via `$HOME/.claude/projects/*/$CLAUDE_CODE_SESSION_ID.jsonl`.
+        - The Claude-Session trailer is built from `CLAUDE_CODE_REMOTE_SESSION_ID` (`cse_` replaced with `session_`).
+        - On exit 2 from build, it prints the build's stderr and exits 2. All other failures exit 0.
+
+        **.claude/settings.json (claude/cross)**
+        ```json
+        {"hooks":{"Stop":[{"hooks":[{"type":"command","command":"\"$CLAUDE_PROJECT_DIR\"/.claude/hooks/session_log.sh","timeout":600,"asyncRewake":true}]}]}}
+        ```
+        - Commits: 2e7a334, 55d48f9.
+
+        **exp/experiments/sys_specific.py (claude/cross, preregistered in 4cefbcd)**
+        - Groups:
+          - V = violation pairs: `acc[y] <= has[x] and not acc[y] <= acc[x]`; `E = acc[y] - acc[x]`; L = entailing pairs from acc[x].
+          - C = concept pairs where y is an ancestor of x and some `own(x)` formula m' has `r_entail(m', m)` with m in `acc(y)`.
+        - Flags per pair: defined_by_refined, independent_slot, same_domain, y_has_concept_child, hops, n.
+        - Criterion: a flag that is 1 in all V and ≤10% in C (or the reverse: 0 in all V and ≥90% in C) becomes a law candidate. Otherwise the conclusion is "区別できない".
+        - Output: `exp/experiments/results/sys_specific.json` with `{"rev", "rows"}` and a "summary 要約" row.
+
+        **cscl/library/syntax/syntax.yaml**
+        - Unchanged. Line 586 carries the comment about the 9 violations.
+
+        4. Errors and fixes
+        - Regex-based ORDER missed flow-style lines, so `order` duplicated 1417–1419 and 1424. Fixed the regex and renumbered all files by (ULID time, order); 10 files changed.
+        - SUSPECT matched redaction markers such as "[電話番号を伏せた]". Fixed by stripping markers before matching.
+        - `time` is not available in the shell; ran without it.
+        - My own replies that named the hold words were held twice; both were decided keep (one decision is commit 17bf833). I will avoid writing those words verbatim in replies.
+        - The initial plan's item 1 was always empty by definition; corrected in the prereg text.
+
+        5. Problem Solving
+        - Hook automation and the PII safeguard work. They were tested with a fake transcript and fired live in this session.
+        - Existing log scan:
+          - No redaction hits.
+          - 2 SUSPECT hits, both domain-modeling examples (口座, 住所); kept.
+        - The 9 specific violations under r_has were reconfirmed:
+          - subj.days_overdue→subj.money, subj.hour→subj.money
+          - subj.plan→syntax.verb_ref, runtime.run→syntax.verb_ref, subj.attendance→syntax.verb_ref
+          - syntax.position→syntax.opposite
+          - subj.height→subj.age
+          - exp.backlog_item→std.hypothesis
+          - exp.control_preservation→exp.context_following
+        - sys_specific result: V 9, C 33.
+
+          | Flag | V | C |
+          |---|---|---|
+          | defined_by_refined | 6 | 28 |
+          | independent_slot | 0 | 0 |
+          | same_domain | 5 | 15 |
+          | y_has_concept_child | 7 | 33 |
+
+        - hops: V {1:6, 2:2, 3:1}, C {1:25, 2:7, 3:1}. n = 1 for all V pairs.
+        - No flag meets the criterion. Conclusion: "今の式では区別できない" (matches the preregistered expectation).
+        - V pairs with defined_by_refined = 0: days_overdue, height, hour. V pairs with y_has_concept_child = 0: height→age, position→opposite.
+
+        6. All user messages (this period)
+        - "個人情報が混ざると怖いからそこだけフィルターしといてもいいかも？　入れることないだろうけど / というか、記録するかClaude側で選んでもいいかも。セーフガード的な。"
+        - "本題に戻ろうか"
+        - "進めて"
+        - Earlier messages are in the previous summary, for example "フックで記録を自動化出来る？" with answers "フックが自動で push (Recommended)" and "記録は別ブランチのまま".
+
+        7. Pending Tasks
+        - Record the sys_specific result:
+          - Commit the results JSON with `git add -f`.
+          - Add exp.yaml measurement_family entries (sys_specific, axis cond values, v_file_of, etc.), following the pattern of da36571.
+          - Add claims.yaml observations, with the commit-of-prereg note (4cefbcd) and the result. Add facts like `v_refer … v_level/v_come_before … mean_value`.
+          - Push to claude/cross.
+        - Then report to the user. The next step per the prereg is to move name-only distinctions into formulas: work out which formula each of the 9 pairs lacks.
+        - Other pending items from earlier: not/all semantics, after/step, signature core.
+        - When the session-log hook holds an utterance, decide keep or withhold.
+
+        8. Current Work
+        - Ran `python exp/experiments/sys_specific.py` after committing the prereg (4cefbcd) and inspected the V rows.
+        - I was looking at how commit da36571 recorded an observation in cscl/design/claims.yaml and exp/src/exp.yaml, to record sys_specific the same way.
+        - The results file `exp/experiments/results/sys_specific.json` exists but is not yet committed.
+
+        9. Optional Next Step
+        - Record the sys_specific observation (JSON, exp.yaml family entries, claims.yaml observation with the preregistration note and result), commit, and push to claude/cross.
+        - Then report in Japanese:
+          - The preregistered criterion found no distinguishing flag, so the 9 pairs are indistinguishable by current formulas.
+          - Per the prereg, the next step is "名前にしかない区別を式に移す話（どんな式が足りないのか）".
+        - This continues the user's "進めて" on the plan I proposed: "2 が違反の9件で起き、普通の上下関係でほとんど起きなければ、それを法則にします。…9件と普通の上下関係を分けられなければ、式からは区別できないと結論します。そのときは、名前にしかない区別を式に移す話（どんな式が足りないのか）に進みます。"
+
+        If you need specific details from before compaction (like exact code snippets, error messages, or content you generated), read the full transcript at: /root/.claude/projects/-home-user-CMT/e05d2140-ce91-515f-a5fb-e6251e13d406.jsonl
+        Continue the conversation from where it left off without asking the user any further questions. Resume directly — do not acknowledge the summary, do not recap what was happening, do not preface with "I'll continue" or similar. Pick up the last task as if the break never happened.
+
+        The messages after this summary are the most recent messages from before compaction, kept verbatim. The summary was written without seeing them, so something it says has not happened yet may already have happened in them.
+facts:
+- {is: v_say, from: session_model, to: 01M7P3VZ89W7B45ZH7NTC2VM84}
+- {is: v_refer, from: 01M7P3VZ89W7B45ZH7NTC2VM84, to: subj.order}
+- {is: v_refer, from: 01M7P3VZ89W7B45ZH7NTC2VM84, to: exp.v_answer}
+- {is: v_refer, from: 01M7P3VZ89W7B45ZH7NTC2VM84, to: subj.days_overdue}
+- {is: v_refer, from: 01M7P3VZ89W7B45ZH7NTC2VM84, to: subj.money}
+- {is: v_refer, from: 01M7P3VZ89W7B45ZH7NTC2VM84, to: subj.hour}
+- {is: v_refer, from: 01M7P3VZ89W7B45ZH7NTC2VM84, to: subj.plan}
+- {is: v_refer, from: 01M7P3VZ89W7B45ZH7NTC2VM84, to: syntax.verb_ref}
+- {is: v_refer, from: 01M7P3VZ89W7B45ZH7NTC2VM84, to: runtime.run}
+- {is: v_refer, from: 01M7P3VZ89W7B45ZH7NTC2VM84, to: subj.attendance}
+- {is: v_refer, from: 01M7P3VZ89W7B45ZH7NTC2VM84, to: syntax.position}
+- {is: v_refer, from: 01M7P3VZ89W7B45ZH7NTC2VM84, to: syntax.opposite}
+- {is: v_refer, from: 01M7P3VZ89W7B45ZH7NTC2VM84, to: subj.height}
+- {is: v_refer, from: 01M7P3VZ89W7B45ZH7NTC2VM84, to: subj.age}
+- {is: v_refer, from: 01M7P3VZ89W7B45ZH7NTC2VM84, to: exp.backlog_item}
+- {is: v_refer, from: 01M7P3VZ89W7B45ZH7NTC2VM84, to: std.hypothesis}
+- {is: v_refer, from: 01M7P3VZ89W7B45ZH7NTC2VM84, to: exp.control_preservation}
+- {is: v_refer, from: 01M7P3VZ89W7B45ZH7NTC2VM84, to: exp.context_following}
+- {is: v_refer, from: 01M7P3VZ89W7B45ZH7NTC2VM84, to: exp.measurement_family}
+- {is: v_refer, from: 01M7P3VZ89W7B45ZH7NTC2VM84, to: exp.v_file_of}
+- {is: v_refer, from: 01M7P3VZ89W7B45ZH7NTC2VM84, to: ontology.v_refer}
+- {is: v_refer, from: 01M7P3VZ89W7B45ZH7NTC2VM84, to: ontology.v_level}
+- {is: v_refer, from: 01M7P3VZ89W7B45ZH7NTC2VM84, to: ontology.v_come_before}
+- {is: v_refer, from: 01M7P3VZ89W7B45ZH7NTC2VM84, to: exp.mean_value}
