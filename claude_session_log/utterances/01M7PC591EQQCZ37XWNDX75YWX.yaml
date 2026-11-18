@@ -1,0 +1,29 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-18T03:45:41.422Z（UTC）
+individuals:
+  01M7PC591EQQCZ37XWNDX75YWX:
+    is: model_utterance
+    display: 発言 1548
+    val:
+      order: 1548
+      text: |
+        手順2として exp/src のコメント 64 行（exp.yaml 56 行、subj.yaml 8 行）を消し、claude/cross に push しました（ccf9772）。前の commit で「e. 式化の候補」とした分類の訂正も、同じ commit メッセージに書きました。
+
+        - **変わらなかったもの:** どちらのファイルも、yaml を読んだ結果は消す前と同じでした。導いた事実も 231306 件で、前後のハッシュが一致しました。型検査の誤りは 0 です。
+        - **消したものの中身:** ほとんどは見出しと書き方の説明です。残りの内訳はこうです。
+          - すでに式があるもの（3 件）
+          - 経緯
+          - 数式の記法への翻訳（h' = h ⊕ v など）
+          - コードの説明（1 件）
+        - **式化の候補として残ったもの:** 2つです。
+          - gloss: continuant、occurrent、any の3つが持っています。型検査器が名前で許しているだけで、式からは導けていません。
+          - signature の any と self: 「any は在らないものも含む」ことと、否定の限定の意味。今は検査器のコードが与えています。
+
+        **残りの手順**
+        - 手順3: claims.yaml のコメント 277 行。中身は経緯と解釈が大半です。消すだけなら手順1・2と同じで、事実は変わりません。ただ、claims は観察と仮説の記録なので、解釈を git の履歴だけに残してよいかは判断が要ります。新しく足す分を commit と会話に書くことは、すでに決めています。
+        - cscl.yaml のコメント 14 行もまだ残っています。
+        - 手順4: hook を「足させない」から「全面禁止」に切り替えます。手順3とその 14 行が済めば、ファイル全体でコメント 0 を検査できます。
+
+        claims は消すだけで進めてよいですか？
+facts:
+- {is: v_say, from: session_model, to: 01M7PC591EQQCZ37XWNDX75YWX}
+- {is: exp.v_answer, from: 01M7PC591EQQCZ37XWNDX75YWX, to: 01M7PC3G62X6K9TNEGR5GB00EA}
