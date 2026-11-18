@@ -14,6 +14,8 @@
   absorbs(y)   = 概念 x の数。x ≠ y、x と y はどちらも相手の祖先でない、r_acc(y, ·) が空でなく、
                  r_acc(y, m) のすべての m に r_has(x, m) がある（x は y の定義を満たすのに、y の下にない）。
   seen(y)      = y が、sys_specific の V または C の組の上の側に出たことがある（見たことのある概念）。
+訂正（登録のあと、結果を見る前）: 一度走らせたところ、with の終点に個体（例 this_design）が来る式があり、
+  祖先を数えられずに止まった（結果は出ていない）。終点がノードでない（個体の）ものは、深さの計算から除く。
 判定: absorbs(y) が 1 以上の概念の割合を、shallow の概念と、そうでない概念で比べる。
   shallow の割合が、そうでない概念の割合の 3 倍以上で、かつ seen でない概念だけで数えても 3 倍以上なら、
   「過大拡張の予測は当たった（法則の候補）」とする。全体では 3 倍以上で、seen を除くと届かなければ
@@ -67,7 +69,7 @@ def main():
                 seen_y.add(k[2:].split("→")[1])
     rows = {}
     for y in sorted(concept):
-        ds = [len(T.ancestors(e)) for m in own[y] for e in with_[m]]
+        ds = [len(T.ancestors(e)) for m in own[y] for e in with_[m] if e in T.N]
         if not ds:
             continue
         ab = 0
