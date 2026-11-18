@@ -1935,6 +1935,8 @@ individuals:
   b_model_attachment_differs: {is: item_queued}
   h_writing_depends_checker: {is: hyp_untested}
   b_writing_depends_checker: {is: item_queued}
+  h_qualification_depends_above: {is: hyp_untested}
+  b_qualification_depends_above: {is: item_queued}
 facts:
   - {is: v_collect, from: residual_space, to: residual_vector}
   - {is: v_sum, from: layer_output, to: state_shift, new: shifted_hidden_state}
@@ -5242,3 +5244,5 @@ facts:
   - {is: v_check, from: b_model_attachment_differs, to: h_model_attachment_differs}
   - {is: v_refer, from: h_writing_depends_checker, to: {is: v_depend, from: formalization_accuracy, to: lang.type_checker}}
   - {is: v_check, from: b_writing_depends_checker, to: h_writing_depends_checker}
+  - {is: v_refer, from: h_qualification_depends_above, to: {is: v_depend, from: qualification_vector, to: lang.above_order}}
+  - {is: v_check, from: b_qualification_depends_above, to: h_qualification_depends_above}
