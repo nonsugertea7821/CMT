@@ -44,6 +44,16 @@
   - main の今の V は 3（sys_kind_ref after2 の後、ほかの操作で変わっていない見込み。before で測る）。
 見込み: errors 0、ec_errors 0、mismatch 0。new_V は 0 でなく、ほとんどが new_V_deep（反証）。r_candidate を導く法則（sees）に
   ほかの条件があれば new_V は小さくなる。
+訂正（after を測ったあと。after は外れ: errors 1, ec_errors 1。結果はそのまま記録した）:
+  誤りは「base: above に法則がない」。型検査器は、体系の行為でない2項の基礎の関係が、どれかの法則に現れることを求める。
+  操作では above を動詞の holds にだけ置き、法則は r_ancestor を数えていた。上位の関係を基礎の関係にするという意図からは、
+  階層を基礎の関係へ訳す法則があり、深さの限定はその基礎の関係を数えるのが筋。操作に次を足し、has_by_depth を直す:
+       above_by_ancestor: {is: law_rule, display: 祖先は上位である}
+       - {is: v_assume, from: above_by_ancestor, to: {is: r_ancestor, from: var1, to: var2}}
+       - {is: v_derive, from: above_by_ancestor, to: {is: above, from: var1, to: var2}}
+     has_by_depth の r_ancestor の原子を、above の原子 {is: above, from: var1, to: var3, at: {count: {gt: 2}}} に替える。
+  同じ判定で測り直す（引数 after2。new_V は before と比べる）。after で見えた数（mismatch 0, new_V 0）は、登録した見込み
+  （反証）と違った。この訂正は見えた数に合わせたものではなく、誤りの内容から決めた。
 
 行（sys_hierarchy_object_<引数>.json）:
   "summary 要約": errors, ec_errors, deep_script, deep_law, mismatch, V, new_V, new_V_deep
@@ -51,7 +61,7 @@
   "mismatch x":   law（0 か 1）, script（0 か 1）
 
 使い方:
-  python exp/experiments/sys_hierarchy_object.py before|after
+  python exp/experiments/sys_hierarchy_object.py before|after|after2
 """
 import collections
 import contextlib
@@ -121,5 +131,5 @@ def main(label):
 
 
 if __name__ == "__main__":
-    assert sys.argv[1:] in (["before"], ["after"])
+    assert sys.argv[1:] in (["before"], ["after"], ["after2"])
     main(sys.argv[1])
