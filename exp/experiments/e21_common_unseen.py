@@ -17,6 +17,10 @@ m を、設問の中で各項目の defs の語が現れたトークン位置に
   nonspecific  common − none ≥ 0.10 だが common − rand < 0.10（向きに依らないずれの効果）
   群ごと（G1, G3, G4）の値も記録するが、判定は ALL で行う。
 
+訂正（実行の後に書き足す）:
+  上と PR の本文で「51 項目」と書いたのは数え違いで、G1・G3・G4 は 19 + 8 + 4 = 31 項目。
+  判定の式（ALL で比べる）と閾値は変えていない。コードも変えていない。
+
 使い方:
   python e21_common_unseen.py --model Qwen/Qwen2.5-1.5B-Instruct
 """
