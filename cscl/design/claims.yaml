@@ -35,6 +35,13 @@ nodes:
   top_placement: {display: 最上位の置き場, extends: quality, mod: syntax.refer_from_occurrent}
   individual_depth: {display: 個体の深さ, extends: quality, mod: {of: [v_depend, from], with: kind}}
   depth_limitation: {display: 深さの限定, extends: quality, mod: {of: [v_refer, from], with: syntax.mod}}
+  above_order: {display: 上位の順序, extends: quality, mod: {of: [v_refer, from], with: syntax.v_above}}
+  placement_by_above: {display: 上位で決まる置き場, extends: quality, mod: {of: [v_depend, from], with: above_order}}
+  above_falsity: {display: 上位の偽, extends: quality, mod: {of: [v_refer, from], with: syntax.v_above, neg: true}}
+  mod_lack: {display: 修飾の欠け, extends: quality, mod: {of: [v_refer, from], with: syntax.mod, neg: true}}
+  name_choice: {display: 識別子の選び, extends: quality, mod: {of: [v_depend, from], with: syntax.identifier}}
+  frame_trace: {display: 後の状態の痕跡, extends: quality, mod: runtime.refer_from_post}
+  any_limitation: {display: 何でもを端に持つ限定, extends: quality, mod: {of: [v_refer, from], with: any}}
   reading_formula: {display: 読みの式, extends: quality, mod: exp.refer_from_hypothesis}
   annotation: {display: 注釈, extends: passage_express_from_natural_language, mod: {of: [v_refer, from], with: syntax.domain}}
   v_not_trigger: {display: 引き起こさない, extends: v_not_transfer, from: any, to: occurrent, opposite: v_trigger}
@@ -190,6 +197,20 @@ individuals:
   b_negation_formula: {is: exp.item_queued}
   h_comment_ban: {is: exp.hyp_untested}
   b_comment_ban: {is: exp.item_queued}
+  h_above_closed: {is: exp.hyp_untested}
+  b_above_closed: {is: exp.item_queued}
+  h_above_individual: {is: exp.hyp_untested}
+  b_above_individual: {is: exp.item_queued}
+  h_placement_in_laws: {is: exp.hyp_untested}
+  b_placement_in_laws: {is: exp.item_queued}
+  h_above_sound: {is: exp.hyp_untested}
+  b_above_sound: {is: exp.item_queued}
+  h_renaming_invariant: {is: exp.hyp_untested}
+  b_renaming_invariant: {is: exp.item_queued}
+  h_w_from_frames: {is: exp.hyp_untested}
+  b_w_from_frames: {is: exp.item_queued}
+  h_any_not_vacuous: {is: exp.hyp_untested}
+  b_any_not_vacuous: {is: exp.item_queued}
   # ===== 定義の循環（自分を限定するものについて述べる定義）。利用者の問い「self がシグネチャになるとどうなるか」から
   # 定義の辺（上位・名前を付けた修飾語・限定の with）をたどった循環を数えた（exp/experiments/sys_cycles.py）。
   # 仮説は、観察を見た後に立てた（事前の登録ではない）。中身は「定義の循環は、否定の限定を通らない」。
@@ -628,6 +649,20 @@ facts:
   - {is: exp.v_support, from: o_sys_hierarchy_object_no_new_violation, to: h_hierarchy_in_object}
   - {is: v_refer, from: h_draw_on_with_shallow, to: {is: v_not_depend, from: reading_formula, to: syntax.display}}
   - {is: exp.v_check, from: b_draw_on_with_shallow, to: h_draw_on_with_shallow}
+  - {is: v_refer, from: h_above_closed, to: {is: v_depend, from: above_order, to: syntax.extends}}
+  - {is: exp.v_check, from: b_above_closed, to: h_above_closed}
+  - {is: v_refer, from: h_above_individual, to: {is: v_depend, from: individual_depth, to: above_order}}
+  - {is: exp.v_check, from: b_above_individual, to: h_above_individual}
+  - {is: v_refer, from: h_placement_in_laws, to: {is: v_not_depend, from: placement_by_above, to: type_checker}}
+  - {is: exp.v_check, from: b_placement_in_laws, to: h_placement_in_laws}
+  - {is: v_refer, from: h_above_sound, to: {is: v_depend, from: above_falsity, to: mod_lack}}
+  - {is: exp.v_check, from: b_above_sound, to: h_above_sound}
+  - {is: v_refer, from: h_renaming_invariant, to: {is: v_not_depend, from: type_checker, to: name_choice}}
+  - {is: exp.v_check, from: b_renaming_invariant, to: h_renaming_invariant}
+  - {is: v_refer, from: h_w_from_frames, to: {is: v_depend, from: top_placement, to: frame_trace}}
+  - {is: exp.v_check, from: b_w_from_frames, to: h_w_from_frames}
+  - {is: v_refer, from: h_any_not_vacuous, to: {is: v_depend, from: any_limitation, to: syntax.of}}
+  - {is: exp.v_check, from: b_any_not_vacuous, to: h_any_not_vacuous}
   - {is: v_refer, from: h_gloss_formula, to: {is: v_not_depend, from: top_placement, to: syntax.gloss}}
   - {is: exp.v_check, from: b_gloss_formula, to: h_gloss_formula}
   - {is: v_refer, from: h_negation_formula, to: {is: v_not_depend, from: negated_limitation, to: type_checker}}
