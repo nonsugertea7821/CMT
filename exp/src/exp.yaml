@@ -147,6 +147,7 @@ nodes:
   model_utterance: {display: モデルの発話, extends: utterance, mod: speak_to_model}
   expose_to: {display: 公開される（終点）, extends: quality, of: [v_expose, to]}
   public_passage: {display: 公開された自然言語の文章, extends: passage_express_from_natural_language, mod: expose_to}
+  reliability: {display: 文章の信頼性, extends: quality, mod: {of: [v_depend, from], with: passage}}
   attribution: {display: 運用者へ帰する文, extends: sentence, mod: {of: [v_refer, from], with: operator}}
   protocol_sentence: {display: 取り決めの部分である文, extends: sentence, mod: {of: [v_compose, from], with: experiment_protocol}}
   correction: {display: 訂正, extends: protocol_sentence, mod: come_after_from_observation}
@@ -1925,6 +1926,12 @@ individuals:
   b_model_utterance_carries_prosody: {is: item_queued}
   h_prosody_language_invariant: {is: hyp_untested}
   b_prosody_language_invariant: {is: item_queued}
+  h_model_utterance_less_reliable: {is: hyp_untested}
+  b_model_utterance_less_reliable: {is: item_queued}
+  h_exposure_carries_reliability: {is: hyp_untested}
+  b_exposure_carries_reliability: {is: item_queued}
+  h_prosody_carries_reliability: {is: hyp_untested}
+  b_prosody_carries_reliability: {is: item_queued}
 facts:
   - {is: v_collect, from: residual_space, to: residual_vector}
   - {is: v_sum, from: layer_output, to: state_shift, new: shifted_hidden_state}
@@ -5224,3 +5231,9 @@ facts:
   - {is: v_check, from: b_model_utterance_carries_prosody, to: h_model_utterance_carries_prosody}
   - {is: v_refer, from: h_prosody_language_invariant, to: {is: lang.v_not_depend, from: prosodic_modifier, to: natural_language}}
   - {is: v_check, from: b_prosody_language_invariant, to: h_prosody_language_invariant}
+  - {is: v_refer, from: h_model_utterance_less_reliable, to: {is: v_lower, from: model_utterance, to: reliability}}
+  - {is: v_check, from: b_model_utterance_less_reliable, to: h_model_utterance_less_reliable}
+  - {is: v_refer, from: h_exposure_carries_reliability, to: {is: v_depend, from: reliability, to: expose_to}}
+  - {is: v_check, from: b_exposure_carries_reliability, to: h_exposure_carries_reliability}
+  - {is: v_refer, from: h_prosody_carries_reliability, to: {is: v_depend, from: reliability, to: prosodic_modifier}}
+  - {is: v_check, from: b_prosody_carries_reliability, to: h_prosody_carries_reliability}
