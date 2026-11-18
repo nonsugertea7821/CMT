@@ -1,0 +1,31 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-18T11:16:18.671Z（UTC）
+individuals:
+  01M7Q5YCKFG0T6X3QP9WNM9MR3:
+    is: model_utterance
+    display: 発言 1882
+    val:
+      order: 1882
+      text: |
+        PR #192 がマージされたので、h_tops_from_primitives は支持として main に入りました。#192 の確認の予約は消し、手元のブランチは main に合わせています。
+
+        次は h_layers_from_primitives（#190）ですが、事前登録の前に一つ決めることがあります。
+
+        「層が三つの形に依存する」をどう測るかで、手が二つあります。
+
+        **案 A: 層ごとに一つの形を受け持つ**
+        runtime は歩みを動く量化、ontology は在ることを述べる場所、syntax は変数の範囲を受け持つ、と読みます。登録したときの私の読みはこれです。
+        - 各ノードが定義の辺をたどって、どの形に届くかを数えます。否定の辺はたどらず、最上位への上位の辺も除きます。
+        - 弱いところは、何を「届いた」とするかの目印を私が選ぶことです。たとえば、歩みの目印に `runtime.steps` と `always`・`sometime` を持つノード、変数の目印に `syntax.variable` と `ranges` を使う、という具合です。結果に効く恣意が入ります。
+        - h_w_from_frames と同じく、到達は粗すぎて何にでも届く恐れもあります。
+
+        **案 B: 前に外れたものを分けられるかを見る**
+        シグネチャから定めた分類（still・refer・change）は、否定の辺をたどらなければ層とほぼ合っていました。外れたのは 25 ノードのまとまりです。三つの形でこの 25 が正しい層に分かれるかを、今の体系で数え直します。
+        - 測る範囲が狭いぶん、判定ははっきりします。
+        - ただ、外れたものの顔ぶれはもう見ているので、結果を見てから手順を合わせる危険があります。
+
+        私は B を推します。前の反証の続きとして筋が通り、見た内容は事前登録で開示できるからです。A がよければ、A で組みます。
+facts:
+- {is: v_say, from: session_model, to: 01M7Q5YCKFG0T6X3QP9WNM9MR3}
+- {is: exp.v_answer, from: 01M7Q5YCKFG0T6X3QP9WNM9MR3, to: 01M7Q5WCZFQVDE55AZ34WNQQYY}
+- {is: v_refer, from: 01M7Q5YCKFG0T6X3QP9WNM9MR3, to: runtime.steps}
+- {is: v_refer, from: 01M7Q5YCKFG0T6X3QP9WNM9MR3, to: syntax.variable}
