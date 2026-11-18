@@ -1,0 +1,22 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-18T13:59:20.039Z（UTC）
+individuals:
+  01M7QF8WQ7NVPAT2G8ADPDJP9R:
+    is: model_utterance
+    display: 発言 1963
+    val:
+      order: 1963
+      text: |
+        #210 の反証から出た2つの案を仮説として登録し、PR #214 を立てました。途中で作業が中断されましたが、やり直して終えています。
+
+        - **h_given_laws_as_rules:** 型検査器が意味を与える runtime の5つの法則（unique_names, step, frame, halt, no_confusion）を、規則で書いた法則として書き直せる、という仮説です。書き直せれば、型検査器は法則を名前で読まずに済みます。
+        - **h_law_names_grammar:** 法則の名前を syntax の文法の語として置く、という仮説です。そうすれば、型検査器が依るのは、層の置き場、シグネチャから定まる分類、文法の記述の3つだけになります。
+
+        1つ目の式は、最初は5つの法則を個別に並べて書きました。しかし式の端には個々の法則を置けず、型検査が通りませんでした。そこで、5つをまとめた種類（syntax.law_given）を端に置いています。
+
+        2つは互いを排除しません。step・frame・halt は走らせ方の意味そのものなので、規則では書き切れないかもしれません。そうなった場合は、書き切れなかった法則を2つ目の仮説で扱うことになりそうです。
+
+        概念は足しておらず、登録だけの PR なので、自動マージに乗るはずです。tc と ec は手元で通りました。
+facts:
+- {is: v_say, from: session_model, to: 01M7QF8WQ7NVPAT2G8ADPDJP9R}
+- {is: exp.v_answer, from: 01M7QF8WQ7NVPAT2G8ADPDJP9R, to: 01M7QBYH9E6WHB29PQ2Y5NMMBD}
+- {is: v_refer, from: 01M7QF8WQ7NVPAT2G8ADPDJP9R, to: syntax.law_given}
