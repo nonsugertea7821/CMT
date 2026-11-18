@@ -1,0 +1,45 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-18T01:30:08.810Z（UTC）
+individuals:
+  01M7P4D31A4X8S8H8KG7KEVCTP:
+    is: model_utterance
+    display: 発言 1451
+    val:
+      order: 1451
+      text: |
+        手順を先に登録して（ad71d32）測りました。登録した判定では**「傾向がある（法則にはしない）」**という結果で、見込みどおりでした。
+
+        | | y の定義の端がすべて上の方（祖先 2 以下） |
+        |---|---|
+        | V（違反の 9 組） | 8 組 |
+        | C（正しい上下関係の 33 組） | 3 組（9%） |
+
+        - 法則の候補にする条件は「V の 9 組すべて」で、そこに 1 組届きませんでした。
+        - 届かなかったのは control_preservation → context_following です。この組の y は、深い端（exp.case）で定義されています。これは登録の時点で見込んでいたとおりです。
+        - 閾値を変えた確かめも併せて取りました。祖先 1 以下では V 7・C 3、3 以下では V 8・C 9 です。
+        - 一つ注意があります。閾値 2 は、前回の数を見てから選びました。そのため、これは同じデータでの確かめで、新しいデータでの検証にはなっていません。記録にもそう書きました。
+
+        **実行の後に気づいたこと（登録していない読み）**
+        C で「上の方」になった 3 組は、sales → money、information_entity_refer_from_p → verb_ref、new_kind → with でした。このうち 2 組は、y が違反と同じ money と verb_ref です。
+
+        つまり、これは「x と y の組」の性質というより、「y という概念」の性質に見えます。上の方の一般的な端だけで定義された概念（money、verb_ref、age、opposite、hypothesis など）は、正しい下位も違反の下位も、区別なく集めてしまいます。
+
+        **記録**
+        - 結果ファイル・exp.yaml の測定・claims.yaml の観察 2 件を足しました。
+        - 検査ツール（exp_check.py）は通りました。
+        - claude/cross に push 済みです（d8e4ccc）。
+
+        **次の一歩**
+        ここからは、どちらに進むかを決めていただく必要があります。
+        - **A. 新しいデータで確かめる:** 「浅い定義の概念」を先に規則で選び、まだ見ていない組で違反の起きやすさを測ります。今は同じデータでの確かめなので、法則にするならこれが要ります。
+        - **B. 定義を厚くする:** 薄い定義の概念に、名前にしかない区別を式で足します。例えば money なら「お金の単位で測る」、age なら「生まれてからの時間」です。足したあと、9 件が規則だけで外れるかを見ます。「名前にしかない区別を式に移す」という本来の方針に近いのは B です。
+
+        私は B を勧めます。どちらにするか教えてください。
+facts:
+- {is: v_say, from: session_model, to: 01M7P4D31A4X8S8H8KG7KEVCTP}
+- {is: exp.v_answer, from: 01M7P4D31A4X8S8H8KG7KEVCTP, to: 01M7P4AMMP8F67210R86RBX261}
+- {is: v_refer, from: 01M7P4D31A4X8S8H8KG7KEVCTP, to: exp.control_preservation}
+- {is: v_refer, from: 01M7P4D31A4X8S8H8KG7KEVCTP, to: exp.context_following}
+- {is: v_refer, from: 01M7P4D31A4X8S8H8KG7KEVCTP, to: exp.case}
+- {is: v_refer, from: 01M7P4D31A4X8S8H8KG7KEVCTP, to: syntax.information_entity_refer_from_p}
+- {is: v_refer, from: 01M7P4D31A4X8S8H8KG7KEVCTP, to: syntax.verb_ref}
+- {is: v_refer, from: 01M7P4D31A4X8S8H8KG7KEVCTP, to: syntax.new_kind}
