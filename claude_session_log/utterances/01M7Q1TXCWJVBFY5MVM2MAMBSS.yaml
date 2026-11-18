@@ -1,0 +1,22 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-18T10:04:30.492Z（UTC）
+individuals:
+  01M7Q1TXCWJVBFY5MVM2MAMBSS:
+    is: model_utterance
+    display: 発言 1817
+    val:
+      order: 1817
+      text: |
+        はい、claim は「主張」です。ラベルも、はじめは「主張」という名前で、後で `claim` に改めたものです（`sync_issues.py:37` の RENAME）。
+
+        ただ、今の使い方では、claim は仮説と並ぶ区分ではありません。
+        - **claim（主張）:** 同期が立てたすべての issue に付く、総称のラベルです。「体系から写した issue」という印として働いています。
+        - **その下の種類:** 仮説（hypothesis）と決定（decision）の 2 つです。
+
+        体系の中にも、claim という概念はありません。仮説は「文」の下位（`std.yaml:17`、extends sentence）で、決定は「定義」の下位（`exp.yaml:326`、extends definition）です。
+
+        なので、type で分けるなら、候補は「仮説 / 決定」の 2 つになります。claim は、全部に付く印なので、type に置く意味は薄いと思います。
+
+        type を足せるかどうかは、まだ確かめていません。
+facts:
+- {is: v_say, from: session_model, to: 01M7Q1TXCWJVBFY5MVM2MAMBSS}
+- {is: exp.v_answer, from: 01M7Q1TXCWJVBFY5MVM2MAMBSS, to: 01M7Q1TMX6CC1P3EW839A7T97T}
