@@ -1,0 +1,36 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-18T03:56:02.180Z（UTC）
+individuals:
+  01M7PCR784C1JC5S7KK2ZE9RY2:
+    is: model_utterance
+    display: 発言 1565
+    val:
+      order: 1565
+      text: |
+        はい、型階層の深さのことです。sys_specific_depth では「浅い」を次のように定義していました。
+
+        > 概念 y の自前の式（限定）の `with` の終点が、どれも祖先の数（extends をたどった上位の数）2 以下
+
+        つまり、`with: occurrent` や `with: kind` のように、階層の上のほうにある一般的な種類だけを相手にして定義された概念のことです。
+
+        **今の体系で書けない理由**
+        - 深さは、導いた関係 `r_ancestor` の個数です。
+        - 限定（mod）が数えられるのは動詞の位置だけです。`{of: [v_depend, from], at: {count: 1}}` のような形になります。
+        - `r_ancestor` は規則が導く関係で、動詞ではありません。そのため、限定の `of` に置けず、`at: {count: {le: 2}}` で数えることもできません。
+        - 結果として、私が書いた「浅い端だけの定義」は「定義に依存する性質」にしかならず、役割と同じ式になりました。
+
+        **束の見方での読み**
+        - 浅い端で定義された概念は、条件がゆるく、外延が大きくなります。
+        - だから、正しい下位も違反の下位も集めてしまいます（過大拡張）。
+        - 「浅い」とは、型階層の上での一般性のことです。
+
+        **書けるようにする道は二つ**
+        1. 上位・下位の関係（extends。今は型検査器と法則が読む構造）を、数えられる動詞として体系に置く。そうすれば `at: {count: {le: 2}}` で浅さを式にできます。ただし、文法の扱いを変える設計の決定になります。
+        2. 深さを数えず、「最上位の直下だけを相手にする」のような形で近似して書く。閾値を式に埋め込むので、sys_specific_depth の閾値 2 を固定することになります。閾値は、データを見てから選んだものです。
+
+        筋がよいのは 1 だと思います。深さが式になれば、display に借りていた「浅い」を返せます。どちらにするか、または今は置いておくか、決めてください。
+facts:
+- {is: v_say, from: session_model, to: 01M7PCR784C1JC5S7KK2ZE9RY2}
+- {is: exp.v_answer, from: 01M7PCR784C1JC5S7KK2ZE9RY2, to: 01M7PCQSPFVSXV1KHZWYGT6Y61}
+- {is: v_refer, from: 01M7PCR784C1JC5S7KK2ZE9RY2, to: syntax.with}
+- {is: v_refer, from: 01M7PCR784C1JC5S7KK2ZE9RY2, to: ontology.v_depend}
+- {is: v_refer, from: 01M7PCR784C1JC5S7KK2ZE9RY2, to: syntax.of}
