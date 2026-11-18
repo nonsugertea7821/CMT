@@ -1,0 +1,32 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-18T12:55:36.254Z（UTC）
+individuals:
+  01M7QBM6HY5JPCJB7E6SM0KK83:
+    is: model_utterance
+    display: 発言 1947
+    val:
+      order: 1947
+      text: |
+        h_layers_unhardcode は**反証**でした。#210 の Draft を外したので、確認してください（型検査器を変える PR なので、自動マージには乗りません）。
+
+        - **取り除けたもの**: 存在論の語（最上位・属する・依存する・特定依存持続体・質・大きさ・動詞を指すもの）、LAYERS、v_spell の例外、部分の言い方。どれも式から一意に導く形にしました。
+          - 体系の検査は 0 件でした。
+          - 278 の変異で、弾くかどうかが元の型検査器と 1 つも変わりませんでした。
+        - **取り除けなかったもの**: runtime の法則 5 つ（unique_names・step・frame・halt・no_confusion）。
+          - 5 つとも、式の上では「law_given で、実行の記録を統べる」という同じ形です。違いは名前と表示語にしかありません。
+          - 名前を付け替えた体系では、新しい型検査器が 10 件のエラーを出しました（元の型検査器は 240 件）。10 件はすべてこの 5 つの法則によるものです。
+
+        **解釈**: 層を動かせば、存在論の語は名前で読まずに済みます。名前で読むしかないのは、意味を型検査器のコードが与える法則です。そこでは名前が、コードと体系をつなぐ唯一の手がかりになっています。
+
+        **測り方の粗さ（2 点）**: どちらも判定は変えていません。
+        - 特定依存持続体も「区別できない」に数えられました。区別に使った色付け（WL）に、限定の個数（count: 1 と ge: 1）を入れていなかったためです。書き換えた型検査器は、個数 1 の限定で 1 つに決められています。
+        - 残った日本語の定数 10 のうち 7 は、エラーの文に使う語です。事前登録の数え方が、それを外していませんでした。
+
+        **次の候補**: 法則 5 つの名前を取り除く道は 2 つ考えられ、どちらも新しい仮説として立てられます。
+        - 法則の意味を式（law_rule）で書く。
+        - 名前を文法の語として syntax に置く。
+facts:
+- {is: v_say, from: session_model, to: 01M7QBM6HY5JPCJB7E6SM0KK83}
+- {is: exp.v_answer, from: 01M7QBM6HY5JPCJB7E6SM0KK83, to: 01M7Q9KKM6W3PBJNKFKJF7TQ0E}
+- {is: v_refer, from: 01M7QBM6HY5JPCJB7E6SM0KK83, to: exp.v_spell}
+- {is: v_refer, from: 01M7QBM6HY5JPCJB7E6SM0KK83, to: syntax.law_given}
+- {is: v_refer, from: 01M7QBM6HY5JPCJB7E6SM0KK83, to: syntax.law_rule}
