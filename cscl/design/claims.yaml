@@ -216,8 +216,8 @@ individuals:
   b_w_from_frames: {is: exp.item_queued}
   h_any_not_vacuous: {is: exp.hyp_refuted}
   b_any_not_vacuous: {is: exp.item_done}
-  h_any_by_entail: {is: exp.hyp_untested}
-  b_any_by_entail: {is: exp.item_queued}
+  h_any_by_entail: {is: exp.hyp_refuted}
+  b_any_by_entail: {is: exp.item_done}
   h_ja_case_frame: {is: exp.hyp_untested}
   b_ja_case_frame: {is: exp.item_queued}
   h_ja_roundtrip: {is: exp.hyp_untested}
@@ -549,6 +549,15 @@ individuals:
   o_sys_any_limitation_mismatch: {is: exp.observation}
   o_sys_any_limitation_no_ancestor: {is: exp.observation}
   o_sys_any_limitation_actual: {is: exp.observation}
+  o_sys_any_by_entail_passes_checks: {is: exp.observation}
+  o_sys_any_by_entail_passes_ec: {is: exp.observation}
+  o_sys_any_by_entail_ideal: {is: exp.observation}
+  o_sys_any_by_entail_sat: {is: exp.observation}
+  o_sys_any_by_entail_ancestor: {is: exp.observation}
+  o_sys_any_by_entail_above: {is: exp.observation}
+  o_sys_any_by_entail_deep: {is: exp.observation}
+  o_sys_any_by_entail_before_match: {is: exp.observation}
+  o_sys_any_by_entail_before_deep: {is: exp.observation}
   # 表示名のうち、式が参照するものの表示名から来ない部分（余り）を見た観察（exp/experiments/sys_display_residual.py）。
   #   手順と判定は実行の前に登録した（841ff81。結果を見る前の訂正 12a37cb: 個体の表示名の読み先）。
   # 結果（2477928、違反 9 組のとき）: V 9（前提は成り立つ）、違反の上 y 6 つの余りを持つ割合 rate_y 1.0、概念 526 すべてでは rate_all 0.772。
@@ -803,6 +812,16 @@ facts:
   - {is: v_refer, from: o_sys_any_limitation_no_ancestor, to: {is: v_level, from: sys_any_limitation_after.any_ancestor.mean_value, to: 0.0}}
   - {is: v_refer, from: o_sys_any_limitation_actual, to: {is: v_level, from: sys_any_limitation_after.actual_sat.mean_value, to: 445.0}}
   - {is: exp.v_contradict, from: o_sys_any_limitation_mismatch, to: h_any_not_vacuous}
+  - {is: v_refer, from: o_sys_any_by_entail_passes_checks, to: {is: v_level, from: sys_any_by_entail_after_fix.errors.mean_value, to: 0.0}}
+  - {is: v_refer, from: o_sys_any_by_entail_passes_ec, to: {is: v_level, from: sys_any_by_entail_after_fix.ec_errors.mean_value, to: 0.0}}
+  - {is: v_refer, from: o_sys_any_by_entail_ideal, to: {is: v_level, from: sys_any_by_entail_after_fix.ideal_nonempty.mean_value, to: 85.0}}
+  - {is: v_refer, from: o_sys_any_by_entail_sat, to: {is: v_level, from: sys_any_by_entail_after_fix.sat_nonempty.mean_value, to: 44.0}}
+  - {is: v_refer, from: o_sys_any_by_entail_ancestor, to: {is: v_level, from: sys_any_by_entail_after_fix.any_ancestor.mean_value, to: 762.0}}
+  - {is: v_refer, from: o_sys_any_by_entail_above, to: {is: v_level, from: sys_any_by_entail_after_fix.above.mean_value, to: 3348.0}}
+  - {is: v_refer, from: o_sys_any_by_entail_deep, to: {is: v_level, from: sys_any_by_entail_after_fix.deep.mean_value, to: 526.0}}
+  - {is: v_refer, from: o_sys_any_by_entail_before_match, to: {is: v_level, from: sys_any_by_entail_before_fix.match.mean_value, to: 0.0}}
+  - {is: v_refer, from: o_sys_any_by_entail_before_deep, to: {is: v_level, from: sys_any_by_entail_before_fix.deep.mean_value, to: 444.0}}
+  - {is: exp.v_contradict, from: o_sys_any_by_entail_sat, to: h_any_by_entail}
   - {is: v_refer, from: o_sys_display_residual_not_distinct, to: {is: v_come_before, from: sys_display_residual_before.rate_y.mean_value, to: 1.16}}
   - {is: v_refer, from: o_sys_display_residual_mostly_residual, to: {is: v_come_after, from: sys_display_residual_before.rate_all.mean_value, to: 0.5}}
   - {is: v_refer, from: o_sys_comments_claims_most, to: {is: v_come_after, from: sys_comments.history.mean_value, to: sys_comments.code.mean_value}}
