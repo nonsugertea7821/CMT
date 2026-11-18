@@ -1,0 +1,218 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-18T12:57:12.352Z（UTC）
+individuals:
+  01M7QBQ4D0RR8J9BG9NMFTZXKE:
+    is: session_summary
+    display: 発言 1949
+    val:
+      order: 1949
+      text: |
+        This session is being continued from a previous conversation that ran out of context. The summary below covers the earlier portion of the conversation.
+
+        <system-reminder>
+        <tools-used-before-summary>AskUserQuestion, Bash, Edit, Grep, Read, ReadNotifications, Skill, TaskStop, ToolSearch, WebFetch, WebSearch, Write, mcp__claude-code-remote__create_trigger, mcp__claude-code-remote__delete_trigger, mcp__claude-code-remote__get_trigger, mcp__claude-code-remote__read_documentation, mcp__claude-code-remote__send_later, mcp__claude-code-remote__subscribe_pr_activity, mcp__claude-code-remote__update_trigger, mcp__github__actions_get, mcp__github__actions_list, mcp__github__add_issue_comment, mcp__github__create_pull_request, mcp__github__get_job_logs, mcp__github__issue_read, mcp__github__issue_write, mcp__github__list_issue_types, mcp__github__list_issues, mcp__github__list_pull_requests, mcp__github__pull_request_read, mcp__github__update_pull_request</tools-used-before-summary>
+        </system-reminder>
+        Summary:
+        1. Primary Request and Intent
+
+        **Standing rules (still in force)**
+        - Repo: nonsugertea7821/CMT at /home/user/CMT.
+        - Reply in Japanese. Don't overclaim. Give interpretation.
+        - Restore files with `git show <rev>:<path> > <path>`. Never checkout to restore and never stash.
+        - Python: /home/user/venv/bin/python.
+        - Commit trailer:
+          `Co-Authored-By: Claude [モデル名を伏せた] <[メールアドレスを伏せた]>`
+          `Claude-Session: https://claude.ai/code/session_015KRKt6TNJZ7ZsQmEknANXK`
+        - PR body ends with:
+          `🤖 Generated with [Claude Code](https://claude.com/claude-code)`
+          blank line
+          `https://claude.ai/code/session_015KRKt6TNJZ7ZsQmEknANXK`
+        - Claude never merges.
+        - No personal info or model identifiers in pushed artifacts.
+        - Don't retry the MEXT PDF WebFetch without OK.
+
+        **CLAUDE.md flow**
+        - Register proposals as untested hypotheses first. Language hypotheses go in claims.yaml; experiment hypotheses go in exp.yaml.
+        - Branch `claude/h_<name>`. The prereg commit holds the script only (`git add -f`). The results commit adds observations, v_support / v_contradict, and the result JSON (`git add -f`). Then undraft.
+        - Every PR: set assignee nonsugertea7821 via issue_write, call subscribe_pr_activity, and set a send_later check about 50 minutes out.
+        - On merge: delete the trigger, then `git fetch -q --prune origin && git switch -q --detach origin/main && git branch -D <branch>`. Never push branch deletions.
+        - No comments in system yaml.
+        - Never rerun recorded scripts.
+        - Don't ask permission in chat.
+        - Attribution of user words: verify against the session log branch. Never invent ULIDs.
+
+        **User's latest explicit intents**
+        - "分類通りの層に動かすのは前提。ただもう一つ検証するべき仮説がある。「動かすことで型検査器からすべてのハードコーディング（シグネチャ・シンタックス以外）を問題なく取り除ける」のか"
+          - Done: the move (#206), the prereg, and the experiment (#210, refuted).
+        - The auto-merge judgment must be returned to the PR side. Done in #208. Manual review is acceptable rather than trimming formulas.
+        - The 概念 / AI internal-state hypothesis as backlog. Done in #211.
+
+        2. Key Technical Concepts
+
+        **Layers and refs**
+        - Layers: signature ← ontology ← syntax ← runtime ← std.
+        - The `layered` law uses T.refs. T.refs now includes node-level `with`.
+
+        **Grammar words and law kinds**
+        - Grammar words (syntax.yaml `grammar:`) may be read by name.
+        - law_given: the checker gives the meaning, so tc must name the law. law_rule: the law is written as a rule.
+
+        **Determinability**
+        - Weisfeiler-Leman color refinement (12 rounds).
+        - Initial labels: names for signature and syntax nodes, "?" for all others, plus the formula shape.
+
+        **Auto-merge rules**
+        - Registration needs exactly one v_refer per hypothesis.
+        - Adding concepts, or editing workflows or the evaluator, means manual review.
+        - auto_merge.py now posts a PR comment with marker `<!-- auto-merge-judgment -->` whenever it decides on manual review.
+
+        3. Files and Code Sections
+
+        **cscl/library/{ontology,syntax,runtime}.yaml (PR #206, merged)**
+        - 27 nodes moved:
+          - ontology→syntax (17): concept, word, sentence, v_refer, v_agree, role, definition, information_entity…
+          - runtime→syntax (5): state, rewrite_rule, refer_from_post, refer_from_laws, role_depend_from_rewrite_rule
+          - syntax→ontology (5): v_above, deep_kind, verb_ref, not_before_from, not_after_from
+        - Kept in syntax:
+          - syntax.individuals — a grammar word.
+          - syntax.not_compose_from_mod — its node-level `with: mod` is not visible from ontology.
+        - Qualified names were updated in tc, claims.yaml and exp_check.py.
+        - T.refs: `for k in ("from", "to", "new_kind", "with"):`
+
+        **.github/scripts/auto_merge.py and .github/workflows/auto_merge.yml (PR #208, merged)**
+        - Added `MARK`, `api(path, method, body)` and `comment(text)`. comment() edits the existing marked comment or posts a new one.
+        - In main: `if do_merge and why: comment("\n".join(lines) + f"\n\n（head {head[:7]}）")`.
+
+        **cscl/design/claims.yaml**
+        - #209 restored both v_refer facts for h_layers_unhardcode:
+          - `v_not_depend(type_checker, name_choice)`
+          - `v_depend(type_checker, [layer_placement, signature_class])`
+        - #211 (merged) added:
+          - Nodes after variable_range:
+            - `model_internal_state: {display: モデルの部分である状態, extends: state, mod: compose_from_model}`
+            - `model_state_sentence: {display: モデルの部分である状態へ述べる文, extends: sentence, mod: {of: [v_refer, from], with: model_internal_state}}`
+          - h_concept_bounds_model_state (untested) and b_concept_bounds_model_state (queued).
+          - Fact: `v_refer: {is: v_depend, from: model_state_sentence, to: definition}`
+        - On branch claude/h_layers_unhardcode (#210):
+          - Observations o_sys_layers_unhardcode_undeterminable and o_sys_layers_unhardcode_rename.
+          - Facts:
+            - `v_come_before(sys_layers_unhardcode.determinable.mean_value, 1.0)`
+            - `v_level(sys_layers_unhardcode.errors_rename.mean_value, 10)`
+            - both linked to the hypothesis with exp.v_contradict
+          - h_layers_unhardcode set to exp.hyp_refuted; b_layers_unhardcode set to exp.item_done.
+
+        **exp/src/exp.yaml (branch #210)**
+        - Family sys_layers_unhardcode: nodes added before sys_case_frame_formula; facts added after the v_metric_of for sys_layers_neg_dual.
+        - Columns are generated from the result rows.
+
+        **exp/experiments/sys_layers_unhardcode.py (prereg commit 8a11432)**
+        - `OLD = "fa18ad943f721c06a13362d7dae49623eb8dd01e"`
+        - H_NODES (9): continuant, occurrent, is, v_depend, sdc, quality, magnitude, verb_ref (all ontology), plus exp.v_spell.
+        - H_INDS (8): ontology, runtime, std, unique_names, step, frame, halt, no_confusion.
+        - Functions: colors (WL), scan (AST constants), worktree (git archive), no_checkers, run_tc, rename, mutants, apply_mutant.
+        - Verdict:
+          - refuted if any H item is not determinable;
+          - supported if all are determinable, and scan 0, system 0, rename 0, and all mutants agree;
+          - otherwise mixed.
+        - Result JSON exp/experiments/results/sys_layers_unhardcode.json was added in commit 4c3e817.
+
+        **cscl/bootstrap/type_checker/type_checker.py (refactor commit 9734049)**
+        - Globals set in load():
+          - `TOPS = tops_of(O["nodes"])` — no extends/of/form/holds; `always` = continuant, `sometime` = occurrent.
+          - `LAYERS[:]` = signature plus the library domains. LAYERS is a list mutated in place, because exp_check imports it.
+          - `VERBATIM_TO` = verbs whose `to` node is verbatim. It is updated again in build after each merge_domain.
+        - New load check: each library domain must be declared as a domain individual.
+        - `Ontology.anchor()` sets v_relate, v_is, v_depend, v_parts, sdc, quality, magnitude, verb_ref. Each is found by `one()` uniqueness.
+        - These replace the hardcoded names in parents, grounding, check, check_counts, the gloss top check and the v_spell exception.
+        - `part_words(T)` builds the part phrases from the displays of the part verbs.
+        - Removed the dead `in_scope("std")` loop.
+        - LAWS_RUN is kept.
+
+        4. Errors and fixes
+
+        - **Move regex matched the grammar line of individuals.** Restored the files and skipped syntax.individuals.
+        - **not_compose_from_mod undefined after the move.** Kept it in syntax and added `with` to T.refs.
+        - **exp_check ImportError on LAYERS.** Defined a LAYERS global, later made it a list mutated in place.
+        - **VERBATIM_TO empty at load.** exp nodes are merged later, so I recompute it after each merge_domain, before the natural-language check.
+        - **Archived worktree gave 1426 errors with checkers on.** (b) now runs in ROOT instead.
+        - **Registration named_mod errors.** Switched to the named modifier compose_from_model and avoided extending `laws`.
+        - **My trimming of #205 auto-merged against the user's intent.** The user said "いや、手で見ることを書き足してほしい。PR側に。" Fixed with #209 (restore) and #208 (judgment written as a PR comment).
+
+        5. Problem Solving
+
+        - #210's experiment was refuted. The only law_given names in runtime cannot be distinguished by formula.
+        - Disclosures in #210:
+          - sdc came out non-determinable because WL ignored `at` counts.
+          - 7 of the 10 Japanese constants are labels in one() error messages.
+          - A post-hoc scratch diagnosis of the rename errors was done; the result JSON was not overwritten.
+        - Suggested follow-ups, not registered yet:
+          - write the laws as law_rule;
+          - place the law names as grammar words in syntax.
+
+        6. All user messages
+
+        - "分類通りの層に動かすのは前提。ただもう一つ検証するべき仮説がある。「動かすことで型検査器からすべてのハードコーディング（シグネチャ・シンタックス以外）を問題なく取り除ける」のか" (from before this segment)
+        - "自動マージの判定（仮説の登録） 手で見る（外れた条件）: * h_layers_unhardcode の v_refer が 2 個（1つでない）"
+        - "これ返ってこないんだ"
+        - "いや、手で見ることを書き足してほしい。PR側に。"
+        - "フックがね"
+        - "「概念」とは何か、を帰納的・演繹的に導くことが出来れば、AIの「起きてはいけない内部状態」を論述することが出来るのではないかという仮説。"
+        - "まあすぐには扱わないけどバックログかな"
+
+        7. Pending Tasks
+
+        - **PR #210** (h_layers_unhardcode, refuted, undrafted): wait for CI and the user's review and merge.
+          - On merge: delete trig_01U3DkMr8cLcgSVqQ8b3vVKD and clean up the local branch claude/h_layers_unhardcode (prune, detach, `branch -D`).
+        - **send_later trig_01U3DkMr8cLcgSVqQ8b3vVKD** fires at 13:30Z to check #210. #211 is already merged.
+        - **Later:**
+          - h_leap_reaches_agreement (#197) and h_leap_lowers_chain (#198) need preregs.
+          - The backlog h_concept_bounds_model_state.
+          - Issue #190 stays mixed.
+          - Possible new hypotheses about the law_given names, only if the user wants them.
+
+        8. Current Work
+
+        I undrafted #210 after pushing results commit 4c3e817 and reported the refutation to the user. The last notification was ready_for_review on #210, and I replied that I'm waiting for CI and the user's review.
+
+        9. Optional Next Step
+
+        Wait for #210 events. When it merges, delete trigger trig_01U3DkMr8cLcgSVqQ8b3vVKD and run `git fetch -q --prune origin && git switch -q --detach origin/main && git branch -D claude/h_layers_unhardcode`. If CI fails, fix it. My last statement: "#210 の Draft が外れたという知らせが来ました。外したのは私の操作です。CI の結果と、あなたの確認を待っています。"
+
+        If you need specific details from before compaction (like exact code snippets, error messages, or content you generated), read the full transcript at: /root/.claude/projects/-home-user-CMT/e05d2140-ce91-515f-a5fb-e6251e13d406.jsonl
+        Continue the conversation from where it left off without asking the user any further questions. Resume directly — do not acknowledge the summary, do not recap what was happening, do not preface with "I'll continue" or similar. Pick up the last task as if the break never happened.
+
+        The messages after this summary are the most recent messages from before compaction, kept verbatim. The summary was written without seeing them, so something it says has not happened yet may already have happened in them.
+facts:
+- {is: v_say, from: session_model, to: 01M7QBQ4D0RR8J9BG9NMFTZXKE}
+- {is: v_refer, from: 01M7QBQ4D0RR8J9BG9NMFTZXKE, to: exp.v_support}
+- {is: v_refer, from: 01M7QBQ4D0RR8J9BG9NMFTZXKE, to: exp.v_contradict}
+- {is: v_refer, from: 01M7QBQ4D0RR8J9BG9NMFTZXKE, to: syntax.with}
+- {is: v_refer, from: 01M7QBQ4D0RR8J9BG9NMFTZXKE, to: syntax.law_given}
+- {is: v_refer, from: 01M7QBQ4D0RR8J9BG9NMFTZXKE, to: syntax.law_rule}
+- {is: v_refer, from: 01M7QBQ4D0RR8J9BG9NMFTZXKE, to: ontology.v_refer}
+- {is: v_refer, from: 01M7QBQ4D0RR8J9BG9NMFTZXKE, to: ontology.v_agree}
+- {is: v_refer, from: 01M7QBQ4D0RR8J9BG9NMFTZXKE, to: ontology.information_entity}
+- {is: v_refer, from: 01M7QBQ4D0RR8J9BG9NMFTZXKE, to: runtime.rewrite_rule}
+- {is: v_refer, from: 01M7QBQ4D0RR8J9BG9NMFTZXKE, to: runtime.refer_from_post}
+- {is: v_refer, from: 01M7QBQ4D0RR8J9BG9NMFTZXKE, to: runtime.refer_from_laws}
+- {is: v_refer, from: 01M7QBQ4D0RR8J9BG9NMFTZXKE, to: runtime.role_depend_from_rewrite_rule}
+- {is: v_refer, from: 01M7QBQ4D0RR8J9BG9NMFTZXKE, to: syntax.verb_ref}
+- {is: v_refer, from: 01M7QBQ4D0RR8J9BG9NMFTZXKE, to: syntax.not_before_from}
+- {is: v_refer, from: 01M7QBQ4D0RR8J9BG9NMFTZXKE, to: syntax.not_after_from}
+- {is: v_refer, from: 01M7QBQ4D0RR8J9BG9NMFTZXKE, to: syntax.individuals}
+- {is: v_refer, from: 01M7QBQ4D0RR8J9BG9NMFTZXKE, to: syntax.not_compose_from_mod}
+- {is: v_refer, from: 01M7QBQ4D0RR8J9BG9NMFTZXKE, to: syntax.new_kind}
+- {is: v_refer, from: 01M7QBQ4D0RR8J9BG9NMFTZXKE, to: lang.v_not_depend}
+- {is: v_refer, from: 01M7QBQ4D0RR8J9BG9NMFTZXKE, to: lang.type_checker}
+- {is: v_refer, from: 01M7QBQ4D0RR8J9BG9NMFTZXKE, to: ontology.v_depend}
+- {is: v_refer, from: 01M7QBQ4D0RR8J9BG9NMFTZXKE, to: lang.layer_placement}
+- {is: v_refer, from: 01M7QBQ4D0RR8J9BG9NMFTZXKE, to: lang.signature_class}
+- {is: v_refer, from: 01M7QBQ4D0RR8J9BG9NMFTZXKE, to: std.compose_from_model}
+- {is: v_refer, from: 01M7QBQ4D0RR8J9BG9NMFTZXKE, to: ontology.v_come_before}
+- {is: v_refer, from: 01M7QBQ4D0RR8J9BG9NMFTZXKE, to: ontology.v_level}
+- {is: v_refer, from: 01M7QBQ4D0RR8J9BG9NMFTZXKE, to: exp.hyp_refuted}
+- {is: v_refer, from: 01M7QBQ4D0RR8J9BG9NMFTZXKE, to: exp.item_done}
+- {is: v_refer, from: 01M7QBQ4D0RR8J9BG9NMFTZXKE, to: exp.v_metric_of}
+- {is: v_refer, from: 01M7QBQ4D0RR8J9BG9NMFTZXKE, to: exp.v_spell}
+- {is: v_refer, from: 01M7QBQ4D0RR8J9BG9NMFTZXKE, to: syntax.to}
+- {is: v_refer, from: 01M7QBQ4D0RR8J9BG9NMFTZXKE, to: syntax.laws}
+- {is: v_refer, from: 01M7QBQ4D0RR8J9BG9NMFTZXKE, to: syntax.at}
