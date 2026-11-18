@@ -1,0 +1,53 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-18T01:02:05.715Z（UTC）
+individuals:
+  01M7P2SQCK0PTW3Z7W3EK0XS1R:
+    is: model_utterance
+    display: 発言 1418
+    val:
+      order: 1418
+      text: |
+        このセッションの発言をすべて、領域 `claude_session_log` として 1発言1ファイルで記録し、新しいブランチ `claude/session-log` に push しました（6d99d3e）。型検査は約6秒で、違反は0件です。
+
+        **中身**
+        - 1419件の発言を `claude_session_log/utterances/<ULID>.yaml` に1件ずつ置きました。
+        - ULID は、時刻と記録の行の識別子から決めています。作り直しても同じ名前になります。
+        - 各ファイルには次のものが入っています。
+          - 個体1つ：種類（利用者の発言・Claude の発言・要約）、順番（`order` 軸）、原文（`text` 軸）。時刻は注釈です。
+          - 事実：
+            - `v_say`：話し手から発言へ。
+            - `exp.v_answer`：直前の相手の発言へ答える。
+            - `v_refer`：発言の中に書かれた体系のノード名へ。全体で2113件です。
+        - `claude_session_log/claude_session_log.yaml` は領域の本体です。語の定義と、話し手2人を持ちます。
+        - `claude_session_log/build.py` が作り方で、取り出しと形式化の規則もここに書いています。手では書き換えず、記録から作り直す前提です。
+
+        **「例外なく」の範囲**
+        入れたもの（規則で決めています）：
+        - あなたの発言すべて。中断（`[Request interrupted]`）、打ち込んだコマンド、質問への回答、ツールの拒否、画像（`[画像]` と表記）も含みます。
+        - 私の返答の本文すべてと、私が出した質問と選択肢。
+        - 文脈が尽きたときの要約24件。
+
+        入れていないもの（どれも発言ではないためです）：
+        - システムが付けた通知（`system-reminder`、バックグラウンドの完了通知、コマンドの出力）。
+        - 私の思考と、ツールの呼び出しとその出力。
+
+        **原文から変えたところ**
+        - メールアドレスとモデルの識別子は伏せ字にしました。
+        - このため `/model` コマンドの引数も伏せています。リポジトリにモデルの識別子を書かない決まりがあるためです。
+
+        **型検査器と文法の変更**
+        - 領域のファイルに `parts`（部分ファイルの glob）を書けるようにしました。型検査器は、部分ファイルの個体と事実を一つの領域にまとめて読みます。
+        - 文法の `grammar.domain` に `parts` を加え、ノード `syntax.parts` を置きました。
+        - `cscl.yaml` の include に、この領域を加えました。
+
+        **注意**
+        - この変更は `claude/cross` には入っていません。`claude/session-log` は `claude/cross` の最新から切っています。
+        - 記録はこの返答を書いている途中までです。この後の発言は、`build.py` を走らせ直せば足されます。
+        - 前の作業で確認しかけていた「`specific` を含意に替えると違反が9件残る」は、中断のため確認が終わっていません。
+facts:
+- {is: v_say, from: session_model, to: 01M7P2SQCK0PTW3Z7W3EK0XS1R}
+- {is: exp.v_answer, from: 01M7P2SQCK0PTW3Z7W3EK0XS1R, to: 01M7P2KPRRGZMR79FQVZDQE1XJ}
+- {is: v_refer, from: 01M7P2SQCK0PTW3Z7W3EK0XS1R, to: subj.order}
+- {is: v_refer, from: 01M7P2SQCK0PTW3Z7W3EK0XS1R, to: claude_session_log.v_say}
+- {is: v_refer, from: 01M7P2SQCK0PTW3Z7W3EK0XS1R, to: exp.v_answer}
+- {is: v_refer, from: 01M7P2SQCK0PTW3Z7W3EK0XS1R, to: ontology.v_refer}
+- {is: v_refer, from: 01M7P2SQCK0PTW3Z7W3EK0XS1R, to: syntax.parts}

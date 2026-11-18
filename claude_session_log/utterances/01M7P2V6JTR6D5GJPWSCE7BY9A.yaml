@@ -1,0 +1,17 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-18T01:02:54.042Z（UTC）
+individuals:
+  01M7P2V6JTR6D5GJPWSCE7BY9A:
+    is: model_utterance
+    display: 発言 1420
+    val:
+      order: 1420
+      text: |
+        ［質問］フックで記録を自動にできます。Claude が返答を終えるたびに（Stop フック）、記録から新しい発言を足す形です。ただし、フックがファイルを書くと毎回コミットされていない変更が残り、いまの環境の「push されていない変更があると止まれない」フックとぶつかります。記録のコミットと push はどうしますか？
+          - フックが自動で push (Recommended): フックが claude_session_log/ だけをコミットし push する。毎ターン1コミット増える。ほかの変更には触れない
+          - 作業と一緒に手で: フックはファイルを書くだけ。私が作業をコミットするときに一緒に入れる。会話だけのターンでは止まれないことがある
+        ［質問］記録はどのブランチに置きますか？いまは作業が claude/cross、記録が claude/session-log に分かれています。
+          - 作業ブランチに合流 (Recommended): claude/session-log を claude/cross に入れ、記録は作業と同じブランチに足していく。切り替えが要らない
+          - 記録は別ブランチのまま: フックが記録用の別の作業木（worktree）に書いて claude/session-log に push する。作業ブランチは汚れないが仕組みが複雑
+facts:
+- {is: v_say, from: session_model, to: 01M7P2V6JTR6D5GJPWSCE7BY9A}
+- {is: exp.v_answer, from: 01M7P2V6JTR6D5GJPWSCE7BY9A, to: 01M7P2THYB3W3J1QJQP3BDA9WZ}

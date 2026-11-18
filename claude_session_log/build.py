@@ -23,8 +23,12 @@
   v_refer             発言 → 体系のノード。発言の中で `...` に囲まれた語か、_ か . を含む語のうち、
                       この領域から1つに解決できるノードの名（ノードの名と全く同じもの）
 
+足し方（増分）: 既にあるファイル（同じ ULID）は書き直さず、ないものだけを足す。消さない（別のセッションの発言も同じ所に置く）。
+  新しい発言の order は、今ある発言の order の最大の続き。claude_session_log.yaml は数を数え直して書き直す。
+
 使い方:
   python claude_session_log/build.py <transcript.jsonl>
+  python claude_session_log/build.py -        フックの入力（JSON, transcript_path を持つ）を標準入力から読む
 """
 import contextlib
 import hashlib
@@ -119,8 +123,17 @@ class Block(str):
 yaml.add_representer(Block, lambda d, s: d.represent_scalar("tag:yaml.org,2002:str", s, style="|"))
 
 
+ORDER = re.compile(r"^      order: (\d+)$", re.M)
+
+
 def main():
-    us = utterances(sys.argv[1])
+    src = sys.argv[1]
+    if src == "-":
+        src = json.load(sys.stdin)["transcript_path"]
+    us = utterances(src)
+    PARTS.mkdir(exist_ok=True)
+    have = {f.stem for f in PARTS.glob("*.yaml")}
+    base = max((int(m) for f in PARTS.glob("*.yaml") for m in ORDER.findall(f.read_text(encoding="utf-8"))), default=0)
     sys.path[:0] = [str(ROOT / "cscl/bootstrap/type_checker")]
     with contextlib.redirect_stdout(io.StringIO()):
         import type_checker as tc
@@ -147,7 +160,8 @@ def main():
            "session_model": {"is": "std.model", "display": "Claude"}}
     facts = [{"is": "syntax.v_use", "from": DOMAIN, "to": d} for d in ("exp", "subj", "std", "runtime")]
     last, body, ids = {}, [], set()
-    for i, (ts, k, s, key) in enumerate(us, 1):
+    new = 0
+    for ts, k, s, key in us:
         uid = ulid(ts, key)
         assert uid not in ids, uid
         ids.add(uid)
@@ -157,22 +171,24 @@ def main():
             if other:
                 fs.append({"is": "exp.v_answer", "from": uid, "to": other})
             last[k] = uid
+        if uid in have:
+            continue
+        new += 1
+        i = base + new
         fs += [{"is": "v_refer", "from": uid, "to": n} for n in mentions(s)]
         body.append((uid, ts, {"is": kind[k], "display": f"発言 {i}", "val": {"order": i, "text": Block(s + "\n") if "\n" in s else s}}, fs))
     dump = lambda x: yaml.dump(x, allow_unicode=True, sort_keys=False, width=10**9, default_flow_style=None)
-    count = (f"発言 {len(us)}（利用者 {sum(k == 'user' for _, k, _, _ in us)}、Claude {sum(k == 'model' for _, k, _, _ in us)}、"
-             f"要約 {sum(k == 'summary' for _, k, _, _ in us)}）")
+    for uid, ts, v, fs in body:
+        (PARTS / f"{uid}.yaml").write_text(f"# 領域 claude_session_log の部分。記録の時刻 {ts}（UTC）\n" + dump({"individuals": {uid: v}, "facts": fs}), encoding="utf-8")
+    kinds = [re.search(r"is: (\w+)", f.read_text(encoding="utf-8").split("individuals:", 1)[1]).group(1) for f in PARTS.glob("*.yaml")]
+    count = (f"発言 {len(kinds)}（利用者 {kinds.count('user_utterance')}、Claude {kinds.count('model_utterance')}、"
+             f"要約 {kinds.count('session_summary')}）")
     head = ("# 領域 claude_session_log（Claude Code のセッションの記録）。発言を例外なく、原文と事実で持つ。\n"
             "# 発言は1つずつ utterances/<ULID>.yaml に置く（parts）。作り方と規則は claude_session_log/build.py。手で書き換えない（作り直す）。\n"
             f"# {count}。\n")
     OUT.write_text(head + dump({"domain": DOMAIN, "parts": "claude_session_log/utterances/*.yaml", "nodes": NODES,
                                 "individuals": ind, "facts": facts}), encoding="utf-8")
-    PARTS.mkdir(exist_ok=True)
-    for old in PARTS.glob("*.yaml"):
-        old.unlink()
-    for uid, ts, v, fs in body:
-        (PARTS / f"{uid}.yaml").write_text(f"# 領域 claude_session_log の部分。記録の時刻 {ts}（UTC）\n" + dump({"individuals": {uid: v}, "facts": fs}), encoding="utf-8")
-    print(head)
+    print(f"新しい発言 {new}。" + head)
 
 
 NODES = {
