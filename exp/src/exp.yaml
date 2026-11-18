@@ -706,6 +706,21 @@ individuals:
   sys_differentiation_cond_edges_with_own: {is: axis_value, val: {text: edges_with_own}}
   sys_differentiation_cond_edges_one_own: {is: axis_value, val: {text: edges_one_own}}
   sys_differentiation_cond_narrow_end_hop1: {is: axis_value, val: {text: narrow_end_hop1}}
+  sys_overextension_steps: {is: measurement_family}
+  sys_overextension_steps_cond: {is: family_axis, val: {text: cond}}
+  sys_overextension_steps_cond_median_level: {is: axis_value, val: {text: median_level}}
+  sys_overextension_steps_cond_all_low_n: {is: axis_value, val: {text: all_low_n}}
+  sys_overextension_steps_cond_all_low_any: {is: axis_value, val: {text: all_low_any}}
+  sys_overextension_steps_cond_all_low_rate: {is: axis_value, val: {text: all_low_rate}}
+  sys_overextension_steps_cond_all_high_n: {is: axis_value, val: {text: all_high_n}}
+  sys_overextension_steps_cond_all_high_any: {is: axis_value, val: {text: all_high_any}}
+  sys_overextension_steps_cond_all_high_rate: {is: axis_value, val: {text: all_high_rate}}
+  sys_overextension_steps_cond_unseen_low_n: {is: axis_value, val: {text: unseen_low_n}}
+  sys_overextension_steps_cond_unseen_low_any: {is: axis_value, val: {text: unseen_low_any}}
+  sys_overextension_steps_cond_unseen_low_rate: {is: axis_value, val: {text: unseen_low_rate}}
+  sys_overextension_steps_cond_unseen_high_n: {is: axis_value, val: {text: unseen_high_n}}
+  sys_overextension_steps_cond_unseen_high_any: {is: axis_value, val: {text: unseen_high_any}}
+  sys_overextension_steps_cond_unseen_high_rate: {is: axis_value, val: {text: unseen_high_rate}}
   sys_outlive: {is: measurement_family}
   sys_outlive_cond: {is: family_axis, val: {text: cond}}
   sys_outlive_cond_outlives_source: {is: axis_value, val: {text: outlives_source}}
@@ -2798,6 +2813,37 @@ facts:
   - {is: v_spell, from: sys_differentiation_cond_narrow_end_hop1, to: narrow_end_hop1}
   - {is: v_entry_of, from: '{cond}', to: sys_differentiation}
   - {is: v_metric_of, from: sys_differentiation, to: mean_value}
+  - {is: v_file_of, from: sys_overextension_steps.json, to: sys_overextension_steps}
+  - {is: v_rows_of, from: [rows], to: sys_overextension_steps}
+  - {is: v_axis_of, from: sys_overextension_steps_cond, to: sys_overextension_steps}
+  - {is: v_value_of, from: sys_overextension_steps_cond_median_level, to: sys_overextension_steps_cond}
+  - {is: v_spell, from: sys_overextension_steps_cond_median_level, to: median_level}
+  - {is: v_value_of, from: sys_overextension_steps_cond_all_low_n, to: sys_overextension_steps_cond}
+  - {is: v_spell, from: sys_overextension_steps_cond_all_low_n, to: all_low_n}
+  - {is: v_value_of, from: sys_overextension_steps_cond_all_low_any, to: sys_overextension_steps_cond}
+  - {is: v_spell, from: sys_overextension_steps_cond_all_low_any, to: all_low_any}
+  - {is: v_value_of, from: sys_overextension_steps_cond_all_low_rate, to: sys_overextension_steps_cond}
+  - {is: v_spell, from: sys_overextension_steps_cond_all_low_rate, to: all_low_rate}
+  - {is: v_value_of, from: sys_overextension_steps_cond_all_high_n, to: sys_overextension_steps_cond}
+  - {is: v_spell, from: sys_overextension_steps_cond_all_high_n, to: all_high_n}
+  - {is: v_value_of, from: sys_overextension_steps_cond_all_high_any, to: sys_overextension_steps_cond}
+  - {is: v_spell, from: sys_overextension_steps_cond_all_high_any, to: all_high_any}
+  - {is: v_value_of, from: sys_overextension_steps_cond_all_high_rate, to: sys_overextension_steps_cond}
+  - {is: v_spell, from: sys_overextension_steps_cond_all_high_rate, to: all_high_rate}
+  - {is: v_value_of, from: sys_overextension_steps_cond_unseen_low_n, to: sys_overextension_steps_cond}
+  - {is: v_spell, from: sys_overextension_steps_cond_unseen_low_n, to: unseen_low_n}
+  - {is: v_value_of, from: sys_overextension_steps_cond_unseen_low_any, to: sys_overextension_steps_cond}
+  - {is: v_spell, from: sys_overextension_steps_cond_unseen_low_any, to: unseen_low_any}
+  - {is: v_value_of, from: sys_overextension_steps_cond_unseen_low_rate, to: sys_overextension_steps_cond}
+  - {is: v_spell, from: sys_overextension_steps_cond_unseen_low_rate, to: unseen_low_rate}
+  - {is: v_value_of, from: sys_overextension_steps_cond_unseen_high_n, to: sys_overextension_steps_cond}
+  - {is: v_spell, from: sys_overextension_steps_cond_unseen_high_n, to: unseen_high_n}
+  - {is: v_value_of, from: sys_overextension_steps_cond_unseen_high_any, to: sys_overextension_steps_cond}
+  - {is: v_spell, from: sys_overextension_steps_cond_unseen_high_any, to: unseen_high_any}
+  - {is: v_value_of, from: sys_overextension_steps_cond_unseen_high_rate, to: sys_overextension_steps_cond}
+  - {is: v_spell, from: sys_overextension_steps_cond_unseen_high_rate, to: unseen_high_rate}
+  - {is: v_entry_of, from: '{cond}', to: sys_overextension_steps}
+  - {is: v_metric_of, from: sys_overextension_steps, to: mean_value}
   - {is: v_file_of, from: sys_content_symmetry.json, to: sys_content_symmetry}
   - {is: v_rows_of, from: [rows], to: sys_content_symmetry}
   - {is: v_axis_of, from: sys_content_symmetry_cond, to: sys_content_symmetry}

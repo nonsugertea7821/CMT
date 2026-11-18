@@ -392,6 +392,16 @@ individuals:
   o_sys_diff_few_kinds: {is: exp.observation}
   o_sys_diff_one_step: {is: exp.observation}
   o_sys_diff_narrow_not_typical: {is: exp.observation}
+  # 発達水準を持つ式の数（何歩分化したか）で測った過大拡張の観察（exp/experiments/sys_overextension_steps.py）。
+  #   手順と判定は実行の前に登録した（3eb4f13）。作りの上で、式の少ない概念ほど満たされやすいことも登録の前に書いた。
+  # 結果: 中央値 4。全体で低い 18/202（8.9%）、高い 13/179（7.3%）、比 1.2。見た概念を除くと 13/192（6.8%）、7/169（4.1%）、比 1.6。
+  #   登録した判定により「外れた」。作りの効果があっても、差はほとんどない。
+  # 実行の後の読み（登録していない）: 式の数ごとの割合は 1: 0/3、2: 0/17、3: 12/71、4: 6/111、5: 10/80、6: 3/44、7 以上: 0/55。
+  #   一番発達していない概念（1〜2）は、まったく集めすぎない（満たすものはすでに下に置かれている）。集めすぎは 3〜5 の中間に集まる。
+  #   深さの物差し（sys_overextension）と式の数の物差しの、2つとも外れた。「発達水準が低いほど過大拡張する」は、
+  #   なだらかな法則としては支持されない。
+  o_sys_overext_steps_small_ratio: {is: exp.observation}
+  o_sys_overext_steps_unseen_small_ratio: {is: exp.observation}
   o_sys_frame_declared_never_grows: {is: exp.observation}
   o_sys_frame_declared_never_shrinks: {is: exp.observation}
   o_sys_frame_creates_over_removes: {is: exp.observation}
@@ -535,6 +545,8 @@ facts:
   - {is: v_refer, from: o_sys_diff_few_kinds, to: {is: v_come_before, from: sys_differentiation.other.mean_value, to: 24.5}}
   - {is: v_refer, from: o_sys_diff_one_step, to: {is: v_come_after, from: sys_differentiation.edges_one_own.mean_value, to: 372.8}}
   - {is: v_refer, from: o_sys_diff_narrow_not_typical, to: {is: v_come_before, from: sys_differentiation.narrow_end.mean_value, to: 245.0}}
+  - {is: v_refer, from: o_sys_overext_steps_small_ratio, to: {is: v_come_before, from: sys_overextension_steps.all_low_rate.mean_value, to: 0.2178}}
+  - {is: v_refer, from: o_sys_overext_steps_unseen_small_ratio, to: {is: v_come_before, from: sys_overextension_steps.unseen_low_rate.mean_value, to: 0.1242}}
   - {is: v_refer, from: o_sys_outlive_never_outlived, to: {is: v_level, from: sys_outlive.outlives_source.mean_value, to: 0.0}}
   - {is: v_refer, from: o_sys_outlive_compute_steps_ok, to: {is: v_level, from: sys_outlive.c_step_ok.mean_value, to: 1.0}}
   - {is: v_refer, from: o_sys_outlive_speak_steps_ok, to: {is: v_level, from: sys_outlive.s_step_ok.mean_value, to: 1.0}}
