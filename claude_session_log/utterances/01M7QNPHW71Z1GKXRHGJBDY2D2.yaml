@@ -1,0 +1,39 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-18T15:51:39.143Z（UTC）
+individuals:
+  01M7QNPHW71Z1GKXRHGJBDY2D2:
+    is: model_utterance
+    display: 発言 2047
+    val:
+      order: 2047
+      text: |
+        今日の報告を「これ含意が無いか？」の目で読み返しました。含意は三つあり、そのうち一つは私のミスです。
+
+        **1. h_law_names_grammar（#230）の反証は、言葉の範囲の取り方で決まっていた（訂正の開示: #233）**
+        - 私は「名前で読んでよい文法の語」を、`grammar` の節に書かれた語だけに限って数えました。
+        - この仮説のもとになった #210 は、`syntax` の層に置いたノード（role、definition、v_refer）も「名前で読んでよい」としていました。
+        - #210 の範囲で読み直すと、名前で読む語の残りは `any`（シグネチャの語）だけで、反証になりません。
+        - 判定は事前登録の範囲のまま変えず、範囲の違いをスクリプトの説明に書き足して開示しました。手で見てください。
+        - 含意: 「名前で読んでよい語」の範囲を、体系の式ではなく、実験ごとの手順の言葉で決めています。範囲を式に置かない限り、この系列の判定は範囲の取り方で入れ替わります。h_checker_words_in_grammar（#231）は、この範囲を式に固定する案として意味があります。
+
+        **2. 体系に、検査されていない主張が実際に入っている**
+        - h_reading_ends_resolved で見つけた「先に書いた読みの式が、後の式に上書きされて読まれない」件を、中身まで追いました。
+        - `h_layers_unhardcode` で上書きされて消えた式は、「型検査器は名前の選び方に依らない」でした。これは次に予定していた h_renaming_invariant（#151）と同じ中身です。
+        - しかも、名前を付け替えると法則の名で検査が壊れることは、#210 ですでに観察しています。h_renaming_invariant は、走らせる前から結果がほぼ決まっています。
+        - `o_sys_money_unit_stops_overextension` では、上書きされたのは名前の要点にあたる比較の式でした（前より後の値が小さい）。その比較を、ec は確かめていません。
+        - h_readings_many（#226 で登録済み）は、この欠けを確かめる仮説として優先度が高いと考えます。
+
+        **3. 今日の実験は、コードを読めば結果が予想できるものが多かった**
+        - h_plural_from、h_given_laws_as_rules、h_law_names_grammar は、どれも事前に反証を予想し、そのとおりになりました。体系に記録する意味はありますが、新しく分かることは少ない実験です。
+
+        **周回の手順に足したこと（次の周は 16:20Z）**
+        - 仮説を選ぶ前に、その仮説の系列（登録の commit、前の実験の手順と観察）を読み返します。
+        - 結果の予想が立たない仮説を優先します。
+        - 「文法の語」のような言葉の定義は、前の実験の定義と照らしてから決めます。
+        - h_renaming_invariant は、範囲を絞り、それを開示した上でやります。
+        - 結果が出るたびに「これ含意が無いか？」と問い、前の結果、登録済みの仮説の前提、記録済みの観察と照らします。
+facts:
+- {is: v_say, from: session_model, to: 01M7QNPHW71Z1GKXRHGJBDY2D2}
+- {is: exp.v_answer, from: 01M7QNPHW71Z1GKXRHGJBDY2D2, to: 01M7QNHQ4V4BM1XRVD248NT5X3}
+- {is: v_refer, from: 01M7QNPHW71Z1GKXRHGJBDY2D2, to: syntax.grammar}
+- {is: v_refer, from: 01M7QNPHW71Z1GKXRHGJBDY2D2, to: ontology.v_refer}
+- {is: v_refer, from: 01M7QNPHW71Z1GKXRHGJBDY2D2, to: any}
