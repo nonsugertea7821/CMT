@@ -388,8 +388,10 @@ individuals:
   #   「端を狭めるのが典型」は外れ。
   # 実行の後の読み（登録していない）: 端に関わる狭め（add_end と narrow_end）を合わせると 187（38%）。分化は、
   #   一辺に式1つで、主に「新しい特徴を足す」か「端を決める・狭める」の2つで進む。
-  # 訂正（sys_money_unit のあとで気づいた）: (b)「一辺に式1つ」は、法則 single（1つのノードが足せる限定は1つだけ）が
-  #   決めていることで、観察で見つけた規則性ではない（式が2つ以上の辺は、axis などほかの書き方が式を足すもの）。new の親は information_entity 24、
+  # 訂正（sys_money_unit のあとで気づいた）: (b)「一辺に式1つ」は、限定（mod）については法則 single が決めていることで、
+  #   観察で見つけた規則性ではない。r_own は限定のほかに軸（axis）と動詞の端（from, to）も数えるので、式が2つの辺 24 は、
+  #   限定1つと軸1つ（22。age, money, accuracy など）か、動詞の2つの端（2。v_spell, v_close）。single は破れていない。
+  #   new の 238 にも、軸が入っている（限定とは別の種類の特徴を、同じ「式」として数えた）。new の親は information_entity 24、
   #   process 12、quality 11 など最上位に近い概念が多い。sys_specific の C で見えた「端を1段狭める」は、洗練の対を選んだ偏り。
   o_sys_diff_few_kinds: {is: exp.observation}
   o_sys_diff_one_step: {is: exp.observation}
@@ -416,6 +418,19 @@ individuals:
   o_sys_money_unit_stops_overextension: {is: exp.observation}
   o_sys_money_unit_keeps_sales: {is: exp.observation}
   o_sys_money_unit_breaks_single: {is: exp.observation}
+  # sys_money_unit の後の読み（会話）: 自前の式が2つの辺の2つ目は軸（axis）で、限定とは別枠。単位は軸の側の特徴（量の分化）。
+  # money の単位を軸の分化（円の量 yen ⊂ 量 amount）として足す操作の観察（exp/experiments/sys_money_axis.py）。手順と判定は実行の前に登録した（a94497c）。
+  #   軸に上下を書けるようにした（1f01587）。after は、領域に軸を書けず errors 2 で外れ（訂正 13d46bd、領域に軸を書けるようにした 52fa1e5）。
+  #   after2 は、軸の上下を extends の文に訳したため法則 placed_deduced が yen を概念として読み errors 1 で外れ
+  #   （訂正 2 fd1cb86。軸の上下を axis の文に訳し直した。訂正 2 は after3 を一度走らせた後に書いた）。どの変更でも、今の体系の導いた文は、法則の個体のほかは変わらないことを確かめた。
+  # 結果（after3）: errors 0、V 7（before の 9 から money の2組 hour, days_overdue を除いたものと同じ）、v_money 0、sales_ok 1、
+  #   absorbs_money 0、money_has_amount 1（money は円の量を持ち、含意で量も持つ）。登録した判定の5つを満たす。
+  #   ただし、前提の不足で2度外れ、測り直した（after3 は、訂正 2 の内容を決める前に一度走らせて見ている）。
+  # 実行の後の読み（登録していない）: 名前にしかなかった区別（円）を、限定ではなく軸の分化として式に移すと、法則を破らずに
+  #   過大拡張が規則だけで止まる。操作は subj.yaml に残す（money の axis は yen）。
+  o_sys_money_axis_stops_overextension: {is: exp.observation}
+  o_sys_money_axis_passes_checks: {is: exp.observation}
+  o_sys_money_axis_keeps_amount: {is: exp.observation}
   o_sys_frame_declared_never_grows: {is: exp.observation}
   o_sys_frame_declared_never_shrinks: {is: exp.observation}
   o_sys_frame_creates_over_removes: {is: exp.observation}
@@ -565,6 +580,11 @@ facts:
   - {is: v_refer, from: o_sys_money_unit_stops_overextension, to: {is: v_level, from: sys_money_unit_after.absorbs_money.mean_value, to: 0.0}}
   - {is: v_refer, from: o_sys_money_unit_keeps_sales, to: {is: v_level, from: sys_money_unit_after.sales_ok.mean_value, to: 1.0}}
   - {is: v_refer, from: o_sys_money_unit_breaks_single, to: {is: v_level, from: sys_money_unit_after.errors.mean_value, to: 3.0}}
+  - {is: v_refer, from: o_sys_money_axis_stops_overextension, to: {is: v_come_before, from: sys_money_axis_after3.v_money.mean_value, to: sys_money_axis_before.v_money.mean_value}}
+  - {is: v_refer, from: o_sys_money_axis_stops_overextension, to: {is: v_level, from: sys_money_axis_after3.absorbs_money.mean_value, to: 0.0}}
+  - {is: v_refer, from: o_sys_money_axis_passes_checks, to: {is: v_level, from: sys_money_axis_after3.errors.mean_value, to: 0.0}}
+  - {is: v_refer, from: o_sys_money_axis_passes_checks, to: {is: v_level, from: sys_money_axis_after3.sales_ok.mean_value, to: 1.0}}
+  - {is: v_refer, from: o_sys_money_axis_keeps_amount, to: {is: v_level, from: sys_money_axis_after3.money_has_amount.mean_value, to: 1.0}}
   - {is: v_refer, from: o_sys_outlive_never_outlived, to: {is: v_level, from: sys_outlive.outlives_source.mean_value, to: 0.0}}
   - {is: v_refer, from: o_sys_outlive_compute_steps_ok, to: {is: v_level, from: sys_outlive.c_step_ok.mean_value, to: 1.0}}
   - {is: v_refer, from: o_sys_outlive_speak_steps_ok, to: {is: v_level, from: sys_outlive.s_step_ok.mean_value, to: 1.0}}

@@ -1,6 +1,8 @@
 # 領域 subj（題材）。実験で定義を与える語を、概念体系制御言語で書く。体系（ontology.yaml）の一部で、同じ検査にかかる。
 # 書き方は exp.yaml と同じ。signature を使う。固有のもの（曜日、地域、品目）は個体で書き、種類の式の中から参照する。
 domain: subj
+axes:
+  yen: {display: 円の量, source: any, value: number, extends: amount}   # 単位は量の分化（sys_money_axis）
 nodes:
   # ===== 動詞 =====
   v_contract: {display: 契約を結ぶ, extends: occurrent, from: agent, to: agent, holds: [{is: depend, from: new, to: from}, {is: depend, from: new, to: to}]}
@@ -71,7 +73,7 @@ nodes:
   dormant_agent: {display: 直近一年間に取引がない相手, extends: agent, mod: {of: [v_place, to], with: recent_order, neg: true}}
   new_order: {display: 新規, extends: order, mod: {of: [v_place, from], with: dormant_agent}}
   payment: {display: 入金, extends: process, mod: {of: [v_pay, to]}}
-  money: {display: 金額（円）, extends: magnitude, mod: {of: [v_measure, from], with: process}, axis: amount}
+  money: {display: 金額（円）, extends: magnitude, mod: {of: [v_measure, from], with: process}, axis: yen}
   sales: {display: 売上, extends: money, mod: {of: [v_measure, from], with: payment}}
   plan: {display: プラン, extends: information_entity, mod: {of: [v_refer, from], with: service}}
   free_plan: {display: 無料, extends: plan, mod: {of: [v_depend, to], with: monthly_fee, at: {amount: {le: 500}}}}
