@@ -1,0 +1,26 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-18T12:21:49.542Z（UTC）
+individuals:
+  01M7Q9PBB6NKCGE1V1EA1VWYBX:
+    is: model_utterance
+    display: 発言 1932
+    val:
+      order: 1932
+      text: |
+        自動マージの判定が PR に返らないことは、ワークフロー側を直す PR で対処しました。その途中で #205 の内容を一部取り違えたので、戻す PR も立てています。
+
+        - **#208（判定を PR に返す）**
+          - 判定はこれまで Actions のジョブのまとめにしか書かれず、PR にもこのセッションにも返っていませんでした。
+          - 手で見る判定のとき、外れた条件を PR のコメントに書くようにしました。前のコメントがあれば書き換えるので、push のたびにコメントは増えません。
+          - ワークフローの変更なので、手で見てもらう PR です。手元で確かめたのは構文だけです。コメントが実際に書けるかは、マージ後に次に手で見る判定になる PR で分かります。
+
+        - **#209（#205 の式を戻す）**
+          - 私が式を 1 つに削って push した時点で、#205 が自動マージされました。2 つに戻した commit はマージに間に合っていません。
+          - いま main の h_layers_unhardcode には、`v_depend(型検査器, [層の置き場, シグネチャの類])` しか入っていません。
+          - #209 で `v_not_depend(型検査器, 識別子の選び)` を戻します。既にある仮説に式を足す PR なので、手で見てもらう PR です。経緯は PR の本文に書きました。
+
+        #206（層の移動）を含む 3 つの PR は、どれも確認とマージを待っています。全部見張っています。
+facts:
+- {is: v_say, from: session_model, to: 01M7Q9PBB6NKCGE1V1EA1VWYBX}
+- {is: exp.v_answer, from: 01M7Q9PBB6NKCGE1V1EA1VWYBX, to: 01M7Q9KKM6W3PBJNKFKJF7TQ0E}
+- {is: v_refer, from: 01M7Q9PBB6NKCGE1V1EA1VWYBX, to: ontology.v_depend}
+- {is: v_refer, from: 01M7Q9PBB6NKCGE1V1EA1VWYBX, to: lang.v_not_depend}
