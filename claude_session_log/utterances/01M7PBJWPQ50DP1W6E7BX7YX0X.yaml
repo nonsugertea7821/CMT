@@ -1,0 +1,20 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-18T03:35:38.967Z（UTC）
+individuals:
+  01M7PBJWPQ50DP1W6E7BX7YX0X:
+    is: model_utterance
+    display: 発言 1527
+    val:
+      order: 1527
+      text: |
+        (b) で進めます。今後、解釈は commit のメッセージと会話にだけ書き、claims には事実だけを足します。
+
+        まず検査のフックを作ります。今ある 431 個をすぐ禁止すると、移し終えるまでどの編集もできなくなります。なので当面は「新しいコメントを足さない」ことを検査し、移し終えた時点で全面禁止にします。
+
+        フックは 2 か所に置きます。
+        - **Edit / Write の後**：その場で知らせます。
+        - **`git commit` の前**：私は Python のスクリプトでファイルを書き換えることが多く、Edit を通らない書き換えはここでしか捕まえられないからです。
+
+        フックの設定は commit されるので、この repo で動くすべてのセッションにかかります。
+facts:
+- {is: v_say, from: session_model, to: 01M7PBJWPQ50DP1W6E7BX7YX0X}
+- {is: exp.v_answer, from: 01M7PBJWPQ50DP1W6E7BX7YX0X, to: 01M7PBJEBR7KGTYTATTWBAX3AG}

@@ -1,0 +1,26 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-18T03:38:23.723Z（UTC）
+individuals:
+  01M7PBQXKB715C1691CV8NJS7F:
+    is: model_utterance
+    display: 発言 1534
+    val:
+      order: 1534
+      text: |
+        hook だけの PR を出しました: https://github.com/nonsugertea7821/CMT/pull/132 （main 向け、ブランチ `claude/model-concept-language-mapping-g0lw1i`）
+
+        - **中身:** `.claude/hooks/no_new_comments.py` と `.claude/settings.json` だけです。
+          - ファイルを書いた直後と `git commit` の前に動きます。
+          - `cscl.yaml`、`cscl/library/`、`cscl/design/`、`exp/src/` の yaml に、HEAD にないコメントがあると止めます。
+          - コメントを消すのは止めません。
+        - **途中で直した穴:** `git commit -a` のとき、まだ add していない変更を見ていませんでした。`-a`、`-am`、`--all` のどれでも止まるようにしました。
+        - **確かめた結果:**
+          - コメントを足すと止まりました（edit、staged の commit、`-a`/`-am`/`--all` の commit。どれも終了コード 2）。
+          - コメントがないとき、消しただけのとき、`git commit` 以外のコマンドでは止まりませんでした（0）。
+          - main 全体で検査しても 0 でした。
+        - **マージで要る手作業:** main には `.claude/settings.json` がないので、この PR で新しく作ります。claude/cross 側の settings.json（session log の Stop hook）とは、マージのときに手で合わせる必要があります。
+        - **claude/cross の扱い:** この2ファイルは claude/cross ではまだ commit していません。作業ツリーでは hook がすでに効いています。PR を main に入れてから claude/cross に取り込む想定です。
+
+        この PR の CI とレビューを見張りましょうか？見張っている間に、cscl/library のコメント 76 個の移し替え（見出しの削除から）を claude/cross で進めます。
+facts:
+- {is: v_say, from: session_model, to: 01M7PBQXKB715C1691CV8NJS7F}
+- {is: exp.v_answer, from: 01M7PBQXKB715C1691CV8NJS7F, to: 01M7PBP3DMS1770JSKKTF0BJG2}
