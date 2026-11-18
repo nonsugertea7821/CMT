@@ -125,8 +125,10 @@ individuals:
   b_renaming_invariant: {is: exp.item_queued}
   h_w_from_frames: {is: exp.hyp_refuted}
   b_w_from_frames: {is: exp.item_done}
-  h_layers_from_primitives: {is: exp.hyp_untested}
-  b_layers_from_primitives: {is: exp.item_queued}
+  h_layers_from_primitives: {is: exp.hyp_mixed}
+  b_layers_from_primitives: {is: exp.item_done}
+  h_layers_role_edges: {is: exp.hyp_untested}
+  b_layers_role_edges: {is: exp.item_queued}
   h_tops_from_primitives: {is: exp.hyp_supported}
   b_tops_from_primitives: {is: exp.item_done}
   h_any_not_vacuous: {is: exp.hyp_refuted}
@@ -314,6 +316,10 @@ individuals:
   o_sys_ja_case_frame_broken: {is: exp.observation}
   o_sys_ja_roundtrip_ok: {is: exp.observation}
   o_sys_ja_roundtrip_struct: {is: exp.observation}
+  o_sys_layers_primitives_mostly: {is: exp.observation}
+  o_sys_layers_primitives_blocked: {is: exp.observation}
+  o_sys_layers_primitives_violations: {is: exp.observation}
+  o_sys_layers_primitives_errors: {is: exp.observation}
   o_sys_tops_primitives_left: {is: exp.observation}
   o_sys_tops_primitives_errors: {is: exp.observation}
   o_sys_gloss_formula_accepted: {is: exp.observation}
@@ -459,6 +465,8 @@ facts:
   - {is: exp.v_check, from: b_w_from_frames, to: h_w_from_frames}
   - {is: v_refer, from: h_layers_from_primitives, to: {is: v_depend, from: layer_placement, to: [step_quantification, kind_existence, variable_range]}}
   - {is: exp.v_check, from: b_layers_from_primitives, to: h_layers_from_primitives}
+  - {is: v_refer, from: h_layers_role_edges, to: {is: v_depend, from: layer_placement, to: [step_quantification, kind_existence, variable_range, ontology.role]}}
+  - {is: exp.v_check, from: b_layers_role_edges, to: h_layers_role_edges}
   - {is: v_refer, from: h_tops_from_primitives, to: {is: v_depend, from: top_placement, to: [step_quantification, kind_existence, variable_range]}}
   - {is: exp.v_check, from: b_tops_from_primitives, to: h_tops_from_primitives}
   - {is: v_refer, from: h_any_not_vacuous, to: {is: v_depend, from: any_limitation, to: syntax.of}}
@@ -602,6 +610,12 @@ facts:
   - {is: v_refer, from: o_sys_ja_roundtrip_ok, to: {is: v_level, from: sys_ja_roundtrip.rate_ok.mean_value, to: 1.0}}
   - {is: v_refer, from: o_sys_ja_roundtrip_struct, to: {is: v_level, from: sys_ja_roundtrip.n_struct.mean_value, to: 0}}
   - {is: exp.v_support, from: o_sys_ja_roundtrip_struct, to: h_ja_roundtrip}
+  - {is: v_refer, from: o_sys_layers_primitives_mostly, to: {is: v_come_after, from: sys_layers_primitives.movable.mean_value, to: 0.5}}
+  - {is: v_refer, from: o_sys_layers_primitives_blocked, to: {is: v_come_before, from: sys_layers_primitives.movable.mean_value, to: 1.0}}
+  - {is: v_refer, from: o_sys_layers_primitives_violations, to: {is: v_level, from: sys_layers_primitives.n_violations.mean_value, to: 7}}
+  - {is: v_refer, from: o_sys_layers_primitives_errors, to: {is: v_level, from: sys_layers_primitives.errors.mean_value, to: 0}}
+  - {is: exp.v_support, from: o_sys_layers_primitives_mostly, to: h_layers_from_primitives}
+  - {is: exp.v_contradict, from: o_sys_layers_primitives_blocked, to: h_layers_from_primitives}
   - {is: v_refer, from: o_sys_tops_primitives_left, to: {is: v_level, from: sys_tops_primitives.n_left.mean_value, to: 0}}
   - {is: v_refer, from: o_sys_tops_primitives_errors, to: {is: v_level, from: sys_tops_primitives.errors.mean_value, to: 0}}
   - {is: exp.v_support, from: o_sys_tops_primitives_left, to: h_tops_from_primitives}
