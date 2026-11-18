@@ -465,6 +465,16 @@ individuals:
   o_sys_kind_ref_stops_overextension: {is: exp.observation}
   o_sys_kind_ref_no_new_violation: {is: exp.observation}
   o_sys_kind_ref_passes_checks: {is: exp.observation}
+  # 表示名のうち、式が参照するものの表示名から来ない部分（余り）を見た観察（exp/experiments/sys_display_residual.py）。
+  #   手順と判定は実行の前に登録した（841ff81。結果を見る前の訂正 12a37cb: 個体の表示名の読み先）。
+  # 結果（2477928、違反 9 組のとき）: V 9（前提は成り立つ）、違反の上 y 6 つの余りを持つ割合 rate_y 1.0、概念 526 すべてでは rate_all 0.772。
+  #   比は 1.30 で、登録した 1.5 倍に届かず外れ。表示名の 77% は、式から来ない文字を持つ（語彙化した名前が多い）。
+  #   今の体系（HEAD）: V 3、rate_y 1.0、rate_all 0.772。
+  # 実行の後の読み（登録していない）: 余りの有無は、取り残しと語彙化した名前を区別できない。ただ、直した概念では余りの中身が変わった:
+  #   money の余りは 円・金・額 → 金・額（円は軸 yen の表示名から来る）、age は 年・歳・齢 → 年・齢。verb_ref の 動・詞・指 は残る
+  #   （is と occurrent と kind の表示名からは来ない。「動詞」は 生起体 の別の名で、日本語の辞書の側の語）。
+  o_sys_display_residual_not_distinct: {is: exp.observation}
+  o_sys_display_residual_mostly_residual: {is: exp.observation}
   o_sys_frame_declared_never_grows: {is: exp.observation}
   o_sys_frame_declared_never_shrinks: {is: exp.observation}
   o_sys_frame_creates_over_removes: {is: exp.observation}
@@ -630,6 +640,8 @@ facts:
   - {is: v_refer, from: o_sys_kind_ref_stops_overextension, to: {is: v_come_before, from: sys_kind_ref_after2.v_verb_ref.mean_value, to: sys_kind_ref_before.v_verb_ref.mean_value}}
   - {is: v_refer, from: o_sys_kind_ref_no_new_violation, to: {is: v_level, from: sys_kind_ref_after2.new_V.mean_value, to: 0.0}}
   - {is: v_refer, from: o_sys_kind_ref_passes_checks, to: {is: v_level, from: sys_kind_ref_after2.errors.mean_value, to: 0.0}}
+  - {is: v_refer, from: o_sys_display_residual_not_distinct, to: {is: v_come_before, from: sys_display_residual_before.rate_y.mean_value, to: 1.16}}
+  - {is: v_refer, from: o_sys_display_residual_mostly_residual, to: {is: v_come_after, from: sys_display_residual_before.rate_all.mean_value, to: 0.5}}
   - {is: v_refer, from: o_sys_outlive_never_outlived, to: {is: v_level, from: sys_outlive.outlives_source.mean_value, to: 0.0}}
   - {is: v_refer, from: o_sys_outlive_compute_steps_ok, to: {is: v_level, from: sys_outlive.c_step_ok.mean_value, to: 1.0}}
   - {is: v_refer, from: o_sys_outlive_speak_steps_ok, to: {is: v_level, from: sys_outlive.s_step_ok.mean_value, to: 1.0}}
