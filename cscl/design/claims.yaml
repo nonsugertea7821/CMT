@@ -23,12 +23,12 @@ nodes:
   top_placement: {display: 最上位の置き場, extends: quality, mod: syntax.refer_from_occurrent}
   individual_depth: {display: 個体の深さ, extends: quality, mod: {of: [v_depend, from], with: kind}}
   depth_limitation: {display: 深さの限定, extends: quality, mod: {of: [v_refer, from], with: syntax.mod}}
-  above_order: {display: 上位の順序, extends: quality, mod: {of: [v_refer, from], with: syntax.v_above}}
+  above_order: {display: 上位の順序, extends: quality, mod: {of: [v_refer, from], with: ontology.v_above}}
   placement_by_above: {display: 上位で決まる置き場, extends: quality, mod: {of: [v_depend, from], with: above_order}}
-  above_falsity: {display: 上位の偽, extends: quality, mod: {of: [v_refer, from], with: syntax.v_above, neg: true}}
+  above_falsity: {display: 上位の偽, extends: quality, mod: {of: [v_refer, from], with: ontology.v_above, neg: true}}
   mod_lack: {display: 修飾の欠け, extends: quality, mod: {of: [v_refer, from], with: syntax.mod, neg: true}}
   name_choice: {display: 識別子の選び, extends: quality, mod: {of: [v_depend, from], with: syntax.identifier}}
-  frame_trace: {display: 後の状態の痕跡, extends: quality, mod: runtime.refer_from_post}
+  frame_trace: {display: 後の状態の痕跡, extends: quality, mod: syntax.refer_from_post}
   any_limitation: {display: 何でもを端に持つ限定, extends: quality, mod: {of: [v_refer, from], with: any}}
   reading_formula: {display: 読みの式, extends: quality, mod: exp.refer_from_hypothesis}
   annotation: {display: 注釈, extends: passage_express_from_natural_language, mod: {of: [v_refer, from], with: syntax.domain}}
@@ -37,9 +37,9 @@ nodes:
   ja_ambiguity: {display: 日本語の係りの多義, extends: quality, mod: {of: [v_refer, from], with: ja_text}}
   case_frame: {display: 動詞の格の枠, extends: quality, mod: {of: [v_depend, from], with: syntax.position}}
   ja_connective: {display: 文と文の接続, extends: quality, mod: {of: [v_refer, from], with: v_agree}}
-  exists_scope: {display: 在るものの範囲, extends: quality, mod: {of: [v_depend, from], with: runtime.state}}
+  exists_scope: {display: 在るものの範囲, extends: quality, mod: {of: [v_depend, from], with: syntax.state}}
   step_quantification: {display: ステップ上の量化, extends: quality, mod: {of: [v_refer, from], with: runtime.steps, quant: all}}
-  kind_existence: {display: 種類について在ることを述べる場所, extends: quality, mod: {of: [v_refer, from], with: runtime.state, quant: all}}
+  kind_existence: {display: 種類について在ることを述べる場所, extends: quality, mod: {of: [v_refer, from], with: syntax.state, quant: all}}
   variable_range: {display: 変数の範囲, extends: quality, mod: syntax.refer_from_variable}
   v_not_trigger: {display: 引き起こさない, extends: v_not_transfer, from: any, to: occurrent, opposite: v_trigger}
 
@@ -441,7 +441,7 @@ facts:
   - {is: v_refer, from: h_open_declaration, to: {is: v_depend, from: declared_scope, to: runtime.steps}}
   - {is: exp.v_check, from: b_open_declaration, to: h_open_declaration}
   - {is: v_refer, from: h_frame_closed, to: {is: v_agree, from: declared_scope, to: exists_scope}}
-  - {is: v_refer, from: h_open_runtime, to: {is: v_not_depend, from: declared_scope, to: runtime.state}}
+  - {is: v_refer, from: h_open_runtime, to: {is: v_not_depend, from: declared_scope, to: syntax.state}}
   - {is: exp.v_check, from: b_open_runtime, to: h_open_runtime}
   - {is: v_refer, from: h_layers_signature, to: {is: v_depend, from: layer_placement, to: signature_class}}
   - {is: exp.v_check, from: b_layers_signature, to: h_layers_signature}
@@ -481,7 +481,7 @@ facts:
   - {is: exp.v_check, from: b_w_from_frames, to: h_w_from_frames}
   - {is: v_refer, from: h_layers_from_primitives, to: {is: v_depend, from: layer_placement, to: [step_quantification, kind_existence, variable_range]}}
   - {is: exp.v_check, from: b_layers_from_primitives, to: h_layers_from_primitives}
-  - {is: v_refer, from: h_layers_role_edges, to: {is: v_depend, from: layer_placement, to: [step_quantification, kind_existence, variable_range, ontology.role]}}
+  - {is: v_refer, from: h_layers_role_edges, to: {is: v_depend, from: layer_placement, to: [step_quantification, kind_existence, variable_range, syntax.role]}}
   - {is: exp.v_check, from: b_layers_role_edges, to: h_layers_role_edges}
   - {is: v_refer, from: h_layers_exists_change, to: {is: v_depend, from: layer_placement, to: [kind_existence, signature_class]}}
   - {is: exp.v_check, from: b_layers_exists_change, to: h_layers_exists_change}
@@ -508,7 +508,7 @@ facts:
   - {is: exp.v_check, from: b_case_frame_formula, to: h_case_frame_formula}
   - {is: v_refer, from: h_case_frame_by_relation, to: {is: v_depend, from: case_frame, to: syntax.base}}
   - {is: exp.v_check, from: b_case_frame_by_relation, to: h_case_frame_by_relation}
-  - {is: v_refer, from: h_case_frame_by_role, to: {is: v_depend, from: case_frame, to: ontology.role}}
+  - {is: v_refer, from: h_case_frame_by_role, to: {is: v_depend, from: case_frame, to: syntax.role}}
   - {is: v_refer, from: h_case_frame_by_signature, to: {is: v_depend, from: case_frame, to: signature_class}}
   - {is: exp.v_check, from: b_case_frame_by_signature, to: h_case_frame_by_signature}
   - {is: v_refer, from: h_annotation_gold, to: {is: v_depend, from: ja_readback, to: annotation}}

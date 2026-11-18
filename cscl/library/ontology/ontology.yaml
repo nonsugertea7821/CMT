@@ -17,8 +17,11 @@ axes:
   order: {display: 順番, source: after, value: number}
 
 nodes:
-  express_from_natural_language: {display: 自然言語へで書かれる（始点）, extends: quality, of: [v_express, from], with: natural_language}
-  refer_from_concept: {display: 概念へ述べる（始点）, extends: quality, of: [v_refer, from], with: concept}
+  verb_ref: {display: 動詞を指すもの, extends: kind, mod: {of: [is, to], with: occurrent}}
+  v_above: {display: 上位に持つ, extends: ontology.occurrent, from: any, to: any, holds: [{is: above, from: from, to: to}]}
+  not_before_from: {display: 前には置かれない（始点）, extends: quality, of: [v_not_before, from]}
+  not_after_from: {display: 後ろには置かれない（始点）, extends: quality, of: [v_not_after, from]}
+  deep_kind: {display: 上位を3つ以上持つ種類, extends: ontology.kind, mod: {of: [v_above, from], with: any, at: {count: {gt: 2}}}}
   perform_to: {display: 行う（終点）, extends: quality, of: [v_perform, to]}
 
   continuant: {display: 持続体, mod: {of: [v_stage, to], neg: true}, always: [{is: exists, from: self}]}
@@ -28,8 +31,6 @@ nodes:
   v_compose: {display: 部分になる, extends: occurrent, from: continuant, to: continuant, holds: [{is: part, from: from, to: to}]}
   v_stage: {display: 時間的な部分になる, extends: occurrent, from: occurrent, to: occurrent, holds: [{is: part, from: from, to: to}]}
   v_come_after: {display: 後ろに置かれる, extends: occurrent, from: continuant, to: continuant, holds: [{is: after, from: from, to: to}]}
-  v_refer: {display: 述べる, extends: occurrent, from: continuant, to: any, holds: [{is: refer, from: from, to: to}]}
-  v_agree: {display: 一致する, extends: occurrent, from: continuant, to: continuant, holds: [{is: refer, from: from, to: new}, {is: refer, from: to, to: new}]}
   v_express: {display: で書かれる, extends: occurrent, from: continuant, to: continuant, holds: [{is: depend, from: from, to: to}, {is: part, from: new, to: from}, {is: part, from: new, to: to}]}
   v_involve: {display: に関わらせる, extends: occurrent, from: occurrent, to: continuant, holds: [{is: involve, from: from, to: to}]}
   v_perform: {display: 行う, extends: occurrent, from: continuant, to: occurrent, holds: [{is: involve, from: to, to: from}]}
@@ -51,20 +52,10 @@ nodes:
   generically_dependent_continuant: {display: 汎用依存持続体, extends: dependent, mod: {of: [v_depend, from], at: {count: {ge: 1}}}}
   realizable_entity: {display: 実現可能体, extends: specifically_dependent_continuant, mod: {of: [v_involve, to]}}
   quality: {display: 質, extends: specifically_dependent_continuant, mod: {of: [v_involve, to], neg: true}}
-  role: {display: 役割, extends: realizable_entity, mod: {of: [v_depend, from], with: definition}}
   magnitude: {display: 大きさ, extends: quality, mod: {of: [v_come_after, from], with: quality}}
   process: {display: 過程, extends: occurrent, mod: {of: [v_stage, to]}}
-  information_entity: {display: 情報, extends: generically_dependent_continuant, mod: {of: [v_refer, from]}, many: true}
-  language: {display: 言語, extends: information_entity, mod: {of: [v_express, to]}}
-  natural_language: {display: 自然言語, extends: language, mod: {of: [v_design, to], neg: true}}
-  information_entity_compose_to_word: {display: 語を部分に持つ情報, extends: information_entity, mod: {of: [v_compose, to], with: word}}
-  sentence: {display: 文, extends: information_entity_compose_to_word, mod: {of: [v_express, from], with: language}}
-  information_entity_express_from_natural_language: {display: 自然言語へで書かれる情報, extends: information_entity, mod: express_from_natural_language}
-  word: {display: 語, extends: information_entity_express_from_natural_language, mod: {of: [v_compose, from], with: sentence}}
-  definition: {display: 定義, extends: sentence, mod: refer_from_concept}
 
   inference: {display: 推論, extends: process, mod: perform_to}
-  concept: {display: 概念, extends: inference, mod: {of: [v_trigger, to], with: word}}
   kind: {display: 種類, form: [v_compose, to]}
   participant: {display: 関わるもの, form: [v_involve, to]}
   participant_p_from_not: {display: 関係づけることのない関わるもの, extends: participant, mod: {of: [p, from], neg: true}}
@@ -80,9 +71,6 @@ nodes:
   staged: {display: 時間的な部分を持つもの, form: [v_stage, to]}
   later_one: {display: 後ろに置かれるもの, form: [v_come_after, from]}
   later_target: {display: 後ろに置かれる相手, form: [v_come_after, to]}
-  referrer: {display: 述べるもの, form: [v_refer, from]}
-  agreeing: {display: 一致するもの, form: [v_agree, from]}
-  agreed: {display: 一致する相手, form: [v_agree, to]}
   expressed: {display: で書かれるもの, form: [v_express, from]}
   medium: {display: 書くのに使われるもの, form: [v_express, to]}
   involving: {display: 関わらせるもの, form: [v_involve, from]}

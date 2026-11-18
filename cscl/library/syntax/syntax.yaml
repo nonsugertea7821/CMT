@@ -28,6 +28,28 @@ base:
   above: {display: 上位である, arity: 2}
 
 nodes:
+  state: {display: 状態, extends: passage, mod: {of: [v_compose, to], with: facts}}
+  role_depend_from_rewrite_rule: {display: 書き換えの規則へ依存する役割, extends: role, mod: {of: [v_depend, from], with: rewrite_rule}}
+  rewrite_rule: {display: 書き換えの規則, extends: definition, mod: refer_from_post}
+  refer_from_post: {display: 後の状態の指定へ述べる（始点）, extends: quality, of: [v_refer, from], with: post}
+  refer_from_laws: {display: 法則へ述べる（始点）, extends: quality, of: [v_refer, from], with: laws}
+  word: {display: 語, extends: information_entity_express_from_natural_language, mod: {of: [v_compose, from], with: sentence}}
+  v_refer: {display: 述べる, extends: occurrent, from: continuant, to: any, holds: [{is: refer, from: from, to: to}]}
+  v_agree: {display: 一致する, extends: occurrent, from: continuant, to: continuant, holds: [{is: refer, from: from, to: new}, {is: refer, from: to, to: new}]}
+  sentence: {display: 文, extends: information_entity_compose_to_word, mod: {of: [v_express, from], with: language}}
+  role: {display: 役割, extends: realizable_entity, mod: {of: [v_depend, from], with: definition}}
+  referrer: {display: 述べるもの, form: [v_refer, from]}
+  refer_from_concept: {display: 概念へ述べる（始点）, extends: quality, of: [v_refer, from], with: concept}
+  natural_language: {display: 自然言語, extends: language, mod: {of: [v_design, to], neg: true}}
+  language: {display: 言語, extends: information_entity, mod: {of: [v_express, to]}}
+  information_entity_express_from_natural_language: {display: 自然言語へで書かれる情報, extends: information_entity, mod: express_from_natural_language}
+  information_entity_compose_to_word: {display: 語を部分に持つ情報, extends: information_entity, mod: {of: [v_compose, to], with: word}}
+  information_entity: {display: 情報, extends: generically_dependent_continuant, mod: {of: [v_refer, from]}, many: true}
+  express_from_natural_language: {display: 自然言語へで書かれる（始点）, extends: quality, of: [v_express, from], with: natural_language}
+  definition: {display: 定義, extends: sentence, mod: refer_from_concept}
+  concept: {display: 概念, extends: inference, mod: {of: [v_trigger, to], with: word}}
+  agreeing: {display: 一致するもの, form: [v_agree, from]}
+  agreed: {display: 一致する相手, form: [v_agree, to]}
   refer_from_facts: {display: 事実へ述べる（始点）, extends: quality, of: [v_refer, from], with: facts}
   refer_from_occurrent: {display: 生起体へ述べる（始点）, extends: quality, of: [v_refer, from], with: occurrent}
   compose_from_system: {display: 体系へ部分になる（始点）, extends: quality, of: [v_compose, from], with: system}
@@ -38,15 +60,12 @@ nodes:
   refer_from_third_participant: {display: 第三のものへ述べる（始点）, extends: quality, of: [v_refer, from], with: third_participant}
   refer_from_state_relation: {display: 状態の関係へ述べる（始点）, extends: quality, of: [v_refer, from], with: state_relation}
   come_before_from_post: {display: 後の状態の指定へ前に置かれる（始点）, extends: quality, of: [v_come_before, from], with: post}
-  not_before_from: {display: 前には置かれない（始点）, extends: quality, of: [v_not_before, from]}
-  not_after_from: {display: 後ろには置かれない（始点）, extends: quality, of: [v_not_after, from]}
   refer_from_magnitude: {display: 大きさへ述べる（始点）, extends: quality, of: [v_refer, from], with: magnitude}
   refer_from_sentence: {display: 文へ述べる（始点）, extends: quality, of: [v_refer, from], with: sentence}
   refer_from_individuals: {display: 個体へ述べる（始点）, extends: quality, of: [v_refer, from], with: individuals}
   refer_from_variable: {display: 変数へ述べる（始点）, extends: quality, of: [v_refer, from], with: variable}
 
   v_collect: {display: 成員の種類にする, extends: v_refer, from: kind_collection, to: continuant}
-  verb_ref: {display: 動詞を指すもの, extends: kind, mod: {of: [is, to], with: occurrent}}
   v_measure: {display: 測る, extends: occurrent, from: continuant, to: any, holds: [{is: refer, from: from, to: to}, {is: depend, from: from, to: to}]}
 
   kind_collection: {display: 種類の集まり, extends: information_entity, mod: {of: [v_collect, from]}}
@@ -143,9 +162,6 @@ nodes:
 
   domain: {display: 領域, extends: passage, mod: {of: [v_compose, to], with: concept_expression}, many: true}
   v_use: {display: 使う, extends: v_depend, from: domain, to: domain}
-
-  v_above: {display: 上位に持つ, extends: ontology.occurrent, from: any, to: any, holds: [{is: above, from: from, to: to}]}
-  deep_kind: {display: 上位を3つ以上持つ種類, extends: ontology.kind, mod: {of: [v_above, from], with: any, at: {count: {gt: 2}}}}
 
 individuals:
   syntax: {is: domain, display: 構文}
