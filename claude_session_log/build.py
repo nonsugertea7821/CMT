@@ -16,9 +16,10 @@
 伏せる規則（いつも置き換える）: メールアドレス、電話番号、カード番号らしい数字の並び、秘密の鍵らしい文字列（API キー、
   GitHub などのトークン、Bearer の後ろ、秘密鍵の塊）は「[…を伏せた]」に置き換える。モデルの識別子（claude-<名>-<数>）と
   モデルの名（Opus 5.5 など）は「[モデル名を伏せた]」（リポジトリに置くものにモデルの識別子を書かない取り決め）。それ以外は原文のまま。
-保留の規則（Claude が決める）: 個人の情報を指す語（住所、本名、生年月日、パスワード、口座、郵便番号らしい数字 など）を含む発言は、
+保留の規則（Claude が決める）: 利用者の発言のうち、個人の情報を指す語（住所、本名、生年月日、パスワード、口座、郵便番号らしい数字 など）を含むものは、
   書かずに保留し、終了コード 2 で知らせる（フックが Claude を起こす）。Claude が decisions.yaml に keep（そのまま記録）か
   withhold（記録しない）を書くまで保留のまま。decisions.yaml は ULID と決定と理由だけを持ち、発言の中身は持たない。
+  Claude の発言と要約は保留しない（利用者の取り決め。伏せる規則はどの発言にも使う）。
   Claude は保留でない発言も withhold にできる（まだ push されていなければ、記録されない）。
   python claude_session_log/build.py --decide <ULID> keep|withhold <理由>
   python claude_session_log/build.py --pending <transcript.jsonl>   まだ記録していない発言の ULID と書き出し
@@ -210,7 +211,7 @@ def main():
         assert uid not in ids, uid
         ids.add(uid)
         what = dec.get(uid, {}).get("decision")
-        hit = sorted(set(m.group(0) for m in SUSPECT.finditer(re.sub(r"\[[^\]]*を伏せた\]", "", s))))
+        hit = [] if k != "user" else sorted(set(m.group(0) for m in SUSPECT.finditer(re.sub(r"\[[^\]]*を伏せた\]", "", s))))
         if what == "withhold" or (uid not in have and hit and what != "keep"):
             if what != "withhold":
                 held.append((uid, k, hit, s))
