@@ -1,0 +1,37 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-18T04:31:53.062Z（UTC）
+individuals:
+  01M7PESVQ6DWSK1ARC9ZQ5B2V5:
+    is: model_utterance
+    display: 発言 1609
+    val:
+      order: 1609
+      text: |
+        条件付きの自動マージを入れて、claude/cross に push しました。commit は二つです。
+
+        **先に仮説として登録（83269b4）**
+        - `h_auto_merge_uncorrected` を exp.yaml に登録しました。中身は「訂正のない取り決めで決着した仮説の PR は、マージの判定が運用者によらない」です。
+        - 「訂正」を式で書くために、名前付きの限定「観察の後に来る」を作りました。既存の `lim_post_hoc` も同じ限定を使っていたので、named_mod の法則に合わせて両方をこの名前に寄せています。tc と ec は通っています。
+
+        **ワークフロー auto-merge（ed7017e）**
+        - 対象は `claude/h_<名前>` ブランチの、Draft でない PR です。次の条件をすべて満たすと、GitHub の側でマージします。
+          - 触るファイルが claims.yaml、exp の yaml、実験スクリプト、結果ファイルだけ。
+          - 仮説の状態が、main で未検証、PR で支持か反証。
+          - 事前登録が先にある。各スクリプトを触る commit がちょうど1つで、結果ファイルの commit より前にある。
+          - スクリプトに「訂正」の行が増えていない。
+          - tc と ec が通る。
+        - 外れたら何もせず、外れた理由をジョブの要約に書きます。手で見る対象は、訂正のある PR、mixed になったもの、評価器や文法を変えるものです。
+        - マージした後、同じジョブで issue の同期も走らせます。GitHub Actions の既定のトークンでマージした push では、`issues` ワークフローが起きないためです。
+        - 判定は関数 `decide` にまとめ、ケースごとのテスト（`test_auto_merge.py`）を spec の CI に足しました。手元ではこのテストだけ走らせて、通りました。
+        - `CLAUDE.md` の流れにも例外として書き足しました。自動マージに乗せるには、事前登録の commit にスクリプトだけを入れ、結果ファイルは後の commit で足す必要があります。
+
+        注意が三つあります。
+
+        - **私が Draft を外すと、そのままマージまで進む。** 条件を満たす PR では、Draft を外すことがマージの引き金になります。手で見てほしいものは、条件の側で弾く作りです。
+        - **リポジトリの設定によっては動かない。** main の保護でレビューを必須にしていると、このマージは拒まれ、手でマージする流れに戻ります。
+        - **issue の同期はリポジトリ変数が要る。** 自動マージの後の同期は、`ISSUE_SYNC` が `on` のときだけ走ります。
+
+        どれも、claude/cross が main に入ってから効きます。
+facts:
+- {is: v_say, from: session_model, to: 01M7PESVQ6DWSK1ARC9ZQ5B2V5}
+- {is: exp.v_answer, from: 01M7PESVQ6DWSK1ARC9ZQ5B2V5, to: 01M7PEKY7EJTXRF9MDB4HHVB9Z}
+- {is: v_refer, from: 01M7PESVQ6DWSK1ARC9ZQ5B2V5, to: exp.lim_post_hoc}
