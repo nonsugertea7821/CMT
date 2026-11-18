@@ -18,13 +18,19 @@
   そのため yen が軸として読まれず「axis yen は数の軸でない」。操作の前提（領域に軸を書ける）が成り立っていなかった。
   after の結果はそのまま記録する。次に、領域のファイルにも axes を書けるようにし（grammar.domain と、領域を読むコード）、
   今の体系の導いた文が変わらないことを確かめてから、同じ操作をして同じ判定で測り直す（引数 after2）。
+訂正 2（after2 を測ったあと）: after2 は errors 1 で外れた（V 7、v_money 0、sales_ok 1、absorbs_money 0、money_has_amount 1）。
+  誤りは法則 placed_deduced（var1=yen）。軸の上下を、概念の上下と同じ extends の文に訳したので、概念の法則が yen を概念として読んだ。
+  軸の上下を「下位の軸の値は上位の軸の上にある」と読み、axis の文に訳し直し、法則 entail_by_axis を axis の文で書き直して、
+  軸の含意が上位の軸の上位にも及ぶ法則 entail_by_axis_step を足す。今の体系の導いた文が、法則の個体のほかは変わらないことを確かめ、
+  同じ操作をして同じ判定で測り直す（引数 after3）。この訂正は after3 を一度走らせた後に書いた（after3 の値は見た。
+  after2 の結果ファイルは after3 の実行で上書きしたので、出力から書き直した）。
 
 行（sys_money_axis_before.json / sys_money_axis_after.json）:
   "summary 要約": errors, V, v_money, sales_ok, absorbs_money, money_has_amount
   "V x→y":        1（違反の組の一覧）
 
 使い方:
-  python exp/experiments/sys_money_axis.py before|after|after2
+  python exp/experiments/sys_money_axis.py before|after|after2|after3
 """
 import collections
 import contextlib
@@ -71,5 +77,5 @@ def main(label):
 
 
 if __name__ == "__main__":
-    assert sys.argv[1:] in (["before"], ["after"], ["after2"])
+    assert sys.argv[1:] in (["before"], ["after"], ["after2"], ["after3"])
     main(sys.argv[1])

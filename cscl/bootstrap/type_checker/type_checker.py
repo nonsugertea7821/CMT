@@ -848,9 +848,9 @@ class Ontology:
         for (dom, w), rs in WRITTEN.items():   # 法則 one_spelling が読む
             for r in rs:
                 add("r_written", f"{dom}:{w}", r)
-        for aid, a in self.AX.items():   # 軸の上下（法則 entail_by_axis が読む）
+        for aid, a in self.AX.items():   # 軸の上下は「下位の軸の値は、上位の軸の上にある」と読み、axis の文に訳す（法則 entail_by_axis が読む）
             if isinstance(a.get("extends"), str):
-                add("extends", aid, a["extends"])
+                add("axis", aid, a["extends"])
         for nid, n in self.N.items():
             add("exists", nid)
             add("domain", nid, self.domain(nid))
