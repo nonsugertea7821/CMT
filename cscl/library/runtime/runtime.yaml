@@ -10,15 +10,10 @@ runtime:
 
 nodes:
   refer_from_v_execute: {display: 実行するへ述べる（始点）, extends: quality, of: [v_refer, from], with: v_execute}
-  refer_from_post: {display: 後の状態の指定へ述べる（始点）, extends: quality, of: [v_refer, from], with: post}
-  refer_from_laws: {display: 法則へ述べる（始点）, extends: quality, of: [v_refer, from], with: laws}
 
-  state: {display: 状態, extends: passage, mod: {of: [v_compose, to], with: facts}}
   v_execute: {display: 実行する, extends: occurrent, from: continuant, to: state, new_kind: state,
               pre: [{is: exists, from: new, neg: true}], post: [{is: exists, from: new}, {is: after, from: new, to: to}]}
   run: {display: 実行の記録, extends: information_entity, mod: refer_from_v_execute}
-  rewrite_rule: {display: 書き換えの規則, extends: definition, mod: refer_from_post}
-  role_depend_from_rewrite_rule: {display: 書き換えの規則へ依存する役割, extends: role, mod: {of: [v_depend, from], with: rewrite_rule}}
   executor: {display: 実行器, extends: role_depend_from_rewrite_rule, mod: {of: [v_execute, from]}}
   halted: {display: 止まった状態, extends: state, mod: {of: [v_execute, to], neg: true}}
   steps: {display: ステップの列, extends: information_entity, mod: {of: [v_refer, from], with: v_execute, at: {count: {ge: 1}}}}

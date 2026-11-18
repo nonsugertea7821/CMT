@@ -310,7 +310,7 @@ def status_pattern(T, nid):
     """状態のノードの式から、「支持する観察がある / 反する観察がある」の組を読み取る。"""
     pat = {}
     for m in [m for x in [nid] + T.ancestors(nid) for m in (T.N[x].get("mod") or [])]:
-        if isinstance(m, dict) and m.get("of") == ["ontology.v_agree", "to"] and short(m.get("with")) in ("evidence", "against"):
+        if isinstance(m, dict) and m.get("of") == ["syntax.v_agree", "to"] and short(m.get("with")) in ("evidence", "against"):
             pat[short(m["with"])] = not m.get("neg")
     return pat if set(pat) == {"evidence", "against"} else None
 

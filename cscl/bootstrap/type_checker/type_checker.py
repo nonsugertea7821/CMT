@@ -779,7 +779,7 @@ class Ontology:
     def refs(self, nid):
         """ノードの式が参照しているノード。"""
         n, out = self.N[nid], set(self.parents(nid))
-        for k in ("from", "to", "new_kind"):
+        for k in ("from", "to", "new_kind", "with"):
             out.add(n.get(k))
         for k in ("of", "form"):
             if k in n:
@@ -1210,12 +1210,12 @@ class Ontology:
                     self.check_value(axis, v, where)
                     if axis in AX and AX[axis]["source"] != "any" and AX[axis]["source"] not in self.base_of(verb):
                         err(f"{where}: 軸 {axis} は基礎の関係 {AX[axis]['source']} を抽象にしたものだが、{verb} はそれを使っていない")
-        self.roles = [nid for nid in N if nid != "ontology.role" and "form" not in N[nid] and self.is_a(nid, "role")]
+        self.roles = [nid for nid in N if nid != "syntax.role" and "form" not in N[nid] and self.is_a(nid, "role")]
         for nid in self.roles:
             g = self.grounding(nid)
             if not g:
                 err(f"{nid}: 役割だが、根拠となる定義（依存する定義）がない")
-            elif all(x == "ontology.definition" for x in g):
+            elif all(x == "syntax.definition" for x in g):
                 err(f"{nid}: 根拠となる定義が特定されていない")
         sig = collections.defaultdict(list)
         for nid, n in N.items():
@@ -1237,7 +1237,7 @@ class Ontology:
         if f is None:
             return False
         if "form" in self.N[f] or self.is_verb(f):
-            return any(m["of"] == ["ontology.v_refer", "from"] for m in self.mods_of(kind))
+            return any(m["of"] == ["syntax.v_refer", "from"] for m in self.mods_of(kind))
         cands = [f] + [k for k in self.N if self.is_concept(k) and f in self.ancestors(k)]
         if any(m.get("with") in self.N and self.is_a(f, m["with"]) for m in self.mods_of(kind)):   # 種類の式が、f のものとの関係で限定されている
             return True
