@@ -791,6 +791,11 @@ individuals:
   sys_unit_axis_after_all_cond_new_V: {is: axis_value, val: {text: new_V}}
   sys_unit_axis_after_all_cond_v_money: {is: axis_value, val: {text: v_money}}
   sys_unit_axis_after_all_cond_sales_ok: {is: axis_value, val: {text: sales_ok}}
+  sys_meet: {is: measurement_family}
+  sys_meet_cond: {is: family_axis, val: {text: cond}}
+  sys_meet_cond_pairs: {is: axis_value, val: {text: pairs}}
+  sys_meet_cond_meets: {is: axis_value, val: {text: meets}}
+  sys_meet_cond_lack_any: {is: axis_value, val: {text: lack_any}}
   sys_outlive: {is: measurement_family}
   sys_outlive_cond: {is: family_axis, val: {text: cond}}
   sys_outlive_cond_outlives_source: {is: axis_value, val: {text: outlives_source}}
@@ -3061,6 +3066,17 @@ facts:
   - {is: v_value_of, from: sys_unit_axis_after_all_cond_sales_ok, to: sys_unit_axis_after_all_cond}
   - {is: v_spell, from: sys_unit_axis_after_all_cond_sales_ok, to: sales_ok}
   - {is: v_entry_of, from: '{cond}', to: sys_unit_axis_after_all}
+  - {is: v_file_of, from: sys_meet.json, to: sys_meet}
+  - {is: v_rows_of, from: [rows], to: sys_meet}
+  - {is: v_axis_of, from: sys_meet_cond, to: sys_meet}
+  - {is: v_value_of, from: sys_meet_cond_pairs, to: sys_meet_cond}
+  - {is: v_spell, from: sys_meet_cond_pairs, to: pairs}
+  - {is: v_value_of, from: sys_meet_cond_meets, to: sys_meet_cond}
+  - {is: v_spell, from: sys_meet_cond_meets, to: meets}
+  - {is: v_value_of, from: sys_meet_cond_lack_any, to: sys_meet_cond}
+  - {is: v_spell, from: sys_meet_cond_lack_any, to: lack_any}
+  - {is: v_entry_of, from: '{cond}', to: sys_meet}
+  - {is: v_metric_of, from: sys_meet, to: mean_value}
   - {is: v_metric_of, from: sys_unit_axis_after_all, to: mean_value}
   - {is: v_metric_of, from: sys_money_axis_after3, to: mean_value}
   - {is: v_file_of, from: sys_content_symmetry.json, to: sys_content_symmetry}

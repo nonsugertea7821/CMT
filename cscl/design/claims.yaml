@@ -443,6 +443,16 @@ individuals:
   o_sys_unit_axis_stops_height_age: {is: exp.observation}
   o_sys_unit_axis_no_new_violation: {is: exp.observation}
   o_sys_unit_axis_passes_checks: {is: exp.observation}
+  # 残る違反の組は、2つの概念の交わり（meet）かを見た観察（exp/experiments/sys_meet.py）。手順と判定は実行の前に登録した（8987adb）。
+  # 結果: pairs 6、meets 0、lack_any 0（数え方の前提は成り立つ）。判定は外れ（交わりはない）。
+  #   どの組でも、x は上位 p と y のほかに、自分の限定を1つ足している（extra はその限定と、それが含意する式）。
+  # 実行の後の読み（登録していない）: 6 組のうち 5 組は、y が「生起体へ述べる」（refer_from_occurrent）だけで定義されたもの
+  #   （verb_ref が 3 組、opposite と hypothesis が 1 組ずつ）。verb_ref と opposite は「動詞そのもの（種類）を指す」が、
+  #   x（run, attendance, plan, position, backlog_item）は「起こったこと（成員）を指す」。この区別は式になく、
+  #   verb_ref の注釈（この位置には動詞そのものが来る）と、型検査が名前で verb_ref を読むところにだけある。
+  #   残る1組（control_preservation→context_following）は、control_case が case の下位なので、y の限定を含意する。
+  o_sys_meet_no_meets: {is: exp.observation}
+  o_sys_meet_lack_none: {is: exp.observation}
   o_sys_frame_declared_never_grows: {is: exp.observation}
   o_sys_frame_declared_never_shrinks: {is: exp.observation}
   o_sys_frame_creates_over_removes: {is: exp.observation}
@@ -603,6 +613,8 @@ facts:
   - {is: v_refer, from: o_sys_unit_axis_no_new_violation, to: {is: v_level, from: sys_unit_axis_after_all.new_V.mean_value, to: 0.0}}
   - {is: v_refer, from: o_sys_unit_axis_passes_checks, to: {is: v_level, from: sys_unit_axis_after_all.errors.mean_value, to: 0.0}}
   - {is: v_refer, from: o_sys_unit_axis_passes_checks, to: {is: v_level, from: sys_unit_axis_after_all.sales_ok.mean_value, to: 1.0}}
+  - {is: v_refer, from: o_sys_meet_no_meets, to: {is: v_level, from: sys_meet.meets.mean_value, to: 0.0}}
+  - {is: v_refer, from: o_sys_meet_lack_none, to: {is: v_level, from: sys_meet.lack_any.mean_value, to: 0.0}}
   - {is: v_refer, from: o_sys_outlive_never_outlived, to: {is: v_level, from: sys_outlive.outlives_source.mean_value, to: 0.0}}
   - {is: v_refer, from: o_sys_outlive_compute_steps_ok, to: {is: v_level, from: sys_outlive.c_step_ok.mean_value, to: 1.0}}
   - {is: v_refer, from: o_sys_outlive_speak_steps_ok, to: {is: v_level, from: sys_outlive.s_step_ok.mean_value, to: 1.0}}
