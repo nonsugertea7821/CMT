@@ -232,6 +232,8 @@ individuals:
   b_case_frame_by_relation: {is: exp.item_done}
   h_case_frame_by_role: {is: exp.hyp_untested}
   b_case_frame_by_role: {is: exp.item_queued}
+  h_annotation_gold: {is: exp.hyp_untested}
+  b_annotation_gold: {is: exp.item_queued}
   # ===== 定義の循環（自分を限定するものについて述べる定義）。利用者の問い「self がシグネチャになるとどうなるか」から
   # 定義の辺（上位・名前を付けた修飾語・限定の with）をたどった循環を数えた（exp/experiments/sys_cycles.py）。
   # 仮説は、観察を見た後に立てた（事前の登録ではない）。中身は「定義の循環は、否定の限定を通らない」。
@@ -731,6 +733,8 @@ facts:
   - {is: exp.v_check, from: b_case_frame_by_relation, to: h_case_frame_by_relation}
   - {is: v_refer, from: h_case_frame_by_role, to: {is: v_depend, from: case_frame, to: ontology.role}}
   - {is: exp.v_check, from: b_case_frame_by_role, to: h_case_frame_by_role}
+  - {is: v_refer, from: h_annotation_gold, to: {is: v_depend, from: ja_readback, to: annotation}}
+  - {is: exp.v_check, from: b_annotation_gold, to: h_annotation_gold}
   - {is: v_refer, from: h_gloss_formula, to: {is: v_not_depend, from: top_placement, to: syntax.gloss}}
   - {is: exp.v_check, from: b_gloss_formula, to: h_gloss_formula}
   - {is: v_refer, from: h_negation_formula, to: {is: v_not_depend, from: negated_limitation, to: type_checker}}
