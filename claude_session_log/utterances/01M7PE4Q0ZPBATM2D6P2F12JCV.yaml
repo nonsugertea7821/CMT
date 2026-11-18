@@ -1,0 +1,24 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-18T04:20:20.127Z（UTC）
+individuals:
+  01M7PE4Q0ZPBATM2D6P2F12JCV:
+    is: model_utterance
+    display: 発言 1593
+    val:
+      order: 1593
+      text: |
+        自動マージをやめるのは正しいと思います。理由は二つです。
+
+        - **「解けた」の判定に人の目が要る。** 仮説の状態は ec が式から照合しています。ただ、照合できるのは、支持や反証の観察が式として正しく結ばれているかまでです。事前登録の判定どおりに読んだか、訂正を開示しているか、観察から表を導いたかは、式に出ません。このセッションの sys_count_atom でも、after は外れで、訂正して after2 で通りました。その訂正が妥当かを見るのは人です。
+        - **私の側の決まりとして、マージはしない。** PR を作ることはできても、承認とマージは利用者の手に残す取り決めです。
+
+        仮説ごとに PR を作る流れそのものは、今の仕組みと噛み合う点があります。
+
+        - **issue は状態から自動で閉じる。** `sync_issues.py` は、状態が supported・refuted・adopted・withdrawn になると issue を閉じます（`.github/scripts/sync_issues.py:33`）。仮説の状態を変える PR を手でマージすれば、その push で issue も閉じます。`Closes #n` を書かなくても、結びつきは体系の側にあります。
+        - **issue は main に入ってから立つ。** そのため、PR が参照できる番号は、仮説を main に入れた後にしか出ません。順番は「仮説を登録して main に入れる → issue が立つ → 確かめる PR を作り、本文で issue を参照する → 人が見てマージ → 状態が変わり issue が閉じる」になります。
+
+        今のやり方とは一つずれがあります。いまは claude/cross にいくつもの作業を積んでいるので、仮説ごとに PR にするなら、ブランチも仮説ごとに切ることになります。
+
+        この流れを取り決めにするかどうか（CLAUDE.md に書く、ブランチの切り方）は、決めてもらえればそのとおりにします。
+facts:
+- {is: v_say, from: session_model, to: 01M7PE4Q0ZPBATM2D6P2F12JCV}
+- {is: exp.v_answer, from: 01M7PE4Q0ZPBATM2D6P2F12JCV, to: 01M7PE45W1M6TMSF6KQGY1TCZB}
