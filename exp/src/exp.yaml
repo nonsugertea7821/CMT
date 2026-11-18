@@ -1862,6 +1862,10 @@ individuals:
   b_value_refers_hypothesis: {is: item_done}
   h_hypothesis_refers_family: {is: hyp_untested}
   b_hypothesis_refers_family: {is: item_queued}
+  h_factor_depends_value: {is: hyp_untested}
+  b_factor_depends_value: {is: item_queued}
+  h_definition_bridges_value: {is: hyp_untested}
+  b_definition_bridges_value: {is: item_queued}
   o_sys_family_refers_shared: {is: observation}
   o_sys_family_refers_linked: {is: observation}
   o_sys_family_refers_no_family: {is: observation}
@@ -5039,6 +5043,10 @@ facts:
   - {is: v_check, from: b_hypothesis_refers_family, to: h_hypothesis_refers_family}
   - {is: v_refer, from: h_denote_meets_hypothesis, to: {is: v_denote, from: axis_value, to: hypothesis}}
   - {is: v_check, from: b_denote_meets_hypothesis, to: h_denote_meets_hypothesis}
+  - {is: v_refer, from: h_factor_depends_value, to: {is: v_depend, from: factor, to: axis_value}}
+  - {is: v_check, from: b_factor_depends_value, to: h_factor_depends_value}
+  - {is: v_refer, from: h_definition_bridges_value, to: {is: v_depend, from: factor, to: definition}}
+  - {is: v_check, from: b_definition_bridges_value, to: h_definition_bridges_value}
   - {is: v_refer, from: o_sys_family_refers_shared, to: {is: v_level, from: sys_family_refers_hypothesis.n_shared.mean_value, to: 17}}
   - {is: v_refer, from: o_sys_family_refers_linked, to: {is: v_level, from: sys_family_refers_hypothesis.n_families_linked.mean_value, to: 69}}
   - {is: v_refer, from: o_sys_family_refers_no_family, to: {is: v_level, from: sys_family_refers_hypothesis.n_obs_no_family.mean_value, to: 0}}
