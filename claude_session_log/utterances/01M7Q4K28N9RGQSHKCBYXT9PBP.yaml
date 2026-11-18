@@ -1,0 +1,48 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-18T10:52:39.061Z（UTC）
+individuals:
+  01M7Q4K28N9RGQSHKCBYXT9PBP:
+    is: model_utterance
+    display: 発言 1866
+    val:
+      order: 1866
+      text: |
+        これまでの観察をまとめます。どれも記録済みの結果ファイル `sys_layers.json` から読んだもので、スクリプトは走らせ直していません。結果は commit f33d9e8（11/17）時点の体系のもので、それから main には 196 commit 入っています。今の体系での数は、まだ取っていません。
+
+        **否定の辺をたどるかで、二つの版があります**
+
+        | 層 | 対応させた分類 | 否定の辺もたどる | 否定の辺をたどらない（_pos） |
+        |---|---|---|---|
+        | ontology | still | 59 / 74 | 59 / 74 |
+        | syntax | refer | 21 / 104 | **100 / 104** |
+        | runtime | change | 24 / 24 | 18 / 24 |
+
+        否定の辺をたどると、syntax の大半（80）が change に入ります。たどらない版では、ほぼ合います。差が出るのは否定の扱いで、h_neg_not_self（支持）はこれを根拠にしています。
+
+        **たどらない版で外れたもの（25）は、まとまりになっています**
+        - **ontology で refer に入った 14**: concept, definition, word, sentence, language, natural_language, information_entity とその限定の語、role, v_refer, v_agree。どれも「何かについてのもの」（情報の側）です。ほかに v_design が change に入りました。
+        - **runtime で refer に入った 6**: state, halted, rewrite_rule, refer_from_post, refer_from_laws, role_depend_from_rewrite_rule。変化を起こすのではなく、変化を述べるものです。
+        - **syntax で still に入った 4**: not_after_from, not_before_from, not_compose_from_mod, individuals。前の三つは、中身が否定の限定だけです。否定をたどらないと何も残らないので、測り方から出たものです。individuals は文法の語です。
+
+        **読み（まだ確かめていません）**
+        外れ方はでたらめではなく、どれも「述べること」と「述べられる層」の食い違いです。
+        - ontology には、述べる道具（語・文・言語・概念）が置かれています。
+        - runtime には、変化について述べるもの（状態・規則）が置かれています。
+
+        分類は「中身が refer に届くか」を見ているので、「述べる道具」と「述べる働きそのもの」を区別しません。層を式で決めるには、この区別を式にする必要がありそうです。
+
+        次は、今の体系で同じ数を取り直したいです。記録済みのスクリプトは走らせ直さず、新しいスクリプトとして事前登録して測ります。どんな観察が要るか、たとえば上のまとまりを掘り下げるのか、別の切り口なのか、考えがあれば教えてください。
+facts:
+- {is: v_say, from: session_model, to: 01M7Q4K28N9RGQSHKCBYXT9PBP}
+- {is: exp.v_answer, from: 01M7Q4K28N9RGQSHKCBYXT9PBP, to: 01M7Q4J4ZHJP8WRRH7HPJS1567}
+- {is: v_refer, from: 01M7Q4K28N9RGQSHKCBYXT9PBP, to: ontology.natural_language}
+- {is: v_refer, from: 01M7Q4K28N9RGQSHKCBYXT9PBP, to: ontology.information_entity}
+- {is: v_refer, from: 01M7Q4K28N9RGQSHKCBYXT9PBP, to: ontology.v_refer}
+- {is: v_refer, from: 01M7Q4K28N9RGQSHKCBYXT9PBP, to: ontology.v_agree}
+- {is: v_refer, from: 01M7Q4K28N9RGQSHKCBYXT9PBP, to: ontology.v_design}
+- {is: v_refer, from: 01M7Q4K28N9RGQSHKCBYXT9PBP, to: runtime.rewrite_rule}
+- {is: v_refer, from: 01M7Q4K28N9RGQSHKCBYXT9PBP, to: runtime.refer_from_post}
+- {is: v_refer, from: 01M7Q4K28N9RGQSHKCBYXT9PBP, to: runtime.refer_from_laws}
+- {is: v_refer, from: 01M7Q4K28N9RGQSHKCBYXT9PBP, to: runtime.role_depend_from_rewrite_rule}
+- {is: v_refer, from: 01M7Q4K28N9RGQSHKCBYXT9PBP, to: syntax.not_after_from}
+- {is: v_refer, from: 01M7Q4K28N9RGQSHKCBYXT9PBP, to: syntax.not_before_from}
+- {is: v_refer, from: 01M7Q4K28N9RGQSHKCBYXT9PBP, to: syntax.not_compose_from_mod}
