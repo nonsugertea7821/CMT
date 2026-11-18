@@ -1,0 +1,52 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-18T01:11:30.312Z（UTC）
+individuals:
+  01M7P3AYR8PWP9B1GM57C1GCTQ:
+    is: model_utterance
+    display: 発言 1439
+    val:
+      order: 1439
+      text: |
+        違反は9件のまま残っていました。調べるために `specific` を一時的に r_has へ替え、型検査のあと元に戻しています（作業ツリーに変更は残っていません）。並びも前と同じです。
+
+        | 下に置けと言われる概念 | 上に来る概念 |
+        |---|---|
+        | syntax.position | syntax.opposite |
+        | exp.backlog_item | std.hypothesis |
+        | subj.hour, subj.days_overdue | subj.money |
+        | subj.plan, runtime.run, subj.attendance | syntax.verb_ref |
+        | exp.control_preservation | exp.context_following |
+        | subj.height | subj.age |
+
+        **次の一手の案（観察を事前登録してから走らせる）**
+
+        - **問い**
+          - 9件とも、式の上では下位に置けてしまいます。それでも下に置くべきでないと判断できる手がかりが、式の中にあるかどうかを確かめます。
+        - **見るもの**（すべてのペアについて、機械的に数える）
+          1. 上の概念が持っていて、下の概念に足りない式は何か。
+          2. 下の概念が、同じ動詞・同じ位置に、別の式を持っているか。
+             - 持っているなら、その式の with の終点は、上の概念の with の終点と上下関係にあるか。
+             - 上下関係になく、互いに独立な値を持っているなら、「その式の点で別の種類」とみなせます。
+          3. 比べるために、違反でない普通の上下関係も同じ方法で数えます。そこで 2 がどれだけ起きるかを見ます。
+        - **判定**
+          - 2 が違反の9件で起き、普通の上下関係でほとんど起きなければ、それを法則にします。たとえば「同じ位置に独立な式を持つなら、下に置く候補にしない」です。
+          - 9件と普通の上下関係を分けられなければ、式からは区別できないと結論します。そのときは、名前にしかない区別を式に移す話（どんな式が足りないのか）に進みます。
+
+        この手順を先に commit してから実行します。この方向でよければ進めます。予想が外れたときの扱いや、比べる対象に注文があれば言ってください。
+facts:
+- {is: v_say, from: session_model, to: 01M7P3AYR8PWP9B1GM57C1GCTQ}
+- {is: exp.v_answer, from: 01M7P3AYR8PWP9B1GM57C1GCTQ, to: 01M7P39WMR23J765DQCTMNZDKR}
+- {is: v_refer, from: 01M7P3AYR8PWP9B1GM57C1GCTQ, to: syntax.position}
+- {is: v_refer, from: 01M7P3AYR8PWP9B1GM57C1GCTQ, to: syntax.opposite}
+- {is: v_refer, from: 01M7P3AYR8PWP9B1GM57C1GCTQ, to: exp.backlog_item}
+- {is: v_refer, from: 01M7P3AYR8PWP9B1GM57C1GCTQ, to: std.hypothesis}
+- {is: v_refer, from: 01M7P3AYR8PWP9B1GM57C1GCTQ, to: subj.hour}
+- {is: v_refer, from: 01M7P3AYR8PWP9B1GM57C1GCTQ, to: subj.days_overdue}
+- {is: v_refer, from: 01M7P3AYR8PWP9B1GM57C1GCTQ, to: subj.money}
+- {is: v_refer, from: 01M7P3AYR8PWP9B1GM57C1GCTQ, to: subj.plan}
+- {is: v_refer, from: 01M7P3AYR8PWP9B1GM57C1GCTQ, to: runtime.run}
+- {is: v_refer, from: 01M7P3AYR8PWP9B1GM57C1GCTQ, to: subj.attendance}
+- {is: v_refer, from: 01M7P3AYR8PWP9B1GM57C1GCTQ, to: syntax.verb_ref}
+- {is: v_refer, from: 01M7P3AYR8PWP9B1GM57C1GCTQ, to: exp.control_preservation}
+- {is: v_refer, from: 01M7P3AYR8PWP9B1GM57C1GCTQ, to: exp.context_following}
+- {is: v_refer, from: 01M7P3AYR8PWP9B1GM57C1GCTQ, to: subj.height}
+- {is: v_refer, from: 01M7P3AYR8PWP9B1GM57C1GCTQ, to: subj.age}
