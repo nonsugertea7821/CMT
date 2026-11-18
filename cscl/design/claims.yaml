@@ -155,6 +155,8 @@ individuals:
   b_readings_many: {is: exp.item_queued}
   h_law_names_grammar: {is: exp.hyp_untested}
   b_law_names_grammar: {is: exp.item_queued}
+  h_checker_words_in_grammar: {is: exp.hyp_untested}
+  b_checker_words_in_grammar: {is: exp.item_queued}
   h_tops_from_primitives: {is: exp.hyp_supported}
   b_tops_from_primitives: {is: exp.item_done}
   h_any_not_vacuous: {is: exp.hyp_refuted}
@@ -537,6 +539,8 @@ facts:
   - {is: v_refer, from: h_readings_many, to: {is: v_refer, from: syntax.many, to: reading_formula}}
   - {is: exp.v_check, from: b_readings_many, to: h_readings_many}
   - {is: v_refer, from: h_law_names_grammar, to: {is: v_depend, from: type_checker, to: [layer_placement, signature_class, syntax.grammar]}}
+  - {is: v_refer, from: h_checker_words_in_grammar, to: {is: v_refer, from: syntax.grammar, to: [syntax.role, syntax.definition, syntax.v_refer]}}
+  - {is: exp.v_check, from: b_checker_words_in_grammar, to: h_checker_words_in_grammar}
   - {is: exp.v_check, from: b_law_names_grammar, to: h_law_names_grammar}
   - {is: v_refer, from: h_tops_from_primitives, to: {is: v_depend, from: top_placement, to: [step_quantification, kind_existence, variable_range]}}
   - {is: exp.v_check, from: b_tops_from_primitives, to: h_tops_from_primitives}
