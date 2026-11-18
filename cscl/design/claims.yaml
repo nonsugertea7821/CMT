@@ -41,6 +41,8 @@ nodes:
   step_quantification: {display: ステップ上の量化, extends: quality, mod: {of: [v_refer, from], with: runtime.steps, quant: all}}
   kind_existence: {display: 種類について在ることを述べる場所, extends: quality, mod: {of: [v_refer, from], with: syntax.state, quant: all}}
   variable_range: {display: 変数の範囲, extends: quality, mod: syntax.refer_from_variable}
+  model_internal_state: {display: モデルの部分である状態, extends: state, mod: compose_from_model}
+  model_state_sentence: {display: モデルの部分である状態へ述べる文, extends: sentence, mod: {of: [v_refer, from], with: model_internal_state}}
   v_not_trigger: {display: 引き起こさない, extends: v_not_transfer, from: any, to: occurrent, opposite: v_trigger}
 
 individuals:
@@ -135,6 +137,8 @@ individuals:
   b_layers_neg_dual: {is: exp.item_done}
   h_layers_unhardcode: {is: exp.hyp_refuted}
   b_layers_unhardcode: {is: exp.item_done}
+  h_concept_bounds_model_state: {is: exp.hyp_untested}
+  b_concept_bounds_model_state: {is: exp.item_queued}
   h_tops_from_primitives: {is: exp.hyp_supported}
   b_tops_from_primitives: {is: exp.item_done}
   h_any_not_vacuous: {is: exp.hyp_refuted}
@@ -492,6 +496,8 @@ facts:
   - {is: v_refer, from: h_layers_unhardcode, to: {is: v_not_depend, from: type_checker, to: name_choice}}
   - {is: v_refer, from: h_layers_unhardcode, to: {is: v_depend, from: type_checker, to: [layer_placement, signature_class]}}
   - {is: exp.v_check, from: b_layers_unhardcode, to: h_layers_unhardcode}
+  - {is: v_refer, from: h_concept_bounds_model_state, to: {is: v_depend, from: model_state_sentence, to: definition}}
+  - {is: exp.v_check, from: b_concept_bounds_model_state, to: h_concept_bounds_model_state}
   - {is: v_refer, from: h_tops_from_primitives, to: {is: v_depend, from: top_placement, to: [step_quantification, kind_existence, variable_range]}}
   - {is: exp.v_check, from: b_tops_from_primitives, to: h_tops_from_primitives}
   - {is: v_refer, from: h_any_not_vacuous, to: {is: v_depend, from: any_limitation, to: syntax.of}}
