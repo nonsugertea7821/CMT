@@ -1,0 +1,39 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-18T18:07:58.173Z（UTC）
+individuals:
+  01M7QXG56XR6BTAWQQQCGCGSFJ:
+    is: model_utterance
+    display: 発言 2122
+    val:
+      order: 2122
+      text: |
+        A2・A3 も体系に依存しますが、B とは依存の仕方が違います。周辺は、まだ証明されていません。
+
+        **依存の仕方の違い**
+        - **B（モデルが式を書けるか）は、物差しが型検査器です。** 検査器が健全でないと、測った値そのものが崩れます。
+        - **A2・A3 は、物差しが検査器ではありません。**
+          - A2 は「学習していない上位概念へ転移するか」、A3 は「限定の差分ベクトル（下位の概念ベクトル − 上位の概念ベクトル）を教えると、再定義への追従が上がるか」です。
+          - どちらも、測るのは二択の設問に対するモデルの振る舞いです。
+          - 体系が入るのは教える側で、どの概念がどの概念の上位か（`extends` と `mod`）を体系から取ったときです。
+          - 階層が健全でないと教える信号が汚れ、反証が出ても「手法が効かない」のか「階層が誤っている」のかを分けられません。
+          - 支持が出た場合は、この心配は小さくなります。
+
+        **周辺で分かっていること**
+        - **モデルの側（支持済み）:** 修飾が学習していない上位概念へ転移すること（`h_modifier_transfers_to_unseen_genus`、e4）。
+          - ただし、このときの組は手で作ったもの（`modifiers_ja.json`）で、体系から取っていません。だから体系には依存していません。
+        - **体系の側（健全性は示されていない）:**
+          - `h_above_sound` は反証です。上位の順序が誤るとき、それが修飾の欠けとして表に出ない例が観察されています。
+          - `h_symmetry_soundness` は mixed です。
+          - `h_above_closed`（#147、上位の順序が `extends` だけで閉じるか）と `h_above_individual`（#148）は未検証です。
+          - 支持済みなのは、階層を対象の側に置くこと（`h_hierarchy_in_object`）と、頂点を原始の語から導けること（`h_tops_from_primitives`）までです。
+
+        **進め方の案**
+        - A2・A3 は、まず e4 と同じく手で作った組で回します。こうすれば体系に依存しません。
+        - 体系から組を取る版は、#147 と #148 の後に置きます。
+        - この依存（体系から取った組での結果は、上位の順序の健全性に依存する）も仮説として登録します。
+
+        止められた操作（main の取り込みと、マージ済みブランチの削除）は、手元を見るとブランチの切り替えまで進んでいません。続けてよければ、そこからやり直します。
+facts:
+- {is: v_say, from: session_model, to: 01M7QXG56XR6BTAWQQQCGCGSFJ}
+- {is: exp.v_answer, from: 01M7QXG56XR6BTAWQQQCGCGSFJ, to: 01M7QXF08V5VDX8NBCFJR5G3F2}
+- {is: v_refer, from: 01M7QXG56XR6BTAWQQQCGCGSFJ, to: syntax.extends}
+- {is: v_refer, from: 01M7QXG56XR6BTAWQQQCGCGSFJ, to: syntax.mod}
