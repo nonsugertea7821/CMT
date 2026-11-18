@@ -1,0 +1,237 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-18T08:50:21.828Z（UTC）
+individuals:
+  01M7PXK504N6BV2JKYYJT93XQD:
+    is: session_summary
+    display: 発言 1773
+    val:
+      order: 1773
+      text: |
+        This session is being continued from a previous conversation that ran out of context. The summary below covers the earlier portion of the conversation.
+
+        <system-reminder>
+        <tools-used-before-summary>AskUserQuestion, Bash, Edit, Grep, Read, ReadNotifications, Skill, TaskStop, ToolSearch, WebFetch, WebSearch, Write, mcp__claude-code-remote__create_trigger, mcp__claude-code-remote__delete_trigger, mcp__claude-code-remote__get_trigger, mcp__claude-code-remote__read_documentation, mcp__claude-code-remote__send_later, mcp__claude-code-remote__subscribe_pr_activity, mcp__claude-code-remote__update_trigger, mcp__github__actions_get, mcp__github__actions_list, mcp__github__add_issue_comment, mcp__github__create_pull_request, mcp__github__get_job_logs, mcp__github__issue_read, mcp__github__issue_write, mcp__github__list_issues, mcp__github__list_pull_requests, mcp__github__pull_request_read, mcp__github__update_pull_request</tools-used-before-summary>
+        </system-reminder>
+        Summary:
+        1. Primary Request and Intent
+
+        **Standing rules (still in force)**
+        - Repo: nonsugertea7821/CMT at /home/user/CMT.
+        - Reply in Japanese. Don't overclaim. Give interpretation, not just facts.
+        - Restore files with `git show <rev>:<path> > <path>`. Never use `git checkout` to restore files, and never stash.
+        - Python: /home/user/venv/bin/python.
+        - Commit trailer:
+          ```
+          Co-Authored-By: Claude [モデル名を伏せた] <[メールアドレスを伏せた]>
+          Claude-Session: https://claude.ai/code/session_015KRKt6TNJZ7ZsQmEknANXK
+          ```
+        - PR body ends with:
+          ```
+          🤖 Generated with [Claude Code](https://claude.com/claude-code)
+
+          https://claude.ai/code/session_015KRKt6TNJZ7ZsQmEknANXK
+          ```
+        - Claude never merges.
+        - No personal info or model identifiers in pushed artifacts.
+
+        **CLAUDE.md flow (now includes the new rule from #168)**
+        - Proposals must be registered as untested hypotheses BEFORE telling the user:
+          - `h_x: {is: exp.hyp_untested}` and `b_x: {is: exp.item_queued}`
+          - `{is: v_refer, from: h_x, to: {...}}` and `{is: exp.v_check, from: b_x, to: h_x}`
+        - Registration-only PRs auto-merge; registration happens on branch claude/model-concept-language-mapping-g0lw1i, recreated from origin/main each time.
+        - Hypothesis work:
+          - Branch `claude/h_<name>`. Open a Draft PR that references the issue, with assignee nonsugertea7821 (set via issue_write on the PR number).
+          - The first commit is the prereg and contains scripts only. Results come later and are added with `git add -f`.
+          - Add observations plus v_support / v_contradict, then undraft.
+        - Subscribe to every PR I create. Keep a send_later safety check about 50 minutes out, and cancel it when the PR merges.
+        - No comments in system yaml (hook enforced). Never rerun recorded scripts. CI is left to GitHub.
+        - **New rule:**
+          - The user reviews PRs and comes to chat only to give direction, new hypotheses, ideas or suggestions.
+          - Don't ask permission in chat. Decide, proceed, and put reasoning in PR bodies.
+        - A WebFetch of the MEXT PDF was interrupted by the user earlier; don't retry it without OK.
+
+        **Current direction (user agreed: "それで進めよう")**
+        1. Harvest (formula, Japanese) pairs from comments. Done (#176).
+        2. h_comment_ban: classify and move or delete the comments in claims.yaml (281 lines) and cscl.yaml (4 lines).
+           - Formalizable content becomes formulas.
+           - History, procedure and interpretation are deleted after confirming they exist in git or in scripts.
+           - Headings are deleted.
+           - The pre-registered vs. post-hoc distinction should become a formula (this adds a concept).
+        3. Then build the converter and h_ja_roundtrip using the enriched formulas and the harvested pairs.
+
+        2. Key Technical Concepts
+
+        - **display.py:** `ja`, `fact(T, verb, a, b, I)`, `line`. sync_issues renders hypotheses as `display.fact(T, x["p"], s, o, I)` from `exp_check.build()` C["hypotheses"] (keys s, p, o).
+        - **Verb holds:** verbs have `holds` lists (is: depend/part/refer/after/involve/exists/above). Inherit through T.ancestors(v).
+        - **tc.build:** returns T, O, _. Mods are normalized to lists. T.N[n]["mod"] items are dicts {of: [v, pos], with}.
+        - **ec stat:** mean_value is computed over rows containing the key. Summary keys must not collide with per-row keys.
+        - **exp.yaml family pattern** (to add for each experiment):
+          - Nodes: `F: {is: measurement_family}`, `F_cond: {is: family_axis, val: {text: cond}}`, and `F_cond_k: {is: axis_value, val: {text: k}}` per key.
+          - Facts: v_file_of `F.json`, v_rows_of [rows], v_axis_of, v_value_of / v_spell per key, `v_entry_of '{cond}'`, `v_metric_of mean_value`.
+        - **Observations in claims.yaml:**
+          - `o_x: {is: exp.observation}`
+          - `{is: v_refer, from: o_x, to: {is: v_level|v_come_after|v_come_before, from: F.key.mean_value, to: value_or_metric}}`
+          - Then `exp.v_support` / `exp.v_contradict`.
+          - State changes: hyp_untested → hyp_supported / hyp_refuted, and item_queued → item_done.
+        - **Auto-merge failure "merge" check with HTTP 405** means the PR is not mergeable (a conflict). Fix by merging origin/main into the branch.
+
+        3. Files and Code Sections
+
+        - **cscl/design/claims.yaml** (main) now contains:
+          - Hypotheses:
+            - h_identifier_by_expansion (untested): `v_depend(syntax.identifier, signature_class)`
+            - h_ja_case_frame (supported)
+            - h_case_frame_formula (refuted): `v_not_depend(case_frame, syntax.display)`
+            - h_case_frame_by_relation (refuted): `v_depend(case_frame, syntax.base)`
+            - h_case_frame_by_role (untested): `v_depend(case_frame, ontology.role)`
+            - h_annotation_gold (untested): `v_depend(ja_readback, annotation)`
+          - Observations:
+            - o_sys_ja_case_frame_rate: v_level 0.2105
+            - o_sys_ja_case_frame_broken: v_come_after 0.1; supports h_ja_case_frame
+            - o_sys_case_frame_formula_acc: 0.386
+            - o_sys_case_frame_formula_below: acc_formula < acc_display; contradicts
+            - o_sys_case_frame_by_relation_acc: 0.4912
+            - o_sys_case_frame_by_relation_below: contradicts
+          - Existing items relevant to the next step:
+            - h_comment_ban (line ~203): `v_not_depend(definition, annotation)`
+            - Line ~587: a comment about the inventory `exp/experiments/sys_comments.py` (prereg 64fa140), and observation o_sys_comments_claims_most: `v_come_after(sys_comments.history.mean_value, sys_comments.code.mean_value)`.
+          - annotation node: `annotation: {display: 注釈, extends: passage_express_from_natural_language, mod: {of: [v_refer, from], with: syntax.domain}}`
+        - **exp/experiments/sys_ja_case_frame.py** (#165): uniform frame 「XがYを<verb>」.
+          - Rules: R1 display starts with a particle (P1 = について, から, より, に, で, と, を, へ); R2 passive ending; R4 display contains を.
+          - Result: 57 verbs, 478 occurrences, 12 violating verbs.
+        - **exp/experiments/sys_case_frame_formula.py** (#169):
+          - Contains the GOLD dict (57 verbs → particle), `display_frame(vd)`, `mode(xs)`, and `signature(T, v)` (the (is, from, to, neg) set).
+          - Uses leave-one-out prediction.
+          - Results: n_sig 22, n_empty 15, singletons 13; acc_formula 0.386, acc_display 0.6316, acc_single 0.4912.
+        - **exp/experiments/sys_case_frame_by_relation.py** (#171):
+          - Imports GOLD, display_frame and mode from sys_case_frame_formula. The signature is the set of holds `is` only.
+          - Results: acc_relation 0.4912, acc_relation_held 0.333, acc_display_held 0.5.
+          - Distribution: after → の (4/4); part → の (3/5); refer, depend and involve scattered; no-holds → を (14/15).
+        - **CLAUDE.md:** under "## PR", added three lines about the user reviewing in PRs and not asking permission in chat (#168).
+        - **exp/experiments/annotation_pairs.py** (PR #176, branch claude/h_annotation_gold, Draft):
+          - Splits claims.yaml into blocks at `# =====`.
+          - Extracts 中身は「…」 quotes with nested-bracket counting.
+          - Pairs each quote with the nearest h_ in the same block, and renders the machine text via display.fact.
+          - Output: results/annotation_pairs.json with summary and pairs.
+          - Results: comments 281, blocks 16, quotes 8, paired 7, unpaired 1.
+          - 4 pairs match the formula verbatim (except case frame and word order).
+          - 3 pairs differ:
+            - h_ic_is_bearer: human 「何にも」 vs formula 持続体.
+            - h_open_declaration: the extra second half 「各時点では宣言＝存在で閉じている」 exists only in the comment.
+            - h_definition_positive: human 「通らない」 vs formula 「依存しない」.
+
+        4. Errors and fixes
+
+        - **pip install of fugashi/unidic-lite denied by the classifier.** Used string rules instead and disclosed this.
+        - **Merge conflicts in claims.yaml after a parallel PR merged:**
+          - #168: merged origin/main and combined both sides.
+          - #171: the auto-merge check failed with 405. I merged origin/main and resolved; the user interrupted the tool call, then a stop hook asked me to commit; I committed f9b905c and pushed, and #171 auto-merged.
+        - **The first BrokenPipe when piping the script to head:** harmless, because the JSON was already written.
+        - **The user corrected the hypothesis wording:** "signatureに展開した式が識別子になる". Renamed h_display_vanishes to h_identifier_by_expansion before the PR.
+
+        5. Problem Solving
+
+        The case-frame series concluded that case distinctions currently live in display words (lexicon), not in formulas.
+        - refer, depend and involve are too coarse.
+        - Next hypothesis: frames are determined by the role of the end (h_case_frame_by_role, untested; needs new concepts).
+
+        On comments: the hypothesis-adjacent comments fall into five kinds:
+        - content paraphrase
+        - provenance
+        - whether the hypothesis was pre-registered
+        - procedure
+        - reasons and interpretation
+
+        Ordering decision: comment ban first, after harvesting the pairs (done).
+
+        6. All user messages (this session)
+
+        - "まあ正確には「signatureに展開したが識別子になる」と言った方が正しいのかな" / "訂正、signatureに展開した式が"
+        - "よろしく。"
+        - "いいよー、というか基本的に僕は届いたPRで見てて、方向や新しい仮説・想像・示唆を出す時だけこっちに来るイメージの方が良いんじゃないかな"
+        - "コメント禁止ってどうなったんだ？"
+        - (interrupted a tool use) "仮説にコメントが補足として載っているように見える"
+        - "順序がな。日本語に変換する仕組みを先にするほうが情報損失が少なくてよいのか、それともコメント禁止を先にするほうが体系の分化が進んで良いのか"
+        - "それで進めよう"
+
+        7. Pending Tasks
+
+        - Step 2: the h_comment_ban experiment. Prereg first, then classify, move or delete, and record.
+        - PR #176 is open as a Draft and waits for the user's review. Watching it, with send_later trig_017BWAtKLeLZhJudcYWESwcU at 09:40Z. Cancel the trigger when the PR merges.
+        - Later:
+          - h_case_frame_by_role (needs concepts)
+          - h_identifier_by_expansion
+          - h_ja_roundtrip, h_ja_connective
+          - Older untested hypotheses: h_w_from_frames, h_renaming_invariant, h_placement_in_laws, h_above_closed, h_above_individual, h_gloss_formula, h_draw_on_with_shallow, h_negation_formula
+
+        8. Current Work
+
+        I started step 2 (h_comment_ban). I ran `git checkout -q -B claude/h_comment_ban origin/main` and grepped.
+        - h_comment_ban is `v_not_depend(definition, annotation)`.
+        - An earlier inventory exists: exp/experiments/sys_comments.py, with observation o_sys_comments_claims_most (history > code). Its prereg is commit 64fa140.
+        - I had not yet found the issue number for h_comment_ban or written the prereg.
+
+        Planned prereg design (from my analysis):
+        - Classify each comment line into one of five classes:
+          - H: heading
+          - P: provenance/history
+          - M: procedure (already in a script)
+          - I: interpretation/reason
+          - D: definitional content beyond the formula
+        - Actions: delete H, P, M and I. Try to formalize D.
+        - Measures: lines per class, n_D, n_D_formalized, n_D_left.
+        - Judgment:
+          - Support if n_D_left == 0 and tc/ec pass after deleting all comments.
+          - Contradict if n_D_left > 0.
+        - Expect some D, such as the h_open_declaration second half and h_ic_is_bearer's quantifier.
+        - Reuse or extend the sys_comments.py classification if appropriate.
+        - The PR will need manual review, since it changes system files and adds concepts such as the pre-registered vs. post-hoc distinction.
+
+        9. Optional Next Step
+
+        Continue step 2 per the user's "それで進めよう" and my stated plan: "次は順番の 2 として、h_comment_ban の事前登録に進みます。281 行のコメントを分けて、移すか消すかを決める作業です。"
+        1. Read exp/experiments/sys_comments.py and its results to reuse its classes.
+        2. Find the h_comment_ban issue number with list_issues.
+        3. Write the prereg script on claude/h_comment_ban, commit it with scripts only, push, and open a Draft PR. Set the assignee, subscribe, and add a send_later check.
+        4. Then classify, move or delete the comments, record observations, and run tc/ec.
+
+        If you need specific details from before compaction (like exact code snippets, error messages, or content you generated), read the full transcript at: /root/.claude/projects/-home-user-CMT/e05d2140-ce91-515f-a5fb-e6251e13d406.jsonl
+        Continue the conversation from where it left off without asking the user any further questions. Resume directly — do not acknowledge the summary, do not recap what was happening, do not preface with "I'll continue" or similar. Pick up the last task as if the break never happened.
+
+        The messages after this summary are the most recent messages from before compaction, kept verbatim. The summary was written without seeing them, so something it says has not happened yet may already have happened in them.
+facts:
+- {is: v_say, from: session_model, to: 01M7PXK504N6BV2JKYYJT93XQD}
+- {is: v_refer, from: 01M7PXK504N6BV2JKYYJT93XQD, to: exp.hyp_untested}
+- {is: v_refer, from: 01M7PXK504N6BV2JKYYJT93XQD, to: exp.item_queued}
+- {is: v_refer, from: 01M7PXK504N6BV2JKYYJT93XQD, to: ontology.v_refer}
+- {is: v_refer, from: 01M7PXK504N6BV2JKYYJT93XQD, to: exp.v_check}
+- {is: v_refer, from: 01M7PXK504N6BV2JKYYJT93XQD, to: exp.v_support}
+- {is: v_refer, from: 01M7PXK504N6BV2JKYYJT93XQD, to: exp.v_contradict}
+- {is: v_refer, from: 01M7PXK504N6BV2JKYYJT93XQD, to: syntax.holds}
+- {is: v_refer, from: 01M7PXK504N6BV2JKYYJT93XQD, to: exp.mean_value}
+- {is: v_refer, from: 01M7PXK504N6BV2JKYYJT93XQD, to: exp.measurement_family}
+- {is: v_refer, from: 01M7PXK504N6BV2JKYYJT93XQD, to: exp.family_axis}
+- {is: v_refer, from: 01M7PXK504N6BV2JKYYJT93XQD, to: exp.axis_value}
+- {is: v_refer, from: 01M7PXK504N6BV2JKYYJT93XQD, to: exp.v_file_of}
+- {is: v_refer, from: 01M7PXK504N6BV2JKYYJT93XQD, to: exp.v_rows_of}
+- {is: v_refer, from: 01M7PXK504N6BV2JKYYJT93XQD, to: exp.v_axis_of}
+- {is: v_refer, from: 01M7PXK504N6BV2JKYYJT93XQD, to: exp.v_value_of}
+- {is: v_refer, from: 01M7PXK504N6BV2JKYYJT93XQD, to: exp.v_spell}
+- {is: v_refer, from: 01M7PXK504N6BV2JKYYJT93XQD, to: exp.v_entry_of}
+- {is: v_refer, from: 01M7PXK504N6BV2JKYYJT93XQD, to: exp.v_metric_of}
+- {is: v_refer, from: 01M7PXK504N6BV2JKYYJT93XQD, to: exp.observation}
+- {is: v_refer, from: 01M7PXK504N6BV2JKYYJT93XQD, to: ontology.v_level}
+- {is: v_refer, from: 01M7PXK504N6BV2JKYYJT93XQD, to: ontology.v_come_after}
+- {is: v_refer, from: 01M7PXK504N6BV2JKYYJT93XQD, to: ontology.v_come_before}
+- {is: v_refer, from: 01M7PXK504N6BV2JKYYJT93XQD, to: exp.hyp_supported}
+- {is: v_refer, from: 01M7PXK504N6BV2JKYYJT93XQD, to: exp.hyp_refuted}
+- {is: v_refer, from: 01M7PXK504N6BV2JKYYJT93XQD, to: exp.item_done}
+- {is: v_refer, from: 01M7PXK504N6BV2JKYYJT93XQD, to: ontology.v_depend}
+- {is: v_refer, from: 01M7PXK504N6BV2JKYYJT93XQD, to: syntax.identifier}
+- {is: v_refer, from: 01M7PXK504N6BV2JKYYJT93XQD, to: lang.signature_class}
+- {is: v_refer, from: 01M7PXK504N6BV2JKYYJT93XQD, to: lang.v_not_depend}
+- {is: v_refer, from: 01M7PXK504N6BV2JKYYJT93XQD, to: syntax.display}
+- {is: v_refer, from: 01M7PXK504N6BV2JKYYJT93XQD, to: syntax.base}
+- {is: v_refer, from: 01M7PXK504N6BV2JKYYJT93XQD, to: ontology.role}
+- {is: v_refer, from: 01M7PXK504N6BV2JKYYJT93XQD, to: syntax.passage_express_from_natural_language}
+- {is: v_refer, from: 01M7PXK504N6BV2JKYYJT93XQD, to: syntax.domain}
+- {is: v_refer, from: 01M7PXK504N6BV2JKYYJT93XQD, to: ontology.is}

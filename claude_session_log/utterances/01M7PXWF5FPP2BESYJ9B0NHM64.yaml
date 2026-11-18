@@ -1,0 +1,37 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-18T08:55:27.151Z（UTC）
+individuals:
+  01M7PXWF5FPP2BESYJ9B0NHM64:
+    is: model_utterance
+    display: 発言 1778
+    val:
+      order: 1778
+      text: |
+        コメント禁止（h_comment_ban）を確かめ、**支持**になりました。PR #177 の Draft を外したので、確認とマージをお願いします。手順と判定は、実行の前に 979fcdb で登録しています。
+
+        **結果**
+        - 体系のファイルに残っていたコメント 295 行を消しました（cscl.yaml 14 行、claims.yaml 281 行）。
+        - 分けると、記録 248、見出し 20、コード 9、言い換え 9、定義 9 でした。
+        - 定義の 9 行はすべて式に移しました。残るコメントは 0 で、tc と ec は手元で通っています。GitHub の CI はまだ見ていません。
+        - 登録の前に 295 行をすべて読んでいたので、支持の見込みは高く、強い確かめではありません。分け方も私一人の判断です。
+
+        **読み**
+        コメントの大半は経緯でした。手順はスクリプトの説明に、数は結果のファイルに、文は git の履歴に残ります。注釈にしかなかった定義の中身は 2 種類だけでした。
+
+        1. **仮説を結果の前に立てたか、後に立てたか（8 行）**
+           - 後に立てた 2 つ（h_neg_not_self, h_definition_positive）には、既存の留保の語 `exp.lim_post_hoc` を付けました。この語の表示「結果を見たあとで分類した」は、式より狭い名前です。
+           - 前に立てた 6 つは、その留保を述べないことで閉世界では同じ中身になる、として「移した」と数えました。いちばん弱い判断です。
+        2. **h_open_declaration の言い残し（1 行）**
+           - 「各時点では宣言＝存在で閉じている」という後半が、式に入っていませんでした。
+           - これを新しい未検証の仮説 h_frame_closed にし、概念「在るものの範囲」（exists_scope）を足しました。
+           - h_open_runtime の支持（v_freeze の後も宣言が残る）と食い違う見込みがあり、反証の側に向かうかもしれません。
+
+        **次にできること**
+        - コメントが 0 になったので、フック `no_new_comments.py` の「今あるコメントは残してよい」は要らなくなりました。どのコメントも禁じる形に締められます。
+        - そのあと、順番の 3 として、日本語への変換器と h_ja_roundtrip に進みます。
+
+        PR は見張っていて、50 分後にも状態を確かめます。
+facts:
+- {is: v_say, from: session_model, to: 01M7PXWF5FPP2BESYJ9B0NHM64}
+- {is: exp.v_answer, from: 01M7PXWF5FPP2BESYJ9B0NHM64, to: 01M7PR4AE3206J14AYW4WX2JZX}
+- {is: v_refer, from: 01M7PXWF5FPP2BESYJ9B0NHM64, to: exp.lim_post_hoc}
+- {is: v_refer, from: 01M7PXWF5FPP2BESYJ9B0NHM64, to: std.v_freeze}
