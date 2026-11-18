@@ -1,0 +1,36 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-18T10:05:18.831Z（UTC）
+individuals:
+  01M7Q1WCKFE53Y5TSRDDMP3B11:
+    is: model_utterance
+    display: 発言 1819
+    val:
+      order: 1819
+      text: |
+        個人のアカウントでも、type を足せるようです。
+
+        **分かったこと:**
+        - GitHub の公式の API の文書に、個人のアカウントの issue type を一覧・作成・変更・削除する口（`/user/issue-types`）があります。作成は「認証したユーザーの個人のアカウントに」作ると書かれています。
+        - 「個人のアカウントでも issue type が一般に使えるようになった」という記事も、二つ見つかりました。ただし外部の記事で、GitHub の changelog では確かめていません。
+        - この repo で既定の Task・Bug・Feature が見えたのも、アカウントの既定の type だと読めば辻褄が合います。
+        - issue を作るときと直すときの API は、`type`（type の名前）を受け取ります。付けられるのは push の権限がある者だけで、権限がなければ黙って捨てられます。
+
+        **私にできないこと:** type を作るには、トークンに `user` の範囲が要ります。私の道具にも、同期のワークフローのトークンにも、その範囲はありません。
+
+        **手順の案:**
+        1. 利用者が、GitHub のアカウントの設定で「仮説」と「決定」の 2 つの type を作る。外部の記事では Settings → Planning → Issue types にあるそうですが、この場所は確かめていません。
+        2. 私が、同期（`sync_issues.py`）が issue に type を付けるように直す PR を立てる。
+
+        同期のトークンで type を付けられるか（push の権限として通るか）は、まだ分かりません。最初の同期の結果を見て確かめます。
+
+        type を作ってもらえたら、2 に進みます。
+
+        Sources:
+        - [REST API endpoints for issue types (users)](https://docs.github.com/en/rest/users/issue-types)
+        - [REST API endpoints for issues](https://docs.github.com/en/rest/issues/issues#update-an-issue)
+        - [Managing issue types](https://docs.github.com/en/issues/tracking-your-work-with-issues/using-issues/managing-issue-types)
+        - [SmartScope: GitHub issue types for personal accounts](https://smartscope.blog/en/blog/github-issue-types-personal-account-availability-configuration-guide-2026/)
+        - [WindowsForum: issue types and fields GA for personal accounts](https://windowsforum.com/news/github-issue-types-and-fields-now-generally-available-for-personal-accounts.451870/)
+facts:
+- {is: v_say, from: session_model, to: 01M7Q1WCKFE53Y5TSRDDMP3B11}
+- {is: exp.v_answer, from: 01M7Q1WCKFE53Y5TSRDDMP3B11, to: 01M7Q1VDYHPYMABKP4DFFWQVVE}
+- {is: v_refer, from: 01M7Q1WCKFE53Y5TSRDDMP3B11, to: subj.user}
