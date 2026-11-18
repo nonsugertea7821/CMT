@@ -1,9 +1,5 @@
-# 領域 lang（言語そのものについての主張）。CSCL の設計の決定と仮説を置く。実験（exp）の主張とは分ける。
-# 主張の中身は、言語の層（signature, ontology, syntax, runtime, std）と、この領域 lang の語だけを参照する（type_checker の check_sides が確かめる）。
-# 状態の種類（採用済み・暫定・未検証など）は、いまは exp の語を使う。std へ移すまでの仮の置き場。
 domain: lang
 nodes:
-  # ===== 名前を付けた限定（法則 named_mod）。2つ以上の概念が足す限定は、名前で書く
   is_from_lang_decision: {display: 言語の設計の決定へ属する（始点）, extends: quality, of: [is, from], with: lang_decision}
 
   axiom_layer: {display: 公理の層, extends: section, mod: refer_from_laws}
@@ -12,26 +8,18 @@ nodes:
   lang_dec_adopted: {display: 言語の採用済みの決定, extends: exp.dec_adopted, mod: is_from_lang_decision}
   lang_dec_tentative: {display: 言語の暫定の決定, extends: exp.dec_tentative, mod: is_from_lang_decision}
   lang_dec_withdrawn: {display: 言語の取り下げた決定, extends: exp.dec_withdrawn, mod: is_from_lang_decision}
-  # 否定の動詞（中身の否定は、否定の動詞で書く。exp の v_not_transfer と同じ形）
   v_not_depend: {display: に依存しない, extends: v_immune, from: continuant, to: continuant, opposite: v_depend}
   type_checker: {display: 型検査器, extends: artifact, mod: refer_from_laws}
   previous_checker: {display: 前の版の型検査器, extends: type_checker, mod: {of: [v_come_after, to], with: type_checker}}
-  # 真偽の対称性と健全性（h_symmetry_soundness）の語
   symmetry_break: {display: 真偽の対の欠け, extends: quality, mod: {of: [v_refer, to], with: definition}}
   definition_change: {display: 定義の書き換え, extends: process, mod: {of: [v_involve, from], with: definition}}
-  # 実装の対称性（h_anomaly_defect）と中身の対称性（h_content_asymmetry_harmless）の語
   implementation_break: {display: 実装が壊す真偽の対称性, extends: quality, mod: {of: [v_depend, from], with: artifact}}
   check_failure: {display: 検査の失敗, extends: process, mod: {of: [v_involve, from], with: artifact}}
-  # 定義の循環（h_definition_positive）の語
   definition_cycle: {display: 定義の循環, extends: quality, mod: {of: [v_refer, from], with: definition}}
-  # 時間を含む実行での宣言の範囲（h_open_declaration）の語
   declared_scope: {display: 宣言の範囲, extends: quality, mod: syntax.refer_from_individuals}
-  # 層とシグネチャ（h_layers_signature）の語
   layer_placement: {display: 層の置き場, extends: quality, mod: {of: [v_depend, from], with: syntax.domain}}
   signature_class: {display: シグネチャから定まる分類, extends: quality, mod: {of: [v_depend, from], with: syntax.base}}
-  # 否定は self でないこと（h_neg_not_self）の語
   negated_limitation: {display: 否定の限定, extends: quality, mod: {of: [v_refer, from], with: syntax.neg}}
-  # 持続体と生起体を導く（h_tops_derivable）の語
   top_placement: {display: 最上位の置き場, extends: quality, mod: syntax.refer_from_occurrent}
   individual_depth: {display: 個体の深さ, extends: quality, mod: {of: [v_depend, from], with: kind}}
   depth_limitation: {display: 深さの限定, extends: quality, mod: {of: [v_refer, from], with: syntax.mod}}
@@ -49,22 +37,20 @@ nodes:
   ja_ambiguity: {display: 日本語の係りの多義, extends: quality, mod: {of: [v_refer, from], with: ja_text}}
   case_frame: {display: 動詞の格の枠, extends: quality, mod: {of: [v_depend, from], with: syntax.position}}
   ja_connective: {display: 文と文の接続, extends: quality, mod: {of: [v_refer, from], with: v_agree}}
+  exists_scope: {display: 在るものの範囲, extends: quality, mod: {of: [v_depend, from], with: runtime.state}}
   v_not_trigger: {display: 引き起こさない, extends: v_not_transfer, from: any, to: occurrent, opposite: v_trigger}
 
 individuals:
   lang: {is: domain, display: 言語}
 
-  # ===== 仮説
   h_cscl_self_hosting: {is: exp.hyp_untested}
 
-  # ===== 決定
   d_cscl_laws_in_cscl: {is: lang_dec_adopted}
   d_cscl_closed_world: {is: lang_dec_adopted}
   d_cscl_std_on_axiom: {is: lang_dec_adopted}
   d_cscl_display_derived: {is: lang_dec_adopted}
   d_cscl_trust_previous_version: {is: lang_dec_tentative}
 
-  # ===== 動詞のシグネチャ（端の型）。観察の記録がまだないので暫定
   d_sig_depend_from: {is: lang_dec_tentative}
   d_sig_depend_to: {is: lang_dec_adopted}
   d_sig_compose_from: {is: lang_dec_tentative}
@@ -94,100 +80,22 @@ individuals:
   d_sig_design_from: {is: lang_dec_tentative}
   d_sig_design_to: {is: lang_dec_tentative}
 
-  # ===== 否定だけで定義された種類（独立持続体 = 何にも依存しない持続体）の、肯定の定義の候補（法則 placed_deduced）。
-  # 中身は「依存されるものは、何にも依存しない」。観察に反したので、独立持続体を体系から除き、d_sig_depend_to を採用済みにした
   h_ic_is_bearer: {is: exp.hyp_refuted}
-  # ===== 状態の関係（holds・pre・post の原子の動詞）の置き場
   h_state_relation_in_base: {is: exp.hyp_supported}
   d_state_relation_in_base: {is: lang_dec_adopted}
-  # ===== 真偽の対称性と健全性（利用者の直感から立てた仮説。結果を見る前に登録した）
-  # 中身は「真偽の対の欠けは、定義の書き換えを引き起こす」。確かめ方（exp/experiments/sys_soundness.py の説明に固定）:
-  #   版 48a43c9 の各ノード（動詞・限定）が真偽の対を持つかを測り、版 933ddd6 までに書き換えられたか消えたかと比べる。
-  #   対の無いノードの書き換えの割合が、対のあるノードより大きく、片側 Fisher で p < 0.05 なら支持、以下なら反証。
-  #   測るのは同時に起こることだけで、引き起こすことは示さない。書き換えを欠陥とみなすのは、この確かめでの取り決め
-  # 結果（判定: どちらでもない）。対の無いノードの書き換えは 0.042、対のあるノードは 0.025 で向きは合うが、p = 0.37。
-  # 動詞だけでは向きが逆（0.024 と 0.077）。登録した版の実行では、限定の対の判定に誤り（not と in の優先順位）があり、
-  # 限定に対のあるものが 0 件になっていた（そのときの値: 0.038 と 0.077、p = 0.91）。手順の説明どおりに直して測り直した
   h_symmetry_soundness: {is: exp.hyp_mixed}
   b_symmetry_soundness: {is: exp.item_done}
-  # ===== h_symmetry_soundness を、物理の対称性との類比で2つに分けた仮説（結果を見る前に登録した）
-  # (A) 量子異常の型: 意味として宣言した真偽の対称性を、実装が壊すなら欠陥になる。
-  #   確かめ方は exp/experiments/sys_anomaly.py の説明に固定。runtime.py の1か所の変異のうち、振る舞いを変えるものについて、
-  #   σ を壊す変異が、σ と別の検査（実行の記録の検査）を失敗させる割合が、壊さない変異より大きく、片側 Fisher で p < 0.05 なら支持
-  # 結果（判定: 反証）。振る舞いを変える変異 34 のうち、例外を出した 6 を除く 28 で、σ を壊す変異の失敗は 2/5（0.40）、
-  # 壊さない変異は 20/23（0.87）、p = 1.00。実行の記録は閉世界だけを使うので、述べていない文の扱いだけを変える変異
-  # （閉世界の既定値を真にするもの、開世界を閉世界にするもの）は、どれも検査を失敗させなかった
   h_anomaly_defect: {is: exp.hyp_refuted}
   b_anomaly_defect: {is: exp.item_done}
-  # (B) 明示的・自発的な破れの型: 定義の中身が真偽の対を欠くことは、定義の書き換えを引き起こさない。
-  #   確かめ方は exp/experiments/sys_content_symmetry.py の説明に固定（h_symmetry_soundness と重ならない期間 e845f0b → 6bfac2f）。
-  #   対の無いノードの書き換えが多く、片側 Fisher で p < 0.05 なら反証。そうでなければ反証されない（差を見つけられなかっただけ）
-  # 結果（判定: 反証されない）。対の無いノードの書き換え 7/370（0.019）、対のあるノード 0/77、p = 0.26。
-  # 向きは反証の側だが、書き換えが少なく差を見つけられなかった。差がないことの証明ではない
   h_content_asymmetry_harmless: {is: exp.hyp_supported}
   b_content_asymmetry_harmless: {is: exp.item_done}
-  # ===== 宣言と存在（利用者の見立てから立てた仮説。結果を見る前に登録した）
-  # 種類（時間によらない）では、宣言 ＝ 存在で閉じている（型検査器は宣言されたノードにだけ exists を与える）。
-  # 中身は「時間を含む実行では、宣言の範囲は歩みに依存する（開いている）。各時点では、宣言 ＝ 存在で閉じている」。
-  # 確かめ方は exp/experiments/sys_declaration.py の説明に固定。生まれる動詞と消える動詞を含む同じ歩みを、
-  #   (a) 名前を先に宣言し exists で在ることを述べる今の書き方と、(b) 宣言を歩みで足し取り消す書き方で実行し、
-  #   (b) がすべて歩め、各歩みの後の状態が (a) と一致し、宣言されていない名前を含む文が残らなければ支持、どれかが破れれば反証。
-  #   登録の前に確かめたのは、(a) の記録が今の実行器でエラーなく歩めることだけ
-  # 結果（判定: 反証）。(b) は3歩ともエラーなく歩め、各歩みの後の状態も (a) と一致した。
-  # しかし消える動詞 std.v_freeze で r1 の宣言を取り消すと、r1 についての文 depend(r1, sys1) と refer(r1, dec1) が残った。
-  # (a) では同じ2文が「在らないものについての文」として残る（法則 depend_end_exists は始点が在るときだけを縛るので、違反にならない）。
-  # 生まれることは宣言を足すことと読めたが、消えることは宣言の取り消しとは読めない。
-  # 登録した基準は3つの条件がすべて成り立つときだけ支持なので、成り立った2つ（歩める・状態が一致する）は観察として残し、支持には結ばない
-  # 利用者の指摘: この基準は真偽の軸と宣言の軸を取り違えていた。v_freeze は真偽の軸（exists）だけを操作し、宣言を減らさない。
-  # 宣言が減るのはスタックの巻き戻しのときだけで、「宣言されていない名前の文が残らない」は巻き戻しの後に確かめる条件だった。
-  # 判定は登録した基準どおりに残し、直した条件は別に扱う（フレームの観察 sys_frames を参照）
   h_open_declaration: {is: exp.hyp_refuted}
   b_open_declaration: {is: exp.item_done}
-  # ===== 名前を最初に全部宣言しない実行器（開世界）。利用者の提案「全部を最初に宣言しない実行器を作ればいい。開世界仮説で」から。結果を見る前に登録した
-  # 実行器と確かめ方は exp/experiments/open_runtime.py の説明に固定。世界は world（述べていない文に真偽を与えない）。
-  # 最初に宣言するのは最初に在る個体だけ。歩みが宣言されていない名前を名指したら、在るようにする位置（pre で exists が述べられていない・post で真）でだけ宣言する。
-  # 宣言は取り消さない（v_freeze は真偽の軸の exists を取り除くだけ）。フレームは1歩ごと。巻き戻しは扱わない。
-  # 中身は「宣言の範囲は、状態（真偽の文の集まり）に依存しない」（v_freeze が状態を変えても宣言は減らない）。支持の基準は、exp/tests の記録すべてと sys_declaration の記録で、
-  #   1. エラーなく歩め expect が決められて成り立つ、2. 宣言が減らない、3. 増えるのは在るようにする歩みだけ、4. halted: false の記録で halted: false と決まる、のすべて。
-  #   2 と 3 は作りからほぼ決まり、経験的な中身は 1 と 4。登録の前には、スクリプトが構文として読めることだけを確かめた（実行はしていない）
-  # 結果（判定: 支持）。2つの記録の6歩がすべてエラーなく歩め、expect も決められて成り立った。宣言は一度も減らず、
-  # 増えた2歩（std.v_learn, exp.v_see）はどちらも在るようにする位置に新しい名前を使った歩みだった。v_freeze の後も r1 の宣言は残った。
-  # 支持は弱い: 記録は exp/tests の adopt_withdraw と sys_declaration の2つだけ。adopt_withdraw は名前を足す歩みを含まない。
-  # halted: false を書いた記録は adopt_withdraw だけで、今の名前だけで当てはまる歩みが見つかったので、新しい名前を試す部分は使われていない
   h_open_runtime: {is: exp.hyp_supported}
   b_open_runtime: {is: exp.item_done}
-  # ===== 層とシグネチャ。利用者の指摘「層を分けるには、その層に分類されることを論理演算的に検出する法則が要る」「シグネチャから論理演算的に定められる分類を探すべき」から。
-  # 結果を見る前に登録した。確かめ方は exp/experiments/sys_layers.py の説明に固定。
-  # 各ノードから定義の辺（上位・限定の動詞と相手・動詞の端の種類）をたどり、届いたノードの holds・pre・post で分類する。
-  # 変化する動詞に届けば change、そうでなく refer に届けば refer、どちらでもなければ still。否定の辺もたどる（否定は「述べられていない」で、語としては使う）。
-  # 中身は「層の置き場は、シグネチャから定まる分類に依存する」。対応は ontology → still、syntax → refer、runtime → change。
-  # 支持は、3つの層のすべてのノードが対応する分類に入るとき（層を法則で決めるには、どのノードも事実から判定できなければならない）。1つでも外れれば反証。
-  # 登録の前に分かっていること: 前の版の体系で、似た表を会話の中で作り、外れるノードがあった。反証が見込まれる。目的は一致の度合いと外れの記録
-  # 結果（判定: 反証）。3つの層の 202 ノードのうち、対応する分類に入ったのは 104（0.515）。
-  # runtime は 24 すべてが change。syntax は 104 のうち 80 が change で、どれも否定の辺を通って変化する動詞に届いた（否定の辺をたどらなければ syntax の change は 0）。
-  # 否定の辺をたどらない版では 177/202（0.876）。外れるのは ontology の情報と記述の語 14（refer）、ontology.v_design（change）、
-  # runtime の状態の語 6（refer: state, halted, rewrite_rule など）、syntax の individuals と名前を付けた否定の限定 3（still）
   h_layers_signature: {is: exp.hyp_refuted}
   b_layers_signature: {is: exp.item_done}
-  # ===== 否定は self でないこと。利用者の問い「否定って not self にならないか」「self があることで真偽が不要になるような」から。観察の後に立てた（事前の登録ではない）
-  # 限定は λself. v(self, X)。肯定の限定が定める概念を S = {s | v(s, X)} とすると、否定の限定 λself. ¬v(self, X) は「self は S のどれとも同じでない」（∀s∈S. ¬same(self, s)）。
-  # こう書くと真偽の軸は要らない（偽と述べるか述べられていないかの区別、閉世界か開世界かによらない）。否定の限定がシグネチャから使うのは same と self だけで、
-  # v の成り立つ状態（holds・pre・post）は持ち込まない。v は S を名指す名前としてだけ現れる。
-  # 否定が定義の循環を通ると C = {x | x は C のどれとも同じでない} で self ≠ self になる（Russell の逆理。法則 definition_stratified が禁じる形）。
-  # 根拠の観察は sys_layers の比較版（否定の辺をたどらない版は、シグネチャからの分類と層の一致が高い）。この読みを syntax の neg の定義に反映するかは、まだ決めていない
   h_neg_not_self: {is: exp.hyp_supported}
-  # ===== 持続体と生起体を self・same とフレームの変化から導く。利用者の問い「コンティニュアント・オカレントって導けないかな」から。結果を見る前に登録した
-  # 持続体は「どのフレームでも自分と同じであるもの」（∀t, t'. same(self_t, self_t')）。gloss「時間を通じて同一性を保って存在するもの」を self と same で書いたもの。
-  # 生起体は、利用者が選んだ D2:「前後のフレームを同じでなくするもの」（¬same(frame_t, frame_t+1)）。gloss「時間の中で起こり、展開するもの」を書いたもの。
-  #   D1「限定 λself. v(self, X) の v」は今の体系の書き方（動詞はすべて生起体）と合うが、展開することを使わない。D2 では静的な動詞は生起体でなく関係になる。
-  # 中身は「最上位の置き場は、シグネチャから定まる分類に依存する」。確かめ方は exp/experiments/sys_tops.py の説明に固定。
-  # 支持は、個体がすべて持続体、動的な動詞がすべて生起体、静的な動詞がどれも生起体でない、生起体の名詞がすべて動的な動詞に届く、概念が動的な動詞に届く、のすべて。
-  # 登録の前に分かっていること: 個体 1052 はすべて持続体。動詞 118 はすべて生起体で、動的なものは 16 前後。概念は変化に届かない（sys_layers）。反証が見込まれる。
-  #   目的は、導いた定義と今の体系の食い違いを記録し、そこから直すものを導くこと
-  # 結果（判定: 反証）。個体 1054 はすべて持続体、動的な動詞 36 はすべて生起体（持続体の導きと、D2 の動的な側は合う）。
-  # 静的な動詞 82 もすべて生起体の下にある（D2 では関係で、生起体でない）。生起体の名詞 49 のうち動的な動詞に届くのは 14。
-  # 届かない 35 は、ontology の process・inference・concept・temporal_part など、subj の時間の語（day, week, meeting など）、exp の usage など。概念も届かない。
-  # 登録の前に「動的な動詞は 16 前後」と書いたのは、pre を自分で持つ語根だけを数えた値だった。上位から受け継ぐものを含めると 36
   h_tops_derivable: {is: exp.hyp_refuted}
   b_tops_derivable: {is: exp.item_done}
   h_individual_depth: {is: exp.hyp_supported}
@@ -200,8 +108,8 @@ individuals:
   b_gloss_formula: {is: exp.item_queued}
   h_negation_formula: {is: exp.hyp_untested}
   b_negation_formula: {is: exp.item_queued}
-  h_comment_ban: {is: exp.hyp_untested}
-  b_comment_ban: {is: exp.item_queued}
+  h_comment_ban: {is: exp.hyp_supported}
+  b_comment_ban: {is: exp.item_done}
   h_above_closed: {is: exp.hyp_untested}
   b_above_closed: {is: exp.item_queued}
   h_above_individual: {is: exp.hyp_untested}
@@ -234,13 +142,9 @@ individuals:
   b_case_frame_by_role: {is: exp.item_queued}
   h_annotation_gold: {is: exp.hyp_untested}
   b_annotation_gold: {is: exp.item_queued}
-  # ===== 定義の循環（自分を限定するものについて述べる定義）。利用者の問い「self がシグネチャになるとどうなるか」から
-  # 定義の辺（上位・名前を付けた修飾語・限定の with）をたどった循環を数えた（exp/experiments/sys_cycles.py）。
-  # 仮説は、観察を見た後に立てた（事前の登録ではない）。中身は「定義の循環は、否定の限定を通らない」。
-  # 法則にする理由は観察だけではない。否定を通る循環は C = {x | ¬v(x, C)}（Russell の逆理）の形になり不動点がないことがある。
-  # 否定を通らない（単調な）定義には不動点がある（Knaster–Tarski）。法則の規則にはすでに同じ条件（strata）がある
+  h_frame_closed: {is: exp.hyp_untested}
+  b_frame_closed: {is: exp.item_queued}
   h_definition_positive: {is: exp.hyp_supported}
-  # 法則 definition_stratified の理由になる定理（先行研究）
   pw_russell1902_paradox: {is: exp.prior_work, display: "先行研究: Russell 1902, Frege への書簡（van Heijenoort 編 From Frege to Gödel, 1967 に所収）。Russell 1903, The Principles of Mathematics, 第10章"}
   pwc_russell1902_negative_self: {is: exp.prior_claim, display: "要旨: 自分を含まない集まりの集まり {x | x ∉ x} を、制限なしの内包で作ると矛盾する。自分についての定義が否定を通ると、定義が定まらない"}
   pw_tarski1955_fixpoint: {is: exp.prior_work, display: "先行研究: Tarski 1955, A lattice-theoretical fixpoint theorem and its applications（Pacific Journal of Mathematics 5(2), 285–309）"}
@@ -249,7 +153,6 @@ individuals:
   pwc_apt1988_stratified: {is: exp.prior_claim, display: "要旨: 否定を通る再帰を持たない（層に分けられる）論理プログラムは、層ごとに求まる1つの標準モデルを持つ"}
   d_definition_stratified: {is: lang_dec_adopted}
 
-  # ===== 観察（体系そのものを数えた族 sys_* の値。exp/experiments/sys_ends.py, sys_structure.py）
   o_sys_depended_ic_below_gdc: {is: exp.observation}
   o_sys_depended_mostly_depend: {is: exp.observation}
   o_sys_state_atoms_all_base: {is: exp.observation}
@@ -277,7 +180,6 @@ individuals:
   o_sys_cycles_positive: {is: exp.observation}
   o_sys_cycles_mostly_one_relation: {is: exp.observation}
   o_sys_cycles_mostly_syntax: {is: exp.observation}
-  # フレーム（実行の各時点）の観察（exp/experiments/sys_frames.py）。仮説の確かめではない
   o_sys_tops_ind_continuant: {is: exp.observation}
   o_sys_tops_dyn_occurrent: {is: exp.observation}
   o_sys_tops_static_occurrent: {is: exp.observation}
@@ -294,10 +196,6 @@ individuals:
   o_sys_open_runtime_grows_by_creation: {is: exp.observation}
   o_sys_open_runtime_runs_ok: {is: exp.observation}
   o_sys_open_runtime_supported: {is: exp.observation}
-  # 動的な動詞と静的な動詞の違いの観察（exp/experiments/sys_verbs.py）。仮説の確かめではない。最上位の分類を演繹する型検査の材料。
-  # 多くの値は、会話の中で一度数えたものを手順に固定して記録し直したもの（記録の前に値を見ている）。
-  # 動的 36（自分で pre・post を持つのは 16）、静的 82。動的な動詞の from はすべて持続体。to が持続体でないのは std.v_compute（to: any）だけ。
-  # 動的な動詞の端に生起体はない。静的な動詞は 14 が生起体を端に持つ。静的な動詞は1つも限定されない。限定される動的な動詞 8 はどれも exp の手法の語
   o_sys_verbs_dyn_from_con: {is: exp.observation}
   o_sys_verbs_dyn_ends_not_all_con: {is: exp.observation}
   o_sys_verbs_dyn_no_occ_end: {is: exp.observation}
@@ -306,222 +204,58 @@ individuals:
   o_sys_verbs_dyn_limited: {is: exp.observation}
   o_sys_verbs_dyn_exists_more: {is: exp.observation}
   o_sys_verbs_static_order_more: {is: exp.observation}
-  # 動詞の位置の混同の観察（exp/experiments/sys_confusion.py）。仮説の確かめではない。手順は実行の前に登録した（git の履歴の結果ファイルを個体にする）。
-  # 混同の定義の候補: 動詞 v の定義 F が位置 p の b について成り立たず、F が成り立つ c と R(c, b) があるとき、その使い方は v∘R。v∘R を v と書くのが混同。
-  #   利用者の気づき「設計＝作ることで、別の動詞が混ざる」（programming_language を設計の終点に置く使い方）から抽象化した。体系にはその個体がないので、計算で観察した。
-  # 結果: 結果ファイルの計算の出来事 138（足す 99、計算し直す 39。ファイル 99 のうち 13 が計算し直された）。
-  # 今の語彙（ファイルを v_compute の終点に置く）では、計算し直す 39 がすべて pre の ¬exists(to) で破れる。終点を part に沿って版へずらすと、すべて歩める。
-  # 作りからほぼ決まる結果で、経験的な中身は「計算し直しが実際にある」こと
   o_sys_confusion_v_create_ok: {is: exp.observation}
   o_sys_confusion_v_recompute_fails: {is: exp.observation}
   o_sys_confusion_s_create_ok: {is: exp.observation}
   o_sys_confusion_s_recompute_ok: {is: exp.observation}
   o_sys_confusion_recomputed_some: {is: exp.observation}
-  # v_compute と v_speak を見分ける観察（exp/experiments/sys_outlive.py）。仮説の確かめではない。手順は実行の前に登録した。方法は sys_confusion と同じ。
-  # 2つの式の違いは v_speak の post の depend(to, from) だけで、見えるのは法則 depend_end_exists を通して、作ったものが在らなくなった後も作られたものが在るときだけ。
-  # 結果: _source を持つ結果ファイル 26 のどれでも、作ったもの（スクリプト）は消えていない。履歴に .py の削除は1つもない（削除は全部で 5）。
-  #   だから、この履歴では2つの読みは見分けられない（どちらも 26/26 歩める）。見分けるには、作ったものが消える出来事を持つ外の事実が要る。
-  # 手順の欠け（実行の後に気づいた）: 同じコミットで .py と結果を足すと、名前の順で結果を先に読むので source_in_git が 0 になる（11/26）。見分けの結果には効かない
   o_sys_outlive_never_outlived: {is: exp.observation}
   o_sys_outlive_compute_steps_ok: {is: exp.observation}
   o_sys_outlive_speak_steps_ok: {is: exp.observation}
-  # 動詞の種差の観察（exp/experiments/sys_differentia.py）。仮説の確かめではない。手順は実行の前に登録した。
-  # 利用者の気づき「それぞれに固有の関係が書かれていなかった」を抽象化した: 動詞の式は類と種差からなり、種差が状態の関係になく端の種類だけにあるものを数える。
-  # 結果: 式の語根 56 のうち、状態の式がほかの語根と同じものの組が 12（動的 16 のうち 7、静的 40 のうち 19 が組に入る）。在るようにする動的な語根 9 のうち、産物に固有の関係がないのは v_design と v_compute。
-  # 組の分かれ方（会話で分類）: 端の最上位だけ（v_come_after と v_happen_after、v_compose と v_stage、v_trigger と v_cause）、
-  #   端の any だけ（v_compute、v_rely、v_immune、v_not_transfer）、new_kind だけ（v_judge・v_see・v_learn、v_withdraw・v_vary、v_level・v_near）、
-  #   端を狭めただけ（v_perform と subj.v_seated、v_refer・std.v_close・syntax.v_collect）
   o_sys_differentia_dyn_not_all_unique: {is: exp.observation}
   o_sys_differentia_st_not_all_unique: {is: exp.observation}
   o_sys_differentia_creation_not_all_specific: {is: exp.observation}
-  # 動詞の親子を「端が内側にあり、式が相手の式を含む」で決めたときの観察（exp/experiments/sys_subsume.py）。仮説の確かめではない。手順は実行の前に登録した。
-  # 背景: any→any で式 F を持つ動詞は、F を含む式を持つ動詞すべての親になる（利用者の気づき「any を端に取る関係は全ての関係の親では」）。
-  # 結果: 語根 51 のうち 17 が別の語根に包まれる（15 は式が真に小さい親、14 は端に any を持つ親）。包む語根が上位にあるものは 0。
-  #   語根はどれも occurrent を直に上位とし、ほかの語根の下に式を足す書き方をしていない。
-  #   包む語根を使えない層にあるのは 5（ontology.v_depend・v_trigger、subj.v_begin・v_end は exp の v_rely・v_transfer に、ontology.v_design は std.v_compute に包まれる）。
-  #   ほかに見えた親子: v_level ⊂ v_not_after ∧ v_not_before、v_near ⊂ v_level、v_answer ⊂ v_come_after ∧ v_refer、v_speak ⊂ v_design、v_teach ⊂ v_expose、v_express ⊂ v_depend。
   o_sys_subsume_some_subsumed: {is: exp.observation}
   o_sys_subsume_never_under_subsumer: {is: exp.observation}
   o_sys_subsume_layer_not_all_usable: {is: exp.observation}
-  # 同じ綴りが別のものに解決されるかの観察（exp/experiments/sys_spelling.py）。仮説の確かめではない。手順は実行の前に登録した。
-  # 結果: (領域, 語) 1307 のうち、解決先が2つあるのは syntax の any だけ（限定の with では syntax.any＝存在の数量化、動詞の端ではどのノードでもない any）。
-  #   見込みどおり。qw が syntax で読み直す語が別の先になる組は出なかった。
   o_sys_spelling_one_word_two_referents: {is: exp.observation}
-  # 型検査と実行器が名を挙げる語の観察（exp/experiments/sys_special.py）。仮説の確かめではない。手順は実行の前に登録した。
-  # 結果: 名を挙げた語 128 のうち、シグネチャ 3、文法 66、どちらでもない 60（うち一字 5）。
-  # 実行の後の分け方（登録していない）: 一字を除く 55 を語の領域で分けると、syntax 15、runtime 5、ontology 15、基礎の関係 4（after, exists, part, refer）、
-  #   exp 1（v_spell）、意味を検査が与える法則 10、層の名 4、偶然の一致と見た 2（kind、type_checker。偶然でなかった: 下の sys_mutation の訂正）。
-  # 利用者の見方（実行の後に受けた）: 文法は syntax が定義している。コードは機械語に翻訳しているに過ぎない。
   o_sys_special_outside_named: {is: exp.observation}
-  # 語の名前を付け替えたときの振る舞いの観察（exp/experiments/sys_mutation.py）。仮説の確かめではない。手順は実行の前に登録した（利用者の案: 文法が振る舞いを変えるかを変異で見つける）。
-  # 結果: 陽性の対照（文法の語）4/4 が変わり、陰性の対照（コードに名の出ない言語の層の語）0/14 が変わった（見込みどおり）。調べる語は 43/51 が変わった。
-  #   変わらなかった 8: kind, laws, type_checker（はじめ偶然の一致と書いたが、利用者の問いで確かめると偶然でなかった。
-  #     コードの kind は個体の「属する」の終点＝ontology.kind（種類）、laws は law_rule と law_given を名で挙げて集めた syntax.laws の成員、
-  #     type_checker は lang が型検査器として述べる人工物そのもの。どれも同じものを同じ綴りで指すが、コードは体系から読まずに自分で持つ。
-  #     だから名前を付け替えても変わらない。名前への依存でなく、体系と結ばれていない重複。定義を変える変異でなら見える見込み）、part, refer（基礎の関係。今の入力では表に出ない）、r_written, variable, world。
-  #   exp は変わったが、違う行がもとの出力のどこかにある（並びか数の違い。中身は見ていない）。
-  #   変わった語には、文法として読むべき語（v_assume, v_derive, v_require, law_rule, law_given など規則を書く語、runtime の選択の名）と、
-  #   意味をコードが持つ語（continuant, occurrent, role, quality, magnitude, definition, v_depend, v_refer, v_spell, verb_ref, v_collect, law_given の各法則）が混ざる。
-  #   変異は名前への依存を見つけるが、その依存が正当（文法）かどうかは見分けない。
   o_sys_mutation_controls_hold: {is: exp.observation}
   o_sys_mutation_named_words_depend: {is: exp.observation}
-  # 語の下位を1つ外したときの振る舞いの観察（exp/experiments/sys_detach.py）。仮説の確かめではない。手順は実行の前に登録した（191c424）。
-  # 結果: 調べる語 9/11 で変わり、陰性の対照 0/3 は変わらなかった。飛ばした行はない。
-  # 実行の後に出力の違いを1つずつ見た（登録していない）。分類を読んだのは次のとおり。
-  #   コードが is_a で分類を読む: definition（役割の根拠）、magnitude（指標）、role（役割の数が 14 → 13。誤りは出ない）、v_depend と v_refer（動詞の書き方）。
-  #   体系の法則か型が読む: v_collect（法則 specific）、world（v_presume の終点の型）、v_refer・v_depend（法則 placed_deduced も）。
-  #   laws: 文法の laws の検査（d7dd752 で入れた、コードの鍵の集合・文法・laws の下位が等しいこと）が誤りを出した。
-  #     コードが law_given を名で集めることは変わっていない（core_sections）。見込みどおり。重複は、等しさの検査で表に出るようになった。
-  #   変わらなかった 2: quality（子 adopted。コードが質を読むのは axis を持つ語だけで、adopted は axis を持たない）、
-  #     type_checker（子 previous_checker。コードは lang の type_checker の分類を一度も読まない。体系の述べる型検査器と、コードは結ばれていない）。
-  #   role は、外しても誤りにならず、役割の検査から黙って外れる。役割であることを求める法則がない（分類で検査をかけるが、分類そのものは確かめない）。
   o_sys_detach_neg_hold: {is: exp.observation}
   o_sys_detach_named_read_taxonomy: {is: exp.observation}
-  # 下の層が ontology の語を参照する位置の観察（exp/experiments/sys_lower.py）。仮説の確かめではない。手順は実行の前に登録した（4f2edbe）。
-  # 背景（利用者）: 変数は runtime が持つべき概念。runtime がシグネチャと syntax だけを知って書けるなら、bootstrap に繋がる。表は観察から演繹する。
-  # 結果（層ごと。スクリプトの出力）: runtime は 11 語のうち extends_only 5（definition, information_entity, occurrent, quality, role）、
-  #   reducible 4（v_come_after, v_compose, v_depend, v_refer）、other 2（continuant: 動詞の端、v_come_before: 端を入れ替えた after なので base_verb に当たらない）。
-  #   syntax は 27 語のうち extends_only 3、reducible 2、other 22（s, p, o, kind, sentence, word, participant など文法の位置と語の種類、v_express などの動詞）。
-  #   基礎の関係は 7 のうち 6 が ontology にあり、シグネチャには same だけ。reducible でも、書き直す先の基礎の関係が ontology にある。
-  # 読み: runtime は、基礎の関係をシグネチャに下ろせば、ほとんど ontology なしで書ける形をしている。syntax は ontology の意味を式で使っており、組み替えの本体は syntax の側。
   o_sys_lower_syntax_uses_ontology: {is: exp.observation}
   o_sys_lower_base_in_ontology: {is: exp.observation}
-  # syntax の下に要る ontology の核の観察（exp/experiments/sys_core.py）。仮説の確かめではない。手順は実行の前に登録した（da165c4）。
-  # 結果: 種 22 から定義をたどると、核は ontology のノード 74 のうち 39。基礎の関係は same を除く 6 つすべてを核の語が使う。
-  #   たどって加わった 17: dependent, generically_dependent_continuant, specifically_dependent_continuant, quality, process, inference, language,
-  #   information_entity_compose_to_word, information_entity_express_from_natural_language, participant_p_from_not, v_come_after, v_compose, v_design,
-  #   v_involve, v_perform, v_stage, v_trigger。
-  #   核の外 35: 動詞の端の役（referrer, component など）、definition, role, realizable_entity, disposition, temporal_part, v_level など。
-  # 読み: syntax の下には ontology の約半分と、基礎の関係のほぼすべてが要る。外に残るのは、動詞の端の役と、役割・定義の系統。
   o_sys_core_half_needed: {is: exp.observation}
   o_sys_core_base_needed: {is: exp.observation}
-  # 基礎の関係 after を式に持つ動詞の観察（exp/experiments/sys_after.py）。仮説の確かめではない。手順は実行の前に登録した（1b2a69c）。
-  # 訂正: 一度走らせたあと、used の数え方の誤り（領域のファイルの事実が入っていない）に気づき、直して登録し直した（563e920）。記録はその結果。
-  # 結果: after を持つ動詞 17。端が両方 occurrent（時間）1（v_happen_after）、両方 continuant（並び）8、どちらでもない 8。事実で使われる 11。
-  #   after を書いた規則の法則は after_asymmetric と after_transitive。
-  # 実行の後の読み（登録していない）: continuant の 8 には、値の大小（v_come_after, v_come_before, v_level, v_near。観察の
-  #   「平均値が 0.5 の後ろ」はこれ）と、文の並びが入る。どちらでもない 8 には、原因と結果（v_cause, v_trigger）、上げ下げ（v_raise は after(to, new)）、
-  #   始まりと終わり（v_begin, v_end）が入る。一つの after が、時間・値の大小・並びの3つに使われている。端の種類だけでは時間の順序を見分けられない。
   o_sys_after_time_rare: {is: exp.observation}
   o_sys_after_mostly_used: {is: exp.observation}
-  # 法則 specific を含意（r_has）で読んだときに残る 9 件の違反（V）を、式の上で正しい上下関係（C）と区別できるかの観察
-  #   （exp/experiments/sys_specific.py）。手順と判定は実行の前に登録した（4cefbcd）。登録の前の訂正（案の 1 はいつも空）は手順に書いた。
-  # 結果: V 9 組、C 33 組。1 の数は defined_by_refined V 6 / C 28、independent_slot V 0 / C 0、same_domain V 5 / C 15、
-  #   y_has_concept_child V 7 / C 33。V のすべてで 1 になる値も、V のすべてで 0 かつ C の 90% 以上で 1 になる値もない。
-  #   登録した判定により「今の式では区別できない」（見込みのとおり）。値は summary 要約 の行の数で記録する。
-  # 実行の後の読み（登録していない）: V の n はすべて 1（足りない式は1つだけ、それも含意で持っている）。
-  #   defined_by_refined が 0 の V は days_overdue→money, height→age, hour→money。y_has_concept_child が 0 の V は height→age, position→opposite。
   o_sys_specific_refined_not_all_v: {is: exp.observation}
   o_sys_specific_domain_not_all_v: {is: exp.observation}
   o_sys_specific_child_not_all_v: {is: exp.observation}
   o_sys_specific_slot_never_v: {is: exp.observation}
   o_sys_specific_slot_never_c: {is: exp.observation}
-  # specific の 9 件の違反（V）と正しい上下関係（C）を、上の概念 y の自前の式の端の深さ（祖先の数）で比べた観察
-  #   （exp/experiments/sys_specific_depth.py）。手順と判定は実行の前に登録した（ad71d32）。ただし、閾値 2 は同じ V と C の
-  #   式ごとの数を見てから選んだ（登録に書いた）。同じデータでの確かめで、新しいデータでの検証ではない。
-  # 結果: y の端がすべて深さ 2 以下の組は V 8/9、C 3/33（9%）。登録した判定により「傾向がある（法則にはしない）」。
-  #   V で 0 の組は control_preservation→context_following（y の端 exp.case、深さ 5。見込みのとおり）。
-  #   閾値 1: V 7、C 3。閾値 3: V 8、C 9。
-  # 実行の後の読み（登録していない）: C で 1 の 3 組は sales→money, information_entity_refer_from_p→verb_ref, new_kind→with。
-  #   うち 2 組は y が V と同じ（money, verb_ref）。浅い端だけで定義された y は、正しい下位も、違反の下位も集める。
   o_sys_specific_depth_v_mostly_shallow: {is: exp.observation}
   o_sys_specific_depth_c_rarely_shallow: {is: exp.observation}
-  # 過大拡張の予測の観察（exp/experiments/sys_overextension.py）。手順と判定は実行の前に登録した（1122b96）。
-  #   訂正（結果を見る前、b8deb03）: with の終点が個体の式があり止まったので、個体の終点を深さの計算から除いた。
-  #   予測（利用者の直観「階層の深さが概念の発達水準を示す」から）: 定義の端が浅い（祖先 2 以下）概念ほど、
-  #   定義を満たすのに下にない概念（absorbs）を持つ。判定: 持つ概念の割合が、浅い群で深い群の 3 倍以上（見た概念を除いても）。
-  # 結果: 全体で浅い 12/86（14.0%）、深い 19/295（6.4%）、比 2.2。見た概念を除くと浅い 6/80（7.5%）、深い 14/281（5.0%）、比 1.5。
-  #   登録した判定により「予測は外れた」（向きは予測のとおりだが、3 倍に届かない）。
-  # 実行の後の読み（登録していない）: 端の深さごとの割合は 0: 6/20、1: 3/28、2: 3/38、3: 4/51、4: 8/99、5: 4/63、6: 0/32、7: 3/44、8: 0/6。
-  #   深さ 0（最上位の端だけで定義）だけが 30% で、1 から先はほぼ平ら。集める数は浅い概念が大きい
-  #   （verb_ref 80、hypothesis 54、run 12。深い概念の最大は 6）。深さに沿ってなだらかに発達水準が上がる形ではなく、
-  #   最上位の端だけで定義された概念が、大きく過大拡張する形。
   o_sys_overext_shallow_more: {is: exp.observation}
   o_sys_overext_not_threefold: {is: exp.observation}
   o_sys_overext_unseen_shallow_more: {is: exp.observation}
-  # 分化の操作の観察（exp/experiments/sys_differentiation.py）。手順と判定は実行の前に登録した（49fba98）。
-  #   利用者の直観「発達・分化の操作自体に規則性がある」から。すべての直接の上下関係（概念と親）466 辺、下位が足した式 490。
-  # 結果: new（新しい特徴を足す）238、add_end（端のなかった式に端を書く）157、negate 41、narrow_end（端を狭める）30
-  #   （うち段数 1 が 22）、other 18、narrow_verb 6、limit 0。
-  #   (a) other 3.7%（5% 以下）: 満たす。(b) 自前の式が1つの辺 442/466（94.8%、80% 以上）: 満たす。
-  #   (c) narrow_end 6.1%（50% 以上）: 外れ。登録した判定により「式1つずつ・少ない種類」の規則性はあり、
-  #   「端を狭めるのが典型」は外れ。
-  # 実行の後の読み（登録していない）: 端に関わる狭め（add_end と narrow_end）を合わせると 187（38%）。分化は、
-  #   一辺に式1つで、主に「新しい特徴を足す」か「端を決める・狭める」の2つで進む。
-  # 訂正（sys_money_unit のあとで気づいた）: (b)「一辺に式1つ」は、限定（mod）については法則 single が決めていることで、
-  #   観察で見つけた規則性ではない。r_own は限定のほかに軸（axis）と動詞の端（from, to）も数えるので、式が2つの辺 24 は、
-  #   限定1つと軸1つ（22。age, money, accuracy など）か、動詞の2つの端（2。v_spell, v_close）。single は破れていない。
-  #   new の 238 にも、軸が入っている（限定とは別の種類の特徴を、同じ「式」として数えた）。new の親は information_entity 24、
-  #   process 12、quality 11 など最上位に近い概念が多い。sys_specific の C で見えた「端を1段狭める」は、洗練の対を選んだ偏り。
   o_sys_diff_few_kinds: {is: exp.observation}
   o_sys_diff_one_step: {is: exp.observation}
   o_sys_diff_narrow_not_typical: {is: exp.observation}
-  # 発達水準を持つ式の数（何歩分化したか）で測った過大拡張の観察（exp/experiments/sys_overextension_steps.py）。
-  #   手順と判定は実行の前に登録した（3eb4f13）。作りの上で、式の少ない概念ほど満たされやすいことも登録の前に書いた。
-  # 結果: 中央値 4。全体で低い 18/202（8.9%）、高い 13/179（7.3%）、比 1.2。見た概念を除くと 13/192（6.8%）、7/169（4.1%）、比 1.6。
-  #   登録した判定により「外れた」。作りの効果があっても、差はほとんどない。
-  # 実行の後の読み（登録していない）: 式の数ごとの割合は 1: 0/3、2: 0/17、3: 12/71、4: 6/111、5: 10/80、6: 3/44、7 以上: 0/55。
-  #   一番発達していない概念（1〜2）は、まったく集めすぎない（満たすものはすでに下に置かれている）。集めすぎは 3〜5 の中間に集まる。
-  #   深さの物差し（sys_overextension）と式の数の物差しの、2つとも外れた。「発達水準が低いほど過大拡張する」は、
-  #   なだらかな法則としては支持されない。
   o_sys_overext_steps_small_ratio: {is: exp.observation}
   o_sys_overext_steps_unseen_small_ratio: {is: exp.observation}
-  # money を1歩分化させる操作の観察（exp/experiments/sys_money_unit.py）。手順と判定は実行の前に登録した（f5bf2be）。
-  #   操作: subj.yaml の money の mod に {of: [v_come_after, from], with: money}（単位）を足して2つにした。after を測ったあと、
-  #   体系の検査が通らないので、subj.yaml は元に戻した（操作は commit していない）。
-  # 結果: before は errors 0、V 9、v_money 2、sales_ok 1、absorbs_money 2。after は errors 3、V 7、v_money 0、sales_ok 1、absorbs_money 0。
-  #   V は before から money の2組（hour, days_overdue）を除いたものと同じで、新しい違反はない。
-  #   登録した判定のうち errors 0 を満たさないので「外れ」。誤りは、法則 single（1つのノードが足せる限定は1つだけ）と、
-  #   「mod は並べない」の検査。過大拡張は、見込みどおり規則だけで止まった。
-  # 実行の後の読み（登録していない）: この体系では、分化の1歩に足せる特徴は1つと、法則で決まっている。money に単位を足すには、
-  #   money の今の式を持つ中間の概念を置き、money をその下にして単位の式を足す（2歩に分ける）必要がある。
   o_sys_money_unit_stops_overextension: {is: exp.observation}
   o_sys_money_unit_keeps_sales: {is: exp.observation}
   o_sys_money_unit_breaks_single: {is: exp.observation}
-  # sys_money_unit の後の読み（会話）: 自前の式が2つの辺の2つ目は軸（axis）で、限定とは別枠。単位は軸の側の特徴（量の分化）。
-  # money の単位を軸の分化（円の量 yen ⊂ 量 amount）として足す操作の観察（exp/experiments/sys_money_axis.py）。手順と判定は実行の前に登録した（a94497c）。
-  #   軸に上下を書けるようにした（1f01587）。after は、領域に軸を書けず errors 2 で外れ（訂正 13d46bd、領域に軸を書けるようにした 52fa1e5）。
-  #   after2 は、軸の上下を extends の文に訳したため法則 placed_deduced が yen を概念として読み errors 1 で外れ
-  #   （訂正 2 fd1cb86。軸の上下を axis の文に訳し直した。訂正 2 は after3 を一度走らせた後に書いた）。どの変更でも、今の体系の導いた文は、法則の個体のほかは変わらないことを確かめた。
-  # 結果（after3）: errors 0、V 7（before の 9 から money の2組 hour, days_overdue を除いたものと同じ）、v_money 0、sales_ok 1、
-  #   absorbs_money 0、money_has_amount 1（money は円の量を持ち、含意で量も持つ）。登録した判定の5つを満たす。
-  #   ただし、前提の不足で2度外れ、測り直した（after3 は、訂正 2 の内容を決める前に一度走らせて見ている）。
-  # 実行の後の読み（登録していない）: 名前にしかなかった区別（円）を、限定ではなく軸の分化として式に移すと、法則を破らずに
-  #   過大拡張が規則だけで止まる。操作は subj.yaml に残す（money の axis は yen）。
   o_sys_money_axis_stops_overextension: {is: exp.observation}
   o_sys_money_axis_passes_checks: {is: exp.observation}
   o_sys_money_axis_keeps_amount: {is: exp.observation}
-  # 量の単位を軸の分化として書く操作を、ほかの量にも当てた観察（exp/experiments/sys_unit_axis.py）。手順と判定は実行の前に登録した（77a0dd5）。
-  #   その前に法則 at_axis を足した（45aed87。限定が値を指定する軸は、比べる概念の値の軸かその上位）。
-  # 結果: before は V 7（height→age を含む）。after（歳 sai とセンチ cm を amount の下位に足し、age と height を置く）で
-  #   errors 0、V 6、v_height_age 0、new_V 0。after_all（表示名が単位を書く量をすべて単位の軸に置く。円は yen、人 people、
-  #   日 days、時 hours）でも errors 0、V 6、v_height_age 0、new_V 0、v_money 0、sales_ok 1。登録した判定をどちらも満たす。
-  #   見込みで心配した「円の量どうし（monthly_fee, profit_gap）が money の下に集まる」は起きなかった。
-  # 実行の後の読み（登録していない）: 単位を同じくするだけでは概念は近づかない（monthly_fee, profit_gap は money と限定の動詞が違う）。
-  #   単位の軸は、違う単位の量を分けるだけで、同じ単位の量を寄せはしない。操作は subj.yaml に残す（after_all）。
-  #   残る V 6 組に、単位の分化で止まるものはない（verb_ref に 3 組、opposite, hypothesis, context_following に 1 組ずつ）。
   o_sys_unit_axis_stops_height_age: {is: exp.observation}
   o_sys_unit_axis_no_new_violation: {is: exp.observation}
   o_sys_unit_axis_passes_checks: {is: exp.observation}
-  # 残る違反の組は、2つの概念の交わり（meet）かを見た観察（exp/experiments/sys_meet.py）。手順と判定は実行の前に登録した（8987adb）。
-  # 結果: pairs 6、meets 0、lack_any 0（数え方の前提は成り立つ）。判定は外れ（交わりはない）。
-  #   どの組でも、x は上位 p と y のほかに、自分の限定を1つ足している（extra はその限定と、それが含意する式）。
-  # 実行の後の読み（登録していない）: 6 組のうち 5 組は、y が「生起体へ述べる」（refer_from_occurrent）だけで定義されたもの
-  #   （verb_ref が 3 組、opposite と hypothesis が 1 組ずつ）。verb_ref と opposite は「動詞そのもの（種類）を指す」が、
-  #   x（run, attendance, plan, position, backlog_item）は「起こったこと（成員）を指す」。この区別は式になく、
-  #   verb_ref の注釈（この位置には動詞そのものが来る）と、型検査が名前で verb_ref を読むところにだけある。
-  #   残る1組（control_preservation→context_following）は、control_case が case の下位なので、y の限定を含意する。
   o_sys_meet_no_meets: {is: exp.observation}
   o_sys_meet_lack_none: {is: exp.observation}
-  # 動詞そのもの（種類）を指すことを式で書く操作の観察（exp/experiments/sys_kind_ref.py）。手順と判定は実行の前に登録した（7036a15）。
-  #   操作: verb_ref を「起こったことが属する種類」（extends: kind、mod: is の終点、with: occurrent）にし、
-  #   information_entity_refer_from_p の上位を information_entity にする。
-  #   after は errors 1 で外れ（型検査が is の限定を名前で読むところが、with を常に終点の側として読んでいた）。
-  #   訂正（8931b2f）で型検査を直し（今の体系の導いた文は変わらない）、after2 で測り直した。
-  # 結果（after2）: errors 0、V 3（before の 6 から run, attendance, plan → verb_ref の3組が消えた）、v_verb_ref 0、new_V 0。
-  #   登録した判定の3つを満たす。ただし、前提の不足で1度外れ、測り直した。
-  # 実行の後の読み（登録していない）: 注釈と型検査の名前の読みにだけあった「種類か成員か」の区別を、基礎の動詞 is の位置で式に書くと、
-  #   過大拡張が規則だけで止まった。money の単位（軸の未分化）に続き、これは階（種類と成員）の未分化。操作は syntax.yaml に残す。
   o_sys_kind_ref_stops_overextension: {is: exp.observation}
   o_sys_kind_ref_no_new_violation: {is: exp.observation}
   o_sys_kind_ref_passes_checks: {is: exp.observation}
@@ -568,14 +302,6 @@ individuals:
   o_sys_any_by_entail_deep: {is: exp.observation}
   o_sys_any_by_entail_before_match: {is: exp.observation}
   o_sys_any_by_entail_before_deep: {is: exp.observation}
-  # 表示名のうち、式が参照するものの表示名から来ない部分（余り）を見た観察（exp/experiments/sys_display_residual.py）。
-  #   手順と判定は実行の前に登録した（841ff81。結果を見る前の訂正 12a37cb: 個体の表示名の読み先）。
-  # 結果（2477928、違反 9 組のとき）: V 9（前提は成り立つ）、違反の上 y 6 つの余りを持つ割合 rate_y 1.0、概念 526 すべてでは rate_all 0.772。
-  #   比は 1.30 で、登録した 1.5 倍に届かず外れ。表示名の 77% は、式から来ない文字を持つ（語彙化した名前が多い）。
-  #   今の体系（HEAD）: V 3、rate_y 1.0、rate_all 0.772。
-  # 実行の後の読み（登録していない）: 余りの有無は、取り残しと語彙化した名前を区別できない。ただ、直した概念では余りの中身が変わった:
-  #   money の余りは 円・金・額 → 金・額（円は軸 yen の表示名から来る）、age は 年・歳・齢 → 年・齢。verb_ref の 動・詞・指 は残る
-  #   （is と occurrent と kind の表示名からは来ない。「動詞」は 生起体 の別の名で、日本語の辞書の側の語）。
   o_sys_display_residual_not_distinct: {is: exp.observation}
   o_sys_display_residual_mostly_residual: {is: exp.observation}
   o_sys_ja_case_frame_rate: {is: exp.observation}
@@ -584,10 +310,8 @@ individuals:
   o_sys_case_frame_formula_below: {is: exp.observation}
   o_sys_case_frame_by_relation_acc: {is: exp.observation}
   o_sys_case_frame_by_relation_below: {is: exp.observation}
-  # 体系のファイルのコメントを、決まった規則で分けて数えた棚卸し（exp/experiments/sys_comments.py。手順は実行の前に登録した 64fa140）。
-  # 結果: 431 個（見出し 115、経緯 146、コード 20、意味 150。行だけのもの 386、値の後ろ 45）。claims.yaml が 277（経緯 136、意味 110）、
-  #   cscl/library の 5 ファイルが 76（見出し 41、意味 25、経緯 6、コード 4）、exp/src が 64（見出し 52）、cscl.yaml が 14。
-  #   分け方は語で決めるので、複数行の経緯の2行目以降は「意味」に入る（claims の意味 110 の多くはそれ）。
+  o_sys_comment_ban_defn_left: {is: exp.observation}
+  o_sys_comment_ban_after: {is: exp.observation}
   o_sys_comments_claims_most: {is: exp.observation}
   o_sys_frame_declared_never_grows: {is: exp.observation}
   o_sys_frame_declared_never_shrinks: {is: exp.observation}
@@ -657,6 +381,7 @@ facts:
   - {is: v_contradict, from: o_sys_anomaly_breaks_below, to: h_anomaly_defect}
   - {is: v_support, from: o_sys_content_not_significant, to: h_content_asymmetry_harmless}
   - {is: v_refer, from: h_definition_positive, to: {is: v_not_depend, from: definition_cycle, to: syntax.not}}
+  - {is: exp.v_qualify, from: exp.lim_post_hoc, to: h_definition_positive}
   - {is: v_refer, from: d_definition_stratified, to: {is: v_not_depend, from: definition_cycle, to: syntax.not}}
   - {is: v_ground, from: d_definition_stratified, to: h_definition_positive}
   - {is: v_refer, from: o_sys_cycles_positive, to: {is: v_level, from: sys_cycles.neg.mean_value, to: 0.0}}
@@ -678,6 +403,8 @@ facts:
   - {is: exp.v_state, from: pw_tarski1955_fixpoint, to: pwc_tarski1955_monotone}
   - {is: v_refer, from: h_open_declaration, to: {is: v_depend, from: declared_scope, to: runtime.steps}}
   - {is: exp.v_check, from: b_open_declaration, to: h_open_declaration}
+  - {is: v_refer, from: h_frame_closed, to: {is: v_agree, from: declared_scope, to: exists_scope}}
+  - {is: exp.v_check, from: b_frame_closed, to: h_frame_closed}
   - {is: v_refer, from: h_open_runtime, to: {is: v_not_depend, from: declared_scope, to: runtime.state}}
   - {is: exp.v_check, from: b_open_runtime, to: h_open_runtime}
   - {is: v_refer, from: h_layers_signature, to: {is: v_depend, from: layer_placement, to: signature_class}}
@@ -690,6 +417,7 @@ facts:
   - {is: v_refer, from: o_sys_layers_pos_not_all, to: {is: v_come_before, from: sys_layers.agree_pos.mean_value, to: 1.0}}
   - {is: v_refer, from: o_sys_layers_pos_higher, to: {is: v_come_after, from: sys_layers.agree_pos.mean_value, to: sys_layers.agree.mean_value}}
   - {is: v_refer, from: h_neg_not_self, to: {is: v_not_depend, from: negated_limitation, to: syntax.holds}}
+  - {is: exp.v_qualify, from: exp.lim_post_hoc, to: h_neg_not_self}
   - {is: v_support, from: o_sys_layers_pos_higher, to: h_neg_not_self}
   - {is: v_refer, from: h_tops_derivable, to: {is: v_depend, from: top_placement, to: signature_class}}
   - {is: exp.v_check, from: b_tops_derivable, to: h_tops_derivable}
@@ -859,6 +587,10 @@ facts:
   - {is: v_refer, from: o_sys_case_frame_by_relation_acc, to: {is: v_level, from: sys_case_frame_by_relation.acc_relation.mean_value, to: 0.4912}}
   - {is: v_refer, from: o_sys_case_frame_by_relation_below, to: {is: v_come_before, from: sys_case_frame_by_relation.acc_relation.mean_value, to: sys_case_frame_by_relation.acc_display.mean_value}}
   - {is: exp.v_contradict, from: o_sys_case_frame_by_relation_below, to: h_case_frame_by_relation}
+  - {is: v_refer, from: o_sys_comment_ban_defn_left, to: {is: v_level, from: sys_comment_ban.n_defn_left.mean_value, to: 0}}
+  - {is: v_refer, from: o_sys_comment_ban_after, to: {is: v_level, from: sys_comment_ban.n_after.mean_value, to: 0}}
+  - {is: exp.v_support, from: o_sys_comment_ban_defn_left, to: h_comment_ban}
+  - {is: exp.v_support, from: o_sys_comment_ban_after, to: h_comment_ban}
   - {is: v_refer, from: o_sys_comments_claims_most, to: {is: v_come_after, from: sys_comments.history.mean_value, to: sys_comments.code.mean_value}}
   - {is: v_refer, from: o_sys_outlive_never_outlived, to: {is: v_level, from: sys_outlive.outlives_source.mean_value, to: 0.0}}
   - {is: v_refer, from: o_sys_outlive_compute_steps_ok, to: {is: v_level, from: sys_outlive.c_step_ok.mean_value, to: 1.0}}

@@ -1,16 +1,12 @@
-# CSCL（Concept System Control Language、概念体系制御言語）の体系の範囲（workspace）。
-# tsconfig の include / exclude、Cargo の workspace members に当たる。
-# 型検査器（cscl/bootstrap/type_checker）と実行器（cscl/bootstrap/runtime）は、ここに書いた範囲のファイルだけを読む。
-# 領域どうしの依存（どの領域を使うか）は、ここではなく、各領域のファイルが自分で宣言する（v_use の事実）。
-root: cscl/library/signature/signature.yaml     # シグネチャ（signature）。在る・述べる・同じである、特定の関係によらない軸、規則の変数
-library:                                # 言語の層。この順に読む。ノードは「層.名前」で持つ
-  - cscl/library/ontology/*.yaml        # 存在論（ontology）
-  - cscl/library/syntax/*.yaml          # 構文（syntax）。文法と、書き方について述べる語
-  - cscl/library/runtime/*.yaml         # 実行（runtime）。実行時の意味論
-  - cscl/library/std/*.yaml             # 標準の語彙（std）
-include: [exp/src/*.yaml, cscl/design/*.yaml]   # 領域のファイル。最上位に domain を持つもの
+root: cscl/library/signature/signature.yaml
+library:
+  - cscl/library/ontology/*.yaml
+  - cscl/library/syntax/*.yaml
+  - cscl/library/runtime/*.yaml
+  - cscl/library/std/*.yaml
+include: [exp/src/*.yaml, cscl/design/*.yaml]
 exclude: []
-runs: [exp/tests/*.yaml]                # 実行の記録
-results: exp/experiments/results        # 測定の族が読む結果ファイル（exp の検査が読む）
-checkers:                               # 領域に固有の中身を確かめる検査。型検査器は言語の検査のあと、これを読み込んで check(T, O, Dm) を呼ぶ
+runs: [exp/tests/*.yaml]
+results: exp/experiments/results
+checkers:
   exp: exp/src/exp_check.py
