@@ -1,0 +1,37 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-18T11:33:04.826Z（UTC）
+individuals:
+  01M7Q6X35T1PD5G4B6G34AD0QS:
+    is: model_utterance
+    display: 発言 1897
+    val:
+      order: 1897
+      text: |
+        `form` で合っています。打ち間違いではありません。`form` は文法の語で、表示語は「形の指定」です（`syntax.yaml:6` の語の一覧、`:70` に定義）。一方 `from` は動詞の端の位置の名前です。
+
+        紛らわしいのは、役割の定義に両方が一行に並ぶからです。
+
+        ```yaml
+        referrer: {display: 述べるもの, form: [v_refer, from]}
+        ```
+
+        これは「`v_refer` の `from` の端に立つものの形」と読みます。キー（欄の名前）が `form` で、その値の中の `from` が「どちらの端か」を指します。`agreed: {form: [v_agree, to]}` なら、`to` の端に立つものです。
+
+        今回の実験では次のことが起きました。
+        - 層の法則が使う参照（`T.refs`）は、`of` と同じように `form` の先の動詞も参照に数えます（`type_checker.py:784`）。
+        - 分類のほう（sys_layers の `edges`）は `extends`・`from`/`to`/`new_kind`・`mod` の `of`/`with` しかたどらず、`form` をたどりません。
+        - そのため、役割（referrer など）は動詞に届かず still（点）と分類されて ontology に残ります。ところが、動詞（v_refer）のほうは syntax へ動きます。その結果、ontology から syntax への参照になり、層の法則に反しました。
+
+        次の仮説 `h_layers_role_edges` は、この `form` の辺を分類でもたどるように直すと違反が消えるか、を確かめるものです。
+facts:
+- {is: v_say, from: session_model, to: 01M7Q6X35T1PD5G4B6G34AD0QS}
+- {is: exp.v_answer, from: 01M7Q6X35T1PD5G4B6G34AD0QS, to: 01M7Q6WSEG6SWYCJRH5S023C20}
+- {is: v_refer, from: 01M7Q6X35T1PD5G4B6G34AD0QS, to: syntax.form}
+- {is: v_refer, from: 01M7Q6X35T1PD5G4B6G34AD0QS, to: syntax.from}
+- {is: v_refer, from: 01M7Q6X35T1PD5G4B6G34AD0QS, to: ontology.v_refer}
+- {is: v_refer, from: 01M7Q6X35T1PD5G4B6G34AD0QS, to: ontology.v_agree}
+- {is: v_refer, from: 01M7Q6X35T1PD5G4B6G34AD0QS, to: syntax.to}
+- {is: v_refer, from: 01M7Q6X35T1PD5G4B6G34AD0QS, to: syntax.of}
+- {is: v_refer, from: 01M7Q6X35T1PD5G4B6G34AD0QS, to: syntax.extends}
+- {is: v_refer, from: 01M7Q6X35T1PD5G4B6G34AD0QS, to: syntax.new_kind}
+- {is: v_refer, from: 01M7Q6X35T1PD5G4B6G34AD0QS, to: syntax.mod}
+- {is: v_refer, from: 01M7Q6X35T1PD5G4B6G34AD0QS, to: syntax.with}
