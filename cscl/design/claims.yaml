@@ -453,6 +453,18 @@ individuals:
   #   残る1組（control_preservation→context_following）は、control_case が case の下位なので、y の限定を含意する。
   o_sys_meet_no_meets: {is: exp.observation}
   o_sys_meet_lack_none: {is: exp.observation}
+  # 動詞そのもの（種類）を指すことを式で書く操作の観察（exp/experiments/sys_kind_ref.py）。手順と判定は実行の前に登録した（7036a15）。
+  #   操作: verb_ref を「起こったことが属する種類」（extends: kind、mod: is の終点、with: occurrent）にし、
+  #   information_entity_refer_from_p の上位を information_entity にする。
+  #   after は errors 1 で外れ（型検査が is の限定を名前で読むところが、with を常に終点の側として読んでいた）。
+  #   訂正（8931b2f）で型検査を直し（今の体系の導いた文は変わらない）、after2 で測り直した。
+  # 結果（after2）: errors 0、V 3（before の 6 から run, attendance, plan → verb_ref の3組が消えた）、v_verb_ref 0、new_V 0。
+  #   登録した判定の3つを満たす。ただし、前提の不足で1度外れ、測り直した。
+  # 実行の後の読み（登録していない）: 注釈と型検査の名前の読みにだけあった「種類か成員か」の区別を、基礎の動詞 is の位置で式に書くと、
+  #   過大拡張が規則だけで止まった。money の単位（軸の未分化）に続き、これは階（種類と成員）の未分化。操作は syntax.yaml に残す。
+  o_sys_kind_ref_stops_overextension: {is: exp.observation}
+  o_sys_kind_ref_no_new_violation: {is: exp.observation}
+  o_sys_kind_ref_passes_checks: {is: exp.observation}
   o_sys_frame_declared_never_grows: {is: exp.observation}
   o_sys_frame_declared_never_shrinks: {is: exp.observation}
   o_sys_frame_creates_over_removes: {is: exp.observation}
@@ -615,6 +627,9 @@ facts:
   - {is: v_refer, from: o_sys_unit_axis_passes_checks, to: {is: v_level, from: sys_unit_axis_after_all.sales_ok.mean_value, to: 1.0}}
   - {is: v_refer, from: o_sys_meet_no_meets, to: {is: v_level, from: sys_meet.meets.mean_value, to: 0.0}}
   - {is: v_refer, from: o_sys_meet_lack_none, to: {is: v_level, from: sys_meet.lack_any.mean_value, to: 0.0}}
+  - {is: v_refer, from: o_sys_kind_ref_stops_overextension, to: {is: v_come_before, from: sys_kind_ref_after2.v_verb_ref.mean_value, to: sys_kind_ref_before.v_verb_ref.mean_value}}
+  - {is: v_refer, from: o_sys_kind_ref_no_new_violation, to: {is: v_level, from: sys_kind_ref_after2.new_V.mean_value, to: 0.0}}
+  - {is: v_refer, from: o_sys_kind_ref_passes_checks, to: {is: v_level, from: sys_kind_ref_after2.errors.mean_value, to: 0.0}}
   - {is: v_refer, from: o_sys_outlive_never_outlived, to: {is: v_level, from: sys_outlive.outlives_source.mean_value, to: 0.0}}
   - {is: v_refer, from: o_sys_outlive_compute_steps_ok, to: {is: v_level, from: sys_outlive.c_step_ok.mean_value, to: 1.0}}
   - {is: v_refer, from: o_sys_outlive_speak_steps_ok, to: {is: v_level, from: sys_outlive.s_step_ok.mean_value, to: 1.0}}

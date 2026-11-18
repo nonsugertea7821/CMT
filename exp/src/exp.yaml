@@ -796,6 +796,24 @@ individuals:
   sys_meet_cond_pairs: {is: axis_value, val: {text: pairs}}
   sys_meet_cond_meets: {is: axis_value, val: {text: meets}}
   sys_meet_cond_lack_any: {is: axis_value, val: {text: lack_any}}
+  sys_kind_ref_before: {is: measurement_family}
+  sys_kind_ref_before_cond: {is: family_axis, val: {text: cond}}
+  sys_kind_ref_before_cond_errors: {is: axis_value, val: {text: errors}}
+  sys_kind_ref_before_cond_V: {is: axis_value, val: {text: V}}
+  sys_kind_ref_before_cond_v_verb_ref: {is: axis_value, val: {text: v_verb_ref}}
+  sys_kind_ref_before_cond_new_V: {is: axis_value, val: {text: new_V}}
+  sys_kind_ref_after: {is: measurement_family}
+  sys_kind_ref_after_cond: {is: family_axis, val: {text: cond}}
+  sys_kind_ref_after_cond_errors: {is: axis_value, val: {text: errors}}
+  sys_kind_ref_after_cond_V: {is: axis_value, val: {text: V}}
+  sys_kind_ref_after_cond_v_verb_ref: {is: axis_value, val: {text: v_verb_ref}}
+  sys_kind_ref_after_cond_new_V: {is: axis_value, val: {text: new_V}}
+  sys_kind_ref_after2: {is: measurement_family}
+  sys_kind_ref_after2_cond: {is: family_axis, val: {text: cond}}
+  sys_kind_ref_after2_cond_errors: {is: axis_value, val: {text: errors}}
+  sys_kind_ref_after2_cond_V: {is: axis_value, val: {text: V}}
+  sys_kind_ref_after2_cond_v_verb_ref: {is: axis_value, val: {text: v_verb_ref}}
+  sys_kind_ref_after2_cond_new_V: {is: axis_value, val: {text: new_V}}
   sys_outlive: {is: measurement_family}
   sys_outlive_cond: {is: family_axis, val: {text: cond}}
   sys_outlive_cond_outlives_source: {is: axis_value, val: {text: outlives_source}}
@@ -3076,6 +3094,45 @@ facts:
   - {is: v_value_of, from: sys_meet_cond_lack_any, to: sys_meet_cond}
   - {is: v_spell, from: sys_meet_cond_lack_any, to: lack_any}
   - {is: v_entry_of, from: '{cond}', to: sys_meet}
+  - {is: v_file_of, from: sys_kind_ref_before.json, to: sys_kind_ref_before}
+  - {is: v_rows_of, from: [rows], to: sys_kind_ref_before}
+  - {is: v_axis_of, from: sys_kind_ref_before_cond, to: sys_kind_ref_before}
+  - {is: v_value_of, from: sys_kind_ref_before_cond_errors, to: sys_kind_ref_before_cond}
+  - {is: v_spell, from: sys_kind_ref_before_cond_errors, to: errors}
+  - {is: v_value_of, from: sys_kind_ref_before_cond_V, to: sys_kind_ref_before_cond}
+  - {is: v_spell, from: sys_kind_ref_before_cond_V, to: V}
+  - {is: v_value_of, from: sys_kind_ref_before_cond_v_verb_ref, to: sys_kind_ref_before_cond}
+  - {is: v_spell, from: sys_kind_ref_before_cond_v_verb_ref, to: v_verb_ref}
+  - {is: v_value_of, from: sys_kind_ref_before_cond_new_V, to: sys_kind_ref_before_cond}
+  - {is: v_spell, from: sys_kind_ref_before_cond_new_V, to: new_V}
+  - {is: v_entry_of, from: '{cond}', to: sys_kind_ref_before}
+  - {is: v_metric_of, from: sys_kind_ref_before, to: mean_value}
+  - {is: v_file_of, from: sys_kind_ref_after.json, to: sys_kind_ref_after}
+  - {is: v_rows_of, from: [rows], to: sys_kind_ref_after}
+  - {is: v_axis_of, from: sys_kind_ref_after_cond, to: sys_kind_ref_after}
+  - {is: v_value_of, from: sys_kind_ref_after_cond_errors, to: sys_kind_ref_after_cond}
+  - {is: v_spell, from: sys_kind_ref_after_cond_errors, to: errors}
+  - {is: v_value_of, from: sys_kind_ref_after_cond_V, to: sys_kind_ref_after_cond}
+  - {is: v_spell, from: sys_kind_ref_after_cond_V, to: V}
+  - {is: v_value_of, from: sys_kind_ref_after_cond_v_verb_ref, to: sys_kind_ref_after_cond}
+  - {is: v_spell, from: sys_kind_ref_after_cond_v_verb_ref, to: v_verb_ref}
+  - {is: v_value_of, from: sys_kind_ref_after_cond_new_V, to: sys_kind_ref_after_cond}
+  - {is: v_spell, from: sys_kind_ref_after_cond_new_V, to: new_V}
+  - {is: v_entry_of, from: '{cond}', to: sys_kind_ref_after}
+  - {is: v_metric_of, from: sys_kind_ref_after, to: mean_value}
+  - {is: v_file_of, from: sys_kind_ref_after2.json, to: sys_kind_ref_after2}
+  - {is: v_rows_of, from: [rows], to: sys_kind_ref_after2}
+  - {is: v_axis_of, from: sys_kind_ref_after2_cond, to: sys_kind_ref_after2}
+  - {is: v_value_of, from: sys_kind_ref_after2_cond_errors, to: sys_kind_ref_after2_cond}
+  - {is: v_spell, from: sys_kind_ref_after2_cond_errors, to: errors}
+  - {is: v_value_of, from: sys_kind_ref_after2_cond_V, to: sys_kind_ref_after2_cond}
+  - {is: v_spell, from: sys_kind_ref_after2_cond_V, to: V}
+  - {is: v_value_of, from: sys_kind_ref_after2_cond_v_verb_ref, to: sys_kind_ref_after2_cond}
+  - {is: v_spell, from: sys_kind_ref_after2_cond_v_verb_ref, to: v_verb_ref}
+  - {is: v_value_of, from: sys_kind_ref_after2_cond_new_V, to: sys_kind_ref_after2_cond}
+  - {is: v_spell, from: sys_kind_ref_after2_cond_new_V, to: new_V}
+  - {is: v_entry_of, from: '{cond}', to: sys_kind_ref_after2}
+  - {is: v_metric_of, from: sys_kind_ref_after2, to: mean_value}
   - {is: v_metric_of, from: sys_meet, to: mean_value}
   - {is: v_metric_of, from: sys_unit_axis_after_all, to: mean_value}
   - {is: v_metric_of, from: sys_money_axis_after3, to: mean_value}

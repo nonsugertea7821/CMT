@@ -47,7 +47,7 @@ nodes:
   refer_from_individuals: {display: 個体へ述べる（始点）, extends: quality, of: [v_refer, from], with: individuals}
 
   v_collect: {display: 成員の種類にする, extends: v_refer, from: kind_collection, to: continuant}
-  verb_ref: {display: 動詞を指すもの, extends: information_entity, mod: refer_from_occurrent}   # 位置の型。この位置には動詞そのものが来る
+  verb_ref: {display: 動詞を指すもの, extends: kind, mod: {of: [is, to], with: occurrent}}   # 位置の型。この位置には動詞そのものが来る
   v_measure: {display: 測る, extends: occurrent, from: continuant, to: any, holds: [{is: refer, from: from, to: to}, {is: depend, from: from, to: to}]}
 
   # ===== 情報と言語 =====
@@ -62,7 +62,7 @@ nodes:
   information_entity_express_from_cscl: {display: 概念体系制御言語へで書かれる情報, extends: information_entity, mod: express_from_cscl}
   identifier: {display: 識別子, extends: information_entity_express_from_cscl, mod: {of: [v_refer, from], with: concept_expression, at: {count: 1}}}
   pattern: {display: 識別子の雛形, extends: information_entity, mod: {of: [v_refer, from], with: identifier, at: {count: {gt: 1}}}, verbatim: true}
-  information_entity_refer_from_p: {display: 関係づけるへ述べる情報, extends: verb_ref, mod: refer_from_p}
+  information_entity_refer_from_p: {display: 関係づけるへ述べる情報, extends: information_entity, mod: refer_from_p}
   axis: {display: 軸, extends: information_entity_refer_from_p, mod: {of: [v_compose, to], with: value}}
   value: {display: 値, extends: information_entity, mod: {of: [v_compose, from], with: axis}}
   expression_part: {display: 概念式の部分, extends: information_entity, mod: {of: [v_compose, from], with: concept_expression}}
