@@ -1,0 +1,39 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-18T11:45:16.304Z（UTC）
+individuals:
+  01M7Q7KDGG3ZN4P0SJ9FZEBBTC:
+    is: model_utterance
+    display: 発言 1909
+    val:
+      order: 1909
+      text: |
+        h_layers_role_edges（#195）は**支持**でした。予想どおり、役割の形（`form`）を分類でたどると、役割が原因の違反は消えました。PR #199 の Draft を外してあります。自動マージの条件には乗るはずです。
+
+        | | 前（#194） | 今回 |
+        |---|---|---|
+        | 外れ | 28 | 33 |
+        | 層の法則を壊さずに動かせる外れ | 23（0.82） | 30（0.91） |
+        | 違反の組 | 7 | 2 |
+        | `form` による違反 | 5 | 0 |
+
+        外れが 5 つ増えたのは役割です（referrer・agreeing・agreed・designer・designed）。役割が動詞といっしょに syntax や runtime へ動くので外れに数えられますが、5 つとも層の法則を壊さずに動かせます。
+
+        **解釈**
+        役割は「動詞の端に立つものの形」です。だから点（ontology）ではなく、その動詞と同じ層に属すると読めます。v_refer・v_agree なら関係（syntax）、v_design なら変位（runtime）です。こう読むと、分類と層の法則がそろいます。
+
+        **残る 2 組は、どちらも否定の参照です**
+        - `natural_language`（自然言語）＝ 設計されない言語。v_design を否定して述べています。
+        - `halted`（止まった状態）＝ 実行されない状態。v_execute を否定して述べています。
+
+        否定の参照をどちらの側に置くかは、読みの問題なのであなたに決めてほしいです。
+        - **点の側に置く場合:** 「変わらない」と述べるのは点の性質だと読みます。ただし、点から変位を参照することになるので、層の法則の側で否定の参照を例外にする必要があります。
+        - **変位の側に置く場合:** 否定でも、変位について述べている以上は変位と同じ層だと読みます。分類は否定の辺もたどることになります。ただ、#194 の前の実験 sys_layers で否定の辺をたどったときは、syntax の大半が変位（change）に寄りました。その問題がまた出ます。
+facts:
+- {is: v_say, from: session_model, to: 01M7Q7KDGG3ZN4P0SJ9FZEBBTC}
+- {is: exp.v_answer, from: 01M7Q7KDGG3ZN4P0SJ9FZEBBTC, to: 01M7Q7FK8PBXCBSGYA81R4W2G2}
+- {is: v_refer, from: 01M7Q7KDGG3ZN4P0SJ9FZEBBTC, to: syntax.form}
+- {is: v_refer, from: 01M7Q7KDGG3ZN4P0SJ9FZEBBTC, to: ontology.v_refer}
+- {is: v_refer, from: 01M7Q7KDGG3ZN4P0SJ9FZEBBTC, to: ontology.v_agree}
+- {is: v_refer, from: 01M7Q7KDGG3ZN4P0SJ9FZEBBTC, to: ontology.v_design}
+- {is: v_refer, from: 01M7Q7KDGG3ZN4P0SJ9FZEBBTC, to: ontology.natural_language}
+- {is: v_refer, from: 01M7Q7KDGG3ZN4P0SJ9FZEBBTC, to: runtime.halted}
+- {is: v_refer, from: 01M7Q7KDGG3ZN4P0SJ9FZEBBTC, to: runtime.v_execute}
