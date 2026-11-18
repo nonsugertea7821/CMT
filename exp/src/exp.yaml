@@ -130,12 +130,15 @@ nodes:
   definition_compose_from_glossary: {display: 用語集の部分である定義, extends: definition, mod: {of: [v_compose, from], with: glossary}}
   glossary_head: {display: 用語集の先頭, extends: definition_compose_from_glossary, mod: {of: [v_come_after, from], with: definition, neg: true}}
   operator: {display: 運用者, extends: continuant, mod: {of: [v_design, from], with: experiment_protocol}}
+  operator_speech: {display: 運用者の発言, extends: continuant, mod: speak_to_operator}
+  attribution: {display: 運用者へ帰する文, extends: sentence, mod: {of: [v_refer, from], with: operator}}
   protocol_sentence: {display: 取り決めの部分である文, extends: sentence, mod: {of: [v_compose, from], with: experiment_protocol}}
   correction: {display: 訂正, extends: protocol_sentence, mod: come_after_from_observation}
   uncorrected_protocol: {display: 訂正のない取り決め, extends: experiment_protocol, mod: {of: [v_compose, to], with: correction, neg: true}}
   merge_verdict: {display: マージの判定, extends: verdict, mod: {of: [v_refer, from], with: uncorrected_protocol}}
   passage_compose_from_context: {display: 文脈の部分である文章, extends: passage, mod: compose_from_context}
-  place_system: {display: システムプロンプト, extends: passage_compose_from_context, mod: {of: [v_speak, to], with: operator}}
+  speak_to_operator: {display: 運用者が発話する（終点）, extends: quality, of: [v_speak, to], with: operator}
+  place_system: {display: システムプロンプト, extends: passage_compose_from_context, mod: speak_to_operator}
   place_adjacent: {display: 設問の直前, extends: passage_compose_from_context, mod: {of: [v_come_after, to], with: question, at: {order: 1}}}
   preceding_text: {display: 定義の前にある文章, extends: passage, mod: {of: [v_come_after, to], with: definition}}
   following_text: {display: 定義の後ろにある文章, extends: passage, mod: {of: [v_come_after, from], with: definition}}
@@ -1509,6 +1512,8 @@ individuals:
   h_new_word_immune: {is: hyp_supported}
   h_attention_causes_preceding_effect: {is: hyp_untested}
   h_auto_merge_uncorrected: {is: hyp_untested}
+  h_attribution_logged: {is: hyp_untested}
+  b_attribution_logged: {is: item_queued}
   b_auto_merge_uncorrected: {is: item_queued}
   h_opaque_renaming_raises: {is: hyp_supported}
   h_semi_renaming_does_not_raise: {is: hyp_supported}
@@ -4016,6 +4021,8 @@ facts:
   - {is: v_refer, from: h_attention_carries_text_route, to: {is: v_raise, from: attention, to: redefinition_following}}
   - {is: v_refer, from: h_auto_merge_uncorrected, to: {is: v_immune, from: merge_verdict, to: operator}}
   - {is: v_check, from: b_auto_merge_uncorrected, to: h_auto_merge_uncorrected}
+  - {is: v_refer, from: h_attribution_logged, to: {is: v_agree, from: attribution, to: operator_speech}}
+  - {is: v_check, from: b_attribution_logged, to: h_attribution_logged}
   - {is: v_refer, from: h_length_does_not_lower, to: {is: v_not_lower, from: context_length, to: redefinition_following}}
   - {is: v_scope, from: model_4b, to: h_length_does_not_lower}
   - {is: v_scope, from: text_injection, to: h_length_does_not_lower}
