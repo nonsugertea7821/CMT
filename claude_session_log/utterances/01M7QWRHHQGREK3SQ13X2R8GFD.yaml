@@ -1,0 +1,37 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-18T17:55:04.375Z（UTC）
+individuals:
+  01M7QWRHHQGREK3SQ13X2R8GFD:
+    is: model_utterance
+    display: 発言 2096
+    val:
+      order: 2096
+      text: |
+        公開文書と Claude の発話を対比する案を、未検証の仮説3つとして PR #257 に登録しました。概念を3つ足しているので、自動マージには乗らず、確認してもらう必要があります。手元では tc と ec が通っています。
+
+        **足した概念**
+        - モデルの発話（`model_utterance`）
+        - 公開された自然言語の文章（`public_passage`）
+        - 「公開される」という修飾語（`expose_to`）
+          - 公開された文章と先行研究（`prior_work`）が同じ限定を持つため、検査の規則で名前を付けて共有する必要がありました。
+          - 先行研究もこの修飾語を使うように書き換えましたが、意味は変わりません。
+
+        **仮説**
+        - 公開された文章では、修飾の掛かり先が韻律句（書き言葉なら読点などの句切り）で決まっている。
+        - モデルの発話でも同じように決まっている。この二つを同じ測り方で測れば対比になります。
+        - 韻律句で決まる修飾は、言語によらない。日本語と英語は概念にせず、測定の軸の値として扱います。
+
+        **出典**
+        - CC BY-SA の文書は出典の表示が要り、本文を再配布すると同じライセンスを継ぎます。
+        - そのため、実験では本文をリポジトリに入れず、出典（URL と版）と数えた値だけを記録します。
+        - 青空文庫は、作品ごとに権利の状態を確かめてから使います。
+
+        **届くかどうか（今の時点）**
+        - 青空文庫は届きます（200）。Wikipedia も 301 の転送が返るので、届く見込みです。
+        - Project Gutenberg は 503 で届かないため、英語の出典は Wikipedia から使う予定です。
+
+        測る前に、書き言葉で韻律の句切りをどう数えるか（読点・改行・箇条・句の長さ）を事前登録で決める必要があります。
+facts:
+- {is: v_say, from: session_model, to: 01M7QWRHHQGREK3SQ13X2R8GFD}
+- {is: exp.v_answer, from: 01M7QWRHHQGREK3SQ13X2R8GFD, to: 01M7QWMJEBB9YQKBH91G078B2K}
+- {is: v_refer, from: 01M7QWRHHQGREK3SQ13X2R8GFD, to: claude_session_log.model_utterance}
+- {is: v_refer, from: 01M7QWRHHQGREK3SQ13X2R8GFD, to: exp.prior_work}
