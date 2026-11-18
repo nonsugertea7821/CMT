@@ -1,0 +1,64 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-18T05:04:21.493Z（UTC）
+individuals:
+  01M7PGNAFNEA8V7DYVHHV2X8XT:
+    is: model_utterance
+    display: 発言 1649
+    val:
+      order: 1649
+      text: |
+        型検査器（`type_checker.py`）が名前で直に読んでいる語を、どの節で宣言されているかで分けました。シグネチャと文法の外にあるものは四つに分かれます。ルールに照らして本当に問題なのは一つ目だけです。
+
+        ## 1. ontology のノード名で置き場を決めている（ルールに反する）
+
+        | 行 | 検査 | 読んでいる名前 |
+        |---|---|---|
+        | 183, 1100 | 最上位（上位を持たなくてよいノード） | continuant, occurrent |
+        | 1119 | 動詞は生起体の下に置く | occurrent |
+        | 1130 | 修飾語は特定依存持続体の下に置く | specifically_dependent_continuant |
+        | 1149 | axis を持てるのは質だけ | quality |
+        | 1079, 1183–1190 | 役割には、根拠として依存する定義が要る | role, definition, v_depend |
+        | 994 | 位置に役割が来てもよい | role |
+        | 1210 | v_refer の始点による限定 | v_refer |
+        | 1226 | 個数の事実は magnitude 以外 | magnitude |
+        | 1283 | 最上位に gloss を置いてよい | continuant, occurrent |
+
+        どれも「上位に X を持つなら……」という、階層と名前で決まる規則です。体系の外の Python に書かれているので、体系の側からは見えません。
+
+        ## 2. ontology の基礎の関係と軸（名前で読んでよい側）
+
+        - 該当するもの：
+          - 基礎の関係：exists, refer, part, after
+          - 軸：count, truth, text
+        - 以前決めた定義では、シグネチャは「何も参照せずに宣言される記号（基礎の関係と軸）」でした。この語はその定義に当てはまり、置かれたファイルが ontology なだけです。
+        - ただし、part と after の表示語の検査（1245, 1461 付近）は、関係の意味まで Python で読んでいます。中身は 1 に近い部分です。
+
+        ## 3. 法則の名前
+
+        - syntax の法則（definition_stratified など）は文法の語です。
+        - runtime の法則（unique_names, step, frame, halt, no_confusion）は名前で揃っているかを確かめています。これは名前で読む対象の範囲をどこまでにするかの問題です。
+
+        ## 4. 領域名
+
+        - ontology, runtime, std は名前空間の語です。
+
+        ## 解釈
+
+        - 1 は、`above` が入った今なら書き直せます。前は階層が法則の関係（r_ancestor）でしかなく、ノードの式から指せませんでした。今は基礎の関係 `above` があるので、たとえば「動詞なら、上位に occurrent を持つ」を法則（`v_require`）として CSCL で書けます。そうすると名前を読むのは法則（体系の中）になり、型検査器は名前を知らなくてよくなります。
+        - 例外は最上位です。`h_tops_derivable` が反証されていて、最上位はシグネチャから導けません。法則にしても名前を指すことは残ります。それでも、Python の定数から体系の宣言に移る点は変わります。
+        - 前に答えた `above` の対称性の話とはつながっています。1 を法則にすると、`above` の法則はこれらの検査の土台になります。そうなると `h_above_closed`（`above` を順序の法則と逆向きの法則で閉じる）の重みが上がります。逆向きがないと、直接書いた `above` でこれらの検査をすり抜けられるからです。
+
+        ## 登録した仮説（未検証）
+
+        - **`h_placement_in_laws`**（上位で決まる置き場は、型検査器に依存しない）
+          - 検査：1 の検査を `above` の法則に書き直し、Python から名前を読む部分を取り除く。
+          - 判定：わざと誤りを入れた書き換えが同じく検出され、今の体系の誤りと事実が変わらなければ支持。
+        - 状態：先の二つの仮説と同じブランチに積みました（commit f56ed44）。tc と ec は通っています。
+
+        確かめる順番は、`h_above_closed` を先にするのがよいと思います。土台が閉じていないまま 1 を法則に移すと、すり抜けの道が残るためです。三つまとめて main への PR を立てますか？
+facts:
+- {is: v_say, from: session_model, to: 01M7PGNAFNEA8V7DYVHHV2X8XT}
+- {is: exp.v_answer, from: 01M7PGNAFNEA8V7DYVHHV2X8XT, to: 01M7PGJ9W50B63NT5GT6XKFD9F}
+- {is: v_refer, from: 01M7PGNAFNEA8V7DYVHHV2X8XT, to: ontology.specifically_dependent_continuant}
+- {is: v_refer, from: 01M7PGNAFNEA8V7DYVHHV2X8XT, to: ontology.v_depend}
+- {is: v_refer, from: 01M7PGNAFNEA8V7DYVHHV2X8XT, to: ontology.v_refer}
+- {is: v_refer, from: 01M7PGNAFNEA8V7DYVHHV2X8XT, to: syntax.v_require}
