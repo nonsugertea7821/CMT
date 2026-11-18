@@ -1,0 +1,253 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-18T18:27:01.842Z（UTC）
+individuals:
+  01M7QYK22JN5DZCZGTP5545C1T:
+    is: session_summary
+    display: 発言 2136
+    val:
+      order: 2136
+      text: |
+        This session is being continued from a previous conversation that ran out of context. The summary below covers the earlier portion of the conversation.
+
+        <system-reminder>
+        <tools-used-before-summary>AskUserQuestion, Bash, Edit, Grep, Read, ReadNotifications, Skill, TaskStop, ToolSearch, WebFetch, WebSearch, Write, mcp__claude-code-remote__create_trigger, mcp__claude-code-remote__delete_trigger, mcp__claude-code-remote__get_trigger, mcp__claude-code-remote__read_documentation, mcp__claude-code-remote__send_later, mcp__claude-code-remote__subscribe_pr_activity, mcp__claude-code-remote__update_trigger, mcp__github__actions_get, mcp__github__actions_list, mcp__github__add_issue_comment, mcp__github__create_pull_request, mcp__github__get_job_logs, mcp__github__issue_read, mcp__github__issue_write, mcp__github__list_issue_types, mcp__github__list_issues, mcp__github__list_pull_requests, mcp__github__pull_request_read, mcp__github__update_pull_request</tools-used-before-summary>
+        </system-reminder>
+        Summary:
+        1. Primary Request and Intent
+
+        **Standing rules (still in force)**
+        - Repo: nonsugertea7821/CMT at /home/user/CMT.
+        - Reply in Japanese. Don't overclaim. Give interpretation.
+        - Restore files with `git show <rev>:<path> > <path>`. Never checkout to restore and never stash.
+        - Python: /home/user/venv/bin/python.
+        - Commit trailer:
+          `Co-Authored-By: Claude [モデル名を伏せた] <[メールアドレスを伏せた]>`
+          `Claude-Session: https://claude.ai/code/session_015KRKt6TNJZ7ZsQmEknANXK`
+        - PR body ends with:
+          `🤖 Generated with [Claude Code](https://claude.com/claude-code)`
+          blank line
+          `https://claude.ai/code/session_015KRKt6TNJZ7ZsQmEknANXK`
+        - Claude never merges.
+        - No personal info or model identifiers in pushed artifacts.
+        - Don't retry the MEXT PDF WebFetch without OK.
+        - No comments in system yaml. Never rerun recorded experiment scripts; write new result names instead of overwriting. CI belongs to GitHub.
+        - Every PR:
+          - subscribe_pr_activity;
+          - issue_write update with assignees [nonsugertea7821].
+        - After a merge:
+          - `git fetch -q --prune origin`, then `git branch -D` the local branch;
+          - never push to a merged branch;
+          - never push branch deletions.
+        - Proposals are registered as untested hypotheses (h_/b_ + v_refer/v_check) before they are told to the user.
+          - Registration-only PRs auto-merge.
+          - Concept-adding PRs get manual review.
+        - Lang-side claims (cscl/design/claims.yaml) can't reference exp words. Put cross-layer hypotheses in exp/src/exp.yaml using `lang.` prefixes.
+        - Corpus data: never commit corpus text to the repo; record only the source (URL + version) and counted values. CC BY-SA needs attribution and is share-alike if redistributed. Check rights per Aozora work.
+
+        **Keep-alive rule (user)**
+        - "コンテナは10分作業しないと再起動する 応答終了時に9分30秒チェーンするようにしといて".
+        - Then: "チェーンが居るのは長い実験だけね それ以外はやらなくていい".
+        - So: chain send_later of 9 minutes (minute granularity) only while a long experiment runs in the background.
+
+        **Triage goal (user)**
+        - "トリアージして進めて。…このリポジトリの実験目標、モデルの概念一貫性に寄与しそうなものから優先で".
+        - The goal formula: cross_usage_consistency measures redefinition_success.
+        - Agreed order ("それでいいだろうね よろしく"):
+          - **A** (system-independent, Qwen2.5-1.5B on CPU):
+            - #35, now done;
+            - then #91, #56, #92 using hand-made pairs like e4, not taken from the system.
+          - **A'** (light work): #52 h_text_shift_raises_stability. Record a post-hoc observation from the e14 data (acc_both drops with contrast vectors), disclosed as post-hoc.
+          - **C**: #57, #18, #8.
+          - **E** (system soundness): h_above_closed #147, h_above_individual #148, h_writing_depends_checker, h_qualification_depends_above, h_checker_words_in_grammar, h_renaming_invariant (narrowed), h_hypothesis_refers_family, h_factor_depends_value, h_definition_bridges_value, h_prior_claim_ends_resolved.
+          - **B** (after E; system-dependent): #58 → #90, #55, and the system-pair versions of #91/#92. Fix the checker version and attach soundness observations.
+          - **D**: prosody/corpus line #249–#263. First preregister how to count written prosodic boundaries.
+
+        **30-minute cycle**
+        - Each run:
+          1. Check PRs.
+          2. Pick a hypothesis per the triage.
+          3. Branch claude/h_<name>, Draft PR, prereg commit (script only), run, record, run tc/ec, push, undraft.
+          4. Look for implications and register them as pairs.
+          5. Report briefly.
+        - The next cycle is trig_01VTbhtoXSTKN18AMBJVcSVq at 18:37Z, with the updated prompt containing the order above.
+
+        2. Key Technical Concepts
+        - **Hypothesis registration**
+          - Individuals go before `facts:` as `h_x: {is: hyp_untested}` and `b_x: {is: item_queued}`.
+          - Facts are appended at the end of the file: `{is: v_refer, from: h_x, to: {...}}` and `{is: v_check, from: b_x, to: h_x}`.
+        - **tc laws**
+          - named_mod: identical inline mods must become a named mod node, e.g. `expose_to`.
+          - single, one_name.
+        - **ec side rule**: lang claims may reference only lang and the language layers.
+        - **Measurement families**
+          - Declared with: v_file_of, v_rows_of, v_axis_of / v_value_of / v_denote, v_entry_of, v_metric_of (accuracy, order_robust_accuracy, logit_margin).
+          - Rows are dicts with margin/both.
+        - **Experiment infrastructure**
+          - Runner, Injector (layer forward hook), build_delta, eval_item (in e1_context_injection.py / e3_concept_vectors.py).
+          - e3 vectors are at results/e3_Qwen2.5-1.5B-Instruct_L8_{qa,defqa}.pt.
+        - **Usage concepts**: usage_explain extends usage_apply.
+        - **Other nodes**: multi_layer_vector, single_layer_vector, teacher_examples, teacher_both, no_channel.
+
+        3. Files and Code Sections
+
+        **exp/src/exp.yaml — merged additions this segment**
+        - #253:
+          - h_ja_text_needs_prosody `{is: v_depend, from: lang.ja_text, to: prosodic_phrase}`
+          - h_mod_fixes_prosody `{is: v_depend, from: prosodic_phrase, to: syntax.mod}`
+          - h_ambiguity_calls_prosody `{is: v_depend, from: prosodic_phrase, to: lang.ja_ambiguity}`
+        - #257 concepts:
+          ```
+          speak_to_model: {display: モデルが発話する（終点）, extends: quality, of: [v_speak, to], with: model}
+          model_utterance: {display: モデルの発話, extends: utterance, mod: speak_to_model}
+          expose_to: {display: 公開される（終点）, extends: quality, of: [v_expose, to]}
+          public_passage: {display: 公開された自然言語の文章, extends: passage_express_from_natural_language, mod: expose_to}
+          reliability: {display: 文章の信頼性, extends: quality, mod: {of: [v_depend, from], with: passage}}
+          attachment_tendency: {display: 修飾の掛かり方の傾向, extends: quality, mod: {of: [v_depend, from], with: modifier}}
+          prior_work: {..., mod: expose_to, many: true}
+          ```
+        - #257 hypotheses:
+          - h_public_carries_prosody, h_model_utterance_carries_prosody (v_depend to prosodic_modifier)
+          - h_prosody_language_invariant `{is: lang.v_not_depend, from: prosodic_modifier, to: natural_language}`
+          - h_model_utterance_less_reliable `{is: v_lower, from: model_utterance, to: reliability}`
+          - h_prosody_carries_reliability `{is: v_depend, from: reliability, to: prosodic_modifier}`
+          - h_model_attachment_differs `{is: v_depend, from: attachment_tendency, to: speak_to_model}`
+          - h_exposure_carries_reliability was withdrawn.
+        - #264: h_writing_depends_checker `{is: v_depend, from: formalization_accuracy, to: lang.type_checker}`
+        - #266: h_qualification_depends_above `{is: v_depend, from: qualification_vector, to: lang.above_order}`
+        - #268 (E20):
+          - Families e20_apply, e20_explain and e20_explain_noans. Each has:
+            - file 'e20_Qwen2.5-1.5B-Instruct_L8.json';
+            - rows_of [items, '{cond}'];
+            - cond values none / qa / defqa, denoting no_channel / teacher_examples / teacher_both;
+            - entry apply / explain / explain_noans;
+            - metrics accuracy, order_robust_accuracy, logit_margin.
+          - Observations:
+            - o_e20_examples_move_apply: e20_apply.qa.accuracy come_after none.
+            - o_e20_examples_explain_below_threshold: e20_explain.qa.accuracy come_before 0.75.
+            - o_e20_examples_explain_robust_below_none: qa order_robust come_before none.
+          - The first two v_support h_apply_does_not_transfer_to_explain, which is now hyp_supported; b_measure_explanation is item_done.
+        - #269 (open, registration-only):
+          - h_multi_layer_transfers_to_explain `{is: v_transfer, from: multi_layer_vector, to: usage_explain}`
+          - h_explain_transfers_to_apply `{is: v_transfer, from: usage_explain, to: usage_apply}`
+
+        **exp/experiments/e20_explain_transfer.py (merged)**
+        - G2c 24 items, layer 8, e3 vectors none / qa / defqa.
+        - Measures:
+          - apply (eval_item);
+          - explain: head `次の問いの答えは「{A}」です。そう判断する理由として正しいほうを選び、番号だけで答えてください。` with options `「{L}」は{project}を指すから` / `…{ordinary}を指すから`, swapped;
+          - explain_noans.
+        - Judgment:
+          - pre_apply: qa−none apply acc ≥ 0.25;
+          - pre_ceiling: none explain acc < 0.75;
+          - transfer if qa explain acc ≥ 0.75 and +0.25 over none.
+        - Results:
+
+          | cond | apply acc | explain acc | explain acc_both | noans acc |
+          |---|---|---|---|---|
+          | none | 0.375 | 0.417 | 0.208 | 0.333 |
+          | qa | 0.792 | 0.458 | 0.042 | 0.375 |
+          | defqa | 0.792 | 0.417 | 0.000 | 0.458 |
+
+          Verdict: no_transfer.
+        - Results file: exp/experiments/results/e20_Qwen2.5-1.5B-Instruct_L8.json.
+
+        4. Errors and fixes
+        - The ec side rule rejected lang claims that referenced exp. Fixed by placing them in exp.yaml with `lang.` prefixes.
+        - tc named_mod (public_passage vs prior_work): fixed with the named mod expose_to.
+        - The user corrected the exposure hypothesis, because this repo publishes model output as-is, so the experimental condition doesn't hold. It was withdrawn.
+        - The user interrupted the git switch/branch delete; it was redone later.
+        - delete_trigger was denied by the auto-mode classifier, so update_trigger was used instead (prompt rewrite, enabled=false).
+        - The `sleep 45; cat` call was blocked. Don't chain sleeps; rely on background notifications.
+
+        5. Problem Solving
+        - Triage now puts system dependence first: B (#58, #90), #55, and the system-pair versions of #91/#92 depend on checker/hierarchy soundness, so they come after E.
+        - #52 direction is already visible in e14:
+          - G2c acc_both: none 0.29 → vec1 0.17 → vec2 0.04 → vec4 0.00.
+          - G2k acc_both: 0.5 → 0.08.
+        - E20 shows a single-layer apply vector moves only apply. It also reduces order robustness of the explain choice (a post-hoc reading matching e14).
+
+        6. All user messages
+        - 「ちなみにデータとして青空文庫等のパブリックドキュメントを使い、セッションログのClaudeの発話と対比するのはありだ。CC−BY−SAに関しては出典が要るが。そうすると英語についても同じ事ができる」
+        - 「なおこれは直感だが モデルの発話は公開コーパスよりも信頼できないものになるはずだ。」
+        - 「前者は無いよ このリポジトリはそのまま出してるから実験条件が成立しない」
+        - 「予想だが掛かり方の傾向、特徴量に差が出るはずだ。」
+        - 「じゃあこれで。トリアージして進めて。目標はそうだな……まあ沢山あるか。このリポジトリの実験目標、モデルの概念一貫性に寄与しそうなものから優先で。よろしく」
+        - 「Bは体系の健全性に依存しないか？」
+        - (interrupt) 「A3もじゃないの？それともその周辺はもう証明されてる？」
+        - 「A4は？」
+        - 「それでいいだろうね よろしく」
+        - 「ちなみにコンテナは10分作業しないと再起動する 応答終了時に9分30秒チェーンするようにしといて」
+        - 「チェーンが居るのは長い実験だけね それ以外はやらなくていい」
+
+        7. Pending Tasks
+        - Clean up after the #268 merge:
+          - `git fetch -q --prune origin`;
+          - `git branch -D claude/h_apply_does_not_transfer_to_explain`. The current local branch is claude/reg-explain-pair (PR #269 open; don't delete it).
+        - Watch PR #269. It is expected to auto-merge; delete the local branch after it merges.
+        - The cycle at 18:37Z (trig_01VTbhtoXSTKN18AMBJVcSVq) proceeds with:
+          - A' (#52 post-hoc from e14), or
+          - next A: #91/#56/#92 with hand-made pairs (check modifiers_ja.json and e4 for the pair data).
+        - Keep-alive chain (9 min send_later) only while a long background experiment runs. trig_01B2fudPqGTygrU2P33VMv4L is now disabled.
+        - Later: E items before B; D needs a prereg of the prosodic-boundary counting.
+
+        8. Current Work
+        - Just finished E20 (#35 supported, PR #268 merged by the user) and opened implication PR #269.
+        - The final report was given in Japanese, and the chain was stopped.
+        - The latest notifications:
+          - the chain trigger fired at 18:24 (no reschedule needed, since E20 is done);
+          - #268 merged;
+          - #269 subscription created.
+        - Local cleanup for #268 is not done yet.
+
+        9. Optional Next Step
+        - Clean up the merged branch: `cd /home/user/CMT && git fetch -q --prune origin && git branch -D claude/h_apply_does_not_transfer_to_explain`.
+        - Briefly note that #268 is merged and #269 is waiting on auto-merge.
+        - Then await the 18:37Z cycle. Per the triage, it does either:
+          - A': "h_text_shift_raises_stability（#52）は e14 の記録（acc_both が vec で下がる）で向きが見えている。新しく回さず、e14 の値から観察を書き、事後の照合と開示して結ぶ。"; or
+          - the next A item, with hand-made pairs.
+        - Don't start a keep-alive chain unless a long experiment is running.
+
+        If you need specific details from before compaction (like exact code snippets, error messages, or content you generated), read the full transcript at: /root/.claude/projects/-home-user-CMT/e05d2140-ce91-515f-a5fb-e6251e13d406.jsonl
+        Continue the conversation from where it left off without asking the user any further questions. Resume directly — do not acknowledge the summary, do not recap what was happening, do not preface with "I'll continue" or similar. Pick up the last task as if the break never happened.
+
+        The messages after this summary are the most recent messages from before compaction, kept verbatim. The summary was written without seeing them, so something it says has not happened yet may already have happened in them.
+facts:
+- {is: v_say, from: session_model, to: 01M7QYK22JN5DZCZGTP5545C1T}
+- {is: v_refer, from: 01M7QYK22JN5DZCZGTP5545C1T, to: ontology.v_refer}
+- {is: v_refer, from: 01M7QYK22JN5DZCZGTP5545C1T, to: exp.v_check}
+- {is: v_refer, from: 01M7QYK22JN5DZCZGTP5545C1T, to: exp.cross_usage_consistency}
+- {is: v_refer, from: 01M7QYK22JN5DZCZGTP5545C1T, to: exp.redefinition_success}
+- {is: v_refer, from: 01M7QYK22JN5DZCZGTP5545C1T, to: exp.hyp_untested}
+- {is: v_refer, from: 01M7QYK22JN5DZCZGTP5545C1T, to: exp.item_queued}
+- {is: v_refer, from: 01M7QYK22JN5DZCZGTP5545C1T, to: exp.v_file_of}
+- {is: v_refer, from: 01M7QYK22JN5DZCZGTP5545C1T, to: exp.v_rows_of}
+- {is: v_refer, from: 01M7QYK22JN5DZCZGTP5545C1T, to: exp.v_axis_of}
+- {is: v_refer, from: 01M7QYK22JN5DZCZGTP5545C1T, to: exp.v_value_of}
+- {is: v_refer, from: 01M7QYK22JN5DZCZGTP5545C1T, to: exp.v_denote}
+- {is: v_refer, from: 01M7QYK22JN5DZCZGTP5545C1T, to: exp.v_entry_of}
+- {is: v_refer, from: 01M7QYK22JN5DZCZGTP5545C1T, to: exp.v_metric_of}
+- {is: v_refer, from: 01M7QYK22JN5DZCZGTP5545C1T, to: exp.order_robust_accuracy}
+- {is: v_refer, from: 01M7QYK22JN5DZCZGTP5545C1T, to: exp.logit_margin}
+- {is: v_refer, from: 01M7QYK22JN5DZCZGTP5545C1T, to: exp.usage_explain}
+- {is: v_refer, from: 01M7QYK22JN5DZCZGTP5545C1T, to: exp.usage_apply}
+- {is: v_refer, from: 01M7QYK22JN5DZCZGTP5545C1T, to: exp.multi_layer_vector}
+- {is: v_refer, from: 01M7QYK22JN5DZCZGTP5545C1T, to: exp.single_layer_vector}
+- {is: v_refer, from: 01M7QYK22JN5DZCZGTP5545C1T, to: exp.teacher_examples}
+- {is: v_refer, from: 01M7QYK22JN5DZCZGTP5545C1T, to: exp.teacher_both}
+- {is: v_refer, from: 01M7QYK22JN5DZCZGTP5545C1T, to: exp.no_channel}
+- {is: v_refer, from: 01M7QYK22JN5DZCZGTP5545C1T, to: ontology.v_depend}
+- {is: v_refer, from: 01M7QYK22JN5DZCZGTP5545C1T, to: syntax.mod}
+- {is: v_refer, from: 01M7QYK22JN5DZCZGTP5545C1T, to: exp.v_speak}
+- {is: v_refer, from: 01M7QYK22JN5DZCZGTP5545C1T, to: claude_session_log.model_utterance}
+- {is: v_refer, from: 01M7QYK22JN5DZCZGTP5545C1T, to: exp.v_expose}
+- {is: v_refer, from: 01M7QYK22JN5DZCZGTP5545C1T, to: syntax.passage_express_from_natural_language}
+- {is: v_refer, from: 01M7QYK22JN5DZCZGTP5545C1T, to: exp.prior_work}
+- {is: v_refer, from: 01M7QYK22JN5DZCZGTP5545C1T, to: lang.v_not_depend}
+- {is: v_refer, from: 01M7QYK22JN5DZCZGTP5545C1T, to: ontology.natural_language}
+- {is: v_refer, from: 01M7QYK22JN5DZCZGTP5545C1T, to: exp.v_lower}
+- {is: v_refer, from: 01M7QYK22JN5DZCZGTP5545C1T, to: exp.formalization_accuracy}
+- {is: v_refer, from: 01M7QYK22JN5DZCZGTP5545C1T, to: lang.type_checker}
+- {is: v_refer, from: 01M7QYK22JN5DZCZGTP5545C1T, to: exp.qualification_vector}
+- {is: v_refer, from: 01M7QYK22JN5DZCZGTP5545C1T, to: exp.v_support}
+- {is: v_refer, from: 01M7QYK22JN5DZCZGTP5545C1T, to: exp.hyp_supported}
+- {is: v_refer, from: 01M7QYK22JN5DZCZGTP5545C1T, to: exp.item_done}
+- {is: v_refer, from: 01M7QYK22JN5DZCZGTP5545C1T, to: exp.v_transfer}
