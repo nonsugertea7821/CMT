@@ -21,8 +21,8 @@ nodes:
   refer_from_concept: {display: 概念へ述べる（始点）, extends: quality, of: [v_refer, from], with: concept}
   perform_to: {display: 行う（終点）, extends: quality, of: [v_perform, to]}
 
-  continuant: {display: 持続体, gloss: 時間を通じて同一性を保って存在するもの}
-  occurrent: {display: 生起体, gloss: 時間の中で起こり、展開するもの}
+  continuant: {display: 持続体, mod: {of: [v_stage, to], neg: true}, always: [{is: exists, from: self}]}
+  occurrent: {display: 生起体, sometime: [{pre: [{is: exists, from: self, neg: true}], post: [{is: exists, from: self}]}, {pre: [{is: exists, from: self}], post: [{is: exists, from: self, neg: true}]}]}
 
   v_depend: {display: 依存する, extends: occurrent, from: continuant, to: continuant, holds: [{is: depend, from: from, to: to}]}
   v_compose: {display: 部分になる, extends: occurrent, from: continuant, to: continuant, holds: [{is: part, from: from, to: to}]}
