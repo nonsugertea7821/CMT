@@ -721,6 +721,20 @@ individuals:
   sys_overextension_steps_cond_unseen_high_n: {is: axis_value, val: {text: unseen_high_n}}
   sys_overextension_steps_cond_unseen_high_any: {is: axis_value, val: {text: unseen_high_any}}
   sys_overextension_steps_cond_unseen_high_rate: {is: axis_value, val: {text: unseen_high_rate}}
+  sys_money_unit_before: {is: measurement_family}
+  sys_money_unit_before_cond: {is: family_axis, val: {text: cond}}
+  sys_money_unit_before_cond_errors: {is: axis_value, val: {text: errors}}
+  sys_money_unit_before_cond_V: {is: axis_value, val: {text: V}}
+  sys_money_unit_before_cond_v_money: {is: axis_value, val: {text: v_money}}
+  sys_money_unit_before_cond_sales_ok: {is: axis_value, val: {text: sales_ok}}
+  sys_money_unit_before_cond_absorbs_money: {is: axis_value, val: {text: absorbs_money}}
+  sys_money_unit_after: {is: measurement_family}
+  sys_money_unit_after_cond: {is: family_axis, val: {text: cond}}
+  sys_money_unit_after_cond_errors: {is: axis_value, val: {text: errors}}
+  sys_money_unit_after_cond_V: {is: axis_value, val: {text: V}}
+  sys_money_unit_after_cond_v_money: {is: axis_value, val: {text: v_money}}
+  sys_money_unit_after_cond_sales_ok: {is: axis_value, val: {text: sales_ok}}
+  sys_money_unit_after_cond_absorbs_money: {is: axis_value, val: {text: absorbs_money}}
   sys_outlive: {is: measurement_family}
   sys_outlive_cond: {is: family_axis, val: {text: cond}}
   sys_outlive_cond_outlives_source: {is: axis_value, val: {text: outlives_source}}
@@ -2844,6 +2858,36 @@ facts:
   - {is: v_spell, from: sys_overextension_steps_cond_unseen_high_rate, to: unseen_high_rate}
   - {is: v_entry_of, from: '{cond}', to: sys_overextension_steps}
   - {is: v_metric_of, from: sys_overextension_steps, to: mean_value}
+  - {is: v_file_of, from: sys_money_unit_before.json, to: sys_money_unit_before}
+  - {is: v_rows_of, from: [rows], to: sys_money_unit_before}
+  - {is: v_axis_of, from: sys_money_unit_before_cond, to: sys_money_unit_before}
+  - {is: v_value_of, from: sys_money_unit_before_cond_errors, to: sys_money_unit_before_cond}
+  - {is: v_spell, from: sys_money_unit_before_cond_errors, to: errors}
+  - {is: v_value_of, from: sys_money_unit_before_cond_V, to: sys_money_unit_before_cond}
+  - {is: v_spell, from: sys_money_unit_before_cond_V, to: V}
+  - {is: v_value_of, from: sys_money_unit_before_cond_v_money, to: sys_money_unit_before_cond}
+  - {is: v_spell, from: sys_money_unit_before_cond_v_money, to: v_money}
+  - {is: v_value_of, from: sys_money_unit_before_cond_sales_ok, to: sys_money_unit_before_cond}
+  - {is: v_spell, from: sys_money_unit_before_cond_sales_ok, to: sales_ok}
+  - {is: v_value_of, from: sys_money_unit_before_cond_absorbs_money, to: sys_money_unit_before_cond}
+  - {is: v_spell, from: sys_money_unit_before_cond_absorbs_money, to: absorbs_money}
+  - {is: v_entry_of, from: '{cond}', to: sys_money_unit_before}
+  - {is: v_metric_of, from: sys_money_unit_before, to: mean_value}
+  - {is: v_file_of, from: sys_money_unit_after.json, to: sys_money_unit_after}
+  - {is: v_rows_of, from: [rows], to: sys_money_unit_after}
+  - {is: v_axis_of, from: sys_money_unit_after_cond, to: sys_money_unit_after}
+  - {is: v_value_of, from: sys_money_unit_after_cond_errors, to: sys_money_unit_after_cond}
+  - {is: v_spell, from: sys_money_unit_after_cond_errors, to: errors}
+  - {is: v_value_of, from: sys_money_unit_after_cond_V, to: sys_money_unit_after_cond}
+  - {is: v_spell, from: sys_money_unit_after_cond_V, to: V}
+  - {is: v_value_of, from: sys_money_unit_after_cond_v_money, to: sys_money_unit_after_cond}
+  - {is: v_spell, from: sys_money_unit_after_cond_v_money, to: v_money}
+  - {is: v_value_of, from: sys_money_unit_after_cond_sales_ok, to: sys_money_unit_after_cond}
+  - {is: v_spell, from: sys_money_unit_after_cond_sales_ok, to: sales_ok}
+  - {is: v_value_of, from: sys_money_unit_after_cond_absorbs_money, to: sys_money_unit_after_cond}
+  - {is: v_spell, from: sys_money_unit_after_cond_absorbs_money, to: absorbs_money}
+  - {is: v_entry_of, from: '{cond}', to: sys_money_unit_after}
+  - {is: v_metric_of, from: sys_money_unit_after, to: mean_value}
   - {is: v_file_of, from: sys_content_symmetry.json, to: sys_content_symmetry}
   - {is: v_rows_of, from: [rows], to: sys_content_symmetry}
   - {is: v_axis_of, from: sys_content_symmetry_cond, to: sys_content_symmetry}

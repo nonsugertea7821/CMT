@@ -387,7 +387,9 @@ individuals:
   #   (c) narrow_end 6.1%（50% 以上）: 外れ。登録した判定により「式1つずつ・少ない種類」の規則性はあり、
   #   「端を狭めるのが典型」は外れ。
   # 実行の後の読み（登録していない）: 端に関わる狭め（add_end と narrow_end）を合わせると 187（38%）。分化は、
-  #   一辺に式1つで、主に「新しい特徴を足す」か「端を決める・狭める」の2つで進む。new の親は information_entity 24、
+  #   一辺に式1つで、主に「新しい特徴を足す」か「端を決める・狭める」の2つで進む。
+  # 訂正（sys_money_unit のあとで気づいた）: (b)「一辺に式1つ」は、法則 single（1つのノードが足せる限定は1つだけ）が
+  #   決めていることで、観察で見つけた規則性ではない（式が2つ以上の辺は、axis などほかの書き方が式を足すもの）。new の親は information_entity 24、
   #   process 12、quality 11 など最上位に近い概念が多い。sys_specific の C で見えた「端を1段狭める」は、洗練の対を選んだ偏り。
   o_sys_diff_few_kinds: {is: exp.observation}
   o_sys_diff_one_step: {is: exp.observation}
@@ -402,6 +404,18 @@ individuals:
   #   なだらかな法則としては支持されない。
   o_sys_overext_steps_small_ratio: {is: exp.observation}
   o_sys_overext_steps_unseen_small_ratio: {is: exp.observation}
+  # money を1歩分化させる操作の観察（exp/experiments/sys_money_unit.py）。手順と判定は実行の前に登録した（f5bf2be）。
+  #   操作: subj.yaml の money の mod に {of: [v_come_after, from], with: money}（単位）を足して2つにした。after を測ったあと、
+  #   体系の検査が通らないので、subj.yaml は元に戻した（操作は commit していない）。
+  # 結果: before は errors 0、V 9、v_money 2、sales_ok 1、absorbs_money 2。after は errors 3、V 7、v_money 0、sales_ok 1、absorbs_money 0。
+  #   V は before から money の2組（hour, days_overdue）を除いたものと同じで、新しい違反はない。
+  #   登録した判定のうち errors 0 を満たさないので「外れ」。誤りは、法則 single（1つのノードが足せる限定は1つだけ）と、
+  #   「mod は並べない」の検査。過大拡張は、見込みどおり規則だけで止まった。
+  # 実行の後の読み（登録していない）: この体系では、分化の1歩に足せる特徴は1つと、法則で決まっている。money に単位を足すには、
+  #   money の今の式を持つ中間の概念を置き、money をその下にして単位の式を足す（2歩に分ける）必要がある。
+  o_sys_money_unit_stops_overextension: {is: exp.observation}
+  o_sys_money_unit_keeps_sales: {is: exp.observation}
+  o_sys_money_unit_breaks_single: {is: exp.observation}
   o_sys_frame_declared_never_grows: {is: exp.observation}
   o_sys_frame_declared_never_shrinks: {is: exp.observation}
   o_sys_frame_creates_over_removes: {is: exp.observation}
@@ -547,6 +561,10 @@ facts:
   - {is: v_refer, from: o_sys_diff_narrow_not_typical, to: {is: v_come_before, from: sys_differentiation.narrow_end.mean_value, to: 245.0}}
   - {is: v_refer, from: o_sys_overext_steps_small_ratio, to: {is: v_come_before, from: sys_overextension_steps.all_low_rate.mean_value, to: 0.2178}}
   - {is: v_refer, from: o_sys_overext_steps_unseen_small_ratio, to: {is: v_come_before, from: sys_overextension_steps.unseen_low_rate.mean_value, to: 0.1242}}
+  - {is: v_refer, from: o_sys_money_unit_stops_overextension, to: {is: v_come_before, from: sys_money_unit_after.v_money.mean_value, to: sys_money_unit_before.v_money.mean_value}}
+  - {is: v_refer, from: o_sys_money_unit_stops_overextension, to: {is: v_level, from: sys_money_unit_after.absorbs_money.mean_value, to: 0.0}}
+  - {is: v_refer, from: o_sys_money_unit_keeps_sales, to: {is: v_level, from: sys_money_unit_after.sales_ok.mean_value, to: 1.0}}
+  - {is: v_refer, from: o_sys_money_unit_breaks_single, to: {is: v_level, from: sys_money_unit_after.errors.mean_value, to: 3.0}}
   - {is: v_refer, from: o_sys_outlive_never_outlived, to: {is: v_level, from: sys_outlive.outlives_source.mean_value, to: 0.0}}
   - {is: v_refer, from: o_sys_outlive_compute_steps_ok, to: {is: v_level, from: sys_outlive.c_step_ok.mean_value, to: 1.0}}
   - {is: v_refer, from: o_sys_outlive_speak_steps_ok, to: {is: v_level, from: sys_outlive.s_step_ok.mean_value, to: 1.0}}
