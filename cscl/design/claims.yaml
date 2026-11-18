@@ -34,6 +34,9 @@ nodes:
   # 持続体と生起体を導く（h_tops_derivable）の語
   top_placement: {display: 最上位の置き場, extends: quality, mod: syntax.refer_from_occurrent}
   individual_depth: {display: 個体の深さ, extends: quality, mod: {of: [v_depend, from], with: kind}}
+  depth_limitation: {display: 深さの限定, extends: quality, mod: {of: [v_refer, from], with: syntax.mod}}
+  reading_formula: {display: 読みの式, extends: quality, mod: exp.refer_from_hypothesis}
+  annotation: {display: 注釈, extends: passage_express_from_natural_language, mod: {of: [v_refer, from], with: syntax.domain}}
   v_not_trigger: {display: 引き起こさない, extends: v_not_transfer, from: any, to: occurrent, opposite: v_trigger}
 
 individuals:
@@ -177,6 +180,16 @@ individuals:
   b_tops_derivable: {is: exp.item_done}
   h_individual_depth: {is: exp.hyp_untested}
   b_individual_depth: {is: exp.item_queued}
+  h_hierarchy_in_object: {is: exp.hyp_untested}
+  b_hierarchy_in_object: {is: exp.item_queued}
+  h_draw_on_with_shallow: {is: exp.hyp_untested}
+  b_draw_on_with_shallow: {is: exp.item_queued}
+  h_gloss_formula: {is: exp.hyp_untested}
+  b_gloss_formula: {is: exp.item_queued}
+  h_negation_formula: {is: exp.hyp_untested}
+  b_negation_formula: {is: exp.item_queued}
+  h_comment_ban: {is: exp.hyp_untested}
+  b_comment_ban: {is: exp.item_queued}
   # ===== 定義の循環（自分を限定するものについて述べる定義）。利用者の問い「self がシグネチャになるとどうなるか」から
   # 定義の辺（上位・名前を付けた修飾語・限定の with）をたどった循環を数えた（exp/experiments/sys_cycles.py）。
   # 仮説は、観察を見た後に立てた（事前の登録ではない）。中身は「定義の循環は、否定の限定を通らない」。
@@ -597,6 +610,16 @@ facts:
   - {is: exp.v_check, from: b_tops_derivable, to: h_tops_derivable}
   - {is: v_refer, from: h_individual_depth, to: {is: v_depend, from: individual_depth, to: kind}}
   - {is: exp.v_check, from: b_individual_depth, to: h_individual_depth}
+  - {is: v_refer, from: h_hierarchy_in_object, to: {is: v_depend, from: depth_limitation, to: syntax.base}}
+  - {is: exp.v_check, from: b_hierarchy_in_object, to: h_hierarchy_in_object}
+  - {is: v_refer, from: h_draw_on_with_shallow, to: {is: v_not_depend, from: reading_formula, to: syntax.display}}
+  - {is: exp.v_check, from: b_draw_on_with_shallow, to: h_draw_on_with_shallow}
+  - {is: v_refer, from: h_gloss_formula, to: {is: v_not_depend, from: top_placement, to: syntax.gloss}}
+  - {is: exp.v_check, from: b_gloss_formula, to: h_gloss_formula}
+  - {is: v_refer, from: h_negation_formula, to: {is: v_not_depend, from: negated_limitation, to: type_checker}}
+  - {is: exp.v_check, from: b_negation_formula, to: h_negation_formula}
+  - {is: v_refer, from: h_comment_ban, to: {is: v_not_depend, from: definition, to: annotation}}
+  - {is: exp.v_check, from: b_comment_ban, to: h_comment_ban}
   - {is: v_refer, from: o_sys_tops_ind_continuant, to: {is: v_level, from: sys_tops.ind_continuant.mean_value, to: 1.0}}
   - {is: v_refer, from: o_sys_tops_dyn_occurrent, to: {is: v_level, from: sys_tops.dyn_occurrent.mean_value, to: 1.0}}
   - {is: v_refer, from: o_sys_tops_static_occurrent, to: {is: v_level, from: sys_tops.static_occurrent.mean_value, to: 1.0}}
