@@ -228,8 +228,8 @@ individuals:
   b_identifier_by_expansion: {is: exp.item_queued}
   h_case_frame_formula: {is: exp.hyp_refuted}
   b_case_frame_formula: {is: exp.item_done}
-  h_case_frame_by_relation: {is: exp.hyp_untested}
-  b_case_frame_by_relation: {is: exp.item_queued}
+  h_case_frame_by_relation: {is: exp.hyp_refuted}
+  b_case_frame_by_relation: {is: exp.item_done}
   # ===== 定義の循環（自分を限定するものについて述べる定義）。利用者の問い「self がシグネチャになるとどうなるか」から
   # 定義の辺（上位・名前を付けた修飾語・限定の with）をたどった循環を数えた（exp/experiments/sys_cycles.py）。
   # 仮説は、観察を見た後に立てた（事前の登録ではない）。中身は「定義の循環は、否定の限定を通らない」。
@@ -578,6 +578,8 @@ individuals:
   o_sys_ja_case_frame_broken: {is: exp.observation}
   o_sys_case_frame_formula_acc: {is: exp.observation}
   o_sys_case_frame_formula_below: {is: exp.observation}
+  o_sys_case_frame_by_relation_acc: {is: exp.observation}
+  o_sys_case_frame_by_relation_below: {is: exp.observation}
   # 体系のファイルのコメントを、決まった規則で分けて数えた棚卸し（exp/experiments/sys_comments.py。手順は実行の前に登録した 64fa140）。
   # 結果: 431 個（見出し 115、経緯 146、コード 20、意味 150。行だけのもの 386、値の後ろ 45）。claims.yaml が 277（経緯 136、意味 110）、
   #   cscl/library の 5 ファイルが 76（見出し 41、意味 25、経緯 6、コード 4）、exp/src が 64（見出し 52）、cscl.yaml が 14。
@@ -846,6 +848,9 @@ facts:
   - {is: v_refer, from: o_sys_case_frame_formula_acc, to: {is: v_level, from: sys_case_frame_formula.acc_formula.mean_value, to: 0.386}}
   - {is: v_refer, from: o_sys_case_frame_formula_below, to: {is: v_come_before, from: sys_case_frame_formula.acc_formula.mean_value, to: sys_case_frame_formula.acc_display.mean_value}}
   - {is: exp.v_contradict, from: o_sys_case_frame_formula_below, to: h_case_frame_formula}
+  - {is: v_refer, from: o_sys_case_frame_by_relation_acc, to: {is: v_level, from: sys_case_frame_by_relation.acc_relation.mean_value, to: 0.4912}}
+  - {is: v_refer, from: o_sys_case_frame_by_relation_below, to: {is: v_come_before, from: sys_case_frame_by_relation.acc_relation.mean_value, to: sys_case_frame_by_relation.acc_display.mean_value}}
+  - {is: exp.v_contradict, from: o_sys_case_frame_by_relation_below, to: h_case_frame_by_relation}
   - {is: v_refer, from: o_sys_comments_claims_most, to: {is: v_come_after, from: sys_comments.history.mean_value, to: sys_comments.code.mean_value}}
   - {is: v_refer, from: o_sys_outlive_never_outlived, to: {is: v_level, from: sys_outlive.outlives_source.mean_value, to: 0.0}}
   - {is: v_refer, from: o_sys_outlive_compute_steps_ok, to: {is: v_level, from: sys_outlive.c_step_ok.mean_value, to: 1.0}}
