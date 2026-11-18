@@ -1676,6 +1676,10 @@ individuals:
   b_vectors_on_4b: {is: item_queued}
   b_more_concepts: {is: item_queued}
   b_sparse_dictionary_observation: {is: item_queued}
+  h_leap_reaches_agreement: {is: hyp_untested}
+  h_leap_lowers_chain: {is: hyp_untested}
+  b_leap_reaches_agreement: {is: item_queued}
+  b_leap_lowers_chain: {is: item_queued}
 
 facts:
   - {is: v_collect, from: residual_space, to: residual_vector}
@@ -4475,6 +4479,10 @@ facts:
   - {is: v_check, from: b_vectors_on_4b, to: h_vector_raises_following}
   - {is: v_check, from: b_vectors_on_4b, to: h_single_layer_does_not_reach_shared}
   - {is: v_check, from: b_more_concepts, to: h_vector_count_does_not_lower}
+  - {is: v_refer, from: h_leap_reaches_agreement, to: {is: v_raise, from: operator_speech, to: hypothesis_agree_to_evidence}}
+  - {is: v_refer, from: h_leap_lowers_chain, to: {is: v_lower, from: operator_speech, to: chain_length}}
+  - {is: v_check, from: b_leap_reaches_agreement, to: h_leap_reaches_agreement}
+  - {is: v_check, from: b_leap_lowers_chain, to: h_leap_lowers_chain}
   - {is: v_prior_same, from: pw_wang2025_proactive_interference, to: h_preceding_definitions_lower}
   - {is: v_prior_same, from: pw_stringli2025_inverse_redefinition, to: h_collision_lowers_following}
   - {is: v_prior_differ, from: pw_liu2024_lost_in_the_middle, to: h_distance_does_not_lower}
