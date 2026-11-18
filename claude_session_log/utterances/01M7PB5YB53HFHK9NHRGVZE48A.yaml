@@ -1,0 +1,67 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-18T03:28:34.661Z（UTC）
+individuals:
+  01M7PB5YB53HFHK9NHRGVZE48A:
+    is: model_utterance
+    display: 発言 1519
+    val:
+      order: 1519
+      text: |
+        「種類を指す」ことを式にしました。`run`・`attendance`・`plan` → `verb_ref` の 3 組の違反は、規則だけで消えました。新しい違反は出ず、検査も 0 エラーで通ります。ただし 1 回目の測定は型検査器の誤りで外れていて、直してから測り直した結果です。
+
+        ## やったこと（sys_kind_ref、手順は先に登録）
+
+        **式の書き方**
+        - `verb_ref`（動詞を指すもの）を、「起こったことが属する種類」として書き直しました。
+        - 使ったのは基礎の動詞 `is`（属する）です。始点が成員、終点が種類なので、その終点の側を限定します。
+          ```yaml
+          verb_ref: {display: 動詞を指すもの, extends: kind, mod: {of: [is, to], with: occurrent}}
+          ```
+        - もう 1 か所、`information_entity_refer_from_p` の上位を `verb_ref` から `information_entity` に替えました。これが `verb_ref` の下にあったのは、古い式を含意していたからで、その含意は新しい式ではなくなります。この変更も手順に先に書いておきました。
+
+        **結果**
+
+        | 値 | before | after（外れ） | after2 |
+        |---|---|---|---|
+        | errors | 0 | 1 | 0 |
+        | 違反の組 | 6 | 3 | 3 |
+        | verb_ref が上の違反 | 3 | 0 | 0 |
+        | 新しい違反 | — | 0 | 0 |
+
+        **外れた理由と訂正**
+        `after` では、型検査器が `is` の限定を名前で特別扱いするところが、`with` を常に終点（種類）の側として読んでいました。そのため、`with` が始点（成員）の側にある今回の書き方を「種類でない」と咎めました。`with` が終点の側にあるときだけ特別扱いするよう直し、訂正を手順に書いてから `after2` で測り直しました。直したことで、今の体系から導かれる文は 1 つも変わっていません。
+
+        ## 解釈
+
+        これで、同じ形の直し方が 3 回効いたことになります。どれも、式の外にしかなかった区別を式に移すと、過大拡張が規則だけで止まりました。
+
+        | 回 | 区別 | 区別があった場所 | 移し先 |
+        |---|---|---|---|
+        | money | 単位（円） | 表示名 | 軸の分化 |
+        | 年齢・身長など | 単位（歳・センチ・円・人・日・時） | 表示名 | 軸の分化 |
+        | verb_ref | 種類か成員か（階） | コメントと、型検査器の名前の読み | 基礎の動詞 `is` の位置 |
+
+        コメントや表示名やコードに逃げていた意味は、体系の誤りの原因になっていました。式にするとその誤りが消える、という形です。「コメントは禁止してよいのでは」という考えを、データの側から支える例が 1 つ増えました。
+
+        ## 残っていること
+
+        - **違反は 3 組残っています。** `position→opposite`、`backlog_item→hypothesis`、`control_preservation→context_following` です。どれも別の種類の薄さが原因だと見ています。
+        - **`verb_ref` のコメントはまだ消していません。** 「この位置には動詞そのものが来る」は今は式が言っているので、消してよいはずです。今回の操作では変えないと手順に書いたので、残してあります。
+        - **型検査器の名前の読みも残っています。** `verb_ref` を名前で読んでいる箇所（`type_checker.py:1142`）は、式から判定する形に置き換えられるはずです。
+
+        次は推奨順どおり C（表示名のうち式から導けない部分を数える）に進むつもりです。そこで見つかる取り残しは、上の 3 組の違反の原因の候補にもなります。
+
+        記録は 47a8603 まで claude/cross に push してあります。CI は GitHub 側で走ります。
+facts:
+- {is: v_say, from: session_model, to: 01M7PB5YB53HFHK9NHRGVZE48A}
+- {is: exp.v_answer, from: 01M7PB5YB53HFHK9NHRGVZE48A, to: 01M7PAZFRC6ACRSTFDD2YP9452}
+- {is: v_refer, from: 01M7PB5YB53HFHK9NHRGVZE48A, to: runtime.run}
+- {is: v_refer, from: 01M7PB5YB53HFHK9NHRGVZE48A, to: subj.attendance}
+- {is: v_refer, from: 01M7PB5YB53HFHK9NHRGVZE48A, to: subj.plan}
+- {is: v_refer, from: 01M7PB5YB53HFHK9NHRGVZE48A, to: syntax.verb_ref}
+- {is: v_refer, from: 01M7PB5YB53HFHK9NHRGVZE48A, to: ontology.is}
+- {is: v_refer, from: 01M7PB5YB53HFHK9NHRGVZE48A, to: syntax.information_entity_refer_from_p}
+- {is: v_refer, from: 01M7PB5YB53HFHK9NHRGVZE48A, to: ontology.information_entity}
+- {is: v_refer, from: 01M7PB5YB53HFHK9NHRGVZE48A, to: syntax.with}
+- {is: v_refer, from: 01M7PB5YB53HFHK9NHRGVZE48A, to: exp.backlog_item}
+- {is: v_refer, from: 01M7PB5YB53HFHK9NHRGVZE48A, to: exp.control_preservation}
+- {is: v_refer, from: 01M7PB5YB53HFHK9NHRGVZE48A, to: exp.context_following}
