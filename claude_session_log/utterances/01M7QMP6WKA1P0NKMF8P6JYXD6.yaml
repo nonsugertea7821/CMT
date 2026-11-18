@@ -1,0 +1,239 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-18T15:33:59.315Z（UTC）
+individuals:
+  01M7QMP6WKA1P0NKMF8P6JYXD6:
+    is: session_summary
+    display: 発言 2025
+    val:
+      order: 2025
+      text: |
+        This session is being continued from a previous conversation that ran out of context. The summary below covers the earlier portion of the conversation.
+
+        <system-reminder>
+        <tools-used-before-summary>AskUserQuestion, Bash, Edit, Grep, Read, ReadNotifications, Skill, TaskStop, ToolSearch, WebFetch, WebSearch, Write, mcp__claude-code-remote__create_trigger, mcp__claude-code-remote__delete_trigger, mcp__claude-code-remote__get_trigger, mcp__claude-code-remote__read_documentation, mcp__claude-code-remote__send_later, mcp__claude-code-remote__subscribe_pr_activity, mcp__claude-code-remote__update_trigger, mcp__github__actions_get, mcp__github__actions_list, mcp__github__add_issue_comment, mcp__github__create_pull_request, mcp__github__get_job_logs, mcp__github__issue_read, mcp__github__issue_write, mcp__github__list_issue_types, mcp__github__list_issues, mcp__github__list_pull_requests, mcp__github__pull_request_read, mcp__github__update_pull_request</tools-used-before-summary>
+        </system-reminder>
+        Summary:
+        1. Primary Request and Intent
+
+        **Standing rules (still in force)**
+        - Repo: nonsugertea7821/CMT at /home/user/CMT.
+        - Reply in Japanese. Don't overclaim. Give interpretation.
+        - Restore files with `git show <rev>:<path> > <path>`. Never checkout to restore and never stash.
+        - Python: /home/user/venv/bin/python.
+        - Commit trailer:
+          `Co-Authored-By: Claude [モデル名を伏せた] <[メールアドレスを伏せた]>`
+          `Claude-Session: https://claude.ai/code/session_015KRKt6TNJZ7ZsQmEknANXK`
+        - PR body ends with:
+          `🤖 Generated with [Claude Code](https://claude.com/claude-code)`
+          blank line
+          `https://claude.ai/code/session_015KRKt6TNJZ7ZsQmEknANXK`
+        - Claude never merges.
+        - No personal info or model identifiers in pushed artifacts.
+        - Don't retry the MEXT PDF WebFetch without OK.
+
+        **CLAUDE.md flow**
+        - Register proposals as untested hypotheses first:
+          - h_/b_ with v_refer and exp.v_check;
+          - lang claims can't reference exp words in hypothesis formulas, so add a lang concept if needed.
+        - Branch `claude/h_<name>`, Draft PR:
+          - prereg commit holds the script only (`git add -f`);
+          - results commit adds the exp.yaml family, observations, v_support / v_contradict, status hyp_* and b_ item_done, plus the result JSON (`git add -f`);
+          - run tc and ec, push, update the PR body, undraft.
+        - Every PR:
+          - assignee nonsugertea7821 via issue_write update;
+          - subscribe_pr_activity.
+        - On merge: `git fetch -q --prune origin` and `git branch -D <branch>`. Never push branch deletions.
+        - No comments in system yaml. Never rerun recorded scripts.
+        - Don't ask permission in chat. CI belongs to GitHub.
+
+        **User's current intents**
+        - Do the hypotheses in order, scheduling the next one 30 minutes after each starts:
+          h_individual_scope_by_kind (done) → h_reading_ends_resolved (prioritized, done) → h_plural_from → h_given_laws_as_rules → h_law_names_grammar → h_renaming_invariant.
+        - **New:** run only one experiment at a time. Parallel runs wait on each other ("実行時間がファクトになりにくい").
+        - The user cares about wasting GitHub compute (duplicate runs).
+
+        2. Key Technical Concepts
+
+        **tc gather** (cscl/bootstrap/type_checker/type_checker.py)
+        - A reading formula (v_refer with a dict `to`) sets I[subj] s/p/o by assignment. A later v_refer of the same subject overwrites the earlier one; this is now confirmed.
+        - The final multiplicity check exempts only "o" and "_at" from `many`, so a list in a formula's `from` (s) errors with "関係 s の事実が2つ以上ある".
+        - T.many is the set of relation names whose end kind has `many: true`. It governs the number of facts per (subject, relation), with the subject on either side.
+        - Top-level lists are read as one value: lists in from 113, lists in to 6, none on many relations.
+
+        **exp_check.triple** (checks that ends are defined) is called only for hypotheses (line 236) and decisions (line 265).
+        - Prior-work claims (pwc_) are not end-checked.
+        - Observations are checked elsewhere; all o_ mutants were rejected.
+
+        **Rule engine**
+        - runtime.py `Machine.check_laws` applies law_rules to one state's stated-true base-relation facts only.
+        - `same` is built into type_checker `_match` (name equality = unique_names).
+        - step and frame are in Machine.step; halt is in main plus Machine.applicable; no_confusion is in Machine.confusion.
+        - LAWS_RUN = {unique_names, step, frame, halt, no_confusion}.
+
+        **CI**
+        - spec job time: ~10s (Nov 16) → ~30s (this morning) → ~40–60s now.
+        - tc step: 8 → 14s. test_sync_issues: 13 → 19s; it rebuilds the system via exp_check.build.
+
+        **Container:** 4 cores. Experiments run tc as a subprocess per mutant (~10s each) and copy the 7.2MB results dir.
+
+        3. Files and Code Sections
+
+        **exp/experiments/sys_plural_from.py** (branch claude/h_plural_from, prereg 7df4a73, PR #224)
+        - Targets: reading formulas whose from and to are both str (311).
+        - Mutants: A sets from to `[from, from]`; B sets to to `[to, to]`.
+        - check() runs tc in a worktree (git archive HEAD plus a copy of the results dir); ThreadPoolExecutor(4).
+        - Rows: `"f file:i": {subject_kind, from_rejected, to_rejected, asym}`.
+        - Summary: n_formulas, n_from_rejected, n_to_rejected, n_asym, n_top_list_from, n_top_list_to (via top_lists(T, Dm)).
+        - Verdict: n_asym > 0 → refuted, else supported. Refutation is predicted.
+        - Helpers (yaml_files, check, KINDS) are inlined.
+        - Running as PID 3931 since ~14:55; log at …/scratchpad/plural_run.log.
+        - Waiter task b6ejwja9e waits for both processes (timeout 2h).
+
+        **exp/src/exp.yaml** (merged via #223): family sys_reading_ends_resolved with columns subject_kind, n_refer, mutated, rejected, n_formulas, n_mutants, n_rejected, n_accepted, n_unmutated, n_multi, n_multi_accepted. Same pattern as the sys_individual_scope_by_kind family:
+        ```
+          {F}: {is: measurement_family}
+          {F}_cond: {is: family_axis, val: {text: cond}}
+          {F}_cond_{c}: {is: axis_value, val: {text: c}}
+          facts: v_file_of {F}.json; v_rows_of [rows]; v_axis_of; v_value_of + v_spell per col; v_entry_of '{cond}'; v_metric_of mean_value
+        ```
+        - Inserted after the last sys_individual_scope_by_kind node and fact lines.
+
+        **cscl/design/claims.yaml** (merged via #223)
+        - h_reading_ends_resolved → exp.hyp_refuted; b_ → exp.item_done.
+        - New observations:
+          - o_sys_reading_ends_resolved_accepted: `v_level(sys_reading_ends_resolved.n_accepted.mean_value, 20)`, linked by exp.v_contradict to h_reading_ends_resolved.
+          - o_sys_reading_ends_resolved_overwritten: `v_level(...n_multi_accepted.mean_value, 7)`, not linked.
+
+        **PR #226** (branch claude/register-reading-followups) adds to claims.yaml:
+        ```
+          prior_claim_formula: {display: 先行研究の主張の読みの式, extends: quality, mod: {of: [v_refer, from], with: exp.prior_claim}}
+          h_prior_claim_ends_resolved / b_ ; h_readings_many / b_
+          - {is: v_refer, from: h_prior_claim_ends_resolved, to: {is: v_depend, from: prior_claim_formula, to: declared_scope}}
+          - {is: v_refer, from: h_readings_many, to: {is: v_refer, from: syntax.many, to: reading_formula}}
+          (+ exp.v_check lines)
+        ```
+        - It adds a concept, so it is a manual merge. tc passed locally.
+
+        **.github/workflows/spec.yml** (PR #225, merged)
+        - `on: push: branches: [main]` plus `pull_request:`.
+        - Concurrency group `spec-${{ github.event.pull_request.number || github.ref }}`, cancel-in-progress for pull_request.
+        - A comment was added at the top (allowed: not a system yaml).
+
+        **exp/experiments/sys_given_laws_as_rules.py** (branch claude/h_given_laws_as_rules, prereg a430b5c, PR #227 Draft)
+        - Uses ast to locate regions:
+          - unique_names: the `rel == "same"` If in type_checker `_match` (line 588);
+          - step: If tagged "法則 step" in Machine.step (166);
+          - frame: For tagged "法則 frame" (169);
+          - halt: If tagged "法則 halt" in main (261) plus Machine.applicable (205);
+          - no_confusion: Machine.confusion (176).
+        - names() collects Attribute attrs, Name ids, string subscript slices, and string Compare constants.
+        - MARKERS = {pre, post, bind, N, up, is_a, spot_type, halted, ind, applicable, steps, run}.
+        - Rows: `"law X": {n_markers, uses_pre, uses_post, uses_record, uses_kinds}`.
+        - Summary: n_laws, n_with_markers, n_without_markers.
+        - Verdict: any markers → refuted (predicted). unique_names with 0 markers counts as a "primitive", not a "rule"; this is disclosed.
+        - Output: results/sys_given_laws_as_rules.json. Only region line detection was dry-checked.
+
+        4. Errors and fixes
+
+        - **sys_plural_from imported helpers from sys_reading_ends_resolved,** which isn't on main. Inlined yaml_files, check and KINDS (and added `import re`).
+        - **h_prior_claim_ends_resolved in claims referencing exp.prior_claim:** tc error "lang の主張が、lang と言語の層以外の語を参照している（['exp']）". Fixed by adding the lang concept prior_claim_formula.
+        - **A waiter background task (btusbj9bx) hit its 30-minute limit.** Restarted as b6ejwja9e with a 2-hour timeout.
+        - **Duplicate trigger at 15:15** (trig_01KLjK4pUV1VioAFQ3dJaEin). h_plural_from had already started, so nothing was redone.
+
+        5. Problem Solving
+
+        **h_reading_ends_resolved refuted** (490 rejected, 20 accepted). Two groups:
+        - 13 pwc_ prior claims: triple only covers hypotheses and decisions. The 7 rejected pwc were rejected only indirectly, by the hypothesis comparison.
+        - 7 earlier-of-two v_refer formulas, overwritten in gather: h_layers_unhardcode and the o_sys_money_* / o_sys_unit_axis_* observations.
+        - Interpretation: names are resolved by the checks that read formulas, not by the formulas themselves.
+
+        **CI**
+        - Analyzed the slowdown and the duplication.
+        - #225 merged; the local branch claude/ci-dedupe was deleted.
+        - Remaining in-job duplication: tc and test_sync_issues each build the system. Not addressed.
+
+        **Explained experiment slowness:** a full tc run per mutant, plus copying the results dir, plus two experiments contending on 4 cores.
+
+        6. All user messages (since the previous summary)
+
+        - "CIの性能悪化して無いか？"
+        - "まあ型検査って全部やってたらクソ長いのはそうだよね、他の言語もそうだし"
+        - "同じことを重ねてやってるのはどうかと思うけど / GithubのComputingリソースがもったいない"
+        - "ちなみに実験が20分とか30分とか掛かってるのは何故？"
+        - "あー…… / コンテナ弱いのはしょうがないけど、並列で待ちあうのはちょっとやだな。実行時間がファクトになりにくい"
+
+        Earlier user messages are still relevant:
+        - "それでいこう。一つ始める度に次を30分後に予約して実施。"
+        - "h_reading_ends_resolvedを優先かな"
+
+        7. Pending Tasks
+
+        **PR #227**
+        - Call `subscribe_pr_activity(nonsugertea7821, CMT, 227)` and `issue_write update 227 assignees [nonsugertea7821]`. This is required by the hook and not done yet.
+
+        **Schedule h_law_names_grammar (#216)**
+        - Use create_trigger, about 30 minutes after 15:30 start (≈16:05Z).
+        - Prompt: start it (branch, Draft PR, prereg); execute only after the other experiments finish; then schedule h_renaming_invariant (#151) 30 minutes later; record any finished results.
+
+        **When the plural run (PID 3931) finishes** (waiter b6ejwja9e notifies):
+        - Switch to claude/h_plural_from and merge origin/main.
+        - Add the exp.yaml family sys_plural_from (numeric columns: subject_kind, from_rejected, to_rejected, asym, n_formulas, n_from_rejected, n_to_rejected, n_asym, n_top_list_from, n_top_list_to).
+        - Add observations plus v_support / v_contradict in claims.yaml; set the status and b_plural_from item_done.
+        - Commit with the JSON, run tc and ec, push, update the #224 body, undraft.
+
+        **Then run sys_given_laws_as_rules.py** (only after the plural run ends) on claude/h_given_laws_as_rules, and record its results the same way for #227.
+
+        **Watch #226** (manual merge). On any merge, delete the local branch.
+
+        **Later**
+        - h_leap_reaches_agreement (#197) and h_leap_lowers_chain (#198) preregs.
+        - Backlog h_concept_bounds_model_state.
+
+        8. Current Work
+
+        The 15:30 trigger ("順序の3番目、h_given_laws_as_rules（#215）を始める… 実験は一度に1つだけ走らせる… 始めたら、4番目 h_law_names_grammar を30分後に予約する…") fired.
+        - I created branch claude/h_given_laws_as_rules from origin/main and wrote and pushed the prereg commit a430b5c with exp/experiments/sys_given_laws_as_rules.py.
+        - I just created Draft PR #227. The hook then said to subscribe and assign it.
+        - The local checkout is on claude/h_given_laws_as_rules.
+        - The plural experiment is still running.
+
+        9. Optional Next Step
+
+        Immediately:
+        - call subscribe_pr_activity for #227;
+        - call issue_write (assignees [nonsugertea7821]) on #227;
+        - create the trigger for h_law_names_grammar ~30 minutes after the start, per the trigger instruction "始めたら、4番目 h_law_names_grammar を30分後に予約する（その実行も、前の実験が終わってから）".
+
+        Then wait for b6ejwja9e to report the plural result, record it in #224, and only after that run sys_given_laws_as_rules.py, following the user's "並列で待ちあうのはちょっとやだな" (one experiment at a time).
+
+        If you need specific details from before compaction (like exact code snippets, error messages, or content you generated), read the full transcript at: /root/.claude/projects/-home-user-CMT/e05d2140-ce91-515f-a5fb-e6251e13d406.jsonl
+        Continue the conversation from where it left off without asking the user any further questions. Resume directly — do not acknowledge the summary, do not recap what was happening, do not preface with "I'll continue" or similar. Pick up the last task as if the break never happened.
+
+        The messages after this summary are the most recent messages from before compaction, kept verbatim. The summary was written without seeing them, so something it says has not happened yet may already have happened in them.
+facts:
+- {is: v_say, from: session_model, to: 01M7QMP6WKA1P0NKMF8P6JYXD6}
+- {is: v_refer, from: 01M7QMP6WKA1P0NKMF8P6JYXD6, to: ontology.v_refer}
+- {is: v_refer, from: 01M7QMP6WKA1P0NKMF8P6JYXD6, to: exp.v_check}
+- {is: v_refer, from: 01M7QMP6WKA1P0NKMF8P6JYXD6, to: exp.v_support}
+- {is: v_refer, from: 01M7QMP6WKA1P0NKMF8P6JYXD6, to: exp.v_contradict}
+- {is: v_refer, from: 01M7QMP6WKA1P0NKMF8P6JYXD6, to: exp.item_done}
+- {is: v_refer, from: 01M7QMP6WKA1P0NKMF8P6JYXD6, to: lang.type_checker}
+- {is: v_refer, from: 01M7QMP6WKA1P0NKMF8P6JYXD6, to: syntax.to}
+- {is: v_refer, from: 01M7QMP6WKA1P0NKMF8P6JYXD6, to: syntax.many}
+- {is: v_refer, from: 01M7QMP6WKA1P0NKMF8P6JYXD6, to: syntax.from}
+- {is: v_refer, from: 01M7QMP6WKA1P0NKMF8P6JYXD6, to: ontology.same}
+- {is: v_refer, from: 01M7QMP6WKA1P0NKMF8P6JYXD6, to: exp.measurement_family}
+- {is: v_refer, from: 01M7QMP6WKA1P0NKMF8P6JYXD6, to: exp.family_axis}
+- {is: v_refer, from: 01M7QMP6WKA1P0NKMF8P6JYXD6, to: exp.axis_value}
+- {is: v_refer, from: 01M7QMP6WKA1P0NKMF8P6JYXD6, to: exp.v_file_of}
+- {is: v_refer, from: 01M7QMP6WKA1P0NKMF8P6JYXD6, to: exp.v_rows_of}
+- {is: v_refer, from: 01M7QMP6WKA1P0NKMF8P6JYXD6, to: exp.v_axis_of}
+- {is: v_refer, from: 01M7QMP6WKA1P0NKMF8P6JYXD6, to: exp.v_value_of}
+- {is: v_refer, from: 01M7QMP6WKA1P0NKMF8P6JYXD6, to: exp.v_spell}
+- {is: v_refer, from: 01M7QMP6WKA1P0NKMF8P6JYXD6, to: exp.v_entry_of}
+- {is: v_refer, from: 01M7QMP6WKA1P0NKMF8P6JYXD6, to: exp.v_metric_of}
+- {is: v_refer, from: 01M7QMP6WKA1P0NKMF8P6JYXD6, to: exp.mean_value}
+- {is: v_refer, from: 01M7QMP6WKA1P0NKMF8P6JYXD6, to: exp.hyp_refuted}
+- {is: v_refer, from: 01M7QMP6WKA1P0NKMF8P6JYXD6, to: ontology.v_level}
+- {is: v_refer, from: 01M7QMP6WKA1P0NKMF8P6JYXD6, to: exp.prior_claim}
+- {is: v_refer, from: 01M7QMP6WKA1P0NKMF8P6JYXD6, to: ontology.v_depend}
+- {is: v_refer, from: 01M7QMP6WKA1P0NKMF8P6JYXD6, to: lang.declared_scope}
