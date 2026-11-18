@@ -1,0 +1,229 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-18T20:33:47.983Z（UTC）
+individuals:
+  01M7R5V5YF3DNRJ6252PA0Z6MA:
+    is: session_summary
+    display: 発言 2167
+    val:
+      order: 2167
+      text: |
+        This session is being continued from a previous conversation that ran out of context. The summary below covers the earlier portion of the conversation.
+
+        <system-reminder>
+        <tools-used-before-summary>AskUserQuestion, Bash, Edit, Grep, Read, ReadNotifications, Skill, TaskStop, ToolSearch, WebFetch, WebSearch, Write, mcp__claude-code-remote__create_trigger, mcp__claude-code-remote__delete_trigger, mcp__claude-code-remote__get_trigger, mcp__claude-code-remote__read_documentation, mcp__claude-code-remote__send_later, mcp__claude-code-remote__subscribe_pr_activity, mcp__claude-code-remote__update_trigger, mcp__github__actions_get, mcp__github__actions_list, mcp__github__add_issue_comment, mcp__github__create_pull_request, mcp__github__get_job_logs, mcp__github__issue_read, mcp__github__issue_write, mcp__github__list_issue_types, mcp__github__list_issues, mcp__github__list_pull_requests, mcp__github__pull_request_read, mcp__github__update_pull_request</tools-used-before-summary>
+        </system-reminder>
+        Summary:
+        1. Primary Request and Intent
+
+        **Standing rules (still in force)**
+        - Repo: nonsugertea7821/CMT at /home/user/CMT.
+        - Reply in Japanese. Don't overclaim. Give interpretation.
+        - Restore files with `git show <rev>:<path> > <path>`. Never checkout to restore and never stash.
+        - Python: /home/user/venv/bin/python.
+        - Commit trailer:
+          `Co-Authored-By: Claude [モデル名を伏せた] <[メールアドレスを伏せた]>`
+          `Claude-Session: https://claude.ai/code/session_015KRKt6TNJZ7ZsQmEknANXK`
+        - PR body ends with:
+          `🤖 Generated with [Claude Code](https://claude.com/claude-code)`
+          blank line
+          `https://claude.ai/code/session_015KRKt6TNJZ7ZsQmEknANXK`
+        - Claude never merges.
+        - No personal info or model identifiers in pushed artifacts.
+        - Don't retry the MEXT PDF WebFetch without OK.
+        - No comments in system yaml. Never rerun recorded experiment scripts; write new result names instead of overwriting. CI belongs to GitHub.
+        - Every PR:
+          - subscribe_pr_activity;
+          - issue_write update with assignees [nonsugertea7821].
+        - After a merge:
+          - `git fetch -q --prune origin`, then `git branch -D` the local branch;
+          - never push to a merged branch;
+          - never push branch deletions.
+        - Proposals are registered as untested hypotheses (h_/b_ + v_refer/v_check) before they are told to the user.
+          - Registration-only PRs auto-merge.
+          - Concept-adding PRs get manual review.
+          - Place registrations away from the lines of running hypotheses and from the file end (to avoid conflicts).
+        - Lang-side claims (cscl/design/claims.yaml) can't reference exp words. Put cross-layer hypotheses in exp/src/exp.yaml using `lang.` prefixes.
+        - Corpus data: never commit corpus text to the repo; record only the source (URL + version) and counted values. CC BY-SA needs attribution and is share-alike if redistributed.
+        - Preregistration: commit the script only first. Results come in a later commit. Corrections are appended to the procedure (docstring) and disclosed. Script and results need `git add -f`, because exp/experiments is gitignored.
+
+        **Keep-alive rule (user)**
+        - Chain send_later of 9 minutes only while a long experiment runs in the background ("チェーンが居るのは長い実験だけね").
+        - Stop the chain when the experiment ends: update_trigger enabled=false, since delete_trigger was denied earlier.
+
+        **30-minute cycle**
+        - The prompt is stored in send_later. Each firing first schedules the next one with the same text.
+        - Triage order:
+          - A: #35 (done), then #91, #56, #92 using hand-made pairs.
+          - A': #52.
+          - C: #57, #18, #8.
+          - E: system soundness items.
+          - B: #58 → #90, #55, and the system-pair #91/#92.
+          - D: prosody/corpus, with a counting prereg first.
+        - The next cycle is at 20:42Z (trig_01J3mqhjBWGrpzUMtw1BMqYK).
+
+        2. Key Technical Concepts
+        - ec (exp/src/exp_check.py):
+          - Silent on success.
+          - Verifies observation values against result files. Confirmed by flipping a come_before to come_after, which makes it fail.
+          - Its exit code shows 0 when piped through tail; run it without a pipe to read the code.
+        - tc: cscl/bootstrap/type_checker/type_checker.py.
+        - Measurement families:
+          - Declared with v_file_of, v_rows_of [items], v_axis_of / v_value_of / v_denote, v_filter_of {group: '{group}'}, v_entry_of '{cond}', v_metric_of (accuracy, order_robust_accuracy).
+          - A family without a filter (e.g. e21_all) pools all rows.
+        - Stability (verdict_stability) is operationalized as order_robust_accuracy vs none (as in E16).
+        - Concepts used:
+          - contrast_vector, common_vector_component, qualification_vector (species − genus vector), unseen_genus, prior_meaning, state_shift (denotes the random-vector control).
+          - Group concepts: g_confusable (G1), g_sibling (G3), g_replaced (G4).
+
+        3. Files and Code Sections
+
+        **exp/src/exp.yaml**
+        - Merged via #273:
+          - h_contrast_vector_lowers_stability / b_ placed after b_explain_transfers_to_apply.
+          - Facts `{is: v_lower, from: contrast_vector, to: verdict_stability}` and v_check, placed after `v_check, from: b_e14_contrast_vector`.
+        - Merged via #276:
+          - h_common_component_lowers_prior_meaning / b_ placed after b_contrast_vector_lowers_stability.
+          - Facts `{is: v_lower, from: common_vector_component, to: prior_meaning}` and v_check, placed after the #273 facts.
+        - PR #272 branch (claude/h_text_shift_raises_stability):
+          - Observations o_e14_vec_robust_below_none_conflict and _control, comparing `e14.G2c/G2k.vec1.order_robust_accuracy` with none via v_come_before.
+          - Both are linked to h_text_shift_raises_stability with v_contradict; the hypothesis is set to hyp_refuted.
+        - PR #275 branch (claude/h_common_component_transfers_to_unseen):
+          - Families e21 (group axis G1/G3/G4, filtered) and e21_all (no filter). Both have file 'e21_Qwen2.5-1.5B-Instruct_L8_defqa.json' and conds none / common / rand, denoting no_channel / common_vector_component / state_shift.
+          - Observations: o_e21_common_robust_below_none and o_e21_common_robust_below_rand (e21_all.common.order_robust_accuracy come_before none/rand).
+          - Both are linked with v_contradict; h_common_component_transfers_to_unseen is set to hyp_refuted.
+
+        **exp/experiments/e21_common_unseen.py (PR #275)**
+        - Takes m = mean of the 24 e3 defqa L8 vectors and adds it at the def-label positions of the G1/G3/G4 items, via eval_item with use_vec.
+        - Conditions: none, common, and rand (random direction with norm |m|, seed 0).
+        - Verdict: transfer if common − none ≥ 0.10 and common − rand ≥ 0.10; no_transfer if common − none < 0.10; else nonspecific.
+        - The docstring correction says "51 項目" was a miscount; the actual n is 31.
+        - Results (order-robust accuracy, then accuracy):
+
+          | | none | common | rand |
+          |---|---|---|---|
+          | ALL robust | 0.645 | 0.097 | 0.484 |
+          | ALL acc | 0.742 | 0.677 | 0.613 |
+          | G1 robust | 0.947 | 0.105 | 0.737 |
+          | G3 robust | 0.125 | 0.0 | 0.0 |
+          | G4 robust | 0.25 | 0.25 | 0.25 |
+
+          Verdict: no_transfer.
+
+        **exp/experiments/e22_qualification_unseen.py (PR #278, prereg commit dba6c43)**
+        - Imports:
+          - Runner and question_text from e1;
+          - Injector from e3;
+          - delta_of and encode from e4_modifier_composition.
+        - Uses data/modifiers_ja.json pairs:
+
+          | pair | train parents | test parents |
+          |---|---|---|
+          | 甲種/乙種 | 予約, 注文 | 契約, 申込 |
+          | 青/赤 | 納品, 返品 | 出荷, 支払 |
+          | 一類/二類 | 変更, 購入 | 休暇, 出張 |
+
+          Each parent has 4 items.
+        - For each train parent G, trains v[M+G] on the compound span with train_compounds (e4 objective, 30 steps, lr 0.1). Then q[M] is the mean over G.
+        - Conditions on test items: none, text (defs prefix), mod (e4_modifier_vectors.pt on the modifier tokens), and qual (q[M] on the "M+G'" span).
+        - On train items it also measures own.
+        - Verdict: inconclusive if train own acc < 0.75; transfer if qual acc − none acc ≥ 0.20 and qual robust > none robust; else no_transfer.
+        - Outputs results/e22_Qwen2.5-1.5B-Instruct_L8.json with keys args, train, qual_norms, items, summary (train, test, test:<pair>), and verdict.
+
+        4. Errors and fixes
+        - **E21 item count**: the prereg said 51 items; the real count is 31.
+          - Appended a correction to the docstring and kept the original text (after first reverting a sed that had altered the original wording).
+          - The correction ended up inside the results commit e4193c6, because the `git add` without -f failed and the later add included it. Disclosed in the PR body; no history rewrite.
+        - **Auto-merge judgments**:
+          - #272 needs manual review (no script or results, since it was post-hoc).
+          - #275 needs manual review (two commits touched the script).
+        - **E22 first run killed**: it hit the default 30-minute background limit during the 5th vector's training, and no result file was written.
+          - Rerun with `timeout: 7200000` (task bo5fwjf6m, log scratchpad/e22b.log), with no changes.
+          - Disclosed in the PR #278 body, including that partial pair-1 test margins were seen (qual near 0).
+          - The rerun's first vector loss (0.98 → 0.58) matches the first run.
+        - **Keep-alive chain**: stopped the E21 chain with update_trigger enabled=false.
+
+        5. Problem Solving
+        - #52 refuted post hoc. The contrast vector lowers order-robust accuracy: G2c 0.29 → 0.17 → 0.04 → 0.00 and G2k 0.50 → 0.08 → 0.00.
+        - #56 refuted. The common component hurts unseen concepts more than a random direction, mostly in G1. Interpretation: m is tied to the trained concepts' question format, or suppresses prior meaning.
+        - E22 interpretation: the first-run log for pair 1 showed qual margins near 0 on test, while text was clearly positive.
+        - First-run training losses, for reference:
+
+          | vector | loss |
+          |---|---|
+          | 甲種/乙種 予約 | 0.98 → 0.58 |
+          | 甲種/乙種 注文 | 0.95 → 0.79 |
+          | 青/赤 納品 | 1.21 → 0.00 |
+          | 青/赤 返品 | 1.49 → 0.72 |
+
+        6. All user messages
+        - None in this segment; all inputs were notifications and scheduled triggers.
+        - Prior standing user messages, kept from before:
+          - 「トリアージして進めて。…このリポジトリの実験目標、モデルの概念一貫性に寄与しそうなものから優先で」
+          - 「Bは体系の健全性に依存しないか？」
+          - 「A3もじゃないの？それともその周辺はもう証明されてる？」
+          - 「A4は？」
+          - 「それでいいだろうね よろしく」
+          - 「ちなみにコンテナは10分作業しないと再起動する 応答終了時に9分30秒チェーンするようにしといて」
+          - 「チェーンが居るのは長い実験だけね それ以外はやらなくていい」
+          - The earlier corpus/prosody remarks also stand: use Aozora etc. vs session logs; CC-BY-SA needs attribution; model utterances are expected to be less reliable; the exposure hypothesis does not hold because this repo publishes output as-is; attachment tendency is expected to differ.
+
+        7. Pending Tasks
+        - Open PRs:
+          - #272 and #275 await the user's manual merge.
+          - #278 is a Draft until E22 finishes.
+        - E22 is rerunning (task bo5fwjf6m, ~6.5 min per vector, 6 vectors, plus evaluation).
+        - Keep-alive: the next fire is 20:32Z (trig_01KHzcQ1p2bRTHtfue1K4nnd). Reschedule 9 min while E22 runs; disable when done.
+        - When E22 finishes:
+          - compare the values with the first-run log;
+          - declare family e22 in exp.yaml (rows items, filter {split, pair}, conds none / text / mod / qual / own);
+          - write observations, link v_support or v_contradict to h_qualification_vector_transfers_to_unseen_genus, and run tc and ec;
+          - `git add -f` the results file, commit, push, update the PR #278 body, and undraft;
+          - stop the chain;
+          - consider implication registrations as pairs.
+        - The cycle at 20:42Z continues the triage: next A is #92 h_qualification_teacher_raises_following. Heavy experiments run one at a time.
+        - After a merge, delete local branches:
+          - claude/h_text_shift_raises_stability;
+          - claude/h_common_component_transfers_to_unseen;
+          - claude/h_qualification_vector_transfers_to_unseen_genus.
+
+        8. Current Work
+        - The E22 rerun is in progress; the first vector is done and matches the first run.
+        - The last assistant report: 「E22 の走らせ直しで、1 本目のベクトルの学習が終わりました。損失は 0.98 → 0.58 で、1 回目のログと同じ値です。残りは 5 本で、次の保持の予約は 20:32Z です。」
+        - The current local branch is claude/h_qualification_vector_transfers_to_unseen_genus.
+
+        9. Optional Next Step
+        - At the 20:32Z keep-alive fire:
+          1. Check scratchpad/e22b.log (`grep "^\[train\]"` and the process).
+          2. If E22 is still running, schedule another 9-minute send_later with the same text.
+          3. If it is done: disable the chain, record the results (families, observations, verdict), run tc and ec, `git add -f` the results, push, update PR #278, undraft, and report in Japanese with the implication registrations.
+
+        If you need specific details from before compaction (like exact code snippets, error messages, or content you generated), read the full transcript at: /root/.claude/projects/-home-user-CMT/e05d2140-ce91-515f-a5fb-e6251e13d406.jsonl
+        Continue the conversation from where it left off without asking the user any further questions. Resume directly — do not acknowledge the summary, do not recap what was happening, do not preface with "I'll continue" or similar. Pick up the last task as if the break never happened.
+
+        The messages after this summary are the most recent messages from before compaction, kept verbatim. The summary was written without seeing them, so something it says has not happened yet may already have happened in them.
+facts:
+- {is: v_say, from: session_model, to: 01M7R5V5YF3DNRJ6252PA0Z6MA}
+- {is: v_refer, from: 01M7R5V5YF3DNRJ6252PA0Z6MA, to: ontology.v_refer}
+- {is: v_refer, from: 01M7R5V5YF3DNRJ6252PA0Z6MA, to: exp.v_check}
+- {is: v_refer, from: 01M7R5V5YF3DNRJ6252PA0Z6MA, to: lang.type_checker}
+- {is: v_refer, from: 01M7R5V5YF3DNRJ6252PA0Z6MA, to: exp.v_file_of}
+- {is: v_refer, from: 01M7R5V5YF3DNRJ6252PA0Z6MA, to: exp.v_rows_of}
+- {is: v_refer, from: 01M7R5V5YF3DNRJ6252PA0Z6MA, to: exp.v_axis_of}
+- {is: v_refer, from: 01M7R5V5YF3DNRJ6252PA0Z6MA, to: exp.v_value_of}
+- {is: v_refer, from: 01M7R5V5YF3DNRJ6252PA0Z6MA, to: exp.v_denote}
+- {is: v_refer, from: 01M7R5V5YF3DNRJ6252PA0Z6MA, to: exp.v_filter_of}
+- {is: v_refer, from: 01M7R5V5YF3DNRJ6252PA0Z6MA, to: exp.v_entry_of}
+- {is: v_refer, from: 01M7R5V5YF3DNRJ6252PA0Z6MA, to: exp.v_metric_of}
+- {is: v_refer, from: 01M7R5V5YF3DNRJ6252PA0Z6MA, to: exp.order_robust_accuracy}
+- {is: v_refer, from: 01M7R5V5YF3DNRJ6252PA0Z6MA, to: exp.verdict_stability}
+- {is: v_refer, from: 01M7R5V5YF3DNRJ6252PA0Z6MA, to: exp.contrast_vector}
+- {is: v_refer, from: 01M7R5V5YF3DNRJ6252PA0Z6MA, to: exp.common_vector_component}
+- {is: v_refer, from: 01M7R5V5YF3DNRJ6252PA0Z6MA, to: exp.qualification_vector}
+- {is: v_refer, from: 01M7R5V5YF3DNRJ6252PA0Z6MA, to: exp.unseen_genus}
+- {is: v_refer, from: 01M7R5V5YF3DNRJ6252PA0Z6MA, to: exp.prior_meaning}
+- {is: v_refer, from: 01M7R5V5YF3DNRJ6252PA0Z6MA, to: exp.state_shift}
+- {is: v_refer, from: 01M7R5V5YF3DNRJ6252PA0Z6MA, to: exp.v_lower}
+- {is: v_refer, from: 01M7R5V5YF3DNRJ6252PA0Z6MA, to: ontology.v_come_before}
+- {is: v_refer, from: 01M7R5V5YF3DNRJ6252PA0Z6MA, to: exp.v_contradict}
+- {is: v_refer, from: 01M7R5V5YF3DNRJ6252PA0Z6MA, to: exp.hyp_refuted}
+- {is: v_refer, from: 01M7R5V5YF3DNRJ6252PA0Z6MA, to: exp.no_channel}
+- {is: v_refer, from: 01M7R5V5YF3DNRJ6252PA0Z6MA, to: exp.v_support}
