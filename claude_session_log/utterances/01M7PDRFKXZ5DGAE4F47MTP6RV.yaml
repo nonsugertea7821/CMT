@@ -1,0 +1,27 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-18T04:13:39.325Z（UTC）
+individuals:
+  01M7PDRFKXZ5DGAE4F47MTP6RV:
+    is: model_utterance
+    display: 発言 1584
+    val:
+      order: 1584
+      text: |
+        「個体の深さ」をバックログに入れ、claude/cross に push しました（3d8c7d6）。ただし、まだ Issue にはなっていません。
+
+        **Issue になる仕組み**
+        - Issue に写されるのは仮説と決定だけで、残り項目そのものは写されません（`.github/scripts/sync_issues.py`）。
+        - そこで、これまでと同じ形で、未検証の仮説 `h_individual_depth` と、それを確かめる未着手の残り項目 `b_individual_depth` を対で置きました。Issue になるのは仮説の側です。
+        - 下書きはローカルで作れることを確かめました。タイトルは「[cscl] h_individual_depth: 依存する(個体の深さ, 種類)」で、ラベルは claim / cscl / hypothesis / untested です。
+        - Issue が実際にできるのは、main に入ったあとです。次のどちらかで作られます。
+          - リポジトリ変数 `ISSUE_SYNC` が on なら、main への push で自動的に作られます。
+          - そうでなければ、issues ワークフローを手で実行し、apply を選びます。
+
+        **書けなかったこと**
+        - はじめは、仮説の中身を「個体の深さは祖先の関係（`r_ancestor`）に依存する」と書きました。ところが `r_ancestor` は法則の関係でノードではないため、ec が「未定義」として通しませんでした。
+        - 階層が対象言語にない、という欠け1がここでも出たことになります。
+        - 中身は「個体の深さは種類に依存する」までしか書けていません。`individual_depth` も、自前の式が1つの薄い語です。
+
+        Issue ができたら、説明と経緯の節（自分で書く部分）を埋めましょうか？
+facts:
+- {is: v_say, from: session_model, to: 01M7PDRFKXZ5DGAE4F47MTP6RV}
+- {is: exp.v_answer, from: 01M7PDRFKXZ5DGAE4F47MTP6RV, to: 01M7PDP3BZBK7QKYYF819M04N2}
