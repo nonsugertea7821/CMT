@@ -1,0 +1,26 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-18T04:37:04.344Z（UTC）
+individuals:
+  01M7PF3BPRA2ZDRXWTHH7XGHVT:
+    is: model_utterance
+    display: 発言 1620
+    val:
+      order: 1620
+      text: |
+        まだ決めていませんでした。6つを登録したところで「どれから確かめるか決めてほしい」と聞いて、その後は PR の流れと自動マージの話に移っていました。手がかりとしては、あなたが個体の深さを先に気にしていたことです（「個体の深さかなぁ、バックログに入れといて」）。
+
+        今回登録した分を、つながりで並べるとこうなります。
+
+        1. **h_individual_depth（個体の深さ）**
+           - 一番小さく、ほかに依存しません。sys_count_atom で外した個体の端を、数える側に戻す実験です。
+        2. **h_hierarchy_in_object（型階層を体系の中の語にする、欠け1）**
+           - 浅さは法則の関係（r_shallow）として書けましたが、法則の関係は限定の `of` にも仮説の中身にも置けません。
+        3. **h_draw_on_with_shallow（読みを display に頼らず書く）**
+           - 「浅い端だけの定義」を語として使うので、2 が先に要ります。
+        4. **残りの3つ（h_gloss_formula、h_negation_formula、h_comment_ban）**
+           - それぞれ独立しています。h_comment_ban は残りのコメント（claims に 277、cscl.yaml に 14）を移すので、量が一番多いです。
+
+        おすすめは 1 → 2 → 3 の順で、まず h_individual_depth です。それでよければ、`claude/h_individual_depth` を main から切り、事前登録の commit から始めます。
+facts:
+- {is: v_say, from: session_model, to: 01M7PF3BPRA2ZDRXWTHH7XGHVT}
+- {is: exp.v_answer, from: 01M7PF3BPRA2ZDRXWTHH7XGHVT, to: 01M7PF31CJ4W9PS6MCQKYQ17ZT}
+- {is: v_refer, from: 01M7PF3BPRA2ZDRXWTHH7XGHVT, to: syntax.of}
