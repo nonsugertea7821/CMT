@@ -1,6 +1,7 @@
 domain: exp
 nodes:
   refer_from_hypothesis: {display: 仮説へ述べる（始点）, extends: quality, of: [v_refer, from], with: hypothesis}
+  come_after_from_observation: {display: 観察の後に来る（始点）, extends: quality, of: [v_come_after, from], with: observation}
   depend_from_redefinition: {display: 再定義へ依存する（始点）, extends: quality, of: [v_depend, from], with: redefinition}
   refer_from_common_word: {display: 一般語へ述べる（始点）, extends: quality, of: [v_refer, from], with: common_word}
   not_agree_from_prior_meaning: {display: 元の意味へ一致する（否定）（始点）, extends: quality, of: [v_agree, from], with: prior_meaning, neg: true}
@@ -129,6 +130,10 @@ nodes:
   definition_compose_from_glossary: {display: 用語集の部分である定義, extends: definition, mod: {of: [v_compose, from], with: glossary}}
   glossary_head: {display: 用語集の先頭, extends: definition_compose_from_glossary, mod: {of: [v_come_after, from], with: definition, neg: true}}
   operator: {display: 運用者, extends: continuant, mod: {of: [v_design, from], with: experiment_protocol}}
+  protocol_sentence: {display: 取り決めの部分である文, extends: sentence, mod: {of: [v_compose, from], with: experiment_protocol}}
+  correction: {display: 訂正, extends: protocol_sentence, mod: come_after_from_observation}
+  uncorrected_protocol: {display: 訂正のない取り決め, extends: experiment_protocol, mod: {of: [v_compose, to], with: correction, neg: true}}
+  merge_verdict: {display: マージの判定, extends: verdict, mod: {of: [v_refer, from], with: uncorrected_protocol}}
   passage_compose_from_context: {display: 文脈の部分である文章, extends: passage, mod: compose_from_context}
   place_system: {display: システムプロンプト, extends: passage_compose_from_context, mod: {of: [v_speak, to], with: operator}}
   place_adjacent: {display: 設問の直前, extends: passage_compose_from_context, mod: {of: [v_come_after, to], with: question, at: {order: 1}}}
@@ -303,7 +308,7 @@ nodes:
   hyp_untested: {display: 未検証の仮説, extends: hypothesis_agree_to_evidence_not, mod: not_agree_to_against}
   supersedes: {display: 置き換えられた文, extends: withdrawn_sentence, mod: {of: [v_refer, to], with: sentence}, many: true}
   limitation: {display: 留保, extends: sentence_refer_from_hypothesis, mod: {of: [v_refer, from], with: observation}, many: true}
-  lim_post_hoc: {display: 結果を見たあとで分類した, extends: limitation, mod: {of: [v_come_after, from], with: observation}}
+  lim_post_hoc: {display: 結果を見たあとで分類した, extends: limitation, mod: come_after_from_observation}
   lim_range: {display: 測った範囲が限られる, extends: limitation, mod: {of: [v_refer, from], with: factor}}
   lim_one_item: {display: 差が1問以内, extends: limitation, mod: {of: [v_refer, from], with: question, at: {count: 1}}}
   lim_unconverged: {display: 学習が収束していない, extends: limitation, mod: {of: [v_refer, from], with: training_loss}}
@@ -1345,6 +1350,8 @@ individuals:
   h_following_definitions_do_not_lower: {is: hyp_supported}
   h_new_word_immune: {is: hyp_supported}
   h_attention_causes_preceding_effect: {is: hyp_untested}
+  h_auto_merge_uncorrected: {is: hyp_untested}
+  b_auto_merge_uncorrected: {is: item_queued}
   h_opaque_renaming_raises: {is: hyp_supported}
   h_semi_renaming_does_not_raise: {is: hyp_supported}
   h_opaque_renaming_lowers_control: {is: hyp_supported}
@@ -3520,6 +3527,8 @@ facts:
   - {is: v_refer, from: h_specific_composes_from_expression, to: {is: v_agree, from: specific_vector_component, to: concept_expression}}
   - {is: v_refer, from: h_common_component_transfers_to_unseen, to: {is: v_transfer, from: common_vector_component, to: unseen_genus}}
   - {is: v_refer, from: h_attention_carries_text_route, to: {is: v_raise, from: attention, to: redefinition_following}}
+  - {is: v_refer, from: h_auto_merge_uncorrected, to: {is: v_immune, from: merge_verdict, to: operator}}
+  - {is: v_check, from: b_auto_merge_uncorrected, to: h_auto_merge_uncorrected}
   - {is: v_refer, from: h_length_does_not_lower, to: {is: v_not_lower, from: context_length, to: redefinition_following}}
   - {is: v_scope, from: model_4b, to: h_length_does_not_lower}
   - {is: v_scope, from: text_injection, to: h_length_does_not_lower}
