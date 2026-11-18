@@ -1074,6 +1074,34 @@ class Ontology:
                 if not ok or "at" in f or len(args) != self.B[f["is"]]["arity"] or any(a not in self.G["position"] for a in args):
                     err(f"{vid}: {key} の {f} が、基礎の関係と位置で書かれていない")
 
+    def check_primitives(self, nid, n):
+        """always（どの歩みでも）・sometime（ある歩みで pre から post へ）・ranges（変数の範囲）。原子の項は self だけ。"""
+        def atoms_ok(key, fs):
+            if not isinstance(fs, list) or not fs:
+                return err(f"{nid}: {key} は原子の並びで書く")
+            for f in fs:
+                ok = isinstance(f, dict) and not set(f) - set(self.G["facts"]) and f.get("is") in self.B and "val" not in f
+                args = atom(f)[2] if ok else ()
+                if not ok or len(args) != self.B[f["is"]]["arity"] or any(a != "self" for a in args):
+                    err(f"{nid}: {key} の {f} が、基礎の関係と項 self で書かれていない")
+        if "always" in n:
+            atoms_ok("always", n["always"])
+        if "sometime" in n:
+            if not isinstance(n["sometime"], list) or not n["sometime"]:
+                err(f"{nid}: sometime は変化の並びで書く")
+            for i, c in enumerate(n["sometime"] if isinstance(n["sometime"], list) else []):
+                if not isinstance(c, dict) or set(c) != {"pre", "post"}:
+                    err(f"{nid}: sometime[{i}] は pre と post の両方で書く")
+                    continue
+                atoms_ok(f"sometime[{i}].pre", c["pre"])
+                atoms_ok(f"sometime[{i}].post", c["post"])
+                if sorted(map(atom, c["pre"])) == sorted(map(atom, c["post"])):
+                    err(f"{nid}: sometime[{i}] の pre と post が同じ（変化がない）")
+        if "ranges" in n:
+            r = n["ranges"]
+            if r not in self.I or not self.is_a(self.I[r], "variable"):
+                err(f"{nid}: ranges の {r} は変数でない")
+
     def grounding(self, nid):
         return [m["with"] for x in [nid] + self.ancestors(nid) for m in (self.N[x].get("mod") or [])
                 if isinstance(m, dict) and m.get("of") == ["ontology.v_depend", "from"] and "with" in m and not m.get("neg")
@@ -1098,11 +1126,13 @@ class Ontology:
                 err(f"{nid}: 表示語がない")
             seen[key] = nid
             if nid in TOPS or nid == "any":   # 最上位と、シグネチャの any
-                if set(n) - {"many"} != {"display", "gloss"}:
-                    err(f"{nid}: 最上位は gloss だけを持つ")
+                if set(n) - {"display", "many", "mod", "always", "sometime", "ranges", "gloss"}:
+                    err(f"{nid}: 最上位は display・many・mod・always・sometime・ranges・gloss だけを持つ")
+                self.check_primitives(nid, n)
                 continue
             if "gloss" in n:
                 err(f"{nid}: gloss を持てるのは最上位の2つだけ。式で書くこと")
+            self.check_primitives(nid, n)
             extra = set(n) - set(self.G["nodes"])
             if extra:
                 err(f"{nid}: 語 {extra} が、grammar.nodes に書かれていない")
@@ -1262,7 +1292,7 @@ class Ontology:
         out, hops = [], 0
         while nid in self.N and hops < 80:
             n = self.N[nid]
-            body = {k: n[k] for k in ("from", "to", "new_kind", "holds", "pre", "post", "form", "of", "neg", "mod", "val", "cmp", "axis", "gloss") if k in n}
+            body = {k: n[k] for k in ("from", "to", "new_kind", "holds", "pre", "post", "always", "sometime", "ranges", "form", "of", "neg", "mod", "val", "cmp", "axis", "gloss") if k in n}
             out.append(f"{nid}（{n['display']}） {body}")
             nid, hops = self.parent(nid), hops + 1
         return "\n  ← ".join(out)

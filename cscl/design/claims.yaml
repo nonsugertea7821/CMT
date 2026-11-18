@@ -40,7 +40,7 @@ nodes:
   exists_scope: {display: 在るものの範囲, extends: quality, mod: {of: [v_depend, from], with: runtime.state}}
   step_quantification: {display: 歩みを動く量化, extends: quality, mod: {of: [v_refer, from], with: runtime.steps, quant: all}}
   kind_existence: {display: 種類について在ることを述べる場所, extends: quality, mod: {of: [v_refer, from], with: runtime.state, quant: all}}
-  variable_range: {display: 変数の範囲, extends: quality, mod: {of: [v_refer, from], with: syntax.variable}}
+  variable_range: {display: 変数の範囲, extends: quality, mod: syntax.refer_from_variable}
   v_not_trigger: {display: 引き起こさない, extends: v_not_transfer, from: any, to: occurrent, opposite: v_trigger}
 
 individuals:
@@ -127,8 +127,8 @@ individuals:
   b_w_from_frames: {is: exp.item_done}
   h_layers_from_primitives: {is: exp.hyp_untested}
   b_layers_from_primitives: {is: exp.item_queued}
-  h_tops_from_primitives: {is: exp.hyp_untested}
-  b_tops_from_primitives: {is: exp.item_queued}
+  h_tops_from_primitives: {is: exp.hyp_supported}
+  b_tops_from_primitives: {is: exp.item_done}
   h_any_not_vacuous: {is: exp.hyp_refuted}
   b_any_not_vacuous: {is: exp.item_done}
   h_any_by_entail: {is: exp.hyp_refuted}
@@ -314,6 +314,8 @@ individuals:
   o_sys_ja_case_frame_broken: {is: exp.observation}
   o_sys_ja_roundtrip_ok: {is: exp.observation}
   o_sys_ja_roundtrip_struct: {is: exp.observation}
+  o_sys_tops_primitives_left: {is: exp.observation}
+  o_sys_tops_primitives_errors: {is: exp.observation}
   o_sys_gloss_formula_accepted: {is: exp.observation}
   o_sys_gloss_formula_left: {is: exp.observation}
   o_sys_w_from_frames_dyn: {is: exp.observation}
@@ -600,6 +602,9 @@ facts:
   - {is: v_refer, from: o_sys_ja_roundtrip_ok, to: {is: v_level, from: sys_ja_roundtrip.rate_ok.mean_value, to: 1.0}}
   - {is: v_refer, from: o_sys_ja_roundtrip_struct, to: {is: v_level, from: sys_ja_roundtrip.n_struct.mean_value, to: 0}}
   - {is: exp.v_support, from: o_sys_ja_roundtrip_struct, to: h_ja_roundtrip}
+  - {is: v_refer, from: o_sys_tops_primitives_left, to: {is: v_level, from: sys_tops_primitives.n_left.mean_value, to: 0}}
+  - {is: v_refer, from: o_sys_tops_primitives_errors, to: {is: v_level, from: sys_tops_primitives.errors.mean_value, to: 0}}
+  - {is: exp.v_support, from: o_sys_tops_primitives_left, to: h_tops_from_primitives}
   - {is: v_refer, from: o_sys_gloss_formula_accepted, to: {is: v_level, from: sys_gloss_formula.n_accepted.mean_value, to: 2}}
   - {is: v_refer, from: o_sys_gloss_formula_left, to: {is: v_come_after, from: sys_gloss_formula.n_left.mean_value, to: 0}}
   - {is: exp.v_contradict, from: o_sys_gloss_formula_left, to: h_gloss_formula}
