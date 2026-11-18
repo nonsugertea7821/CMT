@@ -1,0 +1,29 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-18T04:15:54.447Z（UTC）
+individuals:
+  01M7PDWKJF8FMV5X5ARMD6BAJZ:
+    is: model_utterance
+    display: 発言 1588
+    val:
+      order: 1588
+      text: |
+        残りの提案を、未検証の仮説 5 つとして登録しました。それぞれに確かめるための残り項目（未着手）を対で置き、claude/cross に push してあります（d804a35）。
+
+        | 仮説 | 式に書いた中身 | 言いたいこと |
+        |---|---|---|
+        | h_hierarchy_in_object | 深さの限定は基礎の節に依存する | 欠け1。上位の関係を基礎の関係にして動詞を置けば、ノードの式で深さを書ける |
+        | h_draw_on_with_shallow | 読みの式は表示語に依存しない | `r_shallow` を使えば、sys_draw_on の読みを named_mod の誤りなしに式で書ける |
+        | h_gloss_formula | 最上位の置き場は説明文に依存しない | continuant / occurrent / any の gloss を式にできる |
+        | h_negation_formula | 否定の限定は型検査器に依存しない | any の範囲や否定の限定の意味を、検査器のコードから式に移せる |
+        | h_comment_ban | 定義は注釈に依存しない | コメントを全面禁止にしても定義は失われない |
+
+        - **中身の語:** 中身を書くために、`depth_limitation`、`reading_formula`、`annotation` の 3 語を足しました。どれも自前の式が 1 つの薄い語で、意味の大半は表示語と commit メッセージに頼っています。
+        - **名前を付けた修飾語:** `reading_formula` の限定が既存の語と同じになりました。法則 named_mod の指示どおり、名前を付けた修飾語 `exp.refer_from_hypothesis` を置きました。
+        - **検査:** tc と ec の誤りは 0、違反の組は 3 のままです。
+        - **Issue になる時期:** 前回の `h_individual_depth` と合わせて 6 つあり、main に入って同期されると Issue になります。
+
+        **途中の失敗:** 違反の数を見るために sys_draw_on を走らせ、記録済みの結果ファイルを上書きしてしまいました。HEAD の版に戻したので、commit には入っていません。同じ失敗が2回続いたので、確かめに実験スクリプトは使わず、結果ファイルに書かない検査（tc / ec）だけを使うようにします。
+
+        **取り決めを残す場所:** 「提案は仮説にしてから伝える」は、このセッションでは守ります。ただ、この会話の外には残りません。後のセッションでも守らせるなら、リポジトリに `CLAUDE.md` を置いて書いておくのが確実です。置きましょうか？
+facts:
+- {is: v_say, from: session_model, to: 01M7PDWKJF8FMV5X5ARMD6BAJZ}
+- {is: exp.v_answer, from: 01M7PDWKJF8FMV5X5ARMD6BAJZ, to: 01M7PDSE6WQKFYAWBBZ5CPVYHB}
