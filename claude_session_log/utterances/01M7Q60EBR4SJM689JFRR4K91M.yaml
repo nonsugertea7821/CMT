@@ -1,0 +1,51 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-18T11:17:26.008Z（UTC）
+individuals:
+  01M7Q60EBR4SJM689JFRR4K91M:
+    is: model_utterance
+    display: 発言 1884
+    val:
+      order: 1884
+      text: |
+        なると思います。今の体系の中身とも、だいたい合っています。ここから下は私の読みで、まだ確かめていません。
+
+        **syntax の中身がそういう形をしている**
+        - syntax の語（`mod`, `holds`, `pre`, `post`, `always`, `sometime`, `ranges`, `of`, `with`, `quant`）は、どれも物でも出来事でもありません。軸どうしをどう組み合わせるかの指定です。
+          - `mod` は、一つの歩みの中で、ほかのものとの関係で限定する組み合わせ。
+          - `always`・`sometime` は、歩みの軸に沿って限定する組み合わせ。
+          - `pre`→`post` は、点と変位をつなぐ組み合わせ（点 ＋ 変位 ＝ 点）。
+        - 幾何でいえば、点や変位そのものではありません。それらをどう足し引きしてよいかを決める構造（アフィン構造）にあたります。
+
+        **前の観察と合う**
+        - sys_layers で否定の辺をたどらない版では、syntax の 104 のうち 100 が「述べる（refer）」に入りました。
+        - refer は、体系そのものの行為として決めてある、ただ一つの関係です。syntax が中身を持たず関係づけるだけの層なら、述べるに入るのは筋が通ります。
+
+        **登録したときの私の対応を直すことになる**
+        h_layers_from_primitives のとき、私は「syntax ＝ 変数の範囲」と対応させました。いただいた読みだと、次のようになります。
+
+        | 層 | 受け持つもの |
+        |---|---|
+        | ontology | 点（在るもの） |
+        | runtime | 変位（歩み） |
+        | syntax | その間の関係 |
+        | シグネチャ | 変数の範囲（`any`・`self`） |
+
+        変数の範囲は、層の一つではなく、全部の下にある足場になります。
+
+        **この読みから出る予測（確かめていない）**
+        - ontology で外れた 14 ノード（語・文・概念・言語・v_refer など）は、述べる道具です。この読みなら syntax に置くべきものになります。
+        - runtime で外れた 6 ノード（state・rewrite_rule など）は、変位そのものではなく、変位について述べるものです。これも syntax 寄りになります。
+
+        さっきの案 B（外れた 25 ノードが正しい層に分かれるか）を、この対応で事前登録しようと思います。h_layers_from_primitives の中身も、この対応に合わせて書き直します。
+facts:
+- {is: v_say, from: session_model, to: 01M7Q60EBR4SJM689JFRR4K91M}
+- {is: exp.v_answer, from: 01M7Q60EBR4SJM689JFRR4K91M, to: 01M7Q5ZC1EVY1ZA76C3VVBFXTG}
+- {is: v_refer, from: 01M7Q60EBR4SJM689JFRR4K91M, to: syntax.mod}
+- {is: v_refer, from: 01M7Q60EBR4SJM689JFRR4K91M, to: syntax.holds}
+- {is: v_refer, from: 01M7Q60EBR4SJM689JFRR4K91M, to: syntax.pre}
+- {is: v_refer, from: 01M7Q60EBR4SJM689JFRR4K91M, to: syntax.post}
+- {is: v_refer, from: 01M7Q60EBR4SJM689JFRR4K91M, to: syntax.of}
+- {is: v_refer, from: 01M7Q60EBR4SJM689JFRR4K91M, to: syntax.with}
+- {is: v_refer, from: 01M7Q60EBR4SJM689JFRR4K91M, to: syntax.quant}
+- {is: v_refer, from: 01M7Q60EBR4SJM689JFRR4K91M, to: any}
+- {is: v_refer, from: 01M7Q60EBR4SJM689JFRR4K91M, to: ontology.v_refer}
+- {is: v_refer, from: 01M7Q60EBR4SJM689JFRR4K91M, to: runtime.rewrite_rule}
