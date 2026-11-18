@@ -236,7 +236,9 @@ def check_claims(C, values, T):
         triple(h, hid)
         have = {"evidence": bool(h.get("evidence")), "against": bool(h.get("against"))}
         want = [k for k, v in patterns.items() if v == have]
-        if short(h["status"]) not in {short(k) for k in patterns}:
+        if T.is_a(h["status"], "withdrawn_sentence"):
+            pass
+        elif short(h["status"]) not in {short(k) for k in patterns}:
             err(f"{hid}: 種類 {h["status"]} は、仮説の状態のノードでない")
         elif want != [h["status"]]:
             err(f"{hid}: 種類は {h["status"]} と書かれているが、根拠の有無からは {want} になる")
