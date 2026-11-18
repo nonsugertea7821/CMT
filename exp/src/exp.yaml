@@ -1978,6 +1978,10 @@ individuals:
   b_qualification_raises_stability: {is: item_queued}
   h_modifier_vector_raises_stability: {is: hyp_untested}
   b_modifier_vector_raises_stability: {is: item_queued}
+  h_multi_layer_raises_conflict_following: {is: hyp_untested}
+  b_multi_layer_raises_conflict_following: {is: item_queued}
+  h_modifier_vector_raises_conflict_following: {is: hyp_untested}
+  b_modifier_vector_raises_conflict_following: {is: item_queued}
 facts:
   - {is: v_collect, from: residual_space, to: residual_vector}
   - {is: v_sum, from: layer_output, to: state_shift, new: shifted_hidden_state}
@@ -5218,6 +5222,10 @@ facts:
   - {is: v_check, from: b_qualification_raises_stability, to: h_qualification_raises_stability}
   - {is: v_refer, from: h_modifier_vector_raises_stability, to: {is: v_raise, from: modifier, to: verdict_stability}}
   - {is: v_check, from: b_modifier_vector_raises_stability, to: h_modifier_vector_raises_stability}
+  - {is: v_refer, from: h_multi_layer_raises_conflict_following, to: {is: v_raise, from: multi_layer_vector, to: redefinition_following}}
+  - {is: v_check, from: b_multi_layer_raises_conflict_following, to: h_multi_layer_raises_conflict_following}
+  - {is: v_refer, from: h_modifier_vector_raises_conflict_following, to: {is: v_raise, from: modifier, to: redefinition_following}}
+  - {is: v_check, from: b_modifier_vector_raises_conflict_following, to: h_modifier_vector_raises_conflict_following}
   - {is: v_check, from: b_e10_opaque_identifiers, to: h_opaque_expression_raises_following}
   - {is: v_check, from: b_e9_scratchpad, to: h_scratchpad_raises_rule_following}
   - {is: v_check, from: b_e9_scratchpad, to: h_scratchpad_raises_rule_following_4b}
