@@ -1,0 +1,46 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-18T06:33:32.561Z（UTC）
+individuals:
+  01M7PNRM4HCV5VV7FZPAQC03RR:
+    is: model_utterance
+    display: 発言 1710
+    val:
+      order: 1710
+      text: |
+        日本語の表示について仮説を 3 つ立て、登録の PR #159 を立てました。概念を 5 つ足すので自動マージには乗らず、手でマージしていただく必要があります。型検査器と ec はどちらも通っています。PR は見張っていて、あなたを assignee にしてあります。
+
+        **仮説の材料にした事例**
+        - **学習指導要領（国語）:** 学年ごとの、文法に関わる事項です。告示の本文はまだ読めていません。県の資料で学年の区切りを確かめ、文言は記憶で補っています。
+          - 1・2 年: 文の中の主語と述語の関係
+          - 3・4 年: 修飾と被修飾の関係、指示する語句と接続する語句の役割
+          - 5・6 年: 文の中での語句の係り方や語順、文と文との接続
+        - **ACE（Attempto Controlled English）:** 解釈規則を固定して、各文が意味を一つだけ持つようにしています。たとえば、関係節は直前の名詞に係り、前置詞句は動詞に係ります。OWL を ACE に読み下すときは、元の OWL に戻せることを目標にしています。
+        - **GF（Grammatical Framework）:** 抽象構文を一つにして、言語ごとに具象構文へ線形化します。日本語の資源文法もあります。
+
+        **登録した 3 つの仮説**
+
+        | 仮説 | 予測 |
+        |---|---|
+        | h_ja_case_frame | 動詞の語根（52）ごとに、位置（from・to・new）を格助詞（が・を・に など）に写す枠を決める。そうすれば種類の定義は、例外の語を足さずに、主語と述語のそろった文に訳せる。 |
+        | h_ja_roundtrip | 係り方と語順の規則を ACE のように固定する。そうすれば、訳した文を読み戻した式は元の式と一致し、多義が残らない。 |
+        | h_ja_connective | 解釈の文章の文と文のつながりは、「支持する」「反する」などの関係を「だから」「しかし」「なぜなら」に訳したもので書ける。 |
+
+        **確かめる順番**
+        1. まず h_ja_case_frame を確かめます。訳す仕組みと、往復で読み戻す仕組みの土台になるからです。動詞の語根 52 に格の枠を書き、すべての種類の定義を訳して、例外の数を数えます。
+        2. 次に、同じ規則で読み戻す仕組みを作り、往復の一致を数えます（h_ja_roundtrip）。
+        3. h_ja_connective は、前に書いた PR の本文の解釈の文を材料にします。それを体系の事実で書き直せるかを数えます。ただ、ここには前に突き当たった問題が残っています。法則の関係（r_entail など）を体系から参照できないことです。
+
+        学習指導要領の告示の本文と、ACE・GF の一次資料は、事前登録の前に確かめます。
+
+        Sources:
+        - [広島県 資料](https://www.pref.hiroshima.lg.jp/uploaded/attachment/335824.pdf)
+        - [岡山県 資料](https://www.pref.okayama.jp/uploaded/attachment/285968.pdf)
+        - [岩手県 資料](https://www.pref.iwate.jp/_res/projects/default_project/_page_/001/060/933/syoukokugo.pdf)
+        - [岐阜県 資料](https://www.pref.gifu.lg.jp/uploaded/attachment/214169.pdf)
+        - [文部科学省 学習指導要領解説 国語編](https://www.mext.go.jp/content/20220606-mxt_kyoiku02-100002607_002.pdf)
+        - [ACE 6.7 Interpretation Rules](https://attempto.ifi.uzh.ch/site/docs/ace_interpretationrules.html)
+        - [Edinburgh demo（OWL と ACE の往復）](https://homepages.inf.ed.ac.uk/lperez/content/activities/demos-kcap11.pdf)
+        - [A Multilingual Semantic Wiki Based on Attempto（arXiv 1303.4293）](https://arxiv.org/pdf/1303.4293.pdf)
+        - [Typeful Ontologies with Direct Multilingual Verbalization](https://www.springerprofessional.de/en/typeful-ontologies-with-direct-multilingual-verbalization/3910516)
+facts:
+- {is: v_say, from: session_model, to: 01M7PNRM4HCV5VV7FZPAQC03RR}
+- {is: exp.v_answer, from: 01M7PNRM4HCV5VV7FZPAQC03RR, to: 01M7PNKQS45A7CDS0FX8P54S9F}
