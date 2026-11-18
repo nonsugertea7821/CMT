@@ -24,6 +24,9 @@ grammar:
   individuals: [is, display, val]
   facts: [is, from, to, new, at, neg, val]
 
+base:
+  above: {display: 上位である, arity: 2}
+
 nodes:
   refer_from_facts: {display: 事実へ述べる（始点）, extends: quality, of: [v_refer, from], with: facts}
   refer_from_occurrent: {display: 生起体へ述べる（始点）, extends: quality, of: [v_refer, from], with: occurrent}
@@ -136,6 +139,9 @@ nodes:
 
   domain: {display: 領域, extends: passage, mod: {of: [v_compose, to], with: concept_expression}, many: true}
   v_use: {display: 使う, extends: v_depend, from: domain, to: domain}
+
+  v_above: {display: 上位に持つ, extends: ontology.occurrent, from: any, to: any, holds: [{is: above, from: from, to: to}]}
+  deep_kind: {display: 上位を3つ以上持つ種類, extends: ontology.kind, mod: {of: [v_above, from], with: any, at: {count: {gt: 2}}}}
 
 individuals:
   syntax: {is: domain, display: 構文}
@@ -251,6 +257,8 @@ individuals:
   shallow_ends: {is: law_rule, display: 自前の式に端があり、深い端を持たなければ、浅い端だけで定義される}
   deep_end_ind: {is: law_rule, display: 自前の式の端に、属する種類が3つ以上ある個体があれば、深い端を持つ}
   shallow_ends_ind: {is: law_rule, display: 自前の式の端に個体があり、深い端を持たなければ、浅い端だけで定義される}
+  above_by_ancestor: {is: law_rule, display: 祖先は上位である}
+  has_by_depth: {is: law_rule, display: 上位を3つ以上持つものは、上位を3つ以上持つという限定を持つ}
   entail_by_with: {is: law_rule, display: 同じ動詞の同じ位置で、端が下位の限定は、端が上位の限定を含意する（どちらも否定・数量・範囲なし）}
   has_by_acc: {is: law_rule, display: 積み上がった式は持つ}
   has_by_entail: {is: law_rule, display: 積み上がった式が含意する式も持つ}
@@ -594,6 +602,14 @@ facts:
   - {is: v_assume, from: shallow_ends_ind, to: {is: r_ind_kind, from: var3, to: var4}}
   - {is: v_assume, from: shallow_ends_ind, to: {is: r_deep_end, from: var1, neg: true}}
   - {is: v_derive, from: shallow_ends_ind, to: {is: r_shallow, from: var1}}
+  - {is: v_assume, from: above_by_ancestor, to: {is: r_ancestor, from: var1, to: var2}}
+  - {is: v_derive, from: above_by_ancestor, to: {is: above, from: var1, to: var2}}
+  - {is: v_assume, from: has_by_depth, to: {is: of, from: var2, to: v_above}}
+  - {is: v_assume, from: has_by_depth, to: {is: position, from: var2, to: from}}
+  - {is: v_assume, from: has_by_depth, to: {is: at, from: var2, to: "count:\n  gt: 2"}}
+  - {is: v_assume, from: has_by_depth, to: {is: exists, from: var1}}
+  - {is: v_assume, from: has_by_depth, to: {is: above, from: var1, to: var3, at: {count: {gt: 2}}}}
+  - {is: v_derive, from: has_by_depth, to: {is: r_has, from: var1, to: var2}}
   - {is: v_assume, from: at_axis, to: {is: with, from: var1, to: var2}}
   - {is: v_assume, from: at_axis, to: {is: axis, from: var1, to: var3}}
   - {is: v_assume, from: at_axis, to: {is: r_entail, from: var3, to: var4}}
