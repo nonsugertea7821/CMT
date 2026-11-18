@@ -142,8 +142,8 @@ individuals:
   b_concept_bounds_model_state: {is: exp.item_queued}
   h_given_laws_as_rules: {is: exp.hyp_untested}
   b_given_laws_as_rules: {is: exp.item_queued}
-  h_individual_scope_by_kind: {is: exp.hyp_untested}
-  b_individual_scope_by_kind: {is: exp.item_queued}
+  h_individual_scope_by_kind: {is: exp.hyp_refuted}
+  b_individual_scope_by_kind: {is: exp.item_done}
   h_plural_from: {is: exp.hyp_untested}
   b_plural_from: {is: exp.item_queued}
   h_law_names_grammar: {is: exp.hyp_untested}
@@ -337,6 +337,8 @@ individuals:
   o_sys_ja_roundtrip_struct: {is: exp.observation}
   o_sys_layers_unhardcode_undeterminable: {is: exp.observation}
   o_sys_layers_unhardcode_rename: {is: exp.observation}
+  o_sys_individual_scope_by_kind_named: {is: exp.observation}
+  o_sys_individual_scope_by_kind_undeterminable: {is: exp.observation}
   o_sys_layers_neg_dual_violations: {is: exp.observation}
   o_sys_layers_neg_dual_movable: {is: exp.observation}
   o_sys_layers_neg_dual_errors: {is: exp.observation}
@@ -662,6 +664,9 @@ facts:
   - {is: v_refer, from: o_sys_layers_unhardcode_rename, to: {is: v_level, from: sys_layers_unhardcode.errors_rename.mean_value, to: 10}}
   - {is: exp.v_contradict, from: o_sys_layers_unhardcode_undeterminable, to: h_layers_unhardcode}
   - {is: exp.v_contradict, from: o_sys_layers_unhardcode_rename, to: h_layers_unhardcode}
+  - {is: v_refer, from: o_sys_individual_scope_by_kind_named, to: {is: v_level, from: sys_individual_scope_by_kind.n_accepted.mean_value, to: 428}}
+  - {is: v_refer, from: o_sys_individual_scope_by_kind_undeterminable, to: {is: v_level, from: sys_individual_scope_by_kind.n_determinable.mean_value, to: 4}}
+  - {is: exp.v_contradict, from: o_sys_individual_scope_by_kind_named, to: h_individual_scope_by_kind}
   - {is: v_refer, from: o_sys_layers_neg_dual_violations, to: {is: v_level, from: sys_layers_neg_dual.n_violations.mean_value, to: 0}}
   - {is: v_refer, from: o_sys_layers_neg_dual_movable, to: {is: v_level, from: sys_layers_neg_dual.movable.mean_value, to: 1.0}}
   - {is: v_refer, from: o_sys_layers_neg_dual_errors, to: {is: v_level, from: sys_layers_neg_dual.errors.mean_value, to: 0}}
