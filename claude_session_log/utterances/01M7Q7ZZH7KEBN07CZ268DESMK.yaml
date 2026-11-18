@@ -1,0 +1,30 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-18T11:52:07.975Z（UTC）
+individuals:
+  01M7Q7ZZH7KEBN07CZ268DESMK:
+    is: model_utterance
+    display: 発言 1916
+    val:
+      order: 1916
+      text: |
+        h_layers_exists_change（#201）は**支持**でした。予想どおり `natural_language → v_design` の違反が消えました。PR #203 は Draft を外したので、CI が通れば自動マージに乗るはずです。
+
+        | | 前（#199） | 今回 |
+        |---|---|---|
+        | 外れ | 33 | 30 |
+        | 動かせる外れ | 30（0.91） | 29（0.97） |
+        | 違反の組 | 2 | 1 |
+
+        - **変えたこと:** 「存在が変わるだけの動詞」（pre・post が `exists` だけ）を、変位の根拠に数えないようにしました。これで `v_design` とその役割（designer, designed）は ontology に残ります。
+        - **読み:** 点が現れる・消えるのは点の側、点のあいだの関係（after など）が変わるのが変位、という分け方です。決め手は基礎の関係の種類、つまりシグネチャだけで、読みを選んでいません。
+        - **但し書き:** 効いた動詞は `v_design` の一つだけです。この規則が一般に効くことまでは示していません。
+        - **残る違反:** `halted → v_execute`（否定の参照）の 1 組だけです。
+
+        次は、この最後の 1 組を h_layers_neg_dual（#202）で扱います。halted は「どのステップでも、self の後に来る状態がない（□¬）」と読めます。ただ、そう書くには self 以外の項（存在量化される変数）が要り、今の always の原子では書けません。そこで事前登録の前に、次の二つを確かめます。
+        - 原子の項を広げずに書けるか。
+        - 書けないなら、それ自体が「シグネチャに足りない形」の観察になるか。
+facts:
+- {is: v_say, from: session_model, to: 01M7Q7ZZH7KEBN07CZ268DESMK}
+- {is: exp.v_answer, from: 01M7Q7ZZH7KEBN07CZ268DESMK, to: 01M7Q7Q804073AW28WHBXD3D3T}
+- {is: v_refer, from: 01M7Q7ZZH7KEBN07CZ268DESMK, to: ontology.natural_language}
+- {is: v_refer, from: 01M7Q7ZZH7KEBN07CZ268DESMK, to: ontology.v_design}
+- {is: v_refer, from: 01M7Q7ZZH7KEBN07CZ268DESMK, to: runtime.v_execute}
