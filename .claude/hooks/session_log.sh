@@ -5,11 +5,21 @@
 #   bash .claude/hooks/session_log.sh --decide <ULID> keep|withhold <理由>
 #   bash .claude/hooks/session_log.sh --pending          このセッションでまだ記録していない発言（withhold は push の前に）
 # それ以外の失敗では作業を止めない（0 で終わる。次の Stop で足りない分が足される）。
+#
+# 規定では何もしない（clone した人のセッションを記録しないため）。記録するのは、持ち主が自分で有効にしたときだけ:
+#   - 環境変数 CMT_SESSION_LOG_OWNER=<GitHub のユーザー名>、または
+#   - git config cmt.sessionLogOwner <GitHub のユーザー名>（.git/config に書く。commit されず、clone にも渡らない）
+# さらに、そのユーザー名が origin の持ち主と同じときだけ動く。ブランチは claude/session-log-<ユーザー名>。
 set -u
 cd "${CLAUDE_PROJECT_DIR:-$(git rev-parse --show-toplevel)}" || exit 0
+owner=${CMT_SESSION_LOG_OWNER:-$(git config --get cmt.sessionLogOwner 2>/dev/null)}
+[ -n "$owner" ] || exit 0
+case "$owner" in *[!A-Za-z0-9-]*) exit 0;; esac
+origin_owner=$(git remote get-url origin 2>/dev/null | sed -E 's#\.git$##; s#/+$##' | awk -F'[/:]' '{print $(NF-1)}')
+[ "$origin_owner" = "$owner" ] || exit 0
 common=$(cd "$(git rev-parse --git-common-dir)" && pwd) || exit 0
-wt="$common/session-log-worktree"
-branch=claude/session-log
+wt="$common/session-log-worktree-$owner"
+branch="claude/session-log-$owner"
 py=/home/user/venv/bin/python; [ -x "$py" ] || py=python3
 mode=${1:-stop}
 if [ "$mode" = stop ]; then in=$(cat); else
