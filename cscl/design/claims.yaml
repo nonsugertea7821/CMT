@@ -129,6 +129,10 @@ individuals:
   b_layers_from_primitives: {is: exp.item_done}
   h_layers_role_edges: {is: exp.hyp_supported}
   b_layers_role_edges: {is: exp.item_done}
+  h_layers_exists_change: {is: exp.hyp_untested}
+  b_layers_exists_change: {is: exp.item_queued}
+  h_layers_neg_dual: {is: exp.hyp_untested}
+  b_layers_neg_dual: {is: exp.item_queued}
   h_tops_from_primitives: {is: exp.hyp_supported}
   b_tops_from_primitives: {is: exp.item_done}
   h_any_not_vacuous: {is: exp.hyp_refuted}
@@ -471,6 +475,10 @@ facts:
   - {is: exp.v_check, from: b_layers_from_primitives, to: h_layers_from_primitives}
   - {is: v_refer, from: h_layers_role_edges, to: {is: v_depend, from: layer_placement, to: [step_quantification, kind_existence, variable_range, ontology.role]}}
   - {is: exp.v_check, from: b_layers_role_edges, to: h_layers_role_edges}
+  - {is: v_refer, from: h_layers_exists_change, to: {is: v_depend, from: layer_placement, to: [kind_existence, signature_class]}}
+  - {is: exp.v_check, from: b_layers_exists_change, to: h_layers_exists_change}
+  - {is: v_refer, from: h_layers_neg_dual, to: {is: v_depend, from: layer_placement, to: [step_quantification, signature_class]}}
+  - {is: exp.v_check, from: b_layers_neg_dual, to: h_layers_neg_dual}
   - {is: v_refer, from: h_tops_from_primitives, to: {is: v_depend, from: top_placement, to: [step_quantification, kind_existence, variable_range]}}
   - {is: exp.v_check, from: b_tops_from_primitives, to: h_tops_from_primitives}
   - {is: v_refer, from: h_any_not_vacuous, to: {is: v_depend, from: any_limitation, to: syntax.of}}
