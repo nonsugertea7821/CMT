@@ -1,0 +1,34 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-18T01:06:05.696Z（UTC）
+individuals:
+  01M7P311R0QDQGTJ018CSY8676:
+    is: model_utterance
+    display: 発言 1425
+    val:
+      order: 1425
+      text: |
+        フックで自動記録するようにしました。毎ターンの終わりに、そのセッションの発言が `claude/session-log` ブランチへ足されて push されます。スクリプトを手で実行するテストは通りましたが、実際のターン終了でフックが動いたところはまだ見ていません。
+
+        **動き方**
+        - 発言を作り直すのは `claude/session-log` を置いた別の worktree（`.git/session-log-worktree`）の中です。commit と push の対象は `claude_session_log/` だけで、作業中の `claude/cross` には触れません。
+        - フックは裏で動くので、作業を待たせません。
+        - 失敗しても作業は止めず、足りない分は次のターン終了のときに足されます。
+        - push が他のセッションとぶつかったときは、取り込み直して作り直し、3回まで試します。
+
+        **`build.py` の変更**
+        - 既にある発言のファイル（同じ ULID）は書き直さず、何も消しません。別のセッションの発言も同じ場所に溜まっていきます。
+        - 新しい発言の `order` は、今ある最大値の続きから振ります。
+        - メールアドレスとモデル名を伏せる処理はそのままです。
+        - この会話の続きの 8 発言を足して 1427 発言になり、push 済みです（`87e376e`）。
+
+        **登録**
+        - `.claude/settings.json` にターン終了時のフック（Stop フック）を登録し、`claude/cross` に push しました（`2e7a334`）。
+        - 手で実行したときは、新しい発言がなかったので commit はされませんでした。
+        - このセッションが始まった時点ではリポジトリに `.claude/` がなかったので、今のセッションでは読み込まれていないかもしれません。確実に効かせるには、一度 `/hooks` を開くか、新しいセッションを始めてください。
+        - これから始まるクラウドセッションでは、`claude/cross` から始めれば自動で効きます。
+
+        **残っていること**
+        - `claude/cross` に戻ったので、途中で止まっていた確認から再開できます。r_has に替えた後も specific の違反が 9 件残るかどうかです。
+facts:
+- {is: v_say, from: session_model, to: 01M7P311R0QDQGTJ018CSY8676}
+- {is: exp.v_answer, from: 01M7P311R0QDQGTJ018CSY8676, to: 01M7P2VNXJTKSZW6T3QZ5XQHGM}
+- {is: v_refer, from: 01M7P311R0QDQGTJ018CSY8676, to: subj.order}
