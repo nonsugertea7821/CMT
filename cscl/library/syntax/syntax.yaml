@@ -10,7 +10,7 @@ grammar:
   mod: [of, with, neg, quant, at]
   cmp: [axis, a, b, rel]
   base: [display, arity, system_act]
-  axes: [display, source, value]
+  axes: [display, source, value, extends]   # extends: 上位の軸（下位の軸の値は、上位の軸の値でもある。単位は量の分化）
   run: [individuals, facts, steps, expect, halted]   # 実行の記録（exp/tests/*.yaml）
   position: [from, to, new]
   rel: [same, differ]
@@ -259,6 +259,7 @@ individuals:
   qualified_by_quant: {is: law_rule, display: 数量の付いた限定}
   qualified_by_at: {is: law_rule, display: 範囲の付いた限定}
   same_slot: {is: law_rule, display: 同じ動詞の同じ位置を限定する2つ}
+  entail_by_axis: {is: law_rule, display: 下位の軸は、上位の軸を含意する（円の量は量でもある）}
   entail_by_with: {is: law_rule, display: 同じ動詞の同じ位置で、端が下位の限定は、端が上位の限定を含意する（どちらも否定・数量・範囲なし）}
   has_by_acc: {is: law_rule, display: 積み上がった式は持つ}
   has_by_entail: {is: law_rule, display: 積み上がった式が含意する式も持つ}
@@ -576,6 +577,9 @@ facts:
   - {is: v_assume, from: entail_by_with, to: {is: r_qualified, from: var1, neg: true}}
   - {is: v_assume, from: entail_by_with, to: {is: r_qualified, from: var2, neg: true}}
   - {is: v_derive, from: entail_by_with, to: {is: r_entail, from: var1, to: var2}}
+  - {is: v_assume, from: entail_by_axis, to: {is: axis, from: var3, to: var1}}
+  - {is: v_assume, from: entail_by_axis, to: {is: r_ancestor, from: var1, to: var2}}
+  - {is: v_derive, from: entail_by_axis, to: {is: r_entail, from: var1, to: var2}}
   - {is: v_assume, from: has_by_acc, to: {is: r_acc, from: var1, to: var2}}
   - {is: v_derive, from: has_by_acc, to: {is: r_has, from: var1, to: var2}}
   - {is: v_assume, from: has_by_entail, to: {is: r_acc, from: var1, to: var3}}

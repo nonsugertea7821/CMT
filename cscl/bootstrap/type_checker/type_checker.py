@@ -722,6 +722,13 @@ class Ontology:
                     err(f"axes.{aid}: 語 {k} が、grammar.axes に書かれていない")
             if isinstance(a["value"], str) and a["value"] not in G["value"]:
                 err(f"axes.{aid}: 値の種類 {a['values']} が、grammar.values に書かれていない")
+            up, seen = a.get("extends"), {aid}
+            while up is not None:   # 上位の軸は、定義された軸で、値の種類が同じで、輪にならない
+                if up not in self.AX or up in seen or self.AX[up]["value"] != a["value"]:
+                    err(f"axes.{aid}: 上位の軸 {a['extends']} が、定義された同じ値の種類の軸でないか、輪になる")
+                    break
+                seen.add(up)
+                up = self.AX[up].get("extends")
 
     def resolve(self, word, dom):
         """領域を書かない語を、ノードの識別子に解決する。その領域、signature、ほかの領域にただ1つ、の順に探す。"""
@@ -837,6 +844,9 @@ class Ontology:
         for (dom, w), rs in WRITTEN.items():   # 法則 one_spelling が読む
             for r in rs:
                 add("r_written", f"{dom}:{w}", r)
+        for aid, a in self.AX.items():   # 軸の上下（法則 entail_by_axis が読む）
+            if isinstance(a.get("extends"), str):
+                add("extends", aid, a["extends"])
         for nid, n in self.N.items():
             add("exists", nid)
             add("domain", nid, self.domain(nid))
