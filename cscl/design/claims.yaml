@@ -138,8 +138,9 @@ individuals:
   b_case_frame_formula: {is: exp.item_done}
   h_case_frame_by_relation: {is: exp.hyp_refuted}
   b_case_frame_by_relation: {is: exp.item_done}
-  h_case_frame_by_role: {is: exp.hyp_untested}
-  b_case_frame_by_role: {is: exp.item_queued}
+  h_case_frame_by_role: {is: exp.hyp_withdrawn}
+  h_case_frame_by_signature: {is: exp.hyp_untested}
+  b_case_frame_by_signature: {is: exp.item_queued}
   h_annotation_gold: {is: exp.hyp_withdrawn}
   h_frame_closed: {is: exp.hyp_withdrawn}
   h_definition_positive: {is: exp.hyp_supported}
@@ -464,7 +465,8 @@ facts:
   - {is: v_refer, from: h_case_frame_by_relation, to: {is: v_depend, from: case_frame, to: syntax.base}}
   - {is: exp.v_check, from: b_case_frame_by_relation, to: h_case_frame_by_relation}
   - {is: v_refer, from: h_case_frame_by_role, to: {is: v_depend, from: case_frame, to: ontology.role}}
-  - {is: exp.v_check, from: b_case_frame_by_role, to: h_case_frame_by_role}
+  - {is: v_refer, from: h_case_frame_by_signature, to: {is: v_depend, from: case_frame, to: signature_class}}
+  - {is: exp.v_check, from: b_case_frame_by_signature, to: h_case_frame_by_signature}
   - {is: v_refer, from: h_annotation_gold, to: {is: v_depend, from: ja_readback, to: annotation}}
   - {is: v_refer, from: h_gloss_formula, to: {is: v_not_depend, from: top_placement, to: syntax.gloss}}
   - {is: exp.v_check, from: b_gloss_formula, to: h_gloss_formula}
