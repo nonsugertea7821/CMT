@@ -218,8 +218,8 @@ individuals:
   b_any_not_vacuous: {is: exp.item_done}
   h_any_by_entail: {is: exp.hyp_refuted}
   b_any_by_entail: {is: exp.item_done}
-  h_ja_case_frame: {is: exp.hyp_untested}
-  b_ja_case_frame: {is: exp.item_queued}
+  h_ja_case_frame: {is: exp.hyp_supported}
+  b_ja_case_frame: {is: exp.item_done}
   h_ja_roundtrip: {is: exp.hyp_untested}
   b_ja_roundtrip: {is: exp.item_queued}
   h_ja_connective: {is: exp.hyp_untested}
@@ -570,6 +570,8 @@ individuals:
   #   （is と occurrent と kind の表示名からは来ない。「動詞」は 生起体 の別の名で、日本語の辞書の側の語）。
   o_sys_display_residual_not_distinct: {is: exp.observation}
   o_sys_display_residual_mostly_residual: {is: exp.observation}
+  o_sys_ja_case_frame_rate: {is: exp.observation}
+  o_sys_ja_case_frame_broken: {is: exp.observation}
   # 体系のファイルのコメントを、決まった規則で分けて数えた棚卸し（exp/experiments/sys_comments.py。手順は実行の前に登録した 64fa140）。
   # 結果: 431 個（見出し 115、経緯 146、コード 20、意味 150。行だけのもの 386、値の後ろ 45）。claims.yaml が 277（経緯 136、意味 110）、
   #   cscl/library の 5 ファイルが 76（見出し 41、意味 25、経緯 6、コード 4）、exp/src が 64（見出し 52）、cscl.yaml が 14。
@@ -828,6 +830,9 @@ facts:
   - {is: exp.v_contradict, from: o_sys_any_by_entail_sat, to: h_any_by_entail}
   - {is: v_refer, from: o_sys_display_residual_not_distinct, to: {is: v_come_before, from: sys_display_residual_before.rate_y.mean_value, to: 1.16}}
   - {is: v_refer, from: o_sys_display_residual_mostly_residual, to: {is: v_come_after, from: sys_display_residual_before.rate_all.mean_value, to: 0.5}}
+  - {is: v_refer, from: o_sys_ja_case_frame_rate, to: {is: v_level, from: sys_ja_case_frame.rate_verbs.mean_value, to: 0.2105}}
+  - {is: v_refer, from: o_sys_ja_case_frame_broken, to: {is: v_come_after, from: sys_ja_case_frame.rate_verbs.mean_value, to: 0.1}}
+  - {is: exp.v_support, from: o_sys_ja_case_frame_broken, to: h_ja_case_frame}
   - {is: v_refer, from: o_sys_comments_claims_most, to: {is: v_come_after, from: sys_comments.history.mean_value, to: sys_comments.code.mean_value}}
   - {is: v_refer, from: o_sys_outlive_never_outlived, to: {is: v_level, from: sys_outlive.outlives_source.mean_value, to: 0.0}}
   - {is: v_refer, from: o_sys_outlive_compute_steps_ok, to: {is: v_level, from: sys_outlive.c_step_ok.mean_value, to: 1.0}}
