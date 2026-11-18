@@ -71,3 +71,24 @@ def refs(T, nid):
 def fact(T, verb, a, b, individuals=None):
     """事実の1行: 動詞(始点, 終点)。"""
     return f"{ja(T, verb, individuals)}({ja(T, a, individuals)}, {ja(T, b, individuals)})"
+
+
+P1 = ("について", "から", "より", "に", "で", "と", "を", "へ")
+
+
+def case_mark(vd):
+    """動詞の表示語から、目的語に付ける印を決める（h_ja_case_frame の F の枠）。"""
+    if vd.startswith(P1):
+        return ""
+    i = min((vd.find(p) for p in P1 if vd.find(p) > 0), default=-1)
+    if i > 0 and ("一" <= vd[0] <= "鿿" or "゠" <= vd[0] <= "ヿ"):
+        return "の"
+    return "を"
+
+
+def sentence(T, verb, a, b, individuals=None):
+    """事実の文: 「Aが B〈印〉〈動詞〉」、種類の事実は「Aは Bの一種である」。読み戻しが一つに決まることは h_ja_roundtrip で確かめた。"""
+    if verb == "is_a":
+        return f"{ja(T, a, individuals)}は{ja(T, b, individuals)}の一種である"
+    vd = ja(T, verb, individuals)
+    return f"{ja(T, a, individuals)}が{ja(T, b, individuals)}{case_mark(vd)}{vd}"
