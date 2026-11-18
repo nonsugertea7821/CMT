@@ -1,0 +1,20 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-18T09:40:23.927Z（UTC）
+individuals:
+  01M7Q0ERQQ95RM0MTW1G0M1SJD:
+    is: model_utterance
+    display: 発言 1802
+    val:
+      order: 1802
+      text: |
+        ご指摘のとおり、#182 に assignee を付け忘れていました。#182 と、同じく漏れていた #179（マージ済み）に、あなたを assignee として付けました。
+
+        **原因:** CLAUDE.md には、仮説を確かめる PR についてだけ「利用者を assignee にする」と書いてありました。仮説の登録や取り下げの PR は、その外でした。
+
+        **再発の防止（57e63fb、#182 に足しました）:**
+        - CLAUDE.md の「PR」の節に、「立てた PR は、どれも利用者を assignee にする（仮説の PR に限らない）」と足しました。
+        - PR を立てた直後に働くフック `watch_new_pr.py` は、これまで「見張れ」とだけ促していました。今後は assignee を付けることも促します。手元で動かして、促す文が出ることを確かめました。
+
+        #182 には、取り下げの状態とは別の、この変更も入りました。分けたほうがよければ言ってください。
+facts:
+- {is: v_say, from: session_model, to: 01M7Q0ERQQ95RM0MTW1G0M1SJD}
+- {is: exp.v_answer, from: 01M7Q0ERQQ95RM0MTW1G0M1SJD, to: 01M7Q0DV51FR62BXENAF8DY7BJ}
