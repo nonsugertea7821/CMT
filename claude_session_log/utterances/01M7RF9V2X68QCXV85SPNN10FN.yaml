@@ -1,0 +1,220 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-18T23:19:05.565Z（UTC）
+individuals:
+  01M7RF9V2X68QCXV85SPNN10FN:
+    is: session_summary
+    display: 発言 2209
+    val:
+      order: 2209
+      text: |
+        This session is being continued from a previous conversation that ran out of context. The summary below covers the earlier portion of the conversation.
+
+        <system-reminder>
+        <tools-used-before-summary>AskUserQuestion, Bash, Edit, Grep, Read, ReadNotifications, Skill, TaskStop, ToolSearch, WebFetch, WebSearch, Write, mcp__claude-code-remote__create_trigger, mcp__claude-code-remote__delete_trigger, mcp__claude-code-remote__get_trigger, mcp__claude-code-remote__read_documentation, mcp__claude-code-remote__send_later, mcp__claude-code-remote__subscribe_pr_activity, mcp__claude-code-remote__update_trigger, mcp__github__actions_get, mcp__github__actions_list, mcp__github__add_issue_comment, mcp__github__create_pull_request, mcp__github__get_job_logs, mcp__github__issue_read, mcp__github__issue_write, mcp__github__list_issue_types, mcp__github__list_issues, mcp__github__list_pull_requests, mcp__github__pull_request_read, mcp__github__update_pull_request</tools-used-before-summary>
+        </system-reminder>
+        Summary:
+        1. Primary Request and Intent
+
+        **Standing rules (still in force)**
+        - Repo: nonsugertea7821/CMT at /home/user/CMT.
+        - Reply in Japanese. Don't overclaim. Give interpretation.
+        - Restore files with `git show <rev>:<path> > <path>`. Never checkout to restore and never stash.
+        - Python: /home/user/venv/bin/python.
+        - Commit trailer:
+          `Co-Authored-By: Claude [モデル名を伏せた] <[メールアドレスを伏せた]>`
+          `Claude-Session: https://claude.ai/code/session_015KRKt6TNJZ7ZsQmEknANXK`
+        - PR body ends with:
+          `🤖 Generated with [Claude Code](https://claude.com/claude-code)`
+          blank line
+          `https://claude.ai/code/session_015KRKt6TNJZ7ZsQmEknANXK`
+        - Claude never merges.
+        - No personal info or model identifiers in pushed artifacts.
+        - Don't retry the MEXT PDF WebFetch without OK.
+        - No comments in system yaml. Never rerun recorded experiment scripts; write new result names instead of overwriting. CI belongs to GitHub.
+        - Every PR:
+          - subscribe_pr_activity;
+          - issue_write update with assignees [nonsugertea7821].
+        - After a merge:
+          - `git fetch -q --prune origin`, then `git branch -D` the local branch;
+          - never push to a merged branch;
+          - never push branch deletions.
+        - Proposals are registered as untested hypotheses (h_/b_ + v_refer/v_check) before they are told to the user.
+          - Registration-only PRs auto-merge. Concept-adding PRs get manual review.
+          - Place registrations away from the lines of running hypotheses and from the file end.
+        - Lang-side claims can't reference exp words. Put cross-layer hypotheses in exp/src/exp.yaml.
+        - Corpus rule: never commit corpus text; record only the source and counted values. CC BY-SA needs attribution.
+        - Preregistration: commit the script (and hand-made data) only first; results come in a later commit. Corrections are appended to the docstring and disclosed. Use `git add -f` for exp/experiments files.
+        - A PR stays Draft if the hypothesis remains untested (e.g. an inconclusive verdict). Undraft only when the status becomes supported, refuted or mixed.
+
+        **Keep-alive rule (user)**
+        - Chain send_later of 9 minutes only while a long experiment runs in the background.
+        - Stop the chain when the experiment ends with update_trigger enabled=false.
+
+        **30-minute cycle**
+        - The prompt is stored in send_later. Each firing first schedules the next one with the same text.
+        - Triage order:
+          - A: #35, #91, #56, #92 — all done.
+          - A': #52 — done.
+          - C: #57 h_attention_carries_text_route, #18 h_attention_causes_preceding_effect, #8 h_number_comparison_lowers_rule_following.
+          - E: system soundness items.
+          - B: #58 → #90, #55, and the system-pair #91/#92.
+          - D: prosody/corpus, with a counting prereg first.
+        - Also pending from implications: h_multi_layer_raises_conflict_following (untested).
+
+        2. Key Technical Concepts
+        - ec (exp/src/exp_check.py):
+          - Silent on success.
+          - Verifies observation values against result files.
+          - Enumerates all axis combinations, so every cond needs rows for every filter value. This is why own was split into its own family, e23_own, with the constant filter `{split: train}`.
+        - tc: cscl/bootstrap/type_checker/type_checker.py.
+        - Observations compare a measurement with another measurement or a number:
+          - verbs: v_come_after, v_come_before, v_near (with `new: tolerance`), v_level;
+          - reference form: `<family>.<axisvals...>.<cond>.<metric>`.
+        - The difference threshold (≥ 0.20) can't be expressed as an observation. It stays in the result file's verdict and the PR body.
+        - Concepts used:
+          - qualification_vector, modifier, single_layer_vector, multi_layer_vector, concept_vector;
+          - seen_genus, unseen_genus, no_channel, text_injection, definition_text;
+          - redefinition_following, verdict_stability.
+        - Finding: in conflict data, single-layer, 30-step, lr 0.1 vectors saturate near loss ln 2 ≈ 0.69. They cancel the prior meaning but do not flip it, at both the compound position (E23) and the modifier position (E24).
+
+        3. Files and Code Sections
+
+        **exp/experiments/e22_qualification_unseen.py** (merged in #278)
+        - Functions reused later:
+          - `parent_of(ex, parents)`
+          - `train_compounds(r, inj, exs, labels, steps, lr)`
+          - `evaluate(r, inj, ex, prefix, vecs)` → `{"margin", "both"}`
+          - `summarize(rows, conds)` → acc, acc_both, mean_margin
+        - Results (accuracy / order-robust accuracy):
+
+          | | none | text | mod | qual | own |
+          |---|---|---|---|---|---|
+          | test | 0.50/0.125 | 0.792/0.292 | 0.667/0.542 | 0.75/0.375 | – |
+          | train | | | | | 0.792 |
+
+          Verdict: transfer. The 甲種/乙種 pair had qual = none.
+        - exp.yaml (merged): family e22 (axes split, cond none/text/mod/qual; filter {split}); observations o_e22_qual_above_none and o_e22_qual_robust_above_none, both v_support; h_qualification_vector_transfers_to_unseen_genus set to hyp_supported.
+
+        **exp/experiments/data/modifiers_conflict_ja.json** (new, hand-made)
+        - Three conflict pairs, each modifier defined opposite to its prior meaning:
+
+          | pair | definitions | train parents | test parents |
+          |---|---|---|---|
+          | 大口/小口 | 十個未満 / 百個以上 | 注文, 出荷 | 納品, 返品 |
+          | 至急/通常 | 一か月以上先 / 今日中 | 依頼, 修理 | 点検, 回答 |
+          | 正式/仮 | 承認未 / 承認済 | 契約, 予算 | 計画, 採用 |
+
+        - 4 items per parent (2 correct per modifier), 48 in total. Format `{"type":"fill","q":...,"correct":M+G,"wrong":M'+G}`.
+        - The file exists on both the #282 and #286 branches with identical content.
+
+        **exp/experiments/e23_qualification_conflict.py** (PR #282)
+        - Same procedure as E22, imported from e22: conditions none / text / qual on test, plus own on train.
+        - Verdict: inconclusive if train own acc < 0.75 or test none acc > 0.5; raise if qual − none ≥ 0.20 and qual robust > none; else no_raise.
+        - Output: results/e23_Qwen2.5-1.5B-Instruct_L8.json.
+        - Results:
+          - train: none 0.25/0.208, text 0.375/0.167, qual 0.583/0.0, own 0.667/0.25.
+          - test: none 0.25/0.25, text 0.292/0.042, qual 0.625/0.0.
+          - Losses: 5.18→0.69, 2.49→0.69, 2.62→0.61, 2.84→0.72, 3.59→0.67, 2.22→0.70.
+          - Verdict: inconclusive.
+        - exp.yaml:
+          - family e23 (split, cond none/text/qual, filter {split});
+          - family e23_own (cond own, filter `{split: train}`, own denotes concept_vector);
+          - observations o_e23_own_below_threshold (e23_own.own.accuracy v_come_before 0.75) and o_e23_qual_robust_level_zero (v_near 0.0, new 0.01). Neither is linked to a hypothesis.
+        - Placement: individuals after `e4_cond_vec`, facts after `v_metric_of, from: e4, to: accuracy`, observation individuals after `o_e4_pair1_training_failed`, v_refer after the o_e4_pair1 v_refer.
+        - Commits: 1fd9490 (prereg), ad2f62d (results). The PR body was updated; it stays Draft.
+
+        **exp/experiments/e24_modifier_conflict.py** (PR #286, branch claude/h_modifier_vector_raises_conflict_following)
+        - Uses `train_pair` from e4_modifier_composition (vectors at the modifier tokens, all 8 train items of the pair) and evaluate / parent_of / summarize from e22.
+        - Conditions none / text / mod on train and test. Same verdict form, with the precondition on train mod acc.
+        - Results:
+          - train: mod 0.667/0.25.
+          - test: none 0.25/0.25, text 0.292/0.042, mod 0.542/0.125.
+          - Losses: 3.83→0.70, 2.73→1.24, 2.91→0.69.
+          - Verdict: inconclusive.
+        - exp.yaml: family e24 (split, cond none/text/mod; mod denotes single_layer_vector and modifier); observation o_e24_mod_train_below_threshold (e24.train.mod.accuracy v_come_before 0.75).
+        - Main (#272) was merged into the branch.
+        - Commits: cc29506 (prereg), 1343259 (results). The PR body was updated; it stays Draft.
+
+        **Registrations in exp/src/exp.yaml (all merged)**
+        - #279, placed after b_common_component_lowers_prior_meaning:
+          - h_qualification_raises_stability: v_raise qualification_vector → verdict_stability
+          - h_modifier_vector_raises_stability: v_raise modifier → verdict_stability
+        - #283, placed after b_modifier_vector_raises_stability:
+          - h_multi_layer_raises_conflict_following: v_raise multi_layer_vector → redefinition_following
+          - h_modifier_vector_raises_conflict_following: v_raise modifier → redefinition_following
+
+        4. Errors and fixes
+        - **ec failed on a missing own condition in test rows** (`e23.test.own.accuracy: '条件 own の行がない'`). Fixed by moving own into a separate family e23_own with filter `{split: train}`.
+        - **#275 merge conflict in exp/src/exp.yaml**, reported by the user. Two hunks, both additive: the observation individuals (o_e21_* vs o_e14_vec_robust_*) and the facts (e21 refs/contradicts vs e14 contradicts). Removed the conflict markers and kept both sides; tc/ec passed; committed the merge 67f7c9c and pushed. CI passed. The auto-merge judgment remains manual, because two commits touch e21_common_unseen.py.
+        - **Step-budget hypothesis not registered**: no concept exists for training steps, so it was mentioned in the commit and PR text only.
+
+        5. Problem Solving
+        - #91 is supported (E22). #92 is untested and inconclusive (E23). The modifier-position follow-up is inconclusive (E24).
+        - Interpretation: position does not explain the failure under conflict. The remaining readings are layer count (registered) or step budget (not registered).
+        - The text definition also fails under conflict (0.29), whereas it scored 0.79 on non-conflict E22 items.
+
+        6. All user messages
+        - 「#275にマージコンフリクト。」 — the only new user message in this segment. It was handled.
+        - Prior standing user messages, kept from before:
+          - 「トリアージして進めて。…このリポジトリの実験目標、モデルの概念一貫性に寄与しそうなものから優先で」
+          - 「Bは体系の健全性に依存しないか？」
+          - 「A3もじゃないの？それともその周辺はもう証明されてる？」
+          - 「A4は？」
+          - 「それでいいだろうね よろしく」
+          - 「ちなみにコンテナは10分作業しないと再起動する 応答終了時に9分30秒チェーンするようにしといて」
+          - 「チェーンが居るのは長い実験だけね それ以外はやらなくていい」
+          - The earlier corpus/prosody remarks also stand: Aozora etc. vs session logs; CC-BY-SA attribution; model utterances expected to be less reliable; the exposure hypothesis does not hold because this repo publishes output as-is; attachment tendency is expected to differ.
+
+        7. Pending Tasks
+        - Open PRs:
+          - #275 is ready for the user's manual merge.
+          - #282 (E23) and #286 (E24) are Draft; the hypotheses are untested.
+        - After any merge, delete the local branch:
+          - claude/h_common_component_transfers_to_unseen;
+          - claude/h_qualification_teacher_raises_following;
+          - claude/h_modifier_vector_raises_conflict_following.
+        - Continue the 30-minute triage:
+          - next candidates are C (#57, #18, #8) or h_multi_layer_raises_conflict_following;
+          - one heavy experiment at a time, with the keep-alive chain only while it runs.
+
+        8. Current Work
+        - The 30-minute cycle fired at 23:18Z (trig_017EVunZ1y6gniYZBg5N1Jui).
+        - No experiment is running, and the keep-alive chain is disabled.
+        - The local checkout is on claude/h_common_component_transfers_to_unseen after the merge push.
+
+        9. Optional Next Step
+        Per the cycle prompt received at 23:18Z (「30分の周回。始めたら、まず次の周回を30分後に send_later で予約する（同じ文を渡す）。」):
+        1. Schedule the next cycle with send_later (30 min, same text).
+        2. Check open PRs and merges.
+        3. Pick the next untested hypothesis. Candidates are C (#57 h_attention_carries_text_route) or h_multi_layer_raises_conflict_following. Read its lineage first.
+        4. Preregister on a claude/h_<name> branch with a Draft PR.
+        5. Run it in the background with the 9-minute keep-alive chain.
+        6. Report briefly in Japanese.
+
+        If you need specific details from before compaction (like exact code snippets, error messages, or content you generated), read the full transcript at: /root/.claude/projects/-home-user-CMT/e05d2140-ce91-515f-a5fb-e6251e13d406.jsonl
+        Continue the conversation from where it left off without asking the user any further questions. Resume directly — do not acknowledge the summary, do not recap what was happening, do not preface with "I'll continue" or similar. Pick up the last task as if the break never happened.
+
+        The messages after this summary are the most recent messages from before compaction, kept verbatim. The summary was written without seeing them, so something it says has not happened yet may already have happened in them.
+facts:
+- {is: v_say, from: session_model, to: 01M7RF9V2X68QCXV85SPNN10FN}
+- {is: v_refer, from: 01M7RF9V2X68QCXV85SPNN10FN, to: ontology.v_refer}
+- {is: v_refer, from: 01M7RF9V2X68QCXV85SPNN10FN, to: exp.v_check}
+- {is: v_refer, from: 01M7RF9V2X68QCXV85SPNN10FN, to: lang.type_checker}
+- {is: v_refer, from: 01M7RF9V2X68QCXV85SPNN10FN, to: ontology.v_come_after}
+- {is: v_refer, from: 01M7RF9V2X68QCXV85SPNN10FN, to: ontology.v_come_before}
+- {is: v_refer, from: 01M7RF9V2X68QCXV85SPNN10FN, to: exp.v_near}
+- {is: v_refer, from: 01M7RF9V2X68QCXV85SPNN10FN, to: ontology.v_level}
+- {is: v_refer, from: 01M7RF9V2X68QCXV85SPNN10FN, to: exp.qualification_vector}
+- {is: v_refer, from: 01M7RF9V2X68QCXV85SPNN10FN, to: exp.single_layer_vector}
+- {is: v_refer, from: 01M7RF9V2X68QCXV85SPNN10FN, to: exp.multi_layer_vector}
+- {is: v_refer, from: 01M7RF9V2X68QCXV85SPNN10FN, to: exp.concept_vector}
+- {is: v_refer, from: 01M7RF9V2X68QCXV85SPNN10FN, to: exp.seen_genus}
+- {is: v_refer, from: 01M7RF9V2X68QCXV85SPNN10FN, to: exp.unseen_genus}
+- {is: v_refer, from: 01M7RF9V2X68QCXV85SPNN10FN, to: exp.no_channel}
+- {is: v_refer, from: 01M7RF9V2X68QCXV85SPNN10FN, to: exp.text_injection}
+- {is: v_refer, from: 01M7RF9V2X68QCXV85SPNN10FN, to: exp.definition_text}
+- {is: v_refer, from: 01M7RF9V2X68QCXV85SPNN10FN, to: exp.redefinition_following}
+- {is: v_refer, from: 01M7RF9V2X68QCXV85SPNN10FN, to: exp.verdict_stability}
+- {is: v_refer, from: 01M7RF9V2X68QCXV85SPNN10FN, to: exp.v_support}
+- {is: v_refer, from: 01M7RF9V2X68QCXV85SPNN10FN, to: exp.hyp_supported}
+- {is: v_refer, from: 01M7RF9V2X68QCXV85SPNN10FN, to: exp.v_metric_of}
+- {is: v_refer, from: 01M7RF9V2X68QCXV85SPNN10FN, to: exp.v_raise}
