@@ -1,0 +1,46 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-18T04:19:59.238Z（UTC）
+individuals:
+  01M7PE42M6P1SSBV02RAXWJ7A9:
+    is: model_utterance
+    display: 発言 1591
+    val:
+      order: 1591
+      text: |
+        `CLAUDE.md` を書いて claude/cross に push しました（7455a1e）。main にマージした後のセッションから効きます。
+
+        書いたのは次の4つです。
+
+        - **提案**
+          - 「やったほうがいい」と思ったことは、伝える前に未検証の仮説として登録します。
+          - 書き方は h_ / b_ / v_check の形です（中身は v_refer で書きます）。
+          - 仮説は main に入ると issue に写ります。b_ の残り項目は写りません。
+        - **体系のファイル**
+          - コメントを足しません（hook が検査します）。
+          - 経緯と解釈は commit メッセージと会話に書きます。
+          - display は式から訳した名前で、式にできていない意味の置き場にするときはそう自覚して使います。
+          - 名前で読んでよいのは、シグネチャと文法の語だけです。
+        - **実験**
+          - 手順と判定は、実行の前に commit します（事前登録）。訂正は手順に書き足して開示し、表は観察から導きます。
+          - 結果のファイルとスクリプトは `git add -f` で足します。
+          - 記録済みのスクリプトを、確かめのためにもう一度走らせません。このセッションで2回、結果のファイルを上書きしたので明記しました。確かめは tc と ec で行います。
+          - 仮説の状態と根拠の照合は ec が行い、CI は GitHub に任せます。
+        - **git**
+          - ファイルを戻すときは `git show HEAD:<path> > <path>` を使い、checkout と stash は使いません。
+
+        未検証の仮説として登録してあるのは次の6つです。
+
+        | 仮説 | 中身 |
+        |---|---|
+        | h_individual_depth | 個体の深さは種類の深さで決まる |
+        | h_hierarchy_in_object | 型階層を体系の中の語として書く（欠け1） |
+        | h_draw_on_with_shallow | 浅さの語ができたので、読みの中身を display に頼らず書く |
+        | h_gloss_formula | gloss を式にする |
+        | h_negation_formula | 否定の読み方を、型検査器のコードでなく式で書く |
+        | h_comment_ban | 残りのコメント（claims に 277、cscl.yaml に 14）を移して、文法で全面的に禁止する |
+
+        どれから確かめるか決めてもらえれば、事前登録から始めます。
+facts:
+- {is: v_say, from: session_model, to: 01M7PE42M6P1SSBV02RAXWJ7A9}
+- {is: exp.v_answer, from: 01M7PE42M6P1SSBV02RAXWJ7A9, to: 01M7PE1MBCBMBYQ6DX88JRMFV3}
+- {is: v_refer, from: 01M7PE42M6P1SSBV02RAXWJ7A9, to: exp.v_check}
+- {is: v_refer, from: 01M7PE42M6P1SSBV02RAXWJ7A9, to: ontology.v_refer}
