@@ -9,7 +9,7 @@
 
 ## 仮説を確かめる流れ
 1. 仮説が main に入り、issue が立つ。
-2. 仮説ごとにブランチ `claude/h_<仮説名>` を切り、Draft の PR を立てる。本文で issue を参照する。最初の commit は事前登録（手順と判定）。
+2. 仮説ごとにブランチ `claude/h_<仮説名>` を切り、Draft の PR を立てる。本文で issue を参照し、利用者を assignee にする。最初の commit は事前登録（手順と判定）。
 3. 測って、観察を体系に書き、仮説を `v_support` か `v_contradict` で結ぶ。解釈は commit のメッセージと PR の本文に書く。
 4. ec が通り、状態が支持・反証・mixed のどれかになったら、Draft を外す（確認の合図。承認でもマージでもない）。外れて訂正し、未検証のまま残るなら Draft のまま。
 5. 利用者が確認してマージする。Claude はマージしない。main への push で sync が状態を読み、issue を閉じる。
