@@ -3,6 +3,11 @@
 domain: subj
 axes:
   yen: {display: 円の量, source: any, value: number, extends: amount}   # 単位は量の分化（sys_money_axis）
+  sai: {display: 歳の量, source: any, value: number, extends: amount}
+  cm: {display: センチの量, source: any, value: number, extends: amount}
+  people: {display: 人の量, source: any, value: number, extends: amount}
+  days: {display: 日の量, source: any, value: number, extends: amount}
+  hours: {display: 時の量, source: any, value: number, extends: amount}
 nodes:
   # ===== 動詞 =====
   v_contract: {display: 契約を結ぶ, extends: occurrent, from: agent, to: agent, holds: [{is: depend, from: new, to: from}, {is: depend, from: new, to: to}]}
@@ -22,15 +27,15 @@ nodes:
   v_register: {display: 登録者として関わらせる, extends: v_involve, from: service, to: person}
   v_seated: {display: 席にいる, extends: v_perform, from: person, to: process}
 
-  # ===== 量。値は軸 amount の数 =====
-  age: {display: 年齢（歳）, extends: magnitude, mod: {of: [v_depend, from], with: person}, axis: amount}
-  height: {display: 身長（センチ）, extends: magnitude, mod: {of: [v_depend, from], with: person_age_neg}, axis: amount}
-  monthly_fee: {display: 月額（円）, extends: magnitude, mod: {of: [v_depend, from], with: plan}, axis: amount}
-  population: {display: 人口（人）, extends: magnitude, mod: {of: [v_depend, from], with: municipality}, axis: amount}
-  days_overdue: {display: 納期を過ぎた日数, extends: magnitude, mod: {of: [v_measure, from], with: delivery}, axis: amount}
-  days_since: {display: 注文から経過した日数, extends: magnitude, mod: {of: [v_measure, from], with: order}, axis: amount}
-  hour: {display: 時刻（時）, extends: magnitude, mod: {of: [v_measure, from], with: day}, axis: amount}
-  profit_gap: {display: 利益から目標額を引いた額（円）, extends: magnitude, mod: {of: [v_depend, from], with: account}, axis: amount}
+  # ===== 量。値は単位の軸の数（どの単位の軸も amount の下位。sys_unit_axis） =====
+  age: {display: 年齢（歳）, extends: magnitude, mod: {of: [v_depend, from], with: person}, axis: sai}
+  height: {display: 身長（センチ）, extends: magnitude, mod: {of: [v_depend, from], with: person_age_neg}, axis: cm}
+  monthly_fee: {display: 月額（円）, extends: magnitude, mod: {of: [v_depend, from], with: plan}, axis: yen}
+  population: {display: 人口（人）, extends: magnitude, mod: {of: [v_depend, from], with: municipality}, axis: people}
+  days_overdue: {display: 納期を過ぎた日数, extends: magnitude, mod: {of: [v_measure, from], with: delivery}, axis: days}
+  days_since: {display: 注文から経過した日数, extends: magnitude, mod: {of: [v_measure, from], with: order}, axis: days}
+  hour: {display: 時刻（時）, extends: magnitude, mod: {of: [v_measure, from], with: day}, axis: hours}
+  profit_gap: {display: 利益から目標額を引いた額（円）, extends: magnitude, mod: {of: [v_depend, from], with: account}, axis: yen}
 
   # ===== もの =====
   agent: {display: 主体, extends: continuant, mod: {of: [v_perform, from]}}

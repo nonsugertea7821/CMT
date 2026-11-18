@@ -431,6 +431,18 @@ individuals:
   o_sys_money_axis_stops_overextension: {is: exp.observation}
   o_sys_money_axis_passes_checks: {is: exp.observation}
   o_sys_money_axis_keeps_amount: {is: exp.observation}
+  # 量の単位を軸の分化として書く操作を、ほかの量にも当てた観察（exp/experiments/sys_unit_axis.py）。手順と判定は実行の前に登録した（77a0dd5）。
+  #   その前に法則 at_axis を足した（45aed87。限定が値を指定する軸は、比べる概念の値の軸かその上位）。
+  # 結果: before は V 7（height→age を含む）。after（歳 sai とセンチ cm を amount の下位に足し、age と height を置く）で
+  #   errors 0、V 6、v_height_age 0、new_V 0。after_all（表示名が単位を書く量をすべて単位の軸に置く。円は yen、人 people、
+  #   日 days、時 hours）でも errors 0、V 6、v_height_age 0、new_V 0、v_money 0、sales_ok 1。登録した判定をどちらも満たす。
+  #   見込みで心配した「円の量どうし（monthly_fee, profit_gap）が money の下に集まる」は起きなかった。
+  # 実行の後の読み（登録していない）: 単位を同じくするだけでは概念は近づかない（monthly_fee, profit_gap は money と限定の動詞が違う）。
+  #   単位の軸は、違う単位の量を分けるだけで、同じ単位の量を寄せはしない。操作は subj.yaml に残す（after_all）。
+  #   残る V 6 組に、単位の分化で止まるものはない（verb_ref に 3 組、opposite, hypothesis, context_following に 1 組ずつ）。
+  o_sys_unit_axis_stops_height_age: {is: exp.observation}
+  o_sys_unit_axis_no_new_violation: {is: exp.observation}
+  o_sys_unit_axis_passes_checks: {is: exp.observation}
   o_sys_frame_declared_never_grows: {is: exp.observation}
   o_sys_frame_declared_never_shrinks: {is: exp.observation}
   o_sys_frame_creates_over_removes: {is: exp.observation}
@@ -585,6 +597,12 @@ facts:
   - {is: v_refer, from: o_sys_money_axis_passes_checks, to: {is: v_level, from: sys_money_axis_after3.errors.mean_value, to: 0.0}}
   - {is: v_refer, from: o_sys_money_axis_passes_checks, to: {is: v_level, from: sys_money_axis_after3.sales_ok.mean_value, to: 1.0}}
   - {is: v_refer, from: o_sys_money_axis_keeps_amount, to: {is: v_level, from: sys_money_axis_after3.money_has_amount.mean_value, to: 1.0}}
+  - {is: v_refer, from: o_sys_unit_axis_stops_height_age, to: {is: v_come_before, from: sys_unit_axis_after.v_height_age.mean_value, to: sys_unit_axis_before.v_height_age.mean_value}}
+  - {is: v_refer, from: o_sys_unit_axis_stops_height_age, to: {is: v_level, from: sys_unit_axis_after_all.v_height_age.mean_value, to: 0.0}}
+  - {is: v_refer, from: o_sys_unit_axis_no_new_violation, to: {is: v_level, from: sys_unit_axis_after.new_V.mean_value, to: 0.0}}
+  - {is: v_refer, from: o_sys_unit_axis_no_new_violation, to: {is: v_level, from: sys_unit_axis_after_all.new_V.mean_value, to: 0.0}}
+  - {is: v_refer, from: o_sys_unit_axis_passes_checks, to: {is: v_level, from: sys_unit_axis_after_all.errors.mean_value, to: 0.0}}
+  - {is: v_refer, from: o_sys_unit_axis_passes_checks, to: {is: v_level, from: sys_unit_axis_after_all.sales_ok.mean_value, to: 1.0}}
   - {is: v_refer, from: o_sys_outlive_never_outlived, to: {is: v_level, from: sys_outlive.outlives_source.mean_value, to: 0.0}}
   - {is: v_refer, from: o_sys_outlive_compute_steps_ok, to: {is: v_level, from: sys_outlive.c_step_ok.mean_value, to: 1.0}}
   - {is: v_refer, from: o_sys_outlive_speak_steps_ok, to: {is: v_level, from: sys_outlive.s_step_ok.mean_value, to: 1.0}}
