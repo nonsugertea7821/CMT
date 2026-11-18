@@ -1,0 +1,41 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-18T06:43:29.556Z（UTC）
+individuals:
+  01M7PPAV4MP8VXJCHB29TJH4PA:
+    is: model_utterance
+    display: 発言 1724
+    val:
+      order: 1724
+      text: |
+        その言い方のほうが正確だと思います。なので、仮説の名前も中身も、表示語の側ではなく識別子の側に移して登録しました。
+
+        **登録したもの（PR #163）**
+        - `h_identifier_by_expansion`: 識別子は、シグネチャに展開した概念式で決まる。
+        - 式は `v_depend(syntax.identifier, signature_class)` です。
+        - 新しい概念は足していないので、自動マージに乗るはずです。PR は見張っていて、50分後にも一度確かめます。
+
+        **なぜ識別子の側にしたか**
+        - 体系では、表示語（display）は識別子と一致する（`v_agree`）ように置かれています。識別子が展開した式で決まるなら、表示語は「その式を訳した名前」になります。
+        - そうなると、表示語が独立した意味の置き場ではなくなります。これがユーザーの言う「帰納的に消える」です。消えるのは結果のほうで、主張の本体は識別子にあります。
+        - この見方だと、二つの概念が同じかどうかは「展開した式が同じか」で決まります。名前で決まるのではありません。既存の h_renaming_invariant（型検査は名前の選び方に左右されない）を、さらに強くした形です。
+
+        **今の体系との距離**
+        - sys_display_residual では、表示語の約77%に式に出てこない文字がありました。
+        - この仮説が正しければ、その残りは二通りのどちらかです。
+          - 式から訳せば消える言い回しの差
+          - 式に書けていない区別。こちらは体系の側の欠けになります
+        - 確かめ方の候補です。全部の概念をシグネチャの語まで展開し、次の二種類の対を数えます。
+          - 展開が同じなのに、識別子が違う対
+          - 展開は違うが、その違いが表示語にしか現れない対
+
+        **限界**
+        - 「シグネチャへの展開」そのものは、体系にまだ概念がありません。
+        - そこで既存の `signature_class`（シグネチャから定まる分類）で近似しました。展開の操作を概念として足すなら、そのときは手で見てもらう登録になります。
+
+        次は、前に決めた順のとおり h_ja_case_frame の事前登録に進みます。日本語に訳す仕組みができると、この仮説の確かめ（式から名前を訳す）にもそのまま使えます。
+facts:
+- {is: v_say, from: session_model, to: 01M7PPAV4MP8VXJCHB29TJH4PA}
+- {is: exp.v_answer, from: 01M7PPAV4MP8VXJCHB29TJH4PA, to: 01M7PP7ZSZ8ET9EE9S2BVXBAHB}
+- {is: v_refer, from: 01M7PPAV4MP8VXJCHB29TJH4PA, to: ontology.v_depend}
+- {is: v_refer, from: 01M7PPAV4MP8VXJCHB29TJH4PA, to: syntax.identifier}
+- {is: v_refer, from: 01M7PPAV4MP8VXJCHB29TJH4PA, to: lang.signature_class}
+- {is: v_refer, from: 01M7PPAV4MP8VXJCHB29TJH4PA, to: ontology.v_agree}
