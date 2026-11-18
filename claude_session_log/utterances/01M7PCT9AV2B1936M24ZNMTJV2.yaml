@@ -1,0 +1,32 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-18T03:57:09.851Z（UTC）
+individuals:
+  01M7PCT9AV2B1936M24ZNMTJV2:
+    is: model_utterance
+    display: 発言 1568
+    val:
+      order: 1568
+      text: |
+        調べたところ、1 には壁が2つあります。
+
+        **壁1: 上位・下位は事実になっているが、動詞ではない**
+        - extends は `extends(x, y)` という事実に訳され、法則が `r_parent` と `r_ancestor` を導きます（syntax.yaml 290–301）。
+        - 限定の `of` に置けるのは動詞の位置だけです。動詞は、基礎の関係（same, refer, depend, after など）を holds に持つ形で定義されます。
+        - 上位・下位に当たる基礎の関係はありません。exp の決定にも「is_a は動詞ではなく、検査が構造から確かめる」と書かれています。
+        - なので動詞にするには、基礎の関係を1つ足すことになります。シグネチャか ontology の変更です。
+
+        **壁2: 法則の評価器は数えられない**
+        - 法則は否定つきの Datalog として評価されていて（`evaluate`）、集計がありません。
+        - `at: {count: ...}` を評価しているのはコードだけです（`check_counts`）。それも、個体が書いた数値を種類の限定と照らす検査です。種類の階層の上で「祖先が 2 以下」を数えるものはありません。
+        - 抜け道として、「祖先の鎖が3つ続けば深い」を規則で書き、その否定を浅いとする方法があります。ですが、閾値が規則の原子の数に埋め込まれ、2 の形に戻ってしまいます。
+
+        **1 を筋よくやる案**
+        1. ontology に基礎の関係「上位である」を足し、それを holds に持つ動詞 `v_extend`（種類 → 上位の種類）を置きます。extends を書くことが、この動詞の事実を書くことになります。is_a を構造としてだけ扱っていた決定は、取り下げる必要があります。
+        2. 評価器に「限定の `at: {count}` を、導いた事実の個数で評価する」を足します。count は文法の語なので、名前で読んでよい範囲です。
+        3. 浅さを式で書きます。`general_kind: {extends: kind, mod: {of: [v_extend, from], at: {count: {le: 2}}}}` のような形です。
+        4. 確かめ（事前登録します）: 式から導いた「浅い概念」の集合が、sys_specific_depth のスクリプトが数えた集合（y_def_shallow）と一致するかを見ます。一致すれば、display とスクリプトに借りていた「浅い」を、式で返せたことになります。
+
+        1 と 2 は言語の設計の変更（基礎の関係を足すことと、評価器の能力を広げること）です。この2点で進めてよいですか？
+facts:
+- {is: v_say, from: session_model, to: 01M7PCT9AV2B1936M24ZNMTJV2}
+- {is: exp.v_answer, from: 01M7PCT9AV2B1936M24ZNMTJV2, to: 01M7PCS5YQ3CZXDA0V24RSSCZ7}
+- {is: v_refer, from: 01M7PCT9AV2B1936M24ZNMTJV2, to: syntax.of}
