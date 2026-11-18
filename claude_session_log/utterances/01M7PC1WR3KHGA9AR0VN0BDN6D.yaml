@@ -1,0 +1,62 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-18T03:43:50.531Z（UTC）
+individuals:
+  01M7PC1WR3KHGA9AR0VN0BDN6D:
+    is: model_utterance
+    display: 発言 1545
+    val:
+      order: 1545
+      text: |
+        **1. 「e」に古いものが混ざっていたか**
+
+        混ざっていました。今の式と一つずつ照らすと、本当に式化の候補として残るのは 15 件中 2 件だけでした。私が確かめずに「e」へ入れたのが原因です。
+
+        | 消したコメント | 今の式との関係 | 分類の直し |
+        |---|---|---|
+        | syntax:50 verb_ref の位置には動詞が来る | `mod {of: [is, to], with: occurrent}` で式になっている | a（古い） |
+        | syntax:76–81 neg・many・opposite・derive・via・verbatim | どれも、自分の mod（with と at）が同じことを言っている | a |
+        | syntax:395, 404 | 規則そのものの言い換え | a |
+        | ontology:113 個体は種類に1つ、事実は関係1つ | `is` が1つの値しか持てない書き方で決まる | a |
+        | ontology:16 単位は質の種類が決める | 単位を軸（yen、sai、…は amount の下位）にした後では事実と違う | d（食い違い） |
+        | ontology:15 個数はどの関係でも見られる | `source: any` | a |
+        | std:26 重みに learned は来ない | v_learn の new_kind は realizable_entity、重みは人工物 | a |
+        | syntax:54 集まりの性質は成員に受け継がれない | v_collect は extends でないので、性質がたどられない（私の読み。式で検査はしていない） | a に近い |
+        | runtime:56, std:90 閉じた前提 | `v_presume closed_world` が式。理由の部分は解釈 | a ＋ c |
+        | std:45 閉じる対象は下位で決める | 書き方の指針 | c |
+        | ontology:44「後ろ＝大きい」 | `after` を「大きさ」と読み替える翻訳 | c（display の側の話） |
+
+        残る候補は次の2つです。
+        - **signature:2–4, 20 の一部:** 「any は在らないものも含む」と「否定の限定の意味」。今は検査器のコードが与えている意味で、式にはなっていません。
+        - **ontology:28 gloss:** 下の通り、確認が要ります。
+
+        **gloss について。** 私の手元の記録は、「self から導いた」とは逆を示しています。
+
+        - continuant と occurrent を self と same から導く仮説 `h_tops_derivable` は、0014808 で反証として記録されています。静的な動詞 82 個も、すべて生起体の下に入ってしまったためです。
+        - 今の claude/cross、main、cscl、exp のどのブランチでも、2つはまだ `gloss` を持っています。
+        - 型検査器は「gloss を持てるのは TOPS と any だけ」を、名前で検査しています。
+
+        なので、リポジトリの上では gloss はまだ導かれていません。ただ、そのコメント自体はやはり古いものでした。gloss は `any` にもあり、「2つだけ」は事実と違っていたからです。
+
+        導いたのが別の作業（会話だけ、または push していない作業）なら、その内容を教えてください。gloss を外して式にする実験として、事前登録から始めます。直した分類は、次の commit メッセージに「訂正」として残します。
+
+        **2. 辞書と広辞苑**
+
+        その通りだと思います。含意はこう読めます。
+
+        辞書の層を作ると、display を一意に決めるため、語ごとに語釈を足し続けることになります。それはこの体系が避けてきたもの、つまり式の外にある意味の置き場そのものです。
+
+        ですから、辞書を作るよりも逆向きが筋だと考えます。display の残りのずれを「式がまだ薄い」印として扱い、式の側を足していくのです。そうすれば display は式から訳した結果になり、辞書は要らなくなります。
+
+        それでも辞書が要るとすれば、残るのは慣用の名前（例: 動詞＝生起体）のように、式から訳しても決まらない少数の語だけのはずです。その数が広辞苑に近づくなら、それは式が足りないことの測り方として使えます。
+facts:
+- {is: v_say, from: session_model, to: 01M7PC1WR3KHGA9AR0VN0BDN6D}
+- {is: exp.v_answer, from: 01M7PC1WR3KHGA9AR0VN0BDN6D, to: 01M7PC04AXYVZX0W2QD4QE0EZ9}
+- {is: v_refer, from: 01M7PC1WR3KHGA9AR0VN0BDN6D, to: syntax.verb_ref}
+- {is: v_refer, from: 01M7PC1WR3KHGA9AR0VN0BDN6D, to: ontology.is}
+- {is: v_refer, from: 01M7PC1WR3KHGA9AR0VN0BDN6D, to: std.v_learn}
+- {is: v_refer, from: 01M7PC1WR3KHGA9AR0VN0BDN6D, to: syntax.new_kind}
+- {is: v_refer, from: 01M7PC1WR3KHGA9AR0VN0BDN6D, to: ontology.realizable_entity}
+- {is: v_refer, from: 01M7PC1WR3KHGA9AR0VN0BDN6D, to: syntax.v_collect}
+- {is: v_refer, from: 01M7PC1WR3KHGA9AR0VN0BDN6D, to: syntax.v_presume}
+- {is: v_refer, from: 01M7PC1WR3KHGA9AR0VN0BDN6D, to: syntax.closed_world}
+- {is: v_refer, from: 01M7PC1WR3KHGA9AR0VN0BDN6D, to: syntax.gloss}
+- {is: v_refer, from: 01M7PC1WR3KHGA9AR0VN0BDN6D, to: any}
