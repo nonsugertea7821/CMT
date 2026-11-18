@@ -28,7 +28,7 @@ import exp_check  # noqa: E402
 import display  # noqa: E402
 
 SIDE = {"exp": "exp", "lang": "cscl"}   # 領域 → 側のラベル
-STATUS = {"hyp_supported": "supported", "hyp_refuted": "refuted", "hyp_mixed": "mixed", "hyp_untested": "untested",
+STATUS = {"hyp_supported": "supported", "hyp_refuted": "refuted", "hyp_mixed": "mixed", "hyp_untested": "untested", "hyp_withdrawn": "withdrawn",
           "dec_adopted": "adopted", "dec_tentative": "tentative", "dec_withdrawn": "withdrawn"}
 CLOSED = {"supported", "refuted", "adopted", "withdrawn"}
 KIND = {"仮説": "hypothesis", "決定": "decision"}
@@ -144,6 +144,10 @@ def update_body(body, c):
     return body, bool(old and old.group(1) != c["hash"] and explained)
 
 
+def reason_of(c):
+    return "not_planned" if c["status"] == "withdrawn" else "completed"
+
+
 def labels_of(c):
     return ["claim", c["side"], KIND[c["kind"]]] + ([c["status"]] if c["status"] else [])
 
@@ -196,14 +200,14 @@ def apply(cs):
             x = gh.call("POST", "/issues", {"title": c["title"], "body": new_body(c), "labels": labels_of(c)})
             print("作成", x["number"], c["id"])
             if state == "closed":
-                gh.call("PATCH", f"/issues/{x['number']}", {"state": "closed", "state_reason": "completed"})
+                gh.call("PATCH", f"/issues/{x['number']}", {"state": "closed", "state_reason": reason_of(c)})
             continue
         body, stale = update_body(x["body"], c)
         keep = [l["name"] for l in x["labels"] if l["name"] not in COLORS and l["name"] not in RENAME or l["name"] == STALE]
         labels = labels_of(c) + keep + ([STALE] if stale and STALE not in keep else [])
         patch = {"title": c["title"], "body": body, "labels": labels, "state": state}
         if state == "closed":
-            patch["state_reason"] = "completed"
+            patch["state_reason"] = reason_of(c)
         if (body, c["title"], x["state"], sorted(l["name"] for l in x["labels"])) != (x["body"], x["title"], state, sorted(labels)):
             gh.call("PATCH", f"/issues/{x['number']}", patch)
             print("更新", x["number"], c["id"], "（説明が古い）" if stale else "")
