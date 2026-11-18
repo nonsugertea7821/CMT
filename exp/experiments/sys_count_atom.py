@@ -42,6 +42,9 @@
 登録の前に分かっていること: before では r_deep_end と r_shallow はない。sys_specific_depth は V と C の組の y だけを数えた
   （すべての概念では数えていない）。T.ancestors と r_ancestor が同じ祖先を返すかは確かめていない（T.ancestors は形の指定 form を
   持つノードで、位置の型を上位にする）。
+訂正（before を走らせたとき、結果を見る前）: with の終点が個体の式があり、T.ancestors が個体を扱えず止まった。
+  script の深さを、終点が個体なら「属する種類の深さ + 1」（属する種類とその祖先を祖先とする）と数える。法則の側の r_ancestor が
+  is から上位を導く（parent_by_is）読み方に合わせた。sys_specific_depth の定義は、個体の終点を決めていなかった。
 見込み: errors 0、ec_errors 0、changed 0、extra 0。mismatch は 0 か、form を端に持つ概念の数だけ出る。
 
 行（sys_count_atom_<引数>.json）:
@@ -108,9 +111,15 @@ def main(label):
     for t in F.by.get("with", ()):
         if len(t) == 2:
             with_[t[0]].add(t[1])
+    def deep(e):
+        if e in T.N:
+            return len(T.ancestors(e))
+        k = T.q(T.I[e]) if isinstance(T.I.get(e), str) else None
+        return 1 + len(T.ancestors(k)) if k in T.N else 0
+
     script, depth = set(), {}
     for y in own:
-        ds = [len(T.ancestors(e)) for m in own[y] for e in with_[m]]
+        ds = [deep(e) for m in own[y] for e in with_[m]]
         if ds:
             depth[y] = max(ds)
             if max(ds) <= 2:
