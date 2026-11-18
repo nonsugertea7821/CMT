@@ -979,6 +979,16 @@ individuals:
   sys_case_frame_by_relation_cond_acc_single: {is: axis_value, val: {text: acc_single}}
   sys_case_frame_by_relation_cond_acc_relation_held: {is: axis_value, val: {text: acc_relation_held}}
   sys_case_frame_by_relation_cond_acc_display_held: {is: axis_value, val: {text: acc_display_held}}
+  sys_attribution: {is: measurement_family}
+  sys_attribution_cond: {is: family_axis, val: {text: cond}}
+  sys_attribution_cond_n_quotes: {is: axis_value, val: {text: n_quotes}}
+  sys_attribution_cond_n_before: {is: axis_value, val: {text: n_before}}
+  sys_attribution_cond_n_exact: {is: axis_value, val: {text: n_exact}}
+  sys_attribution_cond_n_near: {is: axis_value, val: {text: n_near}}
+  sys_attribution_cond_n_absent: {is: axis_value, val: {text: n_absent}}
+  sys_attribution_cond_n_checked: {is: axis_value, val: {text: n_checked}}
+  sys_attribution_cond_rate_exact: {is: axis_value, val: {text: rate_exact}}
+  sys_attribution_cond_rate_absent: {is: axis_value, val: {text: rate_absent}}
   sys_comment_ban: {is: measurement_family}
   sys_comment_ban_cond: {is: family_axis, val: {text: cond}}
   sys_comment_ban_cond_n_total: {is: axis_value, val: {text: n_total}}
@@ -1512,8 +1522,10 @@ individuals:
   h_new_word_immune: {is: hyp_supported}
   h_attention_causes_preceding_effect: {is: hyp_untested}
   h_auto_merge_uncorrected: {is: hyp_untested}
-  h_attribution_logged: {is: hyp_untested}
-  b_attribution_logged: {is: item_queued}
+  h_attribution_logged: {is: hyp_refuted}
+  b_attribution_logged: {is: item_done}
+  o_sys_attribution_absent: {is: observation}
+  o_sys_attribution_exact: {is: observation}
   b_auto_merge_uncorrected: {is: item_queued}
   h_opaque_renaming_raises: {is: hyp_supported}
   h_semi_renaming_does_not_raise: {is: hyp_supported}
@@ -3764,6 +3776,27 @@ facts:
   - {is: v_spell, from: sys_case_frame_by_relation_cond_acc_display_held, to: acc_display_held}
   - {is: v_entry_of, from: '{cond}', to: sys_case_frame_by_relation}
   - {is: v_metric_of, from: sys_case_frame_by_relation, to: mean_value}
+  - {is: v_file_of, from: sys_attribution.json, to: sys_attribution}
+  - {is: v_rows_of, from: [rows], to: sys_attribution}
+  - {is: v_axis_of, from: sys_attribution_cond, to: sys_attribution}
+  - {is: v_value_of, from: sys_attribution_cond_n_quotes, to: sys_attribution_cond}
+  - {is: v_spell, from: sys_attribution_cond_n_quotes, to: n_quotes}
+  - {is: v_value_of, from: sys_attribution_cond_n_before, to: sys_attribution_cond}
+  - {is: v_spell, from: sys_attribution_cond_n_before, to: n_before}
+  - {is: v_value_of, from: sys_attribution_cond_n_exact, to: sys_attribution_cond}
+  - {is: v_spell, from: sys_attribution_cond_n_exact, to: n_exact}
+  - {is: v_value_of, from: sys_attribution_cond_n_near, to: sys_attribution_cond}
+  - {is: v_spell, from: sys_attribution_cond_n_near, to: n_near}
+  - {is: v_value_of, from: sys_attribution_cond_n_absent, to: sys_attribution_cond}
+  - {is: v_spell, from: sys_attribution_cond_n_absent, to: n_absent}
+  - {is: v_value_of, from: sys_attribution_cond_n_checked, to: sys_attribution_cond}
+  - {is: v_spell, from: sys_attribution_cond_n_checked, to: n_checked}
+  - {is: v_value_of, from: sys_attribution_cond_rate_exact, to: sys_attribution_cond}
+  - {is: v_spell, from: sys_attribution_cond_rate_exact, to: rate_exact}
+  - {is: v_value_of, from: sys_attribution_cond_rate_absent, to: sys_attribution_cond}
+  - {is: v_spell, from: sys_attribution_cond_rate_absent, to: rate_absent}
+  - {is: v_entry_of, from: '{cond}', to: sys_attribution}
+  - {is: v_metric_of, from: sys_attribution, to: mean_value}
   - {is: v_file_of, from: sys_comment_ban.json, to: sys_comment_ban}
   - {is: v_rows_of, from: [rows], to: sys_comment_ban}
   - {is: v_axis_of, from: sys_comment_ban_cond, to: sys_comment_ban}
@@ -4023,6 +4056,9 @@ facts:
   - {is: v_check, from: b_auto_merge_uncorrected, to: h_auto_merge_uncorrected}
   - {is: v_refer, from: h_attribution_logged, to: {is: v_agree, from: attribution, to: operator_speech}}
   - {is: v_check, from: b_attribution_logged, to: h_attribution_logged}
+  - {is: v_refer, from: o_sys_attribution_absent, to: {is: v_come_after, from: sys_attribution.n_absent.mean_value, to: 0}}
+  - {is: v_refer, from: o_sys_attribution_exact, to: {is: v_level, from: sys_attribution.rate_exact.mean_value, to: 0.375}}
+  - {is: v_contradict, from: o_sys_attribution_absent, to: h_attribution_logged}
   - {is: v_refer, from: h_length_does_not_lower, to: {is: v_not_lower, from: context_length, to: redefinition_following}}
   - {is: v_scope, from: model_4b, to: h_length_does_not_lower}
   - {is: v_scope, from: text_injection, to: h_length_does_not_lower}
