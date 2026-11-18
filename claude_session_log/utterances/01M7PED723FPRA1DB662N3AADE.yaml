@@ -1,0 +1,36 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-18T04:24:58.691Z（UTC）
+individuals:
+  01M7PED723FPRA1DB662N3AADE:
+    is: model_utterance
+    display: 発言 1597
+    val:
+      order: 1597
+      text: |
+        理論上はできます。ただ、今のままでは仮説には一本も届きません。セッションログの中身を確かめました。
+
+        **写すための材料はほぼある**
+        - 発言は1つずつ個体になっています。順番は `order` の軸、時刻は ULID が持っています。
+        - 誰の発言かは `v_say`、どの発言に答えたかは `exp.v_answer` で結ばれています。
+        - `v_refer` は発言から体系の名へ張られていて、全体で 2364 本、464 の名に届いています。
+
+        **仮説に届かない理由**
+        - 6つの仮説に向かう `v_refer` は 0 本でした。どの仮説も 0 本です。
+        - `build.py` が名を解決する先はノード（`T.N`）だけです。仮説は個体（`h_x: {is: exp.hyp_untested}`）なので、解決の対象に入っていません（`claude_session_log/build.py:187`）。
+        - 解決の対象に個体を足しても、拾えるのは発言の中で `h_individual_depth` と名前をそのまま書いたときだけです。「個体の深さ」と日本語で話した発言は拾えません。今回の6つも、生まれた経緯の会話はほとんど日本語でした。
+
+        **写す側で決めることと制約**
+        - **写す先。** issue のコメントか、GitHub Discussions か。Discussions は issue とは別の機能です。
+        - **二重に写さない。** sync はすでに印（`<!-- cscl-claim: … -->`）で issue を見つけています。発言にも ULID の印をつければ、二度は写りません。
+        - **取りに行く。** sync は main への push で走ります。セッションログは別のブランチにあるので、sync がそのブランチを取りに行く形になります。
+        - **量。** Claude の発言は長いです。全文を写すか、利用者の発言と抜き出しにするかを決める必要があります。
+        - **公開の範囲。** 保留・伏せる規則を通った発言だけがログにあります。それでも、issue に写すと通知が飛び、読まれる場所が増えます。
+
+        この二つ（個体へ `v_refer` を張る、ログから issue へ写す）はまだ体系に登録していません。CLAUDE.md の取り決めでは、私の提案は先に未検証の仮説として登録してから伝えることになっています。進めるなら、まず仮説として登録します。
+facts:
+- {is: v_say, from: session_model, to: 01M7PED723FPRA1DB662N3AADE}
+- {is: exp.v_answer, from: 01M7PED723FPRA1DB662N3AADE, to: 01M7PEC3WXZB4Q6T7609DXJF3X}
+- {is: v_refer, from: 01M7PED723FPRA1DB662N3AADE, to: subj.order}
+- {is: v_refer, from: 01M7PED723FPRA1DB662N3AADE, to: claude_session_log.v_say}
+- {is: v_refer, from: 01M7PED723FPRA1DB662N3AADE, to: exp.v_answer}
+- {is: v_refer, from: 01M7PED723FPRA1DB662N3AADE, to: ontology.v_refer}
+- {is: v_refer, from: 01M7PED723FPRA1DB662N3AADE, to: exp.hyp_untested}
