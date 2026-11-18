@@ -1,0 +1,61 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-18T01:26:54.780Z（UTC）
+individuals:
+  01M7P475HWSDD1CQZF4ZJ9MX8W:
+    is: model_utterance
+    display: 発言 1449
+    val:
+      order: 1449
+      text: |
+        気になったので、9 組を一つずつ開いて見ました。「足りない式がちょうど 1 つ」というのは、どの組も同じ形をしているということでした。
+
+        **9 組に共通する形**
+        - y（上に置かれるべきだとされた概念）の定義の中心は、自分で足した 1 つの式です。
+        - x はその式とまったく同じ動詞・同じ位置の式を持っていて、端（その式が結ぶ相手）だけが y より狭くなっています。
+        - それ以外の式は、x と y で全部同じです。
+        - つまり x は、式の上では「y の端を 1 か所だけ狭めたもの」そのものです。
+
+        | x → y | y の式（端） | x の同じ式（狭めた端） |
+        |---|---|---|
+        | plan, run, attendance → verb_ref | 起きること（occurrent）を指す | service / v_execute / meeting を指す |
+        | position → opposite | 起きることを指す | p を指す |
+        | backlog_item → hypothesis | 起きることを指す | experiment を指す |
+        | hour → money | 過程（process）を測る | day を測る |
+        | days_overdue → money | 過程を測る | delivery を測る |
+        | height → age | person に依存する | person_age_neg に依存する |
+        | control_preservation → context_following | case に依存する | control_case に依存する |
+
+        **ただし、この形自体は区別の手がかりになりません。**
+        - 正しい上下関係の組（C、33 組）でも、32 組が同じ「1 か所だけ狭める」形でした。
+        - この形は、上下関係を式で書いたときの普通の姿です。
+        - なので、式から見ると、x は正しく y の下位概念になってしまっています。
+
+        **ここから言えること**
+        悪いのは x ではなく、y の定義が薄すぎることです。
+        - money の定義は「過程を測るもの」だけなので、時間（hour）も入ってしまいます。
+        - verb_ref の定義は「起きることを指すもの」だけなので、計画も実行も出席も入ってしまいます。
+        - 名前にはある「お金らしさ」「年齢らしさ」が、式に書かれていません。
+
+        **一つ目についた差（登録していない、見た後の読み）**
+        y の定義の式の端が、どれだけ一般的かを、その端の祖先の数で数えました。祖先が少ないほど上の方にある、一般的な端です。
+
+        | | 祖先 0〜2（体系の一番上の方） | 祖先 3 以上 |
+        |---|---|---|
+        | V | 8 | 1 |
+        | C | 3 | 30 |
+
+        V の y は、ほとんどが occurrent・process・person のような上の方の端だけで定義されています。かなりきれいに分かれていますが、これは結果を見てから気づいた差です。このまま法則にはできません。
+
+        **提案:** 「y の定義の式の端が上の方にあるとき、その y の下に置く提案（r_candidate）は違反になりやすい」を仮説として、手順を先に登録して測り直すのはどうでしょう。もし分かれたら、それは「薄い定義の概念には、下を集めない」という式で書ける法則の候補になります。
+
+        進めてよければ、そう言ってください。
+facts:
+- {is: v_say, from: session_model, to: 01M7P475HWSDD1CQZF4ZJ9MX8W}
+- {is: exp.v_answer, from: 01M7P475HWSDD1CQZF4ZJ9MX8W, to: 01M7P44SKEATGGAQ8RFDA0N5T7}
+- {is: v_refer, from: 01M7P475HWSDD1CQZF4ZJ9MX8W, to: syntax.verb_ref}
+- {is: v_refer, from: 01M7P475HWSDD1CQZF4ZJ9MX8W, to: runtime.v_execute}
+- {is: v_refer, from: 01M7P475HWSDD1CQZF4ZJ9MX8W, to: exp.backlog_item}
+- {is: v_refer, from: 01M7P475HWSDD1CQZF4ZJ9MX8W, to: subj.days_overdue}
+- {is: v_refer, from: 01M7P475HWSDD1CQZF4ZJ9MX8W, to: subj.person_age_neg}
+- {is: v_refer, from: 01M7P475HWSDD1CQZF4ZJ9MX8W, to: exp.control_preservation}
+- {is: v_refer, from: 01M7P475HWSDD1CQZF4ZJ9MX8W, to: exp.context_following}
+- {is: v_refer, from: 01M7P475HWSDD1CQZF4ZJ9MX8W, to: exp.control_case}
