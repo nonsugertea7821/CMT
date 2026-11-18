@@ -1,5 +1,3 @@
-# 実行（runtime）。実行時の意味論（runtime 節）と、実行の状態・実行器・実行の戦略。構文の上に定義する。
-
 domain: runtime
 
 runtime:
@@ -11,13 +9,10 @@ runtime:
   progress: changes_state
 
 nodes:
-  # ===== 名前を付けた限定（法則 named_mod）。2つ以上の概念が足す限定は、名前で書く
   refer_from_v_execute: {display: 実行するへ述べる（始点）, extends: quality, of: [v_refer, from], with: v_execute}
   refer_from_post: {display: 後の状態の指定へ述べる（始点）, extends: quality, of: [v_refer, from], with: post}
   refer_from_laws: {display: 法則へ述べる（始点）, extends: quality, of: [v_refer, from], with: laws}
 
-
-  # ===== 実行。動的な動詞は、個体の状態を書き換える規則である =====
   state: {display: 状態, extends: passage, mod: {of: [v_compose, to], with: facts}}
   v_execute: {display: 実行する, extends: occurrent, from: continuant, to: state, new_kind: state,
               pre: [{is: exists, from: new, neg: true}], post: [{is: exists, from: new}, {is: after, from: new, to: to}]}
@@ -43,17 +38,15 @@ nodes:
 
 individuals:
   runtime: {is: domain, display: 実行}
-  # ===== 意味を検査や実行器が与える法則。規則の当てはめ方そのもの。
   unique_names: {is: law_given, display: 名前の違う個体は同じでない}
   step: {is: law_given, display: 前の状態が成り立つとき後の状態に置き換える}
   frame: {is: law_given, display: 動詞が触れなかった文は変わらない}
   halt: {is: law_given, display: 当てはまる動詞がなければ止まる}
-  # 混同（動詞の位置を関係 R に沿ってずらした v∘R を、v の名前で書くこと）。観察 sys_confusion から
   no_confusion: {is: law_given, display: 位置をずらした動詞を元の動詞の名前で書かない}
 
 facts:
   - {is: v_use, from: runtime, to: syntax}
-  - {is: v_presume, from: runtime, to: closed_world}   # 実行の状態は実行器が完全に持つので、書かれていない文は偽
+  - {is: v_presume, from: runtime, to: closed_world}
   - {is: v_govern, from: unique_names, to: runtime.run}
   - {is: v_govern, from: step, to: runtime.run}
   - {is: v_govern, from: frame, to: runtime.run}

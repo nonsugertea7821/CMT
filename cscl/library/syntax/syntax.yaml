@@ -1,6 +1,3 @@
-# 構文（syntax）。CSCL が自分の書き方について述べる語: 文法（grammar）、式の部品、法則、節、値と関数、論理の語、領域。
-# 存在論の上に定義する。grammar に並べた語は、すべてこの層かその下のノードに当たる。
-
 domain: syntax
 
 grammar:
@@ -10,26 +7,24 @@ grammar:
   mod: [of, with, neg, quant, at]
   cmp: [axis, a, b, rel]
   base: [display, arity, system_act]
-  axes: [display, source, value, extends]   # extends: 上位の軸（下位の軸の値は、上位の軸の値でもある。単位は量の分化）
-  run: [individuals, facts, steps, expect, halted]   # 実行の記録（exp/tests/*.yaml）
+  axes: [display, source, value, extends]
+  run: [individuals, facts, steps, expect, halted]
   position: [from, to, new]
   rel: [same, differ]
   function: [gt, ge, lt, le]
   value: [number, literal]
-  logic: [not, all, some, between]   # true と false は、真偽の軸の値
+  logic: [not, all, some, between]
   runtime: [pre_rule, post_rule, law_check, binding, choice, progress]
-  # 以下は、型検査と実行器が名前で読む語（翻訳する側が知っている語）。コードの持つ語の集まりと等しいことを、それぞれの検査が確かめる
-  strategy: [replace, every_step, distinct, recorded, changes_state]   # 実行の戦略（runtime 節の値。pre_rule は logic の all か some）
-  world: [world, closed_world]   # 書かれていない文の扱い（領域が v_presume で置く）
-  laws: [law_rule, law_given]   # 法則の種類（laws の下位と等しいことを型検査が確かめる）
-  rule_word: [v_assume, v_derive, v_require, v_govern, variable, law_relation]   # 法則を書く語
-  use_word: [v_use, v_presume]   # 領域が使う層と、置く前提を書く語
-  domain: [domain, axes, nodes, individuals, facts]   # 領域のファイル（exp/src/exp.yaml）。axes は、その領域の量の単位など（上位の軸を extends で書く）
+  strategy: [replace, every_step, distinct, recorded, changes_state]
+  world: [world, closed_world]
+  laws: [law_rule, law_given]
+  rule_word: [v_assume, v_derive, v_require, v_govern, variable, law_relation]
+  use_word: [v_use, v_presume]
+  domain: [domain, axes, nodes, individuals, facts]
   individuals: [is, display, val]
-  facts: [is, from, to, new, at, neg, val]   # 事実は動詞の個体。位置に名前を付けて書く。holds / pre / post も同じ形。neg は「述べられていない」、val: {truth: false} は「偽と述べる」
+  facts: [is, from, to, new, at, neg, val]
 
 nodes:
-  # ===== 名前を付けた限定（法則 named_mod）。2つ以上の概念が足す限定は、名前で書く
   refer_from_facts: {display: 事実へ述べる（始点）, extends: quality, of: [v_refer, from], with: facts}
   refer_from_occurrent: {display: 生起体へ述べる（始点）, extends: quality, of: [v_refer, from], with: occurrent}
   compose_from_system: {display: 体系へ部分になる（始点）, extends: quality, of: [v_compose, from], with: system}
@@ -47,11 +42,9 @@ nodes:
   refer_from_individuals: {display: 個体へ述べる（始点）, extends: quality, of: [v_refer, from], with: individuals}
 
   v_collect: {display: 成員の種類にする, extends: v_refer, from: kind_collection, to: continuant}
-  verb_ref: {display: 動詞を指すもの, extends: kind, mod: {of: [is, to], with: occurrent}}   # 位置の型。この位置には動詞そのものが来る
+  verb_ref: {display: 動詞を指すもの, extends: kind, mod: {of: [is, to], with: occurrent}}
   v_measure: {display: 測る, extends: occurrent, from: continuant, to: any, holds: [{is: refer, from: from, to: to}, {is: depend, from: from, to: to}]}
 
-  # ===== 情報と言語 =====
-  # ===== 種類の集まり（2階）。成員は種類。集まりの性質は、成員の種類の下位には受け継がれない
   kind_collection: {display: 種類の集まり, extends: information_entity, mod: {of: [v_collect, from]}}
   system: {display: 体系, extends: information_entity, mod: {of: [v_compose, to], with: concept_expression, at: {count: {gt: 1}}}}
   cscl: {display: 概念体系制御言語, extends: language, mod: {of: [v_depend, from], with: system}}
@@ -73,12 +66,12 @@ nodes:
   form: {display: 形の指定, extends: position, mod: not_compose_from_mod}
   mod: {display: 修飾の指定, extends: expression_part, mod: {of: [v_compose, to], with: position}}
   with: {display: もう一方の端の指定, extends: expression_part, mod: {of: [v_refer, from], with: participant}}
-  neg: {display: 示されていないことの指定, extends: expression_part, mod: refer_from_facts}   # 否定は「その文が示されていない」。偽であることは、閉世界を前提に置いた領域でだけ言える
-  many: {display: 複数を許す指定, extends: expression_part, mod: {of: [v_refer, from], with: kind, at: {count: {gt: 1}}}}   # この種類を終点とする関係は、1つの個体について複数の事実を持てる
-  opposite: {display: 反対の動詞の指定, extends: expression_part, mod: refer_from_occurrent}   # 動詞に書く。2つの文の中身を比べるとき、この組は向きが反対
-  derive: {display: 中身から導く比較の結果の指定, extends: expression_part, mod: {of: [v_refer, from], with: rel}}   # 動詞に書く（same か opposite）。この動詞の事実は、中身の比較から導けなければならない
-  via: {display: 比べる中身を述べる動詞の指定, extends: expression_part, mod: {of: [v_refer, from], with: occurrent, at: {count: 1}}}   # derive と組で書く。始点がこの動詞で述べる文を、終点の文と比べる
-  verbatim: {display: 値をそのまま持つ指定, extends: value_part, mod: {of: [v_refer, from], with: literal}}   # この種類を終点とする関係の値は、語として解決せず、そのまま持つ
+  neg: {display: 示されていないことの指定, extends: expression_part, mod: refer_from_facts}
+  many: {display: 複数を許す指定, extends: expression_part, mod: {of: [v_refer, from], with: kind, at: {count: {gt: 1}}}}
+  opposite: {display: 反対の動詞の指定, extends: expression_part, mod: refer_from_occurrent}
+  derive: {display: 中身から導く比較の結果の指定, extends: expression_part, mod: {of: [v_refer, from], with: rel}}
+  via: {display: 比べる中身を述べる動詞の指定, extends: expression_part, mod: {of: [v_refer, from], with: occurrent, at: {count: 1}}}
+  verbatim: {display: 値をそのまま持つ指定, extends: value_part, mod: {of: [v_refer, from], with: literal}}
   quant: {display: 数量化の指定, extends: expression_part, mod: {of: [v_refer, from], with: participant, at: {count: {gt: 1}}}}
   value_part: {display: 値の指定, extends: expression_part, mod: refer_from_value}
   at: {display: 修飾の中の値の指定, extends: value_part, mod: {of: [v_compose, from], with: mod}}
@@ -112,12 +105,11 @@ nodes:
   of: {display: 位置の指定, extends: expression_part, mod: {of: [v_refer, from], with: position}}
   section: {display: 体系の節, extends: information_entity, mod: compose_from_system}
   base: {display: 基礎の節, extends: section, mod: refer_from_state_relation}
-  state_relation: {display: 状態の関係, extends: continuant, mod: {of: [v_compose, from], with: base}}   # 観察: holds・pre・post の原子はすべて基礎の節に並ぶ関係で、使われるのは syntax だけ
+  state_relation: {display: 状態の関係, extends: continuant, mod: {of: [v_compose, from], with: base}}
   axes: {display: 軸の節, extends: section, mod: {of: [v_refer, from], with: axis}}
   nodes: {display: ノードの節, extends: section, mod: {of: [v_refer, from], with: concept_expression}}
   source: {display: もとになる関係の指定, extends: holds, mod: {of: [v_compose, from], with: axes}}
 
-  # ===== 値と関数。軸の値は、固定値か、真偽を返す範囲の判定式 =====
   function: {display: 関数, extends: value, mod: refer_from_value}
   gt: {display: より大きいという判定, extends: function, mod: {of: [v_come_after, from]}}
   ge: {display: 以上という判定, extends: function, mod: not_before_from}
@@ -128,15 +120,11 @@ nodes:
   value_not_before_from: {display: 前には置かれない値, extends: value, mod: not_before_from}
   between: {display: 範囲の判定, extends: value_not_before_from, mod: not_after_from}
 
-  # ===== 述語論理の語。「について述べる」の限定として書く。区別は法則 truth_distinct が与える =====
   logic: {display: 述語論理の語, extends: word, mod: refer_from_sentence}
   rule_word: {display: 法則を組み立てる語, extends: word, mod: {of: [v_compose, to], with: laws}}
   use_word: {display: 領域の宣言を組み立てる語, extends: word, mod: {of: [v_compose, to], with: domain}}
   sentence_refer_from_sentence: {display: 文へ述べる文, extends: sentence, mod: refer_from_sentence}
   not: {display: 否定（示されていない文を述べる文）, extends: sentence_refer_from_sentence, mod: refer_from_facts}
-  # 書かれていない文の扱いは、領域ごとに前提として選ぶ（v_presume）。世界は、書かれていない文の真偽を述べる文。
-  # world だけを置けば、真偽を述べない（開世界: 書かれていない文の真偽は決められない）。閉世界は、それに「偽」を述べ足したもの。
-  # 開世界を、world と別のノードにしない。「閉世界に一致しない」という否定のほかに、world に足す中身がないので。
   world: {display: 書かれていない文の扱い, extends: definition, mod: refer_from_facts}
   closed_world: {display: 閉世界（書かれていない文は偽）, extends: world, val: {truth: false}}
   v_presume: {display: 前提として置くと述べる, extends: v_refer, from: domain, to: world}
@@ -146,15 +134,11 @@ nodes:
   facts: {display: 個体か種類についての文（種類についての文は、その種類のすべてについて）, extends: sentence, mod: refer_from_individuals}
   expect: {display: 期待する文, extends: facts, val: {truth: true}}
 
-  # ===== 実行の戦略と実行時の意味論。実行の検査（cscl/bootstrap/runtime/runtime.py）は、runtime の節に書かれた選択に従う =====
-
-  # ===== 名前空間。領域ごとに識別子を持ち、ほかの領域のものは「領域.名前」で参照する =====
   domain: {display: 領域, extends: passage, mod: {of: [v_compose, to], with: concept_expression}, many: true}
   v_use: {display: 使う, extends: v_depend, from: domain, to: domain}
 
 individuals:
   syntax: {is: domain, display: 構文}
-  # ===== 導いた関係。規則が導き、規則の前提に使う。
   r_parent: {is: law_relation, display: 上位である}
   r_ancestor: {is: law_relation, display: 祖先である}
   r_end_from: {is: law_relation, display: 始点の種類である}
@@ -184,7 +168,6 @@ individuals:
   r_entail: {is: law_relation, display: 限定として含意する}
   r_has: {is: law_relation, display: 式を（含意によっても）持つ}
   r_visible: {is: law_relation, display: 参照できる}
-  # --- 体系の書き方
   parent_by_extends: {is: law_rule, display: extends に書いたものは上位}
   parent_by_is: {is: law_rule, display: 「属する」の始点として限定した種類は上位}
   ancestor_by_parent: {is: law_rule, display: 上位は祖先}
@@ -392,7 +375,7 @@ facts:
   - {is: v_assume, from: own_by_new_kind, to: {is: new_kind, from: var1, to: var2}}
   - {is: v_derive, from: own_by_new_kind, to: {is: r_own, from: var1, to: var2}}
   - {is: v_assume, from: own_by_axis, to: {is: axis, from: var1, to: var2}}
-  - {is: v_assume, from: own_by_axis, to: {is: exists, from: var1}}   # 式（限定）の軸は、ノードの式ではない
+  - {is: v_assume, from: own_by_axis, to: {is: exists, from: var1}}
   - {is: v_derive, from: own_by_axis, to: {is: r_own, from: var1, to: var2}}
   - {is: v_assume, from: acc_own, to: {is: r_own, from: var1, to: var2}}
   - {is: v_derive, from: acc_own, to: {is: r_acc, from: var1, to: var2}}
@@ -401,7 +384,7 @@ facts:
   - {is: v_derive, from: acc_ancestor, to: {is: r_acc, from: var1, to: var2}}
   - {is: v_assume, from: adds, to: {is: r_parent, from: var1, to: var3}}
   - {is: v_assume, from: adds, to: {is: r_own, from: var1, to: var2}}
-  - {is: v_assume, from: adds, to: {is: r_has, from: var3, to: var2, neg: true}}   # 含意で持つ式は足したことにならない
+  - {is: v_assume, from: adds, to: {is: r_has, from: var3, to: var2, neg: true}}
   - {is: v_derive, from: adds, to: {is: r_adds, from: var1, to: var3}}
   - {is: v_assume, from: concept_kind, to: {is: extends, from: var1, to: var2}}
   - {is: v_assume, from: concept_kind, to: {is: of, from: var1, to: var3, neg: true}}
@@ -598,7 +581,7 @@ facts:
   - {is: v_derive, from: has_by_entail, to: {is: r_has, from: var1, to: var2}}
   - {is: v_assume, from: specific_missing, to: {is: r_candidate, from: var1, to: var2}}
   - {is: v_assume, from: specific_missing, to: {is: r_acc, from: var2, to: var3}}
-  - {is: v_assume, from: specific_missing, to: {is: r_acc, from: var1, to: var3, neg: true}}   # 含意（r_has）に替えると 9 件の違反が残る（式の上では下位だが、法則では区別がつかない）。観察してから替える
+  - {is: v_assume, from: specific_missing, to: {is: r_acc, from: var1, to: var3, neg: true}}
   - {is: v_derive, from: specific_missing, to: {is: r_missing, from: var1, to: var2}}
   - {is: v_assume, from: specific, to: {is: r_candidate, from: var1, to: var2}}
   - {is: v_require, from: specific, to: {is: r_missing, from: var1, to: var2}}

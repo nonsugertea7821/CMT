@@ -1,10 +1,7 @@
-# 存在論（ontology）。最上位の2つ（持続体・生起体）と、その下の上位の分類、基礎の関係に当たる動詞、
-# 言語・文・語・定義・概念・推論。シグネチャの上に定義する。機械学習や実験の語は持たない（std と exp に置く）。
-
 domain: ontology
 
 base:
-  exists: {display: 在る, arity: 1}   # same から導く（法則 exists_self_same, self_same_exists）。実行器の pre・post が使うので、基礎の関係として置く
+  exists: {display: 在る, arity: 1}
   refer: {display: について述べる, arity: 2, system_act: true}
   depend: {display: 依存する, arity: 2}
   part: {display: 部分である, arity: 2}
@@ -12,24 +9,21 @@ base:
   involve: {display: 関わる, arity: 2}
 
 axes:
-  count: {display: 個数, source: any, value: number}   # どの関係についても「いくつと結ばれるか」を見られる
-  amount: {display: 量, source: any, value: number}   # 質の大きさ。単位は質の種類が決める
+  count: {display: 個数, source: any, value: number}
+  amount: {display: 量, source: any, value: number}
   text: {display: 文字列, source: refer, value: literal}
   truth: {display: 真偽, source: refer, value: [true, false]}
   ratio: {display: 割合, source: part, value: number}
   order: {display: 順番, source: after, value: number}
 
 nodes:
-  # ===== 名前を付けた限定（法則 named_mod）。2つ以上の概念が足す限定は、名前で書く
   express_from_natural_language: {display: 自然言語へで書かれる（始点）, extends: quality, of: [v_express, from], with: natural_language}
   refer_from_concept: {display: 概念へ述べる（始点）, extends: quality, of: [v_refer, from], with: concept}
   perform_to: {display: 行う（終点）, extends: quality, of: [v_perform, to]}
 
-  # ===== 最上位。説明文（gloss）を持つのは、この2つだけ =====
   continuant: {display: 持続体, gloss: 時間を通じて同一性を保って存在するもの}
   occurrent: {display: 生起体, gloss: 時間の中で起こり、展開するもの}
 
-  # ===== 動詞・静的。holds に、成り立っている状態の関係を書く =====
   v_depend: {display: 依存する, extends: occurrent, from: continuant, to: continuant, holds: [{is: depend, from: from, to: to}]}
   v_compose: {display: 部分になる, extends: occurrent, from: continuant, to: continuant, holds: [{is: part, from: from, to: to}]}
   v_stage: {display: 時間的な部分になる, extends: occurrent, from: occurrent, to: occurrent, holds: [{is: part, from: from, to: to}]}
@@ -41,21 +35,17 @@ nodes:
   v_perform: {display: 行う, extends: occurrent, from: continuant, to: occurrent, holds: [{is: involve, from: to, to: from}]}
   v_trigger: {display: 引き起こす, extends: occurrent, from: any, to: occurrent, holds: [{is: after, from: to, to: from}, {is: depend, from: to, to: from}]}
 
-  # ===== 動詞・大きさを比べる。「後ろに置かれる」が、より大きい、に当たる =====
   v_come_before: {display: 前に置かれる, extends: occurrent, from: continuant, to: continuant, holds: [{is: after, from: to, to: from}]}
   v_not_before: {display: 前には置かれない, extends: occurrent, from: continuant, to: continuant, holds: [{is: after, from: to, to: from, neg: true}]}
   v_not_after: {display: 後ろには置かれない, extends: occurrent, from: continuant, to: continuant, holds: [{is: after, from: from, to: to, neg: true}]}
   v_level: {display: 同じ位置にある, extends: occurrent, from: continuant, to: continuant, holds: [{is: after, from: from, to: to, neg: true}, {is: after, from: to, to: from, neg: true}]}
 
-  # ===== 動詞・動的。pre と post に、起こる前後の状態の関係を書く =====
   v_design: {display: 設計する, extends: occurrent, from: continuant, to: continuant, pre: [{is: exists, from: to, neg: true}], post: [{is: exists, from: to}]}
 
-  # ===== 文の骨組み。何が（s）、どう関係し（p）、何に（o）。p は、すべての関係の上位 =====
   p: {display: 関係づける, extends: occurrent, from: any, to: any, holds: [{is: exists, from: from}, {is: exists, from: to}]}
   s: {display: 始点に来るもの, form: [p, from]}
   o: {display: 終点に来るもの, form: [p, to]}
 
-  # ===== BFO の区別 =====
   dependent: {display: 依存するもの, form: [v_depend, from]}
   specifically_dependent_continuant: {display: 特定依存持続体, extends: dependent, mod: {of: [v_depend, from], at: {count: 1}}}
   generically_dependent_continuant: {display: 汎用依存持続体, extends: dependent, mod: {of: [v_depend, from], at: {count: {ge: 1}}}}
@@ -73,7 +63,6 @@ nodes:
   word: {display: 語, extends: information_entity_express_from_natural_language, mod: {of: [v_compose, from], with: sentence}}
   definition: {display: 定義, extends: sentence, mod: refer_from_concept}
 
-  # ===== 過程・実験・推論 =====
   inference: {display: 推論, extends: process, mod: perform_to}
   concept: {display: 概念, extends: inference, mod: {of: [v_trigger, to], with: word}}
   kind: {display: 種類, form: [v_compose, to]}
@@ -85,7 +74,6 @@ nodes:
   same: {display: 同じである, extends: quality, of: [v_level, from]}
   differ: {display: 違っている, extends: quality, of: [v_level, from], neg: true}
 
-  # ===== 動詞の端に来るもの。動詞のシグネチャ（端の型）を、形のノードとして名指す。端の型を決めた理由は lang の決定に記録する
   depended: {display: 依存されるもの, form: [v_depend, to]}
   component: {display: 部分になるもの, form: [v_compose, from]}
   temporal_part: {display: 時間的な部分になるもの, form: [v_stage, from]}
@@ -110,12 +98,10 @@ nodes:
   designer: {display: 設計するもの, form: [v_design, from]}
   designed: {display: 設計されるもの, form: [v_design, to]}
 
-  # ===== 個体と事実。個体は is で種類に1つだけ属する。事実は、1つの関係だけを述べる =====
   is: {display: 属する, extends: p, to: kind}
   disposition: {display: 傾向性, extends: realizable_entity, mod: {of: [v_depend, from], with: quality}}
 
 individuals:
-  # ===== 規則の変数。規則の中で、個体やノードの代わりに置く。
   var1: {is: variable, display: 変数1}
   var2: {is: variable, display: 変数2}
   var3: {is: variable, display: 変数3}
