@@ -30,9 +30,19 @@
   "summary 要約": 上の数
   "probe v@pos":  ideal（数）, sat（数）, match（0 か 1）。ideal が空でないものだけ
 
+訂正（after の後）: probe の mod を、リストでなく辞書 {of: ..., with: any} のまま足していた。tc.build は読み込みのときに
+  mod を [辞書] に直すが、build の後に足した probe は直らず、syntax_facts が辞書の鍵を回して、項が "of" と "with" という
+  語になっていた。なので before と after の probe の数（sat, match）は、意図した限定を測っていない。any_ancestor、above、
+  deep、candidate、errors、ec_errors は probe に依らないので、そのまま有効。
+  直し: probe の mod を [{of: [v, pos], with: any}] にする。直した手順で before_fix（法則を足す前の syntax.yaml に
+  一時的に戻して走らせ、戻す）と after_fix を取る。判定は after_fix で、上の判定の基準をそのまま使う。
+  同じ誤りは sys_any_limitation（#155、h_any_not_vacuous の反証）にもある。before_fix はその確かめを兼ねる。
+
 使い方:
-  python exp/experiments/sys_any_by_entail.py before   （法則を足す前）
-  python exp/experiments/sys_any_by_entail.py after    （法則を足した後）
+  python exp/experiments/sys_any_by_entail.py before       （法則を足す前）
+  python exp/experiments/sys_any_by_entail.py after        （法則を足した後）
+  python exp/experiments/sys_any_by_entail.py before_fix   （訂正: 法則を足す前）
+  python exp/experiments/sys_any_by_entail.py after_fix    （訂正: 法則を足した後）
 """
 import collections
 import contextlib
@@ -73,7 +83,8 @@ def main(label):
     probes = {}
     for i, (v, p) in enumerate(slots):
         nid = f"lang.probe_{i}"
-        T.N[nid] = {"display": f"probe {i}", "extends": "ontology.kind", "mod": {"of": [v, p], "with": "any"}}
+        T.N[nid] = {"display": f"probe {i}", "extends": "ontology.kind", "mod": ({"of": [v, p], "with": "any"} if label in ("before", "after")
+                                                                    else [{"of": [v, p], "with": "any"}])}
         probes[nid] = (v, p)
 
     F = tc.Facts(T.syntax_facts())
@@ -121,5 +132,5 @@ def main(label):
 
 
 if __name__ == "__main__":
-    assert sys.argv[1:] in (["before"], ["after"])
+    assert sys.argv[1:] in (["before"], ["after"], ["before_fix"], ["after_fix"])
     main(sys.argv[1])
