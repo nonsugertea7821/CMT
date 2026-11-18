@@ -1,29 +1,30 @@
-# 構文（syntax）。CSCL が自分の書き方について述べる語: 文法（grammar）、式の部品、法則、節、値と関数、論理の語、領域。
-# 存在論の上に定義する。grammar に並べた語は、すべてこの層かその下のノードに当たる。
-
 domain: syntax
 
 grammar:
-  grammar: [system, nodes, mod, cmp, base, axes, run, position, rel, function, value, logic, runtime, domain, individuals, facts, grammar]
+  grammar: [system, nodes, mod, cmp, base, axes, run, position, rel, function, value, logic, runtime, strategy, world, laws, rule_word, use_word, domain, individuals, facts, grammar]
   system: [base, axes, nodes, individuals, facts, runtime, grammar]
   nodes: [display, gloss, extends, from, to, new_kind, holds, pre, post, form, of, with, at, neg, mod, val, cmp, axis, many, opposite, derive, via, verbatim]
   mod: [of, with, neg, quant, at]
   cmp: [axis, a, b, rel]
   base: [display, arity, system_act]
-  axes: [display, source, value]
-  run: [individuals, facts, steps, expect, halted]   # 実行の記録（exp/tests/*.yaml）
+  axes: [display, source, value, extends]
+  run: [individuals, facts, steps, expect, halted]
   position: [from, to, new]
   rel: [same, differ]
   function: [gt, ge, lt, le]
   value: [number, literal]
-  logic: [not, all, any, between]   # true と false は、真偽の軸の値
+  logic: [not, all, some, between]
   runtime: [pre_rule, post_rule, law_check, binding, choice, progress]
-  domain: [domain, nodes, individuals, facts]   # 領域のファイル（exp/src/exp.yaml）
+  strategy: [replace, every_step, distinct, recorded, changes_state]
+  world: [world, closed_world]
+  laws: [law_rule, law_given]
+  rule_word: [v_assume, v_derive, v_require, v_govern, variable, law_relation]
+  use_word: [v_use, v_presume]
+  domain: [domain, axes, nodes, individuals, facts]
   individuals: [is, display, val]
-  facts: [is, from, to, new, at, neg, val]   # 事実は動詞の個体。位置に名前を付けて書く。holds / pre / post も同じ形。neg は「述べられていない」、val: {truth: false} は「偽と述べる」
+  facts: [is, from, to, new, at, neg, val]
 
 nodes:
-  # ===== 名前を付けた限定（法則 named_mod）。2つ以上の概念が足す限定は、名前で書く
   refer_from_facts: {display: 事実へ述べる（始点）, extends: quality, of: [v_refer, from], with: facts}
   refer_from_occurrent: {display: 生起体へ述べる（始点）, extends: quality, of: [v_refer, from], with: occurrent}
   compose_from_system: {display: 体系へ部分になる（始点）, extends: quality, of: [v_compose, from], with: system}
@@ -40,12 +41,10 @@ nodes:
   refer_from_sentence: {display: 文へ述べる（始点）, extends: quality, of: [v_refer, from], with: sentence}
   refer_from_individuals: {display: 個体へ述べる（始点）, extends: quality, of: [v_refer, from], with: individuals}
 
-  v_collect: {display: 成員の種類にする, extends: occurrent, from: kind_collection, to: continuant, holds: [{is: refer, from: from, to: to}]}
-  verb_ref: {display: 動詞を指すもの, extends: information_entity, mod: refer_from_occurrent}   # 位置の型。この位置には動詞そのものが来る
+  v_collect: {display: 成員の種類にする, extends: v_refer, from: kind_collection, to: continuant}
+  verb_ref: {display: 動詞を指すもの, extends: kind, mod: {of: [is, to], with: occurrent}}
   v_measure: {display: 測る, extends: occurrent, from: continuant, to: any, holds: [{is: refer, from: from, to: to}, {is: depend, from: from, to: to}]}
 
-  # ===== 情報と言語 =====
-  # ===== 種類の集まり（2階）。成員は種類。集まりの性質は、成員の種類の下位には受け継がれない
   kind_collection: {display: 種類の集まり, extends: information_entity, mod: {of: [v_collect, from]}}
   system: {display: 体系, extends: information_entity, mod: {of: [v_compose, to], with: concept_expression, at: {count: {gt: 1}}}}
   cscl: {display: 概念体系制御言語, extends: language, mod: {of: [v_depend, from], with: system}}
@@ -67,12 +66,12 @@ nodes:
   form: {display: 形の指定, extends: position, mod: not_compose_from_mod}
   mod: {display: 修飾の指定, extends: expression_part, mod: {of: [v_compose, to], with: position}}
   with: {display: もう一方の端の指定, extends: expression_part, mod: {of: [v_refer, from], with: participant}}
-  neg: {display: 示されていないことの指定, extends: expression_part, mod: refer_from_facts}   # 否定は「その文が示されていない」。偽であることは、閉世界を前提に置いた領域でだけ言える
-  many: {display: 複数を許す指定, extends: expression_part, mod: {of: [v_refer, from], with: kind, at: {count: {gt: 1}}}}   # この種類を終点とする関係は、1つの個体について複数の事実を持てる
-  opposite: {display: 反対の動詞の指定, extends: expression_part, mod: refer_from_occurrent}   # 動詞に書く。2つの文の中身を比べるとき、この組は向きが反対
-  derive: {display: 中身から導く比較の結果の指定, extends: expression_part, mod: {of: [v_refer, from], with: rel}}   # 動詞に書く（same か opposite）。この動詞の事実は、中身の比較から導けなければならない
-  via: {display: 比べる中身を述べる動詞の指定, extends: expression_part, mod: {of: [v_refer, from], with: occurrent, at: {count: 1}}}   # derive と組で書く。始点がこの動詞で述べる文を、終点の文と比べる
-  verbatim: {display: 値をそのまま持つ指定, extends: expression_part, mod: {of: [v_refer, from], with: literal}}   # この種類を終点とする関係の値は、語として解決せず、そのまま持つ
+  neg: {display: 示されていないことの指定, extends: expression_part, mod: refer_from_facts}
+  many: {display: 複数を許す指定, extends: expression_part, mod: {of: [v_refer, from], with: kind, at: {count: {gt: 1}}}}
+  opposite: {display: 反対の動詞の指定, extends: expression_part, mod: refer_from_occurrent}
+  derive: {display: 中身から導く比較の結果の指定, extends: expression_part, mod: {of: [v_refer, from], with: rel}}
+  via: {display: 比べる中身を述べる動詞の指定, extends: expression_part, mod: {of: [v_refer, from], with: occurrent, at: {count: 1}}}
+  verbatim: {display: 値をそのまま持つ指定, extends: value_part, mod: {of: [v_refer, from], with: literal}}
   quant: {display: 数量化の指定, extends: expression_part, mod: {of: [v_refer, from], with: participant, at: {count: {gt: 1}}}}
   value_part: {display: 値の指定, extends: expression_part, mod: refer_from_value}
   at: {display: 修飾の中の値の指定, extends: value_part, mod: {of: [v_compose, from], with: mod}}
@@ -81,7 +80,7 @@ nodes:
   rel: {display: 比べた結果, extends: quality, mod: {of: [v_depend, from], with: cmp}}
   from: {display: 始点の位置, extends: position, mod: {of: [v_refer, from], with: s}}
   to: {display: 終点の位置, extends: position, mod: {of: [v_refer, from], with: o}}
-  new_kind: {display: 第三のものの種類の指定, extends: expression_part, mod: refer_from_third_participant}
+  new_kind: {display: 第三のものの種類の指定, extends: with, mod: refer_from_third_participant}
   holds: {display: 成り立つ状態の指定, extends: expression_part, mod: refer_from_state_relation, verbatim: true}
   pre: {display: 前の状態の指定, extends: holds, mod: come_before_from_post, verbatim: true}
   post: {display: 後の状態の指定, extends: holds, mod: {of: [v_come_after, from], with: pre}, verbatim: true}
@@ -106,12 +105,11 @@ nodes:
   of: {display: 位置の指定, extends: expression_part, mod: {of: [v_refer, from], with: position}}
   section: {display: 体系の節, extends: information_entity, mod: compose_from_system}
   base: {display: 基礎の節, extends: section, mod: refer_from_state_relation}
-  state_relation: {display: 状態の関係, extends: continuant, mod: {of: [v_compose, from], with: base}}   # 観察: holds・pre・post の原子はすべて基礎の節に並ぶ関係で、使われるのは syntax だけ
+  state_relation: {display: 状態の関係, extends: continuant, mod: {of: [v_compose, from], with: base}}
   axes: {display: 軸の節, extends: section, mod: {of: [v_refer, from], with: axis}}
   nodes: {display: ノードの節, extends: section, mod: {of: [v_refer, from], with: concept_expression}}
   source: {display: もとになる関係の指定, extends: holds, mod: {of: [v_compose, from], with: axes}}
 
-  # ===== 値と関数。軸の値は、固定値か、真偽を返す範囲の判定式 =====
   function: {display: 関数, extends: value, mod: refer_from_value}
   gt: {display: より大きいという判定, extends: function, mod: {of: [v_come_after, from]}}
   ge: {display: 以上という判定, extends: function, mod: not_before_from}
@@ -122,33 +120,29 @@ nodes:
   value_not_before_from: {display: 前には置かれない値, extends: value, mod: not_before_from}
   between: {display: 範囲の判定, extends: value_not_before_from, mod: not_after_from}
 
-  # ===== 述語論理の語。「について述べる」の限定として書く。区別は法則 truth_distinct が与える =====
   logic: {display: 述語論理の語, extends: word, mod: refer_from_sentence}
+  rule_word: {display: 法則を組み立てる語, extends: word, mod: {of: [v_compose, to], with: laws}}
+  use_word: {display: 領域の宣言を組み立てる語, extends: word, mod: {of: [v_compose, to], with: domain}}
   sentence_refer_from_sentence: {display: 文へ述べる文, extends: sentence, mod: refer_from_sentence}
   not: {display: 否定（示されていない文を述べる文）, extends: sentence_refer_from_sentence, mod: refer_from_facts}
-  # 書かれていない文の扱いは、領域ごとに前提として選ぶ（v_presume）。世界は、書かれていない文の真偽を述べる文。
-  # world だけを置けば、真偽を述べない（開世界: 書かれていない文の真偽は決められない）。閉世界は、それに「偽」を述べ足したもの。
-  # 開世界を、world と別のノードにしない。「閉世界に一致しない」という否定のほかに、world に足す中身がないので。
   world: {display: 書かれていない文の扱い, extends: definition, mod: refer_from_facts}
   closed_world: {display: 閉世界（書かれていない文は偽）, extends: world, val: {truth: false}}
   v_presume: {display: 前提として置くと述べる, extends: v_refer, from: domain, to: world}
-  any: {display: 存在の数量化, extends: sentence, mod: {of: [v_refer, from], with: participant, at: {count: {ge: 1}}}, many: true}
-  all: {display: 全称の数量化, extends: not, mod: {of: [v_refer, from], with: any}}
+  some: {display: 存在の数量化, extends: sentence, mod: {of: [v_refer, from], with: participant, at: {count: {ge: 1}}}, many: true}
+  all: {display: 全称の数量化, extends: not, mod: {of: [v_refer, from], with: some}}
   individuals: {display: 個体, form: [is, from]}
   facts: {display: 個体か種類についての文（種類についての文は、その種類のすべてについて）, extends: sentence, mod: refer_from_individuals}
   expect: {display: 期待する文, extends: facts, val: {truth: true}}
 
-  # ===== 実行の戦略と実行時の意味論。実行の検査（cscl/bootstrap/runtime/runtime.py）は、runtime の節に書かれた選択に従う =====
-
-  # ===== 名前空間。領域ごとに識別子を持ち、ほかの領域のものは「領域.名前」で参照する =====
-  domain: {display: 領域, extends: information_entity, mod: {of: [v_compose, to], with: concept_expression}, many: true}
+  domain: {display: 領域, extends: passage, mod: {of: [v_compose, to], with: concept_expression}, many: true}
   v_use: {display: 使う, extends: v_depend, from: domain, to: domain}
 
 individuals:
   syntax: {is: domain, display: 構文}
-  # ===== 導いた関係。規則が導き、規則の前提に使う。
   r_parent: {is: law_relation, display: 上位である}
   r_ancestor: {is: law_relation, display: 祖先である}
+  r_deep_end: {is: law_relation, display: 深い端を持つ}
+  r_shallow: {is: law_relation, display: 浅い端だけで定義される}
   r_end_from: {is: law_relation, display: 始点の種類である}
   r_end_to: {is: law_relation, display: 終点の種類である}
   r_end_new_kind: {is: law_relation, display: 第三のものの種類である}
@@ -159,13 +153,23 @@ individuals:
   r_acc: {is: law_relation, display: 積み上がった式である}
   r_adds: {is: law_relation, display: 上位にない式を足している}
   r_concept: {is: law_relation, display: 概念である}
+  r_written: {is: law_relation, display: 領域に書かれた語が指す}
   r_root: {is: law_relation, display: 根である}
   r_verb: {is: law_relation, display: 動詞である}
   r_placed: {is: law_relation, display: 定義から根の下に置かれる}
+  r_mod_lacks: {is: law_relation, display: 同じ動詞の同じ位置の限定で、相手の語のどれかを持たない}
+  r_mod_differ: {is: law_relation, display: 同じ動詞の同じ位置の限定で、どちらかが相手の語のどれかを持たない}
+  r_near: {is: law_relation, display: 上位の下にある別の概念である（見えるかを問わない）}
+  r_pair: {is: law_relation, display: 比べる組である（兄弟か、上位の下にある別の概念）}
+  r_lacks: {is: law_relation, display: 相手の式のどれかを（含意によっても）持たない}
+  r_differ: {is: law_relation, display: どちらかが相手の式のどれかを持たない}
   r_candidate: {is: law_relation, display: 具体的な候補である}
   r_missing: {is: law_relation, display: 候補の式が欠けている}
+  r_same_slot: {is: law_relation, display: 同じ動詞の同じ位置の限定である}
+  r_qualified: {is: law_relation, display: 否定・数量・範囲の付いた限定である}
+  r_entail: {is: law_relation, display: 限定として含意する}
+  r_has: {is: law_relation, display: 式を（含意によっても）持つ}
   r_visible: {is: law_relation, display: 参照できる}
-  # --- 体系の書き方
   parent_by_extends: {is: law_rule, display: extends に書いたものは上位}
   parent_by_is: {is: law_rule, display: 「属する」の始点として限定した種類は上位}
   ancestor_by_parent: {is: law_rule, display: 上位は祖先}
@@ -184,6 +188,7 @@ individuals:
   kind_up_by_form_new_any: {is: law_rule, display: 第三の位置の種類が書かれていない形は any の下}
   below_self: {is: law_rule, display: 自分は自分の下}
   below_any: {is: law_rule, display: すべては any の下}
+  one_spelling: {is: law_rule, display: 同じ領域で同じ綴りの語は、どこに書かれても同じものを指す}
   below_by_step: {is: law_rule, display: 種類として上のものの下は下}
   narrow_from: {is: law_rule, display: 下位の動詞の端 from は、上位の動詞の端を狭める}
   narrow_to: {is: law_rule, display: 下位の動詞の端 to は、上位の動詞の端を狭める}
@@ -216,7 +221,37 @@ individuals:
   placed_deduced: {is: law_rule, display: 動詞でない概念は、定義から根の下に置かれる（根への宣言だけでは置かれない）}
   monotone: {is: law_rule, display: 階層を降りるたびに限定が増える}
   parents_unordered: {is: law_rule, display: 上位に並べた2つは、上下の関係にない}
+  sees: {is: law_rule, display: 別の概念のうち、自分の領域から見えるものが候補}
+  sibling: {is: law_rule, display: 同じ上位を持つ別の概念は、比べる組}
+  lacks: {is: law_rule, display: 組の相手の式のうち、自分が持たないものがある}
+  pair_near: {is: law_rule, display: 上位の下にある別の概念は、比べる組}
+  pair_back: {is: law_rule, display: 比べる組は向きを問わない}
+  mod_lacks_with: {is: law_rule, display: 同じ位置の限定の相手が持つ with を持たない}
+  mod_lacks_neg: {is: law_rule, display: 同じ位置の限定の相手が持つ neg を持たない}
+  mod_lacks_quant: {is: law_rule, display: 同じ位置の限定の相手が持つ quant を持たない}
+  mod_lacks_at: {is: law_rule, display: 同じ位置の限定の相手が持つ at を持たない}
+  mod_lacks_extends: {is: law_rule, display: 同じ位置の限定の相手が持つ extends を持たない}
+  mod_lacks_mod: {is: law_rule, display: 同じ位置の限定の相手が持つ mod を持たない}
+  mod_differ_left: {is: law_rule, display: 自分が相手の語を欠く限定は、相手と違う}
+  mod_differ_right: {is: law_rule, display: 相手が自分の語を欠く限定は、相手と違う}
+  one_mod: {is: law_rule, display: 同じ動詞の同じ位置を、同じ語で限定する名前は1つだけ}
+  one_form: {is: law_rule, display: 同じ動詞の同じ位置に来るものの名前は1つだけ}
+  differ_left: {is: law_rule, display: 自分が相手の式を欠くなら、2つは違う}
+  differ_right: {is: law_rule, display: 相手が自分の式を欠くなら、2つは違う}
+  one_name: {is: law_rule, display: 互いに相手の式を（含意によっても）持つ組は、同じものの別の名前なので置かない}
   specific_candidate: {is: law_rule, display: 上位の下にあり、互いに上下でない別の概念}
+  qualified_by_neg: {is: law_rule, display: 否定の付いた限定}
+  qualified_by_quant: {is: law_rule, display: 数量の付いた限定}
+  qualified_by_at: {is: law_rule, display: 範囲の付いた限定}
+  same_slot: {is: law_rule, display: 同じ動詞の同じ位置を限定する2つ}
+  entail_by_axis: {is: law_rule, display: 下位の軸は、上位の軸を含意する（円の量は量でもある）}
+  entail_by_axis_step: {is: law_rule, display: 軸の含意は、上位の軸の上位にも及ぶ}
+  at_axis: {is: law_rule, display: 限定が値を指定する軸は、比べる概念の値の軸かその上位（円の量で年齢を比べない）}
+  deep_end: {is: law_rule, display: 自前の式の端に、祖先が3つ以上ある種類があれば、深い端を持つ}
+  shallow_ends: {is: law_rule, display: 自前の式に端があり、深い端を持たなければ、浅い端だけで定義される}
+  entail_by_with: {is: law_rule, display: 同じ動詞の同じ位置で、端が下位の限定は、端が上位の限定を含意する（どちらも否定・数量・範囲なし）}
+  has_by_acc: {is: law_rule, display: 積み上がった式は持つ}
+  has_by_entail: {is: law_rule, display: 積み上がった式が含意する式も持つ}
   specific_missing: {is: law_rule, display: 候補の式に、自分にない式がある}
   specific: {is: law_rule, display: より具体的な概念があればその下に置く}
   unique_in_domain: {is: law_rule, display: 表示語は同じ領域の中で重複しない}
@@ -310,6 +345,9 @@ facts:
   - {is: v_derive, from: below_self, to: {is: r_below, from: var1, to: var1}}
   - {is: v_assume, from: below_any, to: {is: exists, from: var1}}
   - {is: v_derive, from: below_any, to: {is: r_below, from: var1, to: any}}
+  - {is: v_assume, from: one_spelling, to: {is: r_written, from: var1, to: var2}}
+  - {is: v_assume, from: one_spelling, to: {is: r_written, from: var1, to: var3}}
+  - {is: v_require, from: one_spelling, to: {is: same, from: var2, to: var3}}
   - {is: v_assume, from: below_by_step, to: {is: r_kind_up, from: var1, to: var3}}
   - {is: v_assume, from: below_by_step, to: {is: r_below, from: var3, to: var2}}
   - {is: v_derive, from: below_by_step, to: {is: r_below, from: var1, to: var2}}
@@ -341,6 +379,7 @@ facts:
   - {is: v_assume, from: own_by_new_kind, to: {is: new_kind, from: var1, to: var2}}
   - {is: v_derive, from: own_by_new_kind, to: {is: r_own, from: var1, to: var2}}
   - {is: v_assume, from: own_by_axis, to: {is: axis, from: var1, to: var2}}
+  - {is: v_assume, from: own_by_axis, to: {is: exists, from: var1}}
   - {is: v_derive, from: own_by_axis, to: {is: r_own, from: var1, to: var2}}
   - {is: v_assume, from: acc_own, to: {is: r_own, from: var1, to: var2}}
   - {is: v_derive, from: acc_own, to: {is: r_acc, from: var1, to: var2}}
@@ -349,7 +388,7 @@ facts:
   - {is: v_derive, from: acc_ancestor, to: {is: r_acc, from: var1, to: var2}}
   - {is: v_assume, from: adds, to: {is: r_parent, from: var1, to: var3}}
   - {is: v_assume, from: adds, to: {is: r_own, from: var1, to: var2}}
-  - {is: v_assume, from: adds, to: {is: r_acc, from: var3, to: var2, neg: true}}
+  - {is: v_assume, from: adds, to: {is: r_has, from: var3, to: var2, neg: true}}
   - {is: v_derive, from: adds, to: {is: r_adds, from: var1, to: var3}}
   - {is: v_assume, from: concept_kind, to: {is: extends, from: var1, to: var2}}
   - {is: v_assume, from: concept_kind, to: {is: of, from: var1, to: var3, neg: true}}
@@ -438,6 +477,64 @@ facts:
   - {is: v_assume, from: parents_unordered, to: {is: r_parent, from: var1, to: var2}}
   - {is: v_assume, from: parents_unordered, to: {is: r_parent, from: var1, to: var3}}
   - {is: v_require, from: parents_unordered, to: {is: r_ancestor, from: var2, to: var3, neg: true}}
+  - {is: v_assume, from: sibling, to: {is: r_parent, from: var1, to: var3}}
+  - {is: v_assume, from: sibling, to: {is: r_parent, from: var2, to: var3}}
+  - {is: v_assume, from: sibling, to: {is: r_concept, from: var1}}
+  - {is: v_assume, from: sibling, to: {is: r_concept, from: var2}}
+  - {is: v_assume, from: sibling, to: {is: same, from: var1, to: var2, neg: true}}
+  - {is: v_derive, from: sibling, to: {is: r_pair, from: var1, to: var2}}
+  - {is: v_assume, from: pair_near, to: {is: r_near, from: var1, to: var2}}
+  - {is: v_derive, from: pair_near, to: {is: r_pair, from: var1, to: var2}}
+  - {is: v_assume, from: pair_back, to: {is: r_near, from: var2, to: var1}}
+  - {is: v_derive, from: pair_back, to: {is: r_pair, from: var1, to: var2}}
+  - {is: v_assume, from: mod_lacks_with, to: {is: r_same_slot, from: var1, to: var2}}
+  - {is: v_assume, from: mod_lacks_with, to: {is: with, from: var2, to: var3}}
+  - {is: v_assume, from: mod_lacks_with, to: {is: with, from: var1, to: var3, neg: true}}
+  - {is: v_derive, from: mod_lacks_with, to: {is: r_mod_lacks, from: var1, to: var2}}
+  - {is: v_assume, from: mod_lacks_neg, to: {is: r_same_slot, from: var1, to: var2}}
+  - {is: v_assume, from: mod_lacks_neg, to: {is: neg, from: var2, to: var3}}
+  - {is: v_assume, from: mod_lacks_neg, to: {is: neg, from: var1, to: var3, neg: true}}
+  - {is: v_derive, from: mod_lacks_neg, to: {is: r_mod_lacks, from: var1, to: var2}}
+  - {is: v_assume, from: mod_lacks_quant, to: {is: r_same_slot, from: var1, to: var2}}
+  - {is: v_assume, from: mod_lacks_quant, to: {is: quant, from: var2, to: var3}}
+  - {is: v_assume, from: mod_lacks_quant, to: {is: quant, from: var1, to: var3, neg: true}}
+  - {is: v_derive, from: mod_lacks_quant, to: {is: r_mod_lacks, from: var1, to: var2}}
+  - {is: v_assume, from: mod_lacks_at, to: {is: r_same_slot, from: var1, to: var2}}
+  - {is: v_assume, from: mod_lacks_at, to: {is: at, from: var2, to: var3}}
+  - {is: v_assume, from: mod_lacks_at, to: {is: at, from: var1, to: var3, neg: true}}
+  - {is: v_derive, from: mod_lacks_at, to: {is: r_mod_lacks, from: var1, to: var2}}
+  - {is: v_assume, from: mod_lacks_extends, to: {is: r_same_slot, from: var1, to: var2}}
+  - {is: v_assume, from: mod_lacks_extends, to: {is: extends, from: var2, to: var3}}
+  - {is: v_assume, from: mod_lacks_extends, to: {is: extends, from: var1, to: var3, neg: true}}
+  - {is: v_derive, from: mod_lacks_extends, to: {is: r_mod_lacks, from: var1, to: var2}}
+  - {is: v_assume, from: mod_lacks_mod, to: {is: r_same_slot, from: var1, to: var2}}
+  - {is: v_assume, from: mod_lacks_mod, to: {is: mod, from: var2, to: var3}}
+  - {is: v_assume, from: mod_lacks_mod, to: {is: mod, from: var1, to: var3, neg: true}}
+  - {is: v_derive, from: mod_lacks_mod, to: {is: r_mod_lacks, from: var1, to: var2}}
+  - {is: v_assume, from: mod_differ_left, to: {is: r_mod_lacks, from: var1, to: var2}}
+  - {is: v_derive, from: mod_differ_left, to: {is: r_mod_differ, from: var1, to: var2}}
+  - {is: v_assume, from: mod_differ_right, to: {is: r_mod_lacks, from: var2, to: var1}}
+  - {is: v_derive, from: mod_differ_right, to: {is: r_mod_differ, from: var1, to: var2}}
+  - {is: v_assume, from: one_mod, to: {is: r_same_slot, from: var1, to: var2}}
+  - {is: v_assume, from: one_mod, to: {is: exists, from: var1}}
+  - {is: v_assume, from: one_mod, to: {is: exists, from: var2}}
+  - {is: v_assume, from: one_mod, to: {is: same, from: var1, to: var2, neg: true}}
+  - {is: v_require, from: one_mod, to: {is: r_mod_differ, from: var1, to: var2}}
+  - {is: v_assume, from: one_form, to: {is: form, from: var1, to: var3}}
+  - {is: v_assume, from: one_form, to: {is: form, from: var2, to: var3}}
+  - {is: v_assume, from: one_form, to: {is: position, from: var1, to: var4}}
+  - {is: v_assume, from: one_form, to: {is: position, from: var2, to: var4}}
+  - {is: v_require, from: one_form, to: {is: same, from: var1, to: var2}}
+  - {is: v_assume, from: lacks, to: {is: r_pair, from: var1, to: var2}}
+  - {is: v_assume, from: lacks, to: {is: r_acc, from: var2, to: var3}}
+  - {is: v_assume, from: lacks, to: {is: r_has, from: var1, to: var3, neg: true}}
+  - {is: v_derive, from: lacks, to: {is: r_lacks, from: var1, to: var2}}
+  - {is: v_assume, from: differ_left, to: {is: r_lacks, from: var1, to: var2}}
+  - {is: v_derive, from: differ_left, to: {is: r_differ, from: var1, to: var2}}
+  - {is: v_assume, from: differ_right, to: {is: r_lacks, from: var2, to: var1}}
+  - {is: v_derive, from: differ_right, to: {is: r_differ, from: var1, to: var2}}
+  - {is: v_assume, from: one_name, to: {is: r_pair, from: var1, to: var2}}
+  - {is: v_require, from: one_name, to: {is: r_differ, from: var1, to: var2}}
   - {is: v_assume, from: specific_candidate, to: {is: r_parent, from: var1, to: var3}}
   - {is: v_assume, from: specific_candidate, to: {is: r_ancestor, from: var2, to: var3}}
   - {is: v_assume, from: specific_candidate, to: {is: r_concept, from: var1}}
@@ -446,7 +543,56 @@ facts:
   - {is: v_assume, from: specific_candidate, to: {is: same, from: var1, to: var2, neg: true}}
   - {is: v_assume, from: specific_candidate, to: {is: r_ancestor, from: var1, to: var2, neg: true}}
   - {is: v_assume, from: specific_candidate, to: {is: r_ancestor, from: var2, to: var1, neg: true}}
-  - {is: v_derive, from: specific_candidate, to: {is: r_candidate, from: var1, to: var2}}
+  - {is: v_derive, from: specific_candidate, to: {is: r_near, from: var1, to: var2}}
+  - {is: v_assume, from: sees, to: {is: r_near, from: var1, to: var2}}
+  - {is: v_assume, from: sees, to: {is: domain, from: var1, to: var3}}
+  - {is: v_assume, from: sees, to: {is: domain, from: var2, to: var4}}
+  - {is: v_assume, from: sees, to: {is: r_visible, from: var3, to: var4}}
+  - {is: v_derive, from: sees, to: {is: r_candidate, from: var1, to: var2}}
+  - {is: v_assume, from: qualified_by_neg, to: {is: neg, from: var1, to: var2}}
+  - {is: v_derive, from: qualified_by_neg, to: {is: r_qualified, from: var1}}
+  - {is: v_assume, from: qualified_by_quant, to: {is: quant, from: var1, to: var2}}
+  - {is: v_derive, from: qualified_by_quant, to: {is: r_qualified, from: var1}}
+  - {is: v_assume, from: qualified_by_at, to: {is: at, from: var1, to: var2}}
+  - {is: v_derive, from: qualified_by_at, to: {is: r_qualified, from: var1}}
+  - {is: v_assume, from: same_slot, to: {is: of, from: var1, to: var3}}
+  - {is: v_assume, from: same_slot, to: {is: of, from: var2, to: var3}}
+  - {is: v_assume, from: same_slot, to: {is: position, from: var1, to: var4}}
+  - {is: v_assume, from: same_slot, to: {is: position, from: var2, to: var4}}
+  - {is: v_derive, from: same_slot, to: {is: r_same_slot, from: var1, to: var2}}
+  - {is: v_assume, from: entail_by_with, to: {is: r_same_slot, from: var1, to: var2}}
+  - {is: v_assume, from: entail_by_with, to: {is: with, from: var1, to: var3}}
+  - {is: v_assume, from: entail_by_with, to: {is: with, from: var2, to: var4}}
+  - {is: v_assume, from: entail_by_with, to: {is: r_ancestor, from: var3, to: var4}}
+  - {is: v_assume, from: entail_by_with, to: {is: r_qualified, from: var1, neg: true}}
+  - {is: v_assume, from: entail_by_with, to: {is: r_qualified, from: var2, neg: true}}
+  - {is: v_derive, from: entail_by_with, to: {is: r_entail, from: var1, to: var2}}
+  - {is: v_assume, from: entail_by_axis, to: {is: axis, from: var3, to: var1}}
+  - {is: v_assume, from: entail_by_axis, to: {is: axis, from: var1, to: var2}}
+  - {is: v_derive, from: entail_by_axis, to: {is: r_entail, from: var1, to: var2}}
+  - {is: v_assume, from: entail_by_axis_step, to: {is: r_entail, from: var1, to: var2}}
+  - {is: v_assume, from: entail_by_axis_step, to: {is: axis, from: var2, to: var3}}
+  - {is: v_derive, from: entail_by_axis_step, to: {is: r_entail, from: var1, to: var3}}
+  - {is: v_assume, from: deep_end, to: {is: r_own, from: var1, to: var2}}
+  - {is: v_assume, from: deep_end, to: {is: with, from: var2, to: var3}}
+  - {is: v_assume, from: deep_end, to: {is: exists, from: var3}}
+  - {is: v_assume, from: deep_end, to: {is: r_ancestor, from: var3, to: var4, at: {count: {gt: 2}}}}
+  - {is: v_derive, from: deep_end, to: {is: r_deep_end, from: var1}}
+  - {is: v_assume, from: shallow_ends, to: {is: r_own, from: var1, to: var2}}
+  - {is: v_assume, from: shallow_ends, to: {is: with, from: var2, to: var3}}
+  - {is: v_assume, from: shallow_ends, to: {is: exists, from: var3}}
+  - {is: v_assume, from: shallow_ends, to: {is: r_deep_end, from: var1, neg: true}}
+  - {is: v_derive, from: shallow_ends, to: {is: r_shallow, from: var1}}
+  - {is: v_assume, from: at_axis, to: {is: with, from: var1, to: var2}}
+  - {is: v_assume, from: at_axis, to: {is: axis, from: var1, to: var3}}
+  - {is: v_assume, from: at_axis, to: {is: r_entail, from: var3, to: var4}}
+  - {is: v_assume, from: at_axis, to: {is: r_has, from: var2, to: var4}}
+  - {is: v_require, from: at_axis, to: {is: r_has, from: var2, to: var3}}
+  - {is: v_assume, from: has_by_acc, to: {is: r_acc, from: var1, to: var2}}
+  - {is: v_derive, from: has_by_acc, to: {is: r_has, from: var1, to: var2}}
+  - {is: v_assume, from: has_by_entail, to: {is: r_acc, from: var1, to: var3}}
+  - {is: v_assume, from: has_by_entail, to: {is: r_entail, from: var3, to: var2}}
+  - {is: v_derive, from: has_by_entail, to: {is: r_has, from: var1, to: var2}}
   - {is: v_assume, from: specific_missing, to: {is: r_candidate, from: var1, to: var2}}
   - {is: v_assume, from: specific_missing, to: {is: r_acc, from: var2, to: var3}}
   - {is: v_assume, from: specific_missing, to: {is: r_acc, from: var1, to: var3, neg: true}}

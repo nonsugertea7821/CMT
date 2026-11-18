@@ -1,9 +1,6 @@
-# 標準の語彙（std）。存在論と構文の上に定義する一般の概念と、その法則。仮説、実験、モデル、閉集合など。
-
 domain: std
 
 nodes:
-  # ===== 名前を付けた限定（法則 named_mod）。2つ以上の概念が足す限定は、名前で書く
   compose_from_model: {display: モデルへ部分になる（始点）, extends: quality, of: [v_compose, from], with: model}
   refer_from_experiment: {display: 実験へ述べる（始点）, extends: quality, of: [v_refer, from], with: experiment}
   depend_from_experiment_protocol: {display: 実験の取り決めへ依存する（始点）, extends: quality, of: [v_depend, from], with: experiment_protocol}
@@ -14,21 +11,18 @@ nodes:
   v_freeze: {display: 固定する, extends: occurrent, from: continuant, to: continuant, new_kind: realizable_entity,
              pre: [{is: exists, from: new}, {is: depend, from: new, to: to}], post: [{is: exists, from: new, neg: true}]}
 
-  # ===== 修飾語。ある動詞の、ある位置を占めているという性質 =====
   frozen: {display: 固定されている, extends: quality, of: [v_freeze, to]}
   learned: {display: 学習で得られた, extends: quality, of: [v_learn, new]}
   computed: {display: 計算で得られた, extends: quality, of: [v_compute, to]}
   hypothesis: {display: 仮説, extends: sentence, mod: refer_from_occurrent}
 
-  # ===== 人工物とモデル =====
   artifact: {display: 人工物, extends: generically_dependent_continuant, mod: {of: [v_refer, from], neg: true}}
   artifact_compose_from_model: {display: モデルの部分である人工物, extends: artifact, mod: compose_from_model}
-  weights: {display: 重み, extends: artifact_compose_from_model, mod: computed}   # 重みは学習の計算が作る人工物。learned（v_learn の new）は傾向性で、人工物は来られない
+  weights: {display: 重み, extends: artifact_compose_from_model, mod: computed}
   frozen_weights: {display: 固定された重み, extends: weights, mod: frozen}
   artifact_compute_from: {display: 計算する人工物, extends: artifact, mod: {of: [v_compute, from]}}
   model: {display: モデル, extends: artifact_compute_from, mod: {of: [v_compose, to], with: frozen_weights}}
 
-  # ===== 体系が、自分の書き方（文法）について述べるための語。文法の語は、すべてノードの識別子 =====
   v_vary: {display: 動かす, extends: occurrent, from: continuant, to: continuant, new_kind: quality,
            pre: [{is: depend, from: new, to: to}], post: [{is: depend, from: new, to: to, neg: true}]}
   process_stage_to_v_vary: {display: 動かすを時間的な部分に持つ過程, extends: process, mod: {of: [v_stage, to], with: v_vary}}
@@ -37,12 +31,12 @@ nodes:
   role_depend_from_experiment_protocol: {display: 実験の取り決めへ依存する役割, extends: role, mod: depend_from_experiment_protocol}
   scope: {display: 適用範囲, extends: role_depend_from_experiment_protocol, mod: {of: [v_depend, from], with: hypothesis}, many: true}
   composable_set: {display: 合成について閉じた集合, extends: closed_set, mod: {of: [v_close, from], with: v_sum}}
-  v_close: {display: について閉じている, extends: occurrent, from: kind_collection, to: verb_ref, holds: [{is: refer, from: from, to: to}]}
+  v_close: {display: について閉じている, extends: v_collect, from: kind_collection, to: verb_ref}
   v_sum: {display: 合成する, extends: occurrent, from: summand, to: summand, new_kind: summand,
           holds: [{is: part, from: from, to: new}, {is: part, from: to, to: new}, {is: depend, from: new, to: from}, {is: depend, from: new, to: to}]}
   model_inference: {display: モデルの推論, extends: inference, mod: {of: [v_perform, to], with: model}}
   summand: {display: 合成できる情報, extends: information_entity, mod: {of: [v_sum, from]}}
-  closed_set: {display: 閉集合, extends: kind_collection, mod: {of: [v_close, from]}}   # 何について閉じているかは、下位の限定で決める
+  closed_set: {display: 閉集合, extends: kind_collection, mod: {of: [v_close, from]}}
 
 individuals:
   std: {is: domain, display: 標準の語彙}
@@ -87,7 +81,7 @@ individuals:
 
 facts:
   - {is: v_use, from: std, to: syntax}
-  - {is: v_presume, from: std, to: closed_world}   # std の法則は否定を前提に使う。体系の記述は完全に書かれている
+  - {is: v_presume, from: std, to: closed_world}
   - {is: v_assume, from: kpart_by_mod_from, to: {is: mod, from: var1, to: var2}}
   - {is: v_assume, from: kpart_by_mod_from, to: {is: of, from: var2, to: v_compose}}
   - {is: v_assume, from: kpart_by_mod_from, to: {is: position, from: var2, to: from}}

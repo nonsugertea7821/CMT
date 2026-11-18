@@ -281,7 +281,7 @@ CLAIM_DOMAINS = {"lang"}   # exp のほかに、仮説・決定を置く領域�
 
 def check_sides(C, T):
     """主張がどちらの側のものかを、中身が参照する語で確かめる。
-    lang の主張は、言語の層（axiom, ontology, syntax, runtime, std）と lang の語だけを参照する。exp の主張は、exp か subj の語（動詞を含む）を少なくとも1つ参照する。"""
+    lang の主張は、言語の層（signature, ontology, syntax, runtime, std）と lang の語だけを参照する。exp の主張は、exp か subj の語（動詞を含む）を少なくとも1つ参照する。"""
     def words(x):
         out = []
         for k in ("s", "o", "p"):
@@ -293,7 +293,7 @@ def check_sides(C, T):
         if w in T.Isubj:
             return T.Isubj[w]
         if w in T.I:
-            return T.Idom if w not in (T.O.get("individuals") or {}) else "axiom"
+            return T.Idom if w not in (T.O.get("individuals") or {}) else "signature"
         return T.domain(w)
     for sect in ("hypotheses", "decisions"):
         for i, x in C[sect].items():
@@ -301,7 +301,7 @@ def check_sides(C, T):
             if side in CLAIM_DOMAINS and ds - set(LAYERS) - {side}:
                 err(f"{i}: {side} の主張が、{side} と言語の層以外の語を参照している（{sorted(ds - set(LAYERS) - {side})}）")
             if side == "exp" and ds and ds <= set(LAYERS):
-                err(f"{i}: exp の主張が、axiom の語だけを参照している。言語についての主張なら cscl の側に置く")
+                err(f"{i}: exp の主張が、signature の語だけを参照している。言語についての主張なら cscl の側に置く")
 
 
 def status_pattern(T, nid):

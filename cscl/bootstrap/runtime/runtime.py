@@ -7,6 +7,8 @@
   step   動詞の pre がすべて成り立つときだけ適用でき、post に置き換わる
   frame  post に書かれていない文は変わらない
   halt   halted: true と書かれた記録では、当てはまる動詞がもうない
+  no_confusion  pre が位置 p の個体 b で破れ、p を新しい個体 c に替えると pre が成り立つなら、その歩みは混同（v∘R を v の名前で書いたもの）
+         の候補として報告する。R は、体系の語彙で c の種類と b の種類を結ぶ基礎の関係（限定 {of: [v_R, from], with: b の種類の上位}。いちばん近い上位と結ぶものだけ）
 
 状態は「述べた文」の記録で、文ごとに、真と述べたか偽と述べたかを持つ。文の読み方は3つ:
   {is: 関係, ...}                       真である。真と述べてあれば真、偽と述べてあれば偽
@@ -68,7 +70,7 @@ def show_atom(r, rel, args):
 # 書かれていない文の扱いは、ここでなく、領域 runtime が置く前提（{is: v_presume, from: runtime, to: 扱い}）から読む。
 WORLDS = {"closed_world": False, "world": None}   # 世界 → 述べていない文に与える真偽（None は与えない）
 IMPLEMENTED = {
-    "pre_rule": {"all", "any"},
+    "pre_rule": {"all", "some"},
     "post_rule": {"replace"},
     "law_check": {"every_step"},
     "binding": {"distinct"},
@@ -163,13 +165,42 @@ class Machine:
             return self.err(f"{where}: pre の {unknown} は、述べられていない文の真偽で、この世界では決められない")
         if not self.quant(self.holds(*f) for f in r["pre"]):  # 法則 step。runtime.pre_rule
             bad = [show_atom(*f) for f in r["pre"] if not self.holds(*f)]
-            return self.err(f"{where}: pre の {bad} が成り立っていない")
+            return self.err(f"{where}: pre の {bad} が成り立っていない" + self.confusion(verb, b, r))
         for v, rel, args in r["post"]:  # 法則 frame: ここに出てこない文には触れない
             if v == UNSTATED:
                 self.facts.pop((rel, args), None)   # 述べたことを取り消す
             else:
                 self.facts[(rel, args)] = v          # 真か偽かを述べる
         self.check_laws(where)
+
+    def confusion(self, verb, b, r):
+        """法則 no_confusion。pre の破れが、ある位置の個体を新しい個体に替えると直るなら、その位置と、ずらす関係 R の候補を述べる。"""
+        T, out = self.T, []
+        for pos, name in b.items():
+            if not any(name in args and not self.holds(v, rel, args) for v, rel, args in r["pre"]):
+                continue
+            kind, fresh = T.spot_type(verb, pos), "_confusion_fresh"
+            self.ind[fresh] = kind
+            try:
+                r2, _ = self.bind(verb, {**b, pos: fresh})
+                ok = r2 is not None and self.quant(self.holds(*f) is True for f in r2["pre"])
+            finally:
+                del self.ind[fresh]
+            if not ok:
+                continue
+            ups, x = [], self.ind[name]   # b の種類から上へ。近い上位ほど前
+            while x in T.N and x not in ups:
+                ups.append(x)
+                x = T.up(x)
+            found = [(ups.index(m["with"]), rel["is"], k) for k, n in T.N.items() if "of" not in n and T.is_a(k, kind)
+                     for m in [x for x in n.get("mod") or [] if isinstance(x, dict)]
+                     if not m.get("neg") and (m.get("of") or [None, None])[1] == "from" and m.get("with") in ups
+                     for rel in T.N.get(m["of"][0], {}).get("holds", []) if rel.get("from") == "from" and rel.get("to") == "to"]
+            near = min((d for d, _, _ in found), default=None)
+            shifts = sorted({(rel, k) for d, rel, k in found if d == near})   # b の種類にいちばん近い上位と結ぶものだけ
+            out.append(f"{pos} の {name} を新しい個体 c に替えると pre が成り立つ。R(c, {name}) の候補: "
+                       + (", ".join(f"{rel}（c は {k}）" for rel, k in shifts) or "語彙にない"))
+        return ("。混同の候補（法則 no_confusion）: " + "; ".join(out)) if out else ""
 
     def applicable(self):
         """当てはまって、状態を変える動詞と束縛を列挙する。"""
@@ -192,6 +223,11 @@ def main():
         merge_domain(name, O)
     T = Ontology(O)
     G = T.G["run"]
+    named = {"strategy": set().union(*IMPLEMENTED.values()) - set(T.G["logic"]), "world": set(WORLDS)}
+    for sect, ws in named.items():   # 実行器が名前で読む語は、文法に書かれている
+        if set(T.G.get(sect) or []) != ws:
+            print(f"実行の検査に失敗: 実行器が名前で読む語 {sorted(ws)} と、grammar.{sect} の語 {sorted(T.G.get(sect) or [])} が違う")
+            sys.exit(1)
     for k, v in T.O["runtime"].items():
         if v not in IMPLEMENTED.get(k, ()):
             print(f"実行の検査に失敗: runtime.{k} の選択 {v} は、この検査に実装がない")

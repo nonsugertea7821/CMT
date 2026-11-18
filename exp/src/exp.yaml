@@ -1,15 +1,7 @@
-# 領域 exp（実験）。体系（ontology.yaml）の一部で、同じ検査にかかる。
-# nodes:       この領域の種類。書き方は ontology.yaml と同じ。領域の中の識別子は、領域を書かずに書く。
-#              ほかの領域からは exp.名前 と書いて参照する。axiom と run は参照できるが、逆はできない（法則 layered）。
-# individuals: 個体。is で種類に1つだけ属する（ほかに表示語 display と、軸の値 val を持てる）。
-#              仮説・決定・残り項目は、状態を表す下位の種類に属する（例 is: hyp_supported）。
-# facts:       事実。1つの事実は、1つの動詞の個体で、位置に名前を付けて書く: {is: 動詞, from: 始点, to: 終点, new: 第三のもの}。
-#              文（観察・仮説・決定）が述べる中身は、同じ形を v_refer の終点に置く。中身は主張されない（事実ではない）。
-#              個数は at で書く: {is: v_compose, from: layer, to: model_15b, at: {count: 28}}（層が28個、部分になる）。
-# 種類と個体の分け方: それ自体が個体を持つものが種類。1つしかないもの（特定のモデル、個々の観察）が個体。
 domain: exp
 nodes:
-  # ===== 名前を付けた限定（法則 named_mod）。2つ以上の概念が足す限定は、名前で書く
+  refer_from_hypothesis: {display: 仮説へ述べる（始点）, extends: quality, of: [v_refer, from], with: hypothesis}
+  come_after_from_observation: {display: 観察の後に来る（始点）, extends: quality, of: [v_come_after, from], with: observation}
   depend_from_redefinition: {display: 再定義へ依存する（始点）, extends: quality, of: [v_depend, from], with: redefinition}
   refer_from_common_word: {display: 一般語へ述べる（始点）, extends: quality, of: [v_refer, from], with: common_word}
   not_agree_from_prior_meaning: {display: 元の意味へ一致する（否定）（始点）, extends: quality, of: [v_agree, from], with: prior_meaning, neg: true}
@@ -31,7 +23,6 @@ nodes:
   refer_to_prior_work: {display: 先行研究へ述べる（終点）, extends: quality, of: [v_refer, to], with: prior_work}
   is_from_design_decision: {display: 本設計の決定へ属する（始点）, extends: quality, of: [is, from], with: design_decision}
 
-  # ===== 動詞 =====
   v_answer: {display: 答える, extends: occurrent, from: continuant, to: continuant, holds: [{is: refer, from: from, to: to}, {is: after, from: from, to: to}]}
   v_judge: {display: 判定する, extends: occurrent, from: continuant, to: continuant, new_kind: information_entity,
             pre: [{is: exists, from: new, neg: true}], post: [{is: exists, from: new}, {is: depend, from: new, to: from}, {is: refer, from: new, to: to}]}
@@ -67,7 +58,6 @@ nodes:
   v_rely: {display: に頼る, extends: occurrent, from: any, to: any, holds: [{is: depend, from: from, to: to}]}
   v_near: {display: ほぼ同じ位置にある, extends: occurrent, from: continuant, to: continuant, new_kind: tolerance, holds: [{is: after, from: from, to: to, neg: true}, {is: after, from: to, to: from, neg: true}]}
 
-  # ----- 個体についての事実に使う動詞。終点か始点を、その関係で限定された種類に狭める
   v_scope: {display: 適用範囲になる, extends: v_depend, from: scope, to: hypothesis}
   v_support: {display: 支持する, extends: v_agree, from: evidence, to: hypothesis}
   v_contradict: {display: 反する, extends: v_agree, from: against, to: hypothesis}
@@ -92,7 +82,6 @@ nodes:
   v_spell: {display: 結果ファイルでの書き方として指す, extends: v_denote, from: axis_value, to: passage}
   v_metric_of: {display: 指標を述べる, extends: v_refer, from: measurement_family, to: metric}
 
-  # ===== 修飾語。ある動詞の、ある位置を占めているという性質 =====
   varied: {display: 動かす条件である, extends: role, of: [v_vary, to], mod: depend_from_experiment_protocol}
   measuring: {display: 測る量である, extends: role, of: [v_measure, from], mod: depend_from_experiment_protocol}
   adopted: {display: 採用されている, extends: quality, of: [v_adopt, to]}
@@ -101,7 +90,6 @@ nodes:
   visible: {display: 見える, extends: disposition, of: [v_see, to]}
   hidden: {display: 見えない, extends: quality, of: [v_see, to], neg: true}
 
-  # ===== 語・定義・再定義・文脈 =====
   disposition_learned: {display: 学習で得られた傾向性, extends: disposition, mod: learned}
   prior_meaning: {display: 元の意味, extends: disposition_learned, mod: {of: [v_depend, from], with: weights}}
   role_depend_from_redefinition: {display: 再定義へ依存する役割, extends: role, mod: depend_from_redefinition}
@@ -142,6 +130,10 @@ nodes:
   definition_compose_from_glossary: {display: 用語集の部分である定義, extends: definition, mod: {of: [v_compose, from], with: glossary}}
   glossary_head: {display: 用語集の先頭, extends: definition_compose_from_glossary, mod: {of: [v_come_after, from], with: definition, neg: true}}
   operator: {display: 運用者, extends: continuant, mod: {of: [v_design, from], with: experiment_protocol}}
+  protocol_sentence: {display: 取り決めの部分である文, extends: sentence, mod: {of: [v_compose, from], with: experiment_protocol}}
+  correction: {display: 訂正, extends: protocol_sentence, mod: come_after_from_observation}
+  uncorrected_protocol: {display: 訂正のない取り決め, extends: experiment_protocol, mod: {of: [v_compose, to], with: correction, neg: true}}
+  merge_verdict: {display: マージの判定, extends: verdict, mod: {of: [v_refer, from], with: uncorrected_protocol}}
   passage_compose_from_context: {display: 文脈の部分である文章, extends: passage, mod: compose_from_context}
   place_system: {display: システムプロンプト, extends: passage_compose_from_context, mod: {of: [v_speak, to], with: operator}}
   place_adjacent: {display: 設問の直前, extends: passage_compose_from_context, mod: {of: [v_come_after, to], with: question, at: {order: 1}}}
@@ -157,10 +149,9 @@ nodes:
   no_channel: {display: 何もなし, extends: process, mod: {of: [v_stage, to], with: channel, neg: true}}
   expression_part_refer_from_identifier: {display: 識別子へ述べる概念式の部分, extends: expression_part, mod: {of: [v_refer, from], with: identifier}}
 
-  # ===== 設問・事例・判定 =====
   information_entity_refer_from_verdict: {display: 判定へ述べる情報, extends: information_entity, mod: refer_from_verdict}
   case: {display: 事例, extends: sentence, mod: {of: [v_judge, to]}}
-  sentence_refer_from_case: {display: 事例へ述べる文, extends: sentence, mod: {of: [v_refer, from], with: case}}
+  sentence_refer_from_case: {display: 事例へ述べる文, extends: sentence_refer_from_sentence, mod: {of: [v_refer, from], with: case}}
   question: {display: 設問, extends: sentence_refer_from_case, mod: {of: [v_answer, to]}}
   verdict: {display: 判定, extends: information_entity, mod: {of: [v_judge_case, new]}}
   information_entity_refer_from_verdict_refer_from_question: {display: 設問へ述べる判定へ述べる情報, extends: information_entity_refer_from_verdict, mod: refer_from_question}
@@ -171,7 +162,7 @@ nodes:
   verdict_by_prior: {display: 元の意味による判定, extends: verdict, mod: agree_from_prior_meaning}
   conflict_case: {display: 衝突する事例, extends: case, cmp: [{axis: truth, a: verdict_by_definition, b: verdict_by_prior, rel: differ}]}
   control_case: {display: 衝突しない事例, extends: case, cmp: [{axis: truth, a: verdict_by_definition, b: verdict_by_prior, rel: same}]}
-  information_entity_compose_to_case: {display: 事例を部分に持つ情報, extends: information_entity, mod: {of: [v_compose, to], with: case}}
+  information_entity_compose_to_case: {display: 事例を部分に持つ情報, extends: passage, mod: {of: [v_compose, to], with: case}}
   application_example: {display: 適用例, extends: information_entity_compose_to_case, mod: {of: [v_compose, to], with: verdict}}
   test: {display: テスト, extends: application_example, mod: {of: [v_use, to], with: verification}}
   label_token_positions: {display: 語のトークン位置, extends: information_entity_compose_to_word, mod: compose_from_context}
@@ -195,7 +186,6 @@ nodes:
   unrelated_items: {display: 無関係な設問, extends: item_group, mod: {of: [v_refer, from], with: redefinition, neg: true}}
   verdict_pair: {display: 選択肢の順序を入れ替えた2回の判定, extends: information_entity, mod: {of: [v_compose, to], with: verdict, at: {count: 2}}}
 
-  # ===== 接続手段と教示。定義をモデルに届ける手段 =====
   teaching: {display: 教示, extends: v_teach, to: layer}
   verification: {display: 検証, extends: v_judge, to: application_example}
   symbol_selection: {display: シンボルの選定, extends: v_judge, to: symbol}
@@ -208,7 +198,6 @@ nodes:
   channel_involve_from_taught_vector: {display: 教示で得られたベクトルへに関わらせる接続手段, extends: channel, mod: {of: [v_involve, from], with: taught_vector}}
   concept_vector: {display: 概念ベクトル, extends: state_shift, mod: depend_from_label_token_positions}
   qualification_vector: {display: 限定の差分ベクトル（下位の概念ベクトル − 上位の概念ベクトル）, extends: concept_vector, mod: {of: [v_depend, from], with: genus_concept}}
-  relation_operator: {display: 関係を取り出す線形の演算子, extends: state_shift, mod: {of: [v_depend, from], with: dependent}}
   unseen_relation: {display: 学習していない関係, extends: dependent, mod: not_teach_from}
   single_layer_vector: {display: 単一層の概念ベクトル, extends: concept_vector, mod: {of: [v_depend, from], with: layer, at: {count: 1}}}
   multi_layer_vector: {display: 複数層の概念ベクトル, extends: concept_vector, mod: {of: [v_depend, from], with: layer, at: {count: {gt: 1}}}}
@@ -229,7 +218,6 @@ nodes:
   taught_vector: {display: 教示で得られたベクトル, extends: realizable_entity, mod: {of: [teaching, new]}}
   teaching_material: {display: 教示の材料, form: [teaching, from]}
 
-  # ===== 使い方 =====
   usage: {display: 使い方, extends: inference, mod: {of: [v_involve, from], with: word}}
   usage_recite: {display: 定義文の暗唱, extends: usage, mod: {of: [v_stage, to], with: v_speak_definition}}
   usage_apply: {display: 適用, extends: usage, mod: {of: [v_stage, to], with: v_judge_case}}
@@ -238,7 +226,6 @@ nodes:
   taught_usage: {display: 教えた使い方, extends: usage, mod: {of: [v_refer, to], with: teaching_material}}
   untaught_usage: {display: 教えていない使い方, extends: usage, mod: {of: [v_refer, to], with: teaching_material, neg: true}}
 
-  # ===== モデルと設計 =====
   layer: {display: 層, extends: artifact_compute_from, mod: compose_from_model}
   open_weight_model: {display: 重みが公開されたモデル, extends: model, mod: {of: [v_expose, from], with: weights}}
   api_only_model: {display: APIでしか使えないモデル, extends: model, mod: {of: [v_expose, from], with: weights, neg: true}}
@@ -254,7 +241,6 @@ nodes:
   information_entity_design_to: {display: 設計する先の情報, extends: information_entity, mod: design_to}
   typed_graph: {display: 型付きグラフ, extends: information_entity_refer_from_concept_n_refer_from_v_depend, mod: {of: [v_involve, to], with: inference, quant: all}}
 
-  # ===== 要因と指標 =====
   factor: {display: 要因, extends: quality, mod: varied}
   context_length: {display: 文脈の長さ, extends: factor, mod: {of: [v_depend, from], with: context}, axis: count}
   context_depth: {display: 文脈の深さ, extends: factor, mod: {of: [v_depend, from], with: preceding_text}, axis: count}
@@ -283,7 +269,6 @@ nodes:
   cross_usage_consistency: {display: 使い方をまたぐ一貫性, extends: quality_measure_to, mod: {of: [v_measure, from], with: usage, quant: all}}
   preceding_definition_effect: {display: 前に並ぶ定義による追従の低下, extends: quality_measure_to, mod: depend_from_preceding_definitions_set}
 
-  # ===== 測定。結果ファイルから測定値を計算する。個体（測定の族）に書ける関係もここ =====
   accuracy: {display: 正答率, extends: metric, mod: measure_from_verdict, axis: ratio}
   order_robust_accuracy: {display: 選択肢の順序に頑健な正答率, extends: metric, mod: {of: [v_measure, from], with: verdict_pair}, axis: ratio}
   training_loss: {display: 学習の損失, extends: metric, mod: {of: [v_measure, from], with: teaching}}
@@ -305,7 +290,6 @@ nodes:
   row_filter: {display: 行の限定, extends: sentence, mod: {of: [v_refer, from], with: result_row}, verbatim: true}
   condition_entry: {display: 条件ごとの記録, extends: information_entity_refer_from_verdict, mod: {of: [v_compose, from], with: result_row}, verbatim: true}
 
-  # ===== 観察・仮説・決定・残り項目 =====
   depended_information: {display: 他の記述が依存する記述, extends: information_entity, mod: {of: [v_depend, to], with: information_entity, quant: all}}
   rule_source_of_truth: {display: 正本の取り決め, extends: decision, mod: {of: [v_refer, from], with: depended_information}}
   change_holder: {display: 与えられた意味が依存するもの, extends: continuant, mod: {of: [v_depend, to], with: assigned_meaning}}
@@ -324,7 +308,7 @@ nodes:
   hyp_untested: {display: 未検証の仮説, extends: hypothesis_agree_to_evidence_not, mod: not_agree_to_against}
   supersedes: {display: 置き換えられた文, extends: withdrawn_sentence, mod: {of: [v_refer, to], with: sentence}, many: true}
   limitation: {display: 留保, extends: sentence_refer_from_hypothesis, mod: {of: [v_refer, from], with: observation}, many: true}
-  lim_post_hoc: {display: 結果を見たあとで分類した, extends: limitation, mod: {of: [v_come_after, from], with: observation}}
+  lim_post_hoc: {display: 結果を見たあとで分類した, extends: limitation, mod: come_after_from_observation}
   lim_range: {display: 測った範囲が限られる, extends: limitation, mod: {of: [v_refer, from], with: factor}}
   lim_one_item: {display: 差が1問以内, extends: limitation, mod: {of: [v_refer, from], with: question, at: {count: 1}}}
   lim_unconverged: {display: 学習が収束していない, extends: limitation, mod: {of: [v_refer, from], with: training_loss}}
@@ -354,18 +338,14 @@ nodes:
   design_dec_adopted: {display: 本設計の採用済みの決定, extends: dec_adopted, mod: is_from_design_decision}
   design_dec_tentative: {display: 本設計の暫定の決定, extends: dec_tentative, mod: is_from_design_decision}
   design_dec_withdrawn: {display: 本設計の取り下げた決定, extends: dec_withdrawn, mod: is_from_design_decision}
-  sentence_refer_from_hypothesis: {display: 仮説へ述べる文, extends: sentence, mod: {of: [v_refer, from], with: hypothesis}}
+  sentence_refer_from_hypothesis: {display: 仮説へ述べる文, extends: sentence_refer_from_sentence, mod: refer_from_hypothesis}
   role_depend_from_rule_source_of_truth: {display: 正本の取り決めへ依存する役割, extends: role, mod: {of: [v_depend, from], with: rule_source_of_truth}}
-  source_of_truth: {display: 正本, extends: role_depend_from_rule_source_of_truth, mod: {of: [v_depend, from], with: information_entity}}
   consolidation_target: {display: 変更の固定先, extends: role, mod: {of: [v_depend, from], with: rule_consolidation}}
 
 individuals:
   exp: {is: domain, display: 実験}
-  # ===== モデル。種類ではなく、1つずつの成果物。
-  # 数の項目は、その種類のものが、この個体との関係でいくつあるか（個数の軸の固定値）。
   model_15b: {is: open_weight_model, display: Qwen2.5-1.5B-Instruct}
-  residual_space: {is: composable_set, display: 残差の流れ}   # 種類の集まり（2階）
-  # ===== 先行研究（2026-11-16 に ACL Anthology と arXiv で探した）。表示語に著者・年・題・所在を書く
+  residual_space: {is: composable_set, display: 残差の流れ}
   pw_wang2025_proactive_interference: {is: prior_work, display: "先行研究: Wang & Sun 2025, Unable to Forget: Proactive Interference Reveals Working Memory Limits in LLMs Beyond Context Length（arXiv:2506.08184, ICML 2025 LCFM workshop）"}
   pw_goworek2026_lexical_redefinition: {is: prior_work, display: "先行研究: Goworek & Dubossarsky 2026, Lexical Redefinition Reveals Context-Sensitive Instruction Following（LUHME 2026, aclanthology 2026.luhme-1.17）"}
   pw_stringli2025_inverse_redefinition: {is: prior_work, display: "先行研究: Stringli et al. 2025, Pitfalls of Scale: Investigating the Inverse Task of Redefinition in Large Language Models（Findings of ACL 2025, arXiv:2502.12821）"}
@@ -386,7 +366,6 @@ individuals:
   pw_park2025_hierarchical_geometry: {is: prior_work, display: "先行研究: Park, Choe, Jiang & Veitch 2025, The Geometry of Categorical and Hierarchical Concepts in Large Language Models（ICLR 2025, arXiv:2406.01506）"}
   pw_hernandez2024_lre: {is: prior_work, display: "先行研究: Hernandez et al. 2024, Linearity of Relation Decoding in Transformer Language Models（ICLR 2024, arXiv:2308.09124）"}
   pw_christ2025_relation_operators: {is: prior_work, display: "先行研究: Christ, Csiszárik, Becsó & Varga 2025, The Structure of Relation Decoding Linear Operators in Large Language Models（arXiv:2510.26543）"}
-  # 先行研究の主張。表示語に、要旨の該当する文を引く。中身は v_refer で、仮説と同じ形に書く
   pwc_wang2025_interference: {is: prior_claim, display: "要旨: retrieval accuracy declines log-linearly toward zero as interference accumulates（前に並ぶ古い値が多いほど、最新の値の検索が下がる）"}
   pwc_liu2024_middle: {is: prior_claim, display: "要旨: performance is often highest when relevant information occurs at the beginning or end of the input context（関係する情報が末尾から離れて中ほどにあると下がる）"}
   pwc_stringli2025_anchoring: {is: prior_claim, display: "要旨: prompting strategies do not stop models from anchoring to memorized values（よく知られた定数を再定義しても、覚えた値に引きずられる）"}
@@ -409,10 +388,8 @@ individuals:
   pwc_christ2025_property_based: {is: prior_claim, display: "要旨: 関係ごとの線形演算子は関係に固有ではなく、関係をまたぐ性質を取り出している。そのため、学習していない関係への汎化は、近い関係にしか届かない"}
   model_4b: {is: open_weight_model, display: Qwen3-4B}
 
-  # ===== 設計。1つしかない。
   this_design: {is: model_design, display: 本設計}
 
-  # ===== 選択肢。文字列が1つに決まっている。
   opt_yes: {is: option, display: 選択肢「はい」, val: {text: はい}}
   opt_no: {is: option, display: 選択肢「いいえ」, val: {text: いいえ}}
   opt_applies: {is: option, display: 選択肢「当たる」, val: {text: 当たる}}
@@ -420,15 +397,12 @@ individuals:
   opt_correct: {is: option, display: 選択肢「正しい」, val: {text: 正しい}}
   opt_wrong: {is: option, display: 選択肢「誤り」, val: {text: 誤り}}
 
-  # ===== 設問群。experiments/data/ にある設問の集まり。
   g_confusable: {is: group_confusable}
   g_redef_conflict: {is: group_redef_conflict}
   g_redef_control: {is: group_redef_control}
   g_sibling: {is: group_sibling}
   g_replaced: {is: group_replaced}
 
-  # ===== 測定の族（is: measurement_family）。値は experiments/results/ から計算する。手で書いた数値は持たない。
-  # 測定値の識別子は「族.軸の値....指標」。
   e1: {is: measurement_family}
   e1type: {is: measurement_family}
   e1b: {is: measurement_family}
@@ -478,7 +452,6 @@ individuals:
   pr_goworek_cond_redefined_with: {is: axis_value, val: {text: redefined_with}}
   pr_goworek_cond_original_without: {is: axis_value, val: {text: original_without}}
   pr_goworek_cond_original_with: {is: axis_value, val: {text: original_with}}
-  # 体系そのものを数えた族（exp/experiments/sys_ends.py が書く）。言語の設計の主張（cscl/design/claims.yaml）の観察が使う
   sys_depend_to: {is: measurement_family}
   sys_depend_to_cond: {is: family_axis, val: {text: cond}}
   sys_depend_to_cond_ic: {is: axis_value, val: {text: ic}}
@@ -555,6 +528,365 @@ individuals:
   sys_open_runtime_cond_run_ok: {is: axis_value, val: {text: run_ok}}
   sys_open_runtime_cond_halted_false_decided: {is: axis_value, val: {text: halted_false_decided}}
   sys_open_runtime_cond_supported: {is: axis_value, val: {text: supported}}
+  sys_layers: {is: measurement_family}
+  sys_layers_cond: {is: family_axis, val: {text: cond}}
+  sys_layers_cond_agree: {is: axis_value, val: {text: agree}}
+  sys_layers_cond_agree_pos: {is: axis_value, val: {text: agree_pos}}
+  sys_layers_cond_exp_change: {is: axis_value, val: {text: exp_change}}
+  sys_layers_cond_exp_change_pos: {is: axis_value, val: {text: exp_change_pos}}
+  sys_layers_cond_exp_refer: {is: axis_value, val: {text: exp_refer}}
+  sys_layers_cond_exp_refer_pos: {is: axis_value, val: {text: exp_refer_pos}}
+  sys_layers_cond_exp_still: {is: axis_value, val: {text: exp_still}}
+  sys_layers_cond_exp_still_pos: {is: axis_value, val: {text: exp_still_pos}}
+  sys_layers_cond_lang_change: {is: axis_value, val: {text: lang_change}}
+  sys_layers_cond_lang_change_pos: {is: axis_value, val: {text: lang_change_pos}}
+  sys_layers_cond_lang_refer: {is: axis_value, val: {text: lang_refer}}
+  sys_layers_cond_lang_refer_pos: {is: axis_value, val: {text: lang_refer_pos}}
+  sys_layers_cond_lang_still: {is: axis_value, val: {text: lang_still}}
+  sys_layers_cond_lang_still_pos: {is: axis_value, val: {text: lang_still_pos}}
+  sys_layers_cond_ontology_change: {is: axis_value, val: {text: ontology_change}}
+  sys_layers_cond_ontology_change_pos: {is: axis_value, val: {text: ontology_change_pos}}
+  sys_layers_cond_ontology_refer: {is: axis_value, val: {text: ontology_refer}}
+  sys_layers_cond_ontology_refer_pos: {is: axis_value, val: {text: ontology_refer_pos}}
+  sys_layers_cond_ontology_still: {is: axis_value, val: {text: ontology_still}}
+  sys_layers_cond_ontology_still_pos: {is: axis_value, val: {text: ontology_still_pos}}
+  sys_layers_cond_runtime_change: {is: axis_value, val: {text: runtime_change}}
+  sys_layers_cond_runtime_change_pos: {is: axis_value, val: {text: runtime_change_pos}}
+  sys_layers_cond_runtime_refer: {is: axis_value, val: {text: runtime_refer}}
+  sys_layers_cond_runtime_refer_pos: {is: axis_value, val: {text: runtime_refer_pos}}
+  sys_layers_cond_runtime_still: {is: axis_value, val: {text: runtime_still}}
+  sys_layers_cond_runtime_still_pos: {is: axis_value, val: {text: runtime_still_pos}}
+  sys_layers_cond_std_change: {is: axis_value, val: {text: std_change}}
+  sys_layers_cond_std_change_pos: {is: axis_value, val: {text: std_change_pos}}
+  sys_layers_cond_std_refer: {is: axis_value, val: {text: std_refer}}
+  sys_layers_cond_std_refer_pos: {is: axis_value, val: {text: std_refer_pos}}
+  sys_layers_cond_std_still: {is: axis_value, val: {text: std_still}}
+  sys_layers_cond_std_still_pos: {is: axis_value, val: {text: std_still_pos}}
+  sys_layers_cond_subj_change: {is: axis_value, val: {text: subj_change}}
+  sys_layers_cond_subj_change_pos: {is: axis_value, val: {text: subj_change_pos}}
+  sys_layers_cond_subj_refer: {is: axis_value, val: {text: subj_refer}}
+  sys_layers_cond_subj_refer_pos: {is: axis_value, val: {text: subj_refer_pos}}
+  sys_layers_cond_subj_still: {is: axis_value, val: {text: subj_still}}
+  sys_layers_cond_subj_still_pos: {is: axis_value, val: {text: subj_still_pos}}
+  sys_layers_cond_supported: {is: axis_value, val: {text: supported}}
+  sys_layers_cond_syntax_change: {is: axis_value, val: {text: syntax_change}}
+  sys_layers_cond_syntax_change_pos: {is: axis_value, val: {text: syntax_change_pos}}
+  sys_layers_cond_syntax_refer: {is: axis_value, val: {text: syntax_refer}}
+  sys_layers_cond_syntax_refer_pos: {is: axis_value, val: {text: syntax_refer_pos}}
+  sys_layers_cond_syntax_still: {is: axis_value, val: {text: syntax_still}}
+  sys_layers_cond_syntax_still_pos: {is: axis_value, val: {text: syntax_still_pos}}
+  sys_tops: {is: measurement_family}
+  sys_tops_cond: {is: family_axis, val: {text: cond}}
+  sys_tops_cond_ind_continuant: {is: axis_value, val: {text: ind_continuant}}
+  sys_tops_cond_dynamic: {is: axis_value, val: {text: dynamic}}
+  sys_tops_cond_dyn_occurrent: {is: axis_value, val: {text: dyn_occurrent}}
+  sys_tops_cond_static_occurrent: {is: axis_value, val: {text: static_occurrent}}
+  sys_tops_cond_reaches_dynamic: {is: axis_value, val: {text: reaches_dynamic}}
+  sys_tops_cond_concept_dynamic: {is: axis_value, val: {text: concept_dynamic}}
+  sys_tops_cond_supported: {is: axis_value, val: {text: supported}}
+  sys_differentia: {is: measurement_family}
+  sys_differentia_cond: {is: family_axis, val: {text: cond}}
+  sys_differentia_cond_root: {is: axis_value, val: {text: root}}
+  sys_differentia_cond_dyn_unique: {is: axis_value, val: {text: dyn_unique}}
+  sys_differentia_cond_st_unique: {is: axis_value, val: {text: st_unique}}
+  sys_differentia_cond_creation_specific: {is: axis_value, val: {text: creation_specific}}
+  sys_subsume: {is: measurement_family}
+  sys_subsume_cond: {is: family_axis, val: {text: cond}}
+  sys_subsume_cond_has_subsumer: {is: axis_value, val: {text: has_subsumer}}
+  sys_subsume_cond_strict: {is: axis_value, val: {text: strict}}
+  sys_subsume_cond_any_end: {is: axis_value, val: {text: any_end}}
+  sys_subsume_cond_all_ancestors: {is: axis_value, val: {text: all_ancestors}}
+  sys_subsume_cond_some_usable: {is: axis_value, val: {text: some_usable}}
+  sys_spelling: {is: measurement_family}
+  sys_spelling_cond: {is: family_axis, val: {text: cond}}
+  sys_spelling_cond_multi: {is: axis_value, val: {text: multi}}
+  sys_special: {is: measurement_family}
+  sys_special_cond: {is: family_axis, val: {text: cond}}
+  sys_special_cond_signature: {is: axis_value, val: {text: signature}}
+  sys_special_cond_grammar: {is: axis_value, val: {text: grammar}}
+  sys_special_cond_outside: {is: axis_value, val: {text: outside}}
+  sys_special_cond_short: {is: axis_value, val: {text: short}}
+  sys_mutation: {is: measurement_family}
+  sys_mutation_cond: {is: family_axis, val: {text: cond}}
+  sys_mutation_cond_test_changed: {is: axis_value, val: {text: test_changed}}
+  sys_mutation_cond_pos_changed: {is: axis_value, val: {text: pos_changed}}
+  sys_mutation_cond_neg_changed: {is: axis_value, val: {text: neg_changed}}
+  sys_detach: {is: measurement_family}
+  sys_detach_cond: {is: family_axis, val: {text: cond}}
+  sys_detach_cond_test_changed: {is: axis_value, val: {text: test_changed}}
+  sys_detach_cond_neg_changed: {is: axis_value, val: {text: neg_changed}}
+  sys_detach_cond_skipped: {is: axis_value, val: {text: skipped}}
+  sys_lower: {is: measurement_family}
+  sys_lower_cond: {is: family_axis, val: {text: cond}}
+  sys_lower_cond_extends_only: {is: axis_value, val: {text: extends_only}}
+  sys_lower_cond_reducible: {is: axis_value, val: {text: reducible}}
+  sys_lower_cond_other: {is: axis_value, val: {text: other}}
+  sys_lower_cond_in_ontology: {is: axis_value, val: {text: in_ontology}}
+  sys_core: {is: measurement_family}
+  sys_core_cond: {is: family_axis, val: {text: cond}}
+  sys_core_cond_seed: {is: axis_value, val: {text: seed}}
+  sys_core_cond_core: {is: axis_value, val: {text: core}}
+  sys_core_cond_used: {is: axis_value, val: {text: used}}
+  sys_after: {is: measurement_family}
+  sys_after_cond: {is: family_axis, val: {text: cond}}
+  sys_after_cond_time: {is: axis_value, val: {text: time}}
+  sys_after_cond_entity: {is: axis_value, val: {text: entity}}
+  sys_after_cond_open: {is: axis_value, val: {text: open}}
+  sys_after_cond_used: {is: axis_value, val: {text: used}}
+  sys_after_cond_rule_after: {is: axis_value, val: {text: rule_after}}
+  sys_specific: {is: measurement_family}
+  sys_specific_cond: {is: family_axis, val: {text: cond}}
+  sys_specific_cond_V_pairs: {is: axis_value, val: {text: V_pairs}}
+  sys_specific_cond_V_defined_by_refined: {is: axis_value, val: {text: V_defined_by_refined}}
+  sys_specific_cond_V_independent_slot: {is: axis_value, val: {text: V_independent_slot}}
+  sys_specific_cond_V_same_domain: {is: axis_value, val: {text: V_same_domain}}
+  sys_specific_cond_V_y_has_concept_child: {is: axis_value, val: {text: V_y_has_concept_child}}
+  sys_specific_cond_C_pairs: {is: axis_value, val: {text: C_pairs}}
+  sys_specific_cond_C_independent_slot: {is: axis_value, val: {text: C_independent_slot}}
+  sys_specific_depth: {is: measurement_family}
+  sys_specific_depth_cond: {is: family_axis, val: {text: cond}}
+  sys_specific_depth_cond_V_pairs: {is: axis_value, val: {text: V_pairs}}
+  sys_specific_depth_cond_V_y_def_shallow: {is: axis_value, val: {text: V_y_def_shallow}}
+  sys_specific_depth_cond_V_y_def_shallow1: {is: axis_value, val: {text: V_y_def_shallow1}}
+  sys_specific_depth_cond_V_y_def_shallow3: {is: axis_value, val: {text: V_y_def_shallow3}}
+  sys_specific_depth_cond_C_pairs: {is: axis_value, val: {text: C_pairs}}
+  sys_specific_depth_cond_C_y_def_shallow: {is: axis_value, val: {text: C_y_def_shallow}}
+  sys_specific_depth_cond_C_y_def_shallow1: {is: axis_value, val: {text: C_y_def_shallow1}}
+  sys_specific_depth_cond_C_y_def_shallow3: {is: axis_value, val: {text: C_y_def_shallow3}}
+  sys_overextension: {is: measurement_family}
+  sys_overextension_cond: {is: family_axis, val: {text: cond}}
+  sys_overextension_cond_all_shallow_n: {is: axis_value, val: {text: all_shallow_n}}
+  sys_overextension_cond_all_shallow_any: {is: axis_value, val: {text: all_shallow_any}}
+  sys_overextension_cond_all_shallow_rate: {is: axis_value, val: {text: all_shallow_rate}}
+  sys_overextension_cond_all_deep_n: {is: axis_value, val: {text: all_deep_n}}
+  sys_overextension_cond_all_deep_any: {is: axis_value, val: {text: all_deep_any}}
+  sys_overextension_cond_all_deep_rate: {is: axis_value, val: {text: all_deep_rate}}
+  sys_overextension_cond_unseen_shallow_n: {is: axis_value, val: {text: unseen_shallow_n}}
+  sys_overextension_cond_unseen_shallow_any: {is: axis_value, val: {text: unseen_shallow_any}}
+  sys_overextension_cond_unseen_shallow_rate: {is: axis_value, val: {text: unseen_shallow_rate}}
+  sys_overextension_cond_unseen_deep_n: {is: axis_value, val: {text: unseen_deep_n}}
+  sys_overextension_cond_unseen_deep_any: {is: axis_value, val: {text: unseen_deep_any}}
+  sys_overextension_cond_unseen_deep_rate: {is: axis_value, val: {text: unseen_deep_rate}}
+  sys_differentiation: {is: measurement_family}
+  sys_differentiation_cond: {is: family_axis, val: {text: cond}}
+  sys_differentiation_cond_edges: {is: axis_value, val: {text: edges}}
+  sys_differentiation_cond_own_formulas: {is: axis_value, val: {text: own_formulas}}
+  sys_differentiation_cond_negate: {is: axis_value, val: {text: negate}}
+  sys_differentiation_cond_narrow_end: {is: axis_value, val: {text: narrow_end}}
+  sys_differentiation_cond_add_end: {is: axis_value, val: {text: add_end}}
+  sys_differentiation_cond_narrow_verb: {is: axis_value, val: {text: narrow_verb}}
+  sys_differentiation_cond_limit: {is: axis_value, val: {text: limit}}
+  sys_differentiation_cond_new: {is: axis_value, val: {text: new}}
+  sys_differentiation_cond_other: {is: axis_value, val: {text: other}}
+  sys_differentiation_cond_edges_with_own: {is: axis_value, val: {text: edges_with_own}}
+  sys_differentiation_cond_edges_one_own: {is: axis_value, val: {text: edges_one_own}}
+  sys_differentiation_cond_narrow_end_hop1: {is: axis_value, val: {text: narrow_end_hop1}}
+  sys_overextension_steps: {is: measurement_family}
+  sys_overextension_steps_cond: {is: family_axis, val: {text: cond}}
+  sys_overextension_steps_cond_median_level: {is: axis_value, val: {text: median_level}}
+  sys_overextension_steps_cond_all_low_n: {is: axis_value, val: {text: all_low_n}}
+  sys_overextension_steps_cond_all_low_any: {is: axis_value, val: {text: all_low_any}}
+  sys_overextension_steps_cond_all_low_rate: {is: axis_value, val: {text: all_low_rate}}
+  sys_overextension_steps_cond_all_high_n: {is: axis_value, val: {text: all_high_n}}
+  sys_overextension_steps_cond_all_high_any: {is: axis_value, val: {text: all_high_any}}
+  sys_overextension_steps_cond_all_high_rate: {is: axis_value, val: {text: all_high_rate}}
+  sys_overextension_steps_cond_unseen_low_n: {is: axis_value, val: {text: unseen_low_n}}
+  sys_overextension_steps_cond_unseen_low_any: {is: axis_value, val: {text: unseen_low_any}}
+  sys_overextension_steps_cond_unseen_low_rate: {is: axis_value, val: {text: unseen_low_rate}}
+  sys_overextension_steps_cond_unseen_high_n: {is: axis_value, val: {text: unseen_high_n}}
+  sys_overextension_steps_cond_unseen_high_any: {is: axis_value, val: {text: unseen_high_any}}
+  sys_overextension_steps_cond_unseen_high_rate: {is: axis_value, val: {text: unseen_high_rate}}
+  sys_money_unit_before: {is: measurement_family}
+  sys_money_unit_before_cond: {is: family_axis, val: {text: cond}}
+  sys_money_unit_before_cond_errors: {is: axis_value, val: {text: errors}}
+  sys_money_unit_before_cond_V: {is: axis_value, val: {text: V}}
+  sys_money_unit_before_cond_v_money: {is: axis_value, val: {text: v_money}}
+  sys_money_unit_before_cond_sales_ok: {is: axis_value, val: {text: sales_ok}}
+  sys_money_unit_before_cond_absorbs_money: {is: axis_value, val: {text: absorbs_money}}
+  sys_money_unit_after: {is: measurement_family}
+  sys_money_unit_after_cond: {is: family_axis, val: {text: cond}}
+  sys_money_unit_after_cond_errors: {is: axis_value, val: {text: errors}}
+  sys_money_unit_after_cond_V: {is: axis_value, val: {text: V}}
+  sys_money_unit_after_cond_v_money: {is: axis_value, val: {text: v_money}}
+  sys_money_unit_after_cond_sales_ok: {is: axis_value, val: {text: sales_ok}}
+  sys_money_unit_after_cond_absorbs_money: {is: axis_value, val: {text: absorbs_money}}
+  sys_money_axis_before: {is: measurement_family}
+  sys_money_axis_before_cond: {is: family_axis, val: {text: cond}}
+  sys_money_axis_before_cond_errors: {is: axis_value, val: {text: errors}}
+  sys_money_axis_before_cond_V: {is: axis_value, val: {text: V}}
+  sys_money_axis_before_cond_v_money: {is: axis_value, val: {text: v_money}}
+  sys_money_axis_before_cond_sales_ok: {is: axis_value, val: {text: sales_ok}}
+  sys_money_axis_before_cond_absorbs_money: {is: axis_value, val: {text: absorbs_money}}
+  sys_money_axis_before_cond_money_has_amount: {is: axis_value, val: {text: money_has_amount}}
+  sys_money_axis_after: {is: measurement_family}
+  sys_money_axis_after_cond: {is: family_axis, val: {text: cond}}
+  sys_money_axis_after_cond_errors: {is: axis_value, val: {text: errors}}
+  sys_money_axis_after_cond_V: {is: axis_value, val: {text: V}}
+  sys_money_axis_after_cond_v_money: {is: axis_value, val: {text: v_money}}
+  sys_money_axis_after_cond_sales_ok: {is: axis_value, val: {text: sales_ok}}
+  sys_money_axis_after_cond_absorbs_money: {is: axis_value, val: {text: absorbs_money}}
+  sys_money_axis_after_cond_money_has_amount: {is: axis_value, val: {text: money_has_amount}}
+  sys_money_axis_after2: {is: measurement_family}
+  sys_money_axis_after2_cond: {is: family_axis, val: {text: cond}}
+  sys_money_axis_after2_cond_errors: {is: axis_value, val: {text: errors}}
+  sys_money_axis_after2_cond_V: {is: axis_value, val: {text: V}}
+  sys_money_axis_after2_cond_v_money: {is: axis_value, val: {text: v_money}}
+  sys_money_axis_after2_cond_sales_ok: {is: axis_value, val: {text: sales_ok}}
+  sys_money_axis_after2_cond_absorbs_money: {is: axis_value, val: {text: absorbs_money}}
+  sys_money_axis_after2_cond_money_has_amount: {is: axis_value, val: {text: money_has_amount}}
+  sys_money_axis_after3: {is: measurement_family}
+  sys_money_axis_after3_cond: {is: family_axis, val: {text: cond}}
+  sys_money_axis_after3_cond_errors: {is: axis_value, val: {text: errors}}
+  sys_money_axis_after3_cond_V: {is: axis_value, val: {text: V}}
+  sys_money_axis_after3_cond_v_money: {is: axis_value, val: {text: v_money}}
+  sys_money_axis_after3_cond_sales_ok: {is: axis_value, val: {text: sales_ok}}
+  sys_money_axis_after3_cond_absorbs_money: {is: axis_value, val: {text: absorbs_money}}
+  sys_money_axis_after3_cond_money_has_amount: {is: axis_value, val: {text: money_has_amount}}
+  sys_unit_axis_before: {is: measurement_family}
+  sys_unit_axis_before_cond: {is: family_axis, val: {text: cond}}
+  sys_unit_axis_before_cond_errors: {is: axis_value, val: {text: errors}}
+  sys_unit_axis_before_cond_V: {is: axis_value, val: {text: V}}
+  sys_unit_axis_before_cond_v_height_age: {is: axis_value, val: {text: v_height_age}}
+  sys_unit_axis_before_cond_new_V: {is: axis_value, val: {text: new_V}}
+  sys_unit_axis_before_cond_v_money: {is: axis_value, val: {text: v_money}}
+  sys_unit_axis_before_cond_sales_ok: {is: axis_value, val: {text: sales_ok}}
+  sys_unit_axis_after: {is: measurement_family}
+  sys_unit_axis_after_cond: {is: family_axis, val: {text: cond}}
+  sys_unit_axis_after_cond_errors: {is: axis_value, val: {text: errors}}
+  sys_unit_axis_after_cond_V: {is: axis_value, val: {text: V}}
+  sys_unit_axis_after_cond_v_height_age: {is: axis_value, val: {text: v_height_age}}
+  sys_unit_axis_after_cond_new_V: {is: axis_value, val: {text: new_V}}
+  sys_unit_axis_after_cond_v_money: {is: axis_value, val: {text: v_money}}
+  sys_unit_axis_after_cond_sales_ok: {is: axis_value, val: {text: sales_ok}}
+  sys_unit_axis_after_all: {is: measurement_family}
+  sys_unit_axis_after_all_cond: {is: family_axis, val: {text: cond}}
+  sys_unit_axis_after_all_cond_errors: {is: axis_value, val: {text: errors}}
+  sys_unit_axis_after_all_cond_V: {is: axis_value, val: {text: V}}
+  sys_unit_axis_after_all_cond_v_height_age: {is: axis_value, val: {text: v_height_age}}
+  sys_unit_axis_after_all_cond_new_V: {is: axis_value, val: {text: new_V}}
+  sys_unit_axis_after_all_cond_v_money: {is: axis_value, val: {text: v_money}}
+  sys_unit_axis_after_all_cond_sales_ok: {is: axis_value, val: {text: sales_ok}}
+  sys_meet: {is: measurement_family}
+  sys_meet_cond: {is: family_axis, val: {text: cond}}
+  sys_meet_cond_pairs: {is: axis_value, val: {text: pairs}}
+  sys_meet_cond_meets: {is: axis_value, val: {text: meets}}
+  sys_meet_cond_lack_any: {is: axis_value, val: {text: lack_any}}
+  sys_kind_ref_before: {is: measurement_family}
+  sys_kind_ref_before_cond: {is: family_axis, val: {text: cond}}
+  sys_kind_ref_before_cond_errors: {is: axis_value, val: {text: errors}}
+  sys_kind_ref_before_cond_V: {is: axis_value, val: {text: V}}
+  sys_kind_ref_before_cond_v_verb_ref: {is: axis_value, val: {text: v_verb_ref}}
+  sys_kind_ref_before_cond_new_V: {is: axis_value, val: {text: new_V}}
+  sys_kind_ref_after: {is: measurement_family}
+  sys_kind_ref_after_cond: {is: family_axis, val: {text: cond}}
+  sys_kind_ref_after_cond_errors: {is: axis_value, val: {text: errors}}
+  sys_kind_ref_after_cond_V: {is: axis_value, val: {text: V}}
+  sys_kind_ref_after_cond_v_verb_ref: {is: axis_value, val: {text: v_verb_ref}}
+  sys_kind_ref_after_cond_new_V: {is: axis_value, val: {text: new_V}}
+  sys_kind_ref_after2: {is: measurement_family}
+  sys_kind_ref_after2_cond: {is: family_axis, val: {text: cond}}
+  sys_kind_ref_after2_cond_errors: {is: axis_value, val: {text: errors}}
+  sys_kind_ref_after2_cond_V: {is: axis_value, val: {text: V}}
+  sys_kind_ref_after2_cond_v_verb_ref: {is: axis_value, val: {text: v_verb_ref}}
+  sys_kind_ref_after2_cond_new_V: {is: axis_value, val: {text: new_V}}
+  sys_draw_on_before: {is: measurement_family}
+  sys_draw_on_before_cond: {is: family_axis, val: {text: cond}}
+  sys_draw_on_before_cond_errors: {is: axis_value, val: {text: errors}}
+  sys_draw_on_before_cond_V: {is: axis_value, val: {text: V}}
+  sys_draw_on_before_cond_new_V: {is: axis_value, val: {text: new_V}}
+  sys_draw_on_before_cond_new_nodes: {is: axis_value, val: {text: new_nodes}}
+  sys_draw_on_before_cond_thin: {is: axis_value, val: {text: thin}}
+  sys_draw_on_before_cond_drawn: {is: axis_value, val: {text: drawn}}
+  sys_draw_on_after: {is: measurement_family}
+  sys_draw_on_after_cond: {is: family_axis, val: {text: cond}}
+  sys_draw_on_after_cond_errors: {is: axis_value, val: {text: errors}}
+  sys_draw_on_after_cond_V: {is: axis_value, val: {text: V}}
+  sys_draw_on_after_cond_new_V: {is: axis_value, val: {text: new_V}}
+  sys_draw_on_after_cond_new_nodes: {is: axis_value, val: {text: new_nodes}}
+  sys_draw_on_after_cond_thin: {is: axis_value, val: {text: thin}}
+  sys_draw_on_after_cond_drawn: {is: axis_value, val: {text: drawn}}
+  sys_count_atom_before: {is: measurement_family}
+  sys_count_atom_before_cond: {is: family_axis, val: {text: cond}}
+  sys_count_atom_before_cond_errors: {is: axis_value, val: {text: errors}}
+  sys_count_atom_before_cond_ec_errors: {is: axis_value, val: {text: ec_errors}}
+  sys_count_atom_before_cond_law_shallow: {is: axis_value, val: {text: law_shallow}}
+  sys_count_atom_before_cond_script: {is: axis_value, val: {text: script}}
+  sys_count_atom_before_cond_mismatch: {is: axis_value, val: {text: mismatch}}
+  sys_count_atom_before_cond_changed: {is: axis_value, val: {text: changed}}
+  sys_count_atom_before_cond_extra: {is: axis_value, val: {text: extra}}
+  sys_count_atom_after: {is: measurement_family}
+  sys_count_atom_after_cond: {is: family_axis, val: {text: cond}}
+  sys_count_atom_after_cond_errors: {is: axis_value, val: {text: errors}}
+  sys_count_atom_after_cond_ec_errors: {is: axis_value, val: {text: ec_errors}}
+  sys_count_atom_after_cond_law_shallow: {is: axis_value, val: {text: law_shallow}}
+  sys_count_atom_after_cond_script: {is: axis_value, val: {text: script}}
+  sys_count_atom_after_cond_mismatch: {is: axis_value, val: {text: mismatch}}
+  sys_count_atom_after_cond_changed: {is: axis_value, val: {text: changed}}
+  sys_count_atom_after_cond_extra: {is: axis_value, val: {text: extra}}
+  sys_count_atom_after2: {is: measurement_family}
+  sys_count_atom_after2_cond: {is: family_axis, val: {text: cond}}
+  sys_count_atom_after2_cond_errors: {is: axis_value, val: {text: errors}}
+  sys_count_atom_after2_cond_ec_errors: {is: axis_value, val: {text: ec_errors}}
+  sys_count_atom_after2_cond_law_shallow: {is: axis_value, val: {text: law_shallow}}
+  sys_count_atom_after2_cond_script: {is: axis_value, val: {text: script}}
+  sys_count_atom_after2_cond_mismatch: {is: axis_value, val: {text: mismatch}}
+  sys_count_atom_after2_cond_changed: {is: axis_value, val: {text: changed}}
+  sys_count_atom_after2_cond_extra: {is: axis_value, val: {text: extra}}
+  sys_display_residual_before: {is: measurement_family}
+  sys_display_residual_before_cond: {is: family_axis, val: {text: cond}}
+  sys_display_residual_before_cond_V: {is: axis_value, val: {text: V}}
+  sys_display_residual_before_cond_n_y: {is: axis_value, val: {text: n_y}}
+  sys_display_residual_before_cond_n_all: {is: axis_value, val: {text: n_all}}
+  sys_display_residual_before_cond_rate_y: {is: axis_value, val: {text: rate_y}}
+  sys_display_residual_before_cond_rate_all: {is: axis_value, val: {text: rate_all}}
+  sys_display_residual_now: {is: measurement_family}
+  sys_display_residual_now_cond: {is: family_axis, val: {text: cond}}
+  sys_display_residual_now_cond_V: {is: axis_value, val: {text: V}}
+  sys_display_residual_now_cond_n_y: {is: axis_value, val: {text: n_y}}
+  sys_display_residual_now_cond_n_all: {is: axis_value, val: {text: n_all}}
+  sys_display_residual_now_cond_rate_y: {is: axis_value, val: {text: rate_y}}
+  sys_display_residual_now_cond_rate_all: {is: axis_value, val: {text: rate_all}}
+  sys_comments: {is: measurement_family}
+  sys_comments_cond: {is: family_axis, val: {text: cond}}
+  sys_comments_cond_total: {is: axis_value, val: {text: total}}
+  sys_comments_cond_header: {is: axis_value, val: {text: header}}
+  sys_comments_cond_history: {is: axis_value, val: {text: history}}
+  sys_comments_cond_code: {is: axis_value, val: {text: code}}
+  sys_comments_cond_meaning: {is: axis_value, val: {text: meaning}}
+  sys_comments_cond_inline: {is: axis_value, val: {text: inline}}
+  sys_comments_cond_line: {is: axis_value, val: {text: line}}
+  sys_outlive: {is: measurement_family}
+  sys_outlive_cond: {is: family_axis, val: {text: cond}}
+  sys_outlive_cond_outlives_source: {is: axis_value, val: {text: outlives_source}}
+  sys_outlive_cond_source_in_git: {is: axis_value, val: {text: source_in_git}}
+  sys_outlive_cond_c_step_ok: {is: axis_value, val: {text: c_step_ok}}
+  sys_outlive_cond_s_step_ok: {is: axis_value, val: {text: s_step_ok}}
+  sys_confusion: {is: measurement_family}
+  sys_confusion_cond: {is: family_axis, val: {text: cond}}
+  sys_confusion_cond_v_a_ok: {is: axis_value, val: {text: v_a_ok}}
+  sys_confusion_cond_v_m_ok: {is: axis_value, val: {text: v_m_ok}}
+  sys_confusion_cond_s_a_ok: {is: axis_value, val: {text: s_a_ok}}
+  sys_confusion_cond_s_m_ok: {is: axis_value, val: {text: s_m_ok}}
+  sys_confusion_cond_recomputed: {is: axis_value, val: {text: recomputed}}
+  sys_verbs: {is: measurement_family}
+  sys_verbs_cond: {is: family_axis, val: {text: cond}}
+  sys_verbs_cond_dyn_has_mod: {is: axis_value, val: {text: dyn_has_mod}}
+  sys_verbs_cond_dyn_from_con: {is: axis_value, val: {text: dyn_from_con}}
+  sys_verbs_cond_dyn_to_con: {is: axis_value, val: {text: dyn_to_con}}
+  sys_verbs_cond_dyn_ends_con: {is: axis_value, val: {text: dyn_ends_con}}
+  sys_verbs_cond_dyn_ends_occ: {is: axis_value, val: {text: dyn_ends_occ}}
+  sys_verbs_cond_dyn_exists: {is: axis_value, val: {text: dyn_exists}}
+  sys_verbs_cond_dyn_after_involve: {is: axis_value, val: {text: dyn_after_involve}}
+  sys_verbs_cond_dyn_opposite: {is: axis_value, val: {text: dyn_opposite}}
+  sys_verbs_cond_st_has_mod: {is: axis_value, val: {text: st_has_mod}}
+  sys_verbs_cond_st_from_con: {is: axis_value, val: {text: st_from_con}}
+  sys_verbs_cond_st_to_con: {is: axis_value, val: {text: st_to_con}}
+  sys_verbs_cond_st_ends_con: {is: axis_value, val: {text: st_ends_con}}
+  sys_verbs_cond_st_ends_occ: {is: axis_value, val: {text: st_ends_occ}}
+  sys_verbs_cond_st_exists: {is: axis_value, val: {text: st_exists}}
+  sys_verbs_cond_st_after_involve: {is: axis_value, val: {text: st_after_involve}}
+  sys_verbs_cond_st_opposite: {is: axis_value, val: {text: st_opposite}}
+  sys_verbs_cond_dyn_root: {is: axis_value, val: {text: dyn_root}}
   sys_content_symmetry: {is: measurement_family}
   sys_content_symmetry_cond: {is: family_axis, val: {text: cond}}
   sys_content_symmetry_cond_unpaired_changed: {is: axis_value, val: {text: unpaired_changed}}
@@ -622,8 +954,6 @@ individuals:
   e17g: {is: measurement_family}
   e18: {is: measurement_family}
   e18u: {is: measurement_family}
-  # ----- 測定の族の軸（is: family_axis）と、軸の値（is: axis_value）。val の text は測定値の識別子に使う字。
-  # 結果ファイルでの書き方（v_spell）と、値が指すもの（v_denote）は事実で書く。
   e1_model: {is: family_axis, val: {text: model}}
   e1_model_15b: {is: axis_value, val: {text: 15b}}
   e1_model_4b: {is: axis_value, val: {text: 4b}}
@@ -899,7 +1229,6 @@ individuals:
   e18u_cond_common: {is: axis_value, val: {text: common}}
   e18u_cond_swapped: {is: axis_value, val: {text: swapped}}
 
-  # ===== 観察。s と o は測定値で、p は大きさを比べる動詞（is: observation）
   o_e1_redef_below_new_adjacent: {is: observation}
   o_e1_glossary_redef_like_none: {is: observation}
   o_e1_glossary_sibling_full: {is: observation}
@@ -1007,8 +1336,6 @@ individuals:
   o_e18_usage_specific_near_common: {is: observation}
   o_e18_statement_full_level_none_conflict: {is: observation}
 
-  # ===== 仮説（is: hypothesis）
-  # --- 文章での注入 ---
   h_collision_lowers_following: {is: hyp_supported}
   h_chain_length_lowers_following: {is: hyp_mixed}
   h_scratchpad_raises_rule_following: {is: hyp_refuted}
@@ -1023,10 +1350,11 @@ individuals:
   h_following_definitions_do_not_lower: {is: hyp_supported}
   h_new_word_immune: {is: hyp_supported}
   h_attention_causes_preceding_effect: {is: hyp_untested}
+  h_auto_merge_uncorrected: {is: hyp_untested}
+  b_auto_merge_uncorrected: {is: item_queued}
   h_opaque_renaming_raises: {is: hyp_supported}
   h_semi_renaming_does_not_raise: {is: hyp_supported}
   h_opaque_renaming_lowers_control: {is: hyp_supported}
-  # --- 概念ベクトル ---
   h_vector_raises_following: {is: hyp_supported}
   h_vector_raises_control: {is: hyp_supported}
   h_format_does_not_lower_following: {is: hyp_supported}
@@ -1036,7 +1364,6 @@ individuals:
   h_vector_raises_following_free: {is: hyp_supported}
   h_layer14_lowers_control: {is: hyp_supported}
   h_rule_type_lowers_vector_following: {is: hyp_mixed}
-  # --- 使い方をまたぐ転移 ---
   h_recite_does_not_transfer_to_apply: {is: hyp_supported}
   h_recite_does_not_transfer_to_paraphrase: {is: hyp_supported}
   h_apply_does_not_transfer_to_paraphrase: {is: hyp_supported}
@@ -1070,8 +1397,6 @@ individuals:
   h_qualification_teacher_raises_following: {is: hyp_untested}
   h_modifier_transfers_to_unseen_genus: {is: hyp_supported}
 
-  # ===== 決定（is: decision）
-  # p は動詞。is_a だけは動詞ではなく、体系の上位・下位の関係そのもので、検査が構造から確かめる。
   d_goal: {is: design_dec_adopted}
   d_avoid_redefinition: {is: design_dec_withdrawn}
   d_metric: {is: design_dec_adopted}
@@ -1090,7 +1415,6 @@ individuals:
   d_vector_needs_open_weights: {is: design_dec_adopted}
   d_text_for_api_models: {is: design_dec_adopted}
 
-  # ===== 残り項目（is: backlog_item）
   b_e8_multi_layer: {is: item_done}
   b_e8_retrain_until_converged: {is: item_queued}
   b_write_subject_concepts_in_cscl: {is: item_done}
@@ -1117,19 +1441,16 @@ individuals:
   b_sparse_dictionary_observation: {is: item_queued}
 
 facts:
-  - {is: v_collect, from: residual_space, to: residual_vector}   # 残差の流れのベクトルは、合成について閉じた集合の一つ
-  # 種類どうしの事実（その種類のすべてについて）。部分と依存（生成の順序）は、ここから導かれる
-  - {is: v_sum, from: layer_output, to: state_shift, new: shifted_hidden_state}                    # h' = h ⊕ v（足す位置を語に限ったものが hidden_state）
-  - {is: v_sum, from: common_vector_component, to: specific_vector_component, new: concept_vector}   # v = m ⊕ s
+  - {is: v_collect, from: residual_space, to: residual_vector}
+  - {is: v_sum, from: layer_output, to: state_shift, new: shifted_hidden_state}
+  - {is: v_sum, from: common_vector_component, to: specific_vector_component, new: concept_vector}
   - {is: syntax.v_use, from: exp, to: std}
   - {is: syntax.v_use, from: exp, to: runtime}
 
-  # ===== モデル。種類ではなく、1つずつの成果物。
   - {is: v_compose, from: weights, to: model_15b, at: {count: 1500000000}}
   - {is: v_compose, from: layer, to: model_15b, at: {count: 28}}
   - {is: v_compose, from: weights, to: model_4b, at: {count: 4000000000}}
 
-  # ===== 測定の族（is: measurement_family）。値は experiments/results/ から計算する。手で書いた数値は持たない。
   - {is: v_file_of, from: 'e1_{model}.json', to: e1}
   - {is: v_rows_of, from: [items], to: e1}
   - {is: v_axis_of, from: e1_model, to: e1}
@@ -1936,7 +2257,6 @@ facts:
   - {is: v_entry_of, from: '{cond}', to: e18u}
   - {is: v_metric_of, from: e18u, to: logit_margin}
 
-  # ===== 観察。s と o は測定値で、p は大きさを比べる動詞（is: observation）
   - {is: v_refer, from: o_e1_redef_below_new_adjacent, to: {is: v_come_before, from: e1.4b.G2c.near.accuracy, to: e1.4b.G3.near.accuracy}}
   - {is: v_refer, from: o_e1_glossary_redef_like_none, to: {is: v_near, from: e1.4b.G2c.glossary.accuracy, to: e1.4b.G2c.none.accuracy, new: 0.1}}
   - {is: v_refer, from: o_e1_glossary_sibling_full, to: {is: v_level, from: e1.4b.G3.glossary.accuracy, to: 1.0}}
@@ -1982,7 +2302,6 @@ facts:
   - {is: v_refer, from: o_e6_examples_paraphrase_at_chance, to: {is: v_near, from: e6_L8.qa.logit_margin, to: 0.0, new: 0.5}}
   - {is: v_refer, from: o_e6_examples_recital_harder, to: {is: v_come_after, from: e6_L8_nll.qa.mean_value, to: e6_L8_nll.none.mean_value}}
 
-  # ===== 先行研究の観察。値は論文の表と本文から書き写したもの（experiments/results/prior/。出典は各ファイルの _source）。
   - {is: v_file_of, from: prior/teehan2024_college_gre.json, to: pr_college_gre}
   - {is: v_rows_of, from: [reported], to: pr_college_gre}
   - {is: v_axis_of, from: pr_college_gre_cond, to: pr_college_gre}
@@ -2227,6 +2546,764 @@ facts:
   - {is: v_spell, from: sys_open_runtime_cond_supported, to: supported}
   - {is: v_entry_of, from: '{cond}', to: sys_open_runtime}
   - {is: v_metric_of, from: sys_open_runtime, to: mean_value}
+  - {is: v_file_of, from: sys_layers.json, to: sys_layers}
+  - {is: v_rows_of, from: [rows], to: sys_layers}
+  - {is: v_axis_of, from: sys_layers_cond, to: sys_layers}
+  - {is: v_value_of, from: sys_layers_cond_agree, to: sys_layers_cond}
+  - {is: v_spell, from: sys_layers_cond_agree, to: agree}
+  - {is: v_value_of, from: sys_layers_cond_agree_pos, to: sys_layers_cond}
+  - {is: v_spell, from: sys_layers_cond_agree_pos, to: agree_pos}
+  - {is: v_value_of, from: sys_layers_cond_exp_change, to: sys_layers_cond}
+  - {is: v_spell, from: sys_layers_cond_exp_change, to: exp_change}
+  - {is: v_value_of, from: sys_layers_cond_exp_change_pos, to: sys_layers_cond}
+  - {is: v_spell, from: sys_layers_cond_exp_change_pos, to: exp_change_pos}
+  - {is: v_value_of, from: sys_layers_cond_exp_refer, to: sys_layers_cond}
+  - {is: v_spell, from: sys_layers_cond_exp_refer, to: exp_refer}
+  - {is: v_value_of, from: sys_layers_cond_exp_refer_pos, to: sys_layers_cond}
+  - {is: v_spell, from: sys_layers_cond_exp_refer_pos, to: exp_refer_pos}
+  - {is: v_value_of, from: sys_layers_cond_exp_still, to: sys_layers_cond}
+  - {is: v_spell, from: sys_layers_cond_exp_still, to: exp_still}
+  - {is: v_value_of, from: sys_layers_cond_exp_still_pos, to: sys_layers_cond}
+  - {is: v_spell, from: sys_layers_cond_exp_still_pos, to: exp_still_pos}
+  - {is: v_value_of, from: sys_layers_cond_lang_change, to: sys_layers_cond}
+  - {is: v_spell, from: sys_layers_cond_lang_change, to: lang_change}
+  - {is: v_value_of, from: sys_layers_cond_lang_change_pos, to: sys_layers_cond}
+  - {is: v_spell, from: sys_layers_cond_lang_change_pos, to: lang_change_pos}
+  - {is: v_value_of, from: sys_layers_cond_lang_refer, to: sys_layers_cond}
+  - {is: v_spell, from: sys_layers_cond_lang_refer, to: lang_refer}
+  - {is: v_value_of, from: sys_layers_cond_lang_refer_pos, to: sys_layers_cond}
+  - {is: v_spell, from: sys_layers_cond_lang_refer_pos, to: lang_refer_pos}
+  - {is: v_value_of, from: sys_layers_cond_lang_still, to: sys_layers_cond}
+  - {is: v_spell, from: sys_layers_cond_lang_still, to: lang_still}
+  - {is: v_value_of, from: sys_layers_cond_lang_still_pos, to: sys_layers_cond}
+  - {is: v_spell, from: sys_layers_cond_lang_still_pos, to: lang_still_pos}
+  - {is: v_value_of, from: sys_layers_cond_ontology_change, to: sys_layers_cond}
+  - {is: v_spell, from: sys_layers_cond_ontology_change, to: ontology_change}
+  - {is: v_value_of, from: sys_layers_cond_ontology_change_pos, to: sys_layers_cond}
+  - {is: v_spell, from: sys_layers_cond_ontology_change_pos, to: ontology_change_pos}
+  - {is: v_value_of, from: sys_layers_cond_ontology_refer, to: sys_layers_cond}
+  - {is: v_spell, from: sys_layers_cond_ontology_refer, to: ontology_refer}
+  - {is: v_value_of, from: sys_layers_cond_ontology_refer_pos, to: sys_layers_cond}
+  - {is: v_spell, from: sys_layers_cond_ontology_refer_pos, to: ontology_refer_pos}
+  - {is: v_value_of, from: sys_layers_cond_ontology_still, to: sys_layers_cond}
+  - {is: v_spell, from: sys_layers_cond_ontology_still, to: ontology_still}
+  - {is: v_value_of, from: sys_layers_cond_ontology_still_pos, to: sys_layers_cond}
+  - {is: v_spell, from: sys_layers_cond_ontology_still_pos, to: ontology_still_pos}
+  - {is: v_value_of, from: sys_layers_cond_runtime_change, to: sys_layers_cond}
+  - {is: v_spell, from: sys_layers_cond_runtime_change, to: runtime_change}
+  - {is: v_value_of, from: sys_layers_cond_runtime_change_pos, to: sys_layers_cond}
+  - {is: v_spell, from: sys_layers_cond_runtime_change_pos, to: runtime_change_pos}
+  - {is: v_value_of, from: sys_layers_cond_runtime_refer, to: sys_layers_cond}
+  - {is: v_spell, from: sys_layers_cond_runtime_refer, to: runtime_refer}
+  - {is: v_value_of, from: sys_layers_cond_runtime_refer_pos, to: sys_layers_cond}
+  - {is: v_spell, from: sys_layers_cond_runtime_refer_pos, to: runtime_refer_pos}
+  - {is: v_value_of, from: sys_layers_cond_runtime_still, to: sys_layers_cond}
+  - {is: v_spell, from: sys_layers_cond_runtime_still, to: runtime_still}
+  - {is: v_value_of, from: sys_layers_cond_runtime_still_pos, to: sys_layers_cond}
+  - {is: v_spell, from: sys_layers_cond_runtime_still_pos, to: runtime_still_pos}
+  - {is: v_value_of, from: sys_layers_cond_std_change, to: sys_layers_cond}
+  - {is: v_spell, from: sys_layers_cond_std_change, to: std_change}
+  - {is: v_value_of, from: sys_layers_cond_std_change_pos, to: sys_layers_cond}
+  - {is: v_spell, from: sys_layers_cond_std_change_pos, to: std_change_pos}
+  - {is: v_value_of, from: sys_layers_cond_std_refer, to: sys_layers_cond}
+  - {is: v_spell, from: sys_layers_cond_std_refer, to: std_refer}
+  - {is: v_value_of, from: sys_layers_cond_std_refer_pos, to: sys_layers_cond}
+  - {is: v_spell, from: sys_layers_cond_std_refer_pos, to: std_refer_pos}
+  - {is: v_value_of, from: sys_layers_cond_std_still, to: sys_layers_cond}
+  - {is: v_spell, from: sys_layers_cond_std_still, to: std_still}
+  - {is: v_value_of, from: sys_layers_cond_std_still_pos, to: sys_layers_cond}
+  - {is: v_spell, from: sys_layers_cond_std_still_pos, to: std_still_pos}
+  - {is: v_value_of, from: sys_layers_cond_subj_change, to: sys_layers_cond}
+  - {is: v_spell, from: sys_layers_cond_subj_change, to: subj_change}
+  - {is: v_value_of, from: sys_layers_cond_subj_change_pos, to: sys_layers_cond}
+  - {is: v_spell, from: sys_layers_cond_subj_change_pos, to: subj_change_pos}
+  - {is: v_value_of, from: sys_layers_cond_subj_refer, to: sys_layers_cond}
+  - {is: v_spell, from: sys_layers_cond_subj_refer, to: subj_refer}
+  - {is: v_value_of, from: sys_layers_cond_subj_refer_pos, to: sys_layers_cond}
+  - {is: v_spell, from: sys_layers_cond_subj_refer_pos, to: subj_refer_pos}
+  - {is: v_value_of, from: sys_layers_cond_subj_still, to: sys_layers_cond}
+  - {is: v_spell, from: sys_layers_cond_subj_still, to: subj_still}
+  - {is: v_value_of, from: sys_layers_cond_subj_still_pos, to: sys_layers_cond}
+  - {is: v_spell, from: sys_layers_cond_subj_still_pos, to: subj_still_pos}
+  - {is: v_value_of, from: sys_layers_cond_supported, to: sys_layers_cond}
+  - {is: v_spell, from: sys_layers_cond_supported, to: supported}
+  - {is: v_value_of, from: sys_layers_cond_syntax_change, to: sys_layers_cond}
+  - {is: v_spell, from: sys_layers_cond_syntax_change, to: syntax_change}
+  - {is: v_value_of, from: sys_layers_cond_syntax_change_pos, to: sys_layers_cond}
+  - {is: v_spell, from: sys_layers_cond_syntax_change_pos, to: syntax_change_pos}
+  - {is: v_value_of, from: sys_layers_cond_syntax_refer, to: sys_layers_cond}
+  - {is: v_spell, from: sys_layers_cond_syntax_refer, to: syntax_refer}
+  - {is: v_value_of, from: sys_layers_cond_syntax_refer_pos, to: sys_layers_cond}
+  - {is: v_spell, from: sys_layers_cond_syntax_refer_pos, to: syntax_refer_pos}
+  - {is: v_value_of, from: sys_layers_cond_syntax_still, to: sys_layers_cond}
+  - {is: v_spell, from: sys_layers_cond_syntax_still, to: syntax_still}
+  - {is: v_value_of, from: sys_layers_cond_syntax_still_pos, to: sys_layers_cond}
+  - {is: v_spell, from: sys_layers_cond_syntax_still_pos, to: syntax_still_pos}
+  - {is: v_entry_of, from: '{cond}', to: sys_layers}
+  - {is: v_metric_of, from: sys_layers, to: mean_value}
+  - {is: v_file_of, from: sys_tops.json, to: sys_tops}
+  - {is: v_rows_of, from: [rows], to: sys_tops}
+  - {is: v_axis_of, from: sys_tops_cond, to: sys_tops}
+  - {is: v_value_of, from: sys_tops_cond_ind_continuant, to: sys_tops_cond}
+  - {is: v_spell, from: sys_tops_cond_ind_continuant, to: ind_continuant}
+  - {is: v_value_of, from: sys_tops_cond_dynamic, to: sys_tops_cond}
+  - {is: v_spell, from: sys_tops_cond_dynamic, to: dynamic}
+  - {is: v_value_of, from: sys_tops_cond_dyn_occurrent, to: sys_tops_cond}
+  - {is: v_spell, from: sys_tops_cond_dyn_occurrent, to: dyn_occurrent}
+  - {is: v_value_of, from: sys_tops_cond_static_occurrent, to: sys_tops_cond}
+  - {is: v_spell, from: sys_tops_cond_static_occurrent, to: static_occurrent}
+  - {is: v_value_of, from: sys_tops_cond_reaches_dynamic, to: sys_tops_cond}
+  - {is: v_spell, from: sys_tops_cond_reaches_dynamic, to: reaches_dynamic}
+  - {is: v_value_of, from: sys_tops_cond_concept_dynamic, to: sys_tops_cond}
+  - {is: v_spell, from: sys_tops_cond_concept_dynamic, to: concept_dynamic}
+  - {is: v_value_of, from: sys_tops_cond_supported, to: sys_tops_cond}
+  - {is: v_spell, from: sys_tops_cond_supported, to: supported}
+  - {is: v_entry_of, from: '{cond}', to: sys_tops}
+  - {is: v_metric_of, from: sys_tops, to: mean_value}
+  - {is: v_file_of, from: sys_verbs.json, to: sys_verbs}
+  - {is: v_rows_of, from: [rows], to: sys_verbs}
+  - {is: v_axis_of, from: sys_verbs_cond, to: sys_verbs}
+  - {is: v_value_of, from: sys_verbs_cond_dyn_has_mod, to: sys_verbs_cond}
+  - {is: v_spell, from: sys_verbs_cond_dyn_has_mod, to: dyn_has_mod}
+  - {is: v_value_of, from: sys_verbs_cond_dyn_from_con, to: sys_verbs_cond}
+  - {is: v_spell, from: sys_verbs_cond_dyn_from_con, to: dyn_from_con}
+  - {is: v_value_of, from: sys_verbs_cond_dyn_to_con, to: sys_verbs_cond}
+  - {is: v_spell, from: sys_verbs_cond_dyn_to_con, to: dyn_to_con}
+  - {is: v_value_of, from: sys_verbs_cond_dyn_ends_con, to: sys_verbs_cond}
+  - {is: v_spell, from: sys_verbs_cond_dyn_ends_con, to: dyn_ends_con}
+  - {is: v_value_of, from: sys_verbs_cond_dyn_ends_occ, to: sys_verbs_cond}
+  - {is: v_spell, from: sys_verbs_cond_dyn_ends_occ, to: dyn_ends_occ}
+  - {is: v_value_of, from: sys_verbs_cond_dyn_exists, to: sys_verbs_cond}
+  - {is: v_spell, from: sys_verbs_cond_dyn_exists, to: dyn_exists}
+  - {is: v_value_of, from: sys_verbs_cond_dyn_after_involve, to: sys_verbs_cond}
+  - {is: v_spell, from: sys_verbs_cond_dyn_after_involve, to: dyn_after_involve}
+  - {is: v_value_of, from: sys_verbs_cond_dyn_opposite, to: sys_verbs_cond}
+  - {is: v_spell, from: sys_verbs_cond_dyn_opposite, to: dyn_opposite}
+  - {is: v_value_of, from: sys_verbs_cond_st_has_mod, to: sys_verbs_cond}
+  - {is: v_spell, from: sys_verbs_cond_st_has_mod, to: st_has_mod}
+  - {is: v_value_of, from: sys_verbs_cond_st_from_con, to: sys_verbs_cond}
+  - {is: v_spell, from: sys_verbs_cond_st_from_con, to: st_from_con}
+  - {is: v_value_of, from: sys_verbs_cond_st_to_con, to: sys_verbs_cond}
+  - {is: v_spell, from: sys_verbs_cond_st_to_con, to: st_to_con}
+  - {is: v_value_of, from: sys_verbs_cond_st_ends_con, to: sys_verbs_cond}
+  - {is: v_spell, from: sys_verbs_cond_st_ends_con, to: st_ends_con}
+  - {is: v_value_of, from: sys_verbs_cond_st_ends_occ, to: sys_verbs_cond}
+  - {is: v_spell, from: sys_verbs_cond_st_ends_occ, to: st_ends_occ}
+  - {is: v_value_of, from: sys_verbs_cond_st_exists, to: sys_verbs_cond}
+  - {is: v_spell, from: sys_verbs_cond_st_exists, to: st_exists}
+  - {is: v_value_of, from: sys_verbs_cond_st_after_involve, to: sys_verbs_cond}
+  - {is: v_spell, from: sys_verbs_cond_st_after_involve, to: st_after_involve}
+  - {is: v_value_of, from: sys_verbs_cond_st_opposite, to: sys_verbs_cond}
+  - {is: v_spell, from: sys_verbs_cond_st_opposite, to: st_opposite}
+  - {is: v_value_of, from: sys_verbs_cond_dyn_root, to: sys_verbs_cond}
+  - {is: v_spell, from: sys_verbs_cond_dyn_root, to: dyn_root}
+  - {is: v_entry_of, from: '{cond}', to: sys_verbs}
+  - {is: v_metric_of, from: sys_verbs, to: mean_value}
+  - {is: v_file_of, from: sys_confusion.json, to: sys_confusion}
+  - {is: v_rows_of, from: [rows], to: sys_confusion}
+  - {is: v_axis_of, from: sys_confusion_cond, to: sys_confusion}
+  - {is: v_value_of, from: sys_confusion_cond_v_a_ok, to: sys_confusion_cond}
+  - {is: v_spell, from: sys_confusion_cond_v_a_ok, to: v_a_ok}
+  - {is: v_value_of, from: sys_confusion_cond_v_m_ok, to: sys_confusion_cond}
+  - {is: v_spell, from: sys_confusion_cond_v_m_ok, to: v_m_ok}
+  - {is: v_value_of, from: sys_confusion_cond_s_a_ok, to: sys_confusion_cond}
+  - {is: v_spell, from: sys_confusion_cond_s_a_ok, to: s_a_ok}
+  - {is: v_value_of, from: sys_confusion_cond_s_m_ok, to: sys_confusion_cond}
+  - {is: v_spell, from: sys_confusion_cond_s_m_ok, to: s_m_ok}
+  - {is: v_value_of, from: sys_confusion_cond_recomputed, to: sys_confusion_cond}
+  - {is: v_spell, from: sys_confusion_cond_recomputed, to: recomputed}
+  - {is: v_entry_of, from: '{cond}', to: sys_confusion}
+  - {is: v_metric_of, from: sys_confusion, to: mean_value}
+  - {is: v_file_of, from: sys_outlive.json, to: sys_outlive}
+  - {is: v_rows_of, from: [rows], to: sys_outlive}
+  - {is: v_axis_of, from: sys_outlive_cond, to: sys_outlive}
+  - {is: v_value_of, from: sys_outlive_cond_outlives_source, to: sys_outlive_cond}
+  - {is: v_spell, from: sys_outlive_cond_outlives_source, to: outlives_source}
+  - {is: v_value_of, from: sys_outlive_cond_source_in_git, to: sys_outlive_cond}
+  - {is: v_spell, from: sys_outlive_cond_source_in_git, to: source_in_git}
+  - {is: v_value_of, from: sys_outlive_cond_c_step_ok, to: sys_outlive_cond}
+  - {is: v_spell, from: sys_outlive_cond_c_step_ok, to: c_step_ok}
+  - {is: v_value_of, from: sys_outlive_cond_s_step_ok, to: sys_outlive_cond}
+  - {is: v_spell, from: sys_outlive_cond_s_step_ok, to: s_step_ok}
+  - {is: v_entry_of, from: '{cond}', to: sys_outlive}
+  - {is: v_metric_of, from: sys_outlive, to: mean_value}
+  - {is: v_file_of, from: sys_differentia.json, to: sys_differentia}
+  - {is: v_rows_of, from: [rows], to: sys_differentia}
+  - {is: v_axis_of, from: sys_differentia_cond, to: sys_differentia}
+  - {is: v_value_of, from: sys_differentia_cond_root, to: sys_differentia_cond}
+  - {is: v_spell, from: sys_differentia_cond_root, to: root}
+  - {is: v_value_of, from: sys_differentia_cond_dyn_unique, to: sys_differentia_cond}
+  - {is: v_spell, from: sys_differentia_cond_dyn_unique, to: dyn_unique}
+  - {is: v_value_of, from: sys_differentia_cond_st_unique, to: sys_differentia_cond}
+  - {is: v_spell, from: sys_differentia_cond_st_unique, to: st_unique}
+  - {is: v_value_of, from: sys_differentia_cond_creation_specific, to: sys_differentia_cond}
+  - {is: v_spell, from: sys_differentia_cond_creation_specific, to: creation_specific}
+  - {is: v_entry_of, from: '{cond}', to: sys_differentia}
+  - {is: v_metric_of, from: sys_differentia, to: mean_value}
+  - {is: v_file_of, from: sys_subsume.json, to: sys_subsume}
+  - {is: v_rows_of, from: [rows], to: sys_subsume}
+  - {is: v_axis_of, from: sys_subsume_cond, to: sys_subsume}
+  - {is: v_value_of, from: sys_subsume_cond_has_subsumer, to: sys_subsume_cond}
+  - {is: v_spell, from: sys_subsume_cond_has_subsumer, to: has_subsumer}
+  - {is: v_value_of, from: sys_subsume_cond_strict, to: sys_subsume_cond}
+  - {is: v_spell, from: sys_subsume_cond_strict, to: strict}
+  - {is: v_value_of, from: sys_subsume_cond_any_end, to: sys_subsume_cond}
+  - {is: v_spell, from: sys_subsume_cond_any_end, to: any_end}
+  - {is: v_value_of, from: sys_subsume_cond_all_ancestors, to: sys_subsume_cond}
+  - {is: v_spell, from: sys_subsume_cond_all_ancestors, to: all_ancestors}
+  - {is: v_value_of, from: sys_subsume_cond_some_usable, to: sys_subsume_cond}
+  - {is: v_spell, from: sys_subsume_cond_some_usable, to: some_usable}
+  - {is: v_entry_of, from: '{cond}', to: sys_subsume}
+  - {is: v_metric_of, from: sys_subsume, to: mean_value}
+  - {is: v_file_of, from: sys_spelling.json, to: sys_spelling}
+  - {is: v_rows_of, from: [rows], to: sys_spelling}
+  - {is: v_axis_of, from: sys_spelling_cond, to: sys_spelling}
+  - {is: v_value_of, from: sys_spelling_cond_multi, to: sys_spelling_cond}
+  - {is: v_spell, from: sys_spelling_cond_multi, to: multi}
+  - {is: v_entry_of, from: '{cond}', to: sys_spelling}
+  - {is: v_metric_of, from: sys_spelling, to: mean_value}
+  - {is: v_file_of, from: sys_special.json, to: sys_special}
+  - {is: v_rows_of, from: [rows], to: sys_special}
+  - {is: v_axis_of, from: sys_special_cond, to: sys_special}
+  - {is: v_value_of, from: sys_special_cond_signature, to: sys_special_cond}
+  - {is: v_spell, from: sys_special_cond_signature, to: signature}
+  - {is: v_value_of, from: sys_special_cond_grammar, to: sys_special_cond}
+  - {is: v_spell, from: sys_special_cond_grammar, to: grammar}
+  - {is: v_value_of, from: sys_special_cond_outside, to: sys_special_cond}
+  - {is: v_spell, from: sys_special_cond_outside, to: outside}
+  - {is: v_value_of, from: sys_special_cond_short, to: sys_special_cond}
+  - {is: v_spell, from: sys_special_cond_short, to: short}
+  - {is: v_entry_of, from: '{cond}', to: sys_special}
+  - {is: v_metric_of, from: sys_special, to: mean_value}
+  - {is: v_file_of, from: sys_mutation.json, to: sys_mutation}
+  - {is: v_rows_of, from: [rows], to: sys_mutation}
+  - {is: v_axis_of, from: sys_mutation_cond, to: sys_mutation}
+  - {is: v_value_of, from: sys_mutation_cond_test_changed, to: sys_mutation_cond}
+  - {is: v_spell, from: sys_mutation_cond_test_changed, to: test_changed}
+  - {is: v_value_of, from: sys_mutation_cond_pos_changed, to: sys_mutation_cond}
+  - {is: v_spell, from: sys_mutation_cond_pos_changed, to: pos_changed}
+  - {is: v_value_of, from: sys_mutation_cond_neg_changed, to: sys_mutation_cond}
+  - {is: v_spell, from: sys_mutation_cond_neg_changed, to: neg_changed}
+  - {is: v_entry_of, from: '{cond}', to: sys_mutation}
+  - {is: v_metric_of, from: sys_mutation, to: mean_value}
+  - {is: v_file_of, from: sys_detach.json, to: sys_detach}
+  - {is: v_rows_of, from: [rows], to: sys_detach}
+  - {is: v_axis_of, from: sys_detach_cond, to: sys_detach}
+  - {is: v_value_of, from: sys_detach_cond_test_changed, to: sys_detach_cond}
+  - {is: v_spell, from: sys_detach_cond_test_changed, to: test_changed}
+  - {is: v_value_of, from: sys_detach_cond_neg_changed, to: sys_detach_cond}
+  - {is: v_spell, from: sys_detach_cond_neg_changed, to: neg_changed}
+  - {is: v_value_of, from: sys_detach_cond_skipped, to: sys_detach_cond}
+  - {is: v_spell, from: sys_detach_cond_skipped, to: skipped}
+  - {is: v_entry_of, from: '{cond}', to: sys_detach}
+  - {is: v_metric_of, from: sys_detach, to: mean_value}
+  - {is: v_file_of, from: sys_lower.json, to: sys_lower}
+  - {is: v_rows_of, from: [rows], to: sys_lower}
+  - {is: v_axis_of, from: sys_lower_cond, to: sys_lower}
+  - {is: v_value_of, from: sys_lower_cond_extends_only, to: sys_lower_cond}
+  - {is: v_spell, from: sys_lower_cond_extends_only, to: extends_only}
+  - {is: v_value_of, from: sys_lower_cond_reducible, to: sys_lower_cond}
+  - {is: v_spell, from: sys_lower_cond_reducible, to: reducible}
+  - {is: v_value_of, from: sys_lower_cond_other, to: sys_lower_cond}
+  - {is: v_spell, from: sys_lower_cond_other, to: other}
+  - {is: v_value_of, from: sys_lower_cond_in_ontology, to: sys_lower_cond}
+  - {is: v_spell, from: sys_lower_cond_in_ontology, to: in_ontology}
+  - {is: v_entry_of, from: '{cond}', to: sys_lower}
+  - {is: v_metric_of, from: sys_lower, to: mean_value}
+  - {is: v_file_of, from: sys_core.json, to: sys_core}
+  - {is: v_rows_of, from: [rows], to: sys_core}
+  - {is: v_axis_of, from: sys_core_cond, to: sys_core}
+  - {is: v_value_of, from: sys_core_cond_seed, to: sys_core_cond}
+  - {is: v_spell, from: sys_core_cond_seed, to: seed}
+  - {is: v_value_of, from: sys_core_cond_core, to: sys_core_cond}
+  - {is: v_spell, from: sys_core_cond_core, to: core}
+  - {is: v_value_of, from: sys_core_cond_used, to: sys_core_cond}
+  - {is: v_spell, from: sys_core_cond_used, to: used}
+  - {is: v_entry_of, from: '{cond}', to: sys_core}
+  - {is: v_metric_of, from: sys_core, to: mean_value}
+  - {is: v_file_of, from: sys_after.json, to: sys_after}
+  - {is: v_rows_of, from: [rows], to: sys_after}
+  - {is: v_axis_of, from: sys_after_cond, to: sys_after}
+  - {is: v_value_of, from: sys_after_cond_time, to: sys_after_cond}
+  - {is: v_spell, from: sys_after_cond_time, to: time}
+  - {is: v_value_of, from: sys_after_cond_entity, to: sys_after_cond}
+  - {is: v_spell, from: sys_after_cond_entity, to: entity}
+  - {is: v_value_of, from: sys_after_cond_open, to: sys_after_cond}
+  - {is: v_spell, from: sys_after_cond_open, to: open}
+  - {is: v_value_of, from: sys_after_cond_used, to: sys_after_cond}
+  - {is: v_spell, from: sys_after_cond_used, to: used}
+  - {is: v_value_of, from: sys_after_cond_rule_after, to: sys_after_cond}
+  - {is: v_spell, from: sys_after_cond_rule_after, to: rule_after}
+  - {is: v_entry_of, from: '{cond}', to: sys_after}
+  - {is: v_metric_of, from: sys_after, to: mean_value}
+  - {is: v_file_of, from: sys_specific.json, to: sys_specific}
+  - {is: v_rows_of, from: [rows], to: sys_specific}
+  - {is: v_axis_of, from: sys_specific_cond, to: sys_specific}
+  - {is: v_value_of, from: sys_specific_cond_V_pairs, to: sys_specific_cond}
+  - {is: v_spell, from: sys_specific_cond_V_pairs, to: V_pairs}
+  - {is: v_value_of, from: sys_specific_cond_V_defined_by_refined, to: sys_specific_cond}
+  - {is: v_spell, from: sys_specific_cond_V_defined_by_refined, to: V_defined_by_refined}
+  - {is: v_value_of, from: sys_specific_cond_V_independent_slot, to: sys_specific_cond}
+  - {is: v_spell, from: sys_specific_cond_V_independent_slot, to: V_independent_slot}
+  - {is: v_value_of, from: sys_specific_cond_V_same_domain, to: sys_specific_cond}
+  - {is: v_spell, from: sys_specific_cond_V_same_domain, to: V_same_domain}
+  - {is: v_value_of, from: sys_specific_cond_V_y_has_concept_child, to: sys_specific_cond}
+  - {is: v_spell, from: sys_specific_cond_V_y_has_concept_child, to: V_y_has_concept_child}
+  - {is: v_value_of, from: sys_specific_cond_C_pairs, to: sys_specific_cond}
+  - {is: v_spell, from: sys_specific_cond_C_pairs, to: C_pairs}
+  - {is: v_value_of, from: sys_specific_cond_C_independent_slot, to: sys_specific_cond}
+  - {is: v_spell, from: sys_specific_cond_C_independent_slot, to: C_independent_slot}
+  - {is: v_entry_of, from: '{cond}', to: sys_specific}
+  - {is: v_metric_of, from: sys_specific, to: mean_value}
+  - {is: v_file_of, from: sys_specific_depth.json, to: sys_specific_depth}
+  - {is: v_rows_of, from: [rows], to: sys_specific_depth}
+  - {is: v_axis_of, from: sys_specific_depth_cond, to: sys_specific_depth}
+  - {is: v_value_of, from: sys_specific_depth_cond_V_pairs, to: sys_specific_depth_cond}
+  - {is: v_spell, from: sys_specific_depth_cond_V_pairs, to: V_pairs}
+  - {is: v_value_of, from: sys_specific_depth_cond_V_y_def_shallow, to: sys_specific_depth_cond}
+  - {is: v_spell, from: sys_specific_depth_cond_V_y_def_shallow, to: V_y_def_shallow}
+  - {is: v_value_of, from: sys_specific_depth_cond_V_y_def_shallow1, to: sys_specific_depth_cond}
+  - {is: v_spell, from: sys_specific_depth_cond_V_y_def_shallow1, to: V_y_def_shallow1}
+  - {is: v_value_of, from: sys_specific_depth_cond_V_y_def_shallow3, to: sys_specific_depth_cond}
+  - {is: v_spell, from: sys_specific_depth_cond_V_y_def_shallow3, to: V_y_def_shallow3}
+  - {is: v_value_of, from: sys_specific_depth_cond_C_pairs, to: sys_specific_depth_cond}
+  - {is: v_spell, from: sys_specific_depth_cond_C_pairs, to: C_pairs}
+  - {is: v_value_of, from: sys_specific_depth_cond_C_y_def_shallow, to: sys_specific_depth_cond}
+  - {is: v_spell, from: sys_specific_depth_cond_C_y_def_shallow, to: C_y_def_shallow}
+  - {is: v_value_of, from: sys_specific_depth_cond_C_y_def_shallow1, to: sys_specific_depth_cond}
+  - {is: v_spell, from: sys_specific_depth_cond_C_y_def_shallow1, to: C_y_def_shallow1}
+  - {is: v_value_of, from: sys_specific_depth_cond_C_y_def_shallow3, to: sys_specific_depth_cond}
+  - {is: v_spell, from: sys_specific_depth_cond_C_y_def_shallow3, to: C_y_def_shallow3}
+  - {is: v_entry_of, from: '{cond}', to: sys_specific_depth}
+  - {is: v_metric_of, from: sys_specific_depth, to: mean_value}
+  - {is: v_file_of, from: sys_overextension.json, to: sys_overextension}
+  - {is: v_rows_of, from: [rows], to: sys_overextension}
+  - {is: v_axis_of, from: sys_overextension_cond, to: sys_overextension}
+  - {is: v_value_of, from: sys_overextension_cond_all_shallow_n, to: sys_overextension_cond}
+  - {is: v_spell, from: sys_overextension_cond_all_shallow_n, to: all_shallow_n}
+  - {is: v_value_of, from: sys_overextension_cond_all_shallow_any, to: sys_overextension_cond}
+  - {is: v_spell, from: sys_overextension_cond_all_shallow_any, to: all_shallow_any}
+  - {is: v_value_of, from: sys_overextension_cond_all_shallow_rate, to: sys_overextension_cond}
+  - {is: v_spell, from: sys_overextension_cond_all_shallow_rate, to: all_shallow_rate}
+  - {is: v_value_of, from: sys_overextension_cond_all_deep_n, to: sys_overextension_cond}
+  - {is: v_spell, from: sys_overextension_cond_all_deep_n, to: all_deep_n}
+  - {is: v_value_of, from: sys_overextension_cond_all_deep_any, to: sys_overextension_cond}
+  - {is: v_spell, from: sys_overextension_cond_all_deep_any, to: all_deep_any}
+  - {is: v_value_of, from: sys_overextension_cond_all_deep_rate, to: sys_overextension_cond}
+  - {is: v_spell, from: sys_overextension_cond_all_deep_rate, to: all_deep_rate}
+  - {is: v_value_of, from: sys_overextension_cond_unseen_shallow_n, to: sys_overextension_cond}
+  - {is: v_spell, from: sys_overextension_cond_unseen_shallow_n, to: unseen_shallow_n}
+  - {is: v_value_of, from: sys_overextension_cond_unseen_shallow_any, to: sys_overextension_cond}
+  - {is: v_spell, from: sys_overextension_cond_unseen_shallow_any, to: unseen_shallow_any}
+  - {is: v_value_of, from: sys_overextension_cond_unseen_shallow_rate, to: sys_overextension_cond}
+  - {is: v_spell, from: sys_overextension_cond_unseen_shallow_rate, to: unseen_shallow_rate}
+  - {is: v_value_of, from: sys_overextension_cond_unseen_deep_n, to: sys_overextension_cond}
+  - {is: v_spell, from: sys_overextension_cond_unseen_deep_n, to: unseen_deep_n}
+  - {is: v_value_of, from: sys_overextension_cond_unseen_deep_any, to: sys_overextension_cond}
+  - {is: v_spell, from: sys_overextension_cond_unseen_deep_any, to: unseen_deep_any}
+  - {is: v_value_of, from: sys_overextension_cond_unseen_deep_rate, to: sys_overextension_cond}
+  - {is: v_spell, from: sys_overextension_cond_unseen_deep_rate, to: unseen_deep_rate}
+  - {is: v_entry_of, from: '{cond}', to: sys_overextension}
+  - {is: v_metric_of, from: sys_overextension, to: mean_value}
+  - {is: v_file_of, from: sys_differentiation.json, to: sys_differentiation}
+  - {is: v_rows_of, from: [rows], to: sys_differentiation}
+  - {is: v_axis_of, from: sys_differentiation_cond, to: sys_differentiation}
+  - {is: v_value_of, from: sys_differentiation_cond_edges, to: sys_differentiation_cond}
+  - {is: v_spell, from: sys_differentiation_cond_edges, to: edges}
+  - {is: v_value_of, from: sys_differentiation_cond_own_formulas, to: sys_differentiation_cond}
+  - {is: v_spell, from: sys_differentiation_cond_own_formulas, to: own_formulas}
+  - {is: v_value_of, from: sys_differentiation_cond_negate, to: sys_differentiation_cond}
+  - {is: v_spell, from: sys_differentiation_cond_negate, to: negate}
+  - {is: v_value_of, from: sys_differentiation_cond_narrow_end, to: sys_differentiation_cond}
+  - {is: v_spell, from: sys_differentiation_cond_narrow_end, to: narrow_end}
+  - {is: v_value_of, from: sys_differentiation_cond_add_end, to: sys_differentiation_cond}
+  - {is: v_spell, from: sys_differentiation_cond_add_end, to: add_end}
+  - {is: v_value_of, from: sys_differentiation_cond_narrow_verb, to: sys_differentiation_cond}
+  - {is: v_spell, from: sys_differentiation_cond_narrow_verb, to: narrow_verb}
+  - {is: v_value_of, from: sys_differentiation_cond_limit, to: sys_differentiation_cond}
+  - {is: v_spell, from: sys_differentiation_cond_limit, to: limit}
+  - {is: v_value_of, from: sys_differentiation_cond_new, to: sys_differentiation_cond}
+  - {is: v_spell, from: sys_differentiation_cond_new, to: new}
+  - {is: v_value_of, from: sys_differentiation_cond_other, to: sys_differentiation_cond}
+  - {is: v_spell, from: sys_differentiation_cond_other, to: other}
+  - {is: v_value_of, from: sys_differentiation_cond_edges_with_own, to: sys_differentiation_cond}
+  - {is: v_spell, from: sys_differentiation_cond_edges_with_own, to: edges_with_own}
+  - {is: v_value_of, from: sys_differentiation_cond_edges_one_own, to: sys_differentiation_cond}
+  - {is: v_spell, from: sys_differentiation_cond_edges_one_own, to: edges_one_own}
+  - {is: v_value_of, from: sys_differentiation_cond_narrow_end_hop1, to: sys_differentiation_cond}
+  - {is: v_spell, from: sys_differentiation_cond_narrow_end_hop1, to: narrow_end_hop1}
+  - {is: v_entry_of, from: '{cond}', to: sys_differentiation}
+  - {is: v_metric_of, from: sys_differentiation, to: mean_value}
+  - {is: v_file_of, from: sys_overextension_steps.json, to: sys_overextension_steps}
+  - {is: v_rows_of, from: [rows], to: sys_overextension_steps}
+  - {is: v_axis_of, from: sys_overextension_steps_cond, to: sys_overextension_steps}
+  - {is: v_value_of, from: sys_overextension_steps_cond_median_level, to: sys_overextension_steps_cond}
+  - {is: v_spell, from: sys_overextension_steps_cond_median_level, to: median_level}
+  - {is: v_value_of, from: sys_overextension_steps_cond_all_low_n, to: sys_overextension_steps_cond}
+  - {is: v_spell, from: sys_overextension_steps_cond_all_low_n, to: all_low_n}
+  - {is: v_value_of, from: sys_overextension_steps_cond_all_low_any, to: sys_overextension_steps_cond}
+  - {is: v_spell, from: sys_overextension_steps_cond_all_low_any, to: all_low_any}
+  - {is: v_value_of, from: sys_overextension_steps_cond_all_low_rate, to: sys_overextension_steps_cond}
+  - {is: v_spell, from: sys_overextension_steps_cond_all_low_rate, to: all_low_rate}
+  - {is: v_value_of, from: sys_overextension_steps_cond_all_high_n, to: sys_overextension_steps_cond}
+  - {is: v_spell, from: sys_overextension_steps_cond_all_high_n, to: all_high_n}
+  - {is: v_value_of, from: sys_overextension_steps_cond_all_high_any, to: sys_overextension_steps_cond}
+  - {is: v_spell, from: sys_overextension_steps_cond_all_high_any, to: all_high_any}
+  - {is: v_value_of, from: sys_overextension_steps_cond_all_high_rate, to: sys_overextension_steps_cond}
+  - {is: v_spell, from: sys_overextension_steps_cond_all_high_rate, to: all_high_rate}
+  - {is: v_value_of, from: sys_overextension_steps_cond_unseen_low_n, to: sys_overextension_steps_cond}
+  - {is: v_spell, from: sys_overextension_steps_cond_unseen_low_n, to: unseen_low_n}
+  - {is: v_value_of, from: sys_overextension_steps_cond_unseen_low_any, to: sys_overextension_steps_cond}
+  - {is: v_spell, from: sys_overextension_steps_cond_unseen_low_any, to: unseen_low_any}
+  - {is: v_value_of, from: sys_overextension_steps_cond_unseen_low_rate, to: sys_overextension_steps_cond}
+  - {is: v_spell, from: sys_overextension_steps_cond_unseen_low_rate, to: unseen_low_rate}
+  - {is: v_value_of, from: sys_overextension_steps_cond_unseen_high_n, to: sys_overextension_steps_cond}
+  - {is: v_spell, from: sys_overextension_steps_cond_unseen_high_n, to: unseen_high_n}
+  - {is: v_value_of, from: sys_overextension_steps_cond_unseen_high_any, to: sys_overextension_steps_cond}
+  - {is: v_spell, from: sys_overextension_steps_cond_unseen_high_any, to: unseen_high_any}
+  - {is: v_value_of, from: sys_overextension_steps_cond_unseen_high_rate, to: sys_overextension_steps_cond}
+  - {is: v_spell, from: sys_overextension_steps_cond_unseen_high_rate, to: unseen_high_rate}
+  - {is: v_entry_of, from: '{cond}', to: sys_overextension_steps}
+  - {is: v_metric_of, from: sys_overextension_steps, to: mean_value}
+  - {is: v_file_of, from: sys_money_unit_before.json, to: sys_money_unit_before}
+  - {is: v_rows_of, from: [rows], to: sys_money_unit_before}
+  - {is: v_axis_of, from: sys_money_unit_before_cond, to: sys_money_unit_before}
+  - {is: v_value_of, from: sys_money_unit_before_cond_errors, to: sys_money_unit_before_cond}
+  - {is: v_spell, from: sys_money_unit_before_cond_errors, to: errors}
+  - {is: v_value_of, from: sys_money_unit_before_cond_V, to: sys_money_unit_before_cond}
+  - {is: v_spell, from: sys_money_unit_before_cond_V, to: V}
+  - {is: v_value_of, from: sys_money_unit_before_cond_v_money, to: sys_money_unit_before_cond}
+  - {is: v_spell, from: sys_money_unit_before_cond_v_money, to: v_money}
+  - {is: v_value_of, from: sys_money_unit_before_cond_sales_ok, to: sys_money_unit_before_cond}
+  - {is: v_spell, from: sys_money_unit_before_cond_sales_ok, to: sales_ok}
+  - {is: v_value_of, from: sys_money_unit_before_cond_absorbs_money, to: sys_money_unit_before_cond}
+  - {is: v_spell, from: sys_money_unit_before_cond_absorbs_money, to: absorbs_money}
+  - {is: v_entry_of, from: '{cond}', to: sys_money_unit_before}
+  - {is: v_metric_of, from: sys_money_unit_before, to: mean_value}
+  - {is: v_file_of, from: sys_money_unit_after.json, to: sys_money_unit_after}
+  - {is: v_rows_of, from: [rows], to: sys_money_unit_after}
+  - {is: v_axis_of, from: sys_money_unit_after_cond, to: sys_money_unit_after}
+  - {is: v_value_of, from: sys_money_unit_after_cond_errors, to: sys_money_unit_after_cond}
+  - {is: v_spell, from: sys_money_unit_after_cond_errors, to: errors}
+  - {is: v_value_of, from: sys_money_unit_after_cond_V, to: sys_money_unit_after_cond}
+  - {is: v_spell, from: sys_money_unit_after_cond_V, to: V}
+  - {is: v_value_of, from: sys_money_unit_after_cond_v_money, to: sys_money_unit_after_cond}
+  - {is: v_spell, from: sys_money_unit_after_cond_v_money, to: v_money}
+  - {is: v_value_of, from: sys_money_unit_after_cond_sales_ok, to: sys_money_unit_after_cond}
+  - {is: v_spell, from: sys_money_unit_after_cond_sales_ok, to: sales_ok}
+  - {is: v_value_of, from: sys_money_unit_after_cond_absorbs_money, to: sys_money_unit_after_cond}
+  - {is: v_spell, from: sys_money_unit_after_cond_absorbs_money, to: absorbs_money}
+  - {is: v_entry_of, from: '{cond}', to: sys_money_unit_after}
+  - {is: v_metric_of, from: sys_money_unit_after, to: mean_value}
+  - {is: v_file_of, from: sys_money_axis_before.json, to: sys_money_axis_before}
+  - {is: v_rows_of, from: [rows], to: sys_money_axis_before}
+  - {is: v_axis_of, from: sys_money_axis_before_cond, to: sys_money_axis_before}
+  - {is: v_value_of, from: sys_money_axis_before_cond_errors, to: sys_money_axis_before_cond}
+  - {is: v_spell, from: sys_money_axis_before_cond_errors, to: errors}
+  - {is: v_value_of, from: sys_money_axis_before_cond_V, to: sys_money_axis_before_cond}
+  - {is: v_spell, from: sys_money_axis_before_cond_V, to: V}
+  - {is: v_value_of, from: sys_money_axis_before_cond_v_money, to: sys_money_axis_before_cond}
+  - {is: v_spell, from: sys_money_axis_before_cond_v_money, to: v_money}
+  - {is: v_value_of, from: sys_money_axis_before_cond_sales_ok, to: sys_money_axis_before_cond}
+  - {is: v_spell, from: sys_money_axis_before_cond_sales_ok, to: sales_ok}
+  - {is: v_value_of, from: sys_money_axis_before_cond_absorbs_money, to: sys_money_axis_before_cond}
+  - {is: v_spell, from: sys_money_axis_before_cond_absorbs_money, to: absorbs_money}
+  - {is: v_value_of, from: sys_money_axis_before_cond_money_has_amount, to: sys_money_axis_before_cond}
+  - {is: v_spell, from: sys_money_axis_before_cond_money_has_amount, to: money_has_amount}
+  - {is: v_entry_of, from: '{cond}', to: sys_money_axis_before}
+  - {is: v_metric_of, from: sys_money_axis_before, to: mean_value}
+  - {is: v_file_of, from: sys_money_axis_after.json, to: sys_money_axis_after}
+  - {is: v_rows_of, from: [rows], to: sys_money_axis_after}
+  - {is: v_axis_of, from: sys_money_axis_after_cond, to: sys_money_axis_after}
+  - {is: v_value_of, from: sys_money_axis_after_cond_errors, to: sys_money_axis_after_cond}
+  - {is: v_spell, from: sys_money_axis_after_cond_errors, to: errors}
+  - {is: v_value_of, from: sys_money_axis_after_cond_V, to: sys_money_axis_after_cond}
+  - {is: v_spell, from: sys_money_axis_after_cond_V, to: V}
+  - {is: v_value_of, from: sys_money_axis_after_cond_v_money, to: sys_money_axis_after_cond}
+  - {is: v_spell, from: sys_money_axis_after_cond_v_money, to: v_money}
+  - {is: v_value_of, from: sys_money_axis_after_cond_sales_ok, to: sys_money_axis_after_cond}
+  - {is: v_spell, from: sys_money_axis_after_cond_sales_ok, to: sales_ok}
+  - {is: v_value_of, from: sys_money_axis_after_cond_absorbs_money, to: sys_money_axis_after_cond}
+  - {is: v_spell, from: sys_money_axis_after_cond_absorbs_money, to: absorbs_money}
+  - {is: v_value_of, from: sys_money_axis_after_cond_money_has_amount, to: sys_money_axis_after_cond}
+  - {is: v_spell, from: sys_money_axis_after_cond_money_has_amount, to: money_has_amount}
+  - {is: v_entry_of, from: '{cond}', to: sys_money_axis_after}
+  - {is: v_metric_of, from: sys_money_axis_after, to: mean_value}
+  - {is: v_file_of, from: sys_money_axis_after2.json, to: sys_money_axis_after2}
+  - {is: v_rows_of, from: [rows], to: sys_money_axis_after2}
+  - {is: v_axis_of, from: sys_money_axis_after2_cond, to: sys_money_axis_after2}
+  - {is: v_value_of, from: sys_money_axis_after2_cond_errors, to: sys_money_axis_after2_cond}
+  - {is: v_spell, from: sys_money_axis_after2_cond_errors, to: errors}
+  - {is: v_value_of, from: sys_money_axis_after2_cond_V, to: sys_money_axis_after2_cond}
+  - {is: v_spell, from: sys_money_axis_after2_cond_V, to: V}
+  - {is: v_value_of, from: sys_money_axis_after2_cond_v_money, to: sys_money_axis_after2_cond}
+  - {is: v_spell, from: sys_money_axis_after2_cond_v_money, to: v_money}
+  - {is: v_value_of, from: sys_money_axis_after2_cond_sales_ok, to: sys_money_axis_after2_cond}
+  - {is: v_spell, from: sys_money_axis_after2_cond_sales_ok, to: sales_ok}
+  - {is: v_value_of, from: sys_money_axis_after2_cond_absorbs_money, to: sys_money_axis_after2_cond}
+  - {is: v_spell, from: sys_money_axis_after2_cond_absorbs_money, to: absorbs_money}
+  - {is: v_value_of, from: sys_money_axis_after2_cond_money_has_amount, to: sys_money_axis_after2_cond}
+  - {is: v_spell, from: sys_money_axis_after2_cond_money_has_amount, to: money_has_amount}
+  - {is: v_entry_of, from: '{cond}', to: sys_money_axis_after2}
+  - {is: v_metric_of, from: sys_money_axis_after2, to: mean_value}
+  - {is: v_file_of, from: sys_money_axis_after3.json, to: sys_money_axis_after3}
+  - {is: v_rows_of, from: [rows], to: sys_money_axis_after3}
+  - {is: v_axis_of, from: sys_money_axis_after3_cond, to: sys_money_axis_after3}
+  - {is: v_value_of, from: sys_money_axis_after3_cond_errors, to: sys_money_axis_after3_cond}
+  - {is: v_spell, from: sys_money_axis_after3_cond_errors, to: errors}
+  - {is: v_value_of, from: sys_money_axis_after3_cond_V, to: sys_money_axis_after3_cond}
+  - {is: v_spell, from: sys_money_axis_after3_cond_V, to: V}
+  - {is: v_value_of, from: sys_money_axis_after3_cond_v_money, to: sys_money_axis_after3_cond}
+  - {is: v_spell, from: sys_money_axis_after3_cond_v_money, to: v_money}
+  - {is: v_value_of, from: sys_money_axis_after3_cond_sales_ok, to: sys_money_axis_after3_cond}
+  - {is: v_spell, from: sys_money_axis_after3_cond_sales_ok, to: sales_ok}
+  - {is: v_value_of, from: sys_money_axis_after3_cond_absorbs_money, to: sys_money_axis_after3_cond}
+  - {is: v_spell, from: sys_money_axis_after3_cond_absorbs_money, to: absorbs_money}
+  - {is: v_value_of, from: sys_money_axis_after3_cond_money_has_amount, to: sys_money_axis_after3_cond}
+  - {is: v_spell, from: sys_money_axis_after3_cond_money_has_amount, to: money_has_amount}
+  - {is: v_entry_of, from: '{cond}', to: sys_money_axis_after3}
+  - {is: v_file_of, from: sys_unit_axis_before.json, to: sys_unit_axis_before}
+  - {is: v_rows_of, from: [rows], to: sys_unit_axis_before}
+  - {is: v_axis_of, from: sys_unit_axis_before_cond, to: sys_unit_axis_before}
+  - {is: v_value_of, from: sys_unit_axis_before_cond_errors, to: sys_unit_axis_before_cond}
+  - {is: v_spell, from: sys_unit_axis_before_cond_errors, to: errors}
+  - {is: v_value_of, from: sys_unit_axis_before_cond_V, to: sys_unit_axis_before_cond}
+  - {is: v_spell, from: sys_unit_axis_before_cond_V, to: V}
+  - {is: v_value_of, from: sys_unit_axis_before_cond_v_height_age, to: sys_unit_axis_before_cond}
+  - {is: v_spell, from: sys_unit_axis_before_cond_v_height_age, to: v_height_age}
+  - {is: v_value_of, from: sys_unit_axis_before_cond_new_V, to: sys_unit_axis_before_cond}
+  - {is: v_spell, from: sys_unit_axis_before_cond_new_V, to: new_V}
+  - {is: v_value_of, from: sys_unit_axis_before_cond_v_money, to: sys_unit_axis_before_cond}
+  - {is: v_spell, from: sys_unit_axis_before_cond_v_money, to: v_money}
+  - {is: v_value_of, from: sys_unit_axis_before_cond_sales_ok, to: sys_unit_axis_before_cond}
+  - {is: v_spell, from: sys_unit_axis_before_cond_sales_ok, to: sales_ok}
+  - {is: v_entry_of, from: '{cond}', to: sys_unit_axis_before}
+  - {is: v_metric_of, from: sys_unit_axis_before, to: mean_value}
+  - {is: v_file_of, from: sys_unit_axis_after.json, to: sys_unit_axis_after}
+  - {is: v_rows_of, from: [rows], to: sys_unit_axis_after}
+  - {is: v_axis_of, from: sys_unit_axis_after_cond, to: sys_unit_axis_after}
+  - {is: v_value_of, from: sys_unit_axis_after_cond_errors, to: sys_unit_axis_after_cond}
+  - {is: v_spell, from: sys_unit_axis_after_cond_errors, to: errors}
+  - {is: v_value_of, from: sys_unit_axis_after_cond_V, to: sys_unit_axis_after_cond}
+  - {is: v_spell, from: sys_unit_axis_after_cond_V, to: V}
+  - {is: v_value_of, from: sys_unit_axis_after_cond_v_height_age, to: sys_unit_axis_after_cond}
+  - {is: v_spell, from: sys_unit_axis_after_cond_v_height_age, to: v_height_age}
+  - {is: v_value_of, from: sys_unit_axis_after_cond_new_V, to: sys_unit_axis_after_cond}
+  - {is: v_spell, from: sys_unit_axis_after_cond_new_V, to: new_V}
+  - {is: v_value_of, from: sys_unit_axis_after_cond_v_money, to: sys_unit_axis_after_cond}
+  - {is: v_spell, from: sys_unit_axis_after_cond_v_money, to: v_money}
+  - {is: v_value_of, from: sys_unit_axis_after_cond_sales_ok, to: sys_unit_axis_after_cond}
+  - {is: v_spell, from: sys_unit_axis_after_cond_sales_ok, to: sales_ok}
+  - {is: v_entry_of, from: '{cond}', to: sys_unit_axis_after}
+  - {is: v_metric_of, from: sys_unit_axis_after, to: mean_value}
+  - {is: v_file_of, from: sys_unit_axis_after_all.json, to: sys_unit_axis_after_all}
+  - {is: v_rows_of, from: [rows], to: sys_unit_axis_after_all}
+  - {is: v_axis_of, from: sys_unit_axis_after_all_cond, to: sys_unit_axis_after_all}
+  - {is: v_value_of, from: sys_unit_axis_after_all_cond_errors, to: sys_unit_axis_after_all_cond}
+  - {is: v_spell, from: sys_unit_axis_after_all_cond_errors, to: errors}
+  - {is: v_value_of, from: sys_unit_axis_after_all_cond_V, to: sys_unit_axis_after_all_cond}
+  - {is: v_spell, from: sys_unit_axis_after_all_cond_V, to: V}
+  - {is: v_value_of, from: sys_unit_axis_after_all_cond_v_height_age, to: sys_unit_axis_after_all_cond}
+  - {is: v_spell, from: sys_unit_axis_after_all_cond_v_height_age, to: v_height_age}
+  - {is: v_value_of, from: sys_unit_axis_after_all_cond_new_V, to: sys_unit_axis_after_all_cond}
+  - {is: v_spell, from: sys_unit_axis_after_all_cond_new_V, to: new_V}
+  - {is: v_value_of, from: sys_unit_axis_after_all_cond_v_money, to: sys_unit_axis_after_all_cond}
+  - {is: v_spell, from: sys_unit_axis_after_all_cond_v_money, to: v_money}
+  - {is: v_value_of, from: sys_unit_axis_after_all_cond_sales_ok, to: sys_unit_axis_after_all_cond}
+  - {is: v_spell, from: sys_unit_axis_after_all_cond_sales_ok, to: sales_ok}
+  - {is: v_entry_of, from: '{cond}', to: sys_unit_axis_after_all}
+  - {is: v_file_of, from: sys_meet.json, to: sys_meet}
+  - {is: v_rows_of, from: [rows], to: sys_meet}
+  - {is: v_axis_of, from: sys_meet_cond, to: sys_meet}
+  - {is: v_value_of, from: sys_meet_cond_pairs, to: sys_meet_cond}
+  - {is: v_spell, from: sys_meet_cond_pairs, to: pairs}
+  - {is: v_value_of, from: sys_meet_cond_meets, to: sys_meet_cond}
+  - {is: v_spell, from: sys_meet_cond_meets, to: meets}
+  - {is: v_value_of, from: sys_meet_cond_lack_any, to: sys_meet_cond}
+  - {is: v_spell, from: sys_meet_cond_lack_any, to: lack_any}
+  - {is: v_entry_of, from: '{cond}', to: sys_meet}
+  - {is: v_file_of, from: sys_kind_ref_before.json, to: sys_kind_ref_before}
+  - {is: v_rows_of, from: [rows], to: sys_kind_ref_before}
+  - {is: v_axis_of, from: sys_kind_ref_before_cond, to: sys_kind_ref_before}
+  - {is: v_value_of, from: sys_kind_ref_before_cond_errors, to: sys_kind_ref_before_cond}
+  - {is: v_spell, from: sys_kind_ref_before_cond_errors, to: errors}
+  - {is: v_value_of, from: sys_kind_ref_before_cond_V, to: sys_kind_ref_before_cond}
+  - {is: v_spell, from: sys_kind_ref_before_cond_V, to: V}
+  - {is: v_value_of, from: sys_kind_ref_before_cond_v_verb_ref, to: sys_kind_ref_before_cond}
+  - {is: v_spell, from: sys_kind_ref_before_cond_v_verb_ref, to: v_verb_ref}
+  - {is: v_value_of, from: sys_kind_ref_before_cond_new_V, to: sys_kind_ref_before_cond}
+  - {is: v_spell, from: sys_kind_ref_before_cond_new_V, to: new_V}
+  - {is: v_entry_of, from: '{cond}', to: sys_kind_ref_before}
+  - {is: v_metric_of, from: sys_kind_ref_before, to: mean_value}
+  - {is: v_file_of, from: sys_kind_ref_after.json, to: sys_kind_ref_after}
+  - {is: v_rows_of, from: [rows], to: sys_kind_ref_after}
+  - {is: v_axis_of, from: sys_kind_ref_after_cond, to: sys_kind_ref_after}
+  - {is: v_value_of, from: sys_kind_ref_after_cond_errors, to: sys_kind_ref_after_cond}
+  - {is: v_spell, from: sys_kind_ref_after_cond_errors, to: errors}
+  - {is: v_value_of, from: sys_kind_ref_after_cond_V, to: sys_kind_ref_after_cond}
+  - {is: v_spell, from: sys_kind_ref_after_cond_V, to: V}
+  - {is: v_value_of, from: sys_kind_ref_after_cond_v_verb_ref, to: sys_kind_ref_after_cond}
+  - {is: v_spell, from: sys_kind_ref_after_cond_v_verb_ref, to: v_verb_ref}
+  - {is: v_value_of, from: sys_kind_ref_after_cond_new_V, to: sys_kind_ref_after_cond}
+  - {is: v_spell, from: sys_kind_ref_after_cond_new_V, to: new_V}
+  - {is: v_entry_of, from: '{cond}', to: sys_kind_ref_after}
+  - {is: v_metric_of, from: sys_kind_ref_after, to: mean_value}
+  - {is: v_file_of, from: sys_kind_ref_after2.json, to: sys_kind_ref_after2}
+  - {is: v_rows_of, from: [rows], to: sys_kind_ref_after2}
+  - {is: v_axis_of, from: sys_kind_ref_after2_cond, to: sys_kind_ref_after2}
+  - {is: v_value_of, from: sys_kind_ref_after2_cond_errors, to: sys_kind_ref_after2_cond}
+  - {is: v_spell, from: sys_kind_ref_after2_cond_errors, to: errors}
+  - {is: v_value_of, from: sys_kind_ref_after2_cond_V, to: sys_kind_ref_after2_cond}
+  - {is: v_spell, from: sys_kind_ref_after2_cond_V, to: V}
+  - {is: v_value_of, from: sys_kind_ref_after2_cond_v_verb_ref, to: sys_kind_ref_after2_cond}
+  - {is: v_spell, from: sys_kind_ref_after2_cond_v_verb_ref, to: v_verb_ref}
+  - {is: v_value_of, from: sys_kind_ref_after2_cond_new_V, to: sys_kind_ref_after2_cond}
+  - {is: v_spell, from: sys_kind_ref_after2_cond_new_V, to: new_V}
+  - {is: v_entry_of, from: '{cond}', to: sys_kind_ref_after2}
+  - {is: v_file_of, from: sys_display_residual_before.json, to: sys_display_residual_before}
+  - {is: v_rows_of, from: [rows], to: sys_display_residual_before}
+  - {is: v_axis_of, from: sys_display_residual_before_cond, to: sys_display_residual_before}
+  - {is: v_value_of, from: sys_display_residual_before_cond_V, to: sys_display_residual_before_cond}
+  - {is: v_spell, from: sys_display_residual_before_cond_V, to: V}
+  - {is: v_value_of, from: sys_display_residual_before_cond_n_y, to: sys_display_residual_before_cond}
+  - {is: v_spell, from: sys_display_residual_before_cond_n_y, to: n_y}
+  - {is: v_value_of, from: sys_display_residual_before_cond_n_all, to: sys_display_residual_before_cond}
+  - {is: v_spell, from: sys_display_residual_before_cond_n_all, to: n_all}
+  - {is: v_value_of, from: sys_display_residual_before_cond_rate_y, to: sys_display_residual_before_cond}
+  - {is: v_spell, from: sys_display_residual_before_cond_rate_y, to: rate_y}
+  - {is: v_value_of, from: sys_display_residual_before_cond_rate_all, to: sys_display_residual_before_cond}
+  - {is: v_spell, from: sys_display_residual_before_cond_rate_all, to: rate_all}
+  - {is: v_entry_of, from: '{cond}', to: sys_display_residual_before}
+  - {is: v_metric_of, from: sys_display_residual_before, to: mean_value}
+  - {is: v_file_of, from: sys_display_residual_now.json, to: sys_display_residual_now}
+  - {is: v_rows_of, from: [rows], to: sys_display_residual_now}
+  - {is: v_axis_of, from: sys_display_residual_now_cond, to: sys_display_residual_now}
+  - {is: v_value_of, from: sys_display_residual_now_cond_V, to: sys_display_residual_now_cond}
+  - {is: v_spell, from: sys_display_residual_now_cond_V, to: V}
+  - {is: v_value_of, from: sys_display_residual_now_cond_n_y, to: sys_display_residual_now_cond}
+  - {is: v_spell, from: sys_display_residual_now_cond_n_y, to: n_y}
+  - {is: v_value_of, from: sys_display_residual_now_cond_n_all, to: sys_display_residual_now_cond}
+  - {is: v_spell, from: sys_display_residual_now_cond_n_all, to: n_all}
+  - {is: v_value_of, from: sys_display_residual_now_cond_rate_y, to: sys_display_residual_now_cond}
+  - {is: v_spell, from: sys_display_residual_now_cond_rate_y, to: rate_y}
+  - {is: v_value_of, from: sys_display_residual_now_cond_rate_all, to: sys_display_residual_now_cond}
+  - {is: v_spell, from: sys_display_residual_now_cond_rate_all, to: rate_all}
+  - {is: v_entry_of, from: '{cond}', to: sys_display_residual_now}
+  - {is: v_file_of, from: sys_comments.json, to: sys_comments}
+  - {is: v_rows_of, from: [rows], to: sys_comments}
+  - {is: v_axis_of, from: sys_comments_cond, to: sys_comments}
+  - {is: v_value_of, from: sys_comments_cond_total, to: sys_comments_cond}
+  - {is: v_spell, from: sys_comments_cond_total, to: total}
+  - {is: v_value_of, from: sys_comments_cond_header, to: sys_comments_cond}
+  - {is: v_spell, from: sys_comments_cond_header, to: header}
+  - {is: v_value_of, from: sys_comments_cond_history, to: sys_comments_cond}
+  - {is: v_spell, from: sys_comments_cond_history, to: history}
+  - {is: v_value_of, from: sys_comments_cond_code, to: sys_comments_cond}
+  - {is: v_spell, from: sys_comments_cond_code, to: code}
+  - {is: v_value_of, from: sys_comments_cond_meaning, to: sys_comments_cond}
+  - {is: v_spell, from: sys_comments_cond_meaning, to: meaning}
+  - {is: v_value_of, from: sys_comments_cond_inline, to: sys_comments_cond}
+  - {is: v_spell, from: sys_comments_cond_inline, to: inline}
+  - {is: v_value_of, from: sys_comments_cond_line, to: sys_comments_cond}
+  - {is: v_spell, from: sys_comments_cond_line, to: line}
+  - {is: v_entry_of, from: '{cond}', to: sys_comments}
+  - {is: v_metric_of, from: sys_comments, to: mean_value}
+  - {is: v_metric_of, from: sys_display_residual_now, to: mean_value}
+  - {is: v_metric_of, from: sys_kind_ref_after2, to: mean_value}
+  - {is: v_file_of, from: sys_draw_on_before.json, to: sys_draw_on_before}
+  - {is: v_rows_of, from: [rows], to: sys_draw_on_before}
+  - {is: v_axis_of, from: sys_draw_on_before_cond, to: sys_draw_on_before}
+  - {is: v_value_of, from: sys_draw_on_before_cond_errors, to: sys_draw_on_before_cond}
+  - {is: v_spell, from: sys_draw_on_before_cond_errors, to: errors}
+  - {is: v_value_of, from: sys_draw_on_before_cond_V, to: sys_draw_on_before_cond}
+  - {is: v_spell, from: sys_draw_on_before_cond_V, to: V}
+  - {is: v_value_of, from: sys_draw_on_before_cond_new_V, to: sys_draw_on_before_cond}
+  - {is: v_spell, from: sys_draw_on_before_cond_new_V, to: new_V}
+  - {is: v_value_of, from: sys_draw_on_before_cond_new_nodes, to: sys_draw_on_before_cond}
+  - {is: v_spell, from: sys_draw_on_before_cond_new_nodes, to: new_nodes}
+  - {is: v_value_of, from: sys_draw_on_before_cond_thin, to: sys_draw_on_before_cond}
+  - {is: v_spell, from: sys_draw_on_before_cond_thin, to: thin}
+  - {is: v_value_of, from: sys_draw_on_before_cond_drawn, to: sys_draw_on_before_cond}
+  - {is: v_spell, from: sys_draw_on_before_cond_drawn, to: drawn}
+  - {is: v_entry_of, from: '{cond}', to: sys_draw_on_before}
+  - {is: v_metric_of, from: sys_draw_on_before, to: mean_value}
+  - {is: v_file_of, from: sys_draw_on_after.json, to: sys_draw_on_after}
+  - {is: v_rows_of, from: [rows], to: sys_draw_on_after}
+  - {is: v_axis_of, from: sys_draw_on_after_cond, to: sys_draw_on_after}
+  - {is: v_value_of, from: sys_draw_on_after_cond_errors, to: sys_draw_on_after_cond}
+  - {is: v_spell, from: sys_draw_on_after_cond_errors, to: errors}
+  - {is: v_value_of, from: sys_draw_on_after_cond_V, to: sys_draw_on_after_cond}
+  - {is: v_spell, from: sys_draw_on_after_cond_V, to: V}
+  - {is: v_value_of, from: sys_draw_on_after_cond_new_V, to: sys_draw_on_after_cond}
+  - {is: v_spell, from: sys_draw_on_after_cond_new_V, to: new_V}
+  - {is: v_value_of, from: sys_draw_on_after_cond_new_nodes, to: sys_draw_on_after_cond}
+  - {is: v_spell, from: sys_draw_on_after_cond_new_nodes, to: new_nodes}
+  - {is: v_value_of, from: sys_draw_on_after_cond_thin, to: sys_draw_on_after_cond}
+  - {is: v_spell, from: sys_draw_on_after_cond_thin, to: thin}
+  - {is: v_value_of, from: sys_draw_on_after_cond_drawn, to: sys_draw_on_after_cond}
+  - {is: v_spell, from: sys_draw_on_after_cond_drawn, to: drawn}
+  - {is: v_entry_of, from: '{cond}', to: sys_draw_on_after}
+  - {is: v_metric_of, from: sys_draw_on_after, to: mean_value}
+  - {is: v_file_of, from: sys_count_atom_before.json, to: sys_count_atom_before}
+  - {is: v_rows_of, from: [rows], to: sys_count_atom_before}
+  - {is: v_axis_of, from: sys_count_atom_before_cond, to: sys_count_atom_before}
+  - {is: v_value_of, from: sys_count_atom_before_cond_errors, to: sys_count_atom_before_cond}
+  - {is: v_spell, from: sys_count_atom_before_cond_errors, to: errors}
+  - {is: v_value_of, from: sys_count_atom_before_cond_ec_errors, to: sys_count_atom_before_cond}
+  - {is: v_spell, from: sys_count_atom_before_cond_ec_errors, to: ec_errors}
+  - {is: v_value_of, from: sys_count_atom_before_cond_law_shallow, to: sys_count_atom_before_cond}
+  - {is: v_spell, from: sys_count_atom_before_cond_law_shallow, to: law_shallow}
+  - {is: v_value_of, from: sys_count_atom_before_cond_script, to: sys_count_atom_before_cond}
+  - {is: v_spell, from: sys_count_atom_before_cond_script, to: script}
+  - {is: v_value_of, from: sys_count_atom_before_cond_mismatch, to: sys_count_atom_before_cond}
+  - {is: v_spell, from: sys_count_atom_before_cond_mismatch, to: mismatch}
+  - {is: v_value_of, from: sys_count_atom_before_cond_changed, to: sys_count_atom_before_cond}
+  - {is: v_spell, from: sys_count_atom_before_cond_changed, to: changed}
+  - {is: v_value_of, from: sys_count_atom_before_cond_extra, to: sys_count_atom_before_cond}
+  - {is: v_spell, from: sys_count_atom_before_cond_extra, to: extra}
+  - {is: v_entry_of, from: '{cond}', to: sys_count_atom_before}
+  - {is: v_metric_of, from: sys_count_atom_before, to: mean_value}
+  - {is: v_file_of, from: sys_count_atom_after.json, to: sys_count_atom_after}
+  - {is: v_rows_of, from: [rows], to: sys_count_atom_after}
+  - {is: v_axis_of, from: sys_count_atom_after_cond, to: sys_count_atom_after}
+  - {is: v_value_of, from: sys_count_atom_after_cond_errors, to: sys_count_atom_after_cond}
+  - {is: v_spell, from: sys_count_atom_after_cond_errors, to: errors}
+  - {is: v_value_of, from: sys_count_atom_after_cond_ec_errors, to: sys_count_atom_after_cond}
+  - {is: v_spell, from: sys_count_atom_after_cond_ec_errors, to: ec_errors}
+  - {is: v_value_of, from: sys_count_atom_after_cond_law_shallow, to: sys_count_atom_after_cond}
+  - {is: v_spell, from: sys_count_atom_after_cond_law_shallow, to: law_shallow}
+  - {is: v_value_of, from: sys_count_atom_after_cond_script, to: sys_count_atom_after_cond}
+  - {is: v_spell, from: sys_count_atom_after_cond_script, to: script}
+  - {is: v_value_of, from: sys_count_atom_after_cond_mismatch, to: sys_count_atom_after_cond}
+  - {is: v_spell, from: sys_count_atom_after_cond_mismatch, to: mismatch}
+  - {is: v_value_of, from: sys_count_atom_after_cond_changed, to: sys_count_atom_after_cond}
+  - {is: v_spell, from: sys_count_atom_after_cond_changed, to: changed}
+  - {is: v_value_of, from: sys_count_atom_after_cond_extra, to: sys_count_atom_after_cond}
+  - {is: v_spell, from: sys_count_atom_after_cond_extra, to: extra}
+  - {is: v_entry_of, from: '{cond}', to: sys_count_atom_after}
+  - {is: v_metric_of, from: sys_count_atom_after, to: mean_value}
+  - {is: v_file_of, from: sys_count_atom_after2.json, to: sys_count_atom_after2}
+  - {is: v_rows_of, from: [rows], to: sys_count_atom_after2}
+  - {is: v_axis_of, from: sys_count_atom_after2_cond, to: sys_count_atom_after2}
+  - {is: v_value_of, from: sys_count_atom_after2_cond_errors, to: sys_count_atom_after2_cond}
+  - {is: v_spell, from: sys_count_atom_after2_cond_errors, to: errors}
+  - {is: v_value_of, from: sys_count_atom_after2_cond_ec_errors, to: sys_count_atom_after2_cond}
+  - {is: v_spell, from: sys_count_atom_after2_cond_ec_errors, to: ec_errors}
+  - {is: v_value_of, from: sys_count_atom_after2_cond_law_shallow, to: sys_count_atom_after2_cond}
+  - {is: v_spell, from: sys_count_atom_after2_cond_law_shallow, to: law_shallow}
+  - {is: v_value_of, from: sys_count_atom_after2_cond_script, to: sys_count_atom_after2_cond}
+  - {is: v_spell, from: sys_count_atom_after2_cond_script, to: script}
+  - {is: v_value_of, from: sys_count_atom_after2_cond_mismatch, to: sys_count_atom_after2_cond}
+  - {is: v_spell, from: sys_count_atom_after2_cond_mismatch, to: mismatch}
+  - {is: v_value_of, from: sys_count_atom_after2_cond_changed, to: sys_count_atom_after2_cond}
+  - {is: v_spell, from: sys_count_atom_after2_cond_changed, to: changed}
+  - {is: v_value_of, from: sys_count_atom_after2_cond_extra, to: sys_count_atom_after2_cond}
+  - {is: v_spell, from: sys_count_atom_after2_cond_extra, to: extra}
+  - {is: v_entry_of, from: '{cond}', to: sys_count_atom_after2}
+  - {is: v_metric_of, from: sys_count_atom_after2, to: mean_value}
+  - {is: v_metric_of, from: sys_meet, to: mean_value}
+  - {is: v_metric_of, from: sys_unit_axis_after_all, to: mean_value}
+  - {is: v_metric_of, from: sys_money_axis_after3, to: mean_value}
   - {is: v_file_of, from: sys_content_symmetry.json, to: sys_content_symmetry}
   - {is: v_rows_of, from: [rows], to: sys_content_symmetry}
   - {is: v_axis_of, from: sys_content_symmetry_cond, to: sys_content_symmetry}
@@ -2360,7 +3437,6 @@ facts:
   - {is: v_refer, from: o_e18_statement_full_level_none_conflict, to: {is: v_near, from: e18.G2c.full.accuracy, to: e18.G2c.none.accuracy, new: 0.05}}
   - {is: v_refer, from: h_vector_transfers_beyond_choice_format, to: {is: v_transfer, from: single_layer_vector, to: question_format}}
 
-  # ===== 仮説（is: hypothesis）
   - {is: v_refer, from: h_collision_lowers_following, to: {is: v_lower, from: prior_collision, to: redefinition_following}}
   - {is: v_scope, from: model_4b, to: h_collision_lowers_following}
   - {is: v_scope, from: text_injection, to: h_collision_lowers_following}
@@ -2451,6 +3527,8 @@ facts:
   - {is: v_refer, from: h_specific_composes_from_expression, to: {is: v_agree, from: specific_vector_component, to: concept_expression}}
   - {is: v_refer, from: h_common_component_transfers_to_unseen, to: {is: v_transfer, from: common_vector_component, to: unseen_genus}}
   - {is: v_refer, from: h_attention_carries_text_route, to: {is: v_raise, from: attention, to: redefinition_following}}
+  - {is: v_refer, from: h_auto_merge_uncorrected, to: {is: v_immune, from: merge_verdict, to: operator}}
+  - {is: v_check, from: b_auto_merge_uncorrected, to: h_auto_merge_uncorrected}
   - {is: v_refer, from: h_length_does_not_lower, to: {is: v_not_lower, from: context_length, to: redefinition_following}}
   - {is: v_scope, from: model_4b, to: h_length_does_not_lower}
   - {is: v_scope, from: text_injection, to: h_length_does_not_lower}
@@ -2622,7 +3700,6 @@ facts:
   - {is: v_support, from: o_e4_modifier_transfers_in_converged_pair, to: h_modifier_transfers_to_unseen_genus}
   - {is: v_support, from: o_e4_pair1_training_failed, to: h_modifier_transfers_to_unseen_genus}
 
-  # ===== 決定（is: decision）
   - {is: v_refer, from: d_goal, to: {is: v_raise, from: this_design, to: redefinition_success}}
   - {is: v_supersede, from: d_goal, to: d_avoid_redefinition}
   - {is: v_refer, from: d_avoid_redefinition, to: {is: v_refer, from: definition, to: new_word}}
@@ -2655,7 +3732,6 @@ facts:
   - {is: v_refer, from: d_vector_needs_open_weights, to: {is: v_rely, from: concept_vector, to: open_weight_model}}
   - {is: v_refer, from: d_text_for_api_models, to: {is: v_rely, from: api_only_model, to: text_injection}}
 
-  # ===== 残り項目（is: backlog_item）
   - {is: v_check, from: b_e8_multi_layer, to: h_multi_layer_raises_consistency}
   - {is: v_check, from: b_e8_retrain_until_converged, to: h_multi_layer_raises_consistency}
   - {is: v_check, from: b_write_subject_concepts_in_cscl, to: h_cscl_raises_following}
@@ -2680,7 +3756,6 @@ facts:
   - {is: v_check, from: b_vectors_on_4b, to: h_vector_raises_following}
   - {is: v_check, from: b_vectors_on_4b, to: h_single_layer_does_not_reach_shared}
   - {is: v_check, from: b_more_concepts, to: h_vector_count_does_not_lower}
-  # ===== 先行研究と主張の関係
   - {is: v_prior_same, from: pw_wang2025_proactive_interference, to: h_preceding_definitions_lower}
   - {is: v_prior_same, from: pw_stringli2025_inverse_redefinition, to: h_collision_lowers_following}
   - {is: v_prior_differ, from: pw_liu2024_lost_in_the_middle, to: h_distance_does_not_lower}
@@ -2691,7 +3766,6 @@ facts:
   - {is: v_prior_method, from: h_vector_raises_following, to: pw_turner2023_activation_addition}
   - {is: v_prior_method, from: h_contrast_vector_raises_following, to: pw_panickssery2023_caa}
   - {is: v_prior_method, from: h_vector_raises_following, to: pw_todd2024_function_vectors}
-  # ----- 先行研究の主張の中身（この形から、仮説との関係を検査が導く）
   - {is: v_state, from: pw_wang2025_proactive_interference, to: pwc_wang2025_interference}
   - {is: v_refer, from: pwc_wang2025_interference, to: {is: v_lower, from: preceding_distractors, to: context_following}}
   - {is: v_state, from: pw_liu2024_lost_in_the_middle, to: pwc_liu2024_middle}
@@ -2727,7 +3801,6 @@ facts:
   - {is: v_state, from: pw_poiroux2024_typecheck, to: pwc_poiroux2024_filter}
   - {is: v_refer, from: pwc_poiroux2024_filter, to: {is: v_raise, from: type_check_result, to: formalization_accuracy}}
 
-  # ===== 限定の差分ベクトル（言語の限定 mod を、子 − 親のベクトルとして教える）
   - {is: v_refer, from: h_qualification_vector_transfers_to_unseen_genus, to: {is: v_transfer, from: qualification_vector, to: unseen_genus}}
   - {is: v_refer, from: h_qualification_teacher_raises_following, to: {is: v_raise, from: qualification_vector, to: redefinition_following}}
   - {is: v_state, from: pw_park2025_hierarchical_geometry, to: pwc_park2025_orthogonal_refinement}

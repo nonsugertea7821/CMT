@@ -2,7 +2,7 @@
 
 cscl.yaml の範囲のファイル（cscl/library/, 領域のファイル）が正本。自然言語の文章は正本ではない。
 
-cscl.yaml の root と library  概念の体系（axiom → ontology → syntax → runtime → std の層）。
+cscl.yaml の root と library  概念の体系（signature → ontology → syntax → runtime → std の層）。
   検査: 表示語の一意性 / gloss を持つのは最上位の2つだけ / 動詞の式（状態の関係・両端・第三のものの種類）の一意性 /
         動詞の下位が端を狭めていること / 修飾の型（その位置に来られるか）/ 分類の軸と値 / 概念の式の一意性 /
         役割が根拠となる定義を持つこと
@@ -66,7 +66,7 @@ def scope_of(dom):
         found = {}
         for d in level:
             for w in LOCALS.get(d, ()):
-                found.setdefault(w, set()).add(f"{d}.{w}")
+                found.setdefault(w, set()).add(w if d == "signature" else f"{d}.{w}")
         for w, qs in found.items():
             if w not in sc:
                 sc[w] = qs.pop() if len(qs) == 1 else None
@@ -81,11 +81,24 @@ def scope_of(dom):
     return sc
 
 
-def qn(w, dom):
-    """語をノードの識別子に直す。領域を書いた語（領域.名前）と any は、そのまま。"""
+WRITTEN = collections.defaultdict(set)   # (領域, 書かれた語) → 解決した先。法則 one_spelling が読む（syntax_facts の r_written）
+
+
+def note(dom, w, r):
+    if isinstance(w, str) and "." not in w:
+        WRITTEN[(dom, w)].add(r)
+    return r
+
+
+def qn_raw(w, dom):
     if not isinstance(w, str) or w == "any" or "." in w:
         return w
     return scope_of(dom).get(w) or w
+
+
+def qn(w, dom):
+    """語をノードの識別子に直す。領域を書いた語（領域.名前）と any は、そのまま。"""
+    return note(dom, w, qn_raw(w, dom))
 
 
 def q_node(n, dom):
@@ -98,15 +111,15 @@ def q_node(n, dom):
         if isinstance(n.get(k), list) and n[k]:
             n[k] = [qn(n[k][0], dom)] + n[k][1:]
     if "of" in n and "with" in n:   # 名前を付けた限定の、もう一方の端
-        n["with"] = scope_of(dom).get("any") or "any" if n["with"] == "any" else qn(n["with"], dom)
+        n["with"] = qn(n["with"], dom)
 
     def m1(m):
         if isinstance(m, dict):
             m = dict(m)
             if isinstance(m.get("of"), list) and m["of"]:
                 m["of"] = [qn(m["of"][0], dom)] + m["of"][1:]
-            if "with" in m:   # with の any は、存在の数量化（構文の語）
-                m["with"] = scope_of(dom).get("any") or "any" if m["with"] == "any" else qn(m["with"], dom)
+            if "with" in m:
+                m["with"] = qn(m["with"], dom)
             return m
         return qn(m, dom)
     if "mod" in n:
@@ -117,13 +130,16 @@ def q_node(n, dom):
 
 
 RULE_VERBS = ("v_assume", "v_derive", "v_require")
+# 型検査が名前で読む語（文法の節ごと）。syntax の grammar の同じ節と等しいことを確かめる（翻訳する側が知っている語は、文法に書かれている）
+KEYWORDS = {"laws": {"law_rule", "law_given"}, "rule_word": set(RULE_VERBS) | {"v_govern", "variable", "law_relation"},
+            "use_word": {"v_use", "v_presume"}, "world": {"world", "closed_world"}}
 
 
 def qw(w, dom):
     """書き方の語（個体の種類、事実の動詞）を直す。自分の領域で解決しなければ、構文（syntax）の語として読む。
     どの層のファイルも構文で書かれる。書き方が構文に従うことは、意味が構文に依存することではない。"""
-    r = qn(w, dom)
-    return qn(w, "syntax") if r == w and isinstance(w, str) and "." not in w else r
+    r = qn_raw(w, dom)
+    return note(dom, w, qn_raw(w, "syntax") if r == w and isinstance(w, str) and "." not in w else r)
 
 
 def q_fact(f, dom, V=()):
@@ -152,8 +168,8 @@ def q_fact(f, dom, V=()):
 
 
 def lib_and_domain_files():
-    """(ファイル, 領域) を、公理、言語の層、領域のファイルの順に。"""
-    out = [(root_name(), "axiom")]
+    """(ファイル, 領域) を、シグネチャ、言語の層、領域のファイルの順に。"""
+    out = [(root_name(), "signature")]
     for p in library_files():
         out.append((str(p.relative_to(ROOT)), (yload(p.read_text(encoding="utf-8")) or {}).get("domain")))
     return out + [(n, d) for d, n in domain_files().items()]
@@ -165,7 +181,7 @@ def in_scope(key):
     excl = {p.resolve() for g in c.get("exclude") or [] for p in ROOT.glob(g)}
     return sorted({p.resolve() for g in c.get(key) or [] for p in ROOT.glob(g)} - excl)
 TOPS = ("ontology.continuant", "ontology.occurrent")
-LAYERS = ("axiom", "ontology", "syntax", "runtime", "std")   # 言語の層。下の層は上の層を参照しない
+LAYERS = ("signature", "ontology", "syntax", "runtime", "std")   # 言語の層。下の層は上の層を参照しない
 LOCALS, USES, _SCOPES = {}, {}, {}   # 領域 → その領域のノードの名前 / 使う領域 / 名前の解決表
 errors = []
 
@@ -240,7 +256,7 @@ def load(name):
         return yaml.load((SPEC / name).read_text(encoding="utf-8"), Loader=_Unique)
     A = yaml.load((SPEC / name).read_text(encoding="utf-8"), Loader=_Unique)
     libs = [(str(p.relative_to(ROOT)), yaml.load(p.read_text(encoding="utf-8"), Loader=_Unique) or {}) for p in library_files()]
-    LOCALS["axiom"], USES["axiom"] = set(A.get("nodes") or {}), uses_in(A, "axiom")
+    LOCALS["signature"], USES["signature"] = set(A.get("nodes") or {}), uses_in(A, "signature")
     for _, D in libs:
         LOCALS[D["domain"]], USES[D["domain"]] = set(D.get("nodes") or {}), uses_in(D, D["domain"])
     _SCOPES.clear()
@@ -260,7 +276,7 @@ def load(name):
             if k not in ("domain", "base", "axes", "grammar", "runtime", "nodes", "individuals", "facts"):
                 err(f"{fname}: 節 {k} は、層のファイルに書けない")
         for nid, n in (D.get("nodes") or {}).items():
-            O["nodes"][f"{dom}.{nid}"] = q_node(n, dom)
+            O["nodes"][nid if dom == "signature" else f"{dom}.{nid}"] = q_node(n, dom)   # シグネチャの語は領域を書かない（domain()）
         for iid, x in (D.get("individuals") or {}).items():
             if iid in O["individuals"]:
                 err(f"{fname}: 個体 {iid} は、ほかの層にもある")
@@ -275,9 +291,10 @@ def core_sections(O):
     """領域と法則は、ontology.yaml の個体と事実で書く。検査と実行器が読む形に並べる（中身の検査は、ほかと同じく gather が行う）:
     domains: {領域: {display, uses: [使う領域]}}、laws: {法則: {kind, display, assume, derive, require, govern}}。"""
     I, F = O.get("individuals") or {}, O.get("facts") or []
+    kinds = set((O.get("grammar") or {}).get("laws") or [])   # 法則の種類は文法が挙げる（laws の下位と等しいことは check_grammar が確かめる）
     O["domains"] = {i: {"display": x.get("display"), "uses": []} for i, x in I.items() if short(x.get("is")) == "domain"}
     O["laws"] = {i: {"kind": short(x["is"]), "display": x.get("display"), "assume": [], "derive": [], "require": [], "govern": []}
-                 for i, x in I.items() if short(x.get("is")) in ("law_rule", "law_given")}
+                 for i, x in I.items() if short(x.get("is")) in kinds}
     key = {"v_assume": "assume", "v_derive": "derive", "v_require": "require", "v_govern": "govern"}
     for f in F:
         if not isinstance(f, dict):
@@ -297,13 +314,17 @@ def qualify(x, local, dom):
 
 
 def merge_domain(name, O):
-    """領域のファイルを読み、そのノードを体系に加える。領域のファイルは、その領域の種類（nodes）と個体（individuals）を持つ。"""
+    """領域のファイルを読み、そのノードを体系に加える。領域のファイルは、その領域の種類（nodes）と個体（individuals）と、軸（axes）を持てる。"""
     D = load(name)
     dom = D.get("domain")
     if dom not in O["domains"]:
         err(f"{name}: 領域 {dom} が domains に書かれていない")
     local = set(D.get("nodes") or {})
     D.setdefault("individuals", {})
+    for k, v in (D.get("axes") or {}).items():   # 領域の軸（単位など）。軸の名は体系の中で1つ
+        if k in O["axes"]:
+            err(f"{name}: axes.{k} は、ほかの層か領域にもある")
+        O["axes"][k] = v
     for nid, n in (D.get("nodes") or {}).items():
         O["nodes"][f"{dom}.{nid}"] = q_node(n, dom)
     D["individuals"] = {iid: {k: (qn(v, dom) if k == "is" else v) for k, v in x.items()} for iid, x in D["individuals"].items()}
@@ -506,9 +527,32 @@ class Facts:
                 yield xs
 
 
+class Count:
+    """前提の原子の個数の限定（at: {count: c}）。束縛済みの変数を固定して、原子を満たす組の数が c に入ること。"""
+    def __init__(self, want):
+        self.want = want
+
+    def ok(self, v):
+        w = self.want
+        if isinstance(w, dict):
+            (op, arg), = w.items()
+            return {"gt": v > arg, "ge": v >= arg, "lt": v < arg, "le": v <= arg}.get(op, True)
+        return w == v
+
+
+def counted(f):
+    """原子が個数の限定を持てば Count を返す。"""
+    c = (f.get("at") or {}).get("count") if isinstance(f, dict) and isinstance(f.get("at"), dict) else None
+    return Count(c) if c is not None else None
+
+
 def compile_atoms(atoms):
-    """前提の並びを (否定, 関係, 位置の並び) に直し、肯定を先に並べる。"""
-    return sorted((atom(f) for f in atoms), key=lambda a: a[0])
+    """前提の並びを (否定, 関係, 位置の並び) に直し、肯定を先に並べる。個数の限定を持つ原子は、否定の位置に Count を置く。"""
+    out = []
+    for f in atoms:
+        neg, rel, args = atom(f)
+        out.append((counted(f) or neg, rel, args))
+    return sorted(out, key=lambda a: 0 if a[0] is False else 1)
 
 
 def matches(atoms, F, V, b=None):
@@ -537,6 +581,10 @@ def _match(cs, i, F, V, b, first=None):
         return
     pat = tuple(b.get(a) if a in V else a for a in args)
     src = first[1] if first is not None and first[0] == i else F
+    if isinstance(neg, Count):
+        if neg.ok(sum(1 for _ in F.find(rel, pat))):
+            yield from _match(cs, i + 1, F, V, b, first)
+        return
     if neg:
         if next(F.find(rel, pat), None) is None:
             yield from _match(cs, i + 1, F, V, b, first)
@@ -565,7 +613,7 @@ def strata(rules):
                 for p in l["assume"]:
                     neg, r, _ = atom(p)
                     if r in st:
-                        need = st[r] + (1 if neg else 0)
+                        need = st[r] + (1 if neg or counted(p) else 0)
                         if need > st[h]:
                             st[h], changed = need, True
         if not changed:
@@ -615,7 +663,7 @@ def evaluate(rules, F, V):
 # 法則のうち、この検査が当てはめるもの / 実行の検査（cscl/bootstrap/runtime/runtime.py）が当てはめるもの
 # 規則で書いた法則（law_rule）は、実行の検査がその規則を読んで当てはめる。ここには、意味を検査が与える法則（law_given）だけを挙げる。
 LAWS_HERE = {"part_fact_direction", "part_display_explicit", "named_mod", "world_declared", "definition_stratified"}
-LAWS_RUN = {"unique_names", "step", "frame", "halt"}
+LAWS_RUN = {"unique_names", "step", "frame", "halt", "no_confusion"}
 
 
 class Ontology:
@@ -651,6 +699,12 @@ class Ontology:
             for w in words:
                 if self.resolve(w, "syntax") is None:
                     err(f"grammar.{sect}: 語 {w} がノードになっていない")
+        for sect, ws in KEYWORDS.items():
+            if set(G.get(sect) or []) != ws:
+                err(f"grammar.{sect}: 型検査が名前で読む語 {sorted(ws)} と、文法に書かれた語 {sorted(G.get(sect) or [])} が違う")
+        below = {short(n) for n in self.N if n != "syntax.laws" and self.is_a(n, "syntax.laws")}
+        if set(G.get("laws") or []) != below:   # 法則の種類は、体系の分類（laws の下位）と同じ
+            err(f"grammar.laws: 文法に書かれた法則の種類 {sorted(G.get('laws') or [])} が、laws の下位 {sorted(below)} と違う")
         L = self.O["laws"]
         for lid, l in L.items():
             where = f"法則 {lid}"
@@ -659,11 +713,12 @@ class Ontology:
                     err(f"{where}: 規則で書いた法則は、前提と、導く文か求める文を持ち、掛かる節を持たない")
                 V = variables(self.O)
                 rels = set(self.B) | {short(n) for n in self.N} | {i for i, x in (self.O.get("individuals") or {}).items() if short(x.get("is")) == "law_relation"}
-                bound = {a for f in l["assume"] if not atom(f)[0] for a in atom(f)[2] if a in V}
+                bound = {a for f in l["assume"] if not atom(f)[0] and not counted(f) for a in atom(f)[2] if a in V}
                 for part in ("assume", "derive", "require"):
                     for f in l[part]:
                         neg, rel, args = atom(f)
-                        if not isinstance(f, dict) or set(f) - {"is", "from", "to", "neg"} or rel not in rels or not args:
+                        keys = {"is", "from", "to", "neg"} | ({"at"} if part == "assume" and counted(f) and set(f["at"]) == {"count"} else set())
+                        if not isinstance(f, dict) or set(f) - keys or rel not in rels or not args:
                             err(f"{where}: {part} の {f} が、関係（基礎の関係・文法の語・導いた関係）と項で書かれていない")
                         if rel in self.B and len(args) != self.B[rel]["arity"]:
                             err(f"{where}: {part} の {f} の端の数が、{rel} と合わない")
@@ -699,9 +754,18 @@ class Ontology:
                     err(f"axes.{aid}: 語 {k} が、grammar.axes に書かれていない")
             if isinstance(a["value"], str) and a["value"] not in G["value"]:
                 err(f"axes.{aid}: 値の種類 {a['values']} が、grammar.values に書かれていない")
+            up, seen = a.get("extends"), {aid}
+            while up is not None:   # 上位の軸は、定義された軸で、値の種類が同じで、輪にならない
+                if up not in self.AX or up in seen or self.AX[up]["value"] != a["value"]:
+                    err(f"axes.{aid}: 上位の軸 {a['extends']} が、定義された同じ値の種類の軸でないか、輪になる")
+                    break
+                seen.add(up)
+                up = self.AX[up].get("extends")
 
     def resolve(self, word, dom):
-        """領域を書かない語を、ノードの識別子に解決する。その領域、axiom、ほかの領域にただ1つ、の順に探す。"""
+        """領域を書かない語を、ノードの識別子に解決する。その領域、signature、ほかの領域にただ1つ、の順に探す。"""
+        if word == "any":   # シグネチャの語
+            return word
         if f"{dom}.{word}" in self.N:
             return f"{dom}.{word}"
         if word in self.N:
@@ -710,7 +774,7 @@ class Ontology:
         return found[0] if len(found) == 1 else None
 
     def domain(self, nid):
-        return nid.split(".", 1)[0] if "." in nid else "axiom"
+        return nid.split(".", 1)[0] if "." in nid else "signature"
 
     def refs(self, nid):
         """ノードの式が参照しているノード。"""
@@ -809,7 +873,12 @@ class Ontology:
         """体系の書き方を、文法の語を関係とする文に直す。法則の規則は、この文に当てはめる。"""
         out, dump = [], lambda x: yaml.safe_dump(x, sort_keys=True, allow_unicode=True).strip()
         add = lambda rel, *xs: out.append((rel, tuple(xs)))
-        add("exists", "any")   # 端の any（存在の数量化 syntax.any を、書き方の語として使う）
+        for (dom, w), rs in WRITTEN.items():   # 法則 one_spelling が読む
+            for r in rs:
+                add("r_written", f"{dom}:{w}", r)
+        for aid, a in self.AX.items():   # 軸の上下は「下位の軸の値は、上位の軸の上にある」と読み、axis の文に訳す（法則 entail_by_axis が読む）
+            if isinstance(a.get("extends"), str):
+                add("axis", aid, a["extends"])
         for nid, n in self.N.items():
             add("exists", nid)
             add("domain", nid, self.domain(nid))
@@ -824,6 +893,14 @@ class Ontology:
                 if isinstance(n.get(k), list) and len(n[k]) == 2:
                     add(k, nid, n[k][0])
                     add("position", nid, n[k][1])
+            if "of" in n:   # 名前を付けた限定は、式の中の限定と同じ語で書く
+                if isinstance(n.get("with"), str):
+                    add("with", nid, n["with"])
+                if n.get("neg"):
+                    add("neg", nid, "true")
+                for k in ("quant", "at"):
+                    if n.get(k) is not None:
+                        add(k, nid, dump(n[k]))
             for k in ("holds", "pre"):
                 for i, _ in enumerate(n.get(k) or []):
                     add(k, nid, i)
@@ -838,6 +915,11 @@ class Ontology:
                         add("with", t, m["with"])
                     if m.get("neg"):
                         add("neg", t, "true")
+                    for k in ("quant", "at"):
+                        if m.get(k) is not None:
+                            add(k, t, dump(m[k]))
+                    for a in (m.get("at") or {}) if isinstance(m.get("at"), dict) else ():   # 限定が値を指定する軸（法則 at_axis が読む）
+                        add("axis", t, a)
                     if isinstance(m.get("with"), str) and m["with"] in self.I:
                         add("refer", nid, m["with"])
             for x in (n.get("val") or {}).items():
@@ -859,7 +941,7 @@ class Ontology:
         for i in self.I:
             if isinstance(self.I[i], str):
                 add("is", i, self.I[i])
-            add("domain", i, "axiom" if i in (self.O.get("individuals") or {}) else self.Isubj.get(i, self.Idom))
+            add("domain", i, "signature" if i in (self.O.get("individuals") or {}) else self.Isubj.get(i, self.Idom))
         for aid, a in self.AX.items():
             add("exists", aid)
             for v in a["value"] if isinstance(a["value"], list) else []:
@@ -900,10 +982,10 @@ class Ontology:
         return None
 
     def q(self, w):
-        """検査が名前で参照する語を、ノードの識別子に解決する（領域を書かない語は、個体の領域、axiom の順に探す）。"""
+        """検査が名前で参照する語を、ノードの識別子に解決する（領域を書かない語は、個体の領域、signature の順に探す）。"""
         if not isinstance(w, str) or w in self.N or w in self.I or w == "any":
             return w
-        return self.resolve(w, self.Idom or "axiom") or w
+        return self.resolve(w, self.Idom or "signature") or w
 
     def occupies(self, kind, end, verb):
         """個体（種類 kind）が、動詞 verb の端の種類 end の位置を占めてよいか。
@@ -1008,15 +1090,15 @@ class Ontology:
         for aid, a in AX.items():
             if a["source"] != "any" and a["source"] not in B:
                 err(f"axes: {aid} のもとになる関係 {a['from']} が未定義")
-        seen, forms = {}, {}
+        seen = {}
         for nid, n in N.items():
             ja = n.get("display")
             key = (self.domain(nid), ja)  # 法則 unique_in_domain
             if not ja:
                 err(f"{nid}: 表示語がない")
             seen[key] = nid
-            if nid in TOPS:
-                if set(n) != {"display", "gloss"}:
+            if nid in TOPS or nid == "any":   # 最上位と、シグネチャの any
+                if set(n) - {"many"} != {"display", "gloss"}:
                     err(f"{nid}: 最上位は gloss だけを持つ")
                 continue
             if "gloss" in n:
@@ -1043,7 +1125,7 @@ class Ontology:
                     self.check_state(nid, n)
             elif "of" in n:
                 self.check_spot(n["of"], nid)
-                if "with" in n and n["with"] not in N and n["with"] != "any" and not str(n["with"]).endswith(".any"):
+                if "with" in n and n["with"] not in N and n["with"] != "any":
                     err(f"{nid}: with の {n['with']} が未定義")
                 if not self.is_a(nid, "specifically_dependent_continuant"):
                     err(f"{nid}: 修飾語は特定依存持続体の下に置く")
@@ -1082,7 +1164,7 @@ class Ontology:
                     other = {"from": "to", "to": "from"}.get(pos)
                     if other is None:
                         err(f"{where}: 位置 new には with を付けられない")
-                    elif verb == "ontology.is":   # 「属する」の終点は、種類そのもの（その成員ではない）
+                    elif verb == "ontology.is" and other == "to":   # 「属する」の終点は、種類そのもの（その成員ではない）
                         if m["with"] not in N or not self.is_concept(m["with"]):
                             err(f"{where}: {m['with']} は種類でない")
                     elif self.is_a(self.end(verb, other), "verb_ref"):   # 動詞を受け取る位置: 来るのは動詞そのもの
@@ -1098,11 +1180,6 @@ class Ontology:
                     self.check_value(axis, v, where)
                     if axis in AX and AX[axis]["source"] != "any" and AX[axis]["source"] not in self.base_of(verb):
                         err(f"{where}: 軸 {axis} は基礎の関係 {AX[axis]['source']} を抽象にしたものだが、{verb} はそれを使っていない")
-            if not ("holds" in n or "pre" in n):
-                key = yaml.safe_dump({k: n[k] for k in ("extends", "from", "to", "of", "with", "at", "mod", "neg", "val", "cmp", "axis") if k in n}, sort_keys=True)
-                if key in forms:
-                    err(f"{nid}: 式が {forms[key]} と同じ")
-                forms.setdefault(key, nid)
         self.roles = [nid for nid in N if nid != "ontology.role" and "form" not in N[nid] and self.is_a(nid, "role")]
         for nid in self.roles:
             g = self.grounding(nid)
@@ -1122,7 +1199,7 @@ class Ontology:
     def mods_of(self, nid):
         return [m for x in [nid] + self.ancestors(nid) for m in (self.N[x].get("mod") or []) if isinstance(m, dict)]
 
-    def field_ok(self, kind, f, dom="axiom"):
+    def field_ok(self, kind, f, dom="signature"):
         """種類 kind の個体に、項目 f を書けるか。項目の表は持たず、式から決める。
         f が動詞かその位置の形（s, p, o）: kind が「について述べる」の始点に来る種類（文）であること。
         それ以外: f かその下位に、kind のものとの関係で限定されたノードがあること。または、kind の式が f のものとの関係で限定されていること。"""
@@ -1203,7 +1280,7 @@ def natural_language_only_in_ja(name, x, path=()):
         for v in x:
             natural_language_only_in_ja(name, v, path)
     elif isinstance(x, str) and re.search(r"[^\x00-\x7f]", x):
-        top = path[:1] == ("nodes",) and path[-1] == "gloss" and path[1] in ("continuant", "occurrent")
+        top = path[:1] == ("nodes",) and path[-1] == "gloss" and path[1] in ("continuant", "occurrent", "any")
         opt = path[:1] == ("individuals",) and path[-2:] == ("val", "text")
         if path[-1:] != ("display",) and not top and not opt:
             err(f"{name} {'.'.join(path)}: 自然言語は表示名 display にだけ書く（{x[:20]}）")
@@ -1487,7 +1564,7 @@ def build():
                 err(f"{name} {iid}: 個体の識別子が、ほかの個体かノードと重なっている")
         T.I |= {iid: x.get("is") for iid, x in X["individuals"].items() if x.get("is") in T.N}
         T.Isubj |= {iid: dom for iid in X["individuals"]}
-    gather({"domain": "axiom", "_local": set(), "individuals": core, "facts": O.get("facts")}, T, "ontology.yaml")
+    gather({"domain": "signature", "_local": set(), "individuals": core, "facts": O.get("facts")}, T, "ontology.yaml")
     for dom, (name, X) in Dm.items():
         gather(X, T, name)
         check_derived(X, T, name)
