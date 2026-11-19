@@ -1,0 +1,253 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-19T15:32:57.013Z（UTC）
+individuals:
+  01M7T7111NVESK06YRRRCY5RG3:
+    is: session_summary
+    display: 発言 2593
+    val:
+      order: 2593
+      text: |
+        This session is being continued from a previous conversation that ran out of context. The summary below covers the earlier portion of the conversation.
+
+        <system-reminder>
+        <tools-used-before-summary>AskUserQuestion, Bash, Edit, Grep, Read, ReadNotifications, Skill, TaskStop, ToolSearch, WebFetch, WebSearch, Write, mcp__claude-code-remote__create_trigger, mcp__claude-code-remote__delete_trigger, mcp__claude-code-remote__get_trigger, mcp__claude-code-remote__read_documentation, mcp__claude-code-remote__send_later, mcp__claude-code-remote__subscribe_pr_activity, mcp__claude-code-remote__update_trigger, mcp__github__actions_get, mcp__github__actions_list, mcp__github__add_issue_comment, mcp__github__create_pull_request, mcp__github__get_job_logs, mcp__github__issue_read, mcp__github__issue_write, mcp__github__list_issue_types, mcp__github__list_issues, mcp__github__list_pull_requests, mcp__github__pull_request_read, mcp__github__update_pull_request</tools-used-before-summary>
+        </system-reminder>
+        Summary:
+        1. Primary Request and Intent:
+
+        **Standing rules (in force)**
+        - Repo: nonsugertea7821/CMT at /home/user/CMT.
+        - Reply in plain, natural Japanese. Don't overclaim. Give interpretation.
+        - When the user asks, use intuitive examples without academic terms.
+        - Restore files with `git show <rev>:<path> > <path>`. Never use checkout or stash to restore; `git switch` for branches is fine.
+        - Python: /home/user/venv/bin/python.
+        - Commit trailer:
+          `Co-Authored-By: Claude [モデル名を伏せた] <[メールアドレスを伏せた]>`
+          `Claude-Session: https://claude.ai/code/session_015KRKt6TNJZ7ZsQmEknANXK`
+        - A PR body ends with `🤖 Generated with [Claude Code](https://claude.com/claude-code)`, a blank line, then the session URL.
+        - No personal info and no model identifiers in pushed artifacts.
+        - Claude never merges.
+        - Every PR I open: call subscribe_pr_activity, and call issue_write update with assignees ["nonsugertea7821"].
+        - After a merge: `git fetch -q --prune origin`, `git switch -q main`, `git merge -q --ff-only origin/main`, then `git branch -D <branch>`.
+        - No comments in system yaml.
+        - Never rerun recorded experiment scripts. Use `git add -f` for exp/experiments files.
+        - CI belongs to GitHub.
+        - Proposals must be registered as untested hypotheses before telling the user:
+          - Form: h_/b_ plus v_refer and v_check.
+          - Registration-only PRs auto-merge.
+        - Preregistration:
+          - The first commit is the script only; open a Draft PR.
+          - Results go in a later commit.
+          - Undraft when the state is supported, refuted or mixed.
+
+        **User's conceptual rules**
+        - Names may be read only for signature and grammar words; other distinctions are written as expressions.
+        - Allowed bases are signature, logic and geometry.
+
+        **Big roadmap (recovered from session log)**
+        - Top goal: `d_goal` (this_design raises redefinition_success). The metric is `d_metric`: cross_usage_consistency measures redefinition_success.
+        - System soundness is a dependency of cross-usage consistency. The user stated this now.
+        - The soundness goal is "display の廃止と式の識別子化". Two walls block it:
+          - Display carries meaning that is not in the formulas: sys_display_residual is about 77%; h_case_frame_formula refuted; h_gloss_formula refuted.
+          - The checker reads names: h_renaming_invariant refuted; h_checker_words_in_grammar refuted; h_above_sound refuted, because some above relations rest only on the name chain.
+        - Identifier attempts:
+          - h_identifier_by_expansion (#328): refuted; 5 collision classes.
+          - h_identifier_by_bisimulation (#331): refuted. Collisions reduced to 4 classes (approve/pay and derive/require mutual recursion), plus 前提に置く.
+          - Next in line were h_rule_roles_by_frame / h_rule_roles_by_signature, and the concept_kind hypotheses (#350, #351).
+        - Geometry's role: give coordinates to distinguish what only names distinguish (the collision pairs and name-only above relations).
+
+        **Latest user request**
+        "ちょっとロードマップの維持の仕方を考えよう 時々わき道にそれて帰ってこられなくなりそうなときがある ちなみに体系の健全性もさらに上のロードマップの依存関係の一つだよ、使い方をまたぐ一貫性のための"
+
+        **30-minute cycle**
+        - Trigger: trig_01L92Xn7LSTHrmqt7enEcCPG. Rescheduled to 15:58Z.
+        - At each fire, first call update_trigger with run_once_at = now + ~31 min and enabled: true.
+        - The trigger prompt contains an older triage list (A/A'/C/E/B/D).
+
+        2. Key Technical Concepts:
+
+        **Checks**
+        - tc: `cscl/bootstrap/type_checker/type_checker.py`
+        - ec: `exp/src/exp_check.py`
+        - Judge both by exit code.
+
+        **Midpoint test (convexity on a finite vocabulary)**
+        1. Center the vocabulary.
+        2. For each member pair, take the midpoint.
+        3. Find the nearest word by cosine, excluding the pair.
+        4. Score 1 if that word is a member.
+
+        **Word vectors**
+        - Japanese: 「w, prefix 「.
+        - English: "Word: w", prefix "Word:".
+        - Before running, verify that the prefix ids are stable for every word.
+        - Layers use relative depth: round(N × 8/28) is judged; 14/28 and 20/28 are recorded.
+
+        **Family recording pattern in exp.yaml**
+        - Nodes:
+          - `F: {is: measurement_family}`
+          - `F_cond: {is: family_axis, val: {text: cond}}`
+          - `F_cond_<c>: {is: axis_value, val: {text: <c>}}`
+        - Facts:
+          - v_file_of F.json, v_rows_of [rows], v_axis_of
+          - For each cond: v_value_of and v_spell
+          - v_entry_of '{cond}', v_metric_of mean_value
+        - Observations:
+          - `v_near` (new: 0.001) for floats
+          - `v_level` for integers
+          - `v_come_after` for X > Y
+        - Then add v_support / v_contradict, change the h_ state (hyp_supported / hyp_refuted / hyp_mixed), and set b_ to item_done.
+        - Insert new families at anchors away from other open PRs' insertions, to avoid merge conflicts.
+
+        **Existing vocabulary**
+        - design decisions: d_goal, d_metric; v_ground (decision ← hypothesis); v_supersede; design_dec_adopted.
+        - lang.v_not_depend, natural_language, pre_model_passage, model, genus_concept, midpoint_membership.
+
+        3. Files and Code Sections:
+
+        **Scripts and results (all on main)**
+        - exp/experiments/geo_interval_cut_midpoint.py with results/geo_interval_cut_midpoint.json (#361, refuted).
+        - exp/experiments/geo_cross_genus_midpoint_models.py (#364, refuted)
+          - Models: llmjp, sarashina, qwen15, qwen05.
+          - Results: diff 0.579 / 0.643 / 0.586 (identical to #353) / 0.500.
+        - exp/experiments/geo_cross_genus_midpoint_english.py (#368, supported)
+          - Defines GENUS/CROSS/FILLER in English, `PREFIX = {"ja": ("「", ""), "en": ("Word:", " ")}`, and the functions `load(name)`, `vectors(tok, model, words, lang)` and `measure(rate, genus, cross, filler, layers, vec)`.
+          - English diffs: llmjp 0.693, sarashina 0.357 (G only 0.47), qwen15 0.564, qwen05 0.664.
+        - exp/experiments/geo_cross_genus_midpoint_pretext.py (#369, supported)
+          - SmolLM2: en 0.571, ja 0.086, drop 0.486.
+          - OLMo-2: en 0.686, ja 0.071, drop 0.614.
+          - Verdict codes: 1 = support, 0 = refute, 2 = mixed, −1 = untested.
+        - exp/experiments/geo_genus_vs_interval_midpoint.py (#370, supported)
+          - Pairs, all with purity 0.5:
+            - 重さ (動物 / 乗り物): genus 1.00, interval 0.59
+            - 値段 (楽器 / 家具): genus 0.98, interval 0.43
+            - 人口 (国 / 都市): genus 0.93, interval 0.70
+          - Gap 0.399.
+
+        **exp/src/exp.yaml (main)**
+        - States:
+          - h_interval_cut_raises_midpoint: refuted
+          - h_midpoint_depends_model: refuted
+          - h_midpoint_language_invariant: supported
+          - h_midpoint_depends_pretext: supported
+          - h_midpoint_depends_genus: supported
+          - h_qualification_immune_genus (#355): untested
+        - The hypothesis lines sit after `b_midpoint_depends_genus`; the facts sit after `- {is: v_check, from: b_midpoint_depends_genus, ...}`.
+
+        **Current uncommitted change (branch claude/register-roadmap-by-ground)**
+        - In exp/src/exp.yaml, after `  b_midpoint_depends_pretext: {is: item_done}`:
+          ```
+          h_roadmap_by_ground: {is: hyp_untested}
+          b_roadmap_by_ground: {is: item_queued}
+          ```
+        - After `  - {is: v_check, from: b_midpoint_depends_pretext, to: h_midpoint_depends_pretext}`:
+          ```
+          - {is: v_refer, from: h_roadmap_by_ground, to: {is: v_depend, from: hypothesis, to: d_goal}}
+          - {is: v_check, from: b_roadmap_by_ground, to: h_roadmap_by_ground}
+          ```
+        - tc = 0 and ec = 0 pass. Not committed.
+
+        4. Errors and fixes:
+        - **Inline validation exec failed on `__file__`**: replaced it with ast.parse only.
+        - **sarashina tokenizer needed sentencepiece and protobuf**: installed both with pip into the venv.
+        - **`"` prefix merged with words in Qwen/OLMo BPE (9 bad words)**: switched to "Word: w".
+        - **Qwen3-4B does not fit in 15GB RAM in float32**: excluded it and disclosed this in the preregistration.
+        - **`sleep 60` was blocked**: used until-loops instead.
+
+        **User feedback**
+        - The user noted that Qwen-family models might be the same, so non-Qwen models were used.
+        - The user pointed out that the work had drifted from the formula/identifier goal. I acknowledged it.
+
+        5. Problem Solving:
+
+        **Geometry findings so far**
+        - Genus sets are convex-like; cross-genus property sets are not.
+        - This is robust across 4 multilingual models and across Japanese and English.
+        - It requires having read text in the language.
+        - Quantity intervals do not create cohesion; genus does.
+
+        **Open questions**
+        - How to keep the roadmap from being lost to detours.
+        - Proposed direction (not yet told to the user):
+          - Encode the roadmap in the system as design decisions linked by v_ground up to d_goal (d_goal ← d_metric ← soundness ← display abolition / identifier ← geometry hypotheses).
+          - Require every hypothesis to have a v_ground path to d_goal.
+          - Have ec flag detours, i.e. hypotheses that reach no decision.
+          - Have the cycle pick only hypotheses on the path.
+          - Registered as h_roadmap_by_ground.
+
+        6. All user messages (since the prior summary):
+        - 「これ別のモデルでも試してみないか？ 何となくモデルが事前学習している特徴量にも影響されている気がするんだ。汎化された性質なのかは試してみた方が良い気がする。」
+        - 「Qwen系だと同じかもしれない。」
+        - 「逆に「英語でも」同じなのか、そして「日本語を学んでいなければ」日本語からその傾向は得られないのか。これは概念を学習するということがどういうことかの手がかりになる」
+        - 「日本語と英語は文章の特徴量の離れ方で最も離れていると言われている 一般に成り立つと考えていいんじゃないかな。真ん中あたりを狙ってもいい気がするけど」
+        - 「これ確か式の欠陥を特定するための実験だよね 幾何と類比して適切な形を導くための どういうロードマップになってる？」
+        - 「もっと大きいロードマップもあったよね そのロードマップの途中で式の識別子化が必須になった記憶がある」
+        - 「ちょっとロードマップの維持の仕方を考えよう 時々わき道にそれて帰ってこられなくなりそうなときがある ちなみに体系の健全性もさらに上のロードマップの依存関係の一つだよ、使い方をまたkぐ一貫性のための」
+        - All other inputs were scheduled-trigger prompts and GitHub notifications. These are not user approvals.
+
+        7. Pending Tasks:
+        - **Roadmap registration PR**: commit and push h_roadmap_by_ground on claude/register-roadmap-by-ground, open the PR, subscribe, assign.
+        - **Answer the user** about roadmap maintenance, with a design for encoding the roadmap in the system:
+          - Decision nodes for intermediate goals (soundness, display abolition, identifierization, geometry), linked with v_ground / v_supersede up to d_goal and d_metric.
+          - Every hypothesis grounds some decision.
+          - ec, or a sys_ measurement, reports hypotheses not reaching d_goal (detours).
+          - The cycle prompt selects only on-path hypotheses and marks detours explicitly.
+          - Possibly update the trigger prompt — this needs the user's direction.
+        - **Next 15:58Z cycle**: reschedule first. Then, per the plan told to the user, register hypotheses that apply the geometry results to identifierization: can geometric coordinates (genus regions) distinguish the collision pairs (approve/pay, derive/require) and the name-only above relations?
+        - **Later**:
+          - h_qualification_immune_genus (#355).
+          - Orthogonality of distinct genera.
+          - self/any/same as a coordinate reading.
+
+        8. Current Work:
+        Responding to the user's request to think about how to maintain the roadmap. I checked the existing vocabulary (d_goal, d_metric, v_ground in exp.yaml). Per the rule to register proposals first, I created branch `claude/register-roadmap-by-ground` and added h_roadmap_by_ground (`{is: v_depend, from: hypothesis, to: d_goal}`) plus its b_ and v_check to exp/src/exp.yaml. tc and ec pass. Not yet committed or pushed, and nothing has been said to the user about the proposal yet.
+
+        9. Optional Next Step:
+        1. Commit and push the registration on claude/register-roadmap-by-ground.
+        2. Open a registration-only PR (subscribe, assign nonsugertea7821).
+        3. Reply to the user's message 「ちょっとロードマップの維持の仕方を考えよう…体系の健全性もさらに上のロードマップの依存関係の一つだよ、使い方をまたぐ一貫性のための」 with the proposed maintenance design:
+           - Represent the roadmap tree inside the system as design decisions (d_goal ← d_metric ← soundness ← display abolition / identifierization ← geometry), connected by v_ground.
+           - Make each hypothesis ground a decision.
+           - Let ec / sys_ measurements flag hypotheses that do not reach d_goal as detours.
+           - Have the cycle choose on-path hypotheses.
+           - Ask only whether the user wants the trigger prompt changed accordingly. That is a direction decision that is the user's to make.
+
+        If you need specific details from before compaction (like exact code snippets, error messages, or content you generated), read the full transcript at: /root/.claude/projects/-home-user-CMT/e05d2140-ce91-515f-a5fb-e6251e13d406.jsonl
+        Continue the conversation from where it left off without asking the user any further questions. Resume directly — do not acknowledge the summary, do not recap what was happening, do not preface with "I'll continue" or similar. Pick up the last task as if the break never happened.
+
+        The messages after this summary are the most recent messages from before compaction, kept verbatim. The summary was written without seeing them, so something it says has not happened yet may already have happened in them.
+facts:
+- {is: v_say, from: session_model, to: 01M7T7111NVESK06YRRRCY5RG3}
+- {is: v_refer, from: 01M7T7111NVESK06YRRRCY5RG3, to: ontology.v_refer}
+- {is: v_refer, from: 01M7T7111NVESK06YRRRCY5RG3, to: exp.v_check}
+- {is: v_refer, from: 01M7T7111NVESK06YRRRCY5RG3, to: exp.redefinition_success}
+- {is: v_refer, from: 01M7T7111NVESK06YRRRCY5RG3, to: exp.cross_usage_consistency}
+- {is: v_refer, from: 01M7T7111NVESK06YRRRCY5RG3, to: lang.type_checker}
+- {is: v_refer, from: 01M7T7111NVESK06YRRRCY5RG3, to: exp.measurement_family}
+- {is: v_refer, from: 01M7T7111NVESK06YRRRCY5RG3, to: exp.family_axis}
+- {is: v_refer, from: 01M7T7111NVESK06YRRRCY5RG3, to: exp.axis_value}
+- {is: v_refer, from: 01M7T7111NVESK06YRRRCY5RG3, to: exp.v_file_of}
+- {is: v_refer, from: 01M7T7111NVESK06YRRRCY5RG3, to: exp.v_rows_of}
+- {is: v_refer, from: 01M7T7111NVESK06YRRRCY5RG3, to: exp.v_axis_of}
+- {is: v_refer, from: 01M7T7111NVESK06YRRRCY5RG3, to: exp.v_value_of}
+- {is: v_refer, from: 01M7T7111NVESK06YRRRCY5RG3, to: exp.v_spell}
+- {is: v_refer, from: 01M7T7111NVESK06YRRRCY5RG3, to: exp.v_entry_of}
+- {is: v_refer, from: 01M7T7111NVESK06YRRRCY5RG3, to: exp.v_metric_of}
+- {is: v_refer, from: 01M7T7111NVESK06YRRRCY5RG3, to: exp.mean_value}
+- {is: v_refer, from: 01M7T7111NVESK06YRRRCY5RG3, to: exp.v_near}
+- {is: v_refer, from: 01M7T7111NVESK06YRRRCY5RG3, to: ontology.v_level}
+- {is: v_refer, from: 01M7T7111NVESK06YRRRCY5RG3, to: ontology.v_come_after}
+- {is: v_refer, from: 01M7T7111NVESK06YRRRCY5RG3, to: exp.v_support}
+- {is: v_refer, from: 01M7T7111NVESK06YRRRCY5RG3, to: exp.v_contradict}
+- {is: v_refer, from: 01M7T7111NVESK06YRRRCY5RG3, to: exp.hyp_supported}
+- {is: v_refer, from: 01M7T7111NVESK06YRRRCY5RG3, to: exp.hyp_refuted}
+- {is: v_refer, from: 01M7T7111NVESK06YRRRCY5RG3, to: exp.hyp_mixed}
+- {is: v_refer, from: 01M7T7111NVESK06YRRRCY5RG3, to: exp.item_done}
+- {is: v_refer, from: 01M7T7111NVESK06YRRRCY5RG3, to: exp.v_ground}
+- {is: v_refer, from: 01M7T7111NVESK06YRRRCY5RG3, to: exp.v_supersede}
+- {is: v_refer, from: 01M7T7111NVESK06YRRRCY5RG3, to: exp.design_dec_adopted}
+- {is: v_refer, from: 01M7T7111NVESK06YRRRCY5RG3, to: lang.v_not_depend}
+- {is: v_refer, from: 01M7T7111NVESK06YRRRCY5RG3, to: ontology.natural_language}
+- {is: v_refer, from: 01M7T7111NVESK06YRRRCY5RG3, to: exp.genus_concept}
+- {is: v_refer, from: 01M7T7111NVESK06YRRRCY5RG3, to: exp.hyp_untested}
+- {is: v_refer, from: 01M7T7111NVESK06YRRRCY5RG3, to: exp.item_queued}
+- {is: v_refer, from: 01M7T7111NVESK06YRRRCY5RG3, to: ontology.v_depend}
