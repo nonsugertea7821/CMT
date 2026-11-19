@@ -1,0 +1,37 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-19T19:14:44.274Z（UTC）
+individuals:
+  01M7TKQ4DJR6C2B5E2RQKV81NB:
+    is: model_utterance
+    display: 発言 2684
+    val:
+      order: 2684
+      text: |
+        h_checker_words_by_formula（#300）を確かめ、PR #397 を開きました。結果は mixed です。Draft は外してあり、あなたの確認待ちです。tc と ec は手元で通りました。
+
+        **分かったこと**
+
+        検査器が名前で読んで区別している 3 語について、その語の定義の式から同じ節点の集まりを切り出せるかを数えました。
+
+        | 語 | 式で切り出した結果 |
+        |---|---|
+        | role（役割） | 名前で選んだ 14 個と一致 |
+        | definition（定義） | 名前で選んだ 50 個と一致 |
+        | v_refer（述べる） | 名前で選ぶと 19 個、式で選ぶと 26 個で、7 個多い |
+
+        - role と definition は、名前で読む代わりに式で区別できることになります。
+        - v_refer は、「述べる関係（refer）を持つ動詞」と式で書くだけでは、ほかの動詞まで入ってしまいます。
+          - 余分に入った 7 個は、測る・答えるのように別の関係を足した動詞と、一致するのように述べる向きが違う動詞と、それぞれの下位の動詞です。
+
+        **含意と新しい仮説**
+        - 余った動詞は、どれも「向きが違う」か「関係が多い」かのどちらかでした。
+        - そこで、`h_refer_by_exact_holds`（未検証）を同じ PR で登録しました。「関係と向きの組み合わせが完全に一致すること」で読めば、v_refer も式で切り出せる、という仮説です。
+        - ロードマップの決定 d_cscl_display_derived に結んであります。
+
+        **あなたのマージ待ち**
+        - #387、#394、#395、#396、#397 の 5 本です。
+
+        ロードマップでは、識別子化の列の h_frame_both_sides（#396）と h_checker_words_by_formula（#397）まで進みました。次は h_collect_by_formula です。
+facts:
+- {is: v_say, from: session_model, to: 01M7TKQ4DJR6C2B5E2RQKV81NB}
+- {is: exp.v_answer, from: 01M7TKQ4DJR6C2B5E2RQKV81NB, to: 01M7TA7A145QS5NA0XWZR9ST0Q}
+- {is: v_refer, from: 01M7TKQ4DJR6C2B5E2RQKV81NB, to: ontology.v_refer}
