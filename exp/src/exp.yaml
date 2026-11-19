@@ -1660,6 +1660,14 @@ individuals:
   e26_cond_block_early: {is: axis_value, val: {text: block_early}}
   e26_cond_block_mid: {is: axis_value, val: {text: block_mid}}
   e26_cond_block_late: {is: axis_value, val: {text: block_late}}
+  e28: {is: measurement_family}
+  e28_cond: {is: family_axis, val: {text: cond}}
+  e28_cond_first: {is: axis_value, val: {text: first}}
+  e28_cond_last: {is: axis_value, val: {text: last}}
+  e28_cond_last_block_all: {is: axis_value, val: {text: last_block_all}}
+  e28_cond_last_block_def: {is: axis_value, val: {text: last_block_def}}
+  e28_cond_last_block_query: {is: axis_value, val: {text: last_block_query}}
+  e28_cond_first_block: {is: axis_value, val: {text: first_block}}
   e15_group: {is: family_axis, val: {text: group}}
   e15_group_G2c: {is: axis_value, val: {text: G2c}}
   e15_group_G2k: {is: axis_value, val: {text: G2k}}
@@ -1809,6 +1817,11 @@ individuals:
   o_e26_block_late_near_text: {is: observation}
   o_e26_block_early_below_text: {is: observation}
   o_e26_block_mid_below_text: {is: observation}
+  o_e28_last_below_first: {is: observation}
+  o_e28_block_all_above_last: {is: observation}
+  o_e28_first_block_below_first: {is: observation}
+  o_e28_block_query_below_last: {is: observation}
+  o_e28_block_def_above_last: {is: observation}
   o_e14_vec_robust_below_none_conflict: {is: observation}
   o_e14_vec_robust_below_none_control: {is: observation}
   o_e20_examples_move_apply: {is: observation}
@@ -1849,7 +1862,7 @@ individuals:
   h_preceding_definitions_lower: {is: hyp_supported}
   h_following_definitions_do_not_lower: {is: hyp_supported}
   h_new_word_immune: {is: hyp_supported}
-  h_attention_causes_preceding_effect: {is: hyp_untested}
+  h_attention_causes_preceding_effect: {is: hyp_supported}
   h_auto_merge_uncorrected: {is: hyp_untested}
   h_attribution_logged: {is: hyp_refuted}
   b_attribution_logged: {is: item_done}
@@ -2875,6 +2888,25 @@ facts:
   - {is: v_metric_of, from: e26, to: accuracy}
   - {is: v_metric_of, from: e26, to: order_robust_accuracy}
   - {is: v_metric_of, from: e26, to: logit_margin}
+  - {is: v_file_of, from: 'e28_Qwen3-4B.json', to: e28}
+  - {is: v_rows_of, from: [items], to: e28}
+  - {is: v_axis_of, from: e28_cond, to: e28}
+  - {is: v_value_of, from: e28_cond_first, to: e28_cond}
+  - {is: v_value_of, from: e28_cond_last, to: e28_cond}
+  - {is: v_value_of, from: e28_cond_last_block_all, to: e28_cond}
+  - {is: v_value_of, from: e28_cond_last_block_def, to: e28_cond}
+  - {is: v_value_of, from: e28_cond_last_block_query, to: e28_cond}
+  - {is: v_value_of, from: e28_cond_first_block, to: e28_cond}
+  - {is: v_denote, from: e28_cond_first, to: glossary}
+  - {is: v_denote, from: e28_cond_first, to: glossary_head}
+  - {is: v_compose, from: following_definitions_set, to: e28_cond_first, at: {count: 54}}
+  - {is: v_denote, from: e28_cond_last, to: glossary}
+  - {is: v_denote, from: e28_cond_last, to: other_definitions}
+  - {is: v_compose, from: preceding_definitions_set, to: e28_cond_last, at: {count: 54}}
+  - {is: v_entry_of, from: '{cond}', to: e28}
+  - {is: v_metric_of, from: e28, to: accuracy}
+  - {is: v_metric_of, from: e28, to: order_robust_accuracy}
+  - {is: v_metric_of, from: e28, to: logit_margin}
   - {is: v_file_of, from: 'e17_Qwen2.5-1.5B-Instruct_L8.json', to: e17}
   - {is: v_rows_of, from: [items], to: e17}
   - {is: v_axis_of, from: e17_group, to: e17}
@@ -5475,6 +5507,13 @@ facts:
   - {is: v_refer, from: o_e26_block_mid_below_text, to: {is: v_come_before, from: e26.block_mid.accuracy, to: e26.text.accuracy}}
   - {is: v_support, from: o_e26_block_all_below_text, to: h_attention_carries_text_route}
   - {is: v_support, from: o_e26_ctrl_all_near_text, to: h_attention_carries_text_route}
+  - {is: v_refer, from: o_e28_last_below_first, to: {is: v_come_before, from: e28.last.accuracy, to: e28.first.accuracy}}
+  - {is: v_refer, from: o_e28_block_all_above_last, to: {is: v_come_after, from: e28.last_block_all.accuracy, to: e28.last.accuracy}}
+  - {is: v_refer, from: o_e28_first_block_below_first, to: {is: v_come_before, from: e28.first_block.accuracy, to: e28.first.accuracy}}
+  - {is: v_refer, from: o_e28_block_query_below_last, to: {is: v_come_before, from: e28.last_block_query.accuracy, to: e28.last.accuracy}}
+  - {is: v_refer, from: o_e28_block_def_above_last, to: {is: v_come_after, from: e28.last_block_def.accuracy, to: e28.last.accuracy}}
+  - {is: v_support, from: o_e28_block_all_above_last, to: h_attention_causes_preceding_effect}
+  - {is: v_support, from: o_e28_first_block_below_first, to: h_attention_causes_preceding_effect}
   - {is: v_contradict, from: o_e21_common_robust_below_none, to: h_common_component_transfers_to_unseen}
   - {is: v_contradict, from: o_e21_common_robust_below_rand, to: h_common_component_transfers_to_unseen}
   - {is: v_contradict, from: o_e14_vec_robust_below_none_conflict, to: h_text_shift_raises_stability}
