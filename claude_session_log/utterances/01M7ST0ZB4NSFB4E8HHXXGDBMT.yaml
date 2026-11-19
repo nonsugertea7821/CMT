@@ -1,0 +1,246 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-19T11:45:43.780Z（UTC）
+individuals:
+  01M7ST0ZB4NSFB4E8HHXXGDBMT:
+    is: session_summary
+    display: 発言 2478
+    val:
+      order: 2478
+      text: |
+        This session is being continued from a previous conversation that ran out of context. The summary below covers the earlier portion of the conversation.
+
+        <system-reminder>
+        <tools-used-before-summary>AskUserQuestion, Bash, Edit, Grep, Read, ReadNotifications, Skill, TaskStop, ToolSearch, WebFetch, WebSearch, Write, mcp__claude-code-remote__create_trigger, mcp__claude-code-remote__delete_trigger, mcp__claude-code-remote__get_trigger, mcp__claude-code-remote__read_documentation, mcp__claude-code-remote__send_later, mcp__claude-code-remote__subscribe_pr_activity, mcp__claude-code-remote__update_trigger, mcp__github__actions_get, mcp__github__actions_list, mcp__github__add_issue_comment, mcp__github__create_pull_request, mcp__github__get_job_logs, mcp__github__issue_read, mcp__github__issue_write, mcp__github__list_issue_types, mcp__github__list_issues, mcp__github__list_pull_requests, mcp__github__pull_request_read, mcp__github__update_pull_request</tools-used-before-summary>
+        </system-reminder>
+        Summary:
+        1. Primary Request and Intent
+
+        **Standing rules (in force)**
+        - Repo: nonsugertea7821/CMT at /home/user/CMT.
+        - Reply in plain, natural Japanese. Don't overclaim. Give interpretation.
+        - Restore files with `git show <rev>:<path> > <path>`. Never checkout to restore and never stash; `git switch` is fine for branches.
+        - Python: /home/user/venv/bin/python.
+        - Commit trailer:
+          `Co-Authored-By: Claude [モデル名を伏せた] <[メールアドレスを伏せた]>`
+          `Claude-Session: https://claude.ai/code/session_015KRKt6TNJZ7ZsQmEknANXK`
+        - PR body ends with `🤖 Generated with [Claude Code](https://claude.com/claude-code)`, a blank line, then the session URL.
+        - Claude never merges. No personal info or model identifiers in pushed artifacts.
+        - No comments in system yaml.
+        - Never rerun recorded experiment scripts. Use `git add -f` for exp/experiments files.
+        - CI belongs to GitHub.
+        - Every PR: call subscribe_pr_activity, and issue_write update with assignees ["nonsugertea7821"].
+        - After a merge: `git fetch -q --prune origin`, ff main, then `git branch -D` the local branch. Never push to a merged branch.
+        - Proposals are registered as untested hypotheses (h_/b_ plus v_refer and v_check) before they are told to the user.
+          - Registration-only PRs auto-merge.
+          - Concept-adding PRs are manual.
+          - Unformalized distinctions are debt; formalize them with expressions.
+        - Preregistration: commit the script only first, open a Draft PR, then add results in a later commit. Disclose corrections.
+        - Observations about cscl hypotheses go in cscl/design/claims.yaml. Measurement families go in exp/src/exp.yaml.
+        - The user's earlier correction still applies: 層 (layer) is derived by rules; ドメイン (domain) is an override unit. Don't mix them.
+
+        **30-minute cycle**
+        - Trigger: trig_01L92Xn7LSTHrmqt7enEcCPG ("仮説の周回（30分毎）").
+        - Reschedule each cycle with update_trigger: `run_once_at` = now + ~31 min and `enabled: true`.
+        - Next fire: **12:15Z**.
+
+        The cycle prompt's steps:
+        1. Check PRs and merges.
+        2. Pick an untested hypothesis. Triage priority: A (model, Qwen) > A' > C > E (sys_) > B > D. Prefer ones whose outcome is not predictable.
+        3. Branch `claude/h_<name>`, Draft PR, preregistration commit, run, record, tc/ec, push, update the body, undraft.
+        4. Implication check, then register new hypotheses in a registration-only PR (paired solutions after a refutation).
+        5. Report briefly.
+
+        2. Key Technical Concepts
+
+        **Checks**
+        - tc: cscl/bootstrap/type_checker/type_checker.py.
+        - ec: exp/src/exp_check.py. Judge by exit code.
+
+        **Family recording pattern** (done with Python scripts that insert lines)
+        - exp.yaml nodes, inserted before the previous family's node line:
+          - `F: {is: measurement_family}`
+          - `F_cond: {is: family_axis, val: {text: cond}}`
+          - `F_cond_<c>: {is: axis_value, val: {text: <c>}}`
+        - Facts, inserted after the previous family's `v_metric_of` line: v_file_of `F.json`, v_rows_of [rows], v_axis_of, v_value_of plus v_spell per cond, `v_entry_of '{cond}'`, `v_metric_of mean_value`.
+        - The conds are keys of the `"summary 要約"` row.
+        - claims.yaml:
+          - `o_x: {is: exp.observation}`
+          - `{is: v_refer, from: o_x, to: {is: v_level, from: F.c.mean_value, to: V}}`
+          - `exp.v_support` / `exp.v_contradict`
+          - state set to `exp.hyp_supported` / `exp.hyp_refuted`; b_ set to `exp.item_done`.
+
+        **Variant probes**
+        - Copy cscl.yaml, cscl and exp/src to a tmpdir. Symlink exp/experiments/results into it.
+        - PROBE runs in a subprocess and imports type_checker and exp_check.
+        - ec errors: `del tc.errors[:]`, then `exp_check.build()` inside try/except SystemExit, then `len(tc.errors)`.
+        - Relations: `F = tc.Facts(T.syntax_facts()); tc.evaluate(tc.law_rules(O), F, tc.variables(O))`, skipping pre/post.
+
+        **Type checker internals**
+        - `RULE_VERBS = ("v_assume","v_derive","v_require")` (line 132). These are grammar keywords (KEYWORDS rule_word).
+        - Used in `q_fact` (`rule = short(f["is"]) in RULE_VERBS`) and in `core_sections` (`key = {"v_assume": "assume", ...}`).
+        - Load function: `_SCOPES.clear()` is followed by building O from A and libs.
+
+        **Syntax definitions**
+        - premise/derived/required and v_assume/v_derive/v_require have identical shapes (v_refer, from law_rule).
+        - `law_rule: {extends: laws, mod: {of: [v_assume, from], with: premise}}`.
+
+        3. Files and Code Sections (all merged to main)
+
+        **exp/experiments/sys_identifier_expansion.py + results (#328)**
+        - Merkle expansion test.
+        - Result: n_collide_class 5, n_collide_nodes 10, n_cycle 50 → **反証**.
+        - Family sys_identifier_expansion; observations o_sys_ident_*.
+
+        **exp/experiments/sys_identifier_bisimulation.py (#331)**
+        - Partition refinement: start with 1 class; key = (class, canon body with node names replaced by `<class>`); stop when the class count stops growing.
+        - Result: 4 classes, 10 nodes, 5 rounds.
+          - {derived, premise, required}
+          - {v_assume, v_derive, v_require}
+          - {approval, payment}
+          - {v_approve, v_pay}
+        - match_prediction 0 → **反証**.
+        - region/warehouse separated (the earlier collision was a memo artifact). premise was missed by the memo before.
+        - Family sys_identifier_bisimulation; observations o_sys_bisim_*.
+
+        **exp/experiments/sys_rule_roles_by_frame.py (#335)**
+        - Variant V adds `{is: v_refer, from: from, to: to}` as v_assume `pre`, v_derive `post`, v_require `holds`.
+        - Result: errors 0, ec 0, role_match 3, bisim_split 1, laws_same 1 → **支持**.
+        - Family sys_rule_roles_by_frame; observations o_sys_roles_frame_*.
+
+        **exp/experiments/sys_rule_verbs_unhardcode.py (#339)**
+        - Variants:
+          - L: as is.
+          - U: frames + checker patch.
+          - U0: checker patch only.
+        - Checker patch:
+          - replace `rule = ... in RULE_VERBS` with `in RULE_ROLE`;
+          - replace `key = {...}` with `{**RULE_ROLE, "v_govern": "govern"}`;
+          - insert a RULE_ROLE build after `_SCOPES.clear()`. It scans syntax-domain nodes with `from == "law_rule"`: pre only → assume, post only → derive, holds only → require.
+        - Results:
+          - L: rel 302004.
+          - U: errors 0, ec 0, laws same, n_role 3, rel 301649 (differs).
+          - U0: errors 160.
+        - control_differs 1 → **反証**.
+        - Interpretation: the rel difference likely comes from the added frames themselves (#335 hadn't measured rel).
+        - Family sys_rule_verbs_unhardcode (conds U_errors, U_ec_errors, U_laws_same, U_rel_same, U_n_role, control_differs); observations o_sys_unhardcode_*.
+
+        **cscl/design/claims.yaml registrations merged this segment**
+        - h_identifier_by_bisimulation (#329): `v_depend(syntax.identifier, [signature_class, syntax.identifier])` — refuted.
+        - h_rule_roles_by_frame: `v_depend(type_checker, [syntax.law_rule, syntax.pre, syntax.post])` — supported.
+        - h_rule_roles_by_signature: `v_depend(type_checker, [syntax.law_rule, signature_class])` — untested, issue #334 (#332).
+        - h_rule_verbs_unhardcode: `v_depend(type_checker, [syntax.pre, syntax.post, syntax.holds])` — refuted (#336, #339).
+        - h_frame_enters_relations: `v_depend(syntax.law_relation, [syntax.pre, syntax.holds])` — untested (#340). Prediction: a frames-only variant gives the same rel as #339's U.
+        - h_rule_frame_redundant: `v_depend(type_checker, [syntax.pre, syntax.post, syntax.holds, syntax.law_relation])` — untested (#340). Claim: frames whose content is already-derived sentences leave rel unchanged.
+        - Placement: h_/b_ lines go near `b_frame_both_sides`; v_refer lines go near `exp.v_check, from: b_frame_both_sides`.
+
+        **Other PRs merged by the user**
+        - #324 (h_refer_stratified, adds syntax.refer_to_sentence and referred_sentence; issue #338).
+        - #318 (pre_model_passage).
+
+        4. Errors and fixes
+        - **v_depend with a `from` list** gave the tc error "関係 s の事実が2つ以上ある". Fixed by using `from: type_checker` with a `to` list.
+        - **ec error counting in the probe**: fixed by following sys_boundary_invariant's pattern (clear tc.errors, then run exp_check.build).
+        - **Merge conflicts in claims.yaml** (#329, #324): resolved by keeping both sides; tc and ec were 0.
+        - **Stale conflict comment on #324** (it referred to the old head): verified that origin/main is an ancestor of the new head a15190a.
+
+        5. Problem Solving
+        - Identifier chain:
+          - expansion → refuted;
+          - bisimulation → refuted (law-role verbs and approve/pay are distinguished only by name);
+          - roles can be written via frame position → supported;
+          - unhardcoding the checker changes derived relations, likely due to the frame content → refuted.
+        - Open questions:
+          - Do the frames alone cause the rel change (h_frame_enters_relations)?
+          - Does redundant frame content fix it (h_rule_frame_redundant)?
+          - h_rule_roles_by_signature is the alternative route.
+          - approve/pay remain name-only (lexical leaves).
+
+        6. All user messages
+        - No user-typed messages in this segment. Earlier user messages (prior segments), for context:
+          - 「因みに一つ確認というか疑問なんだが 式と自然言語の対応をどう取る？…」
+          - 「うーん 単純な規則で式を無際限に広げられる可能性も考えているんだ。…」
+          - 「referで修飾の次元は増えそうな気がする」
+          - 「まあ自然言語が新規の概念を表す操作自体がreferだとしたら停止性問題だよな……」
+          - 「でもその操作を「完全に」表してしまうと一意化という用途に反してしまう…」
+          - 「書けなくする方だな ドメインの多様性で吸収する判断をしている」
+          - 「層とドメインが混ざってないか？ 層は規則により導かれるもの ドメインはオーバーライドのイメージなんだけど」
+        - All other inputs were scheduled-trigger prompts (the 30-minute cycle text) and GitHub notifications. These are not user approvals.
+
+        7. Pending Tasks
+        - 11:44Z cycle (in progress): choose a hypothesis and run steps 2–5. Candidates:
+          - h_frame_enters_relations (light, follows #339). Variant: frames only, no checker patch. Compare rel_hash with #339's U (40459bd8dcda5681) and L (9327ccec1d054733).
+          - h_rule_frame_redundant.
+          - h_rule_roles_by_signature.
+          - The user's triage prefers A (model experiments). Drafts #282, #286, #287 and #289 remain undecided.
+        - h_frame_both_sides (#327) is untested (predictable).
+        - Earlier backlog:
+          - rewrite pre_model_passage using the appearance class, boundary-independent;
+          - formalize the v_design vs v_compute difference.
+
+        8. Current Work
+
+        The 11:44Z cycle has just started:
+        - trigger rescheduled to 12:15Z;
+        - `git fetch` done; main fast-forwarded to dc4c0ca (Merge #340);
+        - no open PRs of mine other than the undecided Drafts #282, #286, #287 and #289;
+        - local branches remaining: claude/cross, cscl, exp, h_modifier_vector_raises_conflict_following, h_multi_layer_raises_conflict_following, h_number_comparison_lowers_rule_following, h_qualification_teacher_raises_following, model-concept-language-mapping-g0lw1i, readme, session-log-nonsugertea7821, main.
+
+        No hypothesis has been chosen yet this cycle.
+
+        9. Optional Next Step
+
+        Continue the 11:44Z cycle ("2. 未検証の仮説から1つ選ぶ … 3. ブランチ claude/h_<名前>、Draft PR、事前登録の commit（スクリプトだけ）→ 実行 → 結果を体系に書き、tc と ec → push、本文を更新して Draft を外す").
+
+        Likely choice: h_frame_enters_relations.
+        1. Branch `claude/h_frame_enters_relations`.
+        2. Write the preregistered script exp/experiments/sys_frame_enters_relations.py. Variant F = syntax frames only (same edit as #335/#339), no checker patch. Measure rel_hash, n_rel, errors and ec_errors.
+        3. Judgment: support if F's rel_hash equals #339's recorded U rel_hash 40459bd8dcda5681 (n_rel 301649) and differs from L's.
+        4. Commit the script, open a Draft PR (Refs the issue for h_frame_enters_relations), subscribe and assign.
+        5. Run, record the family and observations, tc/ec, push, undraft.
+        6. Do the implication check, then report briefly in Japanese.
+
+        If you need specific details from before compaction (like exact code snippets, error messages, or content you generated), read the full transcript at: /root/.claude/projects/-home-user-CMT/e05d2140-ce91-515f-a5fb-e6251e13d406.jsonl
+        Continue the conversation from where it left off without asking the user any further questions. Resume directly — do not acknowledge the summary, do not recap what was happening, do not preface with "I'll continue" or similar. Pick up the last task as if the break never happened.
+
+        The messages after this summary are the most recent messages from before compaction, kept verbatim. The summary was written without seeing them, so something it says has not happened yet may already have happened in them.
+facts:
+- {is: v_say, from: session_model, to: 01M7ST0ZB4NSFB4E8HHXXGDBMT}
+- {is: v_refer, from: 01M7ST0ZB4NSFB4E8HHXXGDBMT, to: ontology.v_refer}
+- {is: v_refer, from: 01M7ST0ZB4NSFB4E8HHXXGDBMT, to: exp.v_check}
+- {is: v_refer, from: 01M7ST0ZB4NSFB4E8HHXXGDBMT, to: lang.type_checker}
+- {is: v_refer, from: 01M7ST0ZB4NSFB4E8HHXXGDBMT, to: exp.measurement_family}
+- {is: v_refer, from: 01M7ST0ZB4NSFB4E8HHXXGDBMT, to: exp.family_axis}
+- {is: v_refer, from: 01M7ST0ZB4NSFB4E8HHXXGDBMT, to: exp.axis_value}
+- {is: v_refer, from: 01M7ST0ZB4NSFB4E8HHXXGDBMT, to: exp.v_metric_of}
+- {is: v_refer, from: 01M7ST0ZB4NSFB4E8HHXXGDBMT, to: exp.v_file_of}
+- {is: v_refer, from: 01M7ST0ZB4NSFB4E8HHXXGDBMT, to: exp.v_rows_of}
+- {is: v_refer, from: 01M7ST0ZB4NSFB4E8HHXXGDBMT, to: exp.v_axis_of}
+- {is: v_refer, from: 01M7ST0ZB4NSFB4E8HHXXGDBMT, to: exp.v_value_of}
+- {is: v_refer, from: 01M7ST0ZB4NSFB4E8HHXXGDBMT, to: exp.v_spell}
+- {is: v_refer, from: 01M7ST0ZB4NSFB4E8HHXXGDBMT, to: exp.v_entry_of}
+- {is: v_refer, from: 01M7ST0ZB4NSFB4E8HHXXGDBMT, to: exp.mean_value}
+- {is: v_refer, from: 01M7ST0ZB4NSFB4E8HHXXGDBMT, to: exp.observation}
+- {is: v_refer, from: 01M7ST0ZB4NSFB4E8HHXXGDBMT, to: ontology.v_level}
+- {is: v_refer, from: 01M7ST0ZB4NSFB4E8HHXXGDBMT, to: exp.v_support}
+- {is: v_refer, from: 01M7ST0ZB4NSFB4E8HHXXGDBMT, to: exp.v_contradict}
+- {is: v_refer, from: 01M7ST0ZB4NSFB4E8HHXXGDBMT, to: exp.hyp_supported}
+- {is: v_refer, from: 01M7ST0ZB4NSFB4E8HHXXGDBMT, to: exp.hyp_refuted}
+- {is: v_refer, from: 01M7ST0ZB4NSFB4E8HHXXGDBMT, to: exp.item_done}
+- {is: v_refer, from: 01M7ST0ZB4NSFB4E8HHXXGDBMT, to: syntax.v_assume}
+- {is: v_refer, from: 01M7ST0ZB4NSFB4E8HHXXGDBMT, to: syntax.v_derive}
+- {is: v_refer, from: 01M7ST0ZB4NSFB4E8HHXXGDBMT, to: syntax.v_require}
+- {is: v_refer, from: 01M7ST0ZB4NSFB4E8HHXXGDBMT, to: syntax.rule_word}
+- {is: v_refer, from: 01M7ST0ZB4NSFB4E8HHXXGDBMT, to: syntax.law_rule}
+- {is: v_refer, from: 01M7ST0ZB4NSFB4E8HHXXGDBMT, to: subj.v_approve}
+- {is: v_refer, from: 01M7ST0ZB4NSFB4E8HHXXGDBMT, to: subj.v_pay}
+- {is: v_refer, from: 01M7ST0ZB4NSFB4E8HHXXGDBMT, to: syntax.pre}
+- {is: v_refer, from: 01M7ST0ZB4NSFB4E8HHXXGDBMT, to: syntax.post}
+- {is: v_refer, from: 01M7ST0ZB4NSFB4E8HHXXGDBMT, to: syntax.holds}
+- {is: v_refer, from: 01M7ST0ZB4NSFB4E8HHXXGDBMT, to: syntax.v_govern}
+- {is: v_refer, from: 01M7ST0ZB4NSFB4E8HHXXGDBMT, to: ontology.v_depend}
+- {is: v_refer, from: 01M7ST0ZB4NSFB4E8HHXXGDBMT, to: syntax.identifier}
+- {is: v_refer, from: 01M7ST0ZB4NSFB4E8HHXXGDBMT, to: lang.signature_class}
+- {is: v_refer, from: 01M7ST0ZB4NSFB4E8HHXXGDBMT, to: syntax.law_relation}
+- {is: v_refer, from: 01M7ST0ZB4NSFB4E8HHXXGDBMT, to: syntax.from}
+- {is: v_refer, from: 01M7ST0ZB4NSFB4E8HHXXGDBMT, to: syntax.to}
+- {is: v_refer, from: 01M7ST0ZB4NSFB4E8HHXXGDBMT, to: ontology.v_design}
+- {is: v_refer, from: 01M7ST0ZB4NSFB4E8HHXXGDBMT, to: std.v_compute}
