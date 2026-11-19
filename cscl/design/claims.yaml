@@ -275,8 +275,10 @@ individuals:
   o_sys_verbs_dyn_ends_not_all_con: {is: exp.observation}
   o_sys_verbs_dyn_no_occ_end: {is: exp.observation}
   o_sys_verbs_static_occ_end: {is: exp.observation}
-  h_collect_agree_in_grammar: {is: exp.hyp_untested}
-  b_collect_agree_in_grammar: {is: exp.item_queued}
+  h_collect_agree_in_grammar: {is: exp.hyp_refuted}
+  b_collect_agree_in_grammar: {is: exp.item_done}
+  h_grammar_section_by_mod: {is: exp.hyp_untested}
+  b_grammar_section_by_mod: {is: exp.item_queued}
   h_collect_by_formula: {is: exp.hyp_refuted}
   b_collect_by_formula: {is: exp.item_done}
   h_collect_by_end_order: {is: exp.hyp_untested}
@@ -447,6 +449,8 @@ individuals:
   o_sys_fact_slot_verb_no_refute: {is: exp.observation}
   o_sys_collect_form_wide: {is: exp.observation}
   o_sys_collect_patch_differs: {is: exp.observation}
+  o_sys_collect_grammar_n1_fails: {is: exp.observation}
+  o_sys_collect_grammar_n2_changes: {is: exp.observation}
   o_sys_any_by_entail_passes_checks: {is: exp.observation}
   o_sys_any_by_entail_passes_ec: {is: exp.observation}
   o_sys_any_by_entail_ideal: {is: exp.observation}
@@ -853,6 +857,13 @@ facts:
   - {is: v_refer, from: o_sys_diff_one_step, to: {is: v_come_after, from: sys_differentiation.edges_one_own.mean_value, to: 372.8}}
   - {is: v_refer, from: h_collect_agree_in_grammar, to: {is: v_refer, from: syntax.grammar, to: [syntax.v_collect, syntax.v_agree]}}
   - {is: exp.v_check, from: b_collect_agree_in_grammar, to: h_collect_agree_in_grammar}
+  - {is: v_refer, from: o_sys_collect_grammar_n1_fails, to: {is: v_level, from: sys_collect_agree_in_grammar.N1_passes.mean_value, to: 0.0}}
+  - {is: v_refer, from: o_sys_collect_grammar_n2_changes, to: {is: v_level, from: sys_collect_agree_in_grammar.N2_passes.mean_value, to: 0.0}}
+  - {is: exp.v_contradict, from: o_sys_collect_grammar_n1_fails, to: h_collect_agree_in_grammar}
+  - {is: exp.v_contradict, from: o_sys_collect_grammar_n2_changes, to: h_collect_agree_in_grammar}
+  - {is: v_refer, from: h_grammar_section_by_mod, to: {is: v_depend, from: syntax.grammar, to: syntax.mod}}
+  - {is: exp.v_check, from: b_grammar_section_by_mod, to: h_grammar_section_by_mod}
+  - {is: exp.v_ground, from: d_cscl_display_derived, to: h_grammar_section_by_mod}
   - {is: v_refer, from: h_collect_by_formula, to: {is: v_refer, from: syntax.mod, to: syntax.v_collect}}
   - {is: exp.v_check, from: b_collect_by_formula, to: h_collect_by_formula}
   - {is: v_refer, from: o_sys_collect_form_wide, to: {is: v_level, from: sys_collect_by_formula.static_match.mean_value, to: 0.0}}
