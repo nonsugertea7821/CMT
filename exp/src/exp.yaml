@@ -912,6 +912,14 @@ individuals:
   sys_above_individual_fix2_cond_B_changed: {is: axis_value, val: {text: B_changed}}
   sys_above_individual_fix2_cond_B_above_ind: {is: axis_value, val: {text: B_above_ind}}
   sys_above_individual_fix2_cond_A_errors: {is: axis_value, val: {text: A_errors}}
+  sys_family_refers_laws_fix: {is: measurement_family}
+  sys_family_refers_laws_fix_cond: {is: family_axis, val: {text: cond}}
+  sys_family_refers_laws_fix_cond_R_errors: {is: axis_value, val: {text: R_errors}}
+  sys_family_refers_laws_fix_cond_R_ec_errors: {is: axis_value, val: {text: R_ec_errors}}
+  sys_family_refers_laws_fix_cond_R_changed: {is: axis_value, val: {text: R_changed}}
+  sys_family_refers_laws_fix_cond_U_errors: {is: axis_value, val: {text: U_errors}}
+  sys_family_refers_laws_fix_cond_U_ec_errors: {is: axis_value, val: {text: U_ec_errors}}
+  sys_family_refers_laws_fix_cond_U_changed: {is: axis_value, val: {text: U_changed}}
   sys_hierarchy_object_before: {is: measurement_family}
   sys_hierarchy_object_before_cond: {is: family_axis, val: {text: cond}}
   sys_hierarchy_object_before_cond_errors: {is: axis_value, val: {text: errors}}
@@ -1925,6 +1933,10 @@ individuals:
   o_e32_rho_full: {is: observation}
   o_e32_p_full: {is: observation}
   o_e32_pairs: {is: observation}
+  o_sys_family_refers_laws_passes: {is: observation}
+  o_sys_family_refers_laws_passes_ec: {is: observation}
+  o_sys_family_refers_laws_unchanged: {is: observation}
+  o_sys_family_refers_laws_undeclared_passes: {is: observation}
   o_e14_vec_robust_below_none_conflict: {is: observation}
   o_e14_vec_robust_below_none_control: {is: observation}
   o_e20_examples_move_apply: {is: observation}
@@ -2056,7 +2068,7 @@ individuals:
   b_save_text_reference_for_paraphrase: {is: item_queued}
   b_renaming_inside_glossary: {is: item_queued}
   b_glossary_raises_writing: {is: item_done}
-  b_family_refers_laws: {is: item_queued}
+  b_family_refers_laws: {is: item_done}
   b_symbol_selection: {is: item_queued}
   b_japanese_generation_consistency: {is: item_queued}
   b_lineage_operations_on_vectors: {is: item_queued}
@@ -2075,7 +2087,7 @@ individuals:
   h_value_refers_hypothesis: {is: hyp_refuted}
   b_value_refers_hypothesis: {is: item_done}
   h_hypothesis_refers_family: {is: hyp_refuted}
-  h_family_refers_laws: {is: hyp_untested}
+  h_family_refers_laws: {is: hyp_supported}
   b_hypothesis_refers_family: {is: item_done}
   h_factor_depends_value: {is: hyp_untested}
   b_factor_depends_value: {is: item_queued}
@@ -4247,6 +4259,23 @@ facts:
   - {is: v_spell, from: sys_above_individual_fix2_cond_A_errors, to: A_errors}
   - {is: v_entry_of, from: '{cond}', to: sys_above_individual_fix2}
   - {is: v_metric_of, from: sys_above_individual_fix2, to: mean_value}
+  - {is: v_file_of, from: sys_family_refers_laws_fix.json, to: sys_family_refers_laws_fix}
+  - {is: v_rows_of, from: [rows], to: sys_family_refers_laws_fix}
+  - {is: v_axis_of, from: sys_family_refers_laws_fix_cond, to: sys_family_refers_laws_fix}
+  - {is: v_value_of, from: sys_family_refers_laws_fix_cond_R_errors, to: sys_family_refers_laws_fix_cond}
+  - {is: v_spell, from: sys_family_refers_laws_fix_cond_R_errors, to: R_errors}
+  - {is: v_value_of, from: sys_family_refers_laws_fix_cond_R_ec_errors, to: sys_family_refers_laws_fix_cond}
+  - {is: v_spell, from: sys_family_refers_laws_fix_cond_R_ec_errors, to: R_ec_errors}
+  - {is: v_value_of, from: sys_family_refers_laws_fix_cond_R_changed, to: sys_family_refers_laws_fix_cond}
+  - {is: v_spell, from: sys_family_refers_laws_fix_cond_R_changed, to: R_changed}
+  - {is: v_value_of, from: sys_family_refers_laws_fix_cond_U_errors, to: sys_family_refers_laws_fix_cond}
+  - {is: v_spell, from: sys_family_refers_laws_fix_cond_U_errors, to: U_errors}
+  - {is: v_value_of, from: sys_family_refers_laws_fix_cond_U_ec_errors, to: sys_family_refers_laws_fix_cond}
+  - {is: v_spell, from: sys_family_refers_laws_fix_cond_U_ec_errors, to: U_ec_errors}
+  - {is: v_value_of, from: sys_family_refers_laws_fix_cond_U_changed, to: sys_family_refers_laws_fix_cond}
+  - {is: v_spell, from: sys_family_refers_laws_fix_cond_U_changed, to: U_changed}
+  - {is: v_entry_of, from: '{cond}', to: sys_family_refers_laws_fix}
+  - {is: v_metric_of, from: sys_family_refers_laws_fix, to: mean_value}
   - {is: v_file_of, from: sys_hierarchy_object_before.json, to: sys_hierarchy_object_before}
   - {is: v_rows_of, from: [rows], to: sys_hierarchy_object_before}
   - {is: v_axis_of, from: sys_hierarchy_object_before_cond, to: sys_hierarchy_object_before}
@@ -5843,6 +5872,13 @@ facts:
   - {is: v_refer, from: o_e32_pairs, to: {is: v_level, from: e32_specific_expression_rsa.n_pairs.mean_value, to: 276}}
   - {is: v_support, from: o_e32_rho_specific, to: h_specific_composes_from_expression}
   - {is: v_support, from: o_e32_p_specific, to: h_specific_composes_from_expression}
+  - {is: v_refer, from: o_sys_family_refers_laws_passes, to: {is: v_level, from: sys_family_refers_laws_fix.R_errors.mean_value, to: 0.0}}
+  - {is: v_refer, from: o_sys_family_refers_laws_passes_ec, to: {is: v_level, from: sys_family_refers_laws_fix.R_ec_errors.mean_value, to: 0.0}}
+  - {is: v_refer, from: o_sys_family_refers_laws_unchanged, to: {is: v_level, from: sys_family_refers_laws_fix.R_changed.mean_value, to: 0.0}}
+  - {is: v_refer, from: o_sys_family_refers_laws_undeclared_passes, to: {is: v_level, from: sys_family_refers_laws_fix.U_errors.mean_value, to: 0.0}}
+  - {is: v_support, from: o_sys_family_refers_laws_passes, to: h_family_refers_laws}
+  - {is: v_support, from: o_sys_family_refers_laws_passes_ec, to: h_family_refers_laws}
+  - {is: v_support, from: o_sys_family_refers_laws_unchanged, to: h_family_refers_laws}
   - {is: v_support, from: o_e28_block_all_above_last, to: h_attention_causes_preceding_effect}
   - {is: v_support, from: o_e28_first_block_below_first, to: h_attention_causes_preceding_effect}
   - {is: v_contradict, from: o_e21_common_robust_below_none, to: h_common_component_transfers_to_unseen}
