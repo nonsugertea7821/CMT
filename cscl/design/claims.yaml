@@ -125,8 +125,8 @@ individuals:
   b_placement_in_laws: {is: exp.item_queued}
   h_above_sound: {is: exp.hyp_refuted}
   b_above_sound: {is: exp.item_done}
-  h_renaming_invariant: {is: exp.hyp_untested}
-  b_renaming_invariant: {is: exp.item_queued}
+  h_renaming_invariant: {is: exp.hyp_refuted}
+  b_renaming_invariant: {is: exp.item_done}
   h_w_from_frames: {is: exp.hyp_refuted}
   b_w_from_frames: {is: exp.item_done}
   h_layers_from_primitives: {is: exp.hyp_mixed}
@@ -203,6 +203,10 @@ individuals:
   b_checker_words_by_formula: {is: exp.item_queued}
   o_sys_limit_subj_unpaired: {is: exp.observation}
   o_sys_mod_no_stated_false: {is: exp.observation}
+  o_sys_renaming_breaks_check: {is: exp.observation}
+  o_sys_renaming_changes_facts: {is: exp.observation}
+  o_sys_renaming_control_breaks: {is: exp.observation}
+  o_sys_renaming_count: {is: exp.observation}
   o_sys_atom_no_stated_false: {is: exp.observation}
   o_sys_soundness_unpaired_above: {is: exp.observation}
   o_sys_soundness_not_significant: {is: exp.observation}
@@ -817,6 +821,12 @@ facts:
   - {is: v_refer, from: o_sys_limit_paired_open, to: {is: v_come_after, from: sys_limitation.pair_open.mean_value, to: 0.5}}
   - {is: v_refer, from: o_sys_limit_subj_unpaired, to: {is: v_level, from: sys_limitation.pair_subj.mean_value, to: 0.0}}
   - {is: v_refer, from: o_sys_mod_no_stated_false, to: {is: v_level, from: sys_limitation.stated_false.mean_value, to: 0.0}}
+  - {is: v_refer, from: o_sys_renaming_breaks_check, to: {is: v_level, from: sys_renaming_invariant.R_errors.mean_value, to: 8}}
+  - {is: v_refer, from: o_sys_renaming_changes_facts, to: {is: v_level, from: sys_renaming_invariant.R_facts_diff.mean_value, to: 70}}
+  - {is: v_refer, from: o_sys_renaming_control_breaks, to: {is: v_level, from: sys_renaming_invariant.C_errors.mean_value, to: 44}}
+  - {is: v_refer, from: o_sys_renaming_count, to: {is: v_level, from: sys_renaming_invariant.n_renamed.mean_value, to: 2643}}
+  - {is: exp.v_contradict, from: o_sys_renaming_breaks_check, to: h_renaming_invariant}
+  - {is: exp.v_contradict, from: o_sys_renaming_changes_facts, to: h_renaming_invariant}
   - {is: v_refer, from: o_sys_atom_no_stated_false, to: {is: v_level, from: sys_limitation.atom_stated_false.mean_value, to: 0.0}}
   - {is: v_refer, from: o_sys_soundness_unpaired_above, to: {is: v_come_after, from: sys_soundness.unpaired_changed.mean_value, to: sys_soundness.paired_changed.mean_value}}
   - {is: v_refer, from: o_sys_soundness_not_significant, to: {is: v_come_after, from: sys_soundness.p_value.mean_value, to: 0.05}}
