@@ -1277,6 +1277,13 @@ individuals:
   e31_glossary_writing_cond_n_gl_exact: {is: axis_value, val: {text: n_gl_exact}}
   e31_glossary_writing_cond_n_oov: {is: axis_value, val: {text: n_oov}}
   e31_glossary_writing_cond_n_before_oov: {is: axis_value, val: {text: n_before_oov}}
+  e32_specific_expression_rsa: {is: measurement_family}
+  e32_specific_expression_rsa_cond: {is: family_axis, val: {text: cond}}
+  e32_specific_expression_rsa_cond_rho_specific: {is: axis_value, val: {text: rho_specific}}
+  e32_specific_expression_rsa_cond_p_specific: {is: axis_value, val: {text: p_specific}}
+  e32_specific_expression_rsa_cond_rho_full: {is: axis_value, val: {text: rho_full}}
+  e32_specific_expression_rsa_cond_p_full: {is: axis_value, val: {text: p_full}}
+  e32_specific_expression_rsa_cond_n_pairs: {is: axis_value, val: {text: n_pairs}}
   sys_case_frame_formula: {is: measurement_family}
   sys_case_frame_formula_cond: {is: family_axis, val: {text: cond}}
   sys_case_frame_formula_cond_errors: {is: axis_value, val: {text: errors}}
@@ -1889,6 +1896,11 @@ individuals:
   o_e31_exact: {is: observation}
   o_e31_oov: {is: observation}
   o_e31_before_oov: {is: observation}
+  o_e32_rho_specific: {is: observation}
+  o_e32_p_specific: {is: observation}
+  o_e32_rho_full: {is: observation}
+  o_e32_p_full: {is: observation}
+  o_e32_pairs: {is: observation}
   o_e14_vec_robust_below_none_conflict: {is: observation}
   o_e14_vec_robust_below_none_control: {is: observation}
   o_e20_examples_move_apply: {is: observation}
@@ -1972,7 +1984,7 @@ individuals:
   h_text_shift_raises_stability: {is: hyp_refuted}
   h_specific_agrees_with_sense_difference: {is: hyp_refuted}
   h_vector_transfers_beyond_choice_format: {is: hyp_mixed}
-  h_specific_composes_from_expression: {is: hyp_untested}
+  h_specific_composes_from_expression: {is: hyp_supported}
   h_common_component_transfers_to_unseen: {is: hyp_refuted}
   h_attention_carries_text_route: {is: hyp_supported}
   h_model_can_write_cscl: {is: hyp_refuted}
@@ -4789,6 +4801,21 @@ facts:
   - {is: v_spell, from: e31_glossary_writing_cond_n_before_oov, to: n_before_oov}
   - {is: v_entry_of, from: '{cond}', to: e31_glossary_writing}
   - {is: v_metric_of, from: e31_glossary_writing, to: mean_value}
+  - {is: v_file_of, from: e32_specific_expression_rsa.json, to: e32_specific_expression_rsa}
+  - {is: v_rows_of, from: [rows], to: e32_specific_expression_rsa}
+  - {is: v_axis_of, from: e32_specific_expression_rsa_cond, to: e32_specific_expression_rsa}
+  - {is: v_value_of, from: e32_specific_expression_rsa_cond_rho_specific, to: e32_specific_expression_rsa_cond}
+  - {is: v_spell, from: e32_specific_expression_rsa_cond_rho_specific, to: rho_specific}
+  - {is: v_value_of, from: e32_specific_expression_rsa_cond_p_specific, to: e32_specific_expression_rsa_cond}
+  - {is: v_spell, from: e32_specific_expression_rsa_cond_p_specific, to: p_specific}
+  - {is: v_value_of, from: e32_specific_expression_rsa_cond_rho_full, to: e32_specific_expression_rsa_cond}
+  - {is: v_spell, from: e32_specific_expression_rsa_cond_rho_full, to: rho_full}
+  - {is: v_value_of, from: e32_specific_expression_rsa_cond_p_full, to: e32_specific_expression_rsa_cond}
+  - {is: v_spell, from: e32_specific_expression_rsa_cond_p_full, to: p_full}
+  - {is: v_value_of, from: e32_specific_expression_rsa_cond_n_pairs, to: e32_specific_expression_rsa_cond}
+  - {is: v_spell, from: e32_specific_expression_rsa_cond_n_pairs, to: n_pairs}
+  - {is: v_entry_of, from: '{cond}', to: e32_specific_expression_rsa}
+  - {is: v_metric_of, from: e32_specific_expression_rsa, to: mean_value}
   - {is: v_file_of, from: sys_layers_exists_change.json, to: sys_layers_exists_change}
   - {is: v_rows_of, from: [rows], to: sys_layers_exists_change}
   - {is: v_axis_of, from: sys_layers_exists_change_cond, to: sys_layers_exists_change}
@@ -5730,6 +5757,13 @@ facts:
   - {is: v_refer, from: o_e31_oov, to: {is: v_level, from: e31_glossary_writing.n_oov.mean_value, to: 1}}
   - {is: v_refer, from: o_e31_before_oov, to: {is: v_level, from: e31_glossary_writing.n_before_oov.mean_value, to: 10}}
   - {is: v_support, from: o_e31_gl, to: h_glossary_raises_writing}
+  - {is: v_refer, from: o_e32_rho_specific, to: {is: v_level, from: e32_specific_expression_rsa.rho_specific.mean_value, to: 0.129105}}
+  - {is: v_refer, from: o_e32_p_specific, to: {is: v_level, from: e32_specific_expression_rsa.p_specific.mean_value, to: 0.0288}}
+  - {is: v_refer, from: o_e32_rho_full, to: {is: v_level, from: e32_specific_expression_rsa.rho_full.mean_value, to: 0.06261}}
+  - {is: v_refer, from: o_e32_p_full, to: {is: v_level, from: e32_specific_expression_rsa.p_full.mean_value, to: 0.1445}}
+  - {is: v_refer, from: o_e32_pairs, to: {is: v_level, from: e32_specific_expression_rsa.n_pairs.mean_value, to: 276}}
+  - {is: v_support, from: o_e32_rho_specific, to: h_specific_composes_from_expression}
+  - {is: v_support, from: o_e32_p_specific, to: h_specific_composes_from_expression}
   - {is: v_support, from: o_e28_block_all_above_last, to: h_attention_causes_preceding_effect}
   - {is: v_support, from: o_e28_first_block_below_first, to: h_attention_causes_preceding_effect}
   - {is: v_contradict, from: o_e21_common_robust_below_none, to: h_common_component_transfers_to_unseen}
