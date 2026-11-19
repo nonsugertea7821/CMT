@@ -112,10 +112,10 @@ individuals:
   b_individual_depth: {is: exp.item_done}
   h_hierarchy_in_object: {is: exp.hyp_supported}
   b_hierarchy_in_object: {is: exp.item_done}
-  h_draw_on_with_shallow: {is: exp.hyp_untested}
-  b_draw_on_with_shallow: {is: exp.item_queued}
   h_law_relation_in_mod: {is: exp.hyp_untested}
   b_law_relation_in_mod: {is: exp.item_queued}
+  h_draw_on_with_shallow: {is: exp.hyp_refuted}
+  b_draw_on_with_shallow: {is: exp.item_done}
   h_gloss_formula: {is: exp.hyp_refuted}
   b_gloss_formula: {is: exp.item_done}
   h_negation_formula: {is: exp.hyp_untested}
@@ -455,6 +455,9 @@ individuals:
   o_sys_collect_grammar_n2_changes: {is: exp.observation}
   o_sys_cf_sig_acc: {is: exp.observation}
   o_sys_cf_sig_below: {is: exp.observation}
+  o_sys_dows_a_reproduces: {is: exp.observation}
+  o_sys_dows_b_fails: {is: exp.observation}
+  o_sys_dows_c_fails: {is: exp.observation}
   o_sys_any_by_entail_passes_checks: {is: exp.observation}
   o_sys_any_by_entail_passes_ec: {is: exp.observation}
   o_sys_any_by_entail_ideal: {is: exp.observation}
@@ -652,6 +655,11 @@ facts:
   - {is: exp.v_check, from: b_draw_on_with_shallow, to: h_draw_on_with_shallow}
   - {is: v_refer, from: h_law_relation_in_mod, to: {is: v_depend, from: syntax.mod, to: syntax.law_relation}}
   - {is: exp.v_check, from: b_law_relation_in_mod, to: h_law_relation_in_mod}
+  - {is: v_refer, from: o_sys_dows_a_reproduces, to: {is: v_level, from: sys_draw_on_with_shallow.named_mod_A.mean_value, to: 2.0}}
+  - {is: v_refer, from: o_sys_dows_b_fails, to: {is: v_level, from: sys_draw_on_with_shallow.errors_B.mean_value, to: 6.0}}
+  - {is: exp.v_contradict, from: o_sys_dows_b_fails, to: h_draw_on_with_shallow}
+  - {is: v_refer, from: o_sys_dows_c_fails, to: {is: v_level, from: sys_draw_on_with_shallow.errors_C.mean_value, to: 5.0}}
+  - {is: exp.v_contradict, from: o_sys_dows_c_fails, to: h_draw_on_with_shallow}
   - {is: v_refer, from: h_above_closed, to: {is: v_depend, from: above_order, to: syntax.extends}}
   - {is: exp.v_check, from: b_above_closed, to: h_above_closed}
   - {is: exp.v_support, from: o_sys_above_closed_no_law_error, to: h_above_closed}
