@@ -232,8 +232,10 @@ individuals:
   o_sys_step_symmetric: {is: exp.observation}
   o_sys_limit_mostly_open: {is: exp.observation}
   o_sys_limit_paired_open: {is: exp.observation}
-  h_checker_words_by_formula: {is: exp.hyp_untested}
-  b_checker_words_by_formula: {is: exp.item_queued}
+  h_checker_words_by_formula: {is: exp.hyp_mixed}
+  b_checker_words_by_formula: {is: exp.item_done}
+  h_refer_by_exact_holds: {is: exp.hyp_untested}
+  b_refer_by_exact_holds: {is: exp.item_queued}
   o_sys_limit_subj_unpaired: {is: exp.observation}
   o_sys_mod_no_stated_false: {is: exp.observation}
   o_sys_renaming_breaks_check: {is: exp.observation}
@@ -443,6 +445,8 @@ individuals:
   o_sys_fact_slot_verb_all_match: {is: exp.observation}
   o_sys_fact_slot_verb_clean: {is: exp.observation}
   o_sys_fact_slot_verb_no_refute: {is: exp.observation}
+  o_sys_cw_two_match: {is: exp.observation}
+  o_sys_cw_not_all: {is: exp.observation}
   o_sys_any_by_entail_passes_checks: {is: exp.observation}
   o_sys_any_by_entail_passes_ec: {is: exp.observation}
   o_sys_any_by_entail_ideal: {is: exp.observation}
@@ -822,6 +826,13 @@ facts:
   - {is: v_refer, from: o_sys_subsume_never_under_subsumer, to: {is: v_level, from: sys_subsume.all_ancestors.mean_value, to: 0.0}}
   - {is: v_refer, from: h_checker_words_by_formula, to: {is: v_depend, from: type_checker, to: [syntax.extends, syntax.mod]}}
   - {is: exp.v_check, from: b_checker_words_by_formula, to: h_checker_words_by_formula}
+  - {is: v_refer, from: o_sys_cw_two_match, to: {is: v_level, from: sys_checker_words_by_formula.n_match.mean_value, to: 2.0}}
+  - {is: v_refer, from: o_sys_cw_not_all, to: {is: v_level, from: sys_checker_words_by_formula.verdict_support.mean_value, to: 0.0}}
+  - {is: exp.v_support, from: o_sys_cw_two_match, to: h_checker_words_by_formula}
+  - {is: exp.v_contradict, from: o_sys_cw_not_all, to: h_checker_words_by_formula}
+  - {is: v_refer, from: h_refer_by_exact_holds, to: {is: v_depend, from: type_checker, to: syntax.holds}}
+  - {is: exp.v_check, from: b_refer_by_exact_holds, to: h_refer_by_exact_holds}
+  - {is: exp.v_ground, from: d_cscl_display_derived, to: h_refer_by_exact_holds}
   - {is: v_refer, from: o_sys_subsume_layer_not_all_usable, to: {is: v_come_before, from: sys_subsume.some_usable.mean_value, to: 1.0}}
   - {is: v_refer, from: o_sys_spelling_one_word_two_referents, to: {is: v_come_after, from: sys_spelling.multi.mean_value, to: 0.0}}
   - {is: v_refer, from: o_sys_special_outside_named, to: {is: v_come_after, from: sys_special.outside.mean_value, to: 0.0}}
