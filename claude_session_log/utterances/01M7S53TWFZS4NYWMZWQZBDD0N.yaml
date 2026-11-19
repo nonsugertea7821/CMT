@@ -1,0 +1,34 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-19T05:40:17.423Z（UTC）
+individuals:
+  01M7S53TWFZS4NYWMZWQZBDD0N:
+    is: model_utterance
+    display: 発言 2314
+    val:
+      order: 2314
+      text: |
+        h_renaming_invariant（#151）は反証でした。名前で読むと分かっている語の外にある 2643 の名を付け替えただけで、tc の誤りが8つ出て、法則の事実も70文変わりました。訂正はなく、PR #301 の Draft を外しました。
+
+        **結果**
+        - 誤り8つは、どれも closed_under_some・closed_under_mod_some への違反です。
+        - 事実の差70文は、どれも residual_space の集まりが消えたことによるものです。
+        - role も付け替えた対照（C）では誤りが44で、付け替えそのものは効いています。
+
+        **原因（使い捨ての探りで確かめ、記録はしていません）**
+        - 型検査器は、集まりの動詞を `"syntax.v_collect"` という層の名を付けた文字列で読んでいます。
+        - 事前登録の除外は、文字列の定数を短い名と突き合わせて決めていたので、この読み方が漏れました。#216 の「名前で読む語」の数えも同じ突き合わせ方だったので、同じく漏れていました。
+        - コードを読むと、層の名を付けた文字列の定数は7つあります（syntax.definition・laws・role・v_agree・v_collect・v_refer・v_use）。このうち v_collect と v_agree は、これまでの数えにも登録にも出ていません。この7つはコードを読んで見たもので、体系には記録していません。
+
+        **含意**
+        - 型検査器が名前で読む語の一覧は、層の名を付けた形を含めて数え直す必要があります。#232・#298 の議論は、その抜けた一覧の上に立っていました。
+
+        **新しい仮説（登録だけの PR #302。v_collect・v_agree の名前読みをなくす道を、反証から対で出したもの）**
+        - h_collect_agree_in_grammar: v_collect と v_agree を、文法の節に置ける。
+        - h_collect_by_formula: v_collect の区別は、限定（mod）の式で述べられる。
+
+        手でのマージを待っている PR は #296・#297・#298・#301 です。次の周回は 06:04Z です。
+facts:
+- {is: v_say, from: session_model, to: 01M7S53TWFZS4NYWMZWQZBDD0N}
+- {is: exp.v_answer, from: 01M7S53TWFZS4NYWMZWQZBDD0N, to: 01M7RE4494JDFW71WBNAW679KX}
+- {is: v_refer, from: 01M7S53TWFZS4NYWMZWQZBDD0N, to: syntax.v_collect}
+- {is: v_refer, from: 01M7S53TWFZS4NYWMZWQZBDD0N, to: ontology.v_agree}
+- {is: v_refer, from: 01M7S53TWFZS4NYWMZWQZBDD0N, to: ontology.v_refer}
