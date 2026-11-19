@@ -1,0 +1,28 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-19T05:06:00.110Z（UTC）
+individuals:
+  01M7S351SEEKNB84JK5WGG9KS1:
+    is: model_utterance
+    display: 発言 2301
+    val:
+      order: 2301
+      text: |
+        sys_checker_words_in_grammar（#298）は、事前登録の判定どおりなら反証でした。ただし、そのうち一部は測り方の欠けと読めるので、訂正版を走らせています。
+
+        | 変種 | tc の誤り | 事実の変化 | 判定への影響 |
+        |---|---|---|---|
+        | N1（式なしのノード） | 2 | 0 | 落ちた |
+        | N2（式つきのノード） | 0 | 9関係で増加 | 落ちた |
+        | M（対照、v_refer を抜いた節） | `grammar.checker_word` の誤り 1 | 0 | 検査は働いている |
+
+        - **N1:** 「式がない」と「法則 monotone に反する」の2つで落ちました。測りの欠けではなく、本当の不合格です。体系では、ノードは式を持つ必要があります。
+        - **N2:** ec も 0 で、ノード名の差もありませんでした。増えた文は、足したノードの式の中にある名前なしの限定についての文です。型検査器はこの限定を yaml の書き出しで名づけるので、その名前に `checker_word` が含まれず、名前の一致で除く方法では除けませんでした。#147・#148 と同じ型の欠けで、これで3度目です。
+
+        記録と訂正は、次の順で commit しました。
+        1. 元の結果
+        2. 訂正の事前登録。除く文の基準を「before に現れない項を含む文」に変えました。判定の規則は変えていません。
+
+        訂正版の実行は裏で走っています。終わったら体系に記録し、tc と ec を通して Draft を外します。訂正があるので、この PR は自動マージに乗らず、手で見てもらうことになります。
+facts:
+- {is: v_say, from: session_model, to: 01M7S351SEEKNB84JK5WGG9KS1}
+- {is: exp.v_answer, from: 01M7S351SEEKNB84JK5WGG9KS1, to: 01M7RE4494JDFW71WBNAW679KX}
+- {is: v_refer, from: 01M7S351SEEKNB84JK5WGG9KS1, to: ontology.v_refer}
