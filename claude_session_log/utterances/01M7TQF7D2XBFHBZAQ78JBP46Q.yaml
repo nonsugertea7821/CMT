@@ -1,0 +1,32 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-19T20:20:19.490Z（UTC）
+individuals:
+  01M7TQF7D2XBFHBZAQ78JBP46Q:
+    is: model_utterance
+    display: 発言 2703
+    val:
+      order: 2703
+      text: |
+        h_collect_agree_in_grammar（#303）を確かめ、PR #400 を開きました。結果は反証です。Draft は外し、tc と ec は手元で通りました。
+
+        **分かったこと**
+        - v_collect と v_agree を文法の節に置く操作を、#298 の訂正版と同じ手順で試しました。
+        - 結果は #298 とまったく同じで、落ち方も数も一致しました。
+          - 式のない節のノードは、「式がない」として落ちました（誤り 2）。
+          - mod を持つ節のノードは、誤りは出ないものの、法則が導く文が 3 つ増えて落ちました。
+        - 対照として片方の語を抜いた節では、検査器が「等しくない」と正しく指摘しました。仕組み自体は働いています。
+
+        **含意と新しい仮説**
+        - 語を替えても結果が同じなので、壁は語の中身ではなく、節の名のノードの式（mod）にあると読めます。
+        - そこで `h_grammar_section_by_mod`（未検証）を同じ PR で登録し、決定 d_cscl_display_derived に結びました。
+          - 確かめ方の案は、語を持たない節で mod の書き方を替え、文が増えない書き方があるかを見ることです。
+
+        **マージ待ち**
+        - #387、#394、#395、#396、#397 は、あなたが手で見る必要があります。
+        - #400 は反証なので、自動マージの条件を満たせばワークフローがマージします。
+
+        ロードマップでは、識別子化の列の h_collect_agree_in_grammar まで終わりました。次は h_case_frame_by_signature です。
+facts:
+- {is: v_say, from: session_model, to: 01M7TQF7D2XBFHBZAQ78JBP46Q}
+- {is: exp.v_answer, from: 01M7TQF7D2XBFHBZAQ78JBP46Q, to: 01M7TA7A145QS5NA0XWZR9ST0Q}
+- {is: v_refer, from: 01M7TQF7D2XBFHBZAQ78JBP46Q, to: syntax.v_collect}
+- {is: v_refer, from: 01M7TQF7D2XBFHBZAQ78JBP46Q, to: ontology.v_agree}
