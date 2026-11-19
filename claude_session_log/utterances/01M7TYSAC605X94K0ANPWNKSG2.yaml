@@ -1,0 +1,23 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-19T22:28:10.246Z（UTC）
+individuals:
+  01M7TYSAC605X94K0ANPWNKSG2:
+    is: model_utterance
+    display: 発言 2728
+    val:
+      order: 2728
+      text: |
+        #407 の仮説 h_refer_stratified（文について述べる文は別の領域に分かれている）は反証になりました。記録を push し、Draft を外しています。訂正を含むので、手で見てマージしてください。
+
+        - **結果（訂正後）:** 文について述べる文は 204 件ありました。そのうち 202 件は同じ領域の中の文を述べています。領域をまたぐのは 2 件だけで、どちらも `exp.v_qualify` でした。
+        - **同じ領域の内訳:** 一番多いのは `exp.v_check` の 140 件で、残り項目 `b_` が仮説 `h_` を述べるものです。次が `v_state` 25 件、`v_report` 18 件、`v_qualify` 12 件です。
+        - **解釈:** 仮説・観察・残り項目が一つの領域に同居し、互いを述べ合っています。なので「領域で層が分かれる」という読みは、今の体系では成り立ちません。層を分けたいなら、領域とは別の区別を式で書く必要があります。
+        - **訂正の開示:** 最初の測定は 0 件と出ていました。測定に使ったデータ（`tc.build()` の O）に claims と exp の領域が入っていなかったためです。訂正スクリプトを事前登録し、各領域の yaml を直接読むようにして数え直しました。PR 本文にも書いてあります。
+
+        ロードマップ a：case_frame（反証）→ draw_on_with_shallow（反証）→ concept_kind の対（片方が支持、片方が反証）→ refer_stratified（反証）と進みました。次は h_negation_formula、h_placement_in_laws、h_cscl_self_hosting の順です。
+facts:
+- {is: v_say, from: session_model, to: 01M7TYSAC605X94K0ANPWNKSG2}
+- {is: exp.v_answer, from: 01M7TYSAC605X94K0ANPWNKSG2, to: 01M7TA7A145QS5NA0XWZR9ST0Q}
+- {is: v_refer, from: 01M7TYSAC605X94K0ANPWNKSG2, to: exp.v_qualify}
+- {is: v_refer, from: 01M7TYSAC605X94K0ANPWNKSG2, to: exp.v_check}
+- {is: v_refer, from: 01M7TYSAC605X94K0ANPWNKSG2, to: exp.v_state}
+- {is: v_refer, from: 01M7TYSAC605X94K0ANPWNKSG2, to: exp.v_report}

@@ -1,0 +1,204 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-19T22:27:44.156Z（UTC）
+individuals:
+  01M7TYRGWWSF7NQVJ2VF2K0RZD:
+    is: session_summary
+    display: 発言 2727
+    val:
+      order: 2727
+      text: |
+        This session is being continued from a previous conversation that ran out of context. The summary below covers the earlier portion of the conversation.
+
+        <system-reminder>
+        <tools-used-before-summary>AskUserQuestion, Bash, Edit, Grep, Read, ReadNotifications, Skill, TaskStop, ToolSearch, WebFetch, WebSearch, Write, mcp__claude-code-remote__create_trigger, mcp__claude-code-remote__delete_trigger, mcp__claude-code-remote__get_trigger, mcp__claude-code-remote__read_documentation, mcp__claude-code-remote__send_later, mcp__claude-code-remote__subscribe_pr_activity, mcp__claude-code-remote__update_trigger, mcp__github__actions_get, mcp__github__actions_list, mcp__github__add_issue_comment, mcp__github__create_pull_request, mcp__github__get_job_logs, mcp__github__issue_read, mcp__github__issue_write, mcp__github__list_issue_types, mcp__github__list_issues, mcp__github__list_pull_requests, mcp__github__pull_request_read, mcp__github__update_pull_request</tools-used-before-summary>
+        </system-reminder>
+        Summary:
+        1. Primary Request and Intent:
+
+        **Standing rules (in force)**
+        - Repo: nonsugertea7821/CMT at /home/user/CMT.
+        - Reply in plain, natural Japanese. Don't overclaim. Give interpretation.
+        - Restore files with `git show <rev>:<path> > <path>`. Never use checkout or stash to restore; `git switch` for branches is fine.
+        - Python: /home/user/venv/bin/python.
+        - Commit trailer:
+          `Co-Authored-By: Claude [モデル名を伏せた] <[メールアドレスを伏せた]>`
+          `Claude-Session: https://claude.ai/code/session_015KRKt6TNJZ7ZsQmEknANXK`
+        - A PR body ends with `🤖 Generated with [Claude Code](https://claude.com/claude-code)`, a blank line, then the session URL.
+        - No personal info and no model identifiers in pushed artifacts.
+        - Claude never merges.
+        - Every PR I open: call subscribe_pr_activity, and call issue_write update with assignees ["nonsugertea7821"].
+        - After a merge: `git fetch -q --prune origin`, `git switch -q main`, `git merge -q --ff-only origin/main`, `git branch -D <branch>`.
+        - No comments in system yaml (the hook checks on commit).
+        - Never rerun recorded experiment scripts. Use `git add -f` for exp/experiments files.
+        - CI belongs to GitHub.
+        - Proposals must be registered as untested hypotheses first.
+        - Every new hypothesis gets v_ground to a roadmap decision in the same PR, or is marked 「わき道」.
+        - Preregistration:
+          - The first commit is the script only, in a Draft PR.
+          - Results go in a later commit.
+          - Corrections are disclosed, preregistered as a `_fix.py` script, and written to `_fix.json`.
+          - Undraft when the state is supported, refuted or mixed.
+        - Don't ask permission in conversation. Decide, and write the rationale in the PR.
+
+        **User's conceptual rules**
+        - Names may be read only for signature and grammar words; other distinctions are written as expressions.
+
+        **Trigger**
+        - trig_01L92Xn7LSTHrmqt7enEcCPG, the 「仮説の周回（30分毎）」 trigger.
+        - At each fire, first call update_trigger with run_once_at about now + 31 min and enabled: true.
+        - Then follow its steps:
+          - Check PRs.
+          - Follow the roadmap.
+          - Preregister, run, record.
+          - Look for implications and register new hypotheses in registration-only PRs.
+          - Report in Japanese with one roadmap line.
+
+        2. Key Technical Concepts:
+        - tc is `cscl/bootstrap/type_checker/type_checker.py`. ec is `exp/src/exp_check.py`.
+        - `tc.build()` returns `(T, O, _)`.
+          - O holds only the syntax and library law facts (590) and individuals (218). It does not include the claims or exp domains.
+          - `T.resolve(word, dom)`, `T.ancestors`, `T.N`.
+          - The evaluated facts come from `F = tc.Facts(T.syntax_facts())`, then `tc.evaluate(tc.law_rules(O), F, tc.variables(O))`, read via `F.by`.
+        - Copy-experiment pattern:
+          - Use tempfile with a copytree of cscl.yaml, cscl and exp/src. Also copy exp/experiments/results whenever ec must pass.
+          - Edit the copy, then run a PROBE via subprocess.
+        - Recording pattern:
+          - exp.yaml: family individuals go before `  sys_any_by_entail_before_fix: {is: measurement_family}`. Facts (v_file_of, v_rows_of, v_axis_of, v_value_of/v_spell per key, v_entry_of '{cond}', v_metric_of mean_value) go before `  - {is: v_file_of, from: sys_any_by_entail_before_fix.json, to: sys_any_by_entail_before_fix}`.
+          - claims.yaml: observations go before `  o_sys_any_by_entail_passes_checks: {is: exp.observation}`. Facts go after the hypothesis's `exp.v_check` line.
+          - Use only numeric summary keys; a null value breaks ec (a TypeError).
+        - auto_merge reads the hypothesis name from the branch name. Corrections, mixed results and pair branches all go to manual review.
+
+        3. Files and Code Sections:
+
+        **exp/experiments/sys_case_frame_by_signature.py** (#402, merged)
+        - C(v) takes the nearest from, to and new_kind, each reduced to its top ancestor, plus holds, pre and post as (is, from, to, neg) tuples.
+        - Leave-one-out mode over GOLD.
+        - Result: acc_signature 0.1667 < acc_display 0.6481 → refuted. 54 of the 57 verbs exist; 30 are singletons.
+        - Observations: o_sys_cf_sig_acc and o_sys_cf_sig_below.
+
+        **exp/experiments/sys_draw_on_with_shallow.py** (#403, merged)
+        - Variants A, B and C of the sys_draw_on "after" state in a copy.
+        - errors: A 6 (named_mod 2), B 6 ("syntax.r_shallow は動詞でない"), C 5. All of C's errors come from overextension colliding with lang.individual_depth (the same formula) → refuted.
+        - Observations: o_sys_dows_a_reproduces, o_sys_dows_b_fails, o_sys_dows_c_fails.
+
+        **h_law_relation_in_mod** (#404, merged)
+        - Registered as `{is: v_depend, from: syntax.mod, to: syntax.law_relation}`, with v_ground from d_cscl_display_derived.
+
+        **exp/experiments/sys_concept_kind_pair.py and sys_concept_kind_pair_fix.py** (#406, branch claude/h_concept_kind_pair, open; manual review, CI green)
+        - E adds `{is: r_verb, from: var1, neg: true}` to concept_kind. N removes the holds and pre negations.
+        - Result:
+          - E: errors 0, n_both 0 (L had 67), rel_eq_f 1.
+          - N: errors 937, mostly one_name.
+        - Correction: the copy lacked the results directory, so ec failed even on L. The fix gave ec_fail L 0, E 0, N 1.
+        - Recorded: h_concept_kind_excludes_verb supported, h_concept_kind_frame_free refuted.
+        - Observations: o_sys_ckp_e_no_both, o_sys_ckp_e_passes, o_sys_ckp_e_ec_passes, o_sys_ckp_n_fails.
+        - Commits: 88c0de8, b097029, 592bc1c, d8eaff4.
+
+        **exp/experiments/sys_refer_stratified.py and sys_refer_stratified_fix.py** (#407, branch claude/h_refer_stratified, Draft)
+        - Commits:
+          - Preregistration.
+          - Raw result: R = 0, caused by the O bug.
+          - The fix script, which reads each domain's yaml directly (facts plus domain), builds `Iq[f"{dom}.{n}"] = T.resolve(is, dom)`, and resolves names via Iq or T.resolve.
+        - The fix was run and wrote sys_refer_stratified_fix.json; that file is NOT yet committed.
+        - Corrected summary: errors 0, n_facts 5478, n_ind 2766, unresolved_verb 4, R 204, R_same 202, R_cross 2, R_inline 1360, S_same 496.
+        - R_same per verb:
+
+          | Verb | same | cross |
+          |---|---|---|
+          | exp.v_check | 140 | 0 |
+          | exp.v_state | 25 | 0 |
+          | exp.v_report | 18 | 0 |
+          | exp.v_qualify | 12 | 2 |
+          | exp.v_prior_differ | 3 | 0 |
+          | exp.v_challenge | 2 | 0 |
+          | exp.v_supersede | 2 | 0 |
+
+        - S_same examples include v_ground d→h and v_support/v_contradict o→h, all inside lang.
+        - Preregistered judgment: R_same > 0 → refuted.
+
+        4. Errors and fixes:
+        - **ec in copies fails without results files.** Fixed with a disclosed _fix that copies exp/experiments/results.
+        - **O lacks the claims and exp domains.** Fixed with a disclosed _fix that reads the yaml files.
+        - **Null conds broke ec** (TypeError). Fixed by dropping V_A, V_B and V_C from the exp.yaml cond list.
+        - **#404 conflict with #403.** Fixed by merging origin/main and running union.py, then deleting the stale untested lines.
+        - **gh search needs is:issue**, so search for each hypothesis separately.
+
+        5. Problem Solving:
+        - Roadmap item a progressed through:
+          - case_frame (refuted)
+          - draw_on_with_shallow (refuted)
+          - concept_kind pair (excludes_verb supported, frame_free refuted)
+          - refer_stratified (in progress; refuted per the corrected data)
+        - Implications noted:
+          - Adopting E in the real syntax.yaml needs a separate manual PR.
+          - Case-frame paths would need new concepts, so none were registered.
+
+        6. All user messages:
+        - None in this stretch. Only trigger fires and GitHub notifications arrived, and these are not user approvals.
+        - Earlier user messages, preserved:
+          - 「それやらないとロードマップ管理は難しいか それをやってから、それ以降の仮説はロードマップに結びながら管理してほしい じゃこんどこそ離席 よろしく」
+          - 「auto_merge で v_ground も登録として通るようにして」
+          - 「#384にマージコンフリクト」
+
+        7. Pending Tasks:
+        - Finish #407 (see Current Work).
+        - Await the user's merge of #387, #394, #395, #396, #397 and #406. All were conflict-free as of 22:24.
+        - After each merge: sync main and delete the branch.
+        - After #387 merges, do a0-3 as a manual PR.
+        - Later manual PRs:
+          - The keep-each-verb checker change.
+          - Adopting concept_kind variant E in syntax.yaml.
+          - Testing h_post_as_fact.
+        - Next on the roadmap after refer_stratified: h_negation_formula, h_placement_in_laws, h_cscl_self_hosting.
+        - The trigger fires next at 2026-11-19T22:55:00Z.
+
+        8. Current Work:
+        On branch claude/h_refer_stratified (PR #407, Draft, subscribed and assigned), the correction script ran. Its output exp/experiments/results/sys_refer_stratified_fix.json is uncommitted.
+
+        The steps left:
+        1. `git add -f` the _fix.json.
+        2. Record in exp.yaml two families: sys_refer_stratified (keys errors, R, R_same, R_cross, R_inline, S_same) and sys_refer_stratified_fix (keys errors, n_facts, n_ind, unresolved_verb, R, R_same, R_cross, R_inline, S_same).
+        3. In claims.yaml:
+           - Set `h_refer_stratified: {is: exp.hyp_refuted}` and `b_refer_stratified: {is: exp.item_done}`.
+           - Add an observation, e.g. o_sys_rs_same: v_level sys_refer_stratified_fix.R_same.mean_value 202.0, with exp.v_contradict to h_refer_stratified.
+           - Optionally add a descriptive observation for S_same 496.
+        4. Run tc and ec, commit (interpretation: exp.v_check b→h makes up 140 of the same-domain cases; v_ground and v_support sentence pairs also sit in the same domain, which is the basis problem), and push.
+        5. Update the PR body with the correction disclosed, and undraft.
+        6. Report in Japanese. Consider a paired implication hypothesis (for example, moving b_/v_check or observations into a separate domain, versus exempting v_check) in a registration-only PR grounded to d_cscl_display_derived.
+
+        9. Optional Next Step:
+        Complete the #407 recording as described in Current Work. The last state: the corrected run printed `{'errors': 0, 'n_facts': 5478, 'n_ind': 2766, 'unresolved_verb': 4, 'R': 204, 'R_same': 202, 'R_cross': 2, 'R_inline': 1360, 'S_same': 496}`. The preregistered rule was 「R_same > 0 なら反証」.
+
+        If you need specific details from before compaction (like exact code snippets, error messages, or content you generated), read the full transcript at: /root/.claude/projects/-home-user-CMT/e05d2140-ce91-515f-a5fb-e6251e13d406.jsonl
+        Continue the conversation from where it left off without asking the user any further questions. Resume directly — do not acknowledge the summary, do not recap what was happening, do not preface with "I'll continue" or similar. Pick up the last task as if the break never happened.
+
+        The messages after this summary are the most recent messages from before compaction, kept verbatim. The summary was written without seeing them, so something it says has not happened yet may already have happened in them.
+facts:
+- {is: v_say, from: session_model, to: 01M7TYRGWWSF7NQVJ2VF2K0RZD}
+- {is: v_refer, from: 01M7TYRGWWSF7NQVJ2VF2K0RZD, to: exp.v_ground}
+- {is: v_refer, from: 01M7TYRGWWSF7NQVJ2VF2K0RZD, to: lang.type_checker}
+- {is: v_refer, from: 01M7TYRGWWSF7NQVJ2VF2K0RZD, to: exp.measurement_family}
+- {is: v_refer, from: 01M7TYRGWWSF7NQVJ2VF2K0RZD, to: exp.v_file_of}
+- {is: v_refer, from: 01M7TYRGWWSF7NQVJ2VF2K0RZD, to: exp.v_rows_of}
+- {is: v_refer, from: 01M7TYRGWWSF7NQVJ2VF2K0RZD, to: exp.v_axis_of}
+- {is: v_refer, from: 01M7TYRGWWSF7NQVJ2VF2K0RZD, to: exp.v_value_of}
+- {is: v_refer, from: 01M7TYRGWWSF7NQVJ2VF2K0RZD, to: exp.v_spell}
+- {is: v_refer, from: 01M7TYRGWWSF7NQVJ2VF2K0RZD, to: exp.v_entry_of}
+- {is: v_refer, from: 01M7TYRGWWSF7NQVJ2VF2K0RZD, to: exp.v_metric_of}
+- {is: v_refer, from: 01M7TYRGWWSF7NQVJ2VF2K0RZD, to: exp.mean_value}
+- {is: v_refer, from: 01M7TYRGWWSF7NQVJ2VF2K0RZD, to: exp.observation}
+- {is: v_refer, from: 01M7TYRGWWSF7NQVJ2VF2K0RZD, to: exp.v_check}
+- {is: v_refer, from: 01M7TYRGWWSF7NQVJ2VF2K0RZD, to: syntax.new_kind}
+- {is: v_refer, from: 01M7TYRGWWSF7NQVJ2VF2K0RZD, to: ontology.v_depend}
+- {is: v_refer, from: 01M7TYRGWWSF7NQVJ2VF2K0RZD, to: syntax.mod}
+- {is: v_refer, from: 01M7TYRGWWSF7NQVJ2VF2K0RZD, to: syntax.law_relation}
+- {is: v_refer, from: 01M7TYRGWWSF7NQVJ2VF2K0RZD, to: exp.v_state}
+- {is: v_refer, from: 01M7TYRGWWSF7NQVJ2VF2K0RZD, to: exp.v_report}
+- {is: v_refer, from: 01M7TYRGWWSF7NQVJ2VF2K0RZD, to: exp.v_qualify}
+- {is: v_refer, from: 01M7TYRGWWSF7NQVJ2VF2K0RZD, to: exp.v_prior_differ}
+- {is: v_refer, from: 01M7TYRGWWSF7NQVJ2VF2K0RZD, to: exp.v_challenge}
+- {is: v_refer, from: 01M7TYRGWWSF7NQVJ2VF2K0RZD, to: exp.v_supersede}
+- {is: v_refer, from: 01M7TYRGWWSF7NQVJ2VF2K0RZD, to: exp.v_support}
+- {is: v_refer, from: 01M7TYRGWWSF7NQVJ2VF2K0RZD, to: exp.v_contradict}
+- {is: v_refer, from: 01M7TYRGWWSF7NQVJ2VF2K0RZD, to: exp.hyp_refuted}
+- {is: v_refer, from: 01M7TYRGWWSF7NQVJ2VF2K0RZD, to: exp.item_done}
+- {is: v_refer, from: 01M7TYRGWWSF7NQVJ2VF2K0RZD, to: ontology.v_level}
