@@ -1,0 +1,26 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-19T05:03:46.651Z（UTC）
+individuals:
+  01M7S30ZEVMDM2YDZSS0214P00:
+    is: model_utterance
+    display: 発言 2299
+    val:
+      order: 2299
+      text: |
+        h_checker_words_in_grammar（#232）を確かめ始めました。結果はまだ出ていません。
+
+        - **確かめること:** 型検査器は role・definition・v_refer の3語を名前で読んでいます。この3語を、文法の新しい節 `checker_word` に置けるかを見ます。法則の名と同じく、型検査器がその節と等しいことを確かめる形です。試すのは一時コピーの上だけで、main は変えません。
+        - **事前登録:** 手順と判定を決めたスクリプトを commit し、Draft PR #298 を立てました。
+          - 節の名にあたるノードの定義を2通り（N1・N2）用意しました。
+          - 対照として、v_refer を抜いた変異 M を置きます。M で検査が誤りを出さなければ「外れ」です。
+          - N1 か N2 のどちらかで「tc の誤り 0・ec の誤り 0・法則を評価した事実が変わらない・ノード名が変わらない」なら支持、どちらもだめなら反証です。
+        - **進み:** スクリプトは裏で走っています。9分ごとの見回りを予約しました。終わったら結果を体系に書き、tc と ec を通してから Draft を外します。
+
+        前から開いている2つの PR は、まだマージされていません。
+        - **#297:** CI が通り、auto-merge の判定かマージを待っています。
+        - **#296:** 手で見てもらう待ちです。
+
+        次の30分の周回は 05:32Z に予約してあります。
+facts:
+- {is: v_say, from: session_model, to: 01M7S30ZEVMDM2YDZSS0214P00}
+- {is: exp.v_answer, from: 01M7S30ZEVMDM2YDZSS0214P00, to: 01M7RE4494JDFW71WBNAW679KX}
+- {is: v_refer, from: 01M7S30ZEVMDM2YDZSS0214P00, to: ontology.v_refer}
