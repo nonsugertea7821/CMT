@@ -1188,6 +1188,14 @@ individuals:
   sys_family_refers_hypothesis_cond_n_obs_linked: {is: axis_value, val: {text: n_obs_linked}}
   sys_family_refers_hypothesis_cond_n_obs_no_family: {is: axis_value, val: {text: n_obs_no_family}}
   sys_family_refers_hypothesis_cond_n_obs_multi_family: {is: axis_value, val: {text: n_obs_multi_family}}
+  sys_hypothesis_refers_family: {is: measurement_family}
+  sys_hypothesis_refers_family_cond: {is: family_axis, val: {text: cond}}
+  sys_hypothesis_refers_family_cond_n_hyps_linked: {is: axis_value, val: {text: n_hyps_linked}}
+  sys_hypothesis_refers_family_cond_n_no_factor: {is: axis_value, val: {text: n_no_factor}}
+  sys_hypothesis_refers_family_cond_n_reached: {is: axis_value, val: {text: n_reached}}
+  sys_hypothesis_refers_family_cond_n_unreached: {is: axis_value, val: {text: n_unreached}}
+  sys_hypothesis_refers_family_cond_n_fams_without_denote: {is: axis_value, val: {text: n_fams_without_denote}}
+  sys_hypothesis_refers_family_cond_n_to_reached: {is: axis_value, val: {text: n_to_reached}}
   sys_readings_many: {is: measurement_family}
   sys_readings_many_cond: {is: family_axis, val: {text: cond}}
   sys_readings_many_cond_kind: {is: axis_value, val: {text: kind}}
@@ -1968,8 +1976,8 @@ individuals:
   b_family_refers_hypothesis: {is: item_done}
   h_value_refers_hypothesis: {is: hyp_refuted}
   b_value_refers_hypothesis: {is: item_done}
-  h_hypothesis_refers_family: {is: hyp_untested}
-  b_hypothesis_refers_family: {is: item_queued}
+  h_hypothesis_refers_family: {is: hyp_refuted}
+  b_hypothesis_refers_family: {is: item_done}
   h_factor_depends_value: {is: hyp_untested}
   b_factor_depends_value: {is: item_queued}
   h_definition_bridges_value: {is: hyp_untested}
@@ -1977,6 +1985,9 @@ individuals:
   o_sys_family_refers_shared: {is: observation}
   o_sys_family_refers_linked: {is: observation}
   o_sys_family_refers_no_family: {is: observation}
+  o_sys_hyp_refers_unreached: {is: observation}
+  o_sys_hyp_refers_reached: {is: observation}
+  o_sys_hyp_refers_no_denote: {is: observation}
   o_sys_value_refers_shared: {is: observation}
   o_sys_value_refers_cells_shared: {is: observation}
   o_sys_value_refers_unresolved: {is: observation}
@@ -4525,6 +4536,23 @@ facts:
   - {is: v_spell, from: sys_family_refers_hypothesis_cond_n_obs_multi_family, to: n_obs_multi_family}
   - {is: v_entry_of, from: '{cond}', to: sys_family_refers_hypothesis}
   - {is: v_metric_of, from: sys_family_refers_hypothesis, to: mean_value}
+  - {is: v_file_of, from: sys_hypothesis_refers_family.json, to: sys_hypothesis_refers_family}
+  - {is: v_rows_of, from: [rows], to: sys_hypothesis_refers_family}
+  - {is: v_axis_of, from: sys_hypothesis_refers_family_cond, to: sys_hypothesis_refers_family}
+  - {is: v_value_of, from: sys_hypothesis_refers_family_cond_n_hyps_linked, to: sys_hypothesis_refers_family_cond}
+  - {is: v_spell, from: sys_hypothesis_refers_family_cond_n_hyps_linked, to: n_hyps_linked}
+  - {is: v_value_of, from: sys_hypothesis_refers_family_cond_n_no_factor, to: sys_hypothesis_refers_family_cond}
+  - {is: v_spell, from: sys_hypothesis_refers_family_cond_n_no_factor, to: n_no_factor}
+  - {is: v_value_of, from: sys_hypothesis_refers_family_cond_n_reached, to: sys_hypothesis_refers_family_cond}
+  - {is: v_spell, from: sys_hypothesis_refers_family_cond_n_reached, to: n_reached}
+  - {is: v_value_of, from: sys_hypothesis_refers_family_cond_n_unreached, to: sys_hypothesis_refers_family_cond}
+  - {is: v_spell, from: sys_hypothesis_refers_family_cond_n_unreached, to: n_unreached}
+  - {is: v_value_of, from: sys_hypothesis_refers_family_cond_n_fams_without_denote, to: sys_hypothesis_refers_family_cond}
+  - {is: v_spell, from: sys_hypothesis_refers_family_cond_n_fams_without_denote, to: n_fams_without_denote}
+  - {is: v_value_of, from: sys_hypothesis_refers_family_cond_n_to_reached, to: sys_hypothesis_refers_family_cond}
+  - {is: v_spell, from: sys_hypothesis_refers_family_cond_n_to_reached, to: n_to_reached}
+  - {is: v_entry_of, from: '{cond}', to: sys_hypothesis_refers_family}
+  - {is: v_metric_of, from: sys_hypothesis_refers_family, to: mean_value}
   - {is: v_file_of, from: sys_readings_many.json, to: sys_readings_many}
   - {is: v_rows_of, from: [rows], to: sys_readings_many}
   - {is: v_axis_of, from: sys_readings_many_cond, to: sys_readings_many}
@@ -5385,6 +5413,10 @@ facts:
   - {is: v_refer, from: o_sys_value_refers_cells_shared, to: {is: v_level, from: sys_value_refers_hypothesis.n_cells_shared.mean_value, to: 31}}
   - {is: v_refer, from: o_sys_value_refers_unresolved, to: {is: v_level, from: sys_value_refers_hypothesis.n_unresolved.mean_value, to: 0}}
   - {is: v_contradict, from: o_sys_value_refers_shared, to: h_value_refers_hypothesis}
+  - {is: v_refer, from: o_sys_hyp_refers_unreached, to: {is: v_level, from: sys_hypothesis_refers_family.n_unreached.mean_value, to: 63}}
+  - {is: v_refer, from: o_sys_hyp_refers_reached, to: {is: v_level, from: sys_hypothesis_refers_family.n_reached.mean_value, to: 29}}
+  - {is: v_refer, from: o_sys_hyp_refers_no_denote, to: {is: v_level, from: sys_hypothesis_refers_family.n_fams_without_denote.mean_value, to: 40}}
+  - {is: v_contradict, from: o_sys_hyp_refers_unreached, to: h_hypothesis_refers_family}
   - {is: v_refer, from: o_sys_denote_meets_miss, to: {is: v_level, from: sys_denote_meets_hypothesis.n_miss.mean_value, to: 92}}
   - {is: v_refer, from: o_sys_denote_meets_meets, to: {is: v_level, from: sys_denote_meets_hypothesis.n_meets.mean_value, to: 67}}
   - {is: v_refer, from: o_sys_denote_meets_empty, to: {is: v_level, from: sys_denote_meets_hypothesis.n_empty_side.mean_value, to: 53}}
