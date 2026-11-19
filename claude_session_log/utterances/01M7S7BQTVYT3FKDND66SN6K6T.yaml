@@ -1,0 +1,207 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-19T06:19:33.595Z（UTC）
+individuals:
+  01M7S7BQTVYT3FKDND66SN6K6T:
+    is: session_summary
+    display: 発言 2322
+    val:
+      order: 2322
+      text: |
+        This session is being continued from a previous conversation that ran out of context. The summary below covers the earlier portion of the conversation.
+
+        <system-reminder>
+        <tools-used-before-summary>AskUserQuestion, Bash, Edit, Grep, Read, ReadNotifications, Skill, TaskStop, ToolSearch, WebFetch, WebSearch, Write, mcp__claude-code-remote__create_trigger, mcp__claude-code-remote__delete_trigger, mcp__claude-code-remote__get_trigger, mcp__claude-code-remote__read_documentation, mcp__claude-code-remote__send_later, mcp__claude-code-remote__subscribe_pr_activity, mcp__claude-code-remote__update_trigger, mcp__github__actions_get, mcp__github__actions_list, mcp__github__add_issue_comment, mcp__github__create_pull_request, mcp__github__get_job_logs, mcp__github__issue_read, mcp__github__issue_write, mcp__github__list_issue_types, mcp__github__list_issues, mcp__github__list_pull_requests, mcp__github__pull_request_read, mcp__github__update_pull_request</tools-used-before-summary>
+        </system-reminder>
+        Summary:
+        1. Primary Request and Intent
+
+        **Standing rules (still in force)**
+        - Repo: nonsugertea7821/CMT at /home/user/CMT.
+        - Reply in Japanese. Don't overclaim. Give interpretation.
+        - Restore files with `git show <rev>:<path> > <path>`. Never checkout to restore and never stash. `git switch` is used for branches.
+        - Python: /home/user/venv/bin/python.
+        - Commit trailer:
+          `Co-Authored-By: Claude [モデル名を伏せた] <[メールアドレスを伏せた]>`
+          `Claude-Session: https://claude.ai/code/session_015KRKt6TNJZ7ZsQmEknANXK`
+        - PR body ends with:
+          `🤖 Generated with [Claude Code](https://claude.com/claude-code)`
+          blank line
+          `https://claude.ai/code/session_015KRKt6TNJZ7ZsQmEknANXK`
+        - Claude never merges. No personal info or model identifiers in pushed artifacts.
+        - Don't retry the MEXT PDF WebFetch without OK.
+        - No comments in system yaml.
+        - Never rerun recorded experiment scripts. Write new result names instead of overwriting.
+        - CI belongs to GitHub.
+        - Every PR:
+          - subscribe_pr_activity;
+          - issue_write update with assignees [nonsugertea7821].
+        - After a merge:
+          - `git fetch -q --prune origin`, ff main, then `git branch -D` the local branch;
+          - never push to a merged branch;
+          - never push branch deletions.
+        - Proposals are registered as untested hypotheses before they are told to the user:
+          - h_/b_ plus v_refer and v_check.
+          - Registration-only PRs auto-merge.
+          - Place registrations away from running-hypothesis lines and from the file end.
+        - Lang-side claims can't reference exp words. Put cross-layer hypotheses in exp/src/exp.yaml.
+        - Preregistration:
+          - commit the script only first; results come in a later commit;
+          - corrections are disclosed, with the correction script committed before it runs;
+          - use `git add -f` for exp/experiments files.
+        - A PR stays Draft only if the hypothesis remains untested. Otherwise undraft.
+
+        **Keep-alive rule (user)**
+        - Chain send_later every 9 minutes only while a long experiment runs in the background. Stop it when the experiment ends.
+
+        **30-minute cycle**
+        - The prompt is reused verbatim via send_later each time. It starts with 「30分の周回。始めたら、まず次の周回を30分後に send_later で予約する（同じ文を渡す）。」 and contains the triage A/A'/C/E/B/D and steps 1–5.
+        - Triage status:
+          - E is done, except: h_writing_depends_checker (model), h_qualification_depends_above (model, predictable), h_factor_depends_value (needs v_depend design).
+          - New untested lang hypotheses: h_checker_words_by_formula, h_collect_agree_in_grammar, h_collect_by_formula.
+          - B has started with #58. Next in B: #90 h_typecheck_feedback_raises_writing.
+
+        2. Key Technical Concepts
+        - **Checks:** tc (cscl/bootstrap/type_checker/type_checker.py) and ec (exp/src/exp_check.py; run with stdout redirected and checked by exit code).
+        - **sys_ family recording in exp.yaml:**
+          - nodes `F: {is: measurement_family}`, `F_cond: {is: family_axis, val: {text: cond}}`, `F_cond_<c>: {is: axis_value, val: {text: <c>}}`;
+          - facts v_file_of F.json, v_rows_of [rows], v_axis_of, v_value_of plus v_spell per cond, `v_entry_of '{cond}'`, v_metric_of mean_value;
+          - ec reads `rows["summary 要約"][cond]`.
+        - **Observations:**
+          - lang-side in claims.yaml: `{is: exp.observation}` with `exp.v_contradict` / `exp.v_support`;
+          - exp-side in exp.yaml: `{is: observation}` with v_contradict / v_support;
+          - both use `{is: v_refer, from: o, to: {is: v_level, from: F.cond.mean_value, to: N}}`.
+        - **Temp-copy probes:** copy cscl.yaml, cscl, exp/src, exp/tests and exp/experiments/results.
+        - **Digest comparisons:** exclude statements containing terms absent from before. Name substring is insufficient because inline mods are named by their yaml dump (seen in #147, #148 and #298).
+        - **The checker reads layer-qualified names:** syntax.definition, laws, role, v_agree, v_collect, v_refer, v_use. v_collect and v_agree were missed in #216.
+        - tc.build includes exp/src and cscl/design (cscl.yaml include).
+
+        3. Files and Code Sections
+
+        **exp/experiments/sys_checker_words_in_grammar.py and _fix.py (PR #298, open, manual review)**
+        - Results:
+          - sys_checker_words_in_grammar.json (original);
+          - sys_checker_words_in_grammar_fix.json: N1_errors 2, N2_errors 0, N2_ec 0, N2_changed 1, M_kw_errors 1.
+        - Recorded in exp.yaml and claims.yaml. h_checker_words_in_grammar is hyp_refuted.
+
+        **exp/experiments/sys_renaming_invariant.py (PR #301, merged)**
+        - Summary: n_renamed 2643, R_errors 8, R_facts_diff 70, C_errors 44, R_ec 218.
+
+        **cscl/design/claims.yaml**
+        - Registrations merged via #299 and #302.
+        - `h_collect_by_formula` formula: `{is: v_refer, from: syntax.mod, to: syntax.v_collect}`.
+
+        **exp/experiments/e29_model_writes_cscl.py (PR #305, branch claude/h_model_can_write_cscl, prereg commit fa8c3e5)**
+        - Items: subj.yaml nodes with mod and without from/axis (72); every 3rd gives 24.
+        - 8 preceding pool lines are given as examples.
+        - Prompt HEAD: 「次は、概念を定義する行の例です。各行の前に、その概念の名前を書きます。\n\n」 + "名前: <display>\n<line>\n\n" per example + "名前: <display>\n  <id>: {".
+        - Model: Qwen2.5-1.5B-Instruct, greedy, 96 tokens, cut at the first newline.
+        - The written line replaces the gold line in a temp copy; tc.build errors must be 0.
+        - Output exp/experiments/results/e29_model_writes_cscl.json:
+          - `{"rev","model","rows"}`;
+          - rows "item <id>": {parsed, typechecks, extends_match, exact, n_errors, written, gold, err_text};
+          - "summary 要約": {n_items, n_parsed, n_typechecks, n_extends_match, n_exact, typecheck_rate, exact_rate, base_errors}.
+        - Verdict rule: typecheck_rate ≥ 0.5 supports.
+        - **RESULT:**
+
+          | measure | value |
+          |---|---|
+          | n_items | 24 |
+          | n_parsed | 24 |
+          | n_typechecks | 5 |
+          | n_extends_match | 13 |
+          | n_exact | 1 |
+          | typecheck_rate | 0.2083 |
+          | exact_rate | 0.0417 |
+          | base_errors | 0 |
+
+          Verdict: refuted.
+        - Passing items: corporation (exact), minor, seafood_category, urban, morning.
+        - Failure types:
+          - invented verbs (v_allow, v_create, v_accept, v_arrive, v_business_day_of: "動詞でない");
+          - wrong end type ("来られない");
+          - undefined parent (entity, relation, property: "上位がない、または未定義");
+          - law violations (one_name, narrow_from);
+          - knock-on errors in other nodes that reference the item (e.g. subj.age.mod with agent, monthly_fee with plan).
+
+        4. Errors and fixes
+        - **#298:** name-based exclusion missed anonymous mod terms. Fixed with a disclosed _fix that excludes by new terms.
+        - **#301:** no measurement defect. The refutation is real (qualified-name reads).
+        - **#302:** the formula `v_depend from syntax.v_collect` was rejected by tc. Rephrased as `v_refer from syntax.mod to syntax.v_collect`.
+        - **PR #301 body:** has a typo "事前登録 a 最初の commit". It was merged anyway.
+
+        5. Problem Solving
+        - The grammar placement mechanism works (M is detected). The section-name node needs a formula that is conservative.
+        - The checker's name-reads include layer-qualified strings.
+        - The model (1.5B) writes parseable cscl but invents verbs and parents. Only 21% typechecks.
+
+        6. All user messages
+        - No new user messages in this segment. Only triggers and notifications arrived.
+        - Prior standing user messages:
+          - 「トリアージして進めて。…このリポジトリの実験目標、モデルの概念一貫性に寄与しそうなものから優先で」
+          - 「Bは体系の健全性に依存しないか？」
+          - 「A3もじゃないの？それともその周辺はもう証明されてる？」
+          - 「A4は？」
+          - 「それでいいだろうね よろしく」
+          - 「ちなみにコンテナは10分作業しないと再起動する 応答終了時に9分30秒チェーンするようにしといて」
+          - 「チェーンが居るのは長い実験だけね それ以外はやらなくていい」
+          - 「#275にマージコンフリクト。」
+        - Unanswered questions to the user:
+          - whether to add concepts for step count, initialization and layer bands;
+          - whether to adopt variant B laws (#296);
+          - the relation_operator fix and the exp_check extension (#297).
+
+        7. Pending Tasks
+        - **Finish e29 / PR #305:**
+          1. Delete keep-alive trigger trig_01YZFZ9MyqeafFPAfV4rimTd (the run finished).
+          2. Record the results: `git add -f` the result json. Add an exp.yaml family e29_model_writes_cscl, checking how e-experiment families are recorded (e.g. e28 or e22) first. Add exp-side observations, e.g. typecheck rate 0.208 (v_contradict to h_model_can_write_cscl), extends_match 13, exact 1. Set h_model_can_write_cscl to hyp_refuted (b_model_writes_concept_expressions is already item_done).
+          3. Run tc and ec, commit, push.
+          4. Update the PR #305 body with the results and interpretation, and undraft.
+        - **Implications to consider registering (registration-only PR):**
+          - giving the available verb and parent list raises the typecheck rate;
+          - typecheck feedback (#90, already registered) is the next B item.
+        - Await manual merges of #296, #297 and #298. After each merge, sync main and `git branch -D` the local branch (claude/h_above_individual, claude/h_prior_claim_ends_resolved, claude/h_checker_words_in_grammar).
+        - Next 30-minute cycle: trig_01UognRi8p1TtJ4HZsDwZaXz at 06:35Z.
+
+        8. Current Work
+        - I had just read the completed e29 results (verdict 反証, typecheck_rate 0.208) on branch claude/h_model_can_write_cscl. The results file exp/experiments/results/e29_model_writes_cscl.json is written but not yet committed. The keep-alive for 06:26 is still pending.
+
+        9. Optional Next Step
+        - Delete the keep-alive trigger trig_01YZFZ9MyqeafFPAfV4rimTd.
+        - Then record e29 per cycle step 3 (「結果を体系に書き、tc と ec → push、本文を更新して Draft を外す」):
+          - add the result json with -f;
+          - add the exp.yaml family and observations with v_contradict to h_model_can_write_cscl, and set it hyp_refuted;
+          - run tc and ec, commit, push;
+          - update the PR #305 body and undraft.
+        - Then step 4: implications, possibly a registration-only PR. Then step 5: a short Japanese report.
+
+        If you need specific details from before compaction (like exact code snippets, error messages, or content you generated), read the full transcript at: /root/.claude/projects/-home-user-CMT/e05d2140-ce91-515f-a5fb-e6251e13d406.jsonl
+        Continue the conversation from where it left off without asking the user any further questions. Resume directly — do not acknowledge the summary, do not recap what was happening, do not preface with "I'll continue" or similar. Pick up the last task as if the break never happened.
+
+        The messages after this summary are the most recent messages from before compaction, kept verbatim. The summary was written without seeing them, so something it says has not happened yet may already have happened in them.
+facts:
+- {is: v_say, from: session_model, to: 01M7S7BQTVYT3FKDND66SN6K6T}
+- {is: v_refer, from: 01M7S7BQTVYT3FKDND66SN6K6T, to: ontology.v_refer}
+- {is: v_refer, from: 01M7S7BQTVYT3FKDND66SN6K6T, to: exp.v_check}
+- {is: v_refer, from: 01M7S7BQTVYT3FKDND66SN6K6T, to: ontology.v_depend}
+- {is: v_refer, from: 01M7S7BQTVYT3FKDND66SN6K6T, to: lang.type_checker}
+- {is: v_refer, from: 01M7S7BQTVYT3FKDND66SN6K6T, to: exp.measurement_family}
+- {is: v_refer, from: 01M7S7BQTVYT3FKDND66SN6K6T, to: exp.family_axis}
+- {is: v_refer, from: 01M7S7BQTVYT3FKDND66SN6K6T, to: exp.axis_value}
+- {is: v_refer, from: 01M7S7BQTVYT3FKDND66SN6K6T, to: exp.v_file_of}
+- {is: v_refer, from: 01M7S7BQTVYT3FKDND66SN6K6T, to: exp.v_rows_of}
+- {is: v_refer, from: 01M7S7BQTVYT3FKDND66SN6K6T, to: exp.v_axis_of}
+- {is: v_refer, from: 01M7S7BQTVYT3FKDND66SN6K6T, to: exp.v_value_of}
+- {is: v_refer, from: 01M7S7BQTVYT3FKDND66SN6K6T, to: exp.v_spell}
+- {is: v_refer, from: 01M7S7BQTVYT3FKDND66SN6K6T, to: exp.v_entry_of}
+- {is: v_refer, from: 01M7S7BQTVYT3FKDND66SN6K6T, to: exp.v_metric_of}
+- {is: v_refer, from: 01M7S7BQTVYT3FKDND66SN6K6T, to: exp.mean_value}
+- {is: v_refer, from: 01M7S7BQTVYT3FKDND66SN6K6T, to: exp.observation}
+- {is: v_refer, from: 01M7S7BQTVYT3FKDND66SN6K6T, to: exp.v_contradict}
+- {is: v_refer, from: 01M7S7BQTVYT3FKDND66SN6K6T, to: exp.v_support}
+- {is: v_refer, from: 01M7S7BQTVYT3FKDND66SN6K6T, to: ontology.v_level}
+- {is: v_refer, from: 01M7S7BQTVYT3FKDND66SN6K6T, to: ontology.v_agree}
+- {is: v_refer, from: 01M7S7BQTVYT3FKDND66SN6K6T, to: syntax.v_collect}
+- {is: v_refer, from: 01M7S7BQTVYT3FKDND66SN6K6T, to: exp.hyp_refuted}
+- {is: v_refer, from: 01M7S7BQTVYT3FKDND66SN6K6T, to: syntax.mod}
+- {is: v_refer, from: 01M7S7BQTVYT3FKDND66SN6K6T, to: subj.seafood_category}
+- {is: v_refer, from: 01M7S7BQTVYT3FKDND66SN6K6T, to: subj.monthly_fee}
+- {is: v_refer, from: 01M7S7BQTVYT3FKDND66SN6K6T, to: exp.item_done}

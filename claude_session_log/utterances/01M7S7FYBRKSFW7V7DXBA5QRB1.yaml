@@ -1,0 +1,34 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-19T06:21:51.352Z（UTC）
+individuals:
+  01M7S7FYBRKSFW7V7DXBA5QRB1:
+    is: model_utterance
+    display: 発言 2326
+    val:
+      order: 2326
+      text: |
+        e29（#305）を記録して PR の Draft を外しました。結果は**反証**です。
+
+        **結果**（Qwen2.5-1.5B、24 件）
+        - 24 件すべて、yaml として読める行になりました（`extends` と `mod: {of: [...], with: ...}` の形）。
+        - 型検査器が受け付けたのは **5 件（0.208）** です。事前に決めた判定（0.5 以上で支持）を下回ったので、h_model_can_write_cscl を反証にしました。
+        - extends が元の行と同じだったのは 13 件、mod まで一致したのは 1 件（corporation）でした。
+        - 落ちた原因は主に次の 3 つです。
+          - 体系にない動詞を作った（v_allow、v_create、v_arrive など）。
+          - 体系にない上位を置いた（entity、relation、property）。
+          - 端の型が合わなかった。
+
+        **解釈**
+        - 形は書けますが、体系の語彙（どの動詞と上位があり、端に何が来られるか）を知らないまま、もっともらしい名前を作っています。
+        - なので「書けない」ではなく、「例 8 行だけでは語彙に合わせて書けない」と読んでいます。
+        - 受け付けられた 5 件も、意味まで正しいとは限りません。たとえば minor は「18 歳未満を件数で数える」と書き、元の行は「金額の 25」でした。
+        - 測ったのは 1 つのモデルで、貪欲に 1 回生成しただけです。
+
+        **次の手**
+        - 使える動詞と上位の定義（用語集）を見せれば受け付けられる割合が上がるか、を仮説 h_glossary_raises_writing として登録しました（#306、登録だけなので自動マージされます）。
+        - 同じく書く力を上げる手として、型検査の誤りを返して書き直させる #90 が、トリアージ B の次に控えています。
+
+        実験が終わったので、9 分ごとの延長の予約は消しました。次の 30 分の周回は 06:35Z です。
+facts:
+- {is: v_say, from: session_model, to: 01M7S7FYBRKSFW7V7DXBA5QRB1}
+- {is: exp.v_answer, from: 01M7S7FYBRKSFW7V7DXBA5QRB1, to: 01M7RE4494JDFW71WBNAW679KX}
+- {is: v_refer, from: 01M7S7FYBRKSFW7V7DXBA5QRB1, to: syntax.extends}
