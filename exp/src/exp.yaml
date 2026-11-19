@@ -1307,6 +1307,14 @@ individuals:
   geo_axis_readout_midpoint_pca_cond_all_lin_above: {is: axis_value, val: {text: all_lin_above}}
   geo_axis_readout_midpoint_pca_cond_gap_unreadable: {is: axis_value, val: {text: gap_unreadable}}
   geo_axis_readout_midpoint_pca_cond_precondition: {is: axis_value, val: {text: precondition}}
+  geo_interval_cut_midpoint: {is: measurement_family}
+  geo_interval_cut_midpoint_cond: {is: family_axis, val: {text: cond}}
+  geo_interval_cut_midpoint_cond_gap_single: {is: axis_value, val: {text: gap_single}}
+  geo_interval_cut_midpoint_cond_all_single_above: {is: axis_value, val: {text: all_single_above}}
+  geo_interval_cut_midpoint_cond_middle_single: {is: axis_value, val: {text: middle_single}}
+  geo_interval_cut_midpoint_cond_ends_single: {is: axis_value, val: {text: ends_single}}
+  geo_interval_cut_midpoint_cond_gap_mixed: {is: axis_value, val: {text: gap_mixed}}
+  geo_interval_cut_midpoint_cond_verdict_support: {is: axis_value, val: {text: verdict_support}}
   sys_value_refers_hypothesis: {is: measurement_family}
   sys_value_refers_hypothesis_cond: {is: family_axis, val: {text: cond}}
   sys_value_refers_hypothesis_cond_n_obs: {is: axis_value, val: {text: n_obs}}
@@ -2226,6 +2234,9 @@ individuals:
   o_geo_pca_readable: {is: observation}
   o_geo_pca_not_all_above: {is: observation}
   o_geo_pca_unreadable_above_readable: {is: observation}
+  o_geo_interval_gap_single: {is: observation}
+  o_geo_interval_not_all_above: {is: observation}
+  o_geo_interval_middle_above_ends: {is: observation}
 
   h_prosody_carries_mod: {is: hyp_untested}
   b_prosody_carries_mod: {is: item_queued}
@@ -2287,8 +2298,8 @@ individuals:
   b_axis_readout_raises_midpoint: {is: item_done}
   h_qualification_immune_genus: {is: hyp_untested}
   b_qualification_immune_genus: {is: item_queued}
-  h_interval_cut_raises_midpoint: {is: hyp_untested}
-  b_interval_cut_raises_midpoint: {is: item_queued}
+  h_interval_cut_raises_midpoint: {is: hyp_refuted}
+  b_interval_cut_raises_midpoint: {is: item_done}
   h_midpoint_depends_genus: {is: hyp_untested}
   b_midpoint_depends_genus: {is: item_queued}
 facts:
@@ -5054,6 +5065,27 @@ facts:
   - {is: v_refer, from: o_geo_pca_unreadable_above_readable, to: {is: v_come_after, from: geo_axis_readout_midpoint_pca.gap_unreadable.mean_value, to: geo_axis_readout_midpoint_pca.gap_readable.mean_value}}
   - {is: v_contradict, from: o_geo_pca_not_all_above, to: h_axis_readout_raises_midpoint}
   - {is: v_contradict, from: o_geo_pca_unreadable_above_readable, to: h_axis_readout_raises_midpoint}
+  - {is: v_file_of, from: geo_interval_cut_midpoint.json, to: geo_interval_cut_midpoint}
+  - {is: v_rows_of, from: [rows], to: geo_interval_cut_midpoint}
+  - {is: v_axis_of, from: geo_interval_cut_midpoint_cond, to: geo_interval_cut_midpoint}
+  - {is: v_value_of, from: geo_interval_cut_midpoint_cond_gap_single, to: geo_interval_cut_midpoint_cond}
+  - {is: v_spell, from: geo_interval_cut_midpoint_cond_gap_single, to: gap_single}
+  - {is: v_value_of, from: geo_interval_cut_midpoint_cond_all_single_above, to: geo_interval_cut_midpoint_cond}
+  - {is: v_spell, from: geo_interval_cut_midpoint_cond_all_single_above, to: all_single_above}
+  - {is: v_value_of, from: geo_interval_cut_midpoint_cond_middle_single, to: geo_interval_cut_midpoint_cond}
+  - {is: v_spell, from: geo_interval_cut_midpoint_cond_middle_single, to: middle_single}
+  - {is: v_value_of, from: geo_interval_cut_midpoint_cond_ends_single, to: geo_interval_cut_midpoint_cond}
+  - {is: v_spell, from: geo_interval_cut_midpoint_cond_ends_single, to: ends_single}
+  - {is: v_value_of, from: geo_interval_cut_midpoint_cond_gap_mixed, to: geo_interval_cut_midpoint_cond}
+  - {is: v_spell, from: geo_interval_cut_midpoint_cond_gap_mixed, to: gap_mixed}
+  - {is: v_value_of, from: geo_interval_cut_midpoint_cond_verdict_support, to: geo_interval_cut_midpoint_cond}
+  - {is: v_spell, from: geo_interval_cut_midpoint_cond_verdict_support, to: verdict_support}
+  - {is: v_entry_of, from: '{cond}', to: geo_interval_cut_midpoint}
+  - {is: v_metric_of, from: geo_interval_cut_midpoint, to: mean_value}
+  - {is: v_refer, from: o_geo_interval_gap_single, to: {is: v_near, from: geo_interval_cut_midpoint.gap_single.mean_value, to: 0.161, new: 0.001}}
+  - {is: v_refer, from: o_geo_interval_not_all_above, to: {is: v_level, from: geo_interval_cut_midpoint.all_single_above.mean_value, to: 0}}
+  - {is: v_refer, from: o_geo_interval_middle_above_ends, to: {is: v_come_after, from: geo_interval_cut_midpoint.middle_single.mean_value, to: geo_interval_cut_midpoint.ends_single.mean_value}}
+  - {is: v_contradict, from: o_geo_interval_not_all_above, to: h_interval_cut_raises_midpoint}
   - {is: v_file_of, from: sys_value_refers_hypothesis.json, to: sys_value_refers_hypothesis}
   - {is: v_rows_of, from: [rows], to: sys_value_refers_hypothesis}
   - {is: v_axis_of, from: sys_value_refers_hypothesis_cond, to: sys_value_refers_hypothesis}
