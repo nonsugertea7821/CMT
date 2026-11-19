@@ -884,6 +884,17 @@ individuals:
   sys_individual_depth_after_cond_extra: {is: axis_value, val: {text: extra}}
   sys_individual_depth_after_cond_shifted: {is: axis_value, val: {text: shifted}}
   sys_individual_depth_after_cond_v_shallow: {is: axis_value, val: {text: v_shallow}}
+  sys_above_closed_after: {is: measurement_family}
+  sys_above_closed_after_cond: {is: family_axis, val: {text: cond}}
+  sys_above_closed_after_cond_errors: {is: axis_value, val: {text: errors}}
+  sys_above_closed_after_cond_ec_errors: {is: axis_value, val: {text: ec_errors}}
+  sys_above_closed_after_cond_law_errors: {is: axis_value, val: {text: law_errors}}
+  sys_above_closed_after_cond_extra: {is: axis_value, val: {text: extra}}
+  sys_above_closed_after_cond_probe_non: {is: axis_value, val: {text: probe_non}}
+  sys_above_closed_after_cond_probe_anc_all: {is: axis_value, val: {text: probe_anc_all}}
+  sys_above_closed_after_fix: {is: measurement_family}
+  sys_above_closed_after_fix_cond: {is: family_axis, val: {text: cond}}
+  sys_above_closed_after_fix_cond_changed_fixed: {is: axis_value, val: {text: changed_fixed}}
   sys_hierarchy_object_before: {is: measurement_family}
   sys_hierarchy_object_before_cond: {is: family_axis, val: {text: cond}}
   sys_hierarchy_object_before_cond_errors: {is: axis_value, val: {text: errors}}
@@ -4097,6 +4108,30 @@ facts:
   - {is: v_spell, from: sys_individual_depth_after_cond_v_shallow, to: v_shallow}
   - {is: v_entry_of, from: '{cond}', to: sys_individual_depth_after}
   - {is: v_metric_of, from: sys_individual_depth_after, to: mean_value}
+  - {is: v_file_of, from: sys_above_closed_after.json, to: sys_above_closed_after}
+  - {is: v_rows_of, from: [rows], to: sys_above_closed_after}
+  - {is: v_axis_of, from: sys_above_closed_after_cond, to: sys_above_closed_after}
+  - {is: v_value_of, from: sys_above_closed_after_cond_errors, to: sys_above_closed_after_cond}
+  - {is: v_spell, from: sys_above_closed_after_cond_errors, to: errors}
+  - {is: v_value_of, from: sys_above_closed_after_cond_ec_errors, to: sys_above_closed_after_cond}
+  - {is: v_spell, from: sys_above_closed_after_cond_ec_errors, to: ec_errors}
+  - {is: v_value_of, from: sys_above_closed_after_cond_law_errors, to: sys_above_closed_after_cond}
+  - {is: v_spell, from: sys_above_closed_after_cond_law_errors, to: law_errors}
+  - {is: v_value_of, from: sys_above_closed_after_cond_extra, to: sys_above_closed_after_cond}
+  - {is: v_spell, from: sys_above_closed_after_cond_extra, to: extra}
+  - {is: v_value_of, from: sys_above_closed_after_cond_probe_non, to: sys_above_closed_after_cond}
+  - {is: v_spell, from: sys_above_closed_after_cond_probe_non, to: probe_non}
+  - {is: v_value_of, from: sys_above_closed_after_cond_probe_anc_all, to: sys_above_closed_after_cond}
+  - {is: v_spell, from: sys_above_closed_after_cond_probe_anc_all, to: probe_anc_all}
+  - {is: v_entry_of, from: '{cond}', to: sys_above_closed_after}
+  - {is: v_metric_of, from: sys_above_closed_after, to: mean_value}
+  - {is: v_file_of, from: sys_above_closed_after_fix.json, to: sys_above_closed_after_fix}
+  - {is: v_rows_of, from: [rows], to: sys_above_closed_after_fix}
+  - {is: v_axis_of, from: sys_above_closed_after_fix_cond, to: sys_above_closed_after_fix}
+  - {is: v_value_of, from: sys_above_closed_after_fix_cond_changed_fixed, to: sys_above_closed_after_fix_cond}
+  - {is: v_spell, from: sys_above_closed_after_fix_cond_changed_fixed, to: changed_fixed}
+  - {is: v_entry_of, from: '{cond}', to: sys_above_closed_after_fix}
+  - {is: v_metric_of, from: sys_above_closed_after_fix, to: mean_value}
   - {is: v_file_of, from: sys_hierarchy_object_before.json, to: sys_hierarchy_object_before}
   - {is: v_rows_of, from: [rows], to: sys_hierarchy_object_before}
   - {is: v_axis_of, from: sys_hierarchy_object_before_cond, to: sys_hierarchy_object_before}
