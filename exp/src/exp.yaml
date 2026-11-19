@@ -1263,6 +1263,12 @@ individuals:
   e29_model_writes_cscl_cond_n_typechecks: {is: axis_value, val: {text: n_typechecks}}
   e29_model_writes_cscl_cond_n_extends_match: {is: axis_value, val: {text: n_extends_match}}
   e29_model_writes_cscl_cond_n_exact: {is: axis_value, val: {text: n_exact}}
+  e30_typecheck_feedback: {is: measurement_family}
+  e30_typecheck_feedback_cond: {is: family_axis, val: {text: cond}}
+  e30_typecheck_feedback_cond_n_items: {is: axis_value, val: {text: n_items}}
+  e30_typecheck_feedback_cond_n_before: {is: axis_value, val: {text: n_before}}
+  e30_typecheck_feedback_cond_n_fb: {is: axis_value, val: {text: n_fb}}
+  e30_typecheck_feedback_cond_n_ctl: {is: axis_value, val: {text: n_ctl}}
   sys_case_frame_formula: {is: measurement_family}
   sys_case_frame_formula_cond: {is: family_axis, val: {text: cond}}
   sys_case_frame_formula_cond_errors: {is: axis_value, val: {text: errors}}
@@ -1866,6 +1872,10 @@ individuals:
   o_e29_items: {is: observation}
   o_e29_extends_match: {is: observation}
   o_e29_exact: {is: observation}
+  o_e30_fb: {is: observation}
+  o_e30_ctl: {is: observation}
+  o_e30_before: {is: observation}
+  o_e30_items: {is: observation}
   o_e14_vec_robust_below_none_conflict: {is: observation}
   o_e14_vec_robust_below_none_control: {is: observation}
   o_e20_examples_move_apply: {is: observation}
@@ -1953,7 +1963,7 @@ individuals:
   h_common_component_transfers_to_unseen: {is: hyp_refuted}
   h_attention_carries_text_route: {is: hyp_supported}
   h_model_can_write_cscl: {is: hyp_refuted}
-  h_typecheck_feedback_raises_writing: {is: hyp_untested}
+  h_typecheck_feedback_raises_writing: {is: hyp_refuted}
   h_glossary_raises_writing: {is: hyp_untested}
   h_qualification_vector_transfers_to_unseen_genus: {is: hyp_supported}
   h_qualification_teacher_raises_following: {is: hyp_untested}
@@ -4736,6 +4746,19 @@ facts:
   - {is: v_spell, from: e29_model_writes_cscl_cond_n_exact, to: n_exact}
   - {is: v_entry_of, from: '{cond}', to: e29_model_writes_cscl}
   - {is: v_metric_of, from: e29_model_writes_cscl, to: mean_value}
+  - {is: v_file_of, from: e30_typecheck_feedback.json, to: e30_typecheck_feedback}
+  - {is: v_rows_of, from: [rows], to: e30_typecheck_feedback}
+  - {is: v_axis_of, from: e30_typecheck_feedback_cond, to: e30_typecheck_feedback}
+  - {is: v_value_of, from: e30_typecheck_feedback_cond_n_items, to: e30_typecheck_feedback_cond}
+  - {is: v_spell, from: e30_typecheck_feedback_cond_n_items, to: n_items}
+  - {is: v_value_of, from: e30_typecheck_feedback_cond_n_before, to: e30_typecheck_feedback_cond}
+  - {is: v_spell, from: e30_typecheck_feedback_cond_n_before, to: n_before}
+  - {is: v_value_of, from: e30_typecheck_feedback_cond_n_fb, to: e30_typecheck_feedback_cond}
+  - {is: v_spell, from: e30_typecheck_feedback_cond_n_fb, to: n_fb}
+  - {is: v_value_of, from: e30_typecheck_feedback_cond_n_ctl, to: e30_typecheck_feedback_cond}
+  - {is: v_spell, from: e30_typecheck_feedback_cond_n_ctl, to: n_ctl}
+  - {is: v_entry_of, from: '{cond}', to: e30_typecheck_feedback}
+  - {is: v_metric_of, from: e30_typecheck_feedback, to: mean_value}
   - {is: v_file_of, from: sys_layers_exists_change.json, to: sys_layers_exists_change}
   - {is: v_rows_of, from: [rows], to: sys_layers_exists_change}
   - {is: v_axis_of, from: sys_layers_exists_change_cond, to: sys_layers_exists_change}
@@ -5665,6 +5688,12 @@ facts:
   - {is: v_refer, from: o_e29_extends_match, to: {is: v_level, from: e29_model_writes_cscl.n_extends_match.mean_value, to: 13}}
   - {is: v_refer, from: o_e29_exact, to: {is: v_level, from: e29_model_writes_cscl.n_exact.mean_value, to: 1}}
   - {is: v_contradict, from: o_e29_typechecks, to: h_model_can_write_cscl}
+  - {is: v_refer, from: o_e30_fb, to: {is: v_level, from: e30_typecheck_feedback.n_fb.mean_value, to: 5}}
+  - {is: v_refer, from: o_e30_ctl, to: {is: v_level, from: e30_typecheck_feedback.n_ctl.mean_value, to: 5}}
+  - {is: v_refer, from: o_e30_before, to: {is: v_level, from: e30_typecheck_feedback.n_before.mean_value, to: 5}}
+  - {is: v_refer, from: o_e30_items, to: {is: v_level, from: e30_typecheck_feedback.n_items.mean_value, to: 24}}
+  - {is: v_contradict, from: o_e30_fb, to: h_typecheck_feedback_raises_writing}
+  - {is: v_contradict, from: o_e30_ctl, to: h_typecheck_feedback_raises_writing}
   - {is: v_support, from: o_e28_block_all_above_last, to: h_attention_causes_preceding_effect}
   - {is: v_support, from: o_e28_first_block_below_first, to: h_attention_causes_preceding_effect}
   - {is: v_contradict, from: o_e21_common_robust_below_none, to: h_common_component_transfers_to_unseen}

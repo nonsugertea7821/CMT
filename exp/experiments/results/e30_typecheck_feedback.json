@@ -1,0 +1,418 @@
+{
+ "rev": "5ce3383",
+ "model": "Qwen/Qwen2.5-1.5B-Instruct",
+ "rows": {
+  "item agent": {
+   "before": 0,
+   "fb_typechecks": 0,
+   "fb_extends_match": 0,
+   "fb_exact": 0,
+   "fb_written": "  agent: {display: 主体, extends: entity, mod: {of: [v_entity, of], with: subject}}",
+   "fb_err_text": [
+    "subj.age.mod[0]: subj.person は ontology.v_depend の to（ontology.continuant）に来られない",
+    "subj.height.mod[0]: subj.person_age_neg は ontology.v_depend の to（ontology.continuant）に来られない",
+    "subj.agent: 上位がない、または未定義"
+   ],
+   "ctl_typechecks": 0,
+   "ctl_extends_match": 0,
+   "ctl_exact": 0,
+   "ctl_written": "  agent: {display: 主体, extends: entity, mod: {of: [v_entity, of], with: subject}}",
+   "ctl_err_text": [
+    "subj.age.mod[0]: subj.person は ontology.v_depend の to（ontology.continuant）に来られない",
+    "subj.height.mod[0]: subj.person_age_neg は ontology.v_depend の to（ontology.continuant）に来られない",
+    "subj.agent: 上位がない、または未定義"
+   ]
+  },
+  "item organization": {
+   "before": 0,
+   "fb_typechecks": 0,
+   "fb_extends_match": 0,
+   "fb_exact": 0,
+   "fb_written": "  organization: {display: 組織, extends: continuant, mod: {of: [v_perform, from]}}",
+   "fb_err_text": [
+    "subj.customer.mod[0]: subj.corporation は subj.v_contract の to（subj.agent）に来られない",
+    "法則 narrow_from（下位の動詞の端 from は、上位の動詞の端を狭める）に反する: var1=subj.v_employ, var2=subj.organization, var3=subj.v_contract, var4=subj.agent, var5=subj.agent",
+    "法則 one_name（互いに相手の式を（含意によっても）持つ組は、同じものの別の名前なので置かない）に反する: var1=subj.agent, var2=subj.organization"
+   ],
+   "ctl_typechecks": 0,
+   "ctl_extends_match": 0,
+   "ctl_exact": 0,
+   "ctl_written": "  organization: {display: 組織, extends: continuant, mod: {of: [v_perform, from]}}",
+   "ctl_err_text": [
+    "subj.customer.mod[0]: subj.corporation は subj.v_contract の to（subj.agent）に来られない",
+    "法則 narrow_from（下位の動詞の端 from は、上位の動詞の端を狭める）に反する: var1=subj.v_employ, var2=subj.organization, var3=subj.v_contract, var4=subj.agent, var5=subj.agent",
+    "法則 one_name（互いに相手の式を（含意によっても）持つ組は、同じものの別の名前なので置かない）に反する: var1=subj.organization, var2=subj.agent"
+   ]
+  },
+  "item corporation": {
+   "before": 1,
+   "fb_typechecks": 1,
+   "fb_extends_match": 1,
+   "fb_exact": 1,
+   "fb_written": "  corporation: {display: 法人, extends: organization, mod: {of: [v_depend, to], with: legal_personality}}",
+   "fb_err_text": [],
+   "ctl_typechecks": 1,
+   "ctl_extends_match": 1,
+   "ctl_exact": 1,
+   "ctl_written": "  corporation: {display: 法人, extends: organization, mod: {of: [v_depend, to], with: legal_personality}}",
+   "ctl_err_text": []
+  },
+  "item minor": {
+   "before": 1,
+   "fb_typechecks": 1,
+   "fb_extends_match": 1,
+   "fb_exact": 0,
+   "fb_written": "  minor: {display: 未成年, extends: person, mod: {of: [v_depend, to], with: age, at: {count: {lt: 18}}}}",
+   "fb_err_text": [],
+   "ctl_typechecks": 1,
+   "ctl_extends_match": 1,
+   "ctl_exact": 0,
+   "ctl_written": "  minor: {display: 未成年, extends: person, mod: {of: [v_depend, to], with: age, at: {count: {lt: 18}}}}",
+   "ctl_err_text": []
+  },
+  "item shared_address": {
+   "before": 0,
+   "fb_typechecks": 0,
+   "fb_extends_match": 0,
+   "fb_exact": 0,
+   "fb_written": "  shared_address: {display: 二人以上が住む住所, extends: address, mod: {of: [v_refer, from], with: people, amount: {gt: 1}}} 型検査の誤り: subj.shared_address.mod[0]: people は syntax.v_refer の to（any）に来られない / subj.shared_address.mod[0]: 語 {'amount'} が、grammar.mod に書かれていない",
+   "fb_err_text": [],
+   "ctl_typechecks": 0,
+   "ctl_extends_match": 0,
+   "ctl_exact": 0,
+   "ctl_written": "  shared_address: {display: 二人以上が住む住所, extends: address, mod: {of: [v_refer, from], with: people, amount: {gt: 1}}} 型検査の誤り: この行は受け付けられなかった。",
+   "ctl_err_text": []
+  },
+  "item user": {
+   "before": 0,
+   "fb_typechecks": 0,
+   "fb_extends_match": 1,
+   "fb_exact": 0,
+   "fb_written": "  user: {display: 利用者, extends: person, mod: {of: [v_use, to]}}",
+   "fb_err_text": [
+    "subj.user.mod[0]: subj.person は syntax.v_use の to（syntax.domain）に来られない"
+   ],
+   "ctl_typechecks": 0,
+   "ctl_extends_match": 1,
+   "ctl_exact": 0,
+   "ctl_written": "  user: {display: 利用者, extends: person, mod: {of: [v_use, to]}} ",
+   "ctl_err_text": [
+    "subj.user.mod[0]: subj.person は syntax.v_use の to（syntax.domain）に来られない"
+   ]
+  },
+  "item setting_rule": {
+   "before": 0,
+   "fb_typechecks": 0,
+   "fb_extends_match": 1,
+   "fb_exact": 0,
+   "fb_written": "  setting_rule: {display: 設定の変更を許す規則, extends: access_rule, mod: {of: [v_allow, to]}}",
+   "fb_err_text": [
+    "subj.setting_rule.mod[0]: v_allow は動詞でない"
+   ],
+   "ctl_typechecks": 0,
+   "ctl_extends_match": 1,
+   "ctl_exact": 0,
+   "ctl_written": "  setting_rule: {display: 設定の変更を許す規則, extends: access_rule, mod: {of: [v_allow, to], with: user}}",
+   "ctl_err_text": [
+    "subj.setting_rule.mod[0]: v_allow は動詞でない"
+   ]
+  },
+  "item admin": {
+   "before": 0,
+   "fb_typechecks": 0,
+   "fb_extends_match": 0,
+   "fb_exact": 0,
+   "fb_written": "  admin: {display: 管理者, extends: role, mod: {of: [v_depend, from], with: permission}, mod: {of: [v_refer, from], with: setting_permission}}",
+   "fb_err_text": [
+    "nstruct_document\n    for dummy in generator:\n                 ^^^^^^^^^\n  File \"/home/user/venv/lib/python3.13/site-packages/yaml/constructor.py\", line 413, in construct_yaml_map\n    value = self.construct_mapping(node)\n  File \"/tmp/tmp89aaqt04/cscl/bootstrap/type_checker/type_checker.py\", line 226, in _mapping\n    raise yaml.constructor.ConstructorError(None, None, f\"識別子 {key} が重複している\", k.start_mark)\nyaml.constructor.ConstructorError: 識別子 mod が重複している\n  in \"<unicode string>\", line 57, column 87\n"
+   ],
+   "ctl_typechecks": 0,
+   "ctl_extends_match": 0,
+   "ctl_exact": 0,
+   "ctl_written": "  admin: {display: 管理者, extends: role, mod: {of: [v_depend, from], with: permission}}型検査の誤り: この行は受け付けられなかった。",
+   "ctl_err_text": []
+  },
+  "item stored_goods": {
+   "before": 0,
+   "fb_typechecks": 0,
+   "fb_extends_match": 0,
+   "fb_exact": 0,
+   "fb_written": "  stored_goods: {display: 倉庫にある商品, extends: relation, mod: {of: [v_store, to], with: goods}}型検査の誤り: subj.stored_goods: 上位がない、または未定義 / subj.stock.mod[0]: subj.stored_goods は subj.v_allocate の to（subj.goods）に来られない",
+   "fb_err_text": [],
+   "ctl_typechecks": 0,
+   "ctl_extends_match": 0,
+   "ctl_exact": 0,
+   "ctl_written": "  stored_goods: {display: 倉庫にある商品, extends: relation, mod: {of: [v_store, to], with: goods}}",
+   "ctl_err_text": [
+    "subj.stored_goods: 上位がない、または未定義",
+    "subj.stock.mod[0]: subj.stored_goods は subj.v_allocate の to（subj.goods）に来られない"
+   ]
+  },
+  "item fruit": {
+   "before": 0,
+   "fb_typechecks": 0,
+   "fb_extends_match": 0,
+   "fb_exact": 0,
+   "fb_written": "  fruit: {display: 果物, extends: category, mod: {of: [v_sell, to], with: setting_permission}}",
+   "fb_err_text": [
+    "subj.fruit.mod[0]: subj.category は subj.v_sell の to（ontology.component）に来られない",
+    "subj.fruit.mod[0]: subj.setting_permission は subj.v_sell の from（subj.agent）に来られない"
+   ],
+   "ctl_typechecks": 0,
+   "ctl_extends_match": 0,
+   "ctl_exact": 0,
+   "ctl_written": "  fruit: {display: 果物, extends: category, mod: {of: [v_sell, to]}} ",
+   "ctl_err_text": [
+    "subj.fruit.mod[0]: subj.category は subj.v_sell の to（ontology.component）に来られない",
+    "法則 named_mod に反する: subj.goods, subj.fruit が同じ限定を足している。名前を付けた修飾語にする"
+   ]
+  },
+  "item seafood_category": {
+   "before": 1,
+   "fb_typechecks": 1,
+   "fb_extends_match": 1,
+   "fb_exact": 0,
+   "fb_written": "  seafood_category: {display: 分類「魚類」, extends: category, mod: {of: [v_classify, to], with: fish}} ",
+   "fb_err_text": [],
+   "ctl_typechecks": 1,
+   "ctl_extends_match": 1,
+   "ctl_exact": 0,
+   "ctl_written": "  seafood_category: {display: 分類「魚類」, extends: category, mod: {of: [v_classify, to], with: fish}} ",
+   "ctl_err_text": []
+  },
+  "item large_order": {
+   "before": 0,
+   "fb_typechecks": 0,
+   "fb_extends_match": 1,
+   "fb_exact": 0,
+   "fb_written": "  large_order: {display: 大口注文, extends: order, mod: {of: [v_place, from], with: large}, neg: true} ",
+   "fb_err_text": [
+    "subj.large_order.mod[0]: large は subj.v_place の to（subj.agent）に来られない"
+   ],
+   "ctl_typechecks": 0,
+   "ctl_extends_match": 1,
+   "ctl_exact": 0,
+   "ctl_written": "  large_order: {display: 大口注文, extends: order, mod: {of: [v_place, from], with: large}}",
+   "ctl_err_text": [
+    "subj.large_order.mod[0]: large は subj.v_place の to（subj.agent）に来られない"
+   ]
+  },
+  "item new_order": {
+   "before": 0,
+   "fb_typechecks": 0,
+   "fb_extends_match": 1,
+   "fb_exact": 0,
+   "fb_written": "  new_order: {display: 新規, extends: order, mod: {of: [v_create, from]}}",
+   "fb_err_text": [
+    "subj.new_order.mod[0]: v_create は動詞でない"
+   ],
+   "ctl_typechecks": 0,
+   "ctl_extends_match": 0,
+   "ctl_exact": 0,
+   "ctl_written": "  new_order: {display: 新規, extends: order, mod: {of: [v_create, from]}}型検査の誤り: この行は受け付けられなかった。",
+   "ctl_err_text": []
+  },
+  "item plan": {
+   "before": 0,
+   "fb_typechecks": 0,
+   "fb_extends_match": 0,
+   "fb_exact": 0,
+   "fb_written": "  plan: {display: プラン, extends: plan_entity, mod: {of: [v_plan, to]}}",
+   "fb_err_text": [
+    "subj.monthly_fee.mod[0]: subj.plan は ontology.v_depend の to（ontology.continuant）に来られない",
+    "subj.plan: 上位がない、または未定義",
+    "subj.free_plan.mod[0]: subj.plan は ontology.v_depend の to（ontology.continuant）に来られない"
+   ],
+   "ctl_typechecks": 0,
+   "ctl_extends_match": 0,
+   "ctl_exact": 0,
+   "ctl_written": "  plan: {display: プラン, extends: plan_entity, mod: {of: [v_plan, to]}}",
+   "ctl_err_text": [
+    "subj.monthly_fee.mod[0]: subj.plan は ontology.v_depend の to（ontology.continuant）に来られない",
+    "subj.plan: 上位がない、または未定義",
+    "subj.free_plan.mod[0]: subj.plan は ontology.v_depend の to（ontology.continuant）に来られない"
+   ]
+  },
+  "item deficit": {
+   "before": 0,
+   "fb_typechecks": 0,
+   "fb_extends_match": 1,
+   "fb_exact": 0,
+   "fb_written": "  deficit: {display: 赤字, extends: account, mod: {of: [v_measure, from], with: amount, neg: true}, mod: {of: [v_depend, to], with: monthly_fee, at: {amount: {le: 500}}}}",
+   "fb_err_text": [
+    "nstruct_document\n    for dummy in generator:\n                 ^^^^^^^^^\n  File \"/home/user/venv/lib/python3.13/site-packages/yaml/constructor.py\", line 413, in construct_yaml_map\n    value = self.construct_mapping(node)\n  File \"/tmp/tmprds3mi02/cscl/bootstrap/type_checker/type_checker.py\", line 226, in _mapping\n    raise yaml.constructor.ConstructorError(None, None, f\"識別子 {key} が重複している\", k.start_mark)\nyaml.constructor.ConstructorError: 識別子 mod が重複している\n  in \"<unicode string>\", line 81, column 99\n"
+   ],
+   "ctl_typechecks": 0,
+   "ctl_extends_match": 1,
+   "ctl_exact": 0,
+   "ctl_written": "  deficit: {display: 赤字, extends: account, mod: {of: [v_measure, from], with: amount, neg: true}}",
+   "ctl_err_text": [
+    "subj.deficit.mod[0]: amount は syntax.v_measure の to（any）に来られない"
+   ]
+  },
+  "item approval": {
+   "before": 0,
+   "fb_typechecks": 0,
+   "fb_extends_match": 1,
+   "fb_exact": 0,
+   "fb_written": "  approval: {display: 承認, extends: process, mod: {of: [v_accept, from], with: inspection}}",
+   "fb_err_text": [
+    "subj.approval.mod[0]: v_accept は動詞でない"
+   ],
+   "ctl_typechecks": 0,
+   "ctl_extends_match": 1,
+   "ctl_exact": 0,
+   "ctl_written": "  approval: {display: 承認, extends: process, mod: {of: [v_accept, from], with: inspection}}",
+   "ctl_err_text": [
+    "subj.approval.mod[0]: v_accept は動詞でない"
+   ]
+  },
+  "item delay": {
+   "before": 0,
+   "fb_typechecks": 0,
+   "fb_extends_match": 0,
+   "fb_exact": 0,
+   "fb_written": "  delay: {display: 遅延, extends: quality, mod: {of: [v_measure, from], with: approved_inspection}}",
+   "fb_err_text": [
+    "法則 one_name（互いに相手の式を（含意によっても）持つ組は、同じものの別の名前なので置かない）に反する: var1=subj.completed, var2=subj.delay",
+    "法則 one_name（互いに相手の式を（含意によっても）持つ組は、同じものの別の名前なので置かない）に反する: var1=subj.delay, var2=subj.completed",
+    "法則 specific（より具体的な概念があればその下に置く）に反する: var1=subj.delay, var2=subj.completed"
+   ],
+   "ctl_typechecks": 0,
+   "ctl_extends_match": 0,
+   "ctl_exact": 0,
+   "ctl_written": "  delay: {display: 遅延, extends: quality, mod: {of: [v_measure, from], with: approved_inspection}}",
+   "ctl_err_text": [
+    "法則 one_name（互いに相手の式を（含意によっても）持つ組は、同じものの別の名前なので置かない）に反する: var1=subj.delay, var2=subj.completed",
+    "法則 one_name（互いに相手の式を（含意によっても）持つ組は、同じものの別の名前なので置かない）に反する: var1=subj.completed, var2=subj.delay",
+    "法則 specific（より具体的な概念があればその下に置く）に反する: var1=subj.completed, var2=subj.delay"
+   ]
+  },
+  "item absent_person": {
+   "before": 0,
+   "fb_typechecks": 0,
+   "fb_extends_match": 0,
+   "fb_exact": 0,
+   "fb_written": "  absent_person: {display: 開始時刻に席にいなかった人, extends: process, mod: {of: [v_arrive, to], with: meeting_start}}",
+   "fb_err_text": [
+    "subj.absent_person.mod[0]: v_arrive は動詞でない"
+   ],
+   "ctl_typechecks": 0,
+   "ctl_extends_match": 0,
+   "ctl_exact": 0,
+   "ctl_written": "  absent_person: {display: 開始時刻に席にいなかった人, extends: process, mod: {of: [v_arrive, to], with: meeting_start}}",
+   "ctl_err_text": [
+    "subj.absent_person.mod[0]: v_arrive は動詞でない"
+   ]
+  },
+  "item land": {
+   "before": 0,
+   "fb_typechecks": 0,
+   "fb_extends_match": 0,
+   "fb_exact": 0,
+   "fb_written": "  land: {display: 土地, extends: property, mod: {of: [v_occupy, from], with: owner}}",
+   "fb_err_text": [
+    "subj.land: 上位がない、または未定義",
+    "法則 narrow_from（下位の動詞の端 from は、上位の動詞の端を狭める）に反する: var1=subj.v_located, var2=subj.land, var3=ontology.v_compose, var4=ontology.continuant, var5=ontology.continuant",
+    "法則 placed_deduced（動詞でない概念は、定義から根の下に置かれる（根への宣言だけでは置かれない））に反する: var1=subj.land"
+   ],
+   "ctl_typechecks": 0,
+   "ctl_extends_match": 0,
+   "ctl_exact": 0,
+   "ctl_written": "  land: {display: 土地, extends: property, mod: {of: [v_occupy, from], with: owner}}",
+   "ctl_err_text": [
+    "subj.land: 上位がない、または未定義",
+    "法則 narrow_from（下位の動詞の端 from は、上位の動詞の端を狭める）に反する: var1=subj.v_located, var2=subj.land, var3=ontology.v_compose, var4=ontology.continuant, var5=ontology.continuant",
+    "法則 placed_deduced（動詞でない概念は、定義から根の下に置かれる（根への宣言だけでは置かれない））に反する: var1=subj.land"
+   ]
+  },
+  "item urban": {
+   "before": 1,
+   "fb_typechecks": 1,
+   "fb_extends_match": 1,
+   "fb_exact": 0,
+   "fb_written": "  urban: {display: 都市部, extends: municipality, mod: {of: [v_compose, from], with: municipality}}",
+   "fb_err_text": [],
+   "ctl_typechecks": 1,
+   "ctl_extends_match": 1,
+   "ctl_exact": 0,
+   "ctl_written": "  urban: {display: 都市部, extends: municipality, mod: {of: [v_compose, from], with: municipality}}",
+   "ctl_err_text": []
+  },
+  "item business_day": {
+   "before": 0,
+   "fb_typechecks": 0,
+   "fb_extends_match": 0,
+   "fb_exact": 0,
+   "fb_written": "  business_day: {display: 営業日, extends: day, mod: {of: [v_business_day_of, to]}}型検査の誤り: subj.business_day.mod[0]: v_business_day_of は動詞でない",
+   "fb_err_text": [],
+   "ctl_typechecks": 0,
+   "ctl_extends_match": 0,
+   "ctl_exact": 0,
+   "ctl_written": "  business_day: {display: 営業日, extends: day, mod: {of: [v_business_day_of, to]}}型検査の誤り: この行は受け付けられなかった。",
+   "ctl_err_text": []
+  },
+  "item weekday": {
+   "before": 0,
+   "fb_typechecks": 0,
+   "fb_extends_match": 0,
+   "fb_exact": 0,
+   "fb_written": "  weekday: {display: 曜日, extends: weekday_day, mod: {of: [v_weekday_of, to], with: monday, neg: true}}",
+   "fb_err_text": [
+    "法則 narrow_from（下位の動詞の端 from は、上位の動詞の端を狭める）に反する: var1=subj.v_weekday_of, var2=subj.weekday, var3=syntax.v_measure, var4=ontology.continuant, var5=any",
+    "法則 monotone（階層を降りるたびに限定が増える）に反する: var1=subj.weekday, var2=subj.weekday_day",
+    "法則 named_mod に反する: subj.weekday_day, subj.weekday が同じ限定を足している。名前を付けた修飾語にする"
+   ],
+   "ctl_typechecks": 0,
+   "ctl_extends_match": 0,
+   "ctl_exact": 0,
+   "ctl_written": "  weekday: {display: 曜日, extends: weekday_day, mod: {of: [v_weekday_of, to]}}",
+   "ctl_err_text": [
+    "法則 narrow_from（下位の動詞の端 from は、上位の動詞の端を狭める）に反する: var1=subj.v_weekday_of, var2=subj.weekday, var3=syntax.v_measure, var4=ontology.continuant, var5=any",
+    "法則 monotone（階層を降りるたびに限定が増える）に反する: var1=subj.weekday, var2=subj.weekday_day",
+    "法則 named_mod に反する: subj.day, subj.weekday が同じ限定を足している。名前を付けた修飾語にする"
+   ]
+  },
+  "item thursday_day": {
+   "before": 0,
+   "fb_typechecks": 0,
+   "fb_extends_match": 0,
+   "fb_exact": 0,
+   "fb_written": "  thursday_day: {display: 木曜の日, extends: weekday, mod: {of: [v_weekday_of, to], with: thursday, neg: false}}",
+   "fb_err_text": [
+    "subj.thursday_day.mod[0]: subj.weekday は subj.v_weekday_of の to（subj.day）に来られない"
+   ],
+   "ctl_typechecks": 0,
+   "ctl_extends_match": 0,
+   "ctl_exact": 0,
+   "ctl_written": "  thursday_day: {display: 木曜の日, extends: weekday, mod: {of: [v_weekday_of, to], with: thursday}}",
+   "ctl_err_text": [
+    "subj.thursday_day.mod[0]: subj.weekday は subj.v_weekday_of の to（subj.day）に来られない"
+   ]
+  },
+  "item morning": {
+   "before": 1,
+   "fb_typechecks": 1,
+   "fb_extends_match": 1,
+   "fb_exact": 0,
+   "fb_written": "  morning: {display: 午前, extends: morning_base, mod: {of: [v_end, to]}}",
+   "fb_err_text": [],
+   "ctl_typechecks": 1,
+   "ctl_extends_match": 1,
+   "ctl_exact": 0,
+   "ctl_written": "  morning: {display: 午前, extends: morning_base, mod: {of: [v_end, to]}}",
+   "ctl_err_text": []
+  },
+  "summary 要約": {
+   "n_items": 24,
+   "n_before": 5,
+   "n_fb": 5,
+   "n_fb_extends_match": 11,
+   "n_fb_exact": 1,
+   "n_ctl": 5,
+   "n_ctl_extends_match": 10,
+   "n_ctl_exact": 1,
+   "base_errors": 0
+  }
+ }
+}
