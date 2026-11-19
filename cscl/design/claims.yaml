@@ -179,6 +179,8 @@ individuals:
   h_boundary_invariant: {is: exp.hyp_supported}
   b_boundary_invariant: {is: exp.item_done}
   h_frame_both_sides: {is: exp.hyp_untested}
+  h_rule_verbs_unhardcode: {is: exp.hyp_untested}
+  b_rule_verbs_unhardcode: {is: exp.item_queued}
   b_frame_both_sides: {is: exp.item_queued}
   h_rule_roles_by_frame: {is: exp.hyp_supported}
   b_rule_roles_by_frame: {is: exp.item_done}
@@ -650,6 +652,8 @@ facts:
   - {is: exp.v_support, from: o_sys_appear_root_gathers, to: h_appear_root}
   - {is: v_refer, from: h_boundary_invariant, to: {is: v_not_depend, from: type_checker, to: boundary_choice}}
   - {is: exp.v_check, from: b_boundary_invariant, to: h_boundary_invariant}
+  - {is: v_refer, from: h_rule_verbs_unhardcode, to: {is: v_depend, from: type_checker, to: [syntax.pre, syntax.post, syntax.holds]}}
+  - {is: exp.v_check, from: b_rule_verbs_unhardcode, to: h_rule_verbs_unhardcode}
   - {is: v_refer, from: h_frame_both_sides, to: {is: v_depend, from: syntax.pre, to: syntax.post}}
   - {is: exp.v_check, from: b_frame_both_sides, to: h_frame_both_sides}
   - {is: v_refer, from: h_rule_roles_by_frame, to: {is: v_depend, from: type_checker, to: [syntax.law_rule, syntax.pre, syntax.post]}}
