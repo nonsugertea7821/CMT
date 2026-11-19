@@ -112,6 +112,8 @@ individuals:
   b_individual_depth: {is: exp.item_done}
   h_hierarchy_in_object: {is: exp.hyp_supported}
   b_hierarchy_in_object: {is: exp.item_done}
+  h_law_relation_in_mod: {is: exp.hyp_untested}
+  b_law_relation_in_mod: {is: exp.item_queued}
   h_draw_on_with_shallow: {is: exp.hyp_refuted}
   b_draw_on_with_shallow: {is: exp.item_done}
   h_gloss_formula: {is: exp.hyp_refuted}
@@ -540,6 +542,7 @@ facts:
   - {is: exp.v_ground, from: d_cscl_display_derived, to: h_checker_words_by_formula}
   - {is: exp.v_ground, from: d_cscl_display_derived, to: h_refer_stratified}
   - {is: exp.v_ground, from: d_cscl_display_derived, to: h_draw_on_with_shallow}
+  - {is: exp.v_ground, from: d_cscl_display_derived, to: h_law_relation_in_mod}
   - {is: exp.v_ground, from: d_cscl_display_derived, to: h_case_frame_by_signature}
   - {is: exp.v_ground, from: d_cscl_display_derived, to: h_concept_kind_excludes_verb}
   - {is: exp.v_ground, from: d_cscl_display_derived, to: h_concept_kind_frame_free}
@@ -650,6 +653,8 @@ facts:
   - {is: exp.v_support, from: o_sys_hierarchy_object_no_new_violation, to: h_hierarchy_in_object}
   - {is: v_refer, from: h_draw_on_with_shallow, to: {is: v_not_depend, from: reading_formula, to: syntax.display}}
   - {is: exp.v_check, from: b_draw_on_with_shallow, to: h_draw_on_with_shallow}
+  - {is: v_refer, from: h_law_relation_in_mod, to: {is: v_depend, from: syntax.mod, to: syntax.law_relation}}
+  - {is: exp.v_check, from: b_law_relation_in_mod, to: h_law_relation_in_mod}
   - {is: v_refer, from: o_sys_dows_a_reproduces, to: {is: v_level, from: sys_draw_on_with_shallow.named_mod_A.mean_value, to: 2.0}}
   - {is: v_refer, from: o_sys_dows_b_fails, to: {is: v_level, from: sys_draw_on_with_shallow.errors_B.mean_value, to: 6.0}}
   - {is: exp.v_contradict, from: o_sys_dows_b_fails, to: h_draw_on_with_shallow}
