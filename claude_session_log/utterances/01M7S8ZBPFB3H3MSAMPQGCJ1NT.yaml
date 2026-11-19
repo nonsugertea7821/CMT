@@ -1,0 +1,18 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-19T06:47:45.103Z（UTC）
+individuals:
+  01M7S8ZBPFB3H3MSAMPQGCJ1NT:
+    is: model_utterance
+    display: 発言 2335
+    val:
+      order: 2335
+      text: |
+        The first E30 run stopped partway through, after 9 of 24 items, and printed no error. It most likely died when the worker restarted. It had not written any results file yet, so nothing recorded was overwritten.
+
+        - **Restarted:** I started the same pre-registered script again from the beginning. This time it runs as a background task that the harness tracks.
+        - **Same result expected:** Generation is greedy, so the run should be deterministic. The interrupted log (`/tmp/claude-0/-home-user-CMT/e05d2140-ce91-515f-a5fb-e6251e13d406/scratchpad/e30.log`) can be compared against the new one.
+        - **Disclosure:** The PR #308 description will say the first run was interrupted and rerun.
+        - **What the first 9 items showed:** only the 2 that already passed in E29 passed. None of the 7 failed lines passed after either kind of retry: with the error messages, or with just "rejected".
+        - **Next check:** The keep-alive check is at 06:57Z.
+facts:
+- {is: v_say, from: session_model, to: 01M7S8ZBPFB3H3MSAMPQGCJ1NT}
+- {is: exp.v_answer, from: 01M7S8ZBPFB3H3MSAMPQGCJ1NT, to: 01M7RE4494JDFW71WBNAW679KX}
