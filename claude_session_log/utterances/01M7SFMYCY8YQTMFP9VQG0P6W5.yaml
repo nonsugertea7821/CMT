@@ -1,0 +1,24 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-19T08:44:23.838Z（UTC）
+individuals:
+  01M7SFMYCY8YQTMFP9VQG0P6W5:
+    is: model_utterance
+    display: 発言 2408
+    val:
+      order: 2408
+      text: |
+        h_appear_root（#320）を確かめ、結果は**支持**でした。PR #322 の Draft を外しています。
+
+        - **何を見たか:** 動詞ごとに、ある位置のものが「前は無い（pre）、後に有る（post）」と書かれているかを数えました。
+        - **結果:** 枠を持つ動詞 36 のうち 20 がこの「出現」の形でした。pre だけで分けても、pre と post の組で分けても、同じ 20 になります。v_design・v_compute・v_speak もこの中に入っています。名前を読まなくても、出現は式から取り出せる分類になっています。
+        - **現れる位置は 2 通り:** to の位置（v_design・v_speak など）と、new の位置（v_judge・v_learn など）です。
+        - **見つかった負債:** v_design と v_compute は、出現の形のほかに式の違いがありません。違うのは to の種類（continuant か any か）と表示だけです。そのため、出現だけを書いた根 `v_appear` を足すと、v_compute と「動詞の式が同じ」になり、型検査で落ちました。根を置く前に、この 2 つの違いを式で書く必要があります。
+
+        この結果を使えば、#318 の「モデルより前の文章」を、発話ではなく出現の分類で書き直せる見込みです。境目の選び方によらない形（出現の期間と重ならない、など）で書くつもりです。ただ、この実験は今の体系での一致を数えただけで、体系が大きくなっても成り立つかは見ていません。
+facts:
+- {is: v_say, from: session_model, to: 01M7SFMYCY8YQTMFP9VQG0P6W5}
+- {is: exp.v_answer, from: 01M7SFMYCY8YQTMFP9VQG0P6W5, to: 01M7SFA7CB9Z5WE298XGR31N8N}
+- {is: v_refer, from: 01M7SFMYCY8YQTMFP9VQG0P6W5, to: ontology.v_design}
+- {is: v_refer, from: 01M7SFMYCY8YQTMFP9VQG0P6W5, to: std.v_compute}
+- {is: v_refer, from: 01M7SFMYCY8YQTMFP9VQG0P6W5, to: exp.v_speak}
+- {is: v_refer, from: 01M7SFMYCY8YQTMFP9VQG0P6W5, to: exp.v_judge}
+- {is: v_refer, from: 01M7SFMYCY8YQTMFP9VQG0P6W5, to: std.v_learn}

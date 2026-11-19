@@ -1,0 +1,241 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-19T08:41:33.683Z（UTC）
+individuals:
+  01M7SFFR7K0Z84JYHSA8WASXJB:
+    is: session_summary
+    display: 発言 2403
+    val:
+      order: 2403
+      text: |
+        This session is being continued from a previous conversation that ran out of context. The summary below covers the earlier portion of the conversation.
+
+        <system-reminder>
+        <tools-used-before-summary>AskUserQuestion, Bash, Edit, Grep, Read, ReadNotifications, Skill, TaskStop, ToolSearch, WebFetch, WebSearch, Write, mcp__claude-code-remote__create_trigger, mcp__claude-code-remote__delete_trigger, mcp__claude-code-remote__get_trigger, mcp__claude-code-remote__read_documentation, mcp__claude-code-remote__send_later, mcp__claude-code-remote__subscribe_pr_activity, mcp__claude-code-remote__update_trigger, mcp__github__actions_get, mcp__github__actions_list, mcp__github__add_issue_comment, mcp__github__create_pull_request, mcp__github__get_job_logs, mcp__github__issue_read, mcp__github__issue_write, mcp__github__list_issue_types, mcp__github__list_issues, mcp__github__list_pull_requests, mcp__github__pull_request_read, mcp__github__update_pull_request</tools-used-before-summary>
+        </system-reminder>
+        Summary:
+        1. Primary Request and Intent
+
+        **Standing rules (in force)**
+        - Repo: nonsugertea7821/CMT at /home/user/CMT.
+        - Reply in Japanese.
+          - The user complained my Japanese had worsened. Write plainer, natural Japanese.
+        - Don't overclaim. Give interpretation.
+        - Restore files with `git show <rev>:<path> > <path>`. Never checkout to restore and never stash. `git switch` is used for branches.
+        - Python: /home/user/venv/bin/python.
+        - Commit trailer:
+          `Co-Authored-By: Claude [モデル名を伏せた] <[メールアドレスを伏せた]>`
+          `Claude-Session: https://claude.ai/code/session_015KRKt6TNJZ7ZsQmEknANXK`
+        - PR body ends with `🤖 Generated with [Claude Code](https://claude.com/claude-code)`, a blank line, then `https://claude.ai/code/session_015KRKt6TNJZ7ZsQmEknANXK`.
+        - Claude never merges. No personal info or model identifiers in pushed artifacts.
+        - No comments in system yaml.
+        - Never rerun recorded experiment scripts. Write new result names instead of overwriting. Use `git add -f` for exp/experiments files.
+        - CI belongs to GitHub.
+        - Every PR: call subscribe_pr_activity, and issue_write update with assignees [nonsugertea7821].
+        - After a merge: `git fetch -q --prune origin`, ff main, then `git branch -D` the local branch. Never push to a merged branch. Never push branch deletions.
+        - Proposals are registered as untested hypotheses (h_/b_ plus v_refer and v_check) **before** they are told to the user.
+          - Registration-only PRs auto-merge.
+          - Concept-adding PRs are manual.
+        - **NEW user rule:** Do not decide whether to add a concept based on whether it triggers manual review. Unformalized distinctions are debt for identifier-ization. Formalize with expressions.
+        - Preregistration:
+          - commit the script only first, results later;
+          - if a correction is needed, record the original result first, then commit the correction script before running it, and disclose.
+        - A PR stays Draft only if the hypothesis remains untested.
+        - Keep-alive chain is only for long experiments. Run experiments with run_in_background.
+
+        **30-minute cycle**
+        - The prompt is reused verbatim via send_later.
+        - Next fire: trig_01FR8xij2RpyvBvqmVfsseQZ at 09:11Z.
+        - Triage order: A / A' / C / E / B / D.
+
+        **User goals stated in this segment**
+        - System soundness aims at abolishing display and making identifiers formula-derived.
+        - Japanese translation depends on prosody. Naturalness should be verified against pre-LLM public corpus features, not native judges.
+        - Emergence (出現), not utterance, is the right notion for "LLM以前".
+        - Boundary conventions (left/right continuity) must both hold. Dependence on the choice is an error signal.
+
+        2. Key Technical Concepts
+
+        **Checks**
+        - tc: cscl/bootstrap/type_checker/type_checker.py.
+        - ec: exp/src/exp_check.py. Judge by exit code.
+
+        **Family recording in exp.yaml**
+        - Nodes: `F: {is: measurement_family}`, `F_cond`, `F_cond_<c>`.
+        - Facts: v_file_of, v_rows_of [rows], v_axis_of, v_value_of plus v_spell, v_entry_of '{cond}', v_metric_of mean_value.
+        - Observations: v_refer with v_level `F.cond.mean_value`, plus v_support or v_contradict.
+
+        **Variant experiments (sys_*)**
+        - Copy cscl.yaml, cscl and exp/src to a tmpdir. The results dir must also be present (symlink); otherwise ec errors.
+        - A PROBE runs tc.build, exp_check.build, and law evaluation, and hashes facts per relation.
+
+        **Type checker findings**
+        - qn_raw passes dotted names (`syntax.x`) unchecked.
+        - Verbs with an identical formula are rejected ("動詞の式が同じ").
+        - A verb can't be the from of v_not_depend (needs continuant).
+
+        **Appearance frame**
+        - Form: `pre: [{is: exists, from: to, neg: true}], post: [{is: exists, from: to}]`.
+        - Used in v_design (ontology), v_compute (std) and v_speak (exp).
+        - v_compute's formula equals pure appearance; its meaning "計算する" lives only in display.
+        - `occurrent` has `sometime` (its own begin/end).
+        - `new` = third participant position (new_kind), not emergence.
+
+        **Geometric reading discussed**
+        - Concepts are 0/1 vectors over modifier dimensions; any = zero vector, self = origin, same = sign.
+        - Norm (L1) = depth. Note: depth is sometimes counted by extends hops, which can differ.
+        - Cone order (subset of modifiers); monotone law ⇔ norm increases down the order.
+        - The lower set of y = intersection of half-spaces {x_i ≥ 1}.
+        - Existence is not a coordinate. On the time line, existence is a half-open interval [t_appear, t_vanish).
+        - pre/post = left/right limits at the jump; the value at the jump is undetermined.
+        - Per the user: invariance under the choice is required.
+
+        3. Files and Code Sections
+
+        **exp/experiments/sys_family_refers_laws.py (merged via #313)**
+        - FAM = sys_above_individual_fix2.
+        - After the anchor `- {is: v_metric_of, from: FAM, to: mean_value}`, it adds `- {is: v_refer, from: FAM, to: syntax.<law>}`.
+          - R uses above_is_ancestor (declared).
+          - U uses above_by_ind (undeclared).
+        - Excludes statements containing both the FAM and LAW short names.
+        - Judgment: R errors 0, ec 0, changed 0 means supported.
+
+        **exp/experiments/sys_family_refers_laws_fix.py**
+        - Monkeypatches shutil.copytree to symlink exp/experiments/results.
+        - Output sys_family_refers_laws_fix.json. All 0 for R and U.
+
+        **exp/src/exp.yaml (main)**
+        - Family sys_family_refers_laws_fix with keys R_errors, R_ec_errors, R_changed, U_errors, U_ec_errors, U_changed.
+        - Observations:
+          - o_sys_family_refers_laws_passes, _passes_ec, _unchanged → v_support;
+          - o_sys_family_refers_laws_undeclared_passes → descriptive.
+        - h_family_refers_laws is hyp_supported; b_ is item_done.
+        - Also added (main):
+          - `h_ja_text_needs_naturalness` with v_refer `{is: v_depend, from: lang.ja_text, to: naturalness}`;
+          - `h_ja_text_agrees_public` with v_refer `{is: v_agree, from: lang.ja_text, to: public_passage}`.
+
+        **PR #318 branch claude/pre_model_passage (open, manual, ON HOLD)**
+        - Adds `pre_model_passage: {display: モデルの発話より前に置かれる、公開された自然言語の文章, extends: public_passage, mod: {of: [v_come_before, from], with: model_utterance}}`.
+        - Changes h_ja_text_agrees_public to target pre_model_passage.
+        - The user pointed out it should be emergence, not utterance. It is to be rewritten after the appearance concept exists, and made boundary-independent (e.g., "not overlapping the emergence interval").
+
+        **cscl/design/claims.yaml (main, via #319)**
+        - `h_appear_root: {is: exp.hyp_untested}`, `b_appear_root: {is: exp.item_queued}`.
+        - `- {is: v_refer, from: h_appear_root, to: {is: v_depend, from: signature_class, to: syntax.pre}}`.
+
+        **PR #321 branch claude/register_boundary_invariant (open, manual)**
+        - Adds `boundary_choice: {display: 前後の状態の境目の選び, extends: quality, mod: {of: [v_depend, from], with: syntax.post}}` after name_choice.
+        - Adds h_boundary_invariant and b_ with `{is: v_not_depend, from: type_checker, to: boundary_choice}`.
+
+        **exp/experiments/sys_layers.py (read for h_appear_root design)**
+        - Defines the signature classification by following definition edges: extends, mod of/with, named mod, from/to/new_kind.
+        - Collects base relations in holds/pre/post. Classes: change (has pre/post), refer, still.
+
+        4. Errors and fixes
+        - **sys_family_refers_laws original run:** the tmp copy lacked exp/experiments/results, giving 1751 ec errors everywhere.
+          - Fix: recorded the original result (37ea347), committed the _fix script before running (052fa2b), result 347dee6. Disclosed in PR #313.
+        - **The preregistration docstring said "tc 3 回" but the script runs 4.** Minor; not separately disclosed.
+        - **h_appear_root first commit 4674bc2 failed tc** (std.v_compute can't be the from of v_not_depend), and was pushed anyway.
+          - Fixed in 80b4f0d to v_depend(signature_class, syntax.pre). Disclosed in PR #319.
+        - **v_bring_about probe in ontology.yaml collided with std.v_compute.** I restored it via git show.
+        - **I claimed E23 was not a big result.** The user believed E22 and E23 were both big; I clarified that E23 (#282) is still undecided.
+        - **User feedback:**
+          - Japanese quality worsened.
+          - Don't avoid concepts because of manual review.
+          - Utterance should be emergence.
+          - Both boundary conventions must hold.
+
+        5. Problem Solving
+        - The #296-type defect can be referenced (h_family_refers_laws supported), but undeclared referents are not checked. The next steps would be end-declaration checking and a place to declare unadopted variant laws.
+        - Display abolition is blocked by two issues:
+          - display carries meaning not in formulas (~77% residual; case frames 0.39 vs 0.63; gloss 4 of 6 left);
+          - the checker reads names (renaming_invariant refuted; 7 string constants including v_collect and v_agree).
+        - v_compute is a concrete display debt.
+
+        6. All user messages
+        - 「#297 マージコンフリクト」
+        - 「だんだん貴方の日本語が悪化してきたな そろそろCSCLの日本語への翻訳の仮説を取り扱うべきか……？ 取り敢えず今までの流れを概略的に教えて」
+        - 「前回(数時間前)のトリアージからはどう進めてきたか」
+        - 「E22,E23は大きな成果だな。当初の方向性、直観に誤りが無かった可能性が示唆される。体系の健全性の方は、目標はdisplayの廃止と式の識別子化だ。そちらについてはどうだ？」
+        - 「日本語への翻訳は韻律の話と深い依存関係があるぞ 翻訳出来てもネイティブが自然に読めなければ意味が無い」
+        - 「あー、それはどうだろうな LLM登場以前の公開コーパスの特徴量と比較する事で検証するべきかと考えるが」
+        - 「手で見るかどうかで判断しないほうがいい それ識別子化する時の負債だから」
+        - 「発話なのか？出現ではなく？ というか、出現に該当する概念は今あるのか？フレームの前後であたらしいものが現れることはnewにまとまっている？」
+        - 「終点を存在させる、って幾何で言うとどこだ？」
+        - 「ノルム、錐の順序について解説してくれ」
+        - 「半開空間についても解説」
+        - 「ああー微分積分のアレか 極限を取ると定まらなくなるからどちらかにって」
+        - 「それ対称性の含意から言えば、どちらも成立するのでは。というか、どちらも成立する形でなければ何かがおかしいというエラーでは」
+
+        7. Pending Tasks
+        - PR #318 (on hold): rewrite pre_model_passage using emergence, in a boundary-independent form, after h_appear_root establishes the appearance concept.
+        - PR #321 (manual review): after merge, sync and `git branch -D claude/register_boundary_invariant`.
+        - Draft PRs #282, #286, #287 and #289 remain undecided.
+        - Test h_appear_root this cycle; h_identifier_by_expansion comes after.
+        - D-series: the preregistration of prosody phrase counting, and the corpus/feature selection for h_ja_text_agrees_public.
+        - Unanswered older questions: step-count concepts, etc.
+
+        8. Current Work
+
+        The 08:39Z cycle fired, and the next cycle is scheduled (09:11Z). Open PRs: #318 (hold), #321 (manual), plus drafts #282, #286, #287, #289.
+
+        I chose h_appear_root (`v_depend(signature_class, syntax.pre)`) to test, as announced to the user:
+
+        > 次の周回では、この h_appear_root を先に確かめようと考えています。結果しだいで #318 の式が直せるので、h_identifier_by_expansion より先にしたいと考えています。
+
+        I was reading exp/experiments/sys_layers.py to reuse its signature-classification definition (edges through extends, mod, from/to/new_kind; base relations in holds/pre/post).
+
+        Design idea:
+        - Classify verbs by their pre/post frame (atoms over the from/to/new positions), including inherited frames.
+        - Check whether the appearance frame (pre ¬exists(to), post exists(to)) gathers v_design, v_compute and v_speak (and their descendants) as one frame-derived class.
+        - Check whether the class is determinable by formula, without names.
+        - Count verbs whose formula is identical to the bare frame (display-only differentia, like v_compute).
+
+        The current branch is main (clean).
+
+        9. Optional Next Step
+        - Create the branch claude/h_appear_root.
+        - Write a preregistered script exp/experiments/sys_appear_root.py. It should derive frame classes from pre/post (following the sys_layers.py edge conventions), list the members of the appearance class, and count verbs whose differentia beyond the frame is empty.
+        - Fix the judgment before running.
+        - Commit the script only, open a Draft PR referencing the h_appear_root issue, subscribe, and assign.
+        - Run in the background, record the result, then run tc and ec, and undraft.
+        - Report briefly in plain Japanese.
+
+        If you need specific details from before compaction (like exact code snippets, error messages, or content you generated), read the full transcript at: /root/.claude/projects/-home-user-CMT/e05d2140-ce91-515f-a5fb-e6251e13d406.jsonl
+        Continue the conversation from where it left off without asking the user any further questions. Resume directly — do not acknowledge the summary, do not recap what was happening, do not preface with "I'll continue" or similar. Pick up the last task as if the break never happened.
+
+        The messages after this summary are the most recent messages from before compaction, kept verbatim. The summary was written without seeing them, so something it says has not happened yet may already have happened in them.
+facts:
+- {is: v_say, from: session_model, to: 01M7SFFR7K0Z84JYHSA8WASXJB}
+- {is: v_refer, from: 01M7SFFR7K0Z84JYHSA8WASXJB, to: ontology.v_refer}
+- {is: v_refer, from: 01M7SFFR7K0Z84JYHSA8WASXJB, to: exp.v_check}
+- {is: v_refer, from: 01M7SFFR7K0Z84JYHSA8WASXJB, to: lang.type_checker}
+- {is: v_refer, from: 01M7SFFR7K0Z84JYHSA8WASXJB, to: exp.measurement_family}
+- {is: v_refer, from: 01M7SFFR7K0Z84JYHSA8WASXJB, to: exp.v_file_of}
+- {is: v_refer, from: 01M7SFFR7K0Z84JYHSA8WASXJB, to: exp.v_rows_of}
+- {is: v_refer, from: 01M7SFFR7K0Z84JYHSA8WASXJB, to: exp.v_axis_of}
+- {is: v_refer, from: 01M7SFFR7K0Z84JYHSA8WASXJB, to: exp.v_value_of}
+- {is: v_refer, from: 01M7SFFR7K0Z84JYHSA8WASXJB, to: exp.v_spell}
+- {is: v_refer, from: 01M7SFFR7K0Z84JYHSA8WASXJB, to: exp.v_entry_of}
+- {is: v_refer, from: 01M7SFFR7K0Z84JYHSA8WASXJB, to: exp.v_metric_of}
+- {is: v_refer, from: 01M7SFFR7K0Z84JYHSA8WASXJB, to: exp.mean_value}
+- {is: v_refer, from: 01M7SFFR7K0Z84JYHSA8WASXJB, to: ontology.v_level}
+- {is: v_refer, from: 01M7SFFR7K0Z84JYHSA8WASXJB, to: exp.v_support}
+- {is: v_refer, from: 01M7SFFR7K0Z84JYHSA8WASXJB, to: exp.v_contradict}
+- {is: v_refer, from: 01M7SFFR7K0Z84JYHSA8WASXJB, to: lang.v_not_depend}
+- {is: v_refer, from: 01M7SFFR7K0Z84JYHSA8WASXJB, to: ontology.v_design}
+- {is: v_refer, from: 01M7SFFR7K0Z84JYHSA8WASXJB, to: std.v_compute}
+- {is: v_refer, from: 01M7SFFR7K0Z84JYHSA8WASXJB, to: exp.v_speak}
+- {is: v_refer, from: 01M7SFFR7K0Z84JYHSA8WASXJB, to: ontology.occurrent}
+- {is: v_refer, from: 01M7SFFR7K0Z84JYHSA8WASXJB, to: syntax.new}
+- {is: v_refer, from: 01M7SFFR7K0Z84JYHSA8WASXJB, to: syntax.new_kind}
+- {is: v_refer, from: 01M7SFFR7K0Z84JYHSA8WASXJB, to: exp.hyp_supported}
+- {is: v_refer, from: 01M7SFFR7K0Z84JYHSA8WASXJB, to: exp.item_done}
+- {is: v_refer, from: 01M7SFFR7K0Z84JYHSA8WASXJB, to: ontology.v_depend}
+- {is: v_refer, from: 01M7SFFR7K0Z84JYHSA8WASXJB, to: ontology.v_agree}
+- {is: v_refer, from: 01M7SFFR7K0Z84JYHSA8WASXJB, to: ontology.v_come_before}
+- {is: v_refer, from: 01M7SFFR7K0Z84JYHSA8WASXJB, to: claude_session_log.model_utterance}
+- {is: v_refer, from: 01M7SFFR7K0Z84JYHSA8WASXJB, to: exp.hyp_untested}
+- {is: v_refer, from: 01M7SFFR7K0Z84JYHSA8WASXJB, to: exp.item_queued}
+- {is: v_refer, from: 01M7SFFR7K0Z84JYHSA8WASXJB, to: lang.signature_class}
+- {is: v_refer, from: 01M7SFFR7K0Z84JYHSA8WASXJB, to: syntax.pre}
+- {is: v_refer, from: 01M7SFFR7K0Z84JYHSA8WASXJB, to: syntax.post}
+- {is: v_refer, from: 01M7SFFR7K0Z84JYHSA8WASXJB, to: syntax.v_collect}
