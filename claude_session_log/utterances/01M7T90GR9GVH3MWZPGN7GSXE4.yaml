@@ -1,0 +1,27 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-19T16:07:37.481Z（UTC）
+individuals:
+  01M7T90GR9GVH3MWZPGN7GSXE4:
+    is: model_utterance
+    display: 発言 2631
+    val:
+      order: 2631
+      text: |
+        h_fact_slot_by_end は支持されました。型検査器は、一つの個体の事実を「動詞」ではなく「もう一方の端の種類」で分けてしまっておきます。PR #383 で、Draft を外してあります。
+
+        - **結果**: 7 つの見本すべてが見込みどおりでした。v_depend を二つ、v_depend と v_raise、v_raise と v_lower の三つだけが「関係 continuant の事実が2つ以上ある」で落ちました。v_ground を二つ出す見本と、端の種類が違う二つを出す見本は通りました。
+        - **訂正があります**: 一回目は、何も足さない基準の見本まで落ちたので、判定どおり外れとしました。原因は見本の作り方です。exp の検査器は決定に中身の文があることを前提にしていて、中身のない見本の決定で例外を出して止まっていました。中身の文を一つ足す手順を書き足して、走らせ直しました。訂正があるので自動マージには乗りません。手で見てください。
+        - **含意**: 直すことは二つに分かれます。
+          - 違う動詞どうしがぶつかる件は、検査器の側で欄を動詞でも分ければ解けるはずです。仮説 h_fact_slot_by_verb として PR #384 で登録しました。
+          - 同じ動詞を二つ出す件は、欄を動詞で分けても残ります。決定どうしのつながりに「複数を許す」役割を与える、体系の側の直し方（h_decision_link_by_role、登録済み）が要ります。
+        - **もう一つの含意**: exp の検査器は、中身のない決定を誤りとして報告せず、例外で止まります。検査器の健全性の問題なので、次の周回で仮説として登録します。
+
+        #384 は、仮説を決定に結ぶ一行も含むので、登録だけの PR に当たりません。自動マージされないので、これも手で見てください。
+
+        ロードマップでは、識別子化の手前にある検査器の制限を直す段の、一段目を終えたところです。
+facts:
+- {is: v_say, from: session_model, to: 01M7T90GR9GVH3MWZPGN7GSXE4}
+- {is: exp.v_answer, from: 01M7T90GR9GVH3MWZPGN7GSXE4, to: 01M7T862KQ7AY71997B38V3NHK}
+- {is: v_refer, from: 01M7T90GR9GVH3MWZPGN7GSXE4, to: ontology.v_depend}
+- {is: v_refer, from: 01M7T90GR9GVH3MWZPGN7GSXE4, to: exp.v_raise}
+- {is: v_refer, from: 01M7T90GR9GVH3MWZPGN7GSXE4, to: exp.v_lower}
+- {is: v_refer, from: 01M7T90GR9GVH3MWZPGN7GSXE4, to: exp.v_ground}
