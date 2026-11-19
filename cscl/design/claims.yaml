@@ -172,8 +172,8 @@ individuals:
   b_ja_connective: {is: exp.item_queued}
   h_identifier_by_expansion: {is: exp.hyp_refuted}
   b_identifier_by_expansion: {is: exp.item_done}
-  h_identifier_by_bisimulation: {is: exp.hyp_untested}
-  b_identifier_by_bisimulation: {is: exp.item_queued}
+  h_identifier_by_bisimulation: {is: exp.hyp_refuted}
+  b_identifier_by_bisimulation: {is: exp.item_done}
   h_appear_root: {is: exp.hyp_supported}
   b_appear_root: {is: exp.item_done}
   h_boundary_invariant: {is: exp.hyp_supported}
@@ -362,6 +362,11 @@ individuals:
   o_sys_ident_cycle: {is: exp.observation}
   o_sys_ident_no_empty: {is: exp.observation}
   o_sys_ident_base_passes: {is: exp.observation}
+  o_sys_bisim_not_predicted: {is: exp.observation}
+  o_sys_bisim_collide: {is: exp.observation}
+  o_sys_bisim_collide_nodes: {is: exp.observation}
+  o_sys_bisim_rounds: {is: exp.observation}
+  o_sys_bisim_base_passes: {is: exp.observation}
   o_sys_hierarchy_object_first_fails: {is: exp.observation}
   o_sys_hierarchy_object_matches: {is: exp.observation}
   o_sys_hierarchy_object_passes_checks: {is: exp.observation}
@@ -654,6 +659,12 @@ facts:
   - {is: v_refer, from: o_sys_ident_no_empty, to: {is: v_level, from: sys_identifier_expansion.n_empty.mean_value, to: 0.0}}
   - {is: v_refer, from: o_sys_ident_base_passes, to: {is: v_level, from: sys_identifier_expansion.base_errors.mean_value, to: 0.0}}
   - {is: exp.v_contradict, from: o_sys_ident_collide, to: h_identifier_by_expansion}
+  - {is: v_refer, from: o_sys_bisim_not_predicted, to: {is: v_level, from: sys_identifier_bisimulation.match_prediction.mean_value, to: 0.0}}
+  - {is: v_refer, from: o_sys_bisim_collide, to: {is: v_level, from: sys_identifier_bisimulation.n_collide_class.mean_value, to: 4.0}}
+  - {is: v_refer, from: o_sys_bisim_collide_nodes, to: {is: v_level, from: sys_identifier_bisimulation.n_collide_nodes.mean_value, to: 10.0}}
+  - {is: v_refer, from: o_sys_bisim_rounds, to: {is: v_level, from: sys_identifier_bisimulation.n_rounds.mean_value, to: 5.0}}
+  - {is: v_refer, from: o_sys_bisim_base_passes, to: {is: v_level, from: sys_identifier_bisimulation.base_errors.mean_value, to: 0.0}}
+  - {is: exp.v_contradict, from: o_sys_bisim_not_predicted, to: h_identifier_by_bisimulation}
   - {is: v_refer, from: h_case_frame_formula, to: {is: v_not_depend, from: case_frame, to: syntax.display}}
   - {is: exp.v_check, from: b_case_frame_formula, to: h_case_frame_formula}
   - {is: v_refer, from: h_case_frame_by_relation, to: {is: v_depend, from: case_frame, to: syntax.base}}
