@@ -944,6 +944,14 @@ individuals:
   sys_rule_verbs_unhardcode_cond_U_rel_same: {is: axis_value, val: {text: U_rel_same}}
   sys_rule_verbs_unhardcode_cond_U_n_role: {is: axis_value, val: {text: U_n_role}}
   sys_rule_verbs_unhardcode_cond_control_differs: {is: axis_value, val: {text: control_differs}}
+  sys_frame_enters_relations: {is: measurement_family}
+  sys_frame_enters_relations_cond: {is: family_axis, val: {text: cond}}
+  sys_frame_enters_relations_cond_U_rel_ne_L: {is: axis_value, val: {text: U_rel_ne_L}}
+  sys_frame_enters_relations_cond_F_rel_eq_U: {is: axis_value, val: {text: F_rel_eq_U}}
+  sys_frame_enters_relations_cond_F_rel_ne_L: {is: axis_value, val: {text: F_rel_ne_L}}
+  sys_frame_enters_relations_cond_F_laws_eq_L: {is: axis_value, val: {text: F_laws_eq_L}}
+  sys_frame_enters_relations_cond_F_errors: {is: axis_value, val: {text: F_errors}}
+  sys_frame_enters_relations_cond_F_ec_errors: {is: axis_value, val: {text: F_ec_errors}}
   sys_rule_roles_by_frame: {is: measurement_family}
   sys_rule_roles_by_frame_cond: {is: family_axis, val: {text: cond}}
   sys_rule_roles_by_frame_cond_errors: {is: axis_value, val: {text: errors}}
@@ -4419,6 +4427,23 @@ facts:
   - {is: v_spell, from: sys_rule_verbs_unhardcode_cond_control_differs, to: control_differs}
   - {is: v_entry_of, from: '{cond}', to: sys_rule_verbs_unhardcode}
   - {is: v_metric_of, from: sys_rule_verbs_unhardcode, to: mean_value}
+  - {is: v_file_of, from: sys_frame_enters_relations.json, to: sys_frame_enters_relations}
+  - {is: v_rows_of, from: [rows], to: sys_frame_enters_relations}
+  - {is: v_axis_of, from: sys_frame_enters_relations_cond, to: sys_frame_enters_relations}
+  - {is: v_value_of, from: sys_frame_enters_relations_cond_U_rel_ne_L, to: sys_frame_enters_relations_cond}
+  - {is: v_spell, from: sys_frame_enters_relations_cond_U_rel_ne_L, to: U_rel_ne_L}
+  - {is: v_value_of, from: sys_frame_enters_relations_cond_F_rel_eq_U, to: sys_frame_enters_relations_cond}
+  - {is: v_spell, from: sys_frame_enters_relations_cond_F_rel_eq_U, to: F_rel_eq_U}
+  - {is: v_value_of, from: sys_frame_enters_relations_cond_F_rel_ne_L, to: sys_frame_enters_relations_cond}
+  - {is: v_spell, from: sys_frame_enters_relations_cond_F_rel_ne_L, to: F_rel_ne_L}
+  - {is: v_value_of, from: sys_frame_enters_relations_cond_F_laws_eq_L, to: sys_frame_enters_relations_cond}
+  - {is: v_spell, from: sys_frame_enters_relations_cond_F_laws_eq_L, to: F_laws_eq_L}
+  - {is: v_value_of, from: sys_frame_enters_relations_cond_F_errors, to: sys_frame_enters_relations_cond}
+  - {is: v_spell, from: sys_frame_enters_relations_cond_F_errors, to: F_errors}
+  - {is: v_value_of, from: sys_frame_enters_relations_cond_F_ec_errors, to: sys_frame_enters_relations_cond}
+  - {is: v_spell, from: sys_frame_enters_relations_cond_F_ec_errors, to: F_ec_errors}
+  - {is: v_entry_of, from: '{cond}', to: sys_frame_enters_relations}
+  - {is: v_metric_of, from: sys_frame_enters_relations, to: mean_value}
   - {is: v_file_of, from: sys_hierarchy_object_before.json, to: sys_hierarchy_object_before}
   - {is: v_rows_of, from: [rows], to: sys_hierarchy_object_before}
   - {is: v_axis_of, from: sys_hierarchy_object_before_cond, to: sys_hierarchy_object_before}
