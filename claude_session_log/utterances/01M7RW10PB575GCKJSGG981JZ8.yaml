@@ -1,0 +1,30 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-19T03:01:27.883Z（UTC）
+individuals:
+  01M7RW10PB575GCKJSGG981JZ8:
+    is: model_utterance
+    display: 発言 2273
+    val:
+      order: 2273
+      text: |
+        `h_hypothesis_refers_family`（#240）を確かめた結果は**反証**で、PR #294 にまとめた。tc と ec は通ったので Draft を外してある。
+
+        - **測ったこと:** 仮説の要因が、根拠の観察が使う族の表す概念（v_denote）かその上位に届くか。
+        - **結果:** 観察と結ばれた仮説 92 件のうち、届くのは 29 件、届かないのは 63 件。
+        - **届かない理由は 2 つ:**
+          - 体系の実験（sys_）の族 40 件には、表す概念がそもそも書かれていない。
+          - モデルの実験では表す概念があっても、条件の意味を書いた語なので、仮説の要因（attention、usage_apply など）とは別の語になる。
+        - **解釈:** 仮説がどの族を指すかは、いまの式からは読めない。それを担っているのは、観察から仮説への手書きの結び（v_support と v_contradict）。以前に反証になった h_denote_meets_hypothesis と同じ向きの結果。
+        - **次:** 式で読めるようにするには、条件と要因を結ぶ式が要る。それは残っている E の仮説 h_factor_depends_value と h_definition_bridges_value で問う。
+
+        #294 は自動マージの条件に乗るはずなので、マージは CI 次第。
+
+        **残っている判断:**
+        - PR #293（上位の法則 4 つを main に入れるか）は、手での確認を待っている。
+        - 前に聞いた「ステップ数・初期化・層の帯を概念として足すか」は、まだ答えをもらっていない。
+facts:
+- {is: v_say, from: session_model, to: 01M7RW10PB575GCKJSGG981JZ8}
+- {is: exp.v_answer, from: 01M7RW10PB575GCKJSGG981JZ8, to: 01M7RE4494JDFW71WBNAW679KX}
+- {is: v_refer, from: 01M7RW10PB575GCKJSGG981JZ8, to: exp.v_denote}
+- {is: v_refer, from: 01M7RW10PB575GCKJSGG981JZ8, to: exp.usage_apply}
+- {is: v_refer, from: 01M7RW10PB575GCKJSGG981JZ8, to: exp.v_support}
+- {is: v_refer, from: 01M7RW10PB575GCKJSGG981JZ8, to: exp.v_contradict}

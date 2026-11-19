@@ -1,0 +1,249 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-19T02:59:52.693Z（UTC）
+individuals:
+  01M7RVY3QN0DWC1MV24CYH3928:
+    is: session_summary
+    display: 発言 2271
+    val:
+      order: 2271
+      text: |
+        This session is being continued from a previous conversation that ran out of context. The summary below covers the earlier portion of the conversation.
+
+        <system-reminder>
+        <tools-used-before-summary>AskUserQuestion, Bash, Edit, Grep, Read, ReadNotifications, Skill, TaskStop, ToolSearch, WebFetch, WebSearch, Write, mcp__claude-code-remote__create_trigger, mcp__claude-code-remote__delete_trigger, mcp__claude-code-remote__get_trigger, mcp__claude-code-remote__read_documentation, mcp__claude-code-remote__send_later, mcp__claude-code-remote__subscribe_pr_activity, mcp__claude-code-remote__update_trigger, mcp__github__actions_get, mcp__github__actions_list, mcp__github__add_issue_comment, mcp__github__create_pull_request, mcp__github__get_job_logs, mcp__github__issue_read, mcp__github__issue_write, mcp__github__list_issue_types, mcp__github__list_issues, mcp__github__list_pull_requests, mcp__github__pull_request_read, mcp__github__update_pull_request</tools-used-before-summary>
+        </system-reminder>
+        Summary:
+        1. Primary Request and Intent
+
+        **Standing rules (still in force)**
+        - Repo: nonsugertea7821/CMT at /home/user/CMT.
+        - Reply in Japanese. Don't overclaim. Give interpretation.
+        - Restore files with `git show <rev>:<path> > <path>`. Never checkout to restore and never stash. Switching branches with `git switch` is used.
+        - Python: /home/user/venv/bin/python.
+        - Commit trailer:
+          `Co-Authored-By: Claude [モデル名を伏せた] <[メールアドレスを伏せた]>`
+          `Claude-Session: https://claude.ai/code/session_015KRKt6TNJZ7ZsQmEknANXK`
+        - PR body ends with:
+          `🤖 Generated with [Claude Code](https://claude.com/claude-code)`
+          blank line
+          `https://claude.ai/code/session_015KRKt6TNJZ7ZsQmEknANXK`
+        - Claude never merges. No personal info or model identifiers in pushed artifacts.
+        - Don't retry the MEXT PDF WebFetch without OK.
+        - No comments in system yaml.
+        - Never rerun recorded experiment scripts. Write new result names instead of overwriting.
+        - CI belongs to GitHub.
+        - Every PR:
+          - subscribe_pr_activity;
+          - issue_write update with assignees [nonsugertea7821].
+        - After a merge:
+          - `git fetch -q --prune origin`, then `git branch -D` the local branch;
+          - never push to a merged branch;
+          - never push branch deletions.
+        - Proposals are registered as untested hypotheses before they are told to the user:
+          - h_/b_ entries plus v_refer and v_check.
+          - Registration-only PRs auto-merge. A registration-only PR may only add v_check for b_/h_ that it adds itself; a v_check to an existing hypothesis forces manual review.
+          - Concept-adding PRs get manual review.
+          - Place registrations away from running-hypothesis lines and from the file end.
+        - Lang-side claims can't reference exp words. Put cross-layer hypotheses in exp/src/exp.yaml.
+        - Corpus rule: never commit corpus text; record only the source and counted values.
+        - Preregistration:
+          - commit the script only first; results come in a later commit;
+          - corrections are disclosed;
+          - use `git add -f` for exp/experiments files.
+        - Auto-merge conditions:
+          - in-scope files only;
+          - the script is touched by exactly 1 commit;
+          - no results in the same commit as a script;
+          - no grammar changes.
+        - A PR stays Draft if the hypothesis remains untested. Undraft when the status is supported, refuted or mixed.
+
+        **Keep-alive rule (user)**
+        - Chain send_later every 9 minutes only while a long experiment runs in the background.
+        - Stop the chain with update_trigger enabled=false when it ends.
+        - Run experiments with Bash `run_in_background: true`.
+
+        **30-minute cycle**
+        - The full prompt text is reused verbatim in send_later each time. It starts with 「30分の周回。始めたら、まず次の周回を30分後に send_later で予約する（同じ文を渡す）。」 and contains the triage A/A'/C/E/B/D and steps 1–5.
+        - Triage status:
+          - A, A' and C are done (#57 supported, #18 supported, #8 inconclusive).
+          - Now on E (sys_):
+            - #147 h_above_closed: done, awaiting manual review in PR #293;
+            - next: h_above_individual (#148, depends on #147's laws), h_writing_depends_checker, h_qualification_depends_above, h_checker_words_in_grammar, h_renaming_invariant, h_hypothesis_refers_family, h_factor_depends_value, h_definition_bridges_value, h_prior_claim_ends_resolved.
+          - Then B, then D.
+
+        2. Key Technical Concepts
+        - **Checks:** tc (cscl/bootstrap/type_checker/type_checker.py, about 9 s) and ec (exp/src/exp_check.py).
+        - **sys_ experiment pattern:**
+          - before/after with tc.build(), tc.law_rules(O), tc.evaluate and Facts(T.syntax_facts());
+          - a digest of the closure per relation;
+          - judgment from summary counts;
+          - results land in rows {"summary 要約": {...}}.
+        - **Family recording for sys_ experiments (exp.yaml):**
+          - nodes `<name>: {is: measurement_family}`, `<name>_cond: {is: family_axis, val: {text: cond}}`, `<name>_cond_<c>: {is: axis_value, val: {text: <c>}}`;
+          - facts v_file_of `<name>.json`, v_rows_of [rows], v_axis_of, v_value_of plus v_spell per cond, v_entry_of '{cond}', v_metric_of mean_value.
+          - Observations in claims.yaml use `exp.observation` and `{is: v_level, from: <fam>.<cond>.mean_value, to: 0.0}`, linked with `exp.v_support`.
+        - **Model-experiment families:** see e26/e28 (cond axis, metrics accuracy / order_robust_accuracy / logit_margin).
+        - **Kind facts:**
+          - written in a domain's facts become T.KF entries, e.g. `('ontology.v_above', {from, to})`;
+          - in syntax_facts they appear as `of('kind_fact j', verb)` plus from and to;
+          - they are not `above` atoms.
+        - **above in the law layer:** derived only by above_by_ancestor from r_ancestor (2652 above statements).
+        - **Attention blocking:** forward_pre_hook on each self_attn replaces kwargs["attention_mask"] with a 4D additive mask in the model dtype. A plain causal mask equals no mask (verified on 0.5B).
+
+        3. Files and Code Sections
+
+        **exp/src/exp.yaml, branch claude/h_number_comparison_lowers_rule_following (PR #289, Draft)**
+        - Added `b_number_comparison_unbiased: {is: item_queued}` after h_number_comparison_lowers_rule_following.
+        - Added `- {is: v_check, from: b_number_comparison_unbiased, to: h_number_comparison_lowers_rule_following}` after its v_qualify line.
+        - Commit 88b1940. The PR body was updated with the E27 results.
+
+        **PR #290 (merged)**
+        - Registered h_collision_not_lower_rule_following: `{is: v_not_lower, from: prior_collision, to: redefinition_following}` plus its b_ item.
+
+        **exp/experiments/e28_preceding_attention.py (PR #292, MERGED as 223b98c)**
+        - Qwen3-4B bf16, G2c 24 items. Prompts are E7 gl55-first / gl55-last (others shuffled by Random(id)).
+        - Blocking uses a mask_of(n, cols, rows, dtype). Conditions: first, last, last_block_all, last_block_def, last_block_query, first_block.
+        - Results:
+
+          | cond | accuracy |
+          |---|---|
+          | first | 0.708 |
+          | last | 0.542 |
+          | last_block_all | 0.625 |
+          | last_block_def | 0.583 |
+          | last_block_query | 0.417 |
+          | first_block | 0.625 |
+
+          gap 0.167. Verdict causes, exactly at the threshold of 0.5×gap (2 items). route = neither.
+        - exp.yaml:
+          - family e28 (first/last denote like e7 gl55);
+          - observations o_e28_last_below_first, o_e28_block_all_above_last (v_support), o_e28_first_block_below_first (v_support), o_e28_block_query_below_last, o_e28_block_def_above_last;
+          - h_attention_causes_preceding_effect set to hyp_supported.
+
+        **exp/experiments/sys_above_closed.py (PR #293, open, manual review)**
+        - Adds 4 laws to cscl/library/syntax/syntax.yaml after above_by_ancestor:
+          ```
+          above_by_fact: {is: law_rule, display: 種類どうしの事実で上位に持つと書いたものは、上位である}
+          above_is_ancestor: {is: law_rule, display: 上位は祖先である}
+          above_asymmetric: {is: law_rule, display: 上位の逆は上位でない}
+          above_transitive: {is: law_rule, display: 上位の上位は上位である}
+          - {is: v_assume, from: above_by_fact, to: {is: of, from: var1, to: v_above}}
+          - {is: v_assume, from: above_by_fact, to: {is: from, from: var1, to: var2}}
+          - {is: v_assume, from: above_by_fact, to: {is: to, from: var1, to: var3}}
+          - {is: v_derive, from: above_by_fact, to: {is: above, from: var2, to: var3}}
+          - {is: v_assume, from: above_is_ancestor, to: {is: above, from: var1, to: var2}}
+          - {is: v_require, from: above_is_ancestor, to: {is: r_ancestor, from: var1, to: var2}}
+          - {is: v_assume, from: above_asymmetric, to: {is: above, from: var1, to: var2}}
+          - {is: v_require, from: above_asymmetric, to: {is: above, from: var2, to: var1, neg: true}}
+          - {is: v_assume, from: above_transitive, to: {is: above, from: var1, to: var2}}
+          - {is: v_assume, from: above_transitive, to: {is: above, from: var2, to: var3}}
+          - {is: v_require, from: above_transitive, to: {is: above, from: var1, to: var3}}
+          ```
+        - Probes copy cscl.yaml, cscl and exp/src to a temp dir and insert a kind fact before the anchor `  - {is: v_refer, from: h_above_closed,` in claims.yaml. probe_non uses above_order → individual_depth; probe_anc uses above_order → quality.
+        - after: errors 0, ec 0, law_errors 0, above 2652, changed 4, extra 0, probe_non 1 (above_is_ancestor violation), probe_anc_all 0.
+        - Correction:
+          - sys_above_closed_fix.py rebuilds the before closure from the 577cbcc syntax.yaml;
+          - it excludes statements containing the new law names;
+          - changed_fixed 0 (sys_above_closed_after_fix.json).
+        - exp.yaml families: sys_above_closed_after (errors, ec_errors, law_errors, extra, probe_non, probe_anc_all) and sys_above_closed_after_fix (changed_fixed). Inserted after the sys_individual_depth_after family.
+        - claims.yaml:
+          - observations o_sys_above_closed_{passes_checks, passes_ec, no_law_error, no_extra, conservative, binds_non_ancestor (level 1.0), ancestor_passes};
+          - v_support from no_law_error, binds_non_ancestor, ancestor_passes and conservative;
+          - h_above_closed set to exp.hyp_supported.
+        - Commits 577cbcc, 8195036, 9b1665e. CI is green.
+        - Auto-merge judgment says manual review, for three reasons:
+          - syntax.yaml is out of scope;
+          - 2 commits touch the script;
+          - the fix script shares a commit with result files.
+
+        **exp/experiments/sys_value_refers_hypothesis.py (read)**
+        - Template for the hypothesis/family linkage analysis. It collects ents and facts from cscl.yaml root, library and include.
+        - Families come from measurement_family. Observation refs are strings in a v_refer formula's from/to/new that start with "family.".
+        - Links are v_support / v_contradict from o_ to h_.
+        - Its result: n_links 158, n_obs_linked 149, n_obs_no_value 0, n_unresolved 0.
+
+        4. Errors and fixes
+        - **#290 failed the auto-merge conditions** because of a v_check to an existing hypothesis. Moved the item to #289 and disclosed this in the #290 body.
+        - **E28 verdict borderline** (float equality at the 0.5×gap threshold). Disclosed in the PR.
+        - **sys_above_closed changed=4** because the digest didn't exclude the new law names, unlike the template sys_individual_depth. Disclosed the correction, wrote a fix script committed before running it, and wrote a new result file. The original results were not overwritten.
+
+        5. Problem Solving
+        - Attention to irrelevant glossary definitions affects answers regardless of position: first_block lowers accuracy.
+        - The preceding-definition harm leans toward the definition-encoding route rather than the query readout, but this is below threshold.
+        - No concept exists for "definition encoding", so no hypothesis was registered.
+        - above is closed under order laws and ancestor alignment; with the bridge law, directly written above is bound by extends.
+
+        6. All user messages
+        - No new user messages in this segment. Only scheduled triggers and GitHub notifications arrived.
+        - Prior standing user messages, kept:
+          - 「トリアージして進めて。…このリポジトリの実験目標、モデルの概念一貫性に寄与しそうなものから優先で」
+          - 「Bは体系の健全性に依存しないか？」
+          - 「A3もじゃないの？それともその周辺はもう証明されてる？」
+          - 「A4は？」
+          - 「それでいいだろうね よろしく」
+          - 「ちなみにコンテナは10分作業しないと再起動する 応答終了時に9分30秒チェーンするようにしといて」
+          - 「チェーンが居るのは長い実験だけね それ以外はやらなくていい」
+          - 「#275にマージコンフリクト。」
+        - Unanswered questions to the user:
+          - whether to add concepts for step count, initialization and layer bands (for the E25/E26 implications);
+          - in PR #293, whether to keep the 4 laws in main.
+
+        7. Pending Tasks
+        - PR #293: awaiting the user's manual review. After a merge, delete the local branch claude/h_above_closed.
+        - Open Drafts: #282 (E23), #286 (E24), #287 (E25), #289 (E27).
+        - Next cycle fires at 03:28Z (trig_01JFFAizSC1cpwVKk375NzzQ).
+        - Continue E: choose the next sys_ hypothesis. #148 depends on #147's unmerged laws.
+
+        8. Current Work
+        - In the 02:57Z cycle, on main (git switch done). I am selecting the next E hypothesis.
+        - Candidate: h_hypothesis_refers_family (exp.yaml line ~1971; v_refer `{is: v_refer, from: hypothesis, to: measurement_family}`). It was registered in c323e21 as the reverse-direction alternative after #237 refuted h_family_refers_hypothesis; many families per hypothesis are allowed.
+        - I had just read sys_value_refers_hypothesis.py and its results to reuse its collection logic.
+        - Draft test idea:
+          - for each observation linked by v_support/v_contradict to an h_, check that its refs resolve to at least one measurement_family;
+          - count n_obs_no_family and families per hypothesis;
+          - judgment: support if n_obs_no_family = 0, refute if > 0.
+        - Disclosure: the sibling had n_obs_no_value 0, but it ran at an older commit, and lang-side claims observations may differ.
+
+        9. Optional Next Step
+        - Continue the 02:57Z cycle step 2/3 for E: create branch claude/h_hypothesis_refers_family.
+        - Write exp/experiments/sys_hypothesis_refers_family.py, reusing the collection code of sys_value_refers_hypothesis.py.
+          - Docstring with procedure, judgment (support if every linked observation refers to ≥1 family, i.e. n_obs_no_family = 0; otherwise refute), and known-beforehand disclosures.
+        - Commit it alone as the preregistration and open a Draft PR (subscribe and assign).
+        - Run it, record the family and observations in exp.yaml, run tc and ec, push, update the body and undraft.
+        - Report briefly in Japanese.
+
+        If you need specific details from before compaction (like exact code snippets, error messages, or content you generated), read the full transcript at: /root/.claude/projects/-home-user-CMT/e05d2140-ce91-515f-a5fb-e6251e13d406.jsonl
+        Continue the conversation from where it left off without asking the user any further questions. Resume directly — do not acknowledge the summary, do not recap what was happening, do not preface with "I'll continue" or similar. Pick up the last task as if the break never happened.
+
+        The messages after this summary are the most recent messages from before compaction, kept verbatim. The summary was written without seeing them, so something it says has not happened yet may already have happened in them.
+facts:
+- {is: v_say, from: session_model, to: 01M7RVY3QN0DWC1MV24CYH3928}
+- {is: v_refer, from: 01M7RVY3QN0DWC1MV24CYH3928, to: ontology.v_refer}
+- {is: v_refer, from: 01M7RVY3QN0DWC1MV24CYH3928, to: exp.v_check}
+- {is: v_refer, from: 01M7RVY3QN0DWC1MV24CYH3928, to: lang.type_checker}
+- {is: v_refer, from: 01M7RVY3QN0DWC1MV24CYH3928, to: exp.measurement_family}
+- {is: v_refer, from: 01M7RVY3QN0DWC1MV24CYH3928, to: exp.family_axis}
+- {is: v_refer, from: 01M7RVY3QN0DWC1MV24CYH3928, to: exp.axis_value}
+- {is: v_refer, from: 01M7RVY3QN0DWC1MV24CYH3928, to: exp.v_file_of}
+- {is: v_refer, from: 01M7RVY3QN0DWC1MV24CYH3928, to: exp.v_rows_of}
+- {is: v_refer, from: 01M7RVY3QN0DWC1MV24CYH3928, to: exp.v_axis_of}
+- {is: v_refer, from: 01M7RVY3QN0DWC1MV24CYH3928, to: exp.v_value_of}
+- {is: v_refer, from: 01M7RVY3QN0DWC1MV24CYH3928, to: exp.v_spell}
+- {is: v_refer, from: 01M7RVY3QN0DWC1MV24CYH3928, to: exp.v_entry_of}
+- {is: v_refer, from: 01M7RVY3QN0DWC1MV24CYH3928, to: exp.v_metric_of}
+- {is: v_refer, from: 01M7RVY3QN0DWC1MV24CYH3928, to: exp.mean_value}
+- {is: v_refer, from: 01M7RVY3QN0DWC1MV24CYH3928, to: exp.observation}
+- {is: v_refer, from: 01M7RVY3QN0DWC1MV24CYH3928, to: ontology.v_level}
+- {is: v_refer, from: 01M7RVY3QN0DWC1MV24CYH3928, to: exp.v_support}
+- {is: v_refer, from: 01M7RVY3QN0DWC1MV24CYH3928, to: exp.order_robust_accuracy}
+- {is: v_refer, from: 01M7RVY3QN0DWC1MV24CYH3928, to: exp.logit_margin}
+- {is: v_refer, from: 01M7RVY3QN0DWC1MV24CYH3928, to: exp.item_queued}
+- {is: v_refer, from: 01M7RVY3QN0DWC1MV24CYH3928, to: exp.v_qualify}
+- {is: v_refer, from: 01M7RVY3QN0DWC1MV24CYH3928, to: exp.v_not_lower}
+- {is: v_refer, from: 01M7RVY3QN0DWC1MV24CYH3928, to: exp.prior_collision}
+- {is: v_refer, from: 01M7RVY3QN0DWC1MV24CYH3928, to: exp.redefinition_following}
+- {is: v_refer, from: 01M7RVY3QN0DWC1MV24CYH3928, to: exp.hyp_supported}
+- {is: v_refer, from: 01M7RVY3QN0DWC1MV24CYH3928, to: syntax.law_rule}
+- {is: v_refer, from: 01M7RVY3QN0DWC1MV24CYH3928, to: syntax.v_assume}
+- {is: v_refer, from: 01M7RVY3QN0DWC1MV24CYH3928, to: syntax.v_derive}
+- {is: v_refer, from: 01M7RVY3QN0DWC1MV24CYH3928, to: syntax.v_require}
+- {is: v_refer, from: 01M7RVY3QN0DWC1MV24CYH3928, to: exp.v_contradict}
