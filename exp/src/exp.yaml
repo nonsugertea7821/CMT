@@ -895,6 +895,13 @@ individuals:
   sys_above_closed_after_fix: {is: measurement_family}
   sys_above_closed_after_fix_cond: {is: family_axis, val: {text: cond}}
   sys_above_closed_after_fix_cond_changed_fixed: {is: axis_value, val: {text: changed_fixed}}
+  sys_prior_claim_ends_resolved: {is: measurement_family}
+  sys_prior_claim_ends_resolved_cond: {is: family_axis, val: {text: cond}}
+  sys_prior_claim_ends_resolved_cond_n_claims: {is: axis_value, val: {text: n_claims}}
+  sys_prior_claim_ends_resolved_cond_n_head_errors: {is: axis_value, val: {text: n_head_errors}}
+  sys_prior_claim_ends_resolved_cond_n_mutants_rejected: {is: axis_value, val: {text: n_mutants_rejected}}
+  sys_prior_claim_ends_resolved_cond_n_hyps: {is: axis_value, val: {text: n_hyps}}
+  sys_prior_claim_ends_resolved_cond_n_hyp_errors: {is: axis_value, val: {text: n_hyp_errors}}
   sys_above_individual_fix2: {is: measurement_family}
   sys_above_individual_fix2_cond: {is: family_axis, val: {text: cond}}
   sys_above_individual_fix2_cond_B_errors: {is: axis_value, val: {text: B_errors}}
@@ -4197,6 +4204,21 @@ facts:
   - {is: v_spell, from: sys_above_closed_after_fix_cond_changed_fixed, to: changed_fixed}
   - {is: v_entry_of, from: '{cond}', to: sys_above_closed_after_fix}
   - {is: v_metric_of, from: sys_above_closed_after_fix, to: mean_value}
+  - {is: v_file_of, from: sys_prior_claim_ends_resolved.json, to: sys_prior_claim_ends_resolved}
+  - {is: v_rows_of, from: [rows], to: sys_prior_claim_ends_resolved}
+  - {is: v_axis_of, from: sys_prior_claim_ends_resolved_cond, to: sys_prior_claim_ends_resolved}
+  - {is: v_value_of, from: sys_prior_claim_ends_resolved_cond_n_claims, to: sys_prior_claim_ends_resolved_cond}
+  - {is: v_spell, from: sys_prior_claim_ends_resolved_cond_n_claims, to: n_claims}
+  - {is: v_value_of, from: sys_prior_claim_ends_resolved_cond_n_head_errors, to: sys_prior_claim_ends_resolved_cond}
+  - {is: v_spell, from: sys_prior_claim_ends_resolved_cond_n_head_errors, to: n_head_errors}
+  - {is: v_value_of, from: sys_prior_claim_ends_resolved_cond_n_mutants_rejected, to: sys_prior_claim_ends_resolved_cond}
+  - {is: v_spell, from: sys_prior_claim_ends_resolved_cond_n_mutants_rejected, to: n_mutants_rejected}
+  - {is: v_value_of, from: sys_prior_claim_ends_resolved_cond_n_hyps, to: sys_prior_claim_ends_resolved_cond}
+  - {is: v_spell, from: sys_prior_claim_ends_resolved_cond_n_hyps, to: n_hyps}
+  - {is: v_value_of, from: sys_prior_claim_ends_resolved_cond_n_hyp_errors, to: sys_prior_claim_ends_resolved_cond}
+  - {is: v_spell, from: sys_prior_claim_ends_resolved_cond_n_hyp_errors, to: n_hyp_errors}
+  - {is: v_entry_of, from: '{cond}', to: sys_prior_claim_ends_resolved}
+  - {is: v_metric_of, from: sys_prior_claim_ends_resolved, to: mean_value}
   - {is: v_file_of, from: sys_above_individual_fix2.json, to: sys_above_individual_fix2}
   - {is: v_rows_of, from: [rows], to: sys_above_individual_fix2}
   - {is: v_axis_of, from: sys_above_individual_fix2_cond, to: sys_above_individual_fix2}
