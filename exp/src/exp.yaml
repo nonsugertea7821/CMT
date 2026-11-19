@@ -1322,6 +1322,13 @@ individuals:
   geo_genus_vs_interval_midpoint_cond_purity: {is: axis_value, val: {text: purity}}
   geo_genus_vs_interval_midpoint_cond_precondition: {is: axis_value, val: {text: precondition}}
   geo_genus_vs_interval_midpoint_cond_verdict_support: {is: axis_value, val: {text: verdict_support}}
+  sys_roadmap_reach: {is: measurement_family}
+  sys_roadmap_reach_cond: {is: family_axis, val: {text: cond}}
+  sys_roadmap_reach_cond_n_h: {is: axis_value, val: {text: n_h}}
+  sys_roadmap_reach_cond_n_on_path: {is: axis_value, val: {text: n_on_path}}
+  sys_roadmap_reach_cond_n_linkable: {is: axis_value, val: {text: n_linkable}}
+  sys_roadmap_reach_cond_n_detour: {is: axis_value, val: {text: n_detour}}
+  sys_roadmap_reach_cond_share: {is: axis_value, val: {text: share}}
   geo_cross_genus_midpoint_models: {is: measurement_family}
   geo_cross_genus_midpoint_models_cond: {is: family_axis, val: {text: cond}}
   geo_cross_genus_midpoint_models_cond_n_judged: {is: axis_value, val: {text: n_judged}}
@@ -2275,6 +2282,9 @@ individuals:
   o_geo_gvi_mixed: {is: observation}
   o_geo_gvi_gap: {is: observation}
   o_geo_gvi_all_above: {is: observation}
+  o_sys_roadmap_share: {is: observation}
+  o_sys_roadmap_detour: {is: observation}
+  o_sys_roadmap_on_path: {is: observation}
   o_geo_models_judged: {is: observation}
   o_geo_models_all_hold: {is: observation}
   o_geo_models_llmjp: {is: observation}
@@ -2358,8 +2368,8 @@ individuals:
   b_midpoint_language_invariant: {is: item_done}
   h_midpoint_depends_pretext: {is: hyp_supported}
   b_midpoint_depends_pretext: {is: item_done}
-  h_roadmap_by_ground: {is: hyp_untested}
-  b_roadmap_by_ground: {is: item_queued}
+  h_roadmap_by_ground: {is: hyp_refuted}
+  b_roadmap_by_ground: {is: item_done}
   h_ambiguity_is_region_choice: {is: hyp_untested}
   b_ambiguity_is_region_choice: {is: item_queued}
 facts:
@@ -5166,6 +5176,26 @@ facts:
   - {is: v_refer, from: o_geo_gvi_all_above, to: {is: v_level, from: geo_genus_vs_interval_midpoint.all_above.mean_value, to: 1}}
   - {is: v_support, from: o_geo_gvi_gap, to: h_midpoint_depends_genus}
   - {is: v_support, from: o_geo_gvi_all_above, to: h_midpoint_depends_genus}
+  - {is: v_file_of, from: sys_roadmap_reach.json, to: sys_roadmap_reach}
+  - {is: v_rows_of, from: [rows], to: sys_roadmap_reach}
+  - {is: v_axis_of, from: sys_roadmap_reach_cond, to: sys_roadmap_reach}
+  - {is: v_value_of, from: sys_roadmap_reach_cond_n_h, to: sys_roadmap_reach_cond}
+  - {is: v_spell, from: sys_roadmap_reach_cond_n_h, to: n_h}
+  - {is: v_value_of, from: sys_roadmap_reach_cond_n_on_path, to: sys_roadmap_reach_cond}
+  - {is: v_spell, from: sys_roadmap_reach_cond_n_on_path, to: n_on_path}
+  - {is: v_value_of, from: sys_roadmap_reach_cond_n_linkable, to: sys_roadmap_reach_cond}
+  - {is: v_spell, from: sys_roadmap_reach_cond_n_linkable, to: n_linkable}
+  - {is: v_value_of, from: sys_roadmap_reach_cond_n_detour, to: sys_roadmap_reach_cond}
+  - {is: v_spell, from: sys_roadmap_reach_cond_n_detour, to: n_detour}
+  - {is: v_value_of, from: sys_roadmap_reach_cond_share, to: sys_roadmap_reach_cond}
+  - {is: v_spell, from: sys_roadmap_reach_cond_share, to: share}
+  - {is: v_entry_of, from: '{cond}', to: sys_roadmap_reach}
+  - {is: v_metric_of, from: sys_roadmap_reach, to: mean_value}
+  - {is: v_refer, from: o_sys_roadmap_share, to: {is: v_near, from: sys_roadmap_reach.share.mean_value, to: 0.157, new: 0.001}}
+  - {is: v_refer, from: o_sys_roadmap_detour, to: {is: v_level, from: sys_roadmap_reach.n_detour.mean_value, to: 43}}
+  - {is: v_refer, from: o_sys_roadmap_on_path, to: {is: v_level, from: sys_roadmap_reach.n_on_path.mean_value, to: 5}}
+  - {is: v_contradict, from: o_sys_roadmap_share, to: h_roadmap_by_ground}
+  - {is: v_contradict, from: o_sys_roadmap_detour, to: h_roadmap_by_ground}
   - {is: v_file_of, from: geo_cross_genus_midpoint_models.json, to: geo_cross_genus_midpoint_models}
   - {is: v_rows_of, from: [rows], to: geo_cross_genus_midpoint_models}
   - {is: v_axis_of, from: geo_cross_genus_midpoint_models_cond, to: geo_cross_genus_midpoint_models}
