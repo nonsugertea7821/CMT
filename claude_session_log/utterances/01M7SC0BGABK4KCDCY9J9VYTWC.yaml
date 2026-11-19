@@ -1,0 +1,39 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-19T07:40:43.402Z（UTC）
+individuals:
+  01M7SC0BGABK4KCDCY9J9VYTWC:
+    is: model_utterance
+    display: 発言 2351
+    val:
+      order: 2351
+      text: |
+        I tested #55 (E32): does the concept-specific part of each concept vector line up with the structure of that concept's formal expression? It does, weakly. It meets the pre-set threshold, so it's recorded as supported, and the PR is #310.
+
+        **How it was tested**
+        - It uses the 24 concepts and stored vectors from E16, with no new model run.
+        - The concept-specific part is each vector minus the average over the 24 concepts.
+        - For each of the 276 pairs, I compared how similar their vectors are (cosine) with how many symbols their formal expressions share (parents, verb, partner, axis, negation). The overlap measure is Jaccard.
+        - The verdict rule, fixed in a commit before the run, was a positive correlation with permutation p < 0.05.
+
+        **Result**
+
+        | Vector | rank correlation (rho) | p |
+        |---|---|---|
+        | Concept-specific part | **0.129** | **0.029** |
+        | Full vector, average not removed | 0.063 | 0.14 |
+
+        **What it means**
+        - The match only shows up once the shared average is removed. That fits E16, where the specific part helped the model follow redefinitions and the shared part helped keep answers stable.
+        - The effect is weak and rests on a few pairs. 午前/夜間 (morning/night) and 営業日/平日 (business day/weekday) carry it.
+        - Other pairs with similar expressions show almost no vector similarity: 果物/魚類 (fruit/fish) and 大人/未成年 (adult/minor).
+        - The pairs that carry it also have similarly worded Japanese definitions, and the vectors were built from definition text. So this can't tell whether the match comes from the expression structure or just from overlapping wording; I flagged that limitation before running.
+
+        **What would settle it** (not registered yet)
+        - Factor out how much two concepts' definitions overlap in wording, then check whether the correlation survives.
+        - Repeat the test with vectors built from the formal expressions instead of definition text. The stored `exprdefqa` vectors from E3 may be that.
+
+        Either one needs a new concept added to the system, which goes through your review, so I haven't registered them as hypotheses.
+
+        The type checker and experiment check (tc and ec) pass, PR #310 is assigned to you, and I'm watching it.
+facts:
+- {is: v_say, from: session_model, to: 01M7SC0BGABK4KCDCY9J9VYTWC}
+- {is: exp.v_answer, from: 01M7SC0BGABK4KCDCY9J9VYTWC, to: 01M7RE4494JDFW71WBNAW679KX}
