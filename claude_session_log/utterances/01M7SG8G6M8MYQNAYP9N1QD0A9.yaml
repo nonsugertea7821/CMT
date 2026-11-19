@@ -1,0 +1,31 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-19T08:55:04.660Z（UTC）
+individuals:
+  01M7SG8G6M8MYQNAYP9N1QD0A9:
+    is: model_utterance
+    display: 発言 2418
+    val:
+      order: 2418
+      text: |
+        その通りだと思います。refer は、文（式）を一つの点として扱えるようにする働きを持っているからです。
+
+        **次元が増える仕組み**
+        - `mod: {of: [v_refer, from], with: X}` という限定は、「X を述べるもの」という次元を一つ作ります。
+        - 体系の中を見ると、今の `with` には式をそのまま書けず、名前の付いたノードしか置けません。例は `symmetry_break`（with: definition）や `run_sentence`（with: runtime.run）です。
+        - ところが、文に名前を付けたノードはいくらでも作れます。仮説の `h_...` がまさにそうで、v_refer で式を中に持っています。
+        - ですから、「文に名前を付ける → その名前を with に置く → 新しい次元」という手順で、次元は際限なく増やせます。名前を付けた数だけ次元がある、という形です。
+
+        **幾何で言うと**
+        - refer は、空間の点（文）を、空間の座標軸の候補に変える写像です。点が数えきれるだけあれば、次元も同じだけ作れます。空間が自分自身を材料にして広がる形です。
+
+        **ここで出てくる問題が 2 つあります**
+        1. **書き方が一つに決まるか。** 違う名前の 2 つのノードが、同じ意味の文を指していると、同じ次元が 2 本できてしまいます。これを防ぐには、指す先の文どうしが同じかを判定する必要があります。法則が入ると、この判定は一般には難しくなります。
+        2. **自己言及。** 文が、自分を含む文を指せると、否定と組み合わせたときに「この文は成り立たない」の形が作れます。この方向の関連として、h_neg_not_self（否定の限定は holds に依存しない）が支持済みです。ただ、refer の入れ子まで押さえているかは確かめていません。
+
+        今の `with` が名前しか取らないことは、結果として、次元の増え方を「名前を付けた分だけ」に抑える形になっています。この制限が意図した設計なのか、たまたまそうなっているのかは、私には分かりません。
+facts:
+- {is: v_say, from: session_model, to: 01M7SG8G6M8MYQNAYP9N1QD0A9}
+- {is: exp.v_answer, from: 01M7SG8G6M8MYQNAYP9N1QD0A9, to: 01M7SG7XWNHC18XZ5B2112J5FG}
+- {is: v_refer, from: 01M7SG8G6M8MYQNAYP9N1QD0A9, to: ontology.v_refer}
+- {is: v_refer, from: 01M7SG8G6M8MYQNAYP9N1QD0A9, to: syntax.with}
+- {is: v_refer, from: 01M7SG8G6M8MYQNAYP9N1QD0A9, to: lang.symmetry_break}
+- {is: v_refer, from: 01M7SG8G6M8MYQNAYP9N1QD0A9, to: runtime.run}
