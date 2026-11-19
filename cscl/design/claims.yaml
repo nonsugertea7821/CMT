@@ -26,6 +26,7 @@ nodes:
   depth_limitation: {display: 深さの限定, extends: quality, mod: {of: [v_refer, from], with: syntax.mod}}
   above_order: {display: 上位の順序, extends: quality, mod: {of: [v_refer, from], with: ontology.v_above}}
   placement_by_above: {display: 上位で決まる置き場, extends: quality, mod: {of: [v_depend, from], with: above_order}}
+  concept_by_law: {display: 法則で決まる概念の分類, extends: quality, mod: {of: [v_depend, from], with: syntax.law_rule}}
   above_falsity: {display: 上位の偽, extends: quality, mod: {of: [v_refer, from], with: ontology.v_above, neg: true}}
   mod_lack: {display: 修飾の欠け, extends: quality, mod: {of: [v_refer, from], with: syntax.mod, neg: true}}
   name_choice: {display: 識別子の選び, extends: quality, mod: {of: [v_depend, from], with: syntax.identifier}}
@@ -197,6 +198,10 @@ individuals:
   b_case_frame_formula: {is: exp.item_done}
   h_case_frame_by_relation: {is: exp.hyp_refuted}
   b_case_frame_by_relation: {is: exp.item_done}
+  h_concept_kind_excludes_verb: {is: exp.hyp_untested}
+  b_concept_kind_excludes_verb: {is: exp.item_queued}
+  h_concept_kind_frame_free: {is: exp.hyp_untested}
+  b_concept_kind_frame_free: {is: exp.item_queued}
   h_case_frame_by_role: {is: exp.hyp_withdrawn}
   h_case_frame_by_signature: {is: exp.hyp_untested}
   b_case_frame_by_signature: {is: exp.item_queued}
@@ -617,6 +622,10 @@ facts:
   - {is: exp.v_check, from: b_above_individual, to: h_above_individual}
   - {is: v_refer, from: h_placement_in_laws, to: {is: v_not_depend, from: placement_by_above, to: type_checker}}
   - {is: exp.v_check, from: b_placement_in_laws, to: h_placement_in_laws}
+  - {is: v_refer, from: h_concept_kind_excludes_verb, to: {is: v_depend, from: concept_by_law, to: [syntax.pre, syntax.holds, syntax.extends]}}
+  - {is: exp.v_check, from: b_concept_kind_excludes_verb, to: h_concept_kind_excludes_verb}
+  - {is: v_refer, from: h_concept_kind_frame_free, to: {is: v_not_depend, from: concept_by_law, to: [syntax.pre, syntax.holds]}}
+  - {is: exp.v_check, from: b_concept_kind_frame_free, to: h_concept_kind_frame_free}
   - {is: v_refer, from: h_above_sound, to: {is: v_depend, from: above_falsity, to: mod_lack}}
   - {is: exp.v_check, from: b_above_sound, to: h_above_sound}
   - {is: v_refer, from: h_renaming_invariant, to: {is: v_not_depend, from: type_checker, to: name_choice}}
