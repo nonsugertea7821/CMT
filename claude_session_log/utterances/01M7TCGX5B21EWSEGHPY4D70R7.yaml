@@ -1,0 +1,31 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-19T17:09:00.203Z（UTC）
+individuals:
+  01M7TCGX5B21EWSEGHPY4D70R7:
+    is: model_utterance
+    display: 発言 2655
+    val:
+      order: 2655
+      text: |
+        今回の周回で、検査器の側の直し方を確かめました。仮説 h_fact_slot_by_verb は**支持**です（PR #389。Draft は外してあり、あなたの確認待ちです）。#387 はまだマージされていません。
+
+        **結果**
+        - 写しのリポジトリで、検査器が事実の衝突を判定するときに動詞も見るようにしました。8 つの見本がすべて見込みどおりでした。
+        - v_depend と v_raise のように、動詞が違って終点の種類が同じ組は、通るようになりました。
+        - 同じ動詞を二つ出す組は、これまでどおり落ちます。
+        - この変更を入れても、体系の残りは壊れませんでした。
+
+        **含意**
+        - 通るようにはなりますが、二つめの事実は欄に入りません。下流からは読めず、黙って捨てられます。
+        - このままでは、検査器の直し方として不十分です。直すなら、欄そのものを動詞で分けて、事実をどれも残す必要があります。
+        - いまの決定どうしの関係は、#387 の体系の側の道（新しい役割と動詞を足す）で足します。検査器の変更は、別の PR で手で見てもらいます。
+
+        **新しい仮説**（登録だけの PR #390。auto-merge の対象です）
+        - h_fact_slot_keeps_each_verb: 欄を動詞と位置で分け、事実をどれも残すべきだ、という仮説です。識別子化の決定（d_cscl_display_derived）の根拠として結びました。
+        - h_check_reports_contentless: exp の検査器は、中身のない決定で止まらず、誤りとして報告すべきだ、という仮説です。検査器の決定（d_road_checker）の根拠として結びました。前回、登録すると約束していたものです。
+
+        ロードマップ: 「一つの決定から関係を二つ出せない」制限の直し方を、体系の側（#387）と検査器の側（#389）の両方で確かめ終えました。次は #387 のマージ後に、決定どうしの関係を書き換えます。
+facts:
+- {is: v_say, from: session_model, to: 01M7TCGX5B21EWSEGHPY4D70R7}
+- {is: exp.v_answer, from: 01M7TCGX5B21EWSEGHPY4D70R7, to: 01M7TA7A145QS5NA0XWZR9ST0Q}
+- {is: v_refer, from: 01M7TCGX5B21EWSEGHPY4D70R7, to: ontology.v_depend}
+- {is: v_refer, from: 01M7TCGX5B21EWSEGHPY4D70R7, to: exp.v_raise}
