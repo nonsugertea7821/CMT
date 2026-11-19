@@ -1162,6 +1162,15 @@ individuals:
   sys_denote_meets_hypothesis_cond_n_meets: {is: axis_value, val: {text: n_meets}}
   sys_denote_meets_hypothesis_cond_n_miss: {is: axis_value, val: {text: n_miss}}
   sys_denote_meets_hypothesis_cond_n_empty_side: {is: axis_value, val: {text: n_empty_side}}
+  sys_definition_bridges_value: {is: measurement_family}
+  sys_definition_bridges_value_cond: {is: family_axis, val: {text: cond}}
+  sys_definition_bridges_value_cond_n_links: {is: axis_value, val: {text: n_links}}
+  sys_definition_bridges_value_cond_n_nonempty: {is: axis_value, val: {text: n_nonempty}}
+  sys_definition_bridges_value_cond_n_miss1_nonempty: {is: axis_value, val: {text: n_miss1_nonempty}}
+  sys_definition_bridges_value_cond_n_miss_star_nonempty: {is: axis_value, val: {text: n_miss_star_nonempty}}
+  sys_definition_bridges_value_cond_n_bridged: {is: axis_value, val: {text: n_bridged}}
+  sys_definition_bridges_value_cond_n_miss_star_all: {is: axis_value, val: {text: n_miss_star_all}}
+  sys_definition_bridges_value_cond_n_empty_side_star: {is: axis_value, val: {text: n_empty_side_star}}
   sys_value_refers_hypothesis: {is: measurement_family}
   sys_value_refers_hypothesis_cond: {is: family_axis, val: {text: cond}}
   sys_value_refers_hypothesis_cond_n_obs: {is: axis_value, val: {text: n_obs}}
@@ -1980,8 +1989,8 @@ individuals:
   b_hypothesis_refers_family: {is: item_done}
   h_factor_depends_value: {is: hyp_untested}
   b_factor_depends_value: {is: item_queued}
-  h_definition_bridges_value: {is: hyp_untested}
-  b_definition_bridges_value: {is: item_queued}
+  h_definition_bridges_value: {is: hyp_refuted}
+  b_definition_bridges_value: {is: item_done}
   o_sys_family_refers_shared: {is: observation}
   o_sys_family_refers_linked: {is: observation}
   o_sys_family_refers_no_family: {is: observation}
@@ -1994,6 +2003,9 @@ individuals:
   o_sys_denote_meets_miss: {is: observation}
   o_sys_denote_meets_meets: {is: observation}
   o_sys_denote_meets_empty: {is: observation}
+  o_sys_definition_bridges_miss: {is: observation}
+  o_sys_definition_bridges_bridged: {is: observation}
+  o_sys_definition_bridges_nonempty: {is: observation}
 
   h_prosody_carries_mod: {is: hyp_untested}
   b_prosody_carries_mod: {is: item_queued}
@@ -4482,6 +4494,25 @@ facts:
   - {is: v_spell, from: sys_denote_meets_hypothesis_cond_n_empty_side, to: n_empty_side}
   - {is: v_entry_of, from: '{cond}', to: sys_denote_meets_hypothesis}
   - {is: v_metric_of, from: sys_denote_meets_hypothesis, to: mean_value}
+  - {is: v_file_of, from: sys_definition_bridges_value.json, to: sys_definition_bridges_value}
+  - {is: v_rows_of, from: [rows], to: sys_definition_bridges_value}
+  - {is: v_axis_of, from: sys_definition_bridges_value_cond, to: sys_definition_bridges_value}
+  - {is: v_value_of, from: sys_definition_bridges_value_cond_n_links, to: sys_definition_bridges_value_cond}
+  - {is: v_spell, from: sys_definition_bridges_value_cond_n_links, to: n_links}
+  - {is: v_value_of, from: sys_definition_bridges_value_cond_n_nonempty, to: sys_definition_bridges_value_cond}
+  - {is: v_spell, from: sys_definition_bridges_value_cond_n_nonempty, to: n_nonempty}
+  - {is: v_value_of, from: sys_definition_bridges_value_cond_n_miss1_nonempty, to: sys_definition_bridges_value_cond}
+  - {is: v_spell, from: sys_definition_bridges_value_cond_n_miss1_nonempty, to: n_miss1_nonempty}
+  - {is: v_value_of, from: sys_definition_bridges_value_cond_n_miss_star_nonempty, to: sys_definition_bridges_value_cond}
+  - {is: v_spell, from: sys_definition_bridges_value_cond_n_miss_star_nonempty, to: n_miss_star_nonempty}
+  - {is: v_value_of, from: sys_definition_bridges_value_cond_n_bridged, to: sys_definition_bridges_value_cond}
+  - {is: v_spell, from: sys_definition_bridges_value_cond_n_bridged, to: n_bridged}
+  - {is: v_value_of, from: sys_definition_bridges_value_cond_n_miss_star_all, to: sys_definition_bridges_value_cond}
+  - {is: v_spell, from: sys_definition_bridges_value_cond_n_miss_star_all, to: n_miss_star_all}
+  - {is: v_value_of, from: sys_definition_bridges_value_cond_n_empty_side_star, to: sys_definition_bridges_value_cond}
+  - {is: v_spell, from: sys_definition_bridges_value_cond_n_empty_side_star, to: n_empty_side_star}
+  - {is: v_entry_of, from: '{cond}', to: sys_definition_bridges_value}
+  - {is: v_metric_of, from: sys_definition_bridges_value, to: mean_value}
   - {is: v_file_of, from: sys_value_refers_hypothesis.json, to: sys_value_refers_hypothesis}
   - {is: v_rows_of, from: [rows], to: sys_value_refers_hypothesis}
   - {is: v_axis_of, from: sys_value_refers_hypothesis_cond, to: sys_value_refers_hypothesis}
@@ -5421,6 +5452,10 @@ facts:
   - {is: v_refer, from: o_sys_denote_meets_meets, to: {is: v_level, from: sys_denote_meets_hypothesis.n_meets.mean_value, to: 67}}
   - {is: v_refer, from: o_sys_denote_meets_empty, to: {is: v_level, from: sys_denote_meets_hypothesis.n_empty_side.mean_value, to: 53}}
   - {is: v_contradict, from: o_sys_denote_meets_miss, to: h_denote_meets_hypothesis}
+  - {is: v_refer, from: o_sys_definition_bridges_miss, to: {is: v_level, from: sys_definition_bridges_value.n_miss_star_nonempty.mean_value, to: 37}}
+  - {is: v_refer, from: o_sys_definition_bridges_bridged, to: {is: v_level, from: sys_definition_bridges_value.n_bridged.mean_value, to: 8}}
+  - {is: v_refer, from: o_sys_definition_bridges_nonempty, to: {is: v_level, from: sys_definition_bridges_value.n_nonempty.mean_value, to: 118}}
+  - {is: v_contradict, from: o_sys_definition_bridges_miss, to: h_definition_bridges_value}
   - {is: v_prior_same, from: pw_wang2025_proactive_interference, to: h_preceding_definitions_lower}
   - {is: v_prior_same, from: pw_stringli2025_inverse_redefinition, to: h_collision_lowers_following}
   - {is: v_prior_differ, from: pw_liu2024_lost_in_the_middle, to: h_distance_does_not_lower}
