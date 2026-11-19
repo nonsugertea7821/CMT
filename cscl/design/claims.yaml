@@ -118,10 +118,10 @@ individuals:
   b_draw_on_with_shallow: {is: exp.item_done}
   h_gloss_formula: {is: exp.hyp_refuted}
   b_gloss_formula: {is: exp.item_done}
-  h_negation_formula: {is: exp.hyp_untested}
+  h_negation_formula: {is: exp.hyp_supported}
+  b_negation_formula: {is: exp.item_done}
   h_law_given_as_rule: {is: exp.hyp_untested}
   b_law_given_as_rule: {is: exp.item_queued}
-  b_negation_formula: {is: exp.item_queued}
   h_comment_ban: {is: exp.hyp_supported}
   b_comment_ban: {is: exp.item_done}
   h_above_closed: {is: exp.hyp_supported}
@@ -460,6 +460,8 @@ individuals:
   o_sys_dows_a_reproduces: {is: exp.observation}
   o_sys_dows_b_fails: {is: exp.observation}
   o_sys_dows_c_fails: {is: exp.observation}
+  o_sys_nf_agree: {is: exp.observation}
+  o_sys_nf_base_clean: {is: exp.observation}
   o_sys_any_by_entail_passes_checks: {is: exp.observation}
   o_sys_any_by_entail_passes_ec: {is: exp.observation}
   o_sys_any_by_entail_ideal: {is: exp.observation}
@@ -834,6 +836,10 @@ facts:
   - {is: exp.v_check, from: b_gloss_formula, to: h_gloss_formula}
   - {is: v_refer, from: h_negation_formula, to: {is: v_not_depend, from: negated_limitation, to: type_checker}}
   - {is: exp.v_check, from: b_negation_formula, to: h_negation_formula}
+  - {is: v_refer, from: o_sys_nf_agree, to: {is: v_level, from: sys_negation_formula.agree.mean_value, to: 7.0}}
+  - {is: exp.v_support, from: o_sys_nf_agree, to: h_negation_formula}
+  - {is: v_refer, from: o_sys_nf_base_clean, to: {is: v_level, from: sys_negation_formula.other_P0.mean_value, to: 0.0}}
+  - {is: exp.v_support, from: o_sys_nf_base_clean, to: h_negation_formula}
   - {is: v_refer, from: h_law_given_as_rule, to: {is: v_not_depend, from: syntax.law_given, to: type_checker}}
   - {is: exp.v_check, from: b_law_given_as_rule, to: h_law_given_as_rule}
   - {is: v_refer, from: h_comment_ban, to: {is: v_not_depend, from: definition, to: annotation}}
