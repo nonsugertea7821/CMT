@@ -1,0 +1,37 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-19T10:16:06.283Z（UTC）
+individuals:
+  01M7SMWVWBXVG4XXBA0PDKXTD2:
+    is: model_utterance
+    display: 発言 2457
+    val:
+      order: 2457
+      text: |
+        「循環をきちんと扱って比べれば、名前でしか区別できない組は予測した 2 組だけになる」という仮説（h_identifier_by_bisimulation）は、事前に決めた判定どおり反証でした。#331 に記録して Draft を外したので、確認をお願いします。
+
+        **結果**
+        - 一致した類の数は予測どおり 4 つでした。ただし中身が予測と違います。
+        - 前回一致した地方と倉庫（region / warehouse）は、予測どおり分かれました。前回の一致は、手順の欠点による見かけの一致でした。
+        - 予測していなかったのは、「前提に置く」（v_assume）とその目的語の「法則の前提」（premise）です。これらが「導く」「成り立つことを求める」と同じ形で、3 つずつの類になりました。前回の手順はこれも見落としていたので、見かけの一致と見落としの両方が起きていたことになります。
+        - 入金する・承認する（v_pay / v_approve）とその目的語は、予測どおり区別がつきませんでした。
+
+        **含意**
+        - 法則の前提・導く文・求める文の 3 つは、式の上では区別がありません。
+        - 区別しているのは型検査の側で、`RULE_VERBS = ("v_assume", "v_derive", "v_require")` と名前を並べて読んでいます。
+        - 名前で読むのを「シグネチャと文法の語だけ」に限る取り決めから見ると、これは式に書けていない区別、つまり負債です。
+
+        **新しい仮説（#332、登録だけ）**
+        この区別を式で書く方法を、2 通りの対で出しました。
+        - h_rule_roles_by_frame: 役割を前後の状態のどちら側にあるかで読む。前提は前、導く文は後、求める文は両側で成り立つもの、という読みです。
+        - h_rule_roles_by_signature: 役割を表す名詞に式の差を足し、型検査はシグネチャで決まる分類で読む。
+
+        どちらも、型検査から名前の並び `RULE_VERBS` を消しても結果が変わらないかで確かめます。
+
+        #331 と #332 は claims.yaml の近い場所を触っているので、先にどちらかがマージされると衝突するかもしれません。そのときは main を取り込んで解きます。
+facts:
+- {is: v_say, from: session_model, to: 01M7SMWVWBXVG4XXBA0PDKXTD2}
+- {is: exp.v_answer, from: 01M7SMWVWBXVG4XXBA0PDKXTD2, to: 01M7SGQA8VSGSY8VD5321SAS84}
+- {is: v_refer, from: 01M7SMWVWBXVG4XXBA0PDKXTD2, to: syntax.v_assume}
+- {is: v_refer, from: 01M7SMWVWBXVG4XXBA0PDKXTD2, to: subj.v_pay}
+- {is: v_refer, from: 01M7SMWVWBXVG4XXBA0PDKXTD2, to: subj.v_approve}
+- {is: v_refer, from: 01M7SMWVWBXVG4XXBA0PDKXTD2, to: syntax.v_derive}
+- {is: v_refer, from: 01M7SMWVWBXVG4XXBA0PDKXTD2, to: syntax.v_require}
