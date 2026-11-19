@@ -1,0 +1,356 @@
+{
+ "rev": "fea22bc",
+ "model": "Qwen/Qwen2.5-1.5B-Instruct",
+ "rows": {
+  "item agent": {
+   "before": 0,
+   "typechecks": 0,
+   "extends_match": 0,
+   "exact": 0,
+   "oov": 0,
+   "before_oov": 1,
+   "n_errors": 43,
+   "written": "  agent: {display: 主体, extends: person, mod: {of: [v_depend, on], with: person}}",
+   "err_text": [
+    "subj.age.mod[0]: subj.person は ontology.v_depend の to（ontology.continuant）に来られない",
+    "subj.height.mod[0]: subj.person_age_neg は ontology.v_depend の to（ontology.continuant）に来られない",
+    "subj.agent.mod[0]: 位置 True が、grammar.position に書かれていない"
+   ],
+   "prompt_tokens": 2801
+  },
+  "item organization": {
+   "before": 0,
+   "typechecks": 0,
+   "extends_match": 0,
+   "exact": 0,
+   "oov": 0,
+   "before_oov": 0,
+   "n_errors": 4,
+   "written": "  organization: {display: 組織, extends: continuant, mod: {of: [v_place, from], with: order, neg: true}}",
+   "err_text": [
+    "subj.organization.mod[0]: subj.order は subj.v_place の to（subj.agent）に来られない",
+    "subj.customer.mod[0]: subj.corporation は subj.v_contract の to（subj.agent）に来られない",
+    "法則 narrow_from（下位の動詞の端 from は、上位の動詞の端を狭める）に反する: var1=subj.v_employ, var2=subj.organization, var3=subj.v_contract, var4=subj.agent, var5=subj.agent"
+   ],
+   "prompt_tokens": 2807
+  },
+  "item corporation": {
+   "before": 1,
+   "typechecks": 1,
+   "extends_match": 1,
+   "exact": 0,
+   "oov": 0,
+   "before_oov": 0,
+   "n_errors": 0,
+   "written": "  corporation: {display: 法人, extends: organization, mod: {of: [v_design, to], with: legal_personality}}",
+   "err_text": [],
+   "prompt_tokens": 2787
+  },
+  "item minor": {
+   "before": 1,
+   "typechecks": 1,
+   "extends_match": 1,
+   "exact": 0,
+   "oov": 0,
+   "before_oov": 0,
+   "n_errors": 0,
+   "written": "  minor: {display: 未成年, extends: person, mod: {of: [v_depend, to], with: age, at: {count: {lt: 18}}}}",
+   "err_text": [],
+   "prompt_tokens": 2752
+  },
+  "item shared_address": {
+   "before": 0,
+   "typechecks": 1,
+   "extends_match": 1,
+   "exact": 0,
+   "oov": 0,
+   "before_oov": 0,
+   "n_errors": 0,
+   "written": "  shared_address: {display: 二人以上が住む住所, extends: address, mod: {of: [v_refer, from], with: person}}",
+   "err_text": [],
+   "prompt_tokens": 2734
+  },
+  "item user": {
+   "before": 0,
+   "typechecks": 0,
+   "extends_match": 1,
+   "exact": 0,
+   "oov": 0,
+   "before_oov": 1,
+   "n_errors": 2,
+   "written": "  user: {display: 利用者, extends: person, mod: {of: [v_pay, to]}}",
+   "err_text": [
+    "subj.user.mod[0]: subj.person は subj.v_pay の to（subj.payment）に来られない",
+    "法則 named_mod に反する: subj.user, subj.payment が同じ限定を足している。名前を付けた修飾語にする"
+   ],
+   "prompt_tokens": 2754
+  },
+  "item setting_rule": {
+   "before": 0,
+   "typechecks": 0,
+   "extends_match": 0,
+   "exact": 0,
+   "oov": 0,
+   "before_oov": 1,
+   "n_errors": 1,
+   "written": "  setting_rule: {display: 設定の変更を許す規則, extends: permission, mod: {of: [v_perform, to], with: setting_permission}}",
+   "err_text": [
+    "subj.setting_rule.mod[0]: subj.permission は ontology.v_perform の to（ontology.occurrent）に来られない"
+   ],
+   "prompt_tokens": 2768
+  },
+  "item admin": {
+   "before": 0,
+   "typechecks": 1,
+   "extends_match": 0,
+   "exact": 0,
+   "oov": 0,
+   "before_oov": 0,
+   "n_errors": 0,
+   "written": "  admin: {display: 管理者, extends: person, mod: {of: [v_design, from], with: organization}}",
+   "err_text": [],
+   "prompt_tokens": 2780
+  },
+  "item stored_goods": {
+   "before": 0,
+   "typechecks": 0,
+   "extends_match": 1,
+   "exact": 0,
+   "oov": 0,
+   "before_oov": 1,
+   "n_errors": 2,
+   "written": "  stored_goods: {display: 倉庫にある商品, extends: goods, mod: {of: [v_store, to]}} ",
+   "err_text": [
+    "subj.stored_goods.mod[0]: subj.goods は subj.v_store の to（subj.warehouse）に来られない",
+    "法則 named_mod に反する: subj.warehouse, subj.stored_goods が同じ限定を足している。名前を付けた修飾語にする"
+   ],
+   "prompt_tokens": 2772
+  },
+  "item fruit": {
+   "before": 0,
+   "typechecks": 0,
+   "extends_match": 0,
+   "exact": 0,
+   "oov": 0,
+   "before_oov": 0,
+   "n_errors": 1,
+   "written": "  fruit: {display: 果物, extends: category, mod: {of: [v_design, to]}} ",
+   "err_text": [
+    "法則 named_mod に反する: subj.fruit の限定は、修飾語 exp.design_to と同じ。名前で書く"
+   ],
+   "prompt_tokens": 2742
+  },
+  "item seafood_category": {
+   "before": 1,
+   "typechecks": 1,
+   "extends_match": 1,
+   "exact": 0,
+   "oov": 0,
+   "before_oov": 0,
+   "n_errors": 0,
+   "written": "  seafood_category: {display: 分類「魚類」, extends: category, mod: {of: [v_classify, to], with: fish}} ",
+   "err_text": [],
+   "prompt_tokens": 2725
+  },
+  "item large_order": {
+   "before": 0,
+   "typechecks": 0,
+   "extends_match": 1,
+   "exact": 0,
+   "oov": 0,
+   "before_oov": 0,
+   "n_errors": 1,
+   "written": "  large_order: {display: 大口注文, extends: order, mod: {of: [v_place, from], with: amount_greater_than(10000)}}",
+   "err_text": [
+    "subj.large_order.mod[0]: amount_greater_than(10000) は subj.v_place の to（subj.agent）に来られない"
+   ],
+   "prompt_tokens": 2735
+  },
+  "item new_order": {
+   "before": 0,
+   "typechecks": 0,
+   "extends_match": 1,
+   "exact": 0,
+   "oov": 0,
+   "before_oov": 1,
+   "n_errors": 4,
+   "written": "  new_order: {display: 新規, extends: order, mod: {of: [v_place, from]}}",
+   "err_text": [
+    "法則 monotone（階層を降りるたびに限定が増える）に反する: var1=subj.new_order, var2=subj.order",
+    "法則 specific（より具体的な概念があればその下に置く）に反する: var1=subj.large_order, var2=subj.new_order",
+    "法則 specific（より具体的な概念があればその下に置く）に反する: var1=subj.recent_order, var2=subj.new_order"
+   ],
+   "prompt_tokens": 2794
+  },
+  "item plan": {
+   "before": 0,
+   "typechecks": 0,
+   "extends_match": 0,
+   "exact": 0,
+   "oov": 0,
+   "before_oov": 1,
+   "n_errors": 8,
+   "written": "  plan: {display: プラン, extends: plan, mod: {of: [v_design, from]}}",
+   "err_text": [
+    "subj.monthly_fee.mod[0]: subj.plan は ontology.v_depend の to（ontology.continuant）に来られない",
+    "subj.plan.mod[0]: subj.plan は ontology.v_design の from（ontology.continuant）に来られない",
+    "subj.free_plan.mod[0]: subj.plan は ontology.v_depend の to（ontology.continuant）に来られない"
+   ],
+   "prompt_tokens": 2774
+  },
+  "item deficit": {
+   "before": 0,
+   "typechecks": 1,
+   "extends_match": 1,
+   "exact": 0,
+   "oov": 0,
+   "before_oov": 0,
+   "n_errors": 0,
+   "written": "  deficit: {display: 赤字, extends: account, mod: {of: [v_measure, from], with: sales, neg: true}}",
+   "err_text": [],
+   "prompt_tokens": 2775
+  },
+  "item approval": {
+   "before": 0,
+   "typechecks": 0,
+   "extends_match": 0,
+   "exact": 0,
+   "oov": 0,
+   "before_oov": 1,
+   "n_errors": 9,
+   "written": "  approval: {display: 承認, extends: approval, mod: {of: [v_depend, to], with: inspected_inspection, at: {status: \"approved\"}}}",
+   "err_text": [
+    "subj.approval.mod[0]: subj.approval は ontology.v_depend の to（ontology.continuant）に来られない",
+    "subj.approval.mod[0]: inspected_inspection は ontology.v_depend の from（ontology.continuant）に来られない",
+    "subj.approval.mod[0]: 軸 status が未定義"
+   ],
+   "prompt_tokens": 2750
+  },
+  "item delay": {
+   "before": 0,
+   "typechecks": 0,
+   "extends_match": 0,
+   "exact": 0,
+   "oov": 0,
+   "before_oov": 0,
+   "n_errors": 1,
+   "written": "  delay: {display: 遅延, extends: quality, mod: {of: [v_measure, from], with: delivery}}",
+   "err_text": [
+    "法則 named_mod に反する: subj.days_overdue, subj.delay が同じ限定を足している。名前を付けた修飾語にする"
+   ],
+   "prompt_tokens": 2768
+  },
+  "item absent_person": {
+   "before": 0,
+   "typechecks": 0,
+   "extends_match": 0,
+   "exact": 0,
+   "oov": 0,
+   "before_oov": 1,
+   "n_errors": 2,
+   "written": "  absent_person: {display: 開始時刻に席にいなかった人, extends: attendance, mod: {of: [v_seated, from], with: person}}",
+   "err_text": [
+    "subj.absent_person.mod[0]: subj.attendance は subj.v_seated の from（subj.person）に来られない",
+    "subj.absent_person.mod[0]: subj.person は subj.v_seated の to（ontology.process）に来られない"
+   ],
+   "prompt_tokens": 2774
+  },
+  "item land": {
+   "before": 0,
+   "typechecks": 0,
+   "extends_match": 1,
+   "exact": 0,
+   "oov": 1,
+   "before_oov": 1,
+   "n_errors": 2,
+   "written": "  land: {display: 土地, extends: continuant, mod: {of: [v_locate, from], with: person}}",
+   "err_text": [
+    "subj.land.mod[0]: v_locate は動詞でない",
+    "法則 placed_deduced（動詞でない概念は、定義から根の下に置かれる（根への宣言だけでは置かれない））に反する: var1=subj.land"
+   ],
+   "prompt_tokens": 2804
+  },
+  "item urban": {
+   "before": 1,
+   "typechecks": 1,
+   "extends_match": 1,
+   "exact": 0,
+   "oov": 0,
+   "before_oov": 0,
+   "n_errors": 0,
+   "written": "  urban: {display: 都市部, extends: municipality, mod: {of: [v_compose, from], with: municipality}}",
+   "err_text": [],
+   "prompt_tokens": 2772
+  },
+  "item business_day": {
+   "before": 0,
+   "typechecks": 0,
+   "extends_match": 1,
+   "exact": 0,
+   "oov": 0,
+   "before_oov": 1,
+   "n_errors": 4,
+   "written": "  business_day: {display: 営業日, extends: day, mod: {of: [v_weekday_of, to]}}",
+   "err_text": [
+    "法則 monotone（階層を降りるたびに限定が増える）に反する: var1=subj.business_day, var2=subj.day",
+    "法則 specific（より具体的な概念があればその下に置く）に反する: var1=subj.weekday_base, var2=subj.business_day",
+    "法則 specific（より具体的な概念があればその下に置く）に反する: var1=subj.thursday_day, var2=subj.business_day"
+   ],
+   "prompt_tokens": 2740
+  },
+  "item weekday": {
+   "before": 0,
+   "typechecks": 0,
+   "extends_match": 0,
+   "exact": 0,
+   "oov": 0,
+   "before_oov": 0,
+   "n_errors": 3,
+   "written": "  weekday: {display: 曜日, extends: weekday_day, mod: {of: [v_weekday_of, to]}}",
+   "err_text": [
+    "法則 narrow_from（下位の動詞の端 from は、上位の動詞の端を狭める）に反する: var1=subj.v_weekday_of, var2=subj.weekday, var3=syntax.v_measure, var4=ontology.continuant, var5=any",
+    "法則 monotone（階層を降りるたびに限定が増える）に反する: var1=subj.weekday, var2=subj.weekday_day",
+    "法則 named_mod に反する: subj.day, subj.weekday が同じ限定を足している。名前を付けた修飾語にする"
+   ],
+   "prompt_tokens": 2771
+  },
+  "item thursday_day": {
+   "before": 0,
+   "typechecks": 1,
+   "extends_match": 1,
+   "exact": 0,
+   "oov": 0,
+   "before_oov": 0,
+   "n_errors": 0,
+   "written": "  thursday_day: {display: 木曜の日, extends: day, mod: {of: [v_weekday_of, to], with: thursday, neg: false}}",
+   "err_text": [],
+   "prompt_tokens": 2761
+  },
+  "item morning": {
+   "before": 1,
+   "typechecks": 0,
+   "extends_match": 1,
+   "exact": 0,
+   "oov": 0,
+   "before_oov": 0,
+   "n_errors": 1,
+   "written": "  morning: {display: 午前, extends: morning_base, mod: {of: [v_begin, from], with: hour, at: {amount: 0..12}}}",
+   "err_text": [
+    "subj.morning.mod[0]: 軸 amount の値 0..12 は、数でも範囲の判定式でもない"
+   ],
+   "prompt_tokens": 2786
+  },
+  "summary 要約": {
+   "n_items": 24,
+   "n_before": 5,
+   "n_gl": 8,
+   "n_gl_extends_match": 14,
+   "n_gl_exact": 0,
+   "n_oov": 1,
+   "n_before_oov": 10,
+   "n_glossary_verbs": 34,
+   "n_glossary_kinds": 133,
+   "base_errors": 0
+  }
+ }
+}

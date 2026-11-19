@@ -1,0 +1,309 @@
+{
+ "rev": "fa8c3e5",
+ "model": "Qwen/Qwen2.5-1.5B-Instruct",
+ "rows": {
+  "item agent": {
+   "parsed": 1,
+   "typechecks": 0,
+   "extends_match": 0,
+   "exact": 0,
+   "n_errors": 24,
+   "written": "  agent: {display: 主体, extends: entity, mod: {of: [v_entity, of], with: subject}}",
+   "gold": "  agent: {display: 主体, extends: continuant, mod: {of: [v_perform, from]}}",
+   "err_text": [
+    "subj.age.mod[0]: subj.person は ontology.v_depend の to（ontology.continuant）に来られない",
+    "subj.height.mod[0]: subj.person_age_neg は ontology.v_depend の to（ontology.continuant）に来られない",
+    "subj.agent: 上位がない、または未定義"
+   ]
+  },
+  "item organization": {
+   "parsed": 1,
+   "typechecks": 0,
+   "extends_match": 0,
+   "exact": 0,
+   "n_errors": 7,
+   "written": "  organization: {display: 組織, extends: continuant, mod: {of: [v_perform, from]}}",
+   "gold": "  organization: {display: 組織, extends: agent, mod: {of: [v_compose, to], with: person, at: {count: {gt: 1}}}}",
+   "err_text": [
+    "subj.customer.mod[0]: subj.corporation は subj.v_contract の to（subj.agent）に来られない",
+    "法則 narrow_from（下位の動詞の端 from は、上位の動詞の端を狭める）に反する: var1=subj.v_employ, var2=subj.organization, var3=subj.v_contract, var4=subj.agent, var5=subj.agent",
+    "法則 one_name（互いに相手の式を（含意によっても）持つ組は、同じものの別の名前なので置かない）に反する: var1=subj.organization, var2=subj.agent"
+   ]
+  },
+  "item corporation": {
+   "parsed": 1,
+   "typechecks": 1,
+   "extends_match": 1,
+   "exact": 1,
+   "n_errors": 0,
+   "written": "  corporation: {display: 法人, extends: organization, mod: {of: [v_depend, to], with: legal_personality}}",
+   "gold": "  corporation: {display: 法人, extends: organization, mod: {of: [v_depend, to], with: legal_personality}}",
+   "err_text": []
+  },
+  "item minor": {
+   "parsed": 1,
+   "typechecks": 1,
+   "extends_match": 1,
+   "exact": 0,
+   "n_errors": 0,
+   "written": "  minor: {display: 未成年, extends: person, mod: {of: [v_depend, to], with: age, at: {count: {lt: 18}}}}",
+   "gold": "  minor: {display: 未成年, extends: person, mod: {of: [v_depend, to], with: age, at: {amount: {lt: 25}}}}",
+   "err_text": []
+  },
+  "item shared_address": {
+   "parsed": 1,
+   "typechecks": 0,
+   "extends_match": 1,
+   "exact": 0,
+   "n_errors": 2,
+   "written": "  shared_address: {display: 二人以上が住む住所, extends: address, mod: {of: [v_refer, from], with: people, amount: {gt: 1}}}",
+   "gold": "  shared_address: {display: 二人以上が住む住所, extends: address, mod: {of: [v_live, to], with: person, at: {count: {gt: 1}}}}",
+   "err_text": [
+    "subj.shared_address.mod[0]: people は syntax.v_refer の to（any）に来られない",
+    "subj.shared_address.mod[0]: 語 {'amount'} が、grammar.mod に書かれていない"
+   ]
+  },
+  "item user": {
+   "parsed": 1,
+   "typechecks": 0,
+   "extends_match": 1,
+   "exact": 0,
+   "n_errors": 1,
+   "written": "  user: {display: 利用者, extends: person, mod: {of: [v_use, to]}} ",
+   "gold": "  user: {display: 利用者, extends: person, mod: {of: [v_register, to], with: service}}",
+   "err_text": [
+    "subj.user.mod[0]: subj.person は syntax.v_use の to（syntax.domain）に来られない"
+   ]
+  },
+  "item setting_rule": {
+   "parsed": 1,
+   "typechecks": 0,
+   "extends_match": 1,
+   "exact": 0,
+   "n_errors": 1,
+   "written": "  setting_rule: {display: 設定の変更を許す規則, extends: access_rule, mod: {of: [v_allow, to]}}",
+   "gold": "  setting_rule: {display: 設定の変更を許す規則, extends: access_rule, mod: {of: [v_refer, from], with: system_setting}}",
+   "err_text": [
+    "subj.setting_rule.mod[0]: v_allow は動詞でない"
+   ]
+  },
+  "item admin": {
+   "parsed": 1,
+   "typechecks": 0,
+   "extends_match": 0,
+   "exact": 0,
+   "n_errors": 1,
+   "written": "  admin: {display: 管理者, extends: role, mod: {of: [v_depend, from], with: permission}}",
+   "gold": "  admin: {display: 管理者, extends: user, mod: {of: [v_depend, to], with: setting_permission}}",
+   "err_text": [
+    "subj.admin: 根拠となる定義が特定されていない"
+   ]
+  },
+  "item stored_goods": {
+   "parsed": 1,
+   "typechecks": 0,
+   "extends_match": 0,
+   "exact": 0,
+   "n_errors": 2,
+   "written": "  stored_goods: {display: 倉庫にある商品, extends: relation, mod: {of: [v_store, to], with: goods}}",
+   "gold": "  stored_goods: {display: 倉庫にある商品, extends: goods, mod: {of: [v_store, from], with: warehouse}}",
+   "err_text": [
+    "subj.stored_goods: 上位がない、または未定義",
+    "subj.stock.mod[0]: subj.stored_goods は subj.v_allocate の to（subj.goods）に来られない"
+   ]
+  },
+  "item fruit": {
+   "parsed": 1,
+   "typechecks": 0,
+   "extends_match": 0,
+   "exact": 0,
+   "n_errors": 2,
+   "written": "  fruit: {display: 果物, extends: category, mod: {of: [v_sell, to]}} ",
+   "gold": "  fruit: {display: 果物, extends: goods, mod: {of: [v_classify, from], with: fruit_category}}",
+   "err_text": [
+    "subj.fruit.mod[0]: subj.category は subj.v_sell の to（ontology.component）に来られない",
+    "法則 named_mod に反する: subj.goods, subj.fruit が同じ限定を足している。名前を付けた修飾語にする"
+   ]
+  },
+  "item seafood_category": {
+   "parsed": 1,
+   "typechecks": 1,
+   "extends_match": 1,
+   "exact": 0,
+   "n_errors": 0,
+   "written": "  seafood_category: {display: 分類「魚類」, extends: category, mod: {of: [v_classify, to], with: fish}} ",
+   "gold": "  seafood_category: {display: 分類「魚類」, extends: category, mod: {of: [v_classify, to], with: shrimp}}",
+   "err_text": []
+  },
+  "item large_order": {
+   "parsed": 1,
+   "typechecks": 0,
+   "extends_match": 1,
+   "exact": 0,
+   "n_errors": 1,
+   "written": "  large_order: {display: 大口注文, extends: order, mod: {of: [v_place, from], with: large}} ",
+   "gold": "  large_order: {display: 大口注文, extends: order, mod: {of: [v_allocate, from], with: goods, at: {count: {ge: 10}}}}",
+   "err_text": [
+    "subj.large_order.mod[0]: large は subj.v_place の to（subj.agent）に来られない"
+   ]
+  },
+  "item new_order": {
+   "parsed": 1,
+   "typechecks": 0,
+   "extends_match": 1,
+   "exact": 0,
+   "n_errors": 1,
+   "written": "  new_order: {display: 新規, extends: order, mod: {of: [v_create, from]}}",
+   "gold": "  new_order: {display: 新規, extends: order, mod: {of: [v_place, from], with: dormant_agent}}",
+   "err_text": [
+    "subj.new_order.mod[0]: v_create は動詞でない"
+   ]
+  },
+  "item plan": {
+   "parsed": 1,
+   "typechecks": 0,
+   "extends_match": 0,
+   "exact": 0,
+   "n_errors": 4,
+   "written": "  plan: {display: プラン, extends: plan_entity, mod: {of: [v_plan, to]}}",
+   "gold": "  plan: {display: プラン, extends: information_entity, mod: {of: [v_refer, from], with: service}}",
+   "err_text": [
+    "subj.monthly_fee.mod[0]: subj.plan は ontology.v_depend の to（ontology.continuant）に来られない",
+    "subj.plan: 上位がない、または未定義",
+    "subj.free_plan.mod[0]: subj.plan は ontology.v_depend の to（ontology.continuant）に来られない"
+   ]
+  },
+  "item deficit": {
+   "parsed": 1,
+   "typechecks": 0,
+   "extends_match": 1,
+   "exact": 0,
+   "n_errors": 1,
+   "written": "  deficit: {display: 赤字, extends: account, mod: {of: [v_measure, from], with: amount, neg: true}}",
+   "gold": "  deficit: {display: 赤字, extends: account, mod: {of: [v_depend, to], with: profit_gap, at: {amount: {lt: 0}}}}",
+   "err_text": [
+    "subj.deficit.mod[0]: amount は syntax.v_measure の to（any）に来られない"
+   ]
+  },
+  "item approval": {
+   "parsed": 1,
+   "typechecks": 0,
+   "extends_match": 1,
+   "exact": 0,
+   "n_errors": 1,
+   "written": "  approval: {display: 承認, extends: process, mod: {of: [v_accept, from], with: inspection}}",
+   "gold": "  approval: {display: 承認, extends: process, mod: {of: [v_approve, to]}}",
+   "err_text": [
+    "subj.approval.mod[0]: v_accept は動詞でない"
+   ]
+  },
+  "item delay": {
+   "parsed": 1,
+   "typechecks": 0,
+   "extends_match": 0,
+   "exact": 0,
+   "n_errors": 5,
+   "written": "  delay: {display: 遅延, extends: quality, mod: {of: [v_measure, from], with: approved_inspection}}",
+   "gold": "  delay: {display: 遅延, extends: delivery, mod: {of: [v_measure, to], with: days_overdue, at: {amount: {ge: 3}}}}",
+   "err_text": [
+    "法則 one_name（互いに相手の式を（含意によっても）持つ組は、同じものの別の名前なので置かない）に反する: var1=subj.delay, var2=subj.completed",
+    "法則 one_name（互いに相手の式を（含意によっても）持つ組は、同じものの別の名前なので置かない）に反する: var1=subj.completed, var2=subj.delay",
+    "法則 specific（より具体的な概念があればその下に置く）に反する: var1=subj.delay, var2=subj.completed"
+   ]
+  },
+  "item absent_person": {
+   "parsed": 1,
+   "typechecks": 0,
+   "extends_match": 0,
+   "exact": 0,
+   "n_errors": 1,
+   "written": "  absent_person: {display: 開始時刻に席にいなかった人, extends: process, mod: {of: [v_arrive, to], with: meeting_start}}",
+   "gold": "  absent_person: {display: 開始時刻に席にいなかった人, extends: person, mod: {of: [v_seated, from], with: meeting_start, neg: true}}",
+   "err_text": [
+    "subj.absent_person.mod[0]: v_arrive は動詞でない"
+   ]
+  },
+  "item land": {
+   "parsed": 1,
+   "typechecks": 0,
+   "extends_match": 0,
+   "exact": 0,
+   "n_errors": 3,
+   "written": "  land: {display: 土地, extends: property, mod: {of: [v_occupy, from], with: owner}}",
+   "gold": "  land: {display: 土地, extends: continuant, mod: {of: [v_located, from]}}",
+   "err_text": [
+    "subj.land: 上位がない、または未定義",
+    "法則 narrow_from（下位の動詞の端 from は、上位の動詞の端を狭める）に反する: var1=subj.v_located, var2=subj.land, var3=ontology.v_compose, var4=ontology.continuant, var5=ontology.continuant",
+    "法則 placed_deduced（動詞でない概念は、定義から根の下に置かれる（根への宣言だけでは置かれない））に反する: var1=subj.land"
+   ]
+  },
+  "item urban": {
+   "parsed": 1,
+   "typechecks": 1,
+   "extends_match": 1,
+   "exact": 0,
+   "n_errors": 0,
+   "written": "  urban: {display: 都市部, extends: municipality, mod: {of: [v_compose, from], with: municipality}}",
+   "gold": "  urban: {display: 都市部, extends: municipality, mod: {of: [v_depend, to], with: population, at: {amount: {ge: 10000}}}}",
+   "err_text": []
+  },
+  "item business_day": {
+   "parsed": 1,
+   "typechecks": 0,
+   "extends_match": 1,
+   "exact": 0,
+   "n_errors": 1,
+   "written": "  business_day: {display: 営業日, extends: day, mod: {of: [v_business_day_of, to]}}",
+   "gold": "  business_day: {display: 営業日, extends: day, mod: {of: [v_weekday_of, to], with: sunday, neg: true}}",
+   "err_text": [
+    "subj.business_day.mod[0]: v_business_day_of は動詞でない"
+   ]
+  },
+  "item weekday": {
+   "parsed": 1,
+   "typechecks": 0,
+   "extends_match": 0,
+   "exact": 0,
+   "n_errors": 3,
+   "written": "  weekday: {display: 曜日, extends: weekday_day, mod: {of: [v_weekday_of, to]}} ",
+   "gold": "  weekday: {display: 曜日, extends: quality, mod: {of: [v_weekday_of, from]}}",
+   "err_text": [
+    "法則 narrow_from（下位の動詞の端 from は、上位の動詞の端を狭める）に反する: var1=subj.v_weekday_of, var2=subj.weekday, var3=syntax.v_measure, var4=ontology.continuant, var5=any",
+    "法則 monotone（階層を降りるたびに限定が増える）に反する: var1=subj.weekday, var2=subj.weekday_day",
+    "法則 named_mod に反する: subj.day, subj.weekday が同じ限定を足している。名前を付けた修飾語にする"
+   ]
+  },
+  "item thursday_day": {
+   "parsed": 1,
+   "typechecks": 0,
+   "extends_match": 0,
+   "exact": 0,
+   "n_errors": 1,
+   "written": "  thursday_day: {display: 木曜の日, extends: weekday, mod: {of: [v_weekday_of, to], with: thursday}}",
+   "gold": "  thursday_day: {display: 木曜の日, extends: day, mod: {of: [v_weekday_of, to], with: thursday}}",
+   "err_text": [
+    "subj.thursday_day.mod[0]: subj.weekday は subj.v_weekday_of の to（subj.day）に来られない"
+   ]
+  },
+  "item morning": {
+   "parsed": 1,
+   "typechecks": 1,
+   "extends_match": 1,
+   "exact": 0,
+   "n_errors": 0,
+   "written": "  morning: {display: 午前, extends: morning_base, mod: {of: [v_end, to]}}",
+   "gold": "  morning: {display: 午前, extends: morning_base, mod: {of: [v_end, from], with: hour, at: {amount: 13}}}",
+   "err_text": []
+  },
+  "summary 要約": {
+   "n_items": 24,
+   "n_parsed": 24,
+   "n_typechecks": 5,
+   "n_extends_match": 13,
+   "n_exact": 1,
+   "typecheck_rate": 0.20833333333333334,
+   "exact_rate": 0.041666666666666664,
+   "base_errors": 0
+  }
+ }
+}
