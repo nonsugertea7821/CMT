@@ -185,6 +185,10 @@ individuals:
   h_rule_verbs_unhardcode: {is: exp.hyp_refuted}
   b_rule_verbs_unhardcode: {is: exp.item_done}
   b_frame_both_sides: {is: exp.item_queued}
+  h_frame_enters_relations: {is: exp.hyp_untested}
+  b_frame_enters_relations: {is: exp.item_queued}
+  h_rule_frame_redundant: {is: exp.hyp_untested}
+  b_rule_frame_redundant: {is: exp.item_queued}
   h_rule_roles_by_frame: {is: exp.hyp_supported}
   b_rule_roles_by_frame: {is: exp.item_done}
   h_rule_roles_by_signature: {is: exp.hyp_untested}
@@ -667,6 +671,10 @@ facts:
   - {is: exp.v_check, from: b_rule_verbs_unhardcode, to: h_rule_verbs_unhardcode}
   - {is: v_refer, from: h_frame_both_sides, to: {is: v_depend, from: syntax.pre, to: syntax.post}}
   - {is: exp.v_check, from: b_frame_both_sides, to: h_frame_both_sides}
+  - {is: v_refer, from: h_frame_enters_relations, to: {is: v_depend, from: syntax.law_relation, to: [syntax.pre, syntax.holds]}}
+  - {is: exp.v_check, from: b_frame_enters_relations, to: h_frame_enters_relations}
+  - {is: v_refer, from: h_rule_frame_redundant, to: {is: v_depend, from: type_checker, to: [syntax.pre, syntax.post, syntax.holds, syntax.law_relation]}}
+  - {is: exp.v_check, from: b_rule_frame_redundant, to: h_rule_frame_redundant}
   - {is: v_refer, from: h_rule_roles_by_frame, to: {is: v_depend, from: type_checker, to: [syntax.law_rule, syntax.pre, syntax.post]}}
   - {is: exp.v_check, from: b_rule_roles_by_frame, to: h_rule_roles_by_frame}
   - {is: v_refer, from: h_rule_roles_by_signature, to: {is: v_depend, from: type_checker, to: [syntax.law_rule, signature_class]}}
