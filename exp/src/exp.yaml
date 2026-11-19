@@ -935,6 +935,27 @@ individuals:
   sys_boundary_invariant_cond_R_side_diff: {is: axis_value, val: {text: R_side_diff}}
   sys_boundary_invariant_cond_pre_only: {is: axis_value, val: {text: pre_only}}
   sys_boundary_invariant_cond_post_only: {is: axis_value, val: {text: post_only}}
+  sys_rule_roles_by_frame: {is: measurement_family}
+  sys_rule_roles_by_frame_cond: {is: family_axis, val: {text: cond}}
+  sys_rule_roles_by_frame_cond_errors: {is: axis_value, val: {text: errors}}
+  sys_rule_roles_by_frame_cond_ec_errors: {is: axis_value, val: {text: ec_errors}}
+  sys_rule_roles_by_frame_cond_role_match: {is: axis_value, val: {text: role_match}}
+  sys_rule_roles_by_frame_cond_bisim_split: {is: axis_value, val: {text: bisim_split}}
+  sys_rule_roles_by_frame_cond_laws_same: {is: axis_value, val: {text: laws_same}}
+  sys_identifier_bisimulation: {is: measurement_family}
+  sys_identifier_bisimulation_cond: {is: family_axis, val: {text: cond}}
+  sys_identifier_bisimulation_cond_n_collide_class: {is: axis_value, val: {text: n_collide_class}}
+  sys_identifier_bisimulation_cond_n_collide_nodes: {is: axis_value, val: {text: n_collide_nodes}}
+  sys_identifier_bisimulation_cond_n_rounds: {is: axis_value, val: {text: n_rounds}}
+  sys_identifier_bisimulation_cond_base_errors: {is: axis_value, val: {text: base_errors}}
+  sys_identifier_bisimulation_cond_match_prediction: {is: axis_value, val: {text: match_prediction}}
+  sys_identifier_expansion: {is: measurement_family}
+  sys_identifier_expansion_cond: {is: family_axis, val: {text: cond}}
+  sys_identifier_expansion_cond_n_collide_class: {is: axis_value, val: {text: n_collide_class}}
+  sys_identifier_expansion_cond_n_collide_nodes: {is: axis_value, val: {text: n_collide_nodes}}
+  sys_identifier_expansion_cond_n_cycle: {is: axis_value, val: {text: n_cycle}}
+  sys_identifier_expansion_cond_n_empty: {is: axis_value, val: {text: n_empty}}
+  sys_identifier_expansion_cond_base_errors: {is: axis_value, val: {text: base_errors}}
   sys_hierarchy_object_before: {is: measurement_family}
   sys_hierarchy_object_before_cond: {is: family_axis, val: {text: cond}}
   sys_hierarchy_object_before_cond_errors: {is: axis_value, val: {text: errors}}
@@ -4327,6 +4348,51 @@ facts:
   - {is: v_spell, from: sys_boundary_invariant_cond_post_only, to: post_only}
   - {is: v_entry_of, from: '{cond}', to: sys_boundary_invariant}
   - {is: v_metric_of, from: sys_boundary_invariant, to: mean_value}
+  - {is: v_file_of, from: sys_identifier_expansion.json, to: sys_identifier_expansion}
+  - {is: v_rows_of, from: [rows], to: sys_identifier_expansion}
+  - {is: v_axis_of, from: sys_identifier_expansion_cond, to: sys_identifier_expansion}
+  - {is: v_value_of, from: sys_identifier_expansion_cond_n_collide_class, to: sys_identifier_expansion_cond}
+  - {is: v_spell, from: sys_identifier_expansion_cond_n_collide_class, to: n_collide_class}
+  - {is: v_value_of, from: sys_identifier_expansion_cond_n_collide_nodes, to: sys_identifier_expansion_cond}
+  - {is: v_spell, from: sys_identifier_expansion_cond_n_collide_nodes, to: n_collide_nodes}
+  - {is: v_value_of, from: sys_identifier_expansion_cond_n_cycle, to: sys_identifier_expansion_cond}
+  - {is: v_spell, from: sys_identifier_expansion_cond_n_cycle, to: n_cycle}
+  - {is: v_value_of, from: sys_identifier_expansion_cond_n_empty, to: sys_identifier_expansion_cond}
+  - {is: v_spell, from: sys_identifier_expansion_cond_n_empty, to: n_empty}
+  - {is: v_value_of, from: sys_identifier_expansion_cond_base_errors, to: sys_identifier_expansion_cond}
+  - {is: v_spell, from: sys_identifier_expansion_cond_base_errors, to: base_errors}
+  - {is: v_entry_of, from: '{cond}', to: sys_identifier_expansion}
+  - {is: v_metric_of, from: sys_identifier_expansion, to: mean_value}
+  - {is: v_file_of, from: sys_identifier_bisimulation.json, to: sys_identifier_bisimulation}
+  - {is: v_rows_of, from: [rows], to: sys_identifier_bisimulation}
+  - {is: v_axis_of, from: sys_identifier_bisimulation_cond, to: sys_identifier_bisimulation}
+  - {is: v_value_of, from: sys_identifier_bisimulation_cond_n_collide_class, to: sys_identifier_bisimulation_cond}
+  - {is: v_spell, from: sys_identifier_bisimulation_cond_n_collide_class, to: n_collide_class}
+  - {is: v_value_of, from: sys_identifier_bisimulation_cond_n_collide_nodes, to: sys_identifier_bisimulation_cond}
+  - {is: v_spell, from: sys_identifier_bisimulation_cond_n_collide_nodes, to: n_collide_nodes}
+  - {is: v_value_of, from: sys_identifier_bisimulation_cond_n_rounds, to: sys_identifier_bisimulation_cond}
+  - {is: v_spell, from: sys_identifier_bisimulation_cond_n_rounds, to: n_rounds}
+  - {is: v_value_of, from: sys_identifier_bisimulation_cond_base_errors, to: sys_identifier_bisimulation_cond}
+  - {is: v_spell, from: sys_identifier_bisimulation_cond_base_errors, to: base_errors}
+  - {is: v_value_of, from: sys_identifier_bisimulation_cond_match_prediction, to: sys_identifier_bisimulation_cond}
+  - {is: v_spell, from: sys_identifier_bisimulation_cond_match_prediction, to: match_prediction}
+  - {is: v_entry_of, from: '{cond}', to: sys_identifier_bisimulation}
+  - {is: v_metric_of, from: sys_identifier_bisimulation, to: mean_value}
+  - {is: v_file_of, from: sys_rule_roles_by_frame.json, to: sys_rule_roles_by_frame}
+  - {is: v_rows_of, from: [rows], to: sys_rule_roles_by_frame}
+  - {is: v_axis_of, from: sys_rule_roles_by_frame_cond, to: sys_rule_roles_by_frame}
+  - {is: v_value_of, from: sys_rule_roles_by_frame_cond_errors, to: sys_rule_roles_by_frame_cond}
+  - {is: v_spell, from: sys_rule_roles_by_frame_cond_errors, to: errors}
+  - {is: v_value_of, from: sys_rule_roles_by_frame_cond_ec_errors, to: sys_rule_roles_by_frame_cond}
+  - {is: v_spell, from: sys_rule_roles_by_frame_cond_ec_errors, to: ec_errors}
+  - {is: v_value_of, from: sys_rule_roles_by_frame_cond_role_match, to: sys_rule_roles_by_frame_cond}
+  - {is: v_spell, from: sys_rule_roles_by_frame_cond_role_match, to: role_match}
+  - {is: v_value_of, from: sys_rule_roles_by_frame_cond_bisim_split, to: sys_rule_roles_by_frame_cond}
+  - {is: v_spell, from: sys_rule_roles_by_frame_cond_bisim_split, to: bisim_split}
+  - {is: v_value_of, from: sys_rule_roles_by_frame_cond_laws_same, to: sys_rule_roles_by_frame_cond}
+  - {is: v_spell, from: sys_rule_roles_by_frame_cond_laws_same, to: laws_same}
+  - {is: v_entry_of, from: '{cond}', to: sys_rule_roles_by_frame}
+  - {is: v_metric_of, from: sys_rule_roles_by_frame, to: mean_value}
   - {is: v_file_of, from: sys_hierarchy_object_before.json, to: sys_hierarchy_object_before}
   - {is: v_rows_of, from: [rows], to: sys_hierarchy_object_before}
   - {is: v_axis_of, from: sys_hierarchy_object_before_cond, to: sys_hierarchy_object_before}
