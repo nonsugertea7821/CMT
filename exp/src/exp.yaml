@@ -224,6 +224,7 @@ nodes:
   midpoint_membership: {display: 中点が成員に落ちる度合い, extends: quality_measure_to, mod: {of: [v_depend, from], with: midpoint_pair}}
   cross_genus_word: {display: 複数の上位概念にまたがる性質で集めた語, extends: word, mod: {of: [v_refer, from], with: genus_concept, at: {count: {gt: 1}}}}
   axis_readout: {display: 隠れ状態から量への線形の読み出し, extends: information_entity, mod: {of: [v_measure, from], with: hidden_state}}
+  interval_cut: {display: 量のひと続きの区間で集めた語, extends: word, mod: {of: [v_measure, to], with: magnitude}}
   unseen_relation: {display: 学習していない関係, extends: dependent, mod: not_teach_from}
   single_layer_vector: {display: 単一層の概念ベクトル, extends: concept_vector, mod: {of: [v_depend, from], with: layer, at: {count: 1}}}
   multi_layer_vector: {display: 複数層の概念ベクトル, extends: concept_vector, mod: {of: [v_depend, from], with: layer, at: {count: {gt: 1}}}}
@@ -2286,6 +2287,10 @@ individuals:
   b_axis_readout_raises_midpoint: {is: item_done}
   h_qualification_immune_genus: {is: hyp_untested}
   b_qualification_immune_genus: {is: item_queued}
+  h_interval_cut_raises_midpoint: {is: hyp_untested}
+  b_interval_cut_raises_midpoint: {is: item_queued}
+  h_midpoint_depends_genus: {is: hyp_untested}
+  b_midpoint_depends_genus: {is: item_queued}
 facts:
   - {is: v_collect, from: residual_space, to: residual_vector}
   - {is: v_sum, from: layer_output, to: state_shift, new: shifted_hidden_state}
@@ -6200,6 +6205,10 @@ facts:
   - {is: v_check, from: b_axis_readout_raises_midpoint, to: h_axis_readout_raises_midpoint}
   - {is: v_refer, from: h_qualification_immune_genus, to: {is: v_immune, from: qualification_vector, to: genus_concept}}
   - {is: v_check, from: b_qualification_immune_genus, to: h_qualification_immune_genus}
+  - {is: v_refer, from: h_interval_cut_raises_midpoint, to: {is: v_raise, from: interval_cut, to: midpoint_membership}}
+  - {is: v_check, from: b_interval_cut_raises_midpoint, to: h_interval_cut_raises_midpoint}
+  - {is: v_refer, from: h_midpoint_depends_genus, to: {is: v_depend, from: midpoint_membership, to: genus_concept}}
+  - {is: v_check, from: b_midpoint_depends_genus, to: h_midpoint_depends_genus}
   - {is: v_refer, from: h_multi_layer_transfers_to_explain, to: {is: v_transfer, from: multi_layer_vector, to: usage_explain}}
   - {is: v_check, from: b_multi_layer_transfers_to_explain, to: h_multi_layer_transfers_to_explain}
   - {is: v_refer, from: h_explain_transfers_to_apply, to: {is: v_transfer, from: usage_explain, to: usage_apply}}
