@@ -44,9 +44,17 @@
   見込みの理由（検査器の欄の扱い）とは関係しない、数え方の誤り。
   訂正の手順: exp_check を走らせる前に、言語の誤りを取っておいて tc.errors を消す。errors は、言語の誤りと、exp_check が足した誤りの和にする。
   見本・見込み・判定は一回目と同じ。一回目の結果ファイルは書き換えず、訂正は sys_fact_slot_keeps_each_verb_fix.json に書く。
+二度目の訂正（訂正の結果を見た後に書き足す。開示する）:
+  訂正（_fix.json）でも c2 は errors = 2 のままで、ほかは一回目と同じだった。
+  原因: 訂正は、取っておいた言語の誤り（1 件）に、exp_check の中の tc.build() がもう一度出した同じ言語の誤り（1 件）を足していた。
+  訂正の考えちがいで、二度数えることは直っていなかった。
+  二度目の訂正の手順: exp_check を走らせる前に tc.errors を消し、errors は exp_check を走らせた後の tc.errors だけにする
+  （exp_check.build() が言語の検査を一度と exp の検査をするので、どちらも一度ずつ数える）。
+  見本・見込み・判定は変えない。一回目と訂正の結果ファイルは書き換えず、二度目は sys_fact_slot_keeps_each_verb_fix2.json に書く。
 使い方:
   python exp/experiments/sys_fact_slot_keeps_each_verb.py        （一回目）
   python exp/experiments/sys_fact_slot_keeps_each_verb.py fix    （訂正）
+  python exp/experiments/sys_fact_slot_keeps_each_verb.py fix2   （二度目の訂正）
 """
 import json
 import shutil
@@ -70,7 +78,8 @@ CASES = {
     "c6_two_ends": ([("v_depend", "d_metric"), ("v_ground", "h_ambiguity_is_region_choice")], False),
 }
 CONTROL = ("c1_one", "c5_many", "c6_two_ends")
-FIX = len(sys.argv) > 1 and sys.argv[1] == "fix"
+FIX = len(sys.argv) > 1 and sys.argv[1] in ("fix", "fix2")
+FIX2 = len(sys.argv) > 1 and sys.argv[1] == "fix2"
 PATCH = [
     ('    for i, f in enumerate(D.get("facts") or []):\n        where = f"{name} facts[{i}]"\n        if not isinstance(f, dict) or set(f) - set(T.G["facts"]) or "is" not in f:',
      '    BV = {}\n    for i, f in enumerate(D.get("facts") or []):\n        where = f"{name} facts[{i}]"\n        if not isinstance(f, dict) or set(f) - set(T.G["facts"]) or "is" not in f:'),
@@ -99,11 +108,11 @@ with contextlib.redirect_stdout(io.StringIO()):
         pass
     except Exception as e:
         tc.errors.append(f"exception {type(e).__name__}: {e}")
-errs = (errs + [str(e) for e in tc.errors]) if FIXFLAG else [str(e) for e in tc.errors]
+errs = (([] if FIX2FLAG else errs) + [str(e) for e in tc.errors]) if FIXFLAG else [str(e) for e in tc.errors]
 x = Dm["exp"][1]["individuals"].get("PROBE", {})
 print(json.dumps({"errs": errs, "slots": {k: v for k, v in x.items() if k not in ("is", "s", "p", "o")}},
                  ensure_ascii=False, default=str))
-'''.replace("PROBE", PROBE).replace("FIXFLAG", "True" if FIX else "False")
+'''.replace("PROBE", PROBE).replace("FIX2FLAG", "True" if FIX2 else "False").replace("FIXFLAG", "True" if FIX else "False")
 
 
 def patched(src, facts):
@@ -174,7 +183,7 @@ def main():
     s["verdict_refute"] = 1 if s["patch_ok"] and (not s["base_ok"] or s["kept_two"] < 2) else 0
     rows["summary 要約"] = s
     rev = subprocess.run(["git", "rev-parse", "--short", "HEAD"], cwd=ROOT, capture_output=True, text=True).stdout.strip()
-    out = OUT.with_name("sys_fact_slot_keeps_each_verb_fix.json") if FIX else OUT
+    out = OUT.with_name("sys_fact_slot_keeps_each_verb_fix2.json") if FIX2 else OUT.with_name("sys_fact_slot_keeps_each_verb_fix.json") if FIX else OUT
     out.write_text(json.dumps({"rev": rev, "patch_counts": counts, "hit": hit, "rows": rows}, ensure_ascii=False,
                               indent=1, default=str), encoding="utf-8")
     print("summary", json.dumps(s, ensure_ascii=False))
