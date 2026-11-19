@@ -51,6 +51,15 @@
   "rel r":        n, h（before だけ。関係ごとの文の数と、文の並びのハッシュ）
   "error i":      新しい法則に反する誤りの文（after と probe。先頭 20）
 
+訂正（after を走らせた後に書き足す。開示）:
+  after で changed が 4 になった。違った関係は is・domain・r_written・r_ind_kind で、増えた文は新しい法則の個体
+  （above_by_fact ほか 4 つ）そのものについての文（法則であること、領域、綴り、属する種類）だけだった。
+  手本の sys_individual_depth は digest で新しい法則の名を含む文を除いていたが、この手順はそれを落としていた。
+  そこで changed を、新しい法則の名を含む文を除いて数え直す（sys_above_closed_fix.py。結果は sys_above_closed_after_fix.json。
+  before と after の記録は上書きしない）。数え直しでは before の側も同じ除き方で、記録の rel の行ではなく、
+  手順の登録の commit（577cbcc）の syntax.yaml で閉じた事実を作り直して比べる。
+  判定は、changed をこの数え直しに置き換えて、上の規則で行う。訂正なので、手で見てもらう。
+
 使い方:
   python exp/experiments/sys_above_closed.py before|after
 """
