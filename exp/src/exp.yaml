@@ -1053,6 +1053,15 @@ individuals:
   sys_fact_slot_by_end_fix_cond_base_ok: {is: axis_value, val: {text: base_ok}}
   sys_fact_slot_by_end_fix_cond_clean: {is: axis_value, val: {text: clean}}
   sys_fact_slot_by_end_fix_cond_verdict_support: {is: axis_value, val: {text: verdict_support}}
+  sys_fact_slot_by_verb: {is: measurement_family}
+  sys_fact_slot_by_verb_cond: {is: family_axis, val: {text: cond}}
+  sys_fact_slot_by_verb_cond_n_case: {is: axis_value, val: {text: n_case}}
+  sys_fact_slot_by_verb_cond_n_match: {is: axis_value, val: {text: n_match}}
+  sys_fact_slot_by_verb_cond_patch_ok: {is: axis_value, val: {text: patch_ok}}
+  sys_fact_slot_by_verb_cond_base_ok: {is: axis_value, val: {text: base_ok}}
+  sys_fact_slot_by_verb_cond_clean: {is: axis_value, val: {text: clean}}
+  sys_fact_slot_by_verb_cond_refute: {is: axis_value, val: {text: refute}}
+  sys_fact_slot_by_verb_cond_verdict_support: {is: axis_value, val: {text: verdict_support}}
   sys_any_by_entail_before_fix: {is: measurement_family}
   sys_any_by_entail_before_fix_cond: {is: family_axis, val: {text: cond}}
   sys_any_by_entail_before_fix_cond_errors: {is: axis_value, val: {text: errors}}
@@ -4773,6 +4782,25 @@ facts:
   - {is: v_spell, from: sys_fact_slot_by_end_fix_cond_verdict_support, to: verdict_support}
   - {is: v_entry_of, from: '{cond}', to: sys_fact_slot_by_end_fix}
   - {is: v_metric_of, from: sys_fact_slot_by_end_fix, to: mean_value}
+  - {is: v_file_of, from: sys_fact_slot_by_verb.json, to: sys_fact_slot_by_verb}
+  - {is: v_rows_of, from: [rows], to: sys_fact_slot_by_verb}
+  - {is: v_axis_of, from: sys_fact_slot_by_verb_cond, to: sys_fact_slot_by_verb}
+  - {is: v_value_of, from: sys_fact_slot_by_verb_cond_n_case, to: sys_fact_slot_by_verb_cond}
+  - {is: v_spell, from: sys_fact_slot_by_verb_cond_n_case, to: n_case}
+  - {is: v_value_of, from: sys_fact_slot_by_verb_cond_n_match, to: sys_fact_slot_by_verb_cond}
+  - {is: v_spell, from: sys_fact_slot_by_verb_cond_n_match, to: n_match}
+  - {is: v_value_of, from: sys_fact_slot_by_verb_cond_patch_ok, to: sys_fact_slot_by_verb_cond}
+  - {is: v_spell, from: sys_fact_slot_by_verb_cond_patch_ok, to: patch_ok}
+  - {is: v_value_of, from: sys_fact_slot_by_verb_cond_base_ok, to: sys_fact_slot_by_verb_cond}
+  - {is: v_spell, from: sys_fact_slot_by_verb_cond_base_ok, to: base_ok}
+  - {is: v_value_of, from: sys_fact_slot_by_verb_cond_clean, to: sys_fact_slot_by_verb_cond}
+  - {is: v_spell, from: sys_fact_slot_by_verb_cond_clean, to: clean}
+  - {is: v_value_of, from: sys_fact_slot_by_verb_cond_refute, to: sys_fact_slot_by_verb_cond}
+  - {is: v_spell, from: sys_fact_slot_by_verb_cond_refute, to: refute}
+  - {is: v_value_of, from: sys_fact_slot_by_verb_cond_verdict_support, to: sys_fact_slot_by_verb_cond}
+  - {is: v_spell, from: sys_fact_slot_by_verb_cond_verdict_support, to: verdict_support}
+  - {is: v_entry_of, from: '{cond}', to: sys_fact_slot_by_verb}
+  - {is: v_metric_of, from: sys_fact_slot_by_verb, to: mean_value}
   - {is: v_file_of, from: sys_any_by_entail_before_fix.json, to: sys_any_by_entail_before_fix}
   - {is: v_rows_of, from: [rows], to: sys_any_by_entail_before_fix}
   - {is: v_axis_of, from: sys_any_by_entail_before_fix_cond, to: sys_any_by_entail_before_fix}
