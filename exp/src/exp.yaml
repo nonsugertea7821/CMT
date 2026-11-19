@@ -2032,6 +2032,7 @@ individuals:
   b_save_text_reference_for_paraphrase: {is: item_queued}
   b_renaming_inside_glossary: {is: item_queued}
   b_glossary_raises_writing: {is: item_done}
+  b_family_refers_laws: {is: item_queued}
   b_symbol_selection: {is: item_queued}
   b_japanese_generation_consistency: {is: item_queued}
   b_lineage_operations_on_vectors: {is: item_queued}
@@ -2050,6 +2051,7 @@ individuals:
   h_value_refers_hypothesis: {is: hyp_refuted}
   b_value_refers_hypothesis: {is: item_done}
   h_hypothesis_refers_family: {is: hyp_refuted}
+  h_family_refers_laws: {is: hyp_untested}
   b_hypothesis_refers_family: {is: item_done}
   h_factor_depends_value: {is: hyp_untested}
   b_factor_depends_value: {is: item_queued}
@@ -5591,6 +5593,8 @@ facts:
   - {is: v_check, from: b_value_refers_hypothesis, to: h_value_refers_hypothesis}
   - {is: v_refer, from: h_hypothesis_refers_family, to: {is: v_refer, from: hypothesis, to: measurement_family}}
   - {is: v_check, from: b_hypothesis_refers_family, to: h_hypothesis_refers_family}
+  - {is: v_refer, from: h_family_refers_laws, to: {is: v_refer, from: measurement_family, to: syntax.laws}}
+  - {is: v_check, from: b_family_refers_laws, to: h_family_refers_laws}
   - {is: v_refer, from: h_denote_meets_hypothesis, to: {is: v_denote, from: axis_value, to: hypothesis}}
   - {is: v_check, from: b_denote_meets_hypothesis, to: h_denote_meets_hypothesis}
   - {is: v_refer, from: h_factor_depends_value, to: {is: v_depend, from: factor, to: axis_value}}
