@@ -242,6 +242,10 @@ individuals:
   o_sys_verbs_dyn_ends_not_all_con: {is: exp.observation}
   o_sys_verbs_dyn_no_occ_end: {is: exp.observation}
   o_sys_verbs_static_occ_end: {is: exp.observation}
+  h_collect_agree_in_grammar: {is: exp.hyp_untested}
+  b_collect_agree_in_grammar: {is: exp.item_queued}
+  h_collect_by_formula: {is: exp.hyp_untested}
+  b_collect_by_formula: {is: exp.item_queued}
   o_sys_verbs_static_unlimited: {is: exp.observation}
   o_sys_verbs_dyn_limited: {is: exp.observation}
   o_sys_verbs_dyn_exists_more: {is: exp.observation}
@@ -632,6 +636,10 @@ facts:
   - {is: v_refer, from: o_sys_overext_unseen_shallow_more, to: {is: v_come_after, from: sys_overextension.unseen_shallow_rate.mean_value, to: sys_overextension.unseen_deep_rate.mean_value}}
   - {is: v_refer, from: o_sys_diff_few_kinds, to: {is: v_come_before, from: sys_differentiation.other.mean_value, to: 24.5}}
   - {is: v_refer, from: o_sys_diff_one_step, to: {is: v_come_after, from: sys_differentiation.edges_one_own.mean_value, to: 372.8}}
+  - {is: v_refer, from: h_collect_agree_in_grammar, to: {is: v_refer, from: syntax.grammar, to: [syntax.v_collect, syntax.v_agree]}}
+  - {is: exp.v_check, from: b_collect_agree_in_grammar, to: h_collect_agree_in_grammar}
+  - {is: v_refer, from: h_collect_by_formula, to: {is: v_refer, from: syntax.mod, to: syntax.v_collect}}
+  - {is: exp.v_check, from: b_collect_by_formula, to: h_collect_by_formula}
   - {is: v_refer, from: o_sys_diff_narrow_not_typical, to: {is: v_come_before, from: sys_differentiation.narrow_end.mean_value, to: 245.0}}
   - {is: v_refer, from: o_sys_overext_steps_small_ratio, to: {is: v_come_before, from: sys_overextension_steps.all_low_rate.mean_value, to: 0.2178}}
   - {is: v_refer, from: o_sys_overext_steps_unseen_small_ratio, to: {is: v_come_before, from: sys_overextension_steps.unseen_low_rate.mean_value, to: 0.1242}}
