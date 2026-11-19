@@ -1,0 +1,39 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-19T18:24:15.910Z（UTC）
+individuals:
+  01M7TGTQ16Q5F1KYTWXRWV0FMB:
+    is: model_utterance
+    display: 発言 2669
+    val:
+      order: 2669
+      text: |
+        今回の周回で、h_fact_slot_keeps_each_verb を確かめました。結果は**支持**ですが、二度の訂正を経ています（PR #395。Draft は外してあり、訂正があるので手で見る対象です）。
+
+        **結果**
+        - 事実を「端の種類と動詞」ごとの欄にも入れると、v_depend と v_raise のような組で、二つの事実がどちらも残りました。
+        - 同じ動詞が二つの組は、これまでどおり落ちます。
+        - 既存の欄の値は変わらず、体系の残りも壊れませんでした。
+
+        **訂正（どちらも開示済み）**
+        - 一回目は、c2 だけ誤りが 2 件出て、見込みの 1 件から外れました。原因は数え方です。exp の検査器は中で型検査をもう一度走らせるので、同じ誤りを二度数えていました。
+        - 一度目の訂正も、私の考えちがいで、まだ二重に数えていました。
+        - 二度目の訂正で、7 つすべてが見込みどおりになりました。見本・見込み・判定は、三回とも変えていません。
+
+        **含意**
+        - 検査器の側の直し方は、二段とも確かめ終えました。#389 の「衝突の判定を動詞で分ける」と、今回の「欄を分けて事実を残す」です。
+        - ただし、増やした欄を読む側はまだありません。検査器に入れるかどうかは、手で見てもらう PR として別に出します。
+        - 記録の途中で、測定の族の平均が、見本の行と要約の行を混ぜてしまうことに気づきました。そのため、その値は観察から外しました。
+
+        **新しい仮説:** 今回は出していません。
+
+        h_rule_roles_by_signature（本線 a の先頭）は、系列を読み返しました。シグネチャに使える語が `same`・`any`・`above` しかなく、まだ手順を決めきれていないので、今回は見送りました。
+
+        あなたの確認待ちは、#387、#394、#395 の 3 つです。
+
+        ロードマップ: 識別子化の決定（d_cscl_display_derived）の根拠を一つ進めました。
+facts:
+- {is: v_say, from: session_model, to: 01M7TGTQ16Q5F1KYTWXRWV0FMB}
+- {is: exp.v_answer, from: 01M7TGTQ16Q5F1KYTWXRWV0FMB, to: 01M7TA7A145QS5NA0XWZR9ST0Q}
+- {is: v_refer, from: 01M7TGTQ16Q5F1KYTWXRWV0FMB, to: ontology.v_depend}
+- {is: v_refer, from: 01M7TGTQ16Q5F1KYTWXRWV0FMB, to: exp.v_raise}
+- {is: v_refer, from: 01M7TGTQ16Q5F1KYTWXRWV0FMB, to: ontology.same}
+- {is: v_refer, from: 01M7TGTQ16Q5F1KYTWXRWV0FMB, to: any}
