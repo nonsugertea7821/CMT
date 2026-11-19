@@ -147,6 +147,7 @@ nodes:
   model_utterance: {display: モデルの発話, extends: utterance, mod: speak_to_model}
   expose_to: {display: 公開される（終点）, extends: quality, of: [v_expose, to]}
   public_passage: {display: 公開された自然言語の文章, extends: passage_express_from_natural_language, mod: expose_to}
+  pre_model_passage: {display: モデルの発話より前に置かれる、公開された自然言語の文章, extends: public_passage, mod: {of: [v_come_before, from], with: model_utterance}}
   reliability: {display: 文章の信頼性, extends: quality, mod: {of: [v_depend, from], with: passage}}
   attachment_tendency: {display: 修飾の掛かり方の傾向, extends: quality, mod: {of: [v_depend, from], with: modifier}}
   attribution: {display: 運用者へ帰する文, extends: sentence, mod: {of: [v_refer, from], with: operator}}
@@ -5928,7 +5929,7 @@ facts:
   - {is: v_check, from: b_ja_text_needs_prosody, to: h_ja_text_needs_prosody}
   - {is: v_refer, from: h_ja_text_needs_naturalness, to: {is: v_depend, from: lang.ja_text, to: naturalness}}
   - {is: v_check, from: b_ja_text_needs_naturalness, to: h_ja_text_needs_naturalness}
-  - {is: v_refer, from: h_ja_text_agrees_public, to: {is: v_agree, from: lang.ja_text, to: public_passage}}
+  - {is: v_refer, from: h_ja_text_agrees_public, to: {is: v_agree, from: lang.ja_text, to: pre_model_passage}}
   - {is: v_check, from: b_ja_text_agrees_public, to: h_ja_text_agrees_public}
   - {is: v_refer, from: h_mod_fixes_prosody, to: {is: v_depend, from: prosodic_phrase, to: syntax.mod}}
   - {is: v_check, from: b_mod_fixes_prosody, to: h_mod_fixes_prosody}
