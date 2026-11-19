@@ -1,0 +1,22 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-19T08:24:34.471Z（UTC）
+individuals:
+  01M7SEGMX7EXDGGT5S0AZXF5V1:
+    is: model_utterance
+    display: 発言 2385
+    val:
+      order: 2385
+      text: |
+        おっしゃるとおりです。限定を手順の中に逃がすと、その意味はスクリプトや表示語にしか残りません。識別子を式から作るときに、取りこぼす対象を自分で増やしていました。
+
+        「LLM 以前」の限定は、概念として式で書き直しました（PR #318）。概念を足すので、手で見ていただく PR です。
+
+        - **足した概念:** `pre_model_passage`。公開された文章のうち、モデルの発話より前に置かれるものです。
+          - 式: `{extends: public_passage, mod: {of: [v_come_before, from], with: model_utterance}}`
+        - **直した仮説:** `h_ja_text_agrees_public` の比べる相手を、この概念に替えました。
+
+        これからは、概念を足すかどうかを「手で見る変更になるか」では決めず、式で書くべき区別かどうかで決めます。
+facts:
+- {is: v_say, from: session_model, to: 01M7SEGMX7EXDGGT5S0AZXF5V1}
+- {is: exp.v_answer, from: 01M7SEGMX7EXDGGT5S0AZXF5V1, to: 01M7SEENR9H0T53V02Z0M1D3TN}
+- {is: v_refer, from: 01M7SEGMX7EXDGGT5S0AZXF5V1, to: ontology.v_come_before}
+- {is: v_refer, from: 01M7SEGMX7EXDGGT5S0AZXF5V1, to: claude_session_log.model_utterance}
