@@ -2192,6 +2192,7 @@ individuals:
   d_consolidation_in_vector: {is: design_dec_tentative}
   d_road_region: {is: design_dec_tentative}
   d_road_checker: {is: design_dec_tentative}
+  d_road_japanese: {is: design_dec_tentative}
   d_source_of_truth_in_cscl: {is: design_dec_adopted}
   d_rendered_text_is_derived: {is: design_dec_adopted}
   d_symbol_selection_symbolic: {is: design_dec_tentative}
@@ -6227,6 +6228,25 @@ facts:
   - {is: v_refer, from: d_road_checker, to: {is: v_depend, from: formalization_accuracy, to: lang.type_checker}}
   - {is: v_ground, from: d_road_checker, to: h_writing_depends_checker}
   - {is: v_depend, from: d_road_checker, to: lang.d_cscl_display_derived}
+  - {is: v_refer, from: d_road_japanese, to: {is: v_depend, from: syntax.display, to: naturalness}}
+  - {is: v_raise, from: d_road_japanese, to: d_metric}
+  - {is: v_ground, from: d_road_japanese, to: h_ja_text_needs_naturalness}
+  - {is: v_ground, from: d_road_japanese, to: h_ja_text_needs_prosody}
+  - {is: v_ground, from: d_road_japanese, to: h_ja_text_agrees_public}
+  - {is: v_ground, from: d_road_japanese, to: h_prosody_carries_mod}
+  - {is: v_ground, from: d_road_japanese, to: h_mod_fixes_prosody}
+  - {is: v_ground, from: d_road_japanese, to: h_ambiguity_calls_prosody}
+  - {is: v_ground, from: d_road_japanese, to: h_public_carries_prosody}
+  - {is: v_ground, from: d_road_japanese, to: h_prosody_language_invariant}
+  - {is: v_ground, from: d_road_japanese, to: h_model_attachment_differs}
+  - {is: v_ground, from: d_road_japanese, to: h_model_utterance_carries_prosody}
+  - {is: v_ground, from: d_road_japanese, to: h_model_utterance_less_reliable}
+  - {is: v_ground, from: d_road_japanese, to: h_prosody_carries_reliability}
+  - {is: v_ground, from: d_road_japanese, to: h_prosody_lowers_followup}
+  - {is: v_ground, from: d_metric, to: h_explain_transfers_to_apply}
+  - {is: v_ground, from: d_metric, to: h_multi_layer_transfers_to_explain}
+  - {is: v_ground, from: d_road_region, to: h_qualification_immune_genus}
+  - {is: v_ground, from: d_road_region, to: h_qualification_depends_above}
   - {is: v_refer, from: d_source_of_truth_in_cscl, to: {is: v_express, from: depended_information, to: cscl}}
   - {is: v_refer, from: d_rendered_text_is_derived, to: {is: v_rely, from: rendered_text, to: depended_information}}
   - {is: v_refer, from: d_symbol_selection_symbolic, to: {is: v_rely, from: symbol_selection, to: typed_graph}}
