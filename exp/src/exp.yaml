@@ -1251,6 +1251,12 @@ individuals:
   sys_plural_from_cond_n_asym: {is: axis_value, val: {text: n_asym}}
   sys_plural_from_cond_n_top_list_from: {is: axis_value, val: {text: n_top_list_from}}
   sys_plural_from_cond_n_top_list_to: {is: axis_value, val: {text: n_top_list_to}}
+  sys_renaming_invariant: {is: measurement_family}
+  sys_renaming_invariant_cond: {is: family_axis, val: {text: cond}}
+  sys_renaming_invariant_cond_R_errors: {is: axis_value, val: {text: R_errors}}
+  sys_renaming_invariant_cond_R_facts_diff: {is: axis_value, val: {text: R_facts_diff}}
+  sys_renaming_invariant_cond_C_errors: {is: axis_value, val: {text: C_errors}}
+  sys_renaming_invariant_cond_n_renamed: {is: axis_value, val: {text: n_renamed}}
   sys_case_frame_formula: {is: measurement_family}
   sys_case_frame_formula_cond: {is: family_axis, val: {text: cond}}
   sys_case_frame_formula_cond_errors: {is: axis_value, val: {text: errors}}
@@ -4692,6 +4698,19 @@ facts:
   - {is: v_spell, from: sys_plural_from_cond_n_top_list_to, to: n_top_list_to}
   - {is: v_entry_of, from: '{cond}', to: sys_plural_from}
   - {is: v_metric_of, from: sys_plural_from, to: mean_value}
+  - {is: v_file_of, from: sys_renaming_invariant.json, to: sys_renaming_invariant}
+  - {is: v_rows_of, from: [rows], to: sys_renaming_invariant}
+  - {is: v_axis_of, from: sys_renaming_invariant_cond, to: sys_renaming_invariant}
+  - {is: v_value_of, from: sys_renaming_invariant_cond_R_errors, to: sys_renaming_invariant_cond}
+  - {is: v_spell, from: sys_renaming_invariant_cond_R_errors, to: R_errors}
+  - {is: v_value_of, from: sys_renaming_invariant_cond_R_facts_diff, to: sys_renaming_invariant_cond}
+  - {is: v_spell, from: sys_renaming_invariant_cond_R_facts_diff, to: R_facts_diff}
+  - {is: v_value_of, from: sys_renaming_invariant_cond_C_errors, to: sys_renaming_invariant_cond}
+  - {is: v_spell, from: sys_renaming_invariant_cond_C_errors, to: C_errors}
+  - {is: v_value_of, from: sys_renaming_invariant_cond_n_renamed, to: sys_renaming_invariant_cond}
+  - {is: v_spell, from: sys_renaming_invariant_cond_n_renamed, to: n_renamed}
+  - {is: v_entry_of, from: '{cond}', to: sys_renaming_invariant}
+  - {is: v_metric_of, from: sys_renaming_invariant, to: mean_value}
   - {is: v_file_of, from: sys_layers_exists_change.json, to: sys_layers_exists_change}
   - {is: v_rows_of, from: [rows], to: sys_layers_exists_change}
   - {is: v_axis_of, from: sys_layers_exists_change_cond, to: sys_layers_exists_change}
