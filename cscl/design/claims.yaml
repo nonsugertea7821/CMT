@@ -128,8 +128,8 @@ individuals:
   b_above_closed: {is: exp.item_queued}
   h_above_individual: {is: exp.hyp_supported}
   b_above_individual: {is: exp.item_done}
-  h_placement_in_laws: {is: exp.hyp_untested}
-  b_placement_in_laws: {is: exp.item_queued}
+  h_placement_in_laws: {is: exp.hyp_supported}
+  b_placement_in_laws: {is: exp.item_done}
   h_above_sound: {is: exp.hyp_refuted}
   b_above_sound: {is: exp.item_done}
   h_renaming_invariant: {is: exp.hyp_refuted}
@@ -462,6 +462,9 @@ individuals:
   o_sys_dows_c_fails: {is: exp.observation}
   o_sys_nf_agree: {is: exp.observation}
   o_sys_nf_base_clean: {is: exp.observation}
+  o_sys_pil_raw_base_flags: {is: exp.observation}
+  o_sys_pil_fix_agree: {is: exp.observation}
+  o_sys_pil_fix_base_clean: {is: exp.observation}
   o_sys_any_by_entail_passes_checks: {is: exp.observation}
   o_sys_any_by_entail_passes_ec: {is: exp.observation}
   o_sys_any_by_entail_ideal: {is: exp.observation}
@@ -675,6 +678,11 @@ facts:
   - {is: exp.v_check, from: b_above_individual, to: h_above_individual}
   - {is: v_refer, from: h_placement_in_laws, to: {is: v_not_depend, from: placement_by_above, to: type_checker}}
   - {is: exp.v_check, from: b_placement_in_laws, to: h_placement_in_laws}
+  - {is: v_refer, from: o_sys_pil_raw_base_flags, to: {is: v_level, from: sys_placement_in_laws.law_Q0.mean_value, to: 6.0}}
+  - {is: v_refer, from: o_sys_pil_fix_agree, to: {is: v_level, from: sys_placement_in_laws_fix.agree.mean_value, to: 7.0}}
+  - {is: exp.v_support, from: o_sys_pil_fix_agree, to: h_placement_in_laws}
+  - {is: v_refer, from: o_sys_pil_fix_base_clean, to: {is: v_level, from: sys_placement_in_laws_fix.law_Q0.mean_value, to: 0.0}}
+  - {is: exp.v_support, from: o_sys_pil_fix_base_clean, to: h_placement_in_laws}
   - {is: v_refer, from: h_concept_kind_excludes_verb, to: {is: v_depend, from: concept_by_law, to: [syntax.pre, syntax.holds, syntax.extends]}}
   - {is: exp.v_check, from: b_concept_kind_excludes_verb, to: h_concept_kind_excludes_verb}
   - {is: v_refer, from: h_concept_kind_frame_free, to: {is: v_not_depend, from: concept_by_law, to: [syntax.pre, syntax.holds]}}
