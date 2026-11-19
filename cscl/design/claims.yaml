@@ -31,7 +31,6 @@ nodes:
   name_choice: {display: 識別子の選び, extends: quality, mod: {of: [v_depend, from], with: syntax.identifier}}
   boundary_choice: {display: 前後の状態の境目の選び, extends: quality, mod: {of: [v_depend, from], with: syntax.post}}
   referred_sentence: {display: 文に述べられる文, extends: syntax.sentence, mod: syntax.refer_to_sentence}
-  refer_placement: {display: 文に述べられる文の層の置き場, extends: layer_placement, mod: {of: [v_depend, from], with: referred_sentence}}
   frame_trace: {display: 後の状態の痕跡, extends: quality, mod: syntax.refer_from_post}
   any_limitation: {display: 何でもを端に持つ限定, extends: quality, mod: {of: [v_refer, from], with: any}}
   reading_formula: {display: 読みの式, extends: quality, mod: exp.refer_from_hypothesis}
@@ -623,7 +622,7 @@ facts:
   - {is: exp.v_support, from: o_sys_appear_root_gathers, to: h_appear_root}
   - {is: v_refer, from: h_boundary_invariant, to: {is: v_not_depend, from: type_checker, to: boundary_choice}}
   - {is: exp.v_check, from: b_boundary_invariant, to: h_boundary_invariant}
-  - {is: v_refer, from: h_refer_stratified, to: {is: v_depend, from: type_checker, to: refer_placement}}
+  - {is: v_refer, from: h_refer_stratified, to: {is: v_depend, from: type_checker, to: [referred_sentence, syntax.domain]}}
   - {is: exp.v_check, from: b_refer_stratified, to: h_refer_stratified}
   - {is: v_refer, from: h_case_frame_formula, to: {is: v_not_depend, from: case_frame, to: syntax.display}}
   - {is: exp.v_check, from: b_case_frame_formula, to: h_case_frame_formula}
