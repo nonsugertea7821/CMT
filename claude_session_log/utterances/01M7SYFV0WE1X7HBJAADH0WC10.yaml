@@ -1,0 +1,36 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-19T13:03:45.180Z（UTC）
+individuals:
+  01M7SYFV0WE1X7HBJAADH0WC10:
+    is: model_utterance
+    display: 発言 2495
+    val:
+      order: 2495
+      text: |
+        事実ではありません。私が言い過ぎました。
+
+        **式の上では矛盾しています**
+        - excludes_verb は「概念の分類は pre・holds・extends に依存する」、frame_free は「pre・holds に依存しない」と書きました。
+        - `v_not_depend` は `v_depend` の反対として定義されているので、同じ対象についてこの二つは同時に成り立ちません。
+        - ただ、この矛盾は私の書き方から来ています。仮説の中身から必ず出てくるものではありません。
+
+        **中身は両立しえます**
+        - excludes_verb のやり方では、v_refer を上位に持つものは上位をたどって「動詞」とされ、「概念」から外れます。
+        - v_assume は、枠を足す前から v_refer の holds を受け継いでいるので、すでに動詞です。そこへ pre を足しても分類は変わりません。
+        - ですから excludes_verb のもとでも、「枠を足しても導いた関係は変わらない」は成り立つと考えられます。frame_free が言いたかったのはこの性質です。それを「pre・holds を読まない」と強く書いたせいで、矛盾が生まれました。
+        - このことは、まだ測っていない予想です。
+
+        **二つが本当に分かれるところ**
+        - 動詞を「概念」に含めるかどうか、つまり動詞どうしを比べる組（r_pair など）に入れるかどうかです。
+        - excludes_verb では、動詞どうしの組は消えます。表示語の「動詞でないものは概念」には合います。
+        - frame_free のように枠を見ない読み方では、動詞どうしの組が残ります。名前しか違わない動詞を見つける検査（one_name）は動詞にも効きますが、表示語とは食い違います。
+        - これは方向の選び方で、論理的に両立しないということではありません。
+
+        **次にすること**
+        登録した frame_free の式は強すぎるので、このまま検証すると、言いたかった性質とは別のものを確かめることになります。検証に入る前に、「枠を足しても分類が変わらない」という形に式を書き直すのがよいと考えています。その書き直しも、規則どおり仮説として登録してから出します。
+facts:
+- {is: v_say, from: session_model, to: 01M7SYFV0WE1X7HBJAADH0WC10}
+- {is: exp.v_answer, from: 01M7SYFV0WE1X7HBJAADH0WC10, to: 01M7SYF65E0DGQH1B0DJ04QZVH}
+- {is: v_refer, from: 01M7SYFV0WE1X7HBJAADH0WC10, to: lang.v_not_depend}
+- {is: v_refer, from: 01M7SYFV0WE1X7HBJAADH0WC10, to: ontology.v_depend}
+- {is: v_refer, from: 01M7SYFV0WE1X7HBJAADH0WC10, to: ontology.v_refer}
+- {is: v_refer, from: 01M7SYFV0WE1X7HBJAADH0WC10, to: syntax.v_assume}
