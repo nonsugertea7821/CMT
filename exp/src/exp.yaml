@@ -1299,6 +1299,13 @@ individuals:
   geo_axis_readout_midpoint_cond_gap_readable: {is: axis_value, val: {text: gap_readable}}
   geo_axis_readout_midpoint_cond_gap_unreadable: {is: axis_value, val: {text: gap_unreadable}}
   geo_axis_readout_midpoint_cond_precondition: {is: axis_value, val: {text: precondition}}
+  geo_axis_readout_midpoint_pca: {is: measurement_family}
+  geo_axis_readout_midpoint_pca_cond: {is: family_axis, val: {text: cond}}
+  geo_axis_readout_midpoint_pca_cond_n_readable: {is: axis_value, val: {text: n_readable}}
+  geo_axis_readout_midpoint_pca_cond_gap_readable: {is: axis_value, val: {text: gap_readable}}
+  geo_axis_readout_midpoint_pca_cond_all_lin_above: {is: axis_value, val: {text: all_lin_above}}
+  geo_axis_readout_midpoint_pca_cond_gap_unreadable: {is: axis_value, val: {text: gap_unreadable}}
+  geo_axis_readout_midpoint_pca_cond_precondition: {is: axis_value, val: {text: precondition}}
   sys_value_refers_hypothesis: {is: measurement_family}
   sys_value_refers_hypothesis_cond: {is: family_axis, val: {text: cond}}
   sys_value_refers_hypothesis_cond_n_obs: {is: axis_value, val: {text: n_obs}}
@@ -2215,6 +2222,9 @@ individuals:
   o_geo_axis_readable: {is: observation}
   o_geo_axis_precondition: {is: observation}
   o_geo_axis_gap_unreadable: {is: observation}
+  o_geo_pca_readable: {is: observation}
+  o_geo_pca_not_all_above: {is: observation}
+  o_geo_pca_unreadable_above_readable: {is: observation}
 
   h_prosody_carries_mod: {is: hyp_untested}
   b_prosody_carries_mod: {is: item_queued}
@@ -2272,8 +2282,8 @@ individuals:
   b_value_composes_factors: {is: item_queued}
   h_cross_genus_lowers_midpoint: {is: hyp_supported}
   b_cross_genus_lowers_midpoint: {is: item_done}
-  h_axis_readout_raises_midpoint: {is: hyp_untested}
-  b_axis_readout_raises_midpoint: {is: item_queued}
+  h_axis_readout_raises_midpoint: {is: hyp_refuted}
+  b_axis_readout_raises_midpoint: {is: item_done}
   h_qualification_immune_genus: {is: hyp_untested}
   b_qualification_immune_genus: {is: item_queued}
 facts:
@@ -5019,6 +5029,26 @@ facts:
   - {is: v_refer, from: o_geo_axis_readable, to: {is: v_level, from: geo_axis_readout_midpoint.n_readable.mean_value, to: 1}}
   - {is: v_refer, from: o_geo_axis_precondition, to: {is: v_level, from: geo_axis_readout_midpoint.precondition.mean_value, to: 0}}
   - {is: v_refer, from: o_geo_axis_gap_unreadable, to: {is: v_near, from: geo_axis_readout_midpoint.gap_unreadable.mean_value, to: 0.306, new: 0.001}}
+  - {is: v_file_of, from: geo_axis_readout_midpoint_pca.json, to: geo_axis_readout_midpoint_pca}
+  - {is: v_rows_of, from: [rows], to: geo_axis_readout_midpoint_pca}
+  - {is: v_axis_of, from: geo_axis_readout_midpoint_pca_cond, to: geo_axis_readout_midpoint_pca}
+  - {is: v_value_of, from: geo_axis_readout_midpoint_pca_cond_n_readable, to: geo_axis_readout_midpoint_pca_cond}
+  - {is: v_spell, from: geo_axis_readout_midpoint_pca_cond_n_readable, to: n_readable}
+  - {is: v_value_of, from: geo_axis_readout_midpoint_pca_cond_gap_readable, to: geo_axis_readout_midpoint_pca_cond}
+  - {is: v_spell, from: geo_axis_readout_midpoint_pca_cond_gap_readable, to: gap_readable}
+  - {is: v_value_of, from: geo_axis_readout_midpoint_pca_cond_all_lin_above, to: geo_axis_readout_midpoint_pca_cond}
+  - {is: v_spell, from: geo_axis_readout_midpoint_pca_cond_all_lin_above, to: all_lin_above}
+  - {is: v_value_of, from: geo_axis_readout_midpoint_pca_cond_gap_unreadable, to: geo_axis_readout_midpoint_pca_cond}
+  - {is: v_spell, from: geo_axis_readout_midpoint_pca_cond_gap_unreadable, to: gap_unreadable}
+  - {is: v_value_of, from: geo_axis_readout_midpoint_pca_cond_precondition, to: geo_axis_readout_midpoint_pca_cond}
+  - {is: v_spell, from: geo_axis_readout_midpoint_pca_cond_precondition, to: precondition}
+  - {is: v_entry_of, from: '{cond}', to: geo_axis_readout_midpoint_pca}
+  - {is: v_metric_of, from: geo_axis_readout_midpoint_pca, to: mean_value}
+  - {is: v_refer, from: o_geo_pca_readable, to: {is: v_level, from: geo_axis_readout_midpoint_pca.n_readable.mean_value, to: 4}}
+  - {is: v_refer, from: o_geo_pca_not_all_above, to: {is: v_level, from: geo_axis_readout_midpoint_pca.all_lin_above.mean_value, to: 0}}
+  - {is: v_refer, from: o_geo_pca_unreadable_above_readable, to: {is: v_come_after, from: geo_axis_readout_midpoint_pca.gap_unreadable.mean_value, to: geo_axis_readout_midpoint_pca.gap_readable.mean_value}}
+  - {is: v_contradict, from: o_geo_pca_not_all_above, to: h_axis_readout_raises_midpoint}
+  - {is: v_contradict, from: o_geo_pca_unreadable_above_readable, to: h_axis_readout_raises_midpoint}
   - {is: v_file_of, from: sys_value_refers_hypothesis.json, to: sys_value_refers_hypothesis}
   - {is: v_rows_of, from: [rows], to: sys_value_refers_hypothesis}
   - {is: v_axis_of, from: sys_value_refers_hypothesis_cond, to: sys_value_refers_hypothesis}
