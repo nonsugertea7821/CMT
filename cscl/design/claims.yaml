@@ -182,8 +182,8 @@ individuals:
   b_boundary_invariant: {is: exp.item_done}
   h_refer_stratified: {is: exp.hyp_untested}
   b_refer_stratified: {is: exp.item_queued}
-  h_fact_slot_by_end: {is: exp.hyp_untested}
-  b_fact_slot_by_end: {is: exp.item_queued}
+  h_fact_slot_by_end: {is: exp.hyp_supported}
+  b_fact_slot_by_end: {is: exp.item_done}
   h_frame_both_sides: {is: exp.hyp_untested}
   h_rule_verbs_unhardcode: {is: exp.hyp_refuted}
   b_rule_verbs_unhardcode: {is: exp.item_done}
@@ -433,6 +433,9 @@ individuals:
   o_sys_any_limitation_mismatch: {is: exp.observation}
   o_sys_any_limitation_no_ancestor: {is: exp.observation}
   o_sys_any_limitation_actual: {is: exp.observation}
+  o_sys_fact_slot_all_match: {is: exp.observation}
+  o_sys_fact_slot_clean: {is: exp.observation}
+  o_sys_fact_slot_base_ok: {is: exp.observation}
   o_sys_any_by_entail_passes_checks: {is: exp.observation}
   o_sys_any_by_entail_passes_ec: {is: exp.observation}
   o_sys_any_by_entail_ideal: {is: exp.observation}
@@ -917,6 +920,12 @@ facts:
   - {is: v_refer, from: o_sys_any_limitation_no_ancestor, to: {is: v_level, from: sys_any_limitation_after.any_ancestor.mean_value, to: 0.0}}
   - {is: v_refer, from: o_sys_any_limitation_actual, to: {is: v_level, from: sys_any_limitation_after.actual_sat.mean_value, to: 445.0}}
   - {is: exp.v_contradict, from: o_sys_any_limitation_mismatch, to: h_any_not_vacuous}
+  - {is: v_refer, from: o_sys_fact_slot_all_match, to: {is: v_level, from: sys_fact_slot_by_end_fix.n_match.mean_value, to: 7.0}}
+  - {is: v_refer, from: o_sys_fact_slot_clean, to: {is: v_level, from: sys_fact_slot_by_end_fix.clean.mean_value, to: 1.0}}
+  - {is: v_refer, from: o_sys_fact_slot_base_ok, to: {is: v_level, from: sys_fact_slot_by_end_fix.base_ok.mean_value, to: 1.0}}
+  - {is: exp.v_support, from: o_sys_fact_slot_all_match, to: h_fact_slot_by_end}
+  - {is: exp.v_support, from: o_sys_fact_slot_clean, to: h_fact_slot_by_end}
+  - {is: exp.v_ground, from: d_cscl_display_derived, to: h_fact_slot_by_end}
   - {is: v_refer, from: o_sys_any_by_entail_passes_checks, to: {is: v_level, from: sys_any_by_entail_after_fix.errors.mean_value, to: 0.0}}
   - {is: v_refer, from: o_sys_any_by_entail_passes_ec, to: {is: v_level, from: sys_any_by_entail_after_fix.ec_errors.mean_value, to: 0.0}}
   - {is: v_refer, from: o_sys_any_by_entail_ideal, to: {is: v_level, from: sys_any_by_entail_after_fix.ideal_nonempty.mean_value, to: 85.0}}
