@@ -2183,6 +2183,8 @@ individuals:
   d_verdict_by_vector: {is: design_dec_tentative}
   d_explanation_by_text: {is: design_dec_tentative}
   d_consolidation_in_vector: {is: design_dec_tentative}
+  d_road_region: {is: design_dec_tentative}
+  d_road_checker: {is: design_dec_tentative}
   d_source_of_truth_in_cscl: {is: design_dec_adopted}
   d_rendered_text_is_derived: {is: design_dec_adopted}
   d_symbol_selection_symbolic: {is: design_dec_tentative}
@@ -6185,6 +6187,14 @@ facts:
   - {is: v_ground, from: d_explanation_by_text, to: h_both_teachers_raise_control_in_combo}
   - {is: v_refer, from: d_consolidation_in_vector, to: {is: extends, from: change_holder, to: taught_vector}}
   - {is: v_ground, from: d_consolidation_in_vector, to: h_vector_count_does_not_lower}
+  - {is: v_depend, from: d_goal, to: d_metric}
+  - {is: v_refer, from: d_road_region, to: {is: v_depend, from: cross_usage_consistency, to: midpoint_membership}}
+  - {is: v_depend, from: d_metric, to: [d_road_region, d_road_checker]}
+  - {is: v_ground, from: d_road_region, to: h_ambiguity_is_region_choice}
+  - {is: v_depend, from: d_road_region, to: lang.d_cscl_display_derived}
+  - {is: v_refer, from: d_road_checker, to: {is: v_depend, from: formalization_accuracy, to: lang.type_checker}}
+  - {is: v_ground, from: d_road_checker, to: h_writing_depends_checker}
+  - {is: v_depend, from: d_road_checker, to: lang.d_cscl_display_derived}
   - {is: v_refer, from: d_source_of_truth_in_cscl, to: {is: v_express, from: depended_information, to: cscl}}
   - {is: v_refer, from: d_rendered_text_is_derived, to: {is: v_rely, from: rendered_text, to: depended_information}}
   - {is: v_refer, from: d_symbol_selection_symbolic, to: {is: v_rely, from: symbol_selection, to: typed_graph}}
