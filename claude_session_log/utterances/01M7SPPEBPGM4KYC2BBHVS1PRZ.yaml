@@ -1,0 +1,34 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-19T10:47:32.982Z（UTC）
+individuals:
+  01M7SPPEBPGM4KYC2BBHVS1PRZ:
+    is: model_utterance
+    display: 発言 2464
+    val:
+      order: 2464
+      text: |
+        法則の 3 つの役割（前提・導く文・求める文）は、前後の状態の位置で書き分けられ、そこから読み返せました。h_rule_roles_by_frame は支持です（#335）。
+
+        **結果**
+        - 写しの体系で、前提に置く（v_assume）に前（pre）、導く（v_derive）に後（post）、求める（v_require）に両側（holds）を足しました。足した文の中身は 3 つとも同じで、違うのは置いた位置だけです。
+        - 型検査と ec はどちらもエラー 0 でした。
+        - 位置から読んだ役割は、名前どおりの対応と 3 つとも一致しました。
+        - 前回は区別できなかった動詞 3 つと名詞 3 つが、それぞれ別の類に分かれました。
+        - 型検査が集める法則の中身は、元と同じでした。
+        - #335 は Draft を外したので、確認をお願いします。
+
+        **含意**
+        - 前回の結果で、3 つの役割の区別は名前にしかありませんでした。その区別を、文法の語である pre・post・holds の位置に移せることが分かりました。
+        - ただし、型検査は今も名前の並び `RULE_VERBS` で役割を読んでいます。この読み方を置き換えても結果が変わらないかは、まだ確かめていません。このことは事前登録で開示してあります。
+        - 「導く文を後の状態に置く」が意味として正しいかは、別の問いとして残ります。推論は時間の前後とは違うからです。
+
+        **新しい仮説（#336、登録だけ）**
+        - h_rule_verbs_unhardcode: 型検査が役割を名前でなく位置から読むように変えても、検査と法則の評価は変わらない。
+        - 対で登録した h_rule_roles_by_signature（シグネチャで決まる分類から読む解き方、#334）は未検証のままです。
+
+        次の周回は 11:13Z です。
+facts:
+- {is: v_say, from: session_model, to: 01M7SPPEBPGM4KYC2BBHVS1PRZ}
+- {is: exp.v_answer, from: 01M7SPPEBPGM4KYC2BBHVS1PRZ, to: 01M7SGQA8VSGSY8VD5321SAS84}
+- {is: v_refer, from: 01M7SPPEBPGM4KYC2BBHVS1PRZ, to: syntax.v_assume}
+- {is: v_refer, from: 01M7SPPEBPGM4KYC2BBHVS1PRZ, to: syntax.v_derive}
+- {is: v_refer, from: 01M7SPPEBPGM4KYC2BBHVS1PRZ, to: syntax.v_require}
