@@ -180,6 +180,10 @@ individuals:
   b_boundary_invariant: {is: exp.item_done}
   h_frame_both_sides: {is: exp.hyp_untested}
   b_frame_both_sides: {is: exp.item_queued}
+  h_rule_roles_by_frame: {is: exp.hyp_untested}
+  b_rule_roles_by_frame: {is: exp.item_queued}
+  h_rule_roles_by_signature: {is: exp.hyp_untested}
+  b_rule_roles_by_signature: {is: exp.item_queued}
   h_case_frame_formula: {is: exp.hyp_refuted}
   b_case_frame_formula: {is: exp.item_done}
   h_case_frame_by_relation: {is: exp.hyp_refuted}
@@ -643,6 +647,10 @@ facts:
   - {is: exp.v_check, from: b_boundary_invariant, to: h_boundary_invariant}
   - {is: v_refer, from: h_frame_both_sides, to: {is: v_depend, from: syntax.pre, to: syntax.post}}
   - {is: exp.v_check, from: b_frame_both_sides, to: h_frame_both_sides}
+  - {is: v_refer, from: h_rule_roles_by_frame, to: {is: v_depend, from: type_checker, to: [syntax.law_rule, syntax.pre, syntax.post]}}
+  - {is: exp.v_check, from: b_rule_roles_by_frame, to: h_rule_roles_by_frame}
+  - {is: v_refer, from: h_rule_roles_by_signature, to: {is: v_depend, from: type_checker, to: [syntax.law_rule, signature_class]}}
+  - {is: exp.v_check, from: b_rule_roles_by_signature, to: h_rule_roles_by_signature}
   - {is: v_refer, from: o_sys_boundary_post_passes, to: {is: v_level, from: sys_boundary_invariant.R_errors.mean_value, to: 0.0}}
   - {is: v_refer, from: o_sys_boundary_post_passes_ec, to: {is: v_level, from: sys_boundary_invariant.R_ec_errors.mean_value, to: 0.0}}
   - {is: v_refer, from: o_sys_boundary_post_unchanged, to: {is: v_level, from: sys_boundary_invariant.R_changed.mean_value, to: 0.0}}
