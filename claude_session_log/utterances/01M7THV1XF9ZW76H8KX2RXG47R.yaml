@@ -1,0 +1,209 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-19T18:41:55.631Z（UTC）
+individuals:
+  01M7THV1XF9ZW76H8KX2RXG47R:
+    is: session_summary
+    display: 発言 2675
+    val:
+      order: 2675
+      text: |
+        This session is being continued from a previous conversation that ran out of context. The summary below covers the earlier portion of the conversation.
+
+        <system-reminder>
+        <tools-used-before-summary>AskUserQuestion, Bash, Edit, Grep, Read, ReadNotifications, Skill, TaskStop, ToolSearch, WebFetch, WebSearch, Write, mcp__claude-code-remote__create_trigger, mcp__claude-code-remote__delete_trigger, mcp__claude-code-remote__get_trigger, mcp__claude-code-remote__read_documentation, mcp__claude-code-remote__send_later, mcp__claude-code-remote__subscribe_pr_activity, mcp__claude-code-remote__update_trigger, mcp__github__actions_get, mcp__github__actions_list, mcp__github__add_issue_comment, mcp__github__create_pull_request, mcp__github__get_job_logs, mcp__github__issue_read, mcp__github__issue_write, mcp__github__list_issue_types, mcp__github__list_issues, mcp__github__list_pull_requests, mcp__github__pull_request_read, mcp__github__update_pull_request</tools-used-before-summary>
+        </system-reminder>
+        Summary:
+        1. Primary Request and Intent:
+
+        **Standing rules (in force)**
+        - Repo: nonsugertea7821/CMT at /home/user/CMT.
+        - Reply in plain, natural Japanese. Don't overclaim. Give interpretation.
+        - Restore files with `git show <rev>:<path> > <path>`. Never use checkout or stash to restore; `git switch` for branches is fine.
+        - Python: /home/user/venv/bin/python.
+        - Commit trailer:
+          `Co-Authored-By: Claude [モデル名を伏せた] <[メールアドレスを伏せた]>`
+          `Claude-Session: https://claude.ai/code/session_015KRKt6TNJZ7ZsQmEknANXK`
+        - A PR body ends with `🤖 Generated with [Claude Code](https://claude.com/claude-code)`, a blank line, then the session URL.
+        - No personal info and no model identifiers in pushed artifacts.
+        - Claude never merges.
+        - Every PR I open: call subscribe_pr_activity, and call issue_write update with assignees ["nonsugertea7821"].
+        - After a merge: `git fetch -q --prune origin`, `git switch -q main`, `git merge -q --ff-only origin/main`, `git branch -D <branch>`.
+        - No comments in system yaml.
+        - Never rerun recorded experiment scripts. Use `git add -f` for exp/experiments files.
+        - CI belongs to GitHub.
+        - Proposals must be registered as untested hypotheses before telling the user.
+        - Preregistration:
+          - The first commit is the script only, in a Draft PR.
+          - Results go in a later commit.
+          - Corrections are appended to the docstring and disclosed; earlier result files are kept; a corrected run writes a new `_fix.json` (`_fix2.json` for a second correction).
+          - Undraft when the state is supported, refuted or mixed.
+        - Don't ask permission in conversation. Decide, and write the rationale in the PR.
+
+        **User's conceptual rules**
+        - Names may be read only for signature and grammar words; other distinctions are written as expressions.
+        - Allowed bases are signature, logic and geometry.
+
+        **Earlier user instructions this session**
+        - Fix the "one decision can't emit two relations" limit first.
+        - Every new hypothesis gets v_ground to a roadmap decision in the same PR, or is explicitly marked 「わき道」.
+
+        **Trigger**
+        - trig_01L92Xn7LSTHrmqt7enEcCPG fires every ~31 minutes.
+        - At each fire, first call update_trigger with run_once_at about now + 31 min and enabled: true.
+        - Next fire: 19:11Z.
+
+        2. Key Technical Concepts:
+        - tc is `cscl/bootstrap/type_checker/type_checker.py`. ec is `exp/src/exp_check.py`.
+        - `exp_check.build()` calls `tc.build()` again. When probing, clear `tc.errors` before calling exp_check, then count only what comes after.
+        - Fact slots in gather: `I[subj][short(T.end(verb, other))]`.
+          - Collision patch: BV is keyed by (subj, rel, verb).
+          - Keep-patch: also stores `I[subj]["rel.verb"]`.
+        - A measurement family's mean averages over all rows, including case rows and the summary row. A cond that appears in case rows is therefore unreliable as an observation; use conds that exist only in the summary.
+        - Law syntax in syntax.yaml:
+          - Laws are declared as individuals `{is: law_rule, display}` (e.g. `acyclic` at line 204).
+          - Facts use v_assume, v_derive and v_require. Node attributes can serve as relations, e.g. `{is: from, from: var1, to: var2}`; `neg: true` premises are allowed.
+          - syntax presumes closed_world (line 692).
+          - "Must not" is written as v_require `{is: same, ..., neg: true}`.
+        - Frames look like: `v_compute: {..., pre: [{is: exists, from: to, neg: true}], post: [{is: exists, from: to}]}`. In the library there are 9 `pre:` lines and 10 `post:` lines.
+        - Recording pattern: family nodes (measurement_family, family_axis, axis_value) plus facts (v_file_of, v_rows_of [rows], v_axis_of, v_value_of/v_spell, v_entry_of '{cond}', v_metric_of mean_value). Observations are v_level on `<family>.<cond>.mean_value`, then v_support.
+        - exp.yaml uses unprefixed names: observation, v_support, hyp_supported, item_done.
+        - claims.yaml uses `exp.`-prefixed names.
+
+        3. Files and Code Sections:
+
+        **exp/experiments/sys_fact_slot_by_verb.py** (merged, #389)
+        - Patches the copy's gather so collisions are judged per verb.
+        - Result: 8/8 supported.
+
+        **exp/experiments/sys_check_reports_contentless.py** (merged, #393)
+        - orig vs patch runs. The patch adds this at the head of triple:
+        ```python
+        if any(k not in x for k in ("s", "p", "o")):
+            return err(f"{where}: 中身（v_refer で述べる文）がない")
+        ```
+        - Results: orig_trace 2, patch_reported 2, patch_base_ok 1 → supported. Recorded in exp.yaml.
+
+        **exp/src/exp_check.py** (PR #394, branch claude/exp-check-report-contentless, commit 1bbfd3e)
+        - The same two lines added for real. Awaiting the user.
+
+        **exp/experiments/sys_fact_slot_keeps_each_verb.py** (PR #395, branch claude/h_fact_slot_keeps_each_verb)
+        - PATCH adds K1–K3 and, after the slot loop, stores `I[s2][f"{r2}.{v2}"]`.
+        - RUN probe: `FIXFLAG`/`FIX2FLAG` placeholders; `fix` and `fix2` modes write `_fix.json` and `_fix2.json`.
+        - fix2 result: n_hit 7/7, kept_two 2, base_ok 1, same_slot 3.
+        - Recorded:
+          - exp.yaml: family `sys_fact_slot_keeps_each_verb_fix2`.
+          - claims.yaml: o_sys_slot_keep_all_hit (v_level n_hit 7.0) and o_sys_slot_keep_two (kept_two 2.0), both with v_support; state hyp_supported, item_done.
+        - Commits: eb4f435, 4d5beab, 5e20718, 2a1a229.
+
+        **Registered via #390 (merged)**
+        - claims.yaml, h_fact_slot_keeps_each_verb:
+          - `{is: v_depend, from: type_checker, to: [syntax.refer_from_occurrent, syntax.position]}`
+          - `exp.v_ground` from d_cscl_display_derived.
+        - exp.yaml, h_check_reports_contentless:
+          - `{is: v_depend, from: type_check_result, to: syntax.refer_to_sentence}`
+          - `v_ground` from d_road_checker.
+
+        **h_frame_both_sides** (claims.yaml line 731, under investigation)
+        - Content: `{is: v_depend, from: syntax.pre, to: syntax.post}`
+        - Grounded to d_cscl_display_derived.
+        - Origin (commit 1db10c0): implication of h_boundary_invariant. The checker accepts one-sided frames; the idea is to require both sides as an expression.
+
+        4. Errors and fixes:
+        - **#390 conflict with main** in claims.yaml after h_fact_slot_by_verb became supported/done. Merged origin/main, kept main's states, added the new lines. Pushed 042f2ec.
+        - **#393 opened non-draft** by mistake. Disclosed to the user.
+        - **keeps_each_verb double count.**
+          - First correction: still double-counted. Disclosed.
+          - Second correction: count only `tc.errors` after exp_check. Disclosed.
+        - **ec failed on o_sys_slot_keep_same_slot** (mean 1.5 vs 3, because rows are mixed). Removed that observation with `sed -i '/o_sys_slot_keep_same_slot/d'`.
+        - **Python heredoc quote error** while editing the script. Redone with a `rep()` helper.
+
+        5. Problem Solving:
+        - Both fixes for the "two relations from one decision" limit are validated:
+          - System side: #387, prior_decision plus v_presuppose.
+          - Checker side: #389 (collision judged per verb) and #395 (slots split so every fact is kept).
+        - h_rule_roles_by_signature is deferred: the signature has only same/any/above, so no procedure is designed yet.
+
+        6. All user messages:
+        - None in this stretch. All inputs were scheduled-trigger prompts and GitHub notifications, which are not user approvals.
+        - Earlier user messages, preserved:
+          - 「それやらないとロードマップ管理は難しいか それをやってから、それ以降の仮説はロードマップに結びながら管理してほしい じゃこんどこそ離席 よろしく」
+          - 「auto_merge で v_ground も登録として通るようにして」
+          - 「#384にマージコンフリクト」
+
+        7. Pending Tasks:
+        - Awaiting the user's merge, all CI-green and conflict-free:
+          - #387 (h_decision_link_by_role)
+          - #394 (exp_check fix)
+          - #395 (keeps_each_verb, manual because of the corrections)
+        - After each merge: sync main and delete the branch.
+        - After #387 merges, do a0-3 as a manual-review PR:
+          - Add depend_to_from_decision (named mod), prior_decision and v_presuppose to exp.yaml.
+          - Make basis use the named mod.
+          - Split d_metric's v_depend list into v_presuppose facts.
+          - Add v_presuppose from d_road_japanese to lang.d_cscl_display_derived.
+        - Later: a manual PR putting the keep-each-verb slot change into the real checker.
+        - Continue the roadmap: h_frame_both_sides (being designed), then h_rule_roles_by_signature, h_checker_words_by_formula, and so on.
+
+        8. Current Work:
+        Designing the h_frame_both_sides experiment. Nothing written yet; on local main at 223af2a.
+
+        Planned design:
+        - Copy the repo without .git.
+        - Count statically: nodes with pre but no post, and nodes with post but no pre.
+        - Add a law_rule individual `frame_both_sides` to the copy's syntax.yaml with:
+          - v_assume `{is: pre, from: var1, to: var2}`
+          - v_assume `{is: post, from: var1, to: var3, neg: true}`
+          - v_require `{is: same, from: var1, to: var1, neg: true}`
+        - Probes:
+          - base with the law: expect 0 errors.
+          - pre-only verb without the law: expect pass.
+          - pre-only verb with the law: expect fail with the law violation (`法則 ... に反する`).
+          - post-only verb with the law: expect pass.
+        - Judgment:
+          - Supported: static pre-only count is 0 and all probes match.
+          - Refuted: an existing node has pre without post.
+          - Mixed: the law can't be expressed or enforced.
+
+        9. Optional Next Step:
+        Per the trigger's roadmap item a (h_rule_roles_by_signature → h_frame_both_sides → ...):
+        1. Create branch claude/h_frame_both_sides from main.
+        2. Write and preregister exp/experiments/sys_frame_both_sides.py with the design above.
+        3. Open a Draft PR, subscribe and assign; commit the script first, then run, record, run tc and ec, and undraft.
+
+        Before that, at the 19:11 trigger fire, reschedule the trigger and check merges of #387, #394 and #395.
+
+        If you need specific details from before compaction (like exact code snippets, error messages, or content you generated), read the full transcript at: /root/.claude/projects/-home-user-CMT/e05d2140-ce91-515f-a5fb-e6251e13d406.jsonl
+        Continue the conversation from where it left off without asking the user any further questions. Resume directly — do not acknowledge the summary, do not recap what was happening, do not preface with "I'll continue" or similar. Pick up the last task as if the break never happened.
+
+        The messages after this summary are the most recent messages from before compaction, kept verbatim. The summary was written without seeing them, so something it says has not happened yet may already have happened in them.
+facts:
+- {is: v_say, from: session_model, to: 01M7THV1XF9ZW76H8KX2RXG47R}
+- {is: v_refer, from: 01M7THV1XF9ZW76H8KX2RXG47R, to: exp.v_ground}
+- {is: v_refer, from: 01M7THV1XF9ZW76H8KX2RXG47R, to: lang.type_checker}
+- {is: v_refer, from: 01M7THV1XF9ZW76H8KX2RXG47R, to: syntax.law_rule}
+- {is: v_refer, from: 01M7THV1XF9ZW76H8KX2RXG47R, to: syntax.v_assume}
+- {is: v_refer, from: 01M7THV1XF9ZW76H8KX2RXG47R, to: syntax.v_derive}
+- {is: v_refer, from: 01M7THV1XF9ZW76H8KX2RXG47R, to: syntax.v_require}
+- {is: v_refer, from: 01M7THV1XF9ZW76H8KX2RXG47R, to: syntax.closed_world}
+- {is: v_refer, from: 01M7THV1XF9ZW76H8KX2RXG47R, to: std.v_compute}
+- {is: v_refer, from: 01M7THV1XF9ZW76H8KX2RXG47R, to: exp.measurement_family}
+- {is: v_refer, from: 01M7THV1XF9ZW76H8KX2RXG47R, to: exp.family_axis}
+- {is: v_refer, from: 01M7THV1XF9ZW76H8KX2RXG47R, to: exp.axis_value}
+- {is: v_refer, from: 01M7THV1XF9ZW76H8KX2RXG47R, to: exp.v_file_of}
+- {is: v_refer, from: 01M7THV1XF9ZW76H8KX2RXG47R, to: exp.v_rows_of}
+- {is: v_refer, from: 01M7THV1XF9ZW76H8KX2RXG47R, to: exp.v_axis_of}
+- {is: v_refer, from: 01M7THV1XF9ZW76H8KX2RXG47R, to: exp.v_value_of}
+- {is: v_refer, from: 01M7THV1XF9ZW76H8KX2RXG47R, to: exp.v_spell}
+- {is: v_refer, from: 01M7THV1XF9ZW76H8KX2RXG47R, to: exp.v_entry_of}
+- {is: v_refer, from: 01M7THV1XF9ZW76H8KX2RXG47R, to: exp.v_metric_of}
+- {is: v_refer, from: 01M7THV1XF9ZW76H8KX2RXG47R, to: exp.mean_value}
+- {is: v_refer, from: 01M7THV1XF9ZW76H8KX2RXG47R, to: ontology.v_level}
+- {is: v_refer, from: 01M7THV1XF9ZW76H8KX2RXG47R, to: exp.v_support}
+- {is: v_refer, from: 01M7THV1XF9ZW76H8KX2RXG47R, to: exp.hyp_supported}
+- {is: v_refer, from: 01M7THV1XF9ZW76H8KX2RXG47R, to: exp.item_done}
+- {is: v_refer, from: 01M7THV1XF9ZW76H8KX2RXG47R, to: ontology.v_refer}
+- {is: v_refer, from: 01M7THV1XF9ZW76H8KX2RXG47R, to: ontology.v_depend}
+- {is: v_refer, from: 01M7THV1XF9ZW76H8KX2RXG47R, to: syntax.refer_from_occurrent}
+- {is: v_refer, from: 01M7THV1XF9ZW76H8KX2RXG47R, to: syntax.position}
+- {is: v_refer, from: 01M7THV1XF9ZW76H8KX2RXG47R, to: exp.type_check_result}
+- {is: v_refer, from: 01M7THV1XF9ZW76H8KX2RXG47R, to: syntax.pre}
+- {is: v_refer, from: 01M7THV1XF9ZW76H8KX2RXG47R, to: syntax.post}
