@@ -1,0 +1,53 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-19T13:10:02.646Z（UTC）
+individuals:
+  01M7SYVBMPGK4G01FGHF0TF2C1:
+    is: model_utterance
+    display: 発言 2505
+    val:
+      order: 2505
+      text: |
+        はい、先行研究です。Peter Gärdenfors（ルンド大学、認知科学）の概念空間（conceptual spaces）の理論です。主著は "Conceptual Spaces: The Geometry of Thought"（2000）と "The Geometry of Meaning"（2014）です。以下の要約は記憶とさっきの検索によるもので、原典の全文には当たっていません。
+
+        ## 理論の骨格（Gärdenfors 2000）
+        - **質の次元（quality dimensions）**: 色相、明度、音の高さ、重さ、時間など、物の性質を測る軸です。
+        - **領域（domain）**: 一緒にしか値を持てない次元の束です。色相・彩度・明度は分けられないので、まとめて一つの「色の領域」になります。
+          - 用語の注意: これはあなたの言う「ドメイン（オーバーライドの単位）」とは別物です。名前は同じですが、混ぜないほうがよいと思います。
+        - **性質（property）**: 一つの領域の中の凸な範囲です（基準 P）。「赤」は色の領域の凸な範囲です。
+        - **概念（concept）**: 複数の領域の範囲の組です（基準 C）。それに加えて、領域ごとの重み（どの面が目立つか）と、領域のあいだの相関を持ちます。「りんご」は、色・形・味・大きさの範囲の組です。
+        - **凸である理由**: 典型例（プロトタイプ）をいくつか置き、各点を最も近い典型例に割り当てて空間を分けると（ボロノイ分割）、どの区画も自動的に凸になります。少ない例から概念を学べることの説明にもなっています。
+        - **自然な性質**: 凸な範囲になるものだけが、自然な性質だとされます。「赤でない」や「赤か緑」のような否定・選言で作った性質は、凸にならないので自然でないとされます。
+        - **凸に必要なもの**: 本来は「間にある（betweenness）」という関係だけで、距離の全部は要りません。前に言った、アフィンで自然に書けるという点と合います。
+
+        ## 動詞の扱い（Gärdenfors 2014 とその周辺）
+        - 出来事は、二つのベクトルで表されます。行為者が及ぼす**力のベクトル**と、対象の性質空間での変化である**結果のベクトル**です（Warglien・Gärdenfors・Westera 2012）。
+        - 様態の動詞（押す、たたく）は力のベクトルを指し、結果の動詞（壊す、開ける）は結果のベクトルを指します。
+        - 2024 年の論文では、名詞以外の品詞はそれぞれ一つの領域に意味を持つ、という単一領域の仮説が出ています。動詞が二つのベクトルを使うこととどう折り合わせるのかは、全文を読めていないので確かめていません。
+        - 要するに、概念（名詞）は**範囲**で、動詞は**変化のベクトル**です。この二つは種類の違う対象として扱われています。
+
+        ## その後の展開
+        - **凸の緩め（Bechberger & Kühnberger 2017）**: 凸のままでは、領域をまたぐ相関（「赤いりんごは甘い」の類）を幾何で書けないと指摘しています。そのうえで、星形（star-shaped）の集合に緩めています。星形とは、中心の点から集合のどの点への線分も集合に入る、という性質です。凸は、どの点も中心になれる特別な場合にあたります。概念はぼやけた（fuzzy）星形の集合とされ、交わり・和・射影などの演算が定義されています。
+        - **LLM の表現空間の幾何（Park, Choe, Jiang, Veitch, ICLR 2025）**: 「動物である」のような分類の概念が、表現空間の多面体（単体の組み合わせ）として表されると示しています。さらに、上位と下位の関係は直交する部分空間に現れます（植物→動物、哺乳類→鳥の差など）。Gemma と LLaMA-3 で、WordNet の 900 ほどの概念について確かめています。
+
+        ## この体系への含意
+        どれもまだ測っていない読みです。
+        1. **concept_kind の対に、先行研究の側からの答えがあります。** 動詞は概念と同じ空間の範囲ではなく、変化のベクトルです。アフィンでは点とベクトルは型が違うので、動詞を「概念」と一緒に比べる組に入れないほうが、この理論とは合います。
+        2. **pre・post の枠は、そのまま結果のベクトルの形をしています。** pre（前の状態の範囲）から post（後の状態の範囲）への変化が動詞で、holds は変わらずに成り立つ範囲です。#335 で役割を枠の位置で書き分けられたのは、たまたまではないのかもしれません。この読みだと、post を見ない concept_kind の判定（v_derive だけが概念に残った件）は、式の欠けです。
+        3. **限定の差分ベクトル（下位 − 上位）は、Park らの直交性と直接比べられます。** 下位 − 上位のベクトルが上位のベクトルと直交するかは、今の Qwen の実験の道具で測れます。e22 などの限定ベクトルの結果を読む枠組みにもなります。
+        4. **否定と選言は「自然でない」側に入ります。** 体系の mod には neg を使ったものがあります。凸を基準にすると、neg で作った概念は概念ではなく、範囲の外の操作として扱うことになります。前に聞いた「凸か」の問いには、この理論では「性質は凸、相関を入れるなら星形」と答えが出ています。
+        5. **one_name（組が式で違うこと）は「範囲が等しくない」と読めます。** 判定に使えるのは、シグネチャ・論理演算・幾何（間にある、包含、交わり）です。identifier を使わずに書ける見込みがあります。
+
+        確かめられる形にできるのは 2・3・5 です。進める前に、規則どおりこれらを仮説として登録します。
+
+        Sources:
+        - [The Geometry of Categorical and Hierarchical Concepts in Large Language Models (ICLR 2025)](https://proceedings.iclr.cc/paper_files/paper/2025/hash/be7430d22a4dae8516894e32f2fcc6db-Abstract-Conference.html)
+        - [arXiv 2406.01506](https://arxiv.org/html/2406.01506v3)
+        - [A Thorough Formalization of Conceptual Spaces (arXiv 1706.06366)](https://arxiv.org/pdf/1706.06366)
+        - [Formalized Conceptual Spaces with a Geometric Representation of Correlations (arXiv 1801.03929)](https://ar5iv.labs.arxiv.org/html/1801.03929)
+        - [Gärdenfors, event representation (MPI)](https://www.mpi.nl/sites/default/files/2019-04/Gardenfors_EvRep.pdf)
+        - [Gärdenfors ESSLLI 2014 slides](https://stefan-kaufmann.uconn.edu/Models_ESSLLI2014/Slides/Gaerdenfors.pdf)
+        - [Review of The Geometry of Meaning (Nordic Journal of Linguistics)](https://www-cambridge-org.ezproxyberklee.flo.org/core/journals/nordic-journal-of-linguistics/article/peter-gardenfors-the-geometry-of-meaning-semantics-based-on-conceptual-spaces-cambridge-ma-mit-press-2014-pp-xii-343/B3D4A86D2242552612CFC59FF460A78B)
+        - [Lund University record](https://lup.lub.lu.se/record/cc55267f-5235-4c7f-9eac-b4ebfc53be15)
+facts:
+- {is: v_say, from: session_model, to: 01M7SYVBMPGK4G01FGHF0TF2C1}
+- {is: exp.v_answer, from: 01M7SYVBMPGK4G01FGHF0TF2C1, to: 01M7SYSJEAC0X88HXJ3PQKS9W1}
+- {is: v_refer, from: 01M7SYVBMPGK4G01FGHF0TF2C1, to: syntax.v_derive}
