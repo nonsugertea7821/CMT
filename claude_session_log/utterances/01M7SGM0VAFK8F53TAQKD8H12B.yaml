@@ -1,0 +1,29 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-19T09:01:22.154Z（UTC）
+individuals:
+  01M7SGM0VAFK8F53TAQKD8H12B:
+    is: model_utterance
+    display: 発言 2426
+    val:
+      order: 2426
+      text: |
+        「書けなくする」方針を仮説として登録し、PR #324 にしました。概念を足しているので、手で見ていただく必要があります。
+
+        **登録した仮説**
+        - `h_refer_stratified`：型検査器は、文に述べられる文がどの層に置かれるかを見る。言い換えると、同じ層の中では refer で文を名付けられないようにする、という仮説です。
+
+        **足した概念**
+        - `referred_sentence`：文に述べられる文。
+        - `refer_placement`：その文が置かれる層。
+        - `syntax.refer_to_sentence`：「v_refer の to に文を取る」という限定に名前を付けた修飾語です。
+          - 型検査から、この限定が `exp.supersedes` と同じだと指摘されたので、名前を付けて両方から使う形にしました。式の意味は変わっていません。
+        - tc・ec は手元で 0 です。
+
+        **この先の見込み**
+        - いまの体系は、名付けを規則の外に置いているので、結果として「書けない」側に近い位置にいます。ただ、層を式で決めたうえで禁じているわけではありません。
+        - 確かめるときは、まず同じ層の文を述べている事実を数えます。claims の仮説には、同じ lang の概念を式に含むものが多いので、反証になる見込みが高いです。
+        - その場合、何を「同じ層」と数えるか（領域で数えるか、層の置き場で数えるか）が分かれ目になります。どちらで数えるかは、事前登録で先に決めます。
+facts:
+- {is: v_say, from: session_model, to: 01M7SGM0VAFK8F53TAQKD8H12B}
+- {is: exp.v_answer, from: 01M7SGM0VAFK8F53TAQKD8H12B, to: 01M7SGFBE362SQTPGC7YD3KEBF}
+- {is: v_refer, from: 01M7SGM0VAFK8F53TAQKD8H12B, to: ontology.v_refer}
+- {is: v_refer, from: 01M7SGM0VAFK8F53TAQKD8H12B, to: exp.supersedes}
