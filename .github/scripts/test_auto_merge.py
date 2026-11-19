@@ -56,6 +56,11 @@ def main():
         "登録: v_refer が2つ": bool(reg(added=G + [G[2]])),
         "登録: 既存の仮説に v_refer": bool(reg(added=G + ["  - {is: v_refer, from: h_y, to: {is: v_depend, from: a, to: b}}"])),
         "登録: 仮説がない": bool(reg(added=[])),
+        "登録: 決定に結ぶ": reg(added=G + ["  - {is: exp.v_ground, from: d_cscl_display_derived, to: h_x}"]) == [],
+        "登録: 決定に二つ結ぶ": reg(added=G + ["  - {is: v_ground, from: d_a, to: h_x}", "  - {is: v_ground, from: d_b, to: h_x}"]) == [],
+        "登録: 既存の仮説を結ぶ": bool(reg(added=G + ["  - {is: v_ground, from: d_a, to: h_y}"])),
+        "登録: 終点がリストの v_ground": bool(reg(added=G + ["  - {is: v_ground, from: d_a, to: [h_x, h_y]}"])),
+        "登録: v_ground に余計な鍵": bool(reg(added=G + ["  - {is: v_ground, from: d_a, to: h_x, at: {count: 1}}"])),
     }
     bad = [k for k, v in checks.items() if not v]
     print("自動マージの判定の確かめ:", "成功" if not bad else "失敗 " + ", ".join(bad))

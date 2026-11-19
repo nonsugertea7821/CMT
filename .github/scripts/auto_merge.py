@@ -14,9 +14,10 @@
   R2. 触るファイルが cscl/design/claims.yaml と exp/src/exp.yaml だけ
   R3. 消す行がなく、足す行はすべて次のどれか（中身は yaml として読む）:
       h_<名前>: {is: hyp_untested}（領域 exp. を付けてもよい）、b_<名前>: {is: item_queued}、
-      - {is: v_refer, from: h_<名前>, to: ...}、- {is: v_check, from: b_<名前>, to: h_<名前>}
+      - {is: v_refer, from: h_<名前>, to: ...}、- {is: v_check, from: b_<名前>, to: h_<名前>}、
+      - {is: v_ground, from: <決定>, to: h_<名前>}（仮説をロードマップの決定に結ぶ。0 個でもよい。決定であることは tc・ec が確かめる）
   R4. 足した h_<名前> ごとに、v_refer がちょうど1つ、それを結ぶ v_check がちょうど1つ、その b_<名前> が足してある。
-      足した v_refer と v_check は、足した h と b だけを結ぶ
+      足した v_refer と v_check は、足した h と b だけを結ぶ。足した v_ground は、足した h だけを終点にする
   概念（nodes）を足す登録は、定義を足すので手で見る。
 型検査（tc）と exp の検査（ec）は、ワークフローの前の段で走らせる（通らなければここまで来ない）。
 GITHUB_TOKEN でマージした push では他のワークフローが起きないので、issue の同期はワークフローの後の段で走らせる。
@@ -103,7 +104,7 @@ def decide_registration(draft, files, added, removed):
         why.append("変更がない")
     if [l for l in removed if l.strip()]:
         why.append(f"消す行がある（{len([l for l in removed if l.strip()])} 行）")
-    hs, bs, refers, checks = set(), set(), [], []
+    hs, bs, refers, checks, grounds = set(), set(), [], [], []
     for line in (l for l in added if l.strip()):
         try:
             y = yaml.safe_load(line.strip())
@@ -127,6 +128,9 @@ def decide_registration(draft, files, added, removed):
             if _short(f.get("is")) == "v_check" and set(f) == {"is", "from", "to"}:
                 checks.append((f["from"], f["to"]))
                 continue
+            if _short(f.get("is")) == "v_ground" and set(f) == {"is", "from", "to"} and isinstance(f["from"], str) and isinstance(f["to"], str):
+                grounds.append(f["to"])
+                continue
         why.append(f"登録でない行: {line.strip()[:60]}")
     if not hs:
         why.append("足した仮説がない")
@@ -142,6 +146,9 @@ def decide_registration(draft, files, added, removed):
     for b, t in checks:
         if b not in bs or t not in hs:
             why.append(f"足していない項目か仮説の v_check を足す: {b} → {t}")
+    for t in grounds:
+        if t not in hs:
+            why.append(f"足していない仮説を v_ground の終点にする: {t}")
     for b in sorted(bs):
         if not any(c == b for c, _ in checks):
             why.append(f"{b} を結ぶ v_check がない")
