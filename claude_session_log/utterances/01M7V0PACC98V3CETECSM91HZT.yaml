@@ -1,0 +1,28 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-19T23:01:29.100Z（UTC）
+individuals:
+  01M7V0PACC98V3CETECSM91HZT:
+    is: model_utterance
+    display: 発言 2739
+    val:
+      order: 2739
+      text: |
+        h_negation_formula（否定の限定の意味は、型検査器のコードによらず式で書ける）は支持になりました。#408 で Draft を外しています。CI と自動マージの判定はまだ出ていません。
+
+        **何を確かめたか**
+        - 否定の限定に触れる法則のうち、検査器の Python コードで書かれているのは「定義の循環は否定の限定を通らない」（definition_stratified）の一つだけです。
+        - これを、体系の中の規則で書いた法則に置き換えた写しを作りました。
+        - 7 つの版（否定を通る循環、通らない循環、名前を付けた否定の修飾語など）すべてで、Python 版と規則版の判定が一致しました。試しのノードを足さない版では、ほかの誤りは 0 件です。
+
+        **解釈**
+        - 「自分を限定するものは否定の位置に現れない」という意味は、定義の辺（extends・mod・with）と、限定に付く否定の印 neg の文から、規則で書けます。
+        - 確かめたのはこの一つの法則だけです。検査器が否定の限定を除外に使っているほかの箇所は対象外でした。
+        - 実際に syntax.yaml へ移すかどうかは、別の PR で手で見てもらいます。
+
+        **新しい仮説**
+        - h_law_given_as_rule を登録しました（#409、登録だけ）。検査器のコードで意味を与えているほかの法則（named_mod など 4 つ）も、規則で書けるかを問うものです。
+        - 識別子化の決定 d_cscl_display_derived の根拠に結んでいます。
+
+        ロードマップ a の識別子化で、refer_stratified の次の h_negation_formula まで進みました。次は h_placement_in_laws です。
+facts:
+- {is: v_say, from: session_model, to: 01M7V0PACC98V3CETECSM91HZT}
+- {is: exp.v_answer, from: 01M7V0PACC98V3CETECSM91HZT, to: 01M7TA7A145QS5NA0XWZR9ST0Q}
