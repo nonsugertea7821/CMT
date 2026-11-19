@@ -1,0 +1,31 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-19T12:22:57.021Z（UTC）
+individuals:
+  01M7SW547XYSNF641HN8YZKRXW:
+    is: model_utterance
+    display: 発言 2484
+    val:
+      order: 2484
+      text: |
+        今回の周回では h_rule_frame_redundant（#342）を確かめ、結果は**反証**でした。PR は #344 で、Draft を外してあります。
+
+        **結果**
+        - 枠の中身をすでに成り立つとされている文（v_refer の holds と同じ文）に替えても、導いた関係は前回の中身のときと同じでした（301916 件）。何も足さない場合は 302271 件で、これとは違います。
+        - 誤りは 0、法則の集まりは同じで、役割は 3 つとも枠から読めました。
+
+        **原因**
+        - 関係を変えているのは枠の中身ではなく、pre・holds という鍵があること自体です。原因は法則 concept_kind にあります。「概念」かどうかを、そのノード自身に pre・holds の枠があるかで決めていて、上位から受け継いだ枠は見ていません。
+        - そのため今の main では、動詞のうち 67 項が「概念」と「動詞」の両方に数えられています。この法則の表示語は「動詞でないものは概念」なので、式が表示語の意味に届いていません。
+        - 反証は、手順を決める前の調べで予想できていました。そのことは事前登録で開示してあります。
+
+        **新しい仮説（PR #345、概念を 1 つ足すので手で見る登録です）**
+        次の二つは両立しません。どちらを目指すかで、動詞どうしを「比べる組」に残すかが決まります。
+        - `h_concept_kind_excludes_verb`: 概念の分類は上位をたどって pre・holds を読む。両方に入る項は 0 になり、動詞どうしの比べる組は消えます。
+        - `h_concept_kind_frame_free`: 概念の分類は pre・holds を読まない。枠を足しても関係は変わらず、動詞どうしの比べる組は残ります。
+
+        概念 `concept_by_law` を足したのは、法則の個体 `concept_kind` を仮説の式から参照できなかったためです。
+
+        次の周回は 12:46Z です。
+facts:
+- {is: v_say, from: session_model, to: 01M7SW547XYSNF641HN8YZKRXW}
+- {is: exp.v_answer, from: 01M7SW547XYSNF641HN8YZKRXW, to: 01M7SGQA8VSGSY8VD5321SAS84}
+- {is: v_refer, from: 01M7SW547XYSNF641HN8YZKRXW, to: ontology.v_refer}
