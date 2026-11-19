@@ -171,6 +171,8 @@ individuals:
   b_ja_connective: {is: exp.item_queued}
   h_identifier_by_expansion: {is: exp.hyp_untested}
   b_identifier_by_expansion: {is: exp.item_queued}
+  h_appear_root: {is: exp.hyp_untested}
+  b_appear_root: {is: exp.item_queued}
   h_case_frame_formula: {is: exp.hyp_refuted}
   b_case_frame_formula: {is: exp.item_done}
   h_case_frame_by_relation: {is: exp.hyp_refuted}
@@ -597,6 +599,8 @@ facts:
   - {is: exp.v_check, from: b_ja_connective, to: h_ja_connective}
   - {is: v_refer, from: h_identifier_by_expansion, to: {is: v_depend, from: syntax.identifier, to: signature_class}}
   - {is: exp.v_check, from: b_identifier_by_expansion, to: h_identifier_by_expansion}
+  - {is: v_refer, from: h_appear_root, to: {is: v_not_depend, from: std.v_compute, to: syntax.display}}
+  - {is: exp.v_check, from: b_appear_root, to: h_appear_root}
   - {is: v_refer, from: h_case_frame_formula, to: {is: v_not_depend, from: case_frame, to: syntax.display}}
   - {is: exp.v_check, from: b_case_frame_formula, to: h_case_frame_formula}
   - {is: v_refer, from: h_case_frame_by_relation, to: {is: v_depend, from: case_frame, to: syntax.base}}
