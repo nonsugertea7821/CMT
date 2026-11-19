@@ -1,0 +1,269 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-19T15:56:08.099Z（UTC）
+individuals:
+  01M7T8BFH37WZKBSEW0J9CEGRX:
+    is: session_summary
+    display: 発言 2621
+    val:
+      order: 2621
+      text: |
+        This session is being continued from a previous conversation that ran out of context. The summary below covers the earlier portion of the conversation.
+
+        <system-reminder>
+        <tools-used-before-summary>AskUserQuestion, Bash, Edit, Grep, Read, ReadNotifications, Skill, TaskStop, ToolSearch, WebFetch, WebSearch, Write, mcp__claude-code-remote__create_trigger, mcp__claude-code-remote__delete_trigger, mcp__claude-code-remote__get_trigger, mcp__claude-code-remote__read_documentation, mcp__claude-code-remote__send_later, mcp__claude-code-remote__subscribe_pr_activity, mcp__claude-code-remote__update_trigger, mcp__github__actions_get, mcp__github__actions_list, mcp__github__add_issue_comment, mcp__github__create_pull_request, mcp__github__get_job_logs, mcp__github__issue_read, mcp__github__issue_write, mcp__github__list_issue_types, mcp__github__list_issues, mcp__github__list_pull_requests, mcp__github__pull_request_read, mcp__github__update_pull_request</tools-used-before-summary>
+        </system-reminder>
+        Summary:
+        1. Primary Request and Intent:
+
+        **Standing rules (in force)**
+        - Repo: nonsugertea7821/CMT at /home/user/CMT.
+        - Reply in plain, natural Japanese. Don't overclaim. Give interpretation.
+        - Restore files with `git show <rev>:<path> > <path>`. Never use checkout or stash to restore; `git switch` for branches is fine.
+        - Python: /home/user/venv/bin/python.
+        - Commit trailer:
+          `Co-Authored-By: Claude [モデル名を伏せた] <[メールアドレスを伏せた]>`
+          `Claude-Session: https://claude.ai/code/session_015KRKt6TNJZ7ZsQmEknANXK`
+        - A PR body ends with `🤖 Generated with [Claude Code](https://claude.com/claude-code)`, a blank line, then the session URL.
+        - No personal info and no model identifiers in pushed artifacts.
+        - Claude never merges.
+        - Every PR I open: call subscribe_pr_activity, and call issue_write update with assignees ["nonsugertea7821"].
+        - After a merge: `git fetch -q --prune origin`, `git switch -q main`, `git merge -q --ff-only origin/main`, `git branch -D <branch>`.
+        - No comments in system yaml.
+        - Never rerun recorded experiment scripts. Use `git add -f` for exp/experiments files.
+        - CI belongs to GitHub.
+        - Proposals must be registered as untested hypotheses before telling the user:
+          - Form: h_/b_ plus v_refer and v_check.
+          - Registration-only PRs auto-merge.
+        - Preregistration:
+          - The first commit is the script only, in a Draft PR.
+          - Results go in a later commit.
+          - Undraft when the state is supported, refuted or mixed.
+        - Don't ask permission in conversation. Decide, and write the rationale in the PR.
+
+        **User's conceptual rules**
+        - Names may be read only for signature and grammar words; other distinctions are written as expressions.
+        - Allowed bases are signature, logic and geometry.
+
+        **Big picture (agreed this session)**
+        - d_goal (redefinition success) ← d_metric (cross_usage_consistency).
+        - System soundness is one dependency of that.
+        - User's thesis:
+          - The model binds **terms (用語)** to regions of a geometric definition.
+          - Ambiguity is inconsistency in which region is chosen.
+          - Binding terms consistently (identifier formulas), with a natively readable Japanese rendering, is a **sufficient but not necessary** route to the premise, because the model can also choose consistently itself.
+
+        **Latest user request**
+        「一つの決定から関係を二つ出すと、型検査が落ちる これ修正、というか含意がないか？」
+
+        **Standing user instruction (while away)**
+        「結果が出たらそれを観察して効率よく順序を決めてほしい」
+
+        2. Key Technical Concepts:
+
+        **Checks**
+        - tc: `cscl/bootstrap/type_checker/type_checker.py`
+        - ec: `exp/src/exp_check.py`
+        - Judge both by exit code.
+
+        **Roadmap in the system**
+        - Decisions are design_dec_tentative/adopted individuals in exp.yaml.
+        - Decision → decision links use v_depend. Decision → hypothesis links use v_ground, whose `to` is basis, and basis has `many: true`.
+        - d_road_japanese is linked with `v_raise d_road_japanese → d_metric` (a sufficient route).
+        - Reach is computed from exp.d_goal downward over v_depend/v_ground, with v_raise followed in reverse.
+
+        **Checker storage of individual facts**
+        - Code at type_checker.py ~448-470: `subj, rel = f[sides[0]], short(T.end(verb, other))`, then `I[subj].setdefault(rel, []).append(val)`.
+        - If `rel not in T.many and len(vs) > 1`, it reports `関係 {rel} の事実が2つ以上ある`.
+        - So the slot is keyed by the type of the other end, not the verb. Cardinality comes from `many` on that type.
+
+        **Cross-domain limits**
+        - A lang claim may not reference exp words: "lang の主張が、lang と言語の層以外の語を参照している".
+        - v_ground across domains fails because individuals are resolved per domain.
+
+        **Family recording pattern in exp.yaml**
+        - Nodes: measurement_family, family_axis, axis_value.
+        - Facts: v_file_of, v_rows_of, v_axis_of, v_value_of/v_spell, v_entry_of '{cond}', v_metric_of mean_value.
+        - Observations use v_near/v_level, then v_support/v_contradict.
+
+        3. Files and Code Sections:
+
+        **exp/experiments/sys_roadmap_reach.py** (created, preregistered in 6da5709)
+        - Loads tc.build(), exp_check, and the yaml of exp/src/exp.yaml and cscl/design/claims.yaml.
+        - Computes H, R, TR (strict TR excludes syntax./signature./ontology.), on_path/linkable/detour and share.
+        - Verdict: share ≥ 0.8 supports; < 0.5 refutes; otherwise mixed.
+        - Output: results/sys_roadmap_reach.json.
+        - Results: n_h 51, on_path 5, linkable 3 (loose 4), detour 43, share 0.157 → refuted.
+        - Linkable: lang.h_cscl_self_hosting, h_negation_formula, h_placement_in_laws.
+
+        **exp/src/exp.yaml (on main after #371, #373, #375)**
+        - h_roadmap_by_ground: `{is: v_depend, from: hypothesis, to: d_goal}`.
+        - h_ambiguity_is_region_choice: `{is: v_depend, from: cross_usage_consistency, to: midpoint_membership}`.
+        - d_road_region and d_road_checker are design_dec_tentative.
+        - Facts:
+          ```
+          - {is: v_depend, from: d_goal, to: d_metric}
+          - {is: v_refer, from: d_road_region, to: {is: v_depend, from: cross_usage_consistency, to: midpoint_membership}}
+          - {is: v_depend, from: d_metric, to: [d_road_region, d_road_checker]}
+          - {is: v_ground, from: d_road_region, to: h_ambiguity_is_region_choice}
+          - {is: v_depend, from: d_road_region, to: lang.d_cscl_display_derived}
+          - {is: v_refer, from: d_road_checker, to: {is: v_depend, from: formalization_accuracy, to: lang.type_checker}}
+          - {is: v_ground, from: d_road_checker, to: h_writing_depends_checker}
+          - {is: v_depend, from: d_road_checker, to: lang.d_cscl_display_derived}
+          ```
+
+        **PR #378 branch (claude/h_roadmap_by_ground)**
+        - Family sys_roadmap_reach with conds n_h, n_on_path, n_linkable, n_detour, share.
+        - Observations:
+          - o_sys_roadmap_share: v_near 0.157 → contradict
+          - o_sys_roadmap_detour: v_level 43 → contradict
+          - o_sys_roadmap_on_path: v_level 5
+        - h_roadmap_by_ground set to hyp_refuted; b_ set to item_done.
+
+        **PR #379 branch (claude/roadmap-ground-more; commits 95147e3, 8b06072)**
+        - exp.yaml:
+          - Added `d_road_japanese: {is: design_dec_tentative}`.
+          - Added `{is: v_refer, from: d_road_japanese, to: {is: v_depend, from: syntax.display, to: naturalness}}`.
+          - Added `{is: v_raise, from: d_road_japanese, to: d_metric}`.
+          - v_ground from d_road_japanese to 13 prosody hypotheses: h_ja_text_needs_naturalness, h_ja_text_needs_prosody, h_ja_text_agrees_public, h_prosody_carries_mod, h_mod_fixes_prosody, h_ambiguity_calls_prosody, h_public_carries_prosody, h_prosody_language_invariant, h_model_attachment_differs, h_model_utterance_carries_prosody, h_model_utterance_less_reliable, h_prosody_carries_reliability, h_prosody_lowers_followup.
+          - v_ground from d_metric to h_explain_transfers_to_apply and h_multi_layer_transfers_to_explain.
+          - v_ground from d_road_region to h_qualification_immune_genus and h_qualification_depends_above.
+        - claims.yaml: exp.v_ground from d_cscl_display_derived to h_draw_on_with_shallow, h_case_frame_by_signature, h_concept_kind_excludes_verb, h_concept_kind_frame_free, h_frame_both_sides, h_collect_by_formula, h_collect_agree_in_grammar, h_negation_formula, h_placement_in_laws, h_cscl_self_hosting.
+        - Reach went from 5 to 32 of 51.
+        - Not linked (19): following/stability series, operations hypotheses, lang.h_concept_bounds_model_state, lang.h_ja_connective.
+
+        **Current uncommitted branch claude/register-fact-slot (from main after #375)**
+        - cscl/design/claims.yaml, after `  b_refer_stratified: {is: exp.item_queued}`:
+          ```
+          h_fact_slot_by_end: {is: exp.hyp_untested}
+          b_fact_slot_by_end: {is: exp.item_queued}
+          ```
+          and after `  - {is: exp.v_check, from: b_refer_stratified, to: h_refer_stratified}`:
+          ```
+          - {is: v_refer, from: h_fact_slot_by_end, to: {is: v_depend, from: type_checker, to: [syntax.position, syntax.many]}}
+          - {is: exp.v_check, from: b_fact_slot_by_end, to: h_fact_slot_by_end}
+          ```
+        - exp/src/exp.yaml, after `  b_ambiguity_is_region_choice: {is: item_queued}`:
+          ```
+          h_decision_link_by_role: {is: hyp_untested}
+          b_decision_link_by_role: {is: item_queued}
+          ```
+          and after `  - {is: v_check, from: b_ambiguity_is_region_choice, to: h_ambiguity_is_region_choice}`:
+          ```
+          - {is: v_refer, from: h_decision_link_by_role, to: {is: v_depend, from: decision, to: syntax.role}}
+          - {is: v_check, from: b_decision_link_by_role, to: h_decision_link_by_role}
+          ```
+        - tc = 0 and ec = 0. Not committed.
+
+        **Trigger trig_01L92Xn7LSTHrmqt7enEcCPG**
+        - Next fire 15:58Z.
+        - At each fire, first set run_once_at to about now + 31 min.
+        - The prompt now selects only roadmap-reachable hypotheses, in this order:
+          - a. identifierization: #334 → h_frame_both_sides → #300 / collect → case_frame → draw_on → concept_kind pair → #338 → negation / placement / self_hosting
+          - b. Japanese naturalness: preregister prosody counting first
+          - c. checker: #265
+          - d. region and usage hypotheses
+        - Detours are listed and not chosen. Checker limits are noted.
+
+        4. Errors and fixes:
+        - **Two v_depend facts from d_metric** gave "関係 continuant の事実が2つ以上ある". Fixed by putting both targets in one fact with a list `to`.
+        - **v_depend plus v_raise from d_road_japanese** gave the same error. Kept only v_raise and noted the dependency on identifierization in the commit message.
+        - **Cross-domain v_ground failed in both directions:**
+          - exp decision → lang hypothesis gave "basis の仮説 lang.h_… が未定義".
+          - lang fact → exp.d_road_checker gave "どちらの位置にも…個体がない".
+          - Grounded those hypotheses to lang.d_cscl_display_derived instead.
+        - **A lang claim referencing exp.decision was rejected.** Moved h_decision_link_by_role to exp.yaml.
+        - **My first reach script read the wrong yaml section** (hypotheses are under "individuals", not "nodes"). Fixed.
+        - **User feedback:** the user interrupted the tool call to correct the prosody series' role (a sufficient condition), then clarified it is not necessary. I restructured from v_depend to v_raise.
+
+        5. Problem Solving:
+        - The roadmap is encoded in the system and reachable hypotheses are counted. h_roadmap_by_ground is refuted (share 0.157); after re-grounding, 32 of 51 are reachable.
+        - Diagnosis of the "two relations" failure:
+          - The checker keys an individual's fact by the type of the other end, dropping the verb. v_depend and v_raise (both ending at continuant) collide.
+          - Multiplicity is set by `many` on the end type, as with basis. Generic verbs without role ends are single-valued by accident.
+        - Implications to tell the user:
+          - The verb distinction is lost at the individual level. The checker identifies a relation by its end type, which is a hidden collapse of distinct relations.
+          - Roles carry cardinality. Decision-to-decision links need a role concept with `many`, as v_ground has with basis.
+          - Cross-domain individuals are not resolved, which is related to h_refer_stratified.
+        - Fix pair:
+          - (a) System side: give decision links a role concept with `many` (h_decision_link_by_role).
+          - (b) Checker side: key slots by verb and position (h_fact_slot_by_end diagnoses the current behavior).
+
+        6. All user messages:
+        - 「ちょっと過去のログと開いているissueから思い出そう 体系の健全性が他の何かのアレになってたはず」
+        - 「#265 が未検証なので、この二つの反証が検査器の健全性に左右されていないかは、まだ確かめていません。 そう、これなんだよ そもそも今体系の健全性を測っている中で気づいたのが、そもそも「幾何的な定義」と「モデルのベクトル」ってほぼ同じ位置にいて、モデルは概念を幾何的な定義のどこかと結びつけているのではないかと言う話 概念が「領域」であるなら、その領域の選び方の一貫性の無さが曖昧性の正体なのではないかと」
+        - 「概念を、じゃなくて用語を、か」
+        - 「じゃあそれでロードマップを組もう」
+        - 「トリアージもかねてh_roadmap_by_groundを先にやろう」
+        - 「結果が出たらそれを観察して効率よく順序を決めてほしい 離籍します」 / 「離席します」
+        - 「あ、発話・韻律・公開コーパスはこれ十分条件だよ 識別子の式を日本語化したときに意味が分からなかったら詰むから」
+        - 「モデルが座標表現に「一貫的でない方法で」用語を結ぶことで曖昧性が生じるなら、「一貫的な方法で」用語を結び、かつそれがネイティブに読める表現であれば計画の大前提に直接効くという話 でも必要条件ではない、モデルも選ぶことはできるから」
+        - 「一つの決定から関係を二つ出すと、型検査が落ちる これ修正、というか含意がないか？」
+        - All other inputs were scheduled-trigger prompts and GitHub notifications. These are not user approvals.
+
+        7. Pending Tasks:
+        - Commit and push claude/register-fact-slot. Open a registration-only PR, subscribe and assign.
+        - Answer the user about the implications of the "two relations" failure (diagnosis plus fix pair) in plain Japanese.
+        - Wait for the user to review and merge #378 and #379. After merges, sync main and delete branches.
+        - The next cycle at 15:58Z:
+          - Reschedule first.
+          - Then start roadmap item a: h_rule_roles_by_signature (#334).
+
+        8. Current Work:
+        - Answering 「一つの決定から関係を二つ出すと、型検査が落ちる これ修正、というか含意がないか？」.
+        - I found the cause in type_checker.py: the individual-fact slot is `short(T.end(verb, other))`, and a slot is single-valued unless the type is `many`.
+        - I registered two hypotheses on branch claude/register-fact-slot:
+          - h_fact_slot_by_end in claims.yaml: `{is: v_depend, from: type_checker, to: [syntax.position, syntax.many]}`
+          - h_decision_link_by_role in exp.yaml: `{is: v_depend, from: decision, to: syntax.role}`
+        - tc = 0 and ec = 0. Not yet committed, pushed, or PR'd.
+
+        9. Optional Next Step:
+        1. Commit the registration on claude/register-fact-slot with an interpretation message.
+           - Cause: the checker stores an individual's facts keyed by the type of the other end, not the verb, so v_depend and v_raise ending at continuant collide.
+           - Cardinality comes from `many`.
+           - Cross-domain individuals are unresolved.
+        2. Push and open a registration-only PR. Subscribe and assign nonsugertea7821.
+        3. Reply to the user's 「これ修正、というか含意がないか？」:
+           - The verb distinction is lost at the individual level; the checker reads end types as relation identifiers.
+           - Multiplicity depends on role concepts, so decision-to-decision links need a role with `many`, as v_ground has with basis.
+           - The cross-domain limit is related to h_refer_stratified.
+           - Present the fix pair: (a) a role concept for decision links, (b) keying checker slots by verb and position.
+           - Say which roadmap decision these ground: d_road_checker / d_cscl_display_derived.
+
+        If you need specific details from before compaction (like exact code snippets, error messages, or content you generated), read the full transcript at: /root/.claude/projects/-home-user-CMT/e05d2140-ce91-515f-a5fb-e6251e13d406.jsonl
+        Continue the conversation from where it left off without asking the user any further questions. Resume directly — do not acknowledge the summary, do not recap what was happening, do not preface with "I'll continue" or similar. Pick up the last task as if the break never happened.
+
+        The messages after this summary are the most recent messages from before compaction, kept verbatim. The summary was written without seeing them, so something it says has not happened yet may already have happened in them.
+facts:
+- {is: v_say, from: session_model, to: 01M7T8BFH37WZKBSEW0J9CEGRX}
+- {is: v_refer, from: 01M7T8BFH37WZKBSEW0J9CEGRX, to: ontology.v_refer}
+- {is: v_refer, from: 01M7T8BFH37WZKBSEW0J9CEGRX, to: exp.v_check}
+- {is: v_refer, from: 01M7T8BFH37WZKBSEW0J9CEGRX, to: exp.cross_usage_consistency}
+- {is: v_refer, from: 01M7T8BFH37WZKBSEW0J9CEGRX, to: lang.type_checker}
+- {is: v_refer, from: 01M7T8BFH37WZKBSEW0J9CEGRX, to: exp.design_dec_tentative}
+- {is: v_refer, from: 01M7T8BFH37WZKBSEW0J9CEGRX, to: ontology.v_depend}
+- {is: v_refer, from: 01M7T8BFH37WZKBSEW0J9CEGRX, to: exp.v_ground}
+- {is: v_refer, from: 01M7T8BFH37WZKBSEW0J9CEGRX, to: syntax.to}
+- {is: v_refer, from: 01M7T8BFH37WZKBSEW0J9CEGRX, to: exp.v_raise}
+- {is: v_refer, from: 01M7T8BFH37WZKBSEW0J9CEGRX, to: syntax.many}
+- {is: v_refer, from: 01M7T8BFH37WZKBSEW0J9CEGRX, to: exp.measurement_family}
+- {is: v_refer, from: 01M7T8BFH37WZKBSEW0J9CEGRX, to: exp.family_axis}
+- {is: v_refer, from: 01M7T8BFH37WZKBSEW0J9CEGRX, to: exp.axis_value}
+- {is: v_refer, from: 01M7T8BFH37WZKBSEW0J9CEGRX, to: exp.v_file_of}
+- {is: v_refer, from: 01M7T8BFH37WZKBSEW0J9CEGRX, to: exp.v_rows_of}
+- {is: v_refer, from: 01M7T8BFH37WZKBSEW0J9CEGRX, to: exp.v_axis_of}
+- {is: v_refer, from: 01M7T8BFH37WZKBSEW0J9CEGRX, to: exp.v_value_of}
+- {is: v_refer, from: 01M7T8BFH37WZKBSEW0J9CEGRX, to: exp.v_spell}
+- {is: v_refer, from: 01M7T8BFH37WZKBSEW0J9CEGRX, to: exp.v_entry_of}
+- {is: v_refer, from: 01M7T8BFH37WZKBSEW0J9CEGRX, to: exp.v_metric_of}
+- {is: v_refer, from: 01M7T8BFH37WZKBSEW0J9CEGRX, to: exp.mean_value}
+- {is: v_refer, from: 01M7T8BFH37WZKBSEW0J9CEGRX, to: exp.v_near}
+- {is: v_refer, from: 01M7T8BFH37WZKBSEW0J9CEGRX, to: ontology.v_level}
+- {is: v_refer, from: 01M7T8BFH37WZKBSEW0J9CEGRX, to: exp.v_support}
+- {is: v_refer, from: 01M7T8BFH37WZKBSEW0J9CEGRX, to: exp.v_contradict}
+- {is: v_refer, from: 01M7T8BFH37WZKBSEW0J9CEGRX, to: exp.formalization_accuracy}
+- {is: v_refer, from: 01M7T8BFH37WZKBSEW0J9CEGRX, to: exp.hyp_refuted}
+- {is: v_refer, from: 01M7T8BFH37WZKBSEW0J9CEGRX, to: exp.item_done}
+- {is: v_refer, from: 01M7T8BFH37WZKBSEW0J9CEGRX, to: syntax.display}
+- {is: v_refer, from: 01M7T8BFH37WZKBSEW0J9CEGRX, to: exp.item_queued}
+- {is: v_refer, from: 01M7T8BFH37WZKBSEW0J9CEGRX, to: exp.hyp_untested}
+- {is: v_refer, from: 01M7T8BFH37WZKBSEW0J9CEGRX, to: syntax.position}
+- {is: v_refer, from: 01M7T8BFH37WZKBSEW0J9CEGRX, to: exp.decision}
