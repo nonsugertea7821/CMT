@@ -1257,6 +1257,12 @@ individuals:
   sys_renaming_invariant_cond_R_facts_diff: {is: axis_value, val: {text: R_facts_diff}}
   sys_renaming_invariant_cond_C_errors: {is: axis_value, val: {text: C_errors}}
   sys_renaming_invariant_cond_n_renamed: {is: axis_value, val: {text: n_renamed}}
+  e29_model_writes_cscl: {is: measurement_family}
+  e29_model_writes_cscl_cond: {is: family_axis, val: {text: cond}}
+  e29_model_writes_cscl_cond_n_items: {is: axis_value, val: {text: n_items}}
+  e29_model_writes_cscl_cond_n_typechecks: {is: axis_value, val: {text: n_typechecks}}
+  e29_model_writes_cscl_cond_n_extends_match: {is: axis_value, val: {text: n_extends_match}}
+  e29_model_writes_cscl_cond_n_exact: {is: axis_value, val: {text: n_exact}}
   sys_case_frame_formula: {is: measurement_family}
   sys_case_frame_formula_cond: {is: family_axis, val: {text: cond}}
   sys_case_frame_formula_cond_errors: {is: axis_value, val: {text: errors}}
@@ -1856,6 +1862,10 @@ individuals:
   o_e28_first_block_below_first: {is: observation}
   o_e28_block_query_below_last: {is: observation}
   o_e28_block_def_above_last: {is: observation}
+  o_e29_typechecks: {is: observation}
+  o_e29_items: {is: observation}
+  o_e29_extends_match: {is: observation}
+  o_e29_exact: {is: observation}
   o_e14_vec_robust_below_none_conflict: {is: observation}
   o_e14_vec_robust_below_none_control: {is: observation}
   o_e20_examples_move_apply: {is: observation}
@@ -1942,7 +1952,7 @@ individuals:
   h_specific_composes_from_expression: {is: hyp_untested}
   h_common_component_transfers_to_unseen: {is: hyp_refuted}
   h_attention_carries_text_route: {is: hyp_supported}
-  h_model_can_write_cscl: {is: hyp_untested}
+  h_model_can_write_cscl: {is: hyp_refuted}
   h_typecheck_feedback_raises_writing: {is: hyp_untested}
   h_qualification_vector_transfers_to_unseen_genus: {is: hyp_supported}
   h_qualification_teacher_raises_following: {is: hyp_untested}
@@ -4711,6 +4721,19 @@ facts:
   - {is: v_spell, from: sys_renaming_invariant_cond_n_renamed, to: n_renamed}
   - {is: v_entry_of, from: '{cond}', to: sys_renaming_invariant}
   - {is: v_metric_of, from: sys_renaming_invariant, to: mean_value}
+  - {is: v_file_of, from: e29_model_writes_cscl.json, to: e29_model_writes_cscl}
+  - {is: v_rows_of, from: [rows], to: e29_model_writes_cscl}
+  - {is: v_axis_of, from: e29_model_writes_cscl_cond, to: e29_model_writes_cscl}
+  - {is: v_value_of, from: e29_model_writes_cscl_cond_n_items, to: e29_model_writes_cscl_cond}
+  - {is: v_spell, from: e29_model_writes_cscl_cond_n_items, to: n_items}
+  - {is: v_value_of, from: e29_model_writes_cscl_cond_n_typechecks, to: e29_model_writes_cscl_cond}
+  - {is: v_spell, from: e29_model_writes_cscl_cond_n_typechecks, to: n_typechecks}
+  - {is: v_value_of, from: e29_model_writes_cscl_cond_n_extends_match, to: e29_model_writes_cscl_cond}
+  - {is: v_spell, from: e29_model_writes_cscl_cond_n_extends_match, to: n_extends_match}
+  - {is: v_value_of, from: e29_model_writes_cscl_cond_n_exact, to: e29_model_writes_cscl_cond}
+  - {is: v_spell, from: e29_model_writes_cscl_cond_n_exact, to: n_exact}
+  - {is: v_entry_of, from: '{cond}', to: e29_model_writes_cscl}
+  - {is: v_metric_of, from: e29_model_writes_cscl, to: mean_value}
   - {is: v_file_of, from: sys_layers_exists_change.json, to: sys_layers_exists_change}
   - {is: v_rows_of, from: [rows], to: sys_layers_exists_change}
   - {is: v_axis_of, from: sys_layers_exists_change_cond, to: sys_layers_exists_change}
@@ -5633,6 +5656,11 @@ facts:
   - {is: v_refer, from: o_e28_first_block_below_first, to: {is: v_come_before, from: e28.first_block.accuracy, to: e28.first.accuracy}}
   - {is: v_refer, from: o_e28_block_query_below_last, to: {is: v_come_before, from: e28.last_block_query.accuracy, to: e28.last.accuracy}}
   - {is: v_refer, from: o_e28_block_def_above_last, to: {is: v_come_after, from: e28.last_block_def.accuracy, to: e28.last.accuracy}}
+  - {is: v_refer, from: o_e29_typechecks, to: {is: v_level, from: e29_model_writes_cscl.n_typechecks.mean_value, to: 5}}
+  - {is: v_refer, from: o_e29_items, to: {is: v_level, from: e29_model_writes_cscl.n_items.mean_value, to: 24}}
+  - {is: v_refer, from: o_e29_extends_match, to: {is: v_level, from: e29_model_writes_cscl.n_extends_match.mean_value, to: 13}}
+  - {is: v_refer, from: o_e29_exact, to: {is: v_level, from: e29_model_writes_cscl.n_exact.mean_value, to: 1}}
+  - {is: v_contradict, from: o_e29_typechecks, to: h_model_can_write_cscl}
   - {is: v_support, from: o_e28_block_all_above_last, to: h_attention_causes_preceding_effect}
   - {is: v_support, from: o_e28_first_block_below_first, to: h_attention_causes_preceding_effect}
   - {is: v_contradict, from: o_e21_common_robust_below_none, to: h_common_component_transfers_to_unseen}
