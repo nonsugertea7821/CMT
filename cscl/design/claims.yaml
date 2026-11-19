@@ -119,6 +119,8 @@ individuals:
   h_gloss_formula: {is: exp.hyp_refuted}
   b_gloss_formula: {is: exp.item_done}
   h_negation_formula: {is: exp.hyp_untested}
+  h_law_given_as_rule: {is: exp.hyp_untested}
+  b_law_given_as_rule: {is: exp.item_queued}
   b_negation_formula: {is: exp.item_queued}
   h_comment_ban: {is: exp.hyp_supported}
   b_comment_ban: {is: exp.item_done}
@@ -550,6 +552,7 @@ facts:
   - {is: exp.v_ground, from: d_cscl_display_derived, to: h_collect_by_formula}
   - {is: exp.v_ground, from: d_cscl_display_derived, to: h_collect_agree_in_grammar}
   - {is: exp.v_ground, from: d_cscl_display_derived, to: h_negation_formula}
+  - {is: exp.v_ground, from: d_cscl_display_derived, to: h_law_given_as_rule}
   - {is: exp.v_ground, from: d_cscl_display_derived, to: h_placement_in_laws}
   - {is: exp.v_ground, from: d_cscl_display_derived, to: h_cscl_self_hosting}
   - {is: v_refer, from: d_cscl_trust_previous_version, to: {is: v_depend, from: type_checker, to: previous_checker}}
@@ -831,6 +834,8 @@ facts:
   - {is: exp.v_check, from: b_gloss_formula, to: h_gloss_formula}
   - {is: v_refer, from: h_negation_formula, to: {is: v_not_depend, from: negated_limitation, to: type_checker}}
   - {is: exp.v_check, from: b_negation_formula, to: h_negation_formula}
+  - {is: v_refer, from: h_law_given_as_rule, to: {is: v_not_depend, from: syntax.law_given, to: type_checker}}
+  - {is: exp.v_check, from: b_law_given_as_rule, to: h_law_given_as_rule}
   - {is: v_refer, from: h_comment_ban, to: {is: v_not_depend, from: definition, to: annotation}}
   - {is: exp.v_check, from: b_comment_ban, to: h_comment_ban}
   - {is: v_refer, from: o_sys_tops_ind_continuant, to: {is: v_level, from: sys_tops.ind_continuant.mean_value, to: 1.0}}
