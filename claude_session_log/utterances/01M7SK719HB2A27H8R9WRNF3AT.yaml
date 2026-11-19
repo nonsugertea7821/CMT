@@ -1,0 +1,42 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-19T09:46:42.353Z（UTC）
+individuals:
+  01M7SK719HB2A27H8R9WRNF3AT:
+    is: model_utterance
+    display: 発言 2452
+    val:
+      order: 2452
+      text: |
+        「識別子は概念を展開すれば決まる」という仮説（h_identifier_by_expansion）は反証でした。名前だけで区別されている組が見つかっています。
+
+        **結果（#328）**
+        - 全 729 ノードを展開し、名前と表示語を除いて比べました。
+        - 同じ形になった類は 5 つ、ノードは 10 個です。事前に決めた判定どおり反証です。
+        - tc と ec は通りました。
+        - 結果を体系に書き、push して、Draft を外しました。マージは確認をお願いします。
+
+        **どの組が一致したか**
+        - 本当に名前でしか区別されていないと見ている組（2 組、4 類）
+          - 入金する・承認する（v_pay / v_approve）と、入金・承認（payment / approval）
+          - 導く・成り立つことを求める（v_derive / v_require）と、その目的語（derived / required）
+          - 動詞の目的語が名詞で、名詞の修飾がまたその動詞を指す、という互いに参照し合う形をしています。
+          - この 2 組の違いは名前だけで、式にできていない区別、つまり負債です。
+        - 手順の欠点による見かけの一致と見ている組（1 類）
+          - 地方・倉庫（region / warehouse）です。
+          - 循環の途中で計算した値を使い回すため、たどり始める場所で結果が変わります。この欠点は事前登録で開示していました。
+          - 式をたどると、この 2 つは本来別になるはずです。
+        - 型検査の「動詞の式が同じ」という検査は、端の名前を展開せずに比べます。そのため、これらの組は捕まりません。
+
+        **次の仮説（#329、登録だけ）**
+        h_identifier_by_bisimulation として、次を予測しました。
+        - 循環をきちんと扱って比べ直すと（双模倣）、一致は上の 2 組 4 類だけに減ります。
+        - 予測どおり 4 類なら支持、それ以外なら反証です。
+        - 概念を足していないので、自動マージに乗る見込みです。
+
+        表示語をなくす方向とのつながり：予測どおりなら、入金と承認、導くと求めるの違いを式で書き分けない限り、表示語は消せません。
+facts:
+- {is: v_say, from: session_model, to: 01M7SK719HB2A27H8R9WRNF3AT}
+- {is: exp.v_answer, from: 01M7SK719HB2A27H8R9WRNF3AT, to: 01M7SGQA8VSGSY8VD5321SAS84}
+- {is: v_refer, from: 01M7SK719HB2A27H8R9WRNF3AT, to: subj.v_pay}
+- {is: v_refer, from: 01M7SK719HB2A27H8R9WRNF3AT, to: subj.v_approve}
+- {is: v_refer, from: 01M7SK719HB2A27H8R9WRNF3AT, to: syntax.v_derive}
+- {is: v_refer, from: 01M7SK719HB2A27H8R9WRNF3AT, to: syntax.v_require}
