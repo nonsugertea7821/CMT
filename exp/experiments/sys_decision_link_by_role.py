@@ -37,7 +37,19 @@
 
 行（sys_decision_link_by_role.json）: "case <名前>": {...}, "summary 要約": {n_case, n_match, base_ok, clean, cross_ok, verdict_support}
 使い方:
-  python exp/experiments/sys_decision_link_by_role.py
+  python exp/experiments/sys_decision_link_by_role.py       （一回目。結果は sys_decision_link_by_role.json）
+  python exp/experiments/sys_decision_link_by_role.py fix   （訂正。結果は sys_decision_link_by_role_fix.json）
+
+訂正（一回目の結果を見た後に書き足す。開示する）:
+  一回目は、base を含むすべての見本が「法則 named_mod に反する: exp.prior_decision, exp.basis が同じ限定を足している」で落ちた。
+  判定どおり外れとする（ctrl だけは、それに加えて「関係 continuant の事実が2つ以上ある」も出した）。
+  原因: 足した prior_decision の限定 {of: [v_depend, to], with: decision} が basis の限定と同じで、
+  体系の法則（同じ限定を足す概念が二つ以上あれば、名前を付けた修飾語で書く）に掛かった。役割の足し方の誤りで、
+  見込みの理由（欄 = 端の種類と many）とは関係しない。
+  訂正の手順: 名前を付けた修飾語 depend_to_from_decision: {display: 決定が依存する（終点）, extends: quality, of: [v_depend, to], with: decision}
+    を足し、prior_decision と、写しの basis の mod を、どちらもこの名前にする（中身の限定は同じ）。
+  見本・見込み・数え方・判定は一回目と同じ。一回目の結果ファイルは書き換えず、訂正は sys_decision_link_by_role_fix.json に書く。
+  訂正の前に走らせた見本はない。
 """
 import json
 import re
@@ -52,6 +64,11 @@ OUT = ROOT / "exp/experiments/results/sys_decision_link_by_role.json"
 PROBE = "d_probe"
 NODES = ["  prior_decision: {display: 前提となる決定, extends: decision, mod: {of: [v_depend, to], with: decision}, many: true}",
          "  v_presuppose: {display: 前提にする, extends: v_depend, from: decision, to: prior_decision}"]
+FIX = len(sys.argv) > 1 and sys.argv[1] == "fix"
+NAMED = "  depend_to_from_decision: {display: 決定が依存する（終点）, extends: quality, of: [v_depend, to], with: decision}"
+BASIS = "  basis: {display: 根拠となる仮説, extends: hypothesis, mod: {of: [v_depend, to], with: decision}, many: true}"
+if FIX:
+    NODES = [NAMED, NODES[0].replace("mod: {of: [v_depend, to], with: decision}", "mod: depend_to_from_decision"), NODES[1]]
 CONTENT = f"  - {{is: v_refer, from: {PROBE}, to: {{is: v_depend, from: decision, to: basis}}}}"
 CASES = {
     "base": ([], False, True),
@@ -64,6 +81,9 @@ CASES = {
 
 
 def patched(src, facts):
+    if FIX:
+        assert src.count(BASIS) == 1
+        src = src.replace(BASIS, BASIS.replace("mod: {of: [v_depend, to], with: decision}", "mod: depend_to_from_decision"))
     lines = src.split("\n")
     lines.insert(lines.index("nodes:") + 1, "\n".join(NODES))
     lines.insert(lines.index("individuals:") + 1, f"  {PROBE}: {{is: design_dec_tentative}}")
@@ -108,7 +128,8 @@ def main():
     s["verdict_support"] = 1 if s["base_ok"] and s["n_match"] == s["n_case"] and s["clean"] else 0
     rows["summary 要約"] = s
     rev = subprocess.run(["git", "rev-parse", "--short", "HEAD"], cwd=ROOT, capture_output=True, text=True).stdout.strip()
-    OUT.write_text(json.dumps({"rev": rev, "rows": rows}, ensure_ascii=False, indent=1), encoding="utf-8")
+    out = OUT.with_name("sys_decision_link_by_role_fix.json") if FIX else OUT
+    out.write_text(json.dumps({"rev": rev, "rows": rows}, ensure_ascii=False, indent=1), encoding="utf-8")
     print("summary", json.dumps(s, ensure_ascii=False))
 
 
