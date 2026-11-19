@@ -199,6 +199,8 @@ individuals:
   o_sys_step_symmetric: {is: exp.observation}
   o_sys_limit_mostly_open: {is: exp.observation}
   o_sys_limit_paired_open: {is: exp.observation}
+  h_checker_words_by_formula: {is: exp.hyp_untested}
+  b_checker_words_by_formula: {is: exp.item_queued}
   o_sys_limit_subj_unpaired: {is: exp.observation}
   o_sys_mod_no_stated_false: {is: exp.observation}
   o_sys_atom_no_stated_false: {is: exp.observation}
@@ -599,6 +601,8 @@ facts:
   - {is: v_refer, from: o_sys_differentia_creation_not_all_specific, to: {is: v_come_before, from: sys_differentia.creation_specific.mean_value, to: 1.0}}
   - {is: v_refer, from: o_sys_subsume_some_subsumed, to: {is: v_come_after, from: sys_subsume.has_subsumer.mean_value, to: 0.0}}
   - {is: v_refer, from: o_sys_subsume_never_under_subsumer, to: {is: v_level, from: sys_subsume.all_ancestors.mean_value, to: 0.0}}
+  - {is: v_refer, from: h_checker_words_by_formula, to: {is: v_depend, from: type_checker, to: [syntax.extends, syntax.mod]}}
+  - {is: exp.v_check, from: b_checker_words_by_formula, to: h_checker_words_by_formula}
   - {is: v_refer, from: o_sys_subsume_layer_not_all_usable, to: {is: v_come_before, from: sys_subsume.some_usable.mean_value, to: 1.0}}
   - {is: v_refer, from: o_sys_spelling_one_word_two_referents, to: {is: v_come_after, from: sys_spelling.multi.mean_value, to: 0.0}}
   - {is: v_refer, from: o_sys_special_outside_named, to: {is: v_come_after, from: sys_special.outside.mean_value, to: 0.0}}
