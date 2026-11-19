@@ -1,0 +1,29 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-19T07:27:53.601Z（UTC）
+individuals:
+  01M7SB8VR18F6FP4V5GCTT7RV5:
+    is: model_utterance
+    display: 発言 2347
+    val:
+      order: 2347
+      text: |
+        I tested h_glossary_raises_writing (E31): giving the model a list of usable words before it writes raises the number of lines the type checker accepts from 5 to 8 out of 24. By the rule fixed before the run, that counts as supported, but only just: +3 was exactly the threshold.
+
+        - **The model stopped inventing words:** lines using a word outside the list dropped from 10 to 1.
+        - **Lines now fail for different reasons:**
+          - a word placed where it isn't allowed: e.g. `goods` as the object of `v_store`;
+          - a broken system rule: e.g. a subtype that adds no qualifier of its own;
+          - a value written in a form the system can't read: e.g. `0..12`.
+        - **Passing doesn't mean correct:** the exact-match count fell from 1 to 0, and some accepted lines mean the wrong thing. For example, `admin` came out as "a person who designs organizations".
+        - **Small evidence base:** 24 items and a single deterministic run.
+
+        How I read it, together with E30: the vocabulary gap is closed, and the next limit is fitting words to the allowed slots and following the rules. The list already showed each verb's allowed subject and object types, and the model still put the wrong kinds there. Sending error messages back after the fact (E30) didn't fix it either.
+
+        Two follow-ups fall out of this: picking the passing line out of several attempts, and giving the glossary and the error feedback together. I haven't registered either as a hypothesis yet. Each needs a new concept to be written as a formula distinct from the existing ones, and adding concepts goes through your review.
+
+        PR #309 is out of draft and waiting for you. The type checker and experiment checks pass. The next 30-minute cycle is at 07:37Z.
+facts:
+- {is: v_say, from: session_model, to: 01M7SB8VR18F6FP4V5GCTT7RV5}
+- {is: exp.v_answer, from: 01M7SB8VR18F6FP4V5GCTT7RV5, to: 01M7RE4494JDFW71WBNAW679KX}
+- {is: v_refer, from: 01M7SB8VR18F6FP4V5GCTT7RV5, to: subj.goods}
+- {is: v_refer, from: 01M7SB8VR18F6FP4V5GCTT7RV5, to: subj.v_store}
+- {is: v_refer, from: 01M7SB8VR18F6FP4V5GCTT7RV5, to: subj.admin}
