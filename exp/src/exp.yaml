@@ -1315,6 +1315,15 @@ individuals:
   geo_interval_cut_midpoint_cond_ends_single: {is: axis_value, val: {text: ends_single}}
   geo_interval_cut_midpoint_cond_gap_mixed: {is: axis_value, val: {text: gap_mixed}}
   geo_interval_cut_midpoint_cond_verdict_support: {is: axis_value, val: {text: verdict_support}}
+  geo_cross_genus_midpoint_models: {is: measurement_family}
+  geo_cross_genus_midpoint_models_cond: {is: family_axis, val: {text: cond}}
+  geo_cross_genus_midpoint_models_cond_n_judged: {is: axis_value, val: {text: n_judged}}
+  geo_cross_genus_midpoint_models_cond_n_hold: {is: axis_value, val: {text: n_hold}}
+  geo_cross_genus_midpoint_models_cond_diff_llmjp: {is: axis_value, val: {text: diff_llmjp}}
+  geo_cross_genus_midpoint_models_cond_diff_sarashina: {is: axis_value, val: {text: diff_sarashina}}
+  geo_cross_genus_midpoint_models_cond_diff_qwen15: {is: axis_value, val: {text: diff_qwen15}}
+  geo_cross_genus_midpoint_models_cond_diff_qwen05: {is: axis_value, val: {text: diff_qwen05}}
+  geo_cross_genus_midpoint_models_cond_verdict_support: {is: axis_value, val: {text: verdict_support}}
   sys_value_refers_hypothesis: {is: measurement_family}
   sys_value_refers_hypothesis_cond: {is: family_axis, val: {text: cond}}
   sys_value_refers_hypothesis_cond_n_obs: {is: axis_value, val: {text: n_obs}}
@@ -2237,6 +2246,10 @@ individuals:
   o_geo_interval_gap_single: {is: observation}
   o_geo_interval_not_all_above: {is: observation}
   o_geo_interval_middle_above_ends: {is: observation}
+  o_geo_models_judged: {is: observation}
+  o_geo_models_all_hold: {is: observation}
+  o_geo_models_llmjp: {is: observation}
+  o_geo_models_sarashina: {is: observation}
 
   h_prosody_carries_mod: {is: hyp_untested}
   b_prosody_carries_mod: {is: item_queued}
@@ -2302,8 +2315,8 @@ individuals:
   b_interval_cut_raises_midpoint: {is: item_done}
   h_midpoint_depends_genus: {is: hyp_untested}
   b_midpoint_depends_genus: {is: item_queued}
-  h_midpoint_depends_model: {is: hyp_untested}
-  b_midpoint_depends_model: {is: item_queued}
+  h_midpoint_depends_model: {is: hyp_refuted}
+  b_midpoint_depends_model: {is: item_done}
 facts:
   - {is: v_collect, from: residual_space, to: residual_vector}
   - {is: v_sum, from: layer_output, to: state_shift, new: shifted_hidden_state}
@@ -5088,6 +5101,30 @@ facts:
   - {is: v_refer, from: o_geo_interval_not_all_above, to: {is: v_level, from: geo_interval_cut_midpoint.all_single_above.mean_value, to: 0}}
   - {is: v_refer, from: o_geo_interval_middle_above_ends, to: {is: v_come_after, from: geo_interval_cut_midpoint.middle_single.mean_value, to: geo_interval_cut_midpoint.ends_single.mean_value}}
   - {is: v_contradict, from: o_geo_interval_not_all_above, to: h_interval_cut_raises_midpoint}
+  - {is: v_file_of, from: geo_cross_genus_midpoint_models.json, to: geo_cross_genus_midpoint_models}
+  - {is: v_rows_of, from: [rows], to: geo_cross_genus_midpoint_models}
+  - {is: v_axis_of, from: geo_cross_genus_midpoint_models_cond, to: geo_cross_genus_midpoint_models}
+  - {is: v_value_of, from: geo_cross_genus_midpoint_models_cond_n_judged, to: geo_cross_genus_midpoint_models_cond}
+  - {is: v_spell, from: geo_cross_genus_midpoint_models_cond_n_judged, to: n_judged}
+  - {is: v_value_of, from: geo_cross_genus_midpoint_models_cond_n_hold, to: geo_cross_genus_midpoint_models_cond}
+  - {is: v_spell, from: geo_cross_genus_midpoint_models_cond_n_hold, to: n_hold}
+  - {is: v_value_of, from: geo_cross_genus_midpoint_models_cond_diff_llmjp, to: geo_cross_genus_midpoint_models_cond}
+  - {is: v_spell, from: geo_cross_genus_midpoint_models_cond_diff_llmjp, to: diff_llmjp}
+  - {is: v_value_of, from: geo_cross_genus_midpoint_models_cond_diff_sarashina, to: geo_cross_genus_midpoint_models_cond}
+  - {is: v_spell, from: geo_cross_genus_midpoint_models_cond_diff_sarashina, to: diff_sarashina}
+  - {is: v_value_of, from: geo_cross_genus_midpoint_models_cond_diff_qwen15, to: geo_cross_genus_midpoint_models_cond}
+  - {is: v_spell, from: geo_cross_genus_midpoint_models_cond_diff_qwen15, to: diff_qwen15}
+  - {is: v_value_of, from: geo_cross_genus_midpoint_models_cond_diff_qwen05, to: geo_cross_genus_midpoint_models_cond}
+  - {is: v_spell, from: geo_cross_genus_midpoint_models_cond_diff_qwen05, to: diff_qwen05}
+  - {is: v_value_of, from: geo_cross_genus_midpoint_models_cond_verdict_support, to: geo_cross_genus_midpoint_models_cond}
+  - {is: v_spell, from: geo_cross_genus_midpoint_models_cond_verdict_support, to: verdict_support}
+  - {is: v_entry_of, from: '{cond}', to: geo_cross_genus_midpoint_models}
+  - {is: v_metric_of, from: geo_cross_genus_midpoint_models, to: mean_value}
+  - {is: v_refer, from: o_geo_models_judged, to: {is: v_level, from: geo_cross_genus_midpoint_models.n_judged.mean_value, to: 2}}
+  - {is: v_refer, from: o_geo_models_all_hold, to: {is: v_level, from: geo_cross_genus_midpoint_models.n_hold.mean_value, to: 2}}
+  - {is: v_refer, from: o_geo_models_llmjp, to: {is: v_near, from: geo_cross_genus_midpoint_models.diff_llmjp.mean_value, to: 0.579, new: 0.001}}
+  - {is: v_refer, from: o_geo_models_sarashina, to: {is: v_near, from: geo_cross_genus_midpoint_models.diff_sarashina.mean_value, to: 0.643, new: 0.001}}
+  - {is: v_contradict, from: o_geo_models_all_hold, to: h_midpoint_depends_model}
   - {is: v_file_of, from: sys_value_refers_hypothesis.json, to: sys_value_refers_hypothesis}
   - {is: v_rows_of, from: [rows], to: sys_value_refers_hypothesis}
   - {is: v_axis_of, from: sys_value_refers_hypothesis_cond, to: sys_value_refers_hypothesis}
