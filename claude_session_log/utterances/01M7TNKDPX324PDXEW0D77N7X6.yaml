@@ -1,0 +1,32 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-19T19:47:39.869Z（UTC）
+individuals:
+  01M7TNKDPX324PDXEW0D77N7X6:
+    is: model_utterance
+    display: 発言 2689
+    val:
+      order: 2689
+      text: |
+        h_collect_by_formula（#304）を確かめ、PR #398 を開きました。結果は反証です。Draft は外し、tc と ec は手元で通りました。
+
+        **分かったこと**
+        - 検査器は、集める動詞（v_collect）を名前で読んでいます。これを「始点の種類が、その動詞の始点であることで定義されている」という式に替えてみました。
+        - この式に当てはまる動詞は 30 個ありました。v_collect とその下位の 2 個のほかに、規則の動詞（v_assume・v_require など）や、exp・subj の動詞が 28 個入りました。
+        - 写しの検査器をこの式に替えると、種類の集まりが 1 個から 349 個に増え、誤りが 1905 件出ました。
+        - 対照として、名前を付け替えただけの写しでは、集まりが 0 になりました。#301 と同じことが起きたので、名前で読むことの弱さはあらためて確かめられました。
+
+        **解釈と新しい仮説**
+        - 「始点の種類を、動詞の始点であることで定義する」形は、集める動詞に限らず広く使われていて、区別の手がかりになりませんでした。
+        - 集める動詞に固有なのは、端の段のほうだと考えます。始点は個体、終点は種類です。法則 collection_level が見ているのも、この段です。
+        - そこで `h_collect_by_end_order`（未検証）を同じ PR で登録し、ロードマップの決定 d_cscl_display_derived に結びました。
+
+        **あなたのマージ待ち**
+        - #387、#394、#395、#396、#397 は、手で見る必要があります。
+        - #398 は反証なので、自動マージの条件を満たせばワークフローがマージします。
+
+        ロードマップでは、識別子化の列の h_collect_by_formula まで進みました。次は h_collect_agree_in_grammar です。
+facts:
+- {is: v_say, from: session_model, to: 01M7TNKDPX324PDXEW0D77N7X6}
+- {is: exp.v_answer, from: 01M7TNKDPX324PDXEW0D77N7X6, to: 01M7TA7A145QS5NA0XWZR9ST0Q}
+- {is: v_refer, from: 01M7TNKDPX324PDXEW0D77N7X6, to: syntax.v_collect}
+- {is: v_refer, from: 01M7TNKDPX324PDXEW0D77N7X6, to: syntax.v_assume}
+- {is: v_refer, from: 01M7TNKDPX324PDXEW0D77N7X6, to: syntax.v_require}
