@@ -41,7 +41,17 @@
 行（sys_fact_slot_by_end.json）: "case <名前>": {facts, expect_fail, exit, n_err, slot_err, other_err, fails, match},
   "summary 要約": {n_case, n_match, base_ok, clean（落ちる見本の誤りが slot_err だけか）, verdict_support}
 使い方:
-  python exp/experiments/sys_fact_slot_by_end.py
+  python exp/experiments/sys_fact_slot_by_end.py        （一回目。結果は sys_fact_slot_by_end.json）
+  python exp/experiments/sys_fact_slot_by_end.py fix    （訂正。結果は sys_fact_slot_by_end_fix.json）
+
+訂正（一回目の結果を見た後に書き足す。開示する）:
+  一回目は、base を含む 7 つの見本すべてが終了コード 1 で落ち、誤りの行は出なかった。判定どおり外れとする。
+  原因: exp の検査器（exp_check.py の triple）は、決定に v_refer の中身（s, p, o）があることを前提にしていて、
+  中身のない d_probe で KeyError になり、誤りを数える前に止まった。見本の作り方の誤りで、見込みの理由とは関係しない。
+  訂正の手順: どの見本にも、d_probe の中身として {is: v_refer, from: d_probe, to: {is: v_depend, from: decision, to: basis}} を足す。
+    v_refer の中身は個体の欄 s・p・o に入り、端の種類の欄（continuant、basis）とは別なので、見込みは変えない。
+  見本・見込み・数え方・判定は一回目と同じ。一回目の結果ファイルは書き換えず、訂正は sys_fact_slot_by_end_fix.json に書く。
+  訂正の前に、写しで base（中身の文だけを足したもの）が通ることだけを確かめた。ほかの見本は走らせていない。
 """
 import json
 import re
@@ -65,13 +75,17 @@ CASES = {
 }
 
 
+FIX = len(sys.argv) > 1 and sys.argv[1] == "fix"
+CONTENT = f"  - {{is: v_refer, from: {PROBE}, to: {{is: v_depend, from: decision, to: basis}}}}"
+
+
 def patched(src, facts):
     lines = src.split("\n")
     i = lines.index("individuals:")
     lines.insert(i + 1, f"  {PROBE}: {{is: design_dec_tentative}}")
     while lines and lines[-1] == "":
         lines.pop()
-    lines += [f"  - {{is: {v}, from: {PROBE}, to: {t}}}" for v, t in facts]
+    lines += ([CONTENT] if FIX else []) + [f"  - {{is: {v}, from: {PROBE}, to: {t}}}" for v, t in facts]
     return "\n".join(lines) + "\n"
 
 
@@ -108,7 +122,8 @@ def main():
     s["verdict_support"] = 1 if s["base_ok"] and s["n_match"] == s["n_case"] and s["clean"] else 0
     rows["summary 要約"] = s
     rev = subprocess.run(["git", "rev-parse", "--short", "HEAD"], cwd=ROOT, capture_output=True, text=True).stdout.strip()
-    OUT.write_text(json.dumps({"rev": rev, "rows": rows}, ensure_ascii=False, indent=1), encoding="utf-8")
+    out = OUT.with_name("sys_fact_slot_by_end_fix.json") if FIX else OUT
+    out.write_text(json.dumps({"rev": rev, "rows": rows}, ensure_ascii=False, indent=1), encoding="utf-8")
     print("summary", json.dumps(s, ensure_ascii=False))
 
 
