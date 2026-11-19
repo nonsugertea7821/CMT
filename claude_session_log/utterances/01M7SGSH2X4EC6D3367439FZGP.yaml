@@ -1,0 +1,30 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-19T09:04:22.621Z（UTC）
+individuals:
+  01M7SGSH2X4EC6D3367439FZGP:
+    is: model_utterance
+    display: 発言 2431
+    val:
+      order: 2431
+      text: |
+        ご指摘のとおり、混ざっていました。#324 を直しました。
+
+        **どこで混ざっていたか**
+        - 仮説の中心にした `refer_placement` を、既存の `layer_placement`（表示は「層の置き場」）の下に置いていました。
+        - `layer_placement` の式は「領域に依存する性質」です。ところが表示は「層」と言っています。私はその表示につられて、層と領域を同じものとして扱っていました。
+
+        **直した形**
+        - `refer_placement` は消しました。
+        - 仮説は「型検査器は、文に述べられる文と、その領域に依存する」としました。式は `to: [referred_sentence, syntax.domain]` です。
+        - 読みは「同じ領域の中では、文を述べる文を書けない。述べたいときは、別の領域を立てて上書きする」です。層（規則から導かれる分類）は、この仮説には入りません。
+        - tc・ec は手元で 0 です。
+
+        **気づいたこと**
+        - 既存の h_layers_* の仮説群は、「`layer_placement`（式では領域）が signature_class（導かれる層）に依存する」と述べています。
+        - 今回の区別で読み直すと、これらの仮説には「領域は層に従って決まる」という前提が入っていることになります。領域を上書きの単位と見るなら、この前提は成り立たなくてよいはずです。
+        - この点は PR に事実として書くだけにしました。どう扱うかは、まだ決めていません。
+facts:
+- {is: v_say, from: session_model, to: 01M7SGSH2X4EC6D3367439FZGP}
+- {is: exp.v_answer, from: 01M7SGSH2X4EC6D3367439FZGP, to: 01M7SGQA8VSGSY8VD5321SAS84}
+- {is: v_refer, from: 01M7SGSH2X4EC6D3367439FZGP, to: lang.layer_placement}
+- {is: v_refer, from: 01M7SGSH2X4EC6D3367439FZGP, to: syntax.domain}
+- {is: v_refer, from: 01M7SGSH2X4EC6D3367439FZGP, to: lang.signature_class}
