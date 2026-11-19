@@ -1,0 +1,45 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-19T08:29:15.466Z（UTC）
+individuals:
+  01M7SES7AA365X0A1NGFV09JAA:
+    is: model_utterance
+    display: 発言 2390
+    val:
+      order: 2390
+      text: |
+        おっしゃるとおりで、「発話」は誤りです。
+
+        **#318 の式の問題**
+        - 表したかったのは「LLM が出現する前」です。ところが `model_utterance`（モデルの発話）より前、と書いてしまいました。
+        - これだと、どれか一つのモデルの発話より前なら当てはまります。最新の発話より前の文章はほぼすべて入るので、限定として働きません。
+        - #318 はマージせずにおいてください。出現の概念が決まってから、直します。
+
+        **出現に当たる概念は、名前を付けた形ではありません**
+        - 出現は、動詞の前後の状態として書かれています。「前の状態で終点が在らず、後の状態で在る」という枠です。
+        - この枠は、`v_design`（設計する）、`v_compute`（計算する）、`v_speak`（発話する）の 3 つに、別々に書かれています。まとめた概念はありません。
+        - 試しに、この枠だけを持つ動詞（終点を在らせる）を足してみました。型検査器は「`v_compute` と式が同じ」と言って拒みました。
+          - つまり `v_compute` は、式の上では出現そのものです。「計算する」という意味は、表示語にしかありません。
+          - display の廃止という目標にとって、具体的な負債が一つ見つかったことになります。
+        - `occurrent`（生起体）自身は、自分の始まりと終わり（在らなかったものが在るようになる、その逆）を `sometime` で持っています。ただしこれは出来事そのものの始まりで、終点の出現ではありません。
+
+        **`new` は出現ではありません**
+        - `new` は「第三の位置」で、三項の動詞の三つめの参与者です。たとえば `v_adopt`（採用する）の役割や、`v_expose`（公開する）の第三のものです。
+        - 新しく現れるものを表してはいません。名前から受ける印象と、式の意味がずれています。
+
+        **登録した仮説**
+        - `h_appear_root`: 出現は、名前ではなく前後の状態の指定から導ける動詞の分類である（PR #319）。
+        - そう置けば、`v_compute` のように「式は出現と同じで、差は表示語にしかない」動詞を、検査が見つけられるようになります。
+        - 最初の commit は、型検査が落ちたまま push してしまいました。動詞を、依存の関係の始点に置いていたためです。次の commit で直し、PR に開示しました。
+
+        **#318 の直し方**
+        仮説を確かめて出現の分類ができたら、`pre_model_passage` を「モデルの出現より前に置かれる、公開された文章」と書き直します。
+facts:
+- {is: v_say, from: session_model, to: 01M7SES7AA365X0A1NGFV09JAA}
+- {is: exp.v_answer, from: 01M7SES7AA365X0A1NGFV09JAA, to: 01M7SEKXEVV86KANFV1R56260T}
+- {is: v_refer, from: 01M7SES7AA365X0A1NGFV09JAA, to: claude_session_log.model_utterance}
+- {is: v_refer, from: 01M7SES7AA365X0A1NGFV09JAA, to: ontology.v_design}
+- {is: v_refer, from: 01M7SES7AA365X0A1NGFV09JAA, to: std.v_compute}
+- {is: v_refer, from: 01M7SES7AA365X0A1NGFV09JAA, to: exp.v_speak}
+- {is: v_refer, from: 01M7SES7AA365X0A1NGFV09JAA, to: ontology.occurrent}
+- {is: v_refer, from: 01M7SES7AA365X0A1NGFV09JAA, to: syntax.new}
+- {is: v_refer, from: 01M7SES7AA365X0A1NGFV09JAA, to: exp.v_adopt}
+- {is: v_refer, from: 01M7SES7AA365X0A1NGFV09JAA, to: exp.v_expose}
