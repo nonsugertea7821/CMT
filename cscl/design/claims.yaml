@@ -186,6 +186,8 @@ individuals:
   b_fact_slot_by_end: {is: exp.item_done}
   h_fact_slot_by_verb: {is: exp.hyp_untested}
   b_fact_slot_by_verb: {is: exp.item_queued}
+  h_fact_slot_keeps_each_verb: {is: exp.hyp_untested}
+  b_fact_slot_keeps_each_verb: {is: exp.item_queued}
   h_frame_both_sides: {is: exp.hyp_untested}
   h_rule_verbs_unhardcode: {is: exp.hyp_refuted}
   b_rule_verbs_unhardcode: {is: exp.item_done}
@@ -716,6 +718,9 @@ facts:
   - {is: v_refer, from: h_fact_slot_by_verb, to: {is: v_depend, from: type_checker, to: syntax.refer_from_occurrent}}
   - {is: exp.v_check, from: b_fact_slot_by_verb, to: h_fact_slot_by_verb}
   - {is: exp.v_ground, from: d_cscl_display_derived, to: h_fact_slot_by_verb}
+  - {is: v_refer, from: h_fact_slot_keeps_each_verb, to: {is: v_depend, from: type_checker, to: [syntax.refer_from_occurrent, syntax.position]}}
+  - {is: exp.v_check, from: b_fact_slot_keeps_each_verb, to: h_fact_slot_keeps_each_verb}
+  - {is: exp.v_ground, from: d_cscl_display_derived, to: h_fact_slot_keeps_each_verb}
   - {is: v_refer, from: h_rule_verbs_unhardcode, to: {is: v_depend, from: type_checker, to: [syntax.pre, syntax.post, syntax.holds]}}
   - {is: exp.v_check, from: b_rule_verbs_unhardcode, to: h_rule_verbs_unhardcode}
   - {is: v_refer, from: h_frame_both_sides, to: {is: v_depend, from: syntax.pre, to: syntax.post}}

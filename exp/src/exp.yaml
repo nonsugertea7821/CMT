@@ -2338,6 +2338,8 @@ individuals:
   b_model_attachment_differs: {is: item_queued}
   h_writing_depends_checker: {is: hyp_untested}
   b_writing_depends_checker: {is: item_queued}
+  h_check_reports_contentless: {is: hyp_untested}
+  b_check_reports_contentless: {is: item_queued}
   h_qualification_depends_above: {is: hyp_untested}
   b_qualification_depends_above: {is: item_queued}
   h_multi_layer_transfers_to_explain: {is: hyp_untested}
@@ -6457,6 +6459,9 @@ facts:
   - {is: v_check, from: b_model_attachment_differs, to: h_model_attachment_differs}
   - {is: v_refer, from: h_writing_depends_checker, to: {is: v_depend, from: formalization_accuracy, to: lang.type_checker}}
   - {is: v_check, from: b_writing_depends_checker, to: h_writing_depends_checker}
+  - {is: v_refer, from: h_check_reports_contentless, to: {is: v_depend, from: type_check_result, to: syntax.refer_to_sentence}}
+  - {is: v_check, from: b_check_reports_contentless, to: h_check_reports_contentless}
+  - {is: v_ground, from: d_road_checker, to: h_check_reports_contentless}
   - {is: v_refer, from: h_qualification_depends_above, to: {is: v_depend, from: qualification_vector, to: lang.above_order}}
   - {is: v_check, from: b_qualification_depends_above, to: h_qualification_depends_above}
   - {is: v_refer, from: h_hypothesis_depends_factor, to: {is: v_depend, from: hypothesis, to: factor}}
