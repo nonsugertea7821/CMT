@@ -1271,6 +1271,16 @@ individuals:
   sys_definition_bridges_value_cond_n_bridged: {is: axis_value, val: {text: n_bridged}}
   sys_definition_bridges_value_cond_n_miss_star_all: {is: axis_value, val: {text: n_miss_star_all}}
   sys_definition_bridges_value_cond_n_empty_side_star: {is: axis_value, val: {text: n_empty_side_star}}
+  sys_factor_depends_value: {is: measurement_family}
+  sys_factor_depends_value_cond: {is: family_axis, val: {text: cond}}
+  sys_factor_depends_value_cond_n_miss: {is: axis_value, val: {text: n_miss}}
+  sys_factor_depends_value_cond_n_unbridgeable: {is: axis_value, val: {text: n_unbridgeable}}
+  sys_factor_depends_value_cond_n_bridge_facts: {is: axis_value, val: {text: n_bridge_facts}}
+  sys_factor_depends_value_cond_share: {is: axis_value, val: {text: share}}
+  sys_factor_depends_value_cond_B_errors: {is: axis_value, val: {text: B_errors}}
+  sys_factor_depends_value_cond_B_ec_errors: {is: axis_value, val: {text: B_ec_errors}}
+  sys_factor_depends_value_cond_L_errors: {is: axis_value, val: {text: L_errors}}
+  sys_factor_depends_value_cond_L_ec_errors: {is: axis_value, val: {text: L_ec_errors}}
   sys_value_refers_hypothesis: {is: measurement_family}
   sys_value_refers_hypothesis_cond: {is: family_axis, val: {text: cond}}
   sys_value_refers_hypothesis_cond_n_obs: {is: axis_value, val: {text: n_obs}}
@@ -2153,8 +2163,8 @@ individuals:
   h_hypothesis_refers_family: {is: hyp_refuted}
   h_family_refers_laws: {is: hyp_supported}
   b_hypothesis_refers_family: {is: item_done}
-  h_factor_depends_value: {is: hyp_untested}
-  b_factor_depends_value: {is: item_queued}
+  h_factor_depends_value: {is: hyp_refuted}
+  b_factor_depends_value: {is: item_done}
   h_definition_bridges_value: {is: hyp_refuted}
   b_definition_bridges_value: {is: item_done}
   o_sys_family_refers_shared: {is: observation}
@@ -2172,6 +2182,12 @@ individuals:
   o_sys_definition_bridges_miss: {is: observation}
   o_sys_definition_bridges_bridged: {is: observation}
   o_sys_definition_bridges_nonempty: {is: observation}
+  o_sys_factor_unbridgeable: {is: observation}
+  o_sys_factor_miss: {is: observation}
+  o_sys_factor_bridge_facts: {is: observation}
+  o_sys_factor_share: {is: observation}
+  o_sys_factor_errors: {is: observation}
+  o_sys_factor_ec_errors: {is: observation}
 
   h_prosody_carries_mod: {is: hyp_untested}
   b_prosody_carries_mod: {is: item_queued}
@@ -4894,6 +4910,35 @@ facts:
   - {is: v_spell, from: sys_definition_bridges_value_cond_n_empty_side_star, to: n_empty_side_star}
   - {is: v_entry_of, from: '{cond}', to: sys_definition_bridges_value}
   - {is: v_metric_of, from: sys_definition_bridges_value, to: mean_value}
+  - {is: v_file_of, from: sys_factor_depends_value.json, to: sys_factor_depends_value}
+  - {is: v_rows_of, from: [rows], to: sys_factor_depends_value}
+  - {is: v_axis_of, from: sys_factor_depends_value_cond, to: sys_factor_depends_value}
+  - {is: v_value_of, from: sys_factor_depends_value_cond_n_miss, to: sys_factor_depends_value_cond}
+  - {is: v_spell, from: sys_factor_depends_value_cond_n_miss, to: n_miss}
+  - {is: v_value_of, from: sys_factor_depends_value_cond_n_unbridgeable, to: sys_factor_depends_value_cond}
+  - {is: v_spell, from: sys_factor_depends_value_cond_n_unbridgeable, to: n_unbridgeable}
+  - {is: v_value_of, from: sys_factor_depends_value_cond_n_bridge_facts, to: sys_factor_depends_value_cond}
+  - {is: v_spell, from: sys_factor_depends_value_cond_n_bridge_facts, to: n_bridge_facts}
+  - {is: v_value_of, from: sys_factor_depends_value_cond_share, to: sys_factor_depends_value_cond}
+  - {is: v_spell, from: sys_factor_depends_value_cond_share, to: share}
+  - {is: v_value_of, from: sys_factor_depends_value_cond_B_errors, to: sys_factor_depends_value_cond}
+  - {is: v_spell, from: sys_factor_depends_value_cond_B_errors, to: B_errors}
+  - {is: v_value_of, from: sys_factor_depends_value_cond_B_ec_errors, to: sys_factor_depends_value_cond}
+  - {is: v_spell, from: sys_factor_depends_value_cond_B_ec_errors, to: B_ec_errors}
+  - {is: v_value_of, from: sys_factor_depends_value_cond_L_errors, to: sys_factor_depends_value_cond}
+  - {is: v_spell, from: sys_factor_depends_value_cond_L_errors, to: L_errors}
+  - {is: v_value_of, from: sys_factor_depends_value_cond_L_ec_errors, to: sys_factor_depends_value_cond}
+  - {is: v_spell, from: sys_factor_depends_value_cond_L_ec_errors, to: L_ec_errors}
+  - {is: v_entry_of, from: '{cond}', to: sys_factor_depends_value}
+  - {is: v_metric_of, from: sys_factor_depends_value, to: mean_value}
+  - {is: v_refer, from: o_sys_factor_unbridgeable, to: {is: v_level, from: sys_factor_depends_value.n_unbridgeable.mean_value, to: 19}}
+  - {is: v_refer, from: o_sys_factor_miss, to: {is: v_level, from: sys_factor_depends_value.n_miss.mean_value, to: 37}}
+  - {is: v_refer, from: o_sys_factor_bridge_facts, to: {is: v_level, from: sys_factor_depends_value.n_bridge_facts.mean_value, to: 29}}
+  - {is: v_refer, from: o_sys_factor_share, to: {is: v_level, from: sys_factor_depends_value.share.mean_value, to: 1.611}}
+  - {is: v_refer, from: o_sys_factor_errors, to: {is: v_level, from: sys_factor_depends_value.B_errors.mean_value, to: 4}}
+  - {is: v_refer, from: o_sys_factor_ec_errors, to: {is: v_level, from: sys_factor_depends_value.B_ec_errors.mean_value, to: 4}}
+  - {is: v_contradict, from: o_sys_factor_unbridgeable, to: h_factor_depends_value}
+  - {is: v_contradict, from: o_sys_factor_errors, to: h_factor_depends_value}
   - {is: v_file_of, from: sys_value_refers_hypothesis.json, to: sys_value_refers_hypothesis}
   - {is: v_rows_of, from: [rows], to: sys_value_refers_hypothesis}
   - {is: v_axis_of, from: sys_value_refers_hypothesis_cond, to: sys_value_refers_hypothesis}
