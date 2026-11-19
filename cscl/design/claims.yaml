@@ -209,8 +209,8 @@ individuals:
   h_concept_kind_frame_free: {is: exp.hyp_untested}
   b_concept_kind_frame_free: {is: exp.item_queued}
   h_case_frame_by_role: {is: exp.hyp_withdrawn}
-  h_case_frame_by_signature: {is: exp.hyp_untested}
-  b_case_frame_by_signature: {is: exp.item_queued}
+  h_case_frame_by_signature: {is: exp.hyp_refuted}
+  b_case_frame_by_signature: {is: exp.item_done}
   h_annotation_gold: {is: exp.hyp_withdrawn}
   h_frame_closed: {is: exp.hyp_withdrawn}
   h_definition_positive: {is: exp.hyp_supported}
@@ -451,6 +451,8 @@ individuals:
   o_sys_collect_patch_differs: {is: exp.observation}
   o_sys_collect_grammar_n1_fails: {is: exp.observation}
   o_sys_collect_grammar_n2_changes: {is: exp.observation}
+  o_sys_cf_sig_acc: {is: exp.observation}
+  o_sys_cf_sig_below: {is: exp.observation}
   o_sys_any_by_entail_passes_checks: {is: exp.observation}
   o_sys_any_by_entail_passes_ec: {is: exp.observation}
   o_sys_any_by_entail_ideal: {is: exp.observation}
@@ -808,6 +810,9 @@ facts:
   - {is: v_refer, from: h_case_frame_by_role, to: {is: v_depend, from: case_frame, to: syntax.role}}
   - {is: v_refer, from: h_case_frame_by_signature, to: {is: v_depend, from: case_frame, to: signature_class}}
   - {is: exp.v_check, from: b_case_frame_by_signature, to: h_case_frame_by_signature}
+  - {is: v_refer, from: o_sys_cf_sig_acc, to: {is: v_level, from: sys_case_frame_by_signature.acc_signature.mean_value, to: 0.1667}}
+  - {is: v_refer, from: o_sys_cf_sig_below, to: {is: v_come_before, from: sys_case_frame_by_signature.acc_signature.mean_value, to: sys_case_frame_by_signature.acc_display.mean_value}}
+  - {is: exp.v_contradict, from: o_sys_cf_sig_below, to: h_case_frame_by_signature}
   - {is: v_refer, from: h_annotation_gold, to: {is: v_depend, from: ja_readback, to: annotation}}
   - {is: v_refer, from: h_gloss_formula, to: {is: v_not_depend, from: top_placement, to: syntax.gloss}}
   - {is: exp.v_check, from: b_gloss_formula, to: h_gloss_formula}
