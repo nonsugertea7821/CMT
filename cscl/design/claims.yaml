@@ -179,6 +179,8 @@ individuals:
   b_boundary_invariant: {is: exp.item_done}
   h_refer_stratified: {is: exp.hyp_untested}
   b_refer_stratified: {is: exp.item_queued}
+  h_frame_both_sides: {is: exp.hyp_untested}
+  b_frame_both_sides: {is: exp.item_queued}
   h_case_frame_formula: {is: exp.hyp_refuted}
   b_case_frame_formula: {is: exp.item_done}
   h_case_frame_by_relation: {is: exp.hyp_refuted}
@@ -630,6 +632,8 @@ facts:
   - {is: exp.v_check, from: b_boundary_invariant, to: h_boundary_invariant}
   - {is: v_refer, from: h_refer_stratified, to: {is: v_depend, from: type_checker, to: [referred_sentence, syntax.domain]}}
   - {is: exp.v_check, from: b_refer_stratified, to: h_refer_stratified}
+  - {is: v_refer, from: h_frame_both_sides, to: {is: v_depend, from: syntax.pre, to: syntax.post}}
+  - {is: exp.v_check, from: b_frame_both_sides, to: h_frame_both_sides}
   - {is: v_refer, from: o_sys_boundary_post_passes, to: {is: v_level, from: sys_boundary_invariant.R_errors.mean_value, to: 0.0}}
   - {is: v_refer, from: o_sys_boundary_post_passes_ec, to: {is: v_level, from: sys_boundary_invariant.R_ec_errors.mean_value, to: 0.0}}
   - {is: v_refer, from: o_sys_boundary_post_unchanged, to: {is: v_level, from: sys_boundary_invariant.R_changed.mean_value, to: 0.0}}
