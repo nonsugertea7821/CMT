@@ -1,0 +1,40 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-19T13:05:37.138Z（UTC）
+individuals:
+  01M7SYK8BJKX8CJSDYHPN9HG5R:
+    is: model_utterance
+    display: 発言 2499
+    val:
+      order: 2499
+      text: |
+        identifier の話としてなら、そのとおりだと思います。前に聞いた「一意化のための名前」とも合います。意味は式から演繹され、identifier は区別を付けるためだけにある、という読みです。
+
+        **今の体系で、その前提が成り立っているか**
+        まだ成り立っていません。これまでの測定がそのまま答えになっています。
+        - 双模倣（#331）で、式の構造が同じなのに identifier だけで区別されているノードが、4 組・10 個見つかりました。
+          - {derived, premise, required}
+          - {v_assume, v_derive, v_require}
+          - {approval, payment}
+          - {v_approve, v_pay}
+        - 法則の役割の動詞の組は、枠の位置で構造として書き分けられるようになりました（#335、支持）。
+        - approval/payment と v_approve/v_pay は、今も identifier だけで区別されています。
+
+        **検査がこれを見つけられない理由**
+        - 法則 one_name は、比べる組が式で違うこと（r_differ）を求めています。役割から見ると、「identifier だけで区別してはいけない」を検査しているはずの法則です。
+        - ところが、式が違うかどうか（r_has・r_lacks）は、参照先の名前を原子として比べています。v_assume と v_require が違うと判定されるのは、to が premise か required かで違うからです。その premise と required も、元をたどれば名前でしか違いません。
+        - そのため 4 組があっても tc は誤り 0 で通ります。今の検査は、identifier を消せるかどうかを測れていません。
+
+        **concept_kind の対への含意**
+        - 比べる軸は「表示語に合うか」ではなく、identifier だけの区別を検査が拾える範囲が広がるか狭まるかです。
+        - 動詞を「概念」から外す方（excludes_verb）を取ると、動詞が one_name の対象から抜けます。v_approve と v_pay のような組を拾う道が、さらに遠のきます。
+        - 動詞を残す方を取っても、比べ方が名前を原子にしたままなら、やはり拾えません。
+        - どちらの対も、それだけでは決め手になりません。先にあるのは、one_name の「式が違う」を名前を原子にしないで判定できるか、という問いだと考えています。
+
+        この最後の点は、まだ仮説として登録していません。手を付ける前に、規則どおり登録します。
+facts:
+- {is: v_say, from: session_model, to: 01M7SYK8BJKX8CJSDYHPN9HG5R}
+- {is: exp.v_answer, from: 01M7SYK8BJKX8CJSDYHPN9HG5R, to: 01M7SYJDPZW8XKEM64YXF4N8BM}
+- {is: v_refer, from: 01M7SYK8BJKX8CJSDYHPN9HG5R, to: syntax.v_assume}
+- {is: v_refer, from: 01M7SYK8BJKX8CJSDYHPN9HG5R, to: syntax.v_derive}
+- {is: v_refer, from: 01M7SYK8BJKX8CJSDYHPN9HG5R, to: syntax.v_require}
+- {is: v_refer, from: 01M7SYK8BJKX8CJSDYHPN9HG5R, to: subj.v_approve}
+- {is: v_refer, from: 01M7SYK8BJKX8CJSDYHPN9HG5R, to: subj.v_pay}
