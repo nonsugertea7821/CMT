@@ -1435,6 +1435,15 @@ individuals:
   sys_checker_words_in_grammar_fix_cond_N2_ec_errors: {is: axis_value, val: {text: N2_ec_errors}}
   sys_checker_words_in_grammar_fix_cond_N2_changed: {is: axis_value, val: {text: N2_changed}}
   sys_checker_words_in_grammar_fix_cond_M_kw_errors: {is: axis_value, val: {text: M_kw_errors}}
+  sys_check_reports_contentless: {is: measurement_family}
+  sys_check_reports_contentless_cond: {is: family_axis, val: {text: cond}}
+  sys_check_reports_contentless_cond_patch_ok: {is: axis_value, val: {text: patch_ok}}
+  sys_check_reports_contentless_cond_base_ok: {is: axis_value, val: {text: base_ok}}
+  sys_check_reports_contentless_cond_orig_trace: {is: axis_value, val: {text: orig_trace}}
+  sys_check_reports_contentless_cond_patch_reported: {is: axis_value, val: {text: patch_reported}}
+  sys_check_reports_contentless_cond_patch_base_ok: {is: axis_value, val: {text: patch_base_ok}}
+  sys_check_reports_contentless_cond_verdict_support: {is: axis_value, val: {text: verdict_support}}
+  sys_check_reports_contentless_cond_verdict_refute: {is: axis_value, val: {text: verdict_refute}}
   sys_plural_from: {is: measurement_family}
   sys_plural_from_cond: {is: family_axis, val: {text: cond}}
   sys_plural_from_cond_subject_kind: {is: axis_value, val: {text: subject_kind}}
@@ -2312,6 +2321,9 @@ individuals:
   o_geo_pretext_judged: {is: observation}
   o_geo_pretext_all_drop: {is: observation}
   o_geo_pretext_no_ja_hold: {is: observation}
+  o_sys_contentless_orig_stops: {is: observation}
+  o_sys_contentless_patch_reports: {is: observation}
+  o_sys_contentless_patch_base_ok: {is: observation}
   o_geo_pretext_drop_smollm2: {is: observation}
   o_geo_pretext_drop_olmo2: {is: observation}
 
@@ -2347,8 +2359,8 @@ individuals:
   b_model_attachment_differs: {is: item_queued}
   h_writing_depends_checker: {is: hyp_untested}
   b_writing_depends_checker: {is: item_queued}
-  h_check_reports_contentless: {is: hyp_untested}
-  b_check_reports_contentless: {is: item_queued}
+  h_check_reports_contentless: {is: hyp_supported}
+  b_check_reports_contentless: {is: item_done}
   h_qualification_depends_above: {is: hyp_untested}
   b_qualification_depends_above: {is: item_queued}
   h_multi_layer_transfers_to_explain: {is: hyp_untested}
@@ -5455,6 +5467,30 @@ facts:
   - {is: v_spell, from: sys_checker_words_in_grammar_fix_cond_M_kw_errors, to: M_kw_errors}
   - {is: v_entry_of, from: '{cond}', to: sys_checker_words_in_grammar_fix}
   - {is: v_metric_of, from: sys_checker_words_in_grammar_fix, to: mean_value}
+  - {is: v_file_of, from: sys_check_reports_contentless.json, to: sys_check_reports_contentless}
+  - {is: v_rows_of, from: [rows], to: sys_check_reports_contentless}
+  - {is: v_axis_of, from: sys_check_reports_contentless_cond, to: sys_check_reports_contentless}
+  - {is: v_value_of, from: sys_check_reports_contentless_cond_patch_ok, to: sys_check_reports_contentless_cond}
+  - {is: v_spell, from: sys_check_reports_contentless_cond_patch_ok, to: patch_ok}
+  - {is: v_value_of, from: sys_check_reports_contentless_cond_base_ok, to: sys_check_reports_contentless_cond}
+  - {is: v_spell, from: sys_check_reports_contentless_cond_base_ok, to: base_ok}
+  - {is: v_value_of, from: sys_check_reports_contentless_cond_orig_trace, to: sys_check_reports_contentless_cond}
+  - {is: v_spell, from: sys_check_reports_contentless_cond_orig_trace, to: orig_trace}
+  - {is: v_value_of, from: sys_check_reports_contentless_cond_patch_reported, to: sys_check_reports_contentless_cond}
+  - {is: v_spell, from: sys_check_reports_contentless_cond_patch_reported, to: patch_reported}
+  - {is: v_value_of, from: sys_check_reports_contentless_cond_patch_base_ok, to: sys_check_reports_contentless_cond}
+  - {is: v_spell, from: sys_check_reports_contentless_cond_patch_base_ok, to: patch_base_ok}
+  - {is: v_value_of, from: sys_check_reports_contentless_cond_verdict_support, to: sys_check_reports_contentless_cond}
+  - {is: v_spell, from: sys_check_reports_contentless_cond_verdict_support, to: verdict_support}
+  - {is: v_value_of, from: sys_check_reports_contentless_cond_verdict_refute, to: sys_check_reports_contentless_cond}
+  - {is: v_spell, from: sys_check_reports_contentless_cond_verdict_refute, to: verdict_refute}
+  - {is: v_entry_of, from: '{cond}', to: sys_check_reports_contentless}
+  - {is: v_metric_of, from: sys_check_reports_contentless, to: mean_value}
+  - {is: v_refer, from: o_sys_contentless_orig_stops, to: {is: v_level, from: sys_check_reports_contentless.orig_trace.mean_value, to: 2.0}}
+  - {is: v_refer, from: o_sys_contentless_patch_reports, to: {is: v_level, from: sys_check_reports_contentless.patch_reported.mean_value, to: 2.0}}
+  - {is: v_refer, from: o_sys_contentless_patch_base_ok, to: {is: v_level, from: sys_check_reports_contentless.patch_base_ok.mean_value, to: 1.0}}
+  - {is: v_support, from: o_sys_contentless_orig_stops, to: h_check_reports_contentless}
+  - {is: v_support, from: o_sys_contentless_patch_reports, to: h_check_reports_contentless}
   - {is: v_file_of, from: sys_plural_from.json, to: sys_plural_from}
   - {is: v_rows_of, from: [rows], to: sys_plural_from}
   - {is: v_axis_of, from: sys_plural_from_cond, to: sys_plural_from}
