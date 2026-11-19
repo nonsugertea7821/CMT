@@ -1,0 +1,257 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-19T01:03:27.543Z（UTC）
+individuals:
+  01M7RN8Y9Q7HXRC16S88AMV4SK:
+    is: session_summary
+    display: 発言 2241
+    val:
+      order: 2241
+      text: |
+        This session is being continued from a previous conversation that ran out of context. The summary below covers the earlier portion of the conversation.
+
+        <system-reminder>
+        <tools-used-before-summary>AskUserQuestion, Bash, Edit, Grep, Read, ReadNotifications, Skill, TaskStop, ToolSearch, WebFetch, WebSearch, Write, mcp__claude-code-remote__create_trigger, mcp__claude-code-remote__delete_trigger, mcp__claude-code-remote__get_trigger, mcp__claude-code-remote__read_documentation, mcp__claude-code-remote__send_later, mcp__claude-code-remote__subscribe_pr_activity, mcp__claude-code-remote__update_trigger, mcp__github__actions_get, mcp__github__actions_list, mcp__github__add_issue_comment, mcp__github__create_pull_request, mcp__github__get_job_logs, mcp__github__issue_read, mcp__github__issue_write, mcp__github__list_issue_types, mcp__github__list_issues, mcp__github__list_pull_requests, mcp__github__pull_request_read, mcp__github__update_pull_request</tools-used-before-summary>
+        </system-reminder>
+        Summary:
+        1. Primary Request and Intent
+
+        **Standing rules (still in force)**
+        - Repo: nonsugertea7821/CMT at /home/user/CMT.
+        - Reply in Japanese. Don't overclaim. Give interpretation.
+        - Restore files with `git show <rev>:<path> > <path>`. Never checkout to restore and never stash.
+        - Python: /home/user/venv/bin/python.
+        - Commit trailer:
+          `Co-Authored-By: Claude [モデル名を伏せた] <[メールアドレスを伏せた]>`
+          `Claude-Session: https://claude.ai/code/session_015KRKt6TNJZ7ZsQmEknANXK`
+        - PR body ends with:
+          `🤖 Generated with [Claude Code](https://claude.com/claude-code)`
+          blank line
+          `https://claude.ai/code/session_015KRKt6TNJZ7ZsQmEknANXK`
+        - Claude never merges.
+        - No personal info or model identifiers in pushed artifacts.
+        - Don't retry the MEXT PDF WebFetch without OK.
+        - No comments in system yaml. Never rerun recorded experiment scripts; write new result names instead of overwriting. CI belongs to GitHub.
+        - Every PR:
+          - subscribe_pr_activity;
+          - issue_write update with assignees [nonsugertea7821].
+        - After a merge:
+          - `git fetch -q --prune origin`, then `git branch -D` the local branch;
+          - never push to a merged branch;
+          - never push branch deletions.
+        - Proposals are registered as untested hypotheses before they are told to the user:
+          - `h_<名前>: {is: hyp_untested}`, `b_<名前>: {is: item_queued}`, plus v_refer and v_check.
+          - Registration-only PRs auto-merge. Concept-adding PRs get manual review.
+          - Place registrations away from the lines of running hypotheses and from the file end.
+        - Lang-side claims can't reference exp words. Put cross-layer hypotheses in exp/src/exp.yaml.
+        - Corpus rule: never commit corpus text; record only the source and counted values. CC BY-SA needs attribution.
+        - Preregistration: commit the script (and hand-made data) only first; results come in a later commit. Corrections are disclosed. Use `git add -f` for exp/experiments files.
+        - A PR stays Draft if the hypothesis remains untested (e.g. an inconclusive verdict). Undraft only when the status becomes supported, refuted or mixed.
+
+        **Keep-alive rule (user)**
+        - Chain send_later of 9 minutes only while a long experiment runs in the background.
+        - Stop the chain with update_trigger enabled=false when the experiment ends.
+        - Run experiments with Bash `run_in_background: true`. A nohup run died when the container restarted.
+
+        **30-minute cycle**
+        - The full prompt text is reused verbatim in send_later each time. It starts with 「30分の周回。始めたら、まず次の周回を30分後に send_later で予約する（同じ文を渡す）。」 and lists the triage A/A'/C/E/B/D and steps 1–5.
+        - Triage status:
+          - A and A': done.
+          - C: #57 supported (E26). #8 inconclusive (E27). #18 h_attention_causes_preceding_effect remains; its scope is model_4b, which is heavy.
+          - Then E (sys_ soundness), B, D.
+
+        2. Key Technical Concepts
+        - ec (exp/src/exp_check.py) and tc (cscl/bootstrap/type_checker/type_checker.py) are silent or print a success summary.
+        - ec metrics include accuracy (margin>0), order_robust_accuracy (both), and logit_margin (mean margin).
+        - Family patterns:
+          - `measurement_family`, `family_axis`, `axis_value`;
+          - facts v_file_of, v_rows_of [items], v_axis_of, v_value_of, v_denote, v_filter_of, v_entry_of '{cond}', v_metric_of;
+          - a family with only a cond axis needs no v_filter_of (like e21_all);
+          - reference form: `family.<filtervals>.<cond>.<metric>`.
+        - Observation verbs: v_come_after, v_come_before, v_near (with `new: tol`); comparisons are to a measurement or a number.
+        - Available concepts:
+          - attention; multi_layer_vector; modifier;
+          - text_injection, definition_text, no_channel, single_pass;
+          - number_comparison; prior_collision; g_redef_conflict, g_redef_control;
+          - seen_genus, unseen_genus; lim_unconverged.
+        - Verbs: v_not_lower, v_lower, v_raise, v_not_raise.
+        - Attention blocking:
+          - a 4D additive mask passed via forward_pre_hook(with_kwargs=True) on each `layer.self_attn`, replacing kwargs["attention_mask"];
+          - verified to equal the global mask when applied to all layers;
+          - Qwen2.5-1.5B has 28 layers and uses sdpa.
+
+        3. Files and Code Sections
+
+        **exp/experiments/e25_multilayer_conflict.py** (PR #287)
+        - Same as E24, but uses MultiInjector from e8_multilayer with layers 2–13 and per-modifier vectors of shape [12, d].
+        - Helpers: `set_deltas(inj, masks, vecs)` sets `inj.deltas = {L: sum(masks[lab]*vecs[lab][i].view(1,1,-1))}`, plus its own train_pair and evaluate.
+        - Conditions none / text / multi. Same verdict form as E24.
+        - Output: results/e25_Qwen2.5-1.5B-Instruct_L2-13.json.
+        - data/modifiers_conflict_ja.json was copied from the #286 branch with identical content.
+        - Commits: 01544e1 (prereg), 0870f64 (results).
+        - Results:
+          - train multi 0.5/0.0; test none 0.25/0.25, text 0.29/0.04, multi 0.5/0.0.
+          - Losses → 0.70 in all three pairs; max |multi margin| 0.005.
+          - Verdict: inconclusive.
+        - exp.yaml:
+          - family e25 (split, cond none/text/multi; multi denotes multi_layer_vector and modifier; metrics accuracy, order_robust_accuracy, logit_margin);
+          - observations o_e25_multi_train_below_threshold and o_e25_multi_margin_level_zero (e25.test.multi.logit_margin v_near 0.0, new 0.01). Neither is linked.
+          - Placed after e22_cond_qual, o_e22_qual_robust_above_none, and the e22 order_robust metric line.
+        - The PR body was updated (it discloses the restart). It stays Draft.
+        - Side finding: within each pair, both vectors have equal norms in E4, E24 and E25. This is probably antisymmetric; not recorded.
+
+        **exp/experiments/e26_attention_text_route.py** (PR #288, MERGED)
+        - Data: modifiers_ja.json, all 48 items. Conditions none, text, block_all, ctrl_all, block_early (0–9), block_mid (10–18), block_late (19–27).
+        - ctrl blocks the same number of tokens just before the definitions, never position 0. This was changed before the prereg commit, because the system text (16 tokens) was shorter than the definitions (24–27 tokens).
+        - Results:
+
+          | cond | accuracy |
+          |---|---|
+          | none | 0.458 |
+          | text | 0.875 |
+          | block_all | 0.375 |
+          | ctrl_all | 0.875 |
+          | block_early | 0.583 |
+          | block_mid | 0.521 |
+          | block_late | 0.875 |
+
+          Verdict: carries.
+        - exp.yaml: family e26 (cond only). Observations:
+          - o_e26_block_all_below_text and o_e26_ctrl_all_near_text, both v_support;
+          - o_e26_block_all_near_none (0.1), o_e26_block_late_near_text, o_e26_block_early_below_text, o_e26_block_mid_below_text;
+          - h_attention_carries_text_route set to hyp_supported.
+        - Auto-merged as 582ea14.
+
+        **exp/experiments/e27_number_comparison.py** and **data/number_comparison_ja.json** (PR #289, Draft)
+        - Items: the 18 numeric rule items (新規, 午前, 大口注文, 遅延, 未成年, 無料, 夜間, 大人, 都市部; G2c and G2k).
+        - Conditions:
+          - real: the E9 direct condition;
+          - nonce: the concept word replaced by ラモク;
+          - bare: hand-made comparisons such as "22は25未満か。".
+        - Verdict rule:
+          - lowers if bare ≤ 0.75 and at least half of the real-wrong items are also bare-wrong;
+          - not_lowers if bare ≥ 0.85 and real ≤ bare − 0.20.
+        - Commits: a522b5c (prereg), 2c89af2 (results).
+        - Results:
+
+          | | real | nonce | bare |
+          |---|---|---|---|
+          | all | 0.5/0.333 | 0.556/0.444 | 0.667/0.056 |
+          | G2c | 0.333 | 0.222 | 1.0 |
+          | G2k | 0.667 | 0.889 | 0.333 (both 0) |
+
+          Real-wrong items: 9, of which 2 are also bare-wrong. Verdict: inconclusive.
+        - Reading: bare is dominated by a "はい" bias; nonce ≈ real, so the failure isn't driven by the prior meaning.
+        - exp.yaml:
+          - family e27 (group G2c→g_redef_conflict, G2k→g_redef_control; cond real/nonce denote text_injection, definition_text, single_pass; bare denotes number_comparison; filter {group});
+          - observations o_e27_bare_conflict_above_control, o_e27_bare_robust_control_level_zero, o_e27_nonce_near_real_conflict (new 0.12) and o_e27_nonce_above_real_control (v_come_after). None is linked.
+          - Placed after e9_cond_cot, o_e9_scratchpad_below_direct_remap_control_15b, and the e9 order_robust metric line.
+        - The PR body is NOT yet updated with results. It stays Draft.
+
+        **Registration branch claude/reg-collision-rule-15b** (from origin/main, uncommitted)
+        - exp.yaml: added after `  b_attention_observe_and_block: {is: item_queued}`:
+          ```
+          h_collision_not_lower_rule_following: {is: hyp_untested}
+          b_collision_not_lower_rule_following: {is: item_queued}
+          b_number_comparison_unbiased: {is: item_queued}
+          ```
+        - Added after `  - {is: v_check, from: b_attention_observe_and_block, to: h_attention_causes_preceding_effect}`:
+          ```
+          - {is: v_refer, from: h_collision_not_lower_rule_following, to: {is: v_not_lower, from: prior_collision, to: redefinition_following}}
+          - {is: v_check, from: b_collision_not_lower_rule_following, to: h_collision_not_lower_rule_following}
+          - {is: v_check, from: b_number_comparison_unbiased, to: h_number_comparison_lowers_rule_following}
+          ```
+        - tc and ec pass (6 insertions). No v_scope was added: scope lines may not count as registration-only.
+
+        4. Errors and fixes
+        - **E25 process died** on a container restart (nohup). Relaunched with run_in_background and disclosed in the commit and PR.
+        - **Duplicate keep-alive trigger**: removed with delete_trigger.
+        - **E26 control span too short**: the system text was 16 tokens versus 24–27 definition tokens. Switched to the preceding tokens before the prereg commit, and disclosed this in the PR.
+        - **E27 fitted tolerance**: one observation tolerance (0.23) was fitted after seeing the data. Replaced with a v_come_after ordering observation.
+        - **Concepts missing for implications**: step count, initialization and layer band have no concepts, so those hypotheses were not registered. They were raised to the user as a direction question instead.
+
+        5. Problem Solving
+        - In conflict, single-layer and multi-layer vectors at any position all plateau at ln 2 and equalize the choice. Layer count doesn't solve it.
+        - Text works via attention to the definition tokens in layers 0–18.
+        - For 1.5B rule items, a nonce label doesn't help, which points to failure in applying the rule or comparing numbers rather than to the prior meaning.
+        - The bare comparison needs a bias-free format, such as numbers as the options.
+
+        6. All user messages
+        - No new user messages in this segment. Only scheduled triggers and GitHub notifications arrived.
+        - Prior standing user messages, kept:
+          - 「トリアージして進めて。…このリポジトリの実験目標、モデルの概念一貫性に寄与しそうなものから優先で」
+          - 「Bは体系の健全性に依存しないか？」
+          - 「A3もじゃないの？それともその周辺はもう証明されてる？」
+          - 「A4は？」
+          - 「それでいいだろうね よろしく」
+          - 「ちなみにコンテナは10分作業しないと再起動する 応答終了時に9分30秒チェーンするようにしといて」
+          - 「チェーンが居るのは長い実験だけね それ以外はやらなくていい」
+          - 「#275にマージコンフリクト。」
+          - The earlier corpus/prosody remarks.
+        - Questions asked to the user, unanswered:
+          - whether to add concepts for step count, initialization and layer bands, so the E25/E26 implications can be registered.
+
+        7. Pending Tasks
+        - Finish the registration-only PR on claude/reg-collision-rule-15b:
+          - commit, push and create the PR (not Draft; registration-only);
+          - subscribe and assign nonsugertea7821.
+        - Update the PR #289 body with the E27 results, interpretation and disclosure (bare dominated by a yes-bias; nonce ≈ real). It stays Draft.
+        - Open Drafts: #282 (E23), #286 (E24), #287 (E25), #289 (E27). Delete local branches after any merge.
+        - Next cycle at 01:24Z. Remaining C item: #18 (model_4b, heavy). Then E (sys_ items).
+
+        8. Current Work
+        - On branch claude/reg-collision-rule-15b, exp/src/exp.yaml has 6 uncommitted added lines registering h_collision_not_lower_rule_following plus b_ items. tc and ec pass.
+        - Just before that, E27 results were committed (2c89af2) and pushed to #289.
+
+        9. Optional Next Step
+        1. Commit the registration on claude/reg-collision-rule-15b. Message along the lines of 「仮説を登録: 1.5B の規則型では元の意味との衝突は追従を下げない（E27 の含意）。照合を偏りなく測る残り項目を #8 に足す」, with the trailer.
+        2. Push, create the PR, subscribe, and assign nonsugertea7821.
+        3. Update #289's body with the E27 results; it stays Draft.
+        4. Report briefly in Japanese:
+           - E27: inconclusive. bare 0.67 is driven by the yes-bias (order-robust 0.056). nonce ≈ real (G2c 0.22 vs 0.33), so the failure isn't the prior meaning.
+           - New hypothesis: h_collision_not_lower_rule_following.
+           - New item: b_number_comparison_unbiased, for #8 with numbers as the options.
+
+        If you need specific details from before compaction (like exact code snippets, error messages, or content you generated), read the full transcript at: /root/.claude/projects/-home-user-CMT/e05d2140-ce91-515f-a5fb-e6251e13d406.jsonl
+        Continue the conversation from where it left off without asking the user any further questions. Resume directly — do not acknowledge the summary, do not recap what was happening, do not preface with "I'll continue" or similar. Pick up the last task as if the break never happened.
+
+        The messages after this summary are the most recent messages from before compaction, kept verbatim. The summary was written without seeing them, so something it says has not happened yet may already have happened in them.
+facts:
+- {is: v_say, from: session_model, to: 01M7RN8Y9Q7HXRC16S88AMV4SK}
+- {is: v_refer, from: 01M7RN8Y9Q7HXRC16S88AMV4SK, to: exp.hyp_untested}
+- {is: v_refer, from: 01M7RN8Y9Q7HXRC16S88AMV4SK, to: exp.item_queued}
+- {is: v_refer, from: 01M7RN8Y9Q7HXRC16S88AMV4SK, to: ontology.v_refer}
+- {is: v_refer, from: 01M7RN8Y9Q7HXRC16S88AMV4SK, to: exp.v_check}
+- {is: v_refer, from: 01M7RN8Y9Q7HXRC16S88AMV4SK, to: lang.type_checker}
+- {is: v_refer, from: 01M7RN8Y9Q7HXRC16S88AMV4SK, to: exp.order_robust_accuracy}
+- {is: v_refer, from: 01M7RN8Y9Q7HXRC16S88AMV4SK, to: exp.logit_margin}
+- {is: v_refer, from: 01M7RN8Y9Q7HXRC16S88AMV4SK, to: exp.measurement_family}
+- {is: v_refer, from: 01M7RN8Y9Q7HXRC16S88AMV4SK, to: exp.family_axis}
+- {is: v_refer, from: 01M7RN8Y9Q7HXRC16S88AMV4SK, to: exp.axis_value}
+- {is: v_refer, from: 01M7RN8Y9Q7HXRC16S88AMV4SK, to: exp.v_file_of}
+- {is: v_refer, from: 01M7RN8Y9Q7HXRC16S88AMV4SK, to: exp.v_rows_of}
+- {is: v_refer, from: 01M7RN8Y9Q7HXRC16S88AMV4SK, to: exp.v_axis_of}
+- {is: v_refer, from: 01M7RN8Y9Q7HXRC16S88AMV4SK, to: exp.v_value_of}
+- {is: v_refer, from: 01M7RN8Y9Q7HXRC16S88AMV4SK, to: exp.v_denote}
+- {is: v_refer, from: 01M7RN8Y9Q7HXRC16S88AMV4SK, to: exp.v_filter_of}
+- {is: v_refer, from: 01M7RN8Y9Q7HXRC16S88AMV4SK, to: exp.v_entry_of}
+- {is: v_refer, from: 01M7RN8Y9Q7HXRC16S88AMV4SK, to: exp.v_metric_of}
+- {is: v_refer, from: 01M7RN8Y9Q7HXRC16S88AMV4SK, to: ontology.v_come_after}
+- {is: v_refer, from: 01M7RN8Y9Q7HXRC16S88AMV4SK, to: ontology.v_come_before}
+- {is: v_refer, from: 01M7RN8Y9Q7HXRC16S88AMV4SK, to: exp.v_near}
+- {is: v_refer, from: 01M7RN8Y9Q7HXRC16S88AMV4SK, to: exp.multi_layer_vector}
+- {is: v_refer, from: 01M7RN8Y9Q7HXRC16S88AMV4SK, to: exp.text_injection}
+- {is: v_refer, from: 01M7RN8Y9Q7HXRC16S88AMV4SK, to: exp.definition_text}
+- {is: v_refer, from: 01M7RN8Y9Q7HXRC16S88AMV4SK, to: exp.no_channel}
+- {is: v_refer, from: 01M7RN8Y9Q7HXRC16S88AMV4SK, to: exp.single_pass}
+- {is: v_refer, from: 01M7RN8Y9Q7HXRC16S88AMV4SK, to: exp.number_comparison}
+- {is: v_refer, from: 01M7RN8Y9Q7HXRC16S88AMV4SK, to: exp.prior_collision}
+- {is: v_refer, from: 01M7RN8Y9Q7HXRC16S88AMV4SK, to: exp.seen_genus}
+- {is: v_refer, from: 01M7RN8Y9Q7HXRC16S88AMV4SK, to: exp.unseen_genus}
+- {is: v_refer, from: 01M7RN8Y9Q7HXRC16S88AMV4SK, to: exp.lim_unconverged}
+- {is: v_refer, from: 01M7RN8Y9Q7HXRC16S88AMV4SK, to: exp.v_not_lower}
+- {is: v_refer, from: 01M7RN8Y9Q7HXRC16S88AMV4SK, to: exp.v_lower}
+- {is: v_refer, from: 01M7RN8Y9Q7HXRC16S88AMV4SK, to: exp.v_raise}
+- {is: v_refer, from: 01M7RN8Y9Q7HXRC16S88AMV4SK, to: exp.v_not_raise}
+- {is: v_refer, from: 01M7RN8Y9Q7HXRC16S88AMV4SK, to: exp.v_support}
+- {is: v_refer, from: 01M7RN8Y9Q7HXRC16S88AMV4SK, to: exp.hyp_supported}
+- {is: v_refer, from: 01M7RN8Y9Q7HXRC16S88AMV4SK, to: exp.redefinition_following}
+- {is: v_refer, from: 01M7RN8Y9Q7HXRC16S88AMV4SK, to: exp.v_scope}
