@@ -119,8 +119,8 @@ individuals:
   b_comment_ban: {is: exp.item_done}
   h_above_closed: {is: exp.hyp_supported}
   b_above_closed: {is: exp.item_queued}
-  h_above_individual: {is: exp.hyp_untested}
-  b_above_individual: {is: exp.item_queued}
+  h_above_individual: {is: exp.hyp_supported}
+  b_above_individual: {is: exp.item_done}
   h_placement_in_laws: {is: exp.hyp_untested}
   b_placement_in_laws: {is: exp.item_queued}
   h_above_sound: {is: exp.hyp_refuted}
@@ -326,6 +326,14 @@ individuals:
   o_sys_above_closed_conservative: {is: exp.observation}
   o_sys_above_closed_binds_non_ancestor: {is: exp.observation}
   o_sys_above_closed_ancestor_passes: {is: exp.observation}
+  o_sys_above_individual_passes_checks: {is: exp.observation}
+  o_sys_above_individual_passes_ec: {is: exp.observation}
+  o_sys_above_individual_same_shallow: {is: exp.observation}
+  o_sys_above_individual_same_deep: {is: exp.observation}
+  o_sys_above_individual_same_violations: {is: exp.observation}
+  o_sys_above_individual_conservative: {is: exp.observation}
+  o_sys_above_individual_covers: {is: exp.observation}
+  o_sys_above_individual_conflicts_closed: {is: exp.observation}
   o_sys_hierarchy_object_first_fails: {is: exp.observation}
   o_sys_hierarchy_object_matches: {is: exp.observation}
   o_sys_hierarchy_object_passes_checks: {is: exp.observation}
@@ -684,6 +692,18 @@ facts:
   - {is: v_refer, from: o_sys_above_closed_conservative, to: {is: v_level, from: sys_above_closed_after_fix.changed_fixed.mean_value, to: 0.0}}
   - {is: v_refer, from: o_sys_above_closed_binds_non_ancestor, to: {is: v_level, from: sys_above_closed_after.probe_non.mean_value, to: 1.0}}
   - {is: v_refer, from: o_sys_above_closed_ancestor_passes, to: {is: v_level, from: sys_above_closed_after.probe_anc_all.mean_value, to: 0.0}}
+  - {is: v_refer, from: o_sys_above_individual_passes_checks, to: {is: v_level, from: sys_above_individual_fix2.B_errors.mean_value, to: 0.0}}
+  - {is: v_refer, from: o_sys_above_individual_passes_ec, to: {is: v_level, from: sys_above_individual_fix2.B_ec_errors.mean_value, to: 0.0}}
+  - {is: v_refer, from: o_sys_above_individual_same_shallow, to: {is: v_level, from: sys_above_individual_fix2.B_shallow_diff.mean_value, to: 0.0}}
+  - {is: v_refer, from: o_sys_above_individual_same_deep, to: {is: v_level, from: sys_above_individual_fix2.B_deep_diff.mean_value, to: 0.0}}
+  - {is: v_refer, from: o_sys_above_individual_same_violations, to: {is: v_level, from: sys_above_individual_fix2.B_V_diff.mean_value, to: 0.0}}
+  - {is: v_refer, from: o_sys_above_individual_conservative, to: {is: v_level, from: sys_above_individual_fix2.B_changed.mean_value, to: 0.0}}
+  - {is: v_refer, from: o_sys_above_individual_covers, to: {is: v_level, from: sys_above_individual_fix2.B_above_ind.mean_value, to: 13623.0}}
+  - {is: v_refer, from: o_sys_above_individual_conflicts_closed, to: {is: v_level, from: sys_above_individual_fix2.A_errors.mean_value, to: 13623.0}}
+  - {is: exp.v_support, from: o_sys_above_individual_same_shallow, to: h_above_individual}
+  - {is: exp.v_support, from: o_sys_above_individual_same_deep, to: h_above_individual}
+  - {is: exp.v_support, from: o_sys_above_individual_same_violations, to: h_above_individual}
+  - {is: exp.v_support, from: o_sys_above_individual_conservative, to: h_above_individual}
   - {is: v_refer, from: o_sys_hierarchy_object_first_fails, to: {is: v_level, from: sys_hierarchy_object_after.errors.mean_value, to: 1.0}}
   - {is: v_refer, from: o_sys_hierarchy_object_matches, to: {is: v_level, from: sys_hierarchy_object_after2.mismatch.mean_value, to: 0.0}}
   - {is: v_refer, from: o_sys_hierarchy_object_passes_checks, to: {is: v_level, from: sys_hierarchy_object_after2.errors.mean_value, to: 0.0}}
