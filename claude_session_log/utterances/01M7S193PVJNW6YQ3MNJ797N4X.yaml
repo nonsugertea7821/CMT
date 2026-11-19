@@ -1,0 +1,21 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-19T04:33:15.995Z（UTC）
+individuals:
+  01M7S193PVJNW6YQ3MNJ797N4X:
+    is: model_utterance
+    display: 発言 2291
+    val:
+      order: 2291
+      text: |
+        `h_prior_claim_ends_resolved`（#228）を確かめた結果は**反証**で、PR #297 にまとめた。ec は通ったので Draft を外してある。
+
+        - **測ったこと:** 仮説と決定の中身に掛かっている端の確かめを写し、先行研究の主張 24 件に掛けた。写しが正しいかは、同じ確かめを仮説 143 件に掛けて誤り 0 だったことで確かめた。
+        - **結果:** 実在の主張 2 件に誤りが見つかった。`pwc_hernandez2024_linear_relation` と `pwc_christ2025_property_based` の端にある `relation_operator` は、どこにも宣言されていないのに tc も ec も通っている。
+        - **変異:** 端をわざと壊した版は 24 件すべて弾かれた。確かめを掛ければ捕まえられる。
+        - **含意:** 先行研究の主張の式は、確かめが掛かっていないので、実際に未宣言の名前が入り込んでいる。直すには 2 つ要り、どちらも手で見るので別の PR になる。
+          - `relation_operator` を概念として宣言するか、既存の概念に書き換える。
+          - exp_check.py に、主張の端の確かめを足す。
+
+        PR #296（`h_above_individual`）は、まだ確認を待っている。次の周回は 05:01Z。
+facts:
+- {is: v_say, from: session_model, to: 01M7S193PVJNW6YQ3MNJ797N4X}
+- {is: exp.v_answer, from: 01M7S193PVJNW6YQ3MNJ797N4X, to: 01M7RE4494JDFW71WBNAW679KX}
