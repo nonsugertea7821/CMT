@@ -182,8 +182,8 @@ individuals:
   b_boundary_invariant: {is: exp.item_done}
   h_refer_stratified: {is: exp.hyp_untested}
   b_refer_stratified: {is: exp.item_queued}
-  h_fact_slot_by_end: {is: exp.hyp_untested}
-  b_fact_slot_by_end: {is: exp.item_queued}
+  h_fact_slot_by_end: {is: exp.hyp_supported}
+  b_fact_slot_by_end: {is: exp.item_done}
   h_fact_slot_by_verb: {is: exp.hyp_untested}
   b_fact_slot_by_verb: {is: exp.item_queued}
   h_frame_both_sides: {is: exp.hyp_untested}
@@ -435,6 +435,9 @@ individuals:
   o_sys_any_limitation_mismatch: {is: exp.observation}
   o_sys_any_limitation_no_ancestor: {is: exp.observation}
   o_sys_any_limitation_actual: {is: exp.observation}
+  o_sys_fact_slot_all_match: {is: exp.observation}
+  o_sys_fact_slot_clean: {is: exp.observation}
+  o_sys_fact_slot_base_ok: {is: exp.observation}
   o_sys_any_by_entail_passes_checks: {is: exp.observation}
   o_sys_any_by_entail_passes_ec: {is: exp.observation}
   o_sys_any_by_entail_ideal: {is: exp.observation}
@@ -518,6 +521,16 @@ facts:
   - {is: exp.v_ground, from: d_cscl_display_derived, to: h_rule_roles_by_signature}
   - {is: exp.v_ground, from: d_cscl_display_derived, to: h_checker_words_by_formula}
   - {is: exp.v_ground, from: d_cscl_display_derived, to: h_refer_stratified}
+  - {is: exp.v_ground, from: d_cscl_display_derived, to: h_draw_on_with_shallow}
+  - {is: exp.v_ground, from: d_cscl_display_derived, to: h_case_frame_by_signature}
+  - {is: exp.v_ground, from: d_cscl_display_derived, to: h_concept_kind_excludes_verb}
+  - {is: exp.v_ground, from: d_cscl_display_derived, to: h_concept_kind_frame_free}
+  - {is: exp.v_ground, from: d_cscl_display_derived, to: h_frame_both_sides}
+  - {is: exp.v_ground, from: d_cscl_display_derived, to: h_collect_by_formula}
+  - {is: exp.v_ground, from: d_cscl_display_derived, to: h_collect_agree_in_grammar}
+  - {is: exp.v_ground, from: d_cscl_display_derived, to: h_negation_formula}
+  - {is: exp.v_ground, from: d_cscl_display_derived, to: h_placement_in_laws}
+  - {is: exp.v_ground, from: d_cscl_display_derived, to: h_cscl_self_hosting}
   - {is: v_refer, from: d_cscl_trust_previous_version, to: {is: v_depend, from: type_checker, to: previous_checker}}
   - {is: v_refer, from: d_sig_depend_from, to: {is: extends, from: dependent, to: continuant}}
   - {is: v_refer, from: d_sig_depend_to, to: {is: extends, from: depended, to: continuant}}
@@ -912,6 +925,12 @@ facts:
   - {is: v_refer, from: o_sys_any_limitation_no_ancestor, to: {is: v_level, from: sys_any_limitation_after.any_ancestor.mean_value, to: 0.0}}
   - {is: v_refer, from: o_sys_any_limitation_actual, to: {is: v_level, from: sys_any_limitation_after.actual_sat.mean_value, to: 445.0}}
   - {is: exp.v_contradict, from: o_sys_any_limitation_mismatch, to: h_any_not_vacuous}
+  - {is: v_refer, from: o_sys_fact_slot_all_match, to: {is: v_level, from: sys_fact_slot_by_end_fix.n_match.mean_value, to: 7.0}}
+  - {is: v_refer, from: o_sys_fact_slot_clean, to: {is: v_level, from: sys_fact_slot_by_end_fix.clean.mean_value, to: 1.0}}
+  - {is: v_refer, from: o_sys_fact_slot_base_ok, to: {is: v_level, from: sys_fact_slot_by_end_fix.base_ok.mean_value, to: 1.0}}
+  - {is: exp.v_support, from: o_sys_fact_slot_all_match, to: h_fact_slot_by_end}
+  - {is: exp.v_support, from: o_sys_fact_slot_clean, to: h_fact_slot_by_end}
+  - {is: exp.v_ground, from: d_cscl_display_derived, to: h_fact_slot_by_end}
   - {is: v_refer, from: o_sys_any_by_entail_passes_checks, to: {is: v_level, from: sys_any_by_entail_after_fix.errors.mean_value, to: 0.0}}
   - {is: v_refer, from: o_sys_any_by_entail_passes_ec, to: {is: v_level, from: sys_any_by_entail_after_fix.ec_errors.mean_value, to: 0.0}}
   - {is: v_refer, from: o_sys_any_by_entail_ideal, to: {is: v_level, from: sys_any_by_entail_after_fix.ideal_nonempty.mean_value, to: 85.0}}
