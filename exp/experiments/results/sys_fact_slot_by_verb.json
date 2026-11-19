@@ -1,0 +1,139 @@
+{
+ "rev": "d64c0d3",
+ "patch_counts": [
+  1,
+  1,
+  1
+ ],
+ "rows": {
+  "case base": {
+   "facts": [],
+   "checker": "verb",
+   "expect_fail": 0,
+   "exit": 0,
+   "n_err": 0,
+   "slot_err": 0,
+   "other_err": 0,
+   "lines": [],
+   "fails": 0,
+   "match": 1
+  },
+  "case c1_one": {
+   "facts": [
+    "v_depend d_metric"
+   ],
+   "checker": "verb",
+   "expect_fail": 0,
+   "exit": 0,
+   "n_err": 0,
+   "slot_err": 0,
+   "other_err": 0,
+   "lines": [],
+   "fails": 0,
+   "match": 1
+  },
+  "case c2_same_verb": {
+   "facts": [
+    "v_depend d_metric",
+    "v_depend d_road_region"
+   ],
+   "checker": "verb",
+   "expect_fail": 1,
+   "exit": 1,
+   "n_err": 1,
+   "slot_err": 1,
+   "other_err": 0,
+   "lines": [
+    " - exp/src/exp.yaml d_probe: 関係 continuant の事実が2つ以上ある"
+   ],
+   "fails": 1,
+   "match": 1
+  },
+  "case c3_two_verbs": {
+   "facts": [
+    "v_depend d_metric",
+    "v_raise d_road_region"
+   ],
+   "checker": "verb",
+   "expect_fail": 0,
+   "exit": 0,
+   "n_err": 0,
+   "slot_err": 0,
+   "other_err": 0,
+   "lines": [],
+   "fails": 0,
+   "match": 1
+  },
+  "case c4_siblings": {
+   "facts": [
+    "v_raise d_metric",
+    "v_lower d_road_region"
+   ],
+   "checker": "verb",
+   "expect_fail": 0,
+   "exit": 0,
+   "n_err": 0,
+   "slot_err": 0,
+   "other_err": 0,
+   "lines": [],
+   "fails": 0,
+   "match": 1
+  },
+  "case c5_many": {
+   "facts": [
+    "v_ground h_ambiguity_is_region_choice",
+    "v_ground h_writing_depends_checker"
+   ],
+   "checker": "verb",
+   "expect_fail": 0,
+   "exit": 0,
+   "n_err": 0,
+   "slot_err": 0,
+   "other_err": 0,
+   "lines": [],
+   "fails": 0,
+   "match": 1
+  },
+  "case c6_two_ends": {
+   "facts": [
+    "v_depend d_metric",
+    "v_ground h_ambiguity_is_region_choice"
+   ],
+   "checker": "verb",
+   "expect_fail": 0,
+   "exit": 0,
+   "n_err": 0,
+   "slot_err": 0,
+   "other_err": 0,
+   "lines": [],
+   "fails": 0,
+   "match": 1
+  },
+  "case ctrl_c3": {
+   "facts": [
+    "v_depend d_metric",
+    "v_raise d_road_region"
+   ],
+   "checker": "orig",
+   "expect_fail": 1,
+   "exit": 1,
+   "n_err": 1,
+   "slot_err": 1,
+   "other_err": 0,
+   "lines": [
+    " - exp/src/exp.yaml d_probe: 関係 continuant の事実が2つ以上ある"
+   ],
+   "fails": 1,
+   "match": 1
+  },
+  "summary 要約": {
+   "n_case": 8,
+   "n_match": 8,
+   "patch_ok": 1,
+   "base_ok": 1,
+   "clean": 1,
+   "refute": 0,
+   "verdict_support": 1
+  }
+ }
+}
