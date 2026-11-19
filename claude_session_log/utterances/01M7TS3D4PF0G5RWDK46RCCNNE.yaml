@@ -1,0 +1,189 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-19T20:48:49.302Z（UTC）
+individuals:
+  01M7TS3D4PF0G5RWDK46RCCNNE:
+    is: session_summary
+    display: 発言 2706
+    val:
+      order: 2706
+      text: |
+        This session is being continued from a previous conversation that ran out of context. The summary below covers the earlier portion of the conversation.
+
+        <system-reminder>
+        <tools-used-before-summary>AskUserQuestion, Bash, Edit, Grep, Read, ReadNotifications, Skill, TaskStop, ToolSearch, WebFetch, WebSearch, Write, mcp__claude-code-remote__create_trigger, mcp__claude-code-remote__delete_trigger, mcp__claude-code-remote__get_trigger, mcp__claude-code-remote__read_documentation, mcp__claude-code-remote__send_later, mcp__claude-code-remote__subscribe_pr_activity, mcp__claude-code-remote__update_trigger, mcp__github__actions_get, mcp__github__actions_list, mcp__github__add_issue_comment, mcp__github__create_pull_request, mcp__github__get_job_logs, mcp__github__issue_read, mcp__github__issue_write, mcp__github__list_issue_types, mcp__github__list_issues, mcp__github__list_pull_requests, mcp__github__pull_request_read, mcp__github__update_pull_request</tools-used-before-summary>
+        </system-reminder>
+        Summary:
+        1. Primary Request and Intent:
+
+        **Standing rules (in force)**
+        - Repo: nonsugertea7821/CMT at /home/user/CMT.
+        - Reply in plain, natural Japanese. Don't overclaim. Give interpretation.
+        - Restore files with `git show <rev>:<path> > <path>`. Never use checkout or stash to restore; `git switch` for branches is fine.
+        - Python: /home/user/venv/bin/python.
+        - Commit trailer:
+          `Co-Authored-By: Claude [モデル名を伏せた] <[メールアドレスを伏せた]>`
+          `Claude-Session: https://claude.ai/code/session_015KRKt6TNJZ7ZsQmEknANXK`
+        - A PR body ends with `🤖 Generated with [Claude Code](https://claude.com/claude-code)`, a blank line, then the session URL.
+        - No personal info and no model identifiers in pushed artifacts.
+        - Claude never merges.
+        - Every PR I open: call subscribe_pr_activity, and call issue_write update with assignees ["nonsugertea7821"].
+        - After a merge: `git fetch -q --prune origin`, `git switch -q main`, `git merge -q --ff-only origin/main`, `git branch -D <branch>`.
+        - No comments in system yaml. The hook no_new_comments.py checks on git commit.
+          - Don't combine file-writing and git commit in one Bash command when the yaml is mid-merge; the hook can block the whole command.
+        - Never rerun recorded experiment scripts. Use `git add -f` for exp/experiments files.
+        - CI belongs to GitHub.
+        - Proposals must be registered as untested hypotheses before telling the user.
+        - Every new hypothesis gets v_ground to a roadmap decision in the same PR, or is marked 「わき道」.
+        - Preregistration:
+          - The first commit is the script only, in a Draft PR.
+          - Results go in a later commit.
+          - Corrections are disclosed and written to `_fix.json`.
+          - Undraft when the state is supported, refuted or mixed.
+        - Don't ask permission in conversation. Decide, and write the rationale in the PR.
+
+        **User's conceptual rules**
+        - Names may be read only for signature and grammar words; other distinctions are written as expressions.
+        - Allowed bases are signature, logic and geometry.
+
+        **Trigger**
+        - trig_01L92Xn7LSTHrmqt7enEcCPG, the 「仮説の周回（30分毎）」 trigger.
+        - At each fire, first call update_trigger with run_once_at about now + 31 min and enabled: true.
+        - Then follow the roadmap steps.
+
+        2. Key Technical Concepts:
+        - tc is `cscl/bootstrap/type_checker/type_checker.py`. ec is `exp/src/exp_check.py`.
+        - `tc.errors` is a list. `T.N` holds nodes. Useful methods: `T.is_a`, `T.ancestors`, `T.resolve(w, "signature")`, `T.is_verb`.
+        - The facts table in type_checker.py (around line 950) emits `(pre, nid, i)` for `holds` and `pre`, but nothing for `post`.
+        - v_collect is read by name in two places:
+          - line 372 in `collect_kind_facts`: `T.resolve(f.get("is"), dom) == "syntax.v_collect"`
+          - line 984: `add("of", t, "syntax.v_collect")`
+        - KEYWORDS sits at line 134; the section check is around line 748.
+        - Recording pattern:
+          - exp.yaml: family individuals inserted before `  sys_any_by_entail_before_fix: {is: measurement_family}`, and facts before its `v_file_of` line.
+          - claims.yaml: observations inserted before `  o_sys_any_by_entail_passes_checks: {is: exp.observation}`; facts after the hypothesis's `exp.v_check` line.
+          - Use only conds that exist in the summary row (the mean averages over all rows).
+        - State names: exp.hyp_mixed, hyp_refuted, hyp_supported, item_done. Facts use exp.v_support and exp.v_contradict.
+        - The union conflict script is at /tmp/claude-0/-home-user-CMT/e05d2140-ce91-515f-a5fb-e6251e13d406/scratchpad/union.py. It keeps both sides of each conflict hunk.
+
+        3. Files and Code Sections:
+
+        **exp/experiments/sys_frame_both_sides.py** (PR #396, branch claude/h_frame_both_sides)
+        - Adds a law_rule frame_both_sides to the copy's syntax.yaml and probes v_probe_pre and v_probe_post.
+        - Result:
+          - static: n_pre 16, pre_only 0.
+          - base_law: 18 law errors; law_ok 0 → mixed.
+          - Disclosed: v_probe_post failed placed_deduced even without the law.
+        - Recorded:
+          - o_sys_frame_no_pre_only: verdict_refute 0.0 → support.
+          - o_sys_frame_law_fails: law_ok 0.0 → contradict.
+          - h_post_as_fact registered.
+        - Commits: 32e3049, de6cc32, ab4efbe, merge fc07654.
+
+        **exp/experiments/sys_checker_words_by_formula.py** (PR #397, branch claude/h_checker_words_by_formula)
+        - Static comparison of S_name (is_a) vs S_form (genus plus mod, or holds).
+        - Result: role 14/14, definition 50/50, v_refer 19 vs 26.
+          - The 7 extras: exp.v_answer, v_contradict, v_prior_same, v_support, subj.v_weekday_of, syntax.v_agree, v_measure.
+        - Recorded as mixed: o_sys_cw_two_match, o_sys_cw_not_all; h_refer_by_exact_holds registered.
+        - Commits: f159161, the results commit, 8bfc38a, merge db5cdb9.
+
+        **exp/experiments/sys_collect_by_formula.py** (#398, merged as 5a1aa54)
+        - Patched the copy's checker with `_is_coll` (formula F) and renamed v_collect→v_gather.
+        - Result:
+          - orig: n_coll 1, 0 errors.
+          - patch: 349 collections, 1905 errors.
+          - rename: 0 collections, 8 errors.
+          - static: 2 vs 30.
+        - Refuted. h_collect_by_end_order registered.
+
+        **exp/experiments/sys_collect_agree_in_grammar.py** (#400, merged as 6214888)
+        - Imports sys_checker_words_in_grammar_fix (to patch m.PROBE) and sys_checker_words_in_grammar as m.
+        - NAME = "collect_word".
+        - Result: N1 had 2 errors; N2 had r_kpart 822→825; M had kw_errors 1 → refuted.
+        - h_grammar_section_by_mod registered.
+
+        **#395, branch claude/h_fact_slot_keeps_each_verb**
+        - Merged main in (c19120c) to resolve conflicts.
+
+        4. Errors and fixes:
+        - **h_refer_by_exact_holds content failed tc.** `syntax.v_refer` can't be the from of v_depend. Changed it to `{is: v_depend, from: type_checker, to: syntax.holds}`.
+        - **Hook blocked a combined command** (file write, merge resolution and git commit in one Bash call). The hook flagged existing `#'` strings. Rewrote union.py with Write, resolved first, then committed in a separate command.
+        - **Conflicts on #397, #396, #395** after #398 merged. Fixed by merging origin/main and keeping both sides. tc and ec passed locally, and CI was green on all three.
+
+        5. Problem Solving:
+        - Roadmap item a (識別子化) has progressed through:
+          - h_frame_both_sides: mixed.
+          - h_checker_words_by_formula: mixed.
+          - h_collect_by_formula: refuted.
+          - h_collect_agree_in_grammar: refuted.
+        - New untested hypotheses, each grounded to d_cscl_display_derived:
+          - h_post_as_fact (in #396)
+          - h_refer_by_exact_holds (in #397)
+          - h_collect_by_end_order (on main)
+          - h_grammar_section_by_mod (on main)
+        - Auto-merge comments marked #396 and #397 for manual review because they are mixed. #395 is manual because it has 3 commits touching the script.
+
+        6. All user messages:
+        - None in this stretch. All inputs were trigger prompts and GitHub notifications, which are not user approvals.
+        - Earlier user messages, preserved:
+          - 「それやらないとロードマップ管理は難しいか それをやってから、それ以降の仮説はロードマップに結びながら管理してほしい じゃこんどこそ離席 よろしく」
+          - 「auto_merge で v_ground も登録として通るようにして」
+          - 「#384にマージコンフリクト」
+
+        7. Pending Tasks:
+        - Awaiting the user's merge, all CI-green and conflict-free as of 20:21:
+          - #387 (h_decision_link_by_role)
+          - #394 (exp_check fix)
+          - #395 (keeps_each_verb)
+          - #396 (frame_both_sides)
+          - #397 (checker_words_by_formula)
+        - After each merge: sync main and delete the branch.
+        - After #387 merges, do a0-3 as a manual PR:
+          - Add depend_to_from_decision, prior_decision and v_presuppose to exp.yaml.
+          - Split d_metric's v_depend list.
+          - Link d_road_japanese to lang.d_cscl_display_derived.
+        - Later:
+          - A manual PR putting the keep-each-verb slot change into the real checker.
+          - Test h_post_as_fact (needs a checker change).
+        - Continue the roadmap: h_case_frame_by_signature → h_draw_on_with_shallow → h_concept_kind_excludes_verb and h_concept_kind_frame_free → h_refer_stratified, and so on.
+
+        8. Current Work:
+        The trigger fired at 2026-11-19T20:47:55Z with the standard 30-minute prompt. Nothing has been done for this fire yet; local main is at 6214888.
+
+        9. Optional Next Step:
+        Per the trigger, first call `update_trigger(trigger_id="trig_01L92Xn7LSTHrmqt7enEcCPG", run_once_at="2026-11-19T21:19:00Z", enabled=true)`.
+
+        Then:
+        1. Check open PRs, merges and conflicts (`git fetch --prune`, then `git merge-tree` against each branch).
+        2. Continue roadmap item a with the next hypothesis, h_case_frame_by_signature:
+           - Read its lineage first (registration commit, claims.yaml content, prior experiments).
+           - Branch claude/h_case_frame_by_signature, preregister the script, open a Draft PR (subscribe and assign), run, record, run tc and ec, and undraft.
+           - Report the result and implications in Japanese, with one line on where the roadmap advanced.
+
+        If you need specific details from before compaction (like exact code snippets, error messages, or content you generated), read the full transcript at: /root/.claude/projects/-home-user-CMT/e05d2140-ce91-515f-a5fb-e6251e13d406.jsonl
+        Continue the conversation from where it left off without asking the user any further questions. Resume directly — do not acknowledge the summary, do not recap what was happening, do not preface with "I'll continue" or similar. Pick up the last task as if the break never happened.
+
+        The messages after this summary are the most recent messages from before compaction, kept verbatim. The summary was written without seeing them, so something it says has not happened yet may already have happened in them.
+facts:
+- {is: v_say, from: session_model, to: 01M7TS3D4PF0G5RWDK46RCCNNE}
+- {is: v_refer, from: 01M7TS3D4PF0G5RWDK46RCCNNE, to: exp.v_ground}
+- {is: v_refer, from: 01M7TS3D4PF0G5RWDK46RCCNNE, to: lang.type_checker}
+- {is: v_refer, from: 01M7TS3D4PF0G5RWDK46RCCNNE, to: syntax.holds}
+- {is: v_refer, from: 01M7TS3D4PF0G5RWDK46RCCNNE, to: syntax.pre}
+- {is: v_refer, from: 01M7TS3D4PF0G5RWDK46RCCNNE, to: syntax.post}
+- {is: v_refer, from: 01M7TS3D4PF0G5RWDK46RCCNNE, to: syntax.v_collect}
+- {is: v_refer, from: 01M7TS3D4PF0G5RWDK46RCCNNE, to: exp.measurement_family}
+- {is: v_refer, from: 01M7TS3D4PF0G5RWDK46RCCNNE, to: exp.v_file_of}
+- {is: v_refer, from: 01M7TS3D4PF0G5RWDK46RCCNNE, to: exp.observation}
+- {is: v_refer, from: 01M7TS3D4PF0G5RWDK46RCCNNE, to: exp.v_check}
+- {is: v_refer, from: 01M7TS3D4PF0G5RWDK46RCCNNE, to: exp.hyp_mixed}
+- {is: v_refer, from: 01M7TS3D4PF0G5RWDK46RCCNNE, to: exp.hyp_refuted}
+- {is: v_refer, from: 01M7TS3D4PF0G5RWDK46RCCNNE, to: exp.hyp_supported}
+- {is: v_refer, from: 01M7TS3D4PF0G5RWDK46RCCNNE, to: exp.item_done}
+- {is: v_refer, from: 01M7TS3D4PF0G5RWDK46RCCNNE, to: exp.v_support}
+- {is: v_refer, from: 01M7TS3D4PF0G5RWDK46RCCNNE, to: exp.v_contradict}
+- {is: v_refer, from: 01M7TS3D4PF0G5RWDK46RCCNNE, to: syntax.law_rule}
+- {is: v_refer, from: 01M7TS3D4PF0G5RWDK46RCCNNE, to: ontology.v_refer}
+- {is: v_refer, from: 01M7TS3D4PF0G5RWDK46RCCNNE, to: exp.v_answer}
+- {is: v_refer, from: 01M7TS3D4PF0G5RWDK46RCCNNE, to: exp.v_prior_same}
+- {is: v_refer, from: 01M7TS3D4PF0G5RWDK46RCCNNE, to: subj.v_weekday_of}
+- {is: v_refer, from: 01M7TS3D4PF0G5RWDK46RCCNNE, to: syntax.v_measure}
+- {is: v_refer, from: 01M7TS3D4PF0G5RWDK46RCCNNE, to: ontology.v_depend}
