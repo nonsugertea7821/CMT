@@ -1,0 +1,37 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-19T07:04:29.591Z（UTC）
+individuals:
+  01M7S9Y0MQFFQR1H7NEWSYXA5F:
+    is: model_utterance
+    display: 発言 2338
+    val:
+      order: 2338
+      text: |
+        I tested #90 (E30): giving the type checker's error messages back to the model and letting it rewrite does not help. The hypothesis is refuted.
+
+        | Condition | Lines accepted (of 24) |
+        |---|---|
+        | Before rewriting (E29) | 5 |
+        | Rewrite with the error messages | 5 |
+        | Rewrite told only "this line was rejected" | 5 |
+
+        None of the 19 rejected lines passed after one rewrite, in either condition. The rule fixed before the run calls it refuted when the with-errors condition does no better than the control.
+
+        **What happened**
+        - Most rewrites copied the E29 line unchanged: 10 of 19 with the error messages, 14 of 19 without.
+        - With the error messages, the model did change lines more, for example adding qualifiers or writing a second definition clause. But it never swapped an undefined verb or parent for one that exists in the system.
+        - The messages say what is wrong ("v_allow is not a verb") but not what to use instead, and the 1.5B model could not work that out on its own.
+
+        **What it suggests**
+        - Together with E29, this points to missing vocabulary rather than a missing error signal.
+        - The glossary hypothesis already registered (h_glossary_raises_writing: show the model the available verbs and parents) is the natural next test.
+        - I registered no new hypothesis. The other obvious follow-up is the prior work's method (sample many candidates and keep the ones that pass), and I can't yet write that as a formula distinct from #90's without adding new concepts.
+
+        **Things to know about the run**
+        - The first run stopped partway, most likely when the worker restarted, and had not written a results file, so I reran the same script from the start.
+        - The 9 items both runs share got the same accept and exact-match verdicts. The first run's log kept only those verdicts, not the lines written, so the commit message's claim that the output was identical is too strong. I corrected that in the PR body.
+        - Two rewritten lines contained two definition clauses and failed when the YAML was loaded, before the type checker saw them; they count as rejected.
+
+        The results are recorded in the system, the type checker and experiment check both pass, and PR #308 is ready for your review.
+facts:
+- {is: v_say, from: session_model, to: 01M7S9Y0MQFFQR1H7NEWSYXA5F}
+- {is: exp.v_answer, from: 01M7S9Y0MQFFQR1H7NEWSYXA5F, to: 01M7RE4494JDFW71WBNAW679KX}
