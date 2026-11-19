@@ -174,8 +174,8 @@ individuals:
   b_identifier_by_expansion: {is: exp.item_queued}
   h_appear_root: {is: exp.hyp_supported}
   b_appear_root: {is: exp.item_done}
-  h_boundary_invariant: {is: exp.hyp_untested}
-  b_boundary_invariant: {is: exp.item_queued}
+  h_boundary_invariant: {is: exp.hyp_supported}
+  b_boundary_invariant: {is: exp.item_done}
   h_case_frame_formula: {is: exp.hyp_refuted}
   b_case_frame_formula: {is: exp.item_done}
   h_case_frame_by_relation: {is: exp.hyp_refuted}
@@ -347,6 +347,12 @@ individuals:
   o_sys_appear_root_gathers: {is: exp.observation}
   o_sys_appear_root_bare: {is: exp.observation}
   o_sys_appear_root_root_collides: {is: exp.observation}
+  o_sys_boundary_post_passes: {is: exp.observation}
+  o_sys_boundary_post_passes_ec: {is: exp.observation}
+  o_sys_boundary_post_unchanged: {is: exp.observation}
+  o_sys_boundary_post_same_verbs: {is: exp.observation}
+  o_sys_boundary_no_pre_only: {is: exp.observation}
+  o_sys_boundary_no_post_only: {is: exp.observation}
   o_sys_hierarchy_object_first_fails: {is: exp.observation}
   o_sys_hierarchy_object_matches: {is: exp.observation}
   o_sys_hierarchy_object_passes_checks: {is: exp.observation}
@@ -619,6 +625,16 @@ facts:
   - {is: exp.v_support, from: o_sys_appear_root_gathers, to: h_appear_root}
   - {is: v_refer, from: h_boundary_invariant, to: {is: v_not_depend, from: type_checker, to: boundary_choice}}
   - {is: exp.v_check, from: b_boundary_invariant, to: h_boundary_invariant}
+  - {is: v_refer, from: o_sys_boundary_post_passes, to: {is: v_level, from: sys_boundary_invariant.R_errors.mean_value, to: 0.0}}
+  - {is: v_refer, from: o_sys_boundary_post_passes_ec, to: {is: v_level, from: sys_boundary_invariant.R_ec_errors.mean_value, to: 0.0}}
+  - {is: v_refer, from: o_sys_boundary_post_unchanged, to: {is: v_level, from: sys_boundary_invariant.R_changed.mean_value, to: 0.0}}
+  - {is: v_refer, from: o_sys_boundary_post_same_verbs, to: {is: v_level, from: sys_boundary_invariant.R_side_diff.mean_value, to: 0.0}}
+  - {is: v_refer, from: o_sys_boundary_no_pre_only, to: {is: v_level, from: sys_boundary_invariant.pre_only.mean_value, to: 0.0}}
+  - {is: v_refer, from: o_sys_boundary_no_post_only, to: {is: v_level, from: sys_boundary_invariant.post_only.mean_value, to: 0.0}}
+  - {is: exp.v_support, from: o_sys_boundary_post_passes, to: h_boundary_invariant}
+  - {is: exp.v_support, from: o_sys_boundary_post_passes_ec, to: h_boundary_invariant}
+  - {is: exp.v_support, from: o_sys_boundary_post_unchanged, to: h_boundary_invariant}
+  - {is: exp.v_support, from: o_sys_boundary_post_same_verbs, to: h_boundary_invariant}
   - {is: v_refer, from: h_case_frame_formula, to: {is: v_not_depend, from: case_frame, to: syntax.display}}
   - {is: exp.v_check, from: b_case_frame_formula, to: h_case_frame_formula}
   - {is: v_refer, from: h_case_frame_by_relation, to: {is: v_depend, from: case_frame, to: syntax.base}}
