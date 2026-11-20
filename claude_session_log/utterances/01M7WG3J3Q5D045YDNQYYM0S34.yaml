@@ -1,0 +1,42 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-20T12:50:06.071Z（UTC）
+individuals:
+  01M7WG3J3Q5D045YDNQYYM0S34:
+    is: model_utterance
+    display: 発言 3078
+    val:
+      order: 3078
+      text: |
+        **h_rule_nouns_agree_runtime は反証でした（#488）。**
+
+        **結果**
+        名前のある中身で書いた版では、3つの対のうち 2つが一致しました。
+        - premise と pre_rule は、どちらも `pre` を指します。
+        - derived と post_rule は、どちらも `post` を指します。
+        - required と law_check は一致しませんでした。required は always を、law_check は laws を指しています。
+        - 組み合わせの残り 6つの対は、どれも一致しませんでした。つまり、一致は対応する対にだけ出ています。
+        - main ではどの対も一致しませんでした。
+
+        **解釈**
+        - 外れた対も、時点の値は合っています（毎ステップ）。ずれているのは中身の書き方です。
+          - law_check は「何を確かめるか」を述べています。
+          - required は「いつ成り立つか」を述べています。
+
+        **訂正（手で見てください）**
+        - 登録したときの式は、両端を並びで書いていました。体系は並びを総当たりで読むので、意図した 3つの対ではなく 9つの対を述べていました。
+        - 結果を見る前に、対ごとの式に書き直しています。訂正があるので、#488 は自動ではマージされません。
+        - 名前の並びの見た目で式を書いて、体系がどう読むかを確かめていませんでした。h_model_reads_by_name と同じ型の誤りです。
+
+        **新しい仮説（#489、登録だけ）**
+        外れた対を解く道を 2つ、対で出しました。
+        - **h_law_check_by_always**: 法則を確かめる時点を、中身で always と書く。
+        - **h_required_by_laws**: 求める文を、中身で法則に結ぶ。
+
+        **ロードマップ:** a. 識別子化の枝です。どちらも d_cscl_display_derived に結んであります。
+facts:
+- {is: v_say, from: session_model, to: 01M7WG3J3Q5D045YDNQYYM0S34}
+- {is: exp.v_answer, from: 01M7WG3J3Q5D045YDNQYYM0S34, to: 01M7WB475DMBSCHT7J428J3DFB}
+- {is: v_refer, from: 01M7WG3J3Q5D045YDNQYYM0S34, to: runtime.pre_rule}
+- {is: v_refer, from: 01M7WG3J3Q5D045YDNQYYM0S34, to: syntax.pre}
+- {is: v_refer, from: 01M7WG3J3Q5D045YDNQYYM0S34, to: runtime.post_rule}
+- {is: v_refer, from: 01M7WG3J3Q5D045YDNQYYM0S34, to: syntax.post}
+- {is: v_refer, from: 01M7WG3J3Q5D045YDNQYYM0S34, to: runtime.law_check}
