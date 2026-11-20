@@ -1,0 +1,153 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-20T12:13:10.676Z（UTC）
+individuals:
+  01M7WDZYMM1MPR5MHEMTMTKAMY:
+    is: session_summary
+    display: 発言 3068
+    val:
+      order: 3068
+      text: |
+        This session is being continued from a previous conversation that ran out of context. The summary below covers the earlier portion of the conversation.
+
+        <system-reminder>
+        <tools-used-before-summary>AskUserQuestion, Bash, Edit, Grep, Read, ReadNotifications, Skill, TaskStop, ToolSearch, WebFetch, WebSearch, Write, mcp__claude-code-remote__create_trigger, mcp__claude-code-remote__delete_trigger, mcp__claude-code-remote__get_trigger, mcp__claude-code-remote__list_repos, mcp__claude-code-remote__read_documentation, mcp__claude-code-remote__send_later, mcp__claude-code-remote__subscribe_pr_activity, mcp__claude-code-remote__unsubscribe_pr_activity, mcp__claude-code-remote__update_trigger, mcp__github__actions_get, mcp__github__actions_list, mcp__github__add_issue_comment, mcp__github__create_pull_request, mcp__github__get_job_logs, mcp__github__issue_read, mcp__github__issue_write, mcp__github__list_issue_types, mcp__github__list_issues, mcp__github__list_pull_requests, mcp__github__pull_request_read, mcp__github__update_pull_request</tools-used-before-summary>
+        </system-reminder>
+        Summary:
+        1. Primary Request and Intent:
+
+        **Standing rules (still in force)**
+        - Repo: nonsugertea7821/CMT at /home/user/CMT. Python: /home/user/venv/bin/python.
+        - Reply in plain, natural Japanese. Don't overclaim. Give interpretation.
+        - Restore files with `git show <rev>:<path> > <path>`. Never use checkout or stash to restore; `git switch` for branches is fine.
+        - Commit trailer:
+          `Co-Authored-By: Claude [モデル名を伏せた] <[メールアドレスを伏せた]>`
+          `Claude-Session: https://claude.ai/code/session_015KRKt6TNJZ7ZsQmEknANXK`
+        - PR body ends with `🤖 Generated with [Claude Code](https://claude.com/claude-code)`, a blank line, then the session URL.
+        - No personal info and no model identifiers in pushed artifacts.
+        - Claude never merges.
+        - Every PR I open:
+          - Call subscribe_pr_activity.
+          - Call issue_write update with assignees ["nonsugertea7821"].
+        - After a merge: `git fetch -q --prune origin && git switch -q main && git merge -q --ff-only origin/main && git branch -D <branch>`.
+        - No comments in system yaml.
+        - Never rerun recorded experiment scripts that overwrite results. Exploratory analysis in the scratchpad that doesn't write the results file is acceptable if disclosed.
+        - Use `git add -f` for exp/experiments files.
+        - CI belongs to GitHub.
+
+        **Hypothesis registration**
+        - Anything I think "should be done" is registered as a hypothesis first.
+        - New hypotheses get v_ground to a decision in the same PR, or are marked 「わき道」.
+        - Registration-only PRs:
+          - Must use a branch NOT starting with `claude/h_` (e.g. `claude/register-...`).
+          - May contain only h_, b_, v_refer, v_check and v_ground lines. v_scope is NOT allowed.
+        - Hypothesis test PRs:
+          - Use branch `claude/h_<name>` and open a Draft PR with "Closes #<issue>".
+          - The first commit is the script only.
+          - The results commit follows, then remove Draft.
+        - Don't ask permission in conversation. Decide and write the rationale in the PR.
+
+        **Trigger**
+        - trig_01L92Xn7LSTHrmqt7enEcCPG.
+        - At each fire, first call update_trigger with run_once_at ≈ now+31min and enabled: true.
+        - Follow mainline a, record results, look for implications and register new hypotheses, report in Japanese with a roadmap line.
+        - Mainline a order: h_rule_roles_by_signature (done, refuted) → h_frame_both_sides → h_checker_words_by_formula (#300) · h_collect_by_formula · h_collect_agree_in_grammar → h_case_frame_by_signature → h_draw_on_with_shallow → …
+
+        2. Key Technical Concepts:
+        - tc is cscl/bootstrap/type_checker/type_checker.py; success prints "検査に成功". ec is exp/src/exp_check.py; silent, exit 0.
+        - ec computes hypothesis state from links: support plus contradict gives hyp_mixed.
+        - lang claims (claims.yaml) cannot reference exp words. Use exp.yaml for hypotheses about `model`.
+        - From exp, v_ground from lang.d_cscl_display_derived fails. Use exp decisions: d_goal, d_metric, d_road_region, d_road_checker, d_road_japanese.
+        - RULE_VERBS = ("v_assume","v_derive","v_require") sits at type_checker.py line 132.
+          - It is used in q_fact: `rule = short(f["is"]) in RULE_VERBS`.
+          - It is used in core_sections: `key = {"v_assume": "assume", ...}`.
+          - The `_SCOPES.clear()` anchor is at line 274 (first occurrence).
+        - syntax.yaml:
+          - premise, derived and required have mods {of:[v_assume/v_derive/v_require, to], with: law_rule}.
+          - refer_from_post exists.
+          - runtime.pre_rule has the inline mod {of:[v_refer, from], with: pre}.
+          - The laws named_mod_use and named_mod_share require named mods.
+        - auto_merge.py:
+          - Branch `claude/h_` is treated as a hypothesis PR.
+          - Other `claude/` branches are treated as registration PRs.
+
+        3. Files and Code Sections:
+        - **exp/src/exp.yaml** (main) now has:
+          - h_convex_prior_resists_redefinition: v_lower(midpoint_membership, redefinition_following), grounded on d_road_region.
+          - h_state_unique_display: v_refer(hidden_state, syntax.display, at:{count:1}), grounded on d_goal.
+          - h_model_reads_by_name: v_read(model, syntax.identifier), grounded on d_road_checker.
+          - Measurement families sys_rule_roles_by_signature and sys_rule_roles_by_named_mod. Individuals go before `sys_any_by_entail_before_fix`; facts go before its v_file_of line.
+        - **cscl/design/claims.yaml** (main) states:
+          - h_rule_roles_by_signature: refuted. Observations o_sys_rrs_*; only v_contradict on errors and diff_other.
+          - h_rule_roles_by_named_mod: supported. Observations o_sys_rrn_*.
+          - h_premise_agrees_pre_rule: untested. Formula v_agree(syntax.premise, runtime.pre_rule), grounded on d_cscl_display_derived.
+        - **exp/experiments/sys_rule_roles_by_signature.py**, with its result json (#478):
+          - Defines copy_tree, edit_syntax, edit_checker (uses module-level ROLE_BLOCK) and probe (PROBE returns errors, ec_errors, laws_hash, n_role, role, rel list).
+        - **exp/experiments/sys_rule_roles_by_named_mod.py**, with its result json (#484):
+          - Imports PREV = sys_rule_roles_by_signature.
+          - Adds refer_from_pre and refer_from_always after the refer_from_post line.
+          - Maps premise→refer_from_pre, derived→refer_from_post, required→refer_from_always, and runtime pre_rule→refer_from_pre.
+          - ROLE_BLOCK resolves named mods via _N[_m] and maps with pre/post/always to assume/derive/require.
+          - ATTR exclusion covers noun names and "of:\\n"; DEF_RELS = (r_def_back, r_defined, r_written).
+
+        4. Errors and fixes:
+        - **Wrong branch name.** Used claude/h_redefinition_pull for a registration PR (#474). auto-merge judged it a hypothesis PR. Recreated as #475 on a claude/register-... branch and closed #474. The remote branch claude/h_redefinition_pull remains; the user was told to delete it.
+        - **v_scope rejected.** The v_scope line was not counted as a registration line, so I removed it. The scope (common_word) is to be added in the preregistration later.
+        - **ec computed mixed.** Recording #478 with both v_support and v_contradict made ec compute mixed. Removed the v_support links because the preregistration said "1つでも外れれば反証".
+        - **lang/exp crossover.** A claims.yaml hypothesis referencing exp.model failed (lang can't reference exp). Moved it to exp.yaml. v_ground from lang.d_cscl_display_derived failed in exp, so it is grounded on d_road_checker.
+        - **Merge-conflict avoidance.** The #479 insertion was moved away from lines #478 changed (now near h_mod_phrase_any_verb).
+
+        5. Problem Solving:
+        - Rule roles can be read from formula (named mods) instead of verb names. Supported in an experiment copy; not yet applied to the real system (a checker change, to be reviewed by hand).
+        - The user's insight: the reason for my oversight is that the model reads by name. Registered as h_model_reads_by_name.
+
+        6. All user messages:
+        - 「再定義が難しいのは、学習した言語の慣習が作った凸な領域が強い引力を持つから これは仮説にするべきかも」
+        - 「あと合わせて ベクトルは式によって表せる も仮説にしよう」
+        - 「ごめん、正確には「モデルの内部状態は幾何空間の一部を指し示すため、何を考えているか一意に表示語に出来る」かな」
+        - 「良く分かってるな ミスそのものが含意になる、という実験の良い態度を」
+        - 「あー、私が言いたいのはね その「見落とし」をする理由自体が含意だということだよ」
+
+        7. Pending Tasks:
+        - Handle the trigger fire of 12:12.
+        - Continue mainline a with the next hypothesis: h_frame_both_sides, or h_checker_words_by_formula (#300).
+        - Later: apply the named-mod change to the real system/checker (needs manual review); add v_scope common_word in h_convex_prior's preregistration when it is tested.
+        - Leave the old Draft PRs #282, #286, #287, #289 alone.
+
+        8. Current Work:
+        The trigger fired at 2026-11-20T12:12:19Z (just read). All PRs are merged (#473, #475, #478, #479, #482, #484); local main is at 67bd3bd and synced, with no open PRs of mine.
+
+        9. Optional Next Step:
+        - Per the trigger prompt, first call update_trigger(trig_01L92Xn7LSTHrmqt7enEcCPG, run_once_at ≈ 2026-11-20T12:43:00Z, enabled: true).
+        - Then pick the next mainline-a hypothesis. Read its series (registration commit, prior experiments), then do branch claude/h_<name>, Draft PR, preregistration script commit, run, record, push, undraft.
+        - The trigger says: 「本線の順（下の層から）: a. 識別子化: h_rule_roles_by_signature（#334）→ h_frame_both_sides → h_checker_words_by_formula（#300）…」
+
+        If you need specific details from before compaction (like exact code snippets, error messages, or content you generated), read the full transcript at: /root/.claude/projects/-home-user-CMT/e05d2140-ce91-515f-a5fb-e6251e13d406.jsonl
+        Continue the conversation from where it left off without asking the user any further questions. Resume directly — do not acknowledge the summary, do not recap what was happening, do not preface with "I'll continue" or similar. Pick up the last task as if the break never happened.
+
+        The messages after this summary are the most recent messages from before compaction, kept verbatim. The summary was written without seeing them, so something it says has not happened yet may already have happened in them.
+facts:
+- {is: v_say, from: session_model, to: 01M7WDZYMM1MPR5MHEMTMTKAMY}
+- {is: v_refer, from: 01M7WDZYMM1MPR5MHEMTMTKAMY, to: exp.v_ground}
+- {is: v_refer, from: 01M7WDZYMM1MPR5MHEMTMTKAMY, to: ontology.v_refer}
+- {is: v_refer, from: 01M7WDZYMM1MPR5MHEMTMTKAMY, to: exp.v_check}
+- {is: v_refer, from: 01M7WDZYMM1MPR5MHEMTMTKAMY, to: exp.v_scope}
+- {is: v_refer, from: 01M7WDZYMM1MPR5MHEMTMTKAMY, to: lang.type_checker}
+- {is: v_refer, from: 01M7WDZYMM1MPR5MHEMTMTKAMY, to: exp.hyp_mixed}
+- {is: v_refer, from: 01M7WDZYMM1MPR5MHEMTMTKAMY, to: std.model}
+- {is: v_refer, from: 01M7WDZYMM1MPR5MHEMTMTKAMY, to: syntax.v_assume}
+- {is: v_refer, from: 01M7WDZYMM1MPR5MHEMTMTKAMY, to: syntax.v_derive}
+- {is: v_refer, from: 01M7WDZYMM1MPR5MHEMTMTKAMY, to: syntax.v_require}
+- {is: v_refer, from: 01M7WDZYMM1MPR5MHEMTMTKAMY, to: syntax.law_rule}
+- {is: v_refer, from: 01M7WDZYMM1MPR5MHEMTMTKAMY, to: runtime.refer_from_post}
+- {is: v_refer, from: 01M7WDZYMM1MPR5MHEMTMTKAMY, to: runtime.pre_rule}
+- {is: v_refer, from: 01M7WDZYMM1MPR5MHEMTMTKAMY, to: exp.v_lower}
+- {is: v_refer, from: 01M7WDZYMM1MPR5MHEMTMTKAMY, to: exp.redefinition_following}
+- {is: v_refer, from: 01M7WDZYMM1MPR5MHEMTMTKAMY, to: exp.hidden_state}
+- {is: v_refer, from: 01M7WDZYMM1MPR5MHEMTMTKAMY, to: syntax.display}
+- {is: v_refer, from: 01M7WDZYMM1MPR5MHEMTMTKAMY, to: exp.v_read}
+- {is: v_refer, from: 01M7WDZYMM1MPR5MHEMTMTKAMY, to: syntax.identifier}
+- {is: v_refer, from: 01M7WDZYMM1MPR5MHEMTMTKAMY, to: exp.v_file_of}
+- {is: v_refer, from: 01M7WDZYMM1MPR5MHEMTMTKAMY, to: exp.v_contradict}
+- {is: v_refer, from: 01M7WDZYMM1MPR5MHEMTMTKAMY, to: ontology.v_agree}
+- {is: v_refer, from: 01M7WDZYMM1MPR5MHEMTMTKAMY, to: syntax.premise}
+- {is: v_refer, from: 01M7WDZYMM1MPR5MHEMTMTKAMY, to: exp.common_word}
+- {is: v_refer, from: 01M7WDZYMM1MPR5MHEMTMTKAMY, to: exp.v_support}

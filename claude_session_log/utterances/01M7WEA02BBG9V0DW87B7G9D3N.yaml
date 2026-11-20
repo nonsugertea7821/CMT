@@ -1,0 +1,44 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-20T12:18:39.819Z（UTC）
+individuals:
+  01M7WEA02BBG9V0DW87B7G9D3N:
+    is: model_utterance
+    display: 発言 3072
+    val:
+      order: 3072
+      text: |
+        **h_premise_agrees_pre_rule は反証でした（#485、Draft は外してあります）。**
+
+        **何を測ったか**
+        - 型検査が導く `refer` の関係で、前提（premise）と前の状態の確かめ方（pre_rule）が同じ相手を指すかを数えました。
+        - 判定は main の写しで行いました。
+
+        **結果**
+        - main では共通の相手が 0 でした。
+          - premise が指すのは law_rule・v_assume など、法則の中の働きです。
+          - pre_rule が指すのは pre・v_refer など、中身です。
+        - 前の実験（#484）の、名前のある中身で書いた版では、`pre` が共通の相手になりました。
+
+        **解釈**
+        - 2つは書き方の層が違うので、main では重なりません。前提は「何に仮定されるか」で書かれ、pre_rule は「前の状態へ述べる」という中身で書かれています。
+        - 一致するのは、前提を中身で書き直したときだけです。登録したときに根拠にしたのは、書き換えた版で見えた性質でした。main の性質と取り違えていたことになります。
+        - 下見で `refer` の 9 行のうち 4 行を見ていたので、反証はある程度予想できました。このことは事前登録に書いてあります。
+
+        **含意と新しい仮説**
+        - #484 の書き換えを本体に入れると、法則の役割の名詞と実行器の戦略が式で結びつきます。
+        - そこで **h_rule_nouns_agree_runtime** を登録しました（#486、登録だけの PR）。premise↔pre_rule、derived↔post_rule、required↔law_check の3つの対が一致する、という仮説です。
+          - derived↔post_rule は一致しそうです。post_rule はすでに refer_from_post を持っています。
+          - required↔law_check は外れうると見ています。law_check は refer_from_laws を持っています。
+
+        **ロードマップ:** a. 識別子化の枝です。最初の周回文に挙がっていた仮説はすべて検証済みだったので、そこに結ばれた残りの未検証の仮説を進めました。どれも d_cscl_display_derived に結んであります。
+facts:
+- {is: v_say, from: session_model, to: 01M7WEA02BBG9V0DW87B7G9D3N}
+- {is: exp.v_answer, from: 01M7WEA02BBG9V0DW87B7G9D3N, to: 01M7WB475DMBSCHT7J428J3DFB}
+- {is: v_refer, from: 01M7WEA02BBG9V0DW87B7G9D3N, to: runtime.pre_rule}
+- {is: v_refer, from: 01M7WEA02BBG9V0DW87B7G9D3N, to: syntax.law_rule}
+- {is: v_refer, from: 01M7WEA02BBG9V0DW87B7G9D3N, to: syntax.v_assume}
+- {is: v_refer, from: 01M7WEA02BBG9V0DW87B7G9D3N, to: ontology.v_refer}
+- {is: v_refer, from: 01M7WEA02BBG9V0DW87B7G9D3N, to: syntax.pre}
+- {is: v_refer, from: 01M7WEA02BBG9V0DW87B7G9D3N, to: runtime.post_rule}
+- {is: v_refer, from: 01M7WEA02BBG9V0DW87B7G9D3N, to: runtime.law_check}
+- {is: v_refer, from: 01M7WEA02BBG9V0DW87B7G9D3N, to: runtime.refer_from_post}
+- {is: v_refer, from: 01M7WEA02BBG9V0DW87B7G9D3N, to: runtime.refer_from_laws}
