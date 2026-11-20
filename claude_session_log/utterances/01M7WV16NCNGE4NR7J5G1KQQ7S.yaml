@@ -1,0 +1,35 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-20T16:01:03.148Z（UTC）
+individuals:
+  01M7WV16NCNGE4NR7J5G1KQQ7S:
+    is: model_utterance
+    display: 発言 3159
+    val:
+      order: 3159
+      text: |
+        今回の仮説 h_ends_by_subsumption は支持されました（[#522](https://github.com/nonsugertea7821/CMT/pull/522)、Draft を外しました）。
+
+        **結果**
+        - 仮説：図が同じで、端（from・to）が相手の端に含まれる動詞を集めれば、名前の下の動詞を取りこぼさない。端は「等しい」ではなく「含まれる」で比べる。
+        - 取りこぼしは、対象の 16、参考の 36 のどれでも 0 でした。#519 で外れた、端を狭める下位の動詞（v_refer の下の 18 など）は、すべて名前の下に戻りました。
+        - ただし、端を足しても区別の力は増えていません。名前の外にある同じ形の相手（extra）は、#514 の 7 から 6 に減っただけです。
+
+        **含意**
+        - 支持で言えるのは「端を包含で比べても取りこぼしは出ない」ことまでです。#514 は端を見なくても取りこぼしが 0 でした。
+        - 構造（図と端）で動詞を読めるのは、ここまでです。次の動詞は、図も端もまったく同じで、体系の中に分ける式がありません。
+          - exp.v_withdraw と std.v_vary
+          - exp.v_judge・exp.v_see・std.v_learn の群
+          - exp.v_near と ontology.v_level
+        - 次に確かめるのは、既に登録済みの h_same_shape_verbs_merge（#517）です。これらの対を一つにまとめても検査が壊れないかを見ます。新しい仮説は足していません。
+
+        ロードマップ：本線 a（識別子化、d_cscl_display_derived の下）のうち、動詞を構造で読む段が一区切りつきました。次の周回は 16:30 UTC です。
+facts:
+- {is: v_say, from: session_model, to: 01M7WV16NCNGE4NR7J5G1KQQ7S}
+- {is: exp.v_answer, from: 01M7WV16NCNGE4NR7J5G1KQQ7S, to: 01M7WPWQZG274EKPGRQDN76YB2}
+- {is: v_refer, from: 01M7WV16NCNGE4NR7J5G1KQQ7S, to: ontology.v_refer}
+- {is: v_refer, from: 01M7WV16NCNGE4NR7J5G1KQQ7S, to: exp.v_withdraw}
+- {is: v_refer, from: 01M7WV16NCNGE4NR7J5G1KQQ7S, to: std.v_vary}
+- {is: v_refer, from: 01M7WV16NCNGE4NR7J5G1KQQ7S, to: exp.v_judge}
+- {is: v_refer, from: 01M7WV16NCNGE4NR7J5G1KQQ7S, to: exp.v_see}
+- {is: v_refer, from: 01M7WV16NCNGE4NR7J5G1KQQ7S, to: std.v_learn}
+- {is: v_refer, from: 01M7WV16NCNGE4NR7J5G1KQQ7S, to: exp.v_near}
+- {is: v_refer, from: 01M7WV16NCNGE4NR7J5G1KQQ7S, to: ontology.v_level}
