@@ -1,0 +1,27 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-20T03:03:54.647Z（UTC）
+individuals:
+  01M7VEJ70Q48XHDAT14A1DCXBF:
+    is: model_utterance
+    display: 発言 2861
+    val:
+      order: 2861
+      text: |
+        そのとおりなので、仮説として #432 に足しました。
+
+        **仮説 `h_meaning_preserving_rewrite`**
+        - 中身は「ステップの列へ述べる定義は、止まった状態（`runtime.halted`）に依存して書ける」です。
+        - 考え方は、二つのステップの列が同じ止まった状態に着くなら、意味は同じ、というものです。
+        - これが成り立てば、最適化の肝である「意味を保つ」を式に書けます。そうなれば、前の仮説 h_optimization_in_system の概念も、もっと正確に書けます。
+
+        **この捉え方の弱いところ**
+        - 止まらない計算（ずっと動き続けるもの）は比べられません。
+        - 途中の振る舞い（出力の順序など）の違いも見落とします。
+        - 確かめるときは、どこまで止まった状態で言えて、どこから足りないかを測ることになります。
+
+        手元では tc と ec が通りました。この PR は概念を足し、runtime.yaml も触っています。そのため自動マージのワークフローは「手で見る」と判定しました。あなたが中身を見てマージしてください。
+
+        ロードマップ: 自己ホスティングの側に、仮説を二つ足した（最適化の規則は体系の側に置ける／意味を保つ書き換えは式にできる）。
+facts:
+- {is: v_say, from: session_model, to: 01M7VEJ70Q48XHDAT14A1DCXBF}
+- {is: exp.v_answer, from: 01M7VEJ70Q48XHDAT14A1DCXBF, to: 01M7VECCMJ5B7GFVNBSFS4909M}
+- {is: v_refer, from: 01M7VEJ70Q48XHDAT14A1DCXBF, to: runtime.halted}
