@@ -357,7 +357,7 @@ individuals:
   b_collect_by_formula: {is: exp.item_done}
   h_collect_by_end_order: {is: exp.hyp_untested}
   b_collect_by_end_order: {is: exp.item_queued}
-  h_verb_shape_two_phase: {is: exp.hyp_untested}
+  h_verb_shape_two_phase: {is: exp.hyp_refuted}
   b_verb_shape_two_phase: {is: exp.item_queued}
   h_refer_by_projection: {is: exp.hyp_untested}
   b_refer_by_projection: {is: exp.item_queued}
@@ -662,6 +662,9 @@ individuals:
   o_sys_rna_post: {is: exp.observation}
   o_sys_rna_law: {is: exp.observation}
   o_sys_rna_off: {is: exp.observation}
+  o_sys_vst_targets: {is: exp.observation}
+  o_sys_vst_off: {is: exp.observation}
+  o_sys_vst_refs_off: {is: exp.observation}
   o_sys_reh_missing: {is: exp.observation}
   o_sys_reh_extra: {is: exp.observation}
   o_sys_reh_name: {is: exp.observation}
@@ -1329,6 +1332,10 @@ facts:
   - {is: v_refer, from: o_sys_rna_law, to: {is: v_level, from: sys_rule_nouns_agree_runtime.N_law_specific.mean_value, to: 0.0}}
   - {is: exp.v_contradict, from: o_sys_rna_law, to: h_rule_nouns_agree_runtime}
   - {is: v_refer, from: o_sys_rna_off, to: {is: v_level, from: sys_rule_nouns_agree_runtime.N_off_agree.mean_value, to: 0.0}}
+  - {is: v_refer, from: o_sys_vst_targets, to: {is: v_level, from: sys_verb_shape_two_phase.n_targets.mean_value, to: 16.0}}
+  - {is: v_refer, from: o_sys_vst_off, to: {is: v_level, from: sys_verb_shape_two_phase.n_targets_off.mean_value, to: 7.0}}
+  - {is: exp.v_contradict, from: o_sys_vst_off, to: h_verb_shape_two_phase}
+  - {is: v_refer, from: o_sys_vst_refs_off, to: {is: v_level, from: sys_verb_shape_two_phase.n_refs_off.mean_value, to: 10.0}}
   - {is: v_refer, from: o_sys_reh_missing, to: {is: v_level, from: sys_refer_by_exact_holds.missing.mean_value, to: 0.0}}
   - {is: exp.v_support, from: o_sys_reh_missing, to: h_refer_by_exact_holds}
   - {is: v_refer, from: o_sys_reh_extra, to: {is: v_level, from: sys_refer_by_exact_holds.extra.mean_value, to: 0.0}}
