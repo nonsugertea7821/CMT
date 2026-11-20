@@ -1,0 +1,31 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-20T23:26:34.717Z（UTC）
+individuals:
+  01M7XMGZPX5YJRFD89WCK1YDAM:
+    is: model_utterance
+    display: 発言 3287
+    val:
+      order: 3287
+      text: |
+        h_verbs_state_own_ends（#570）を確かめた結果、反証でした。下位の動詞は 70 のうち 59 で書いた extends と一致し、#565 の 50 から 9 増えました。上位の動詞は 49 のうち 49 で、正しく「親なし」と出ました。tc と ec は通り、PR の Draft も外してあります。
+
+        **外れた 11 の内訳**
+        - 5 つは channel の系列（renaming など）で、親がすべて channel と出ました。書いた親の text_injection が持つ mod を子が書いていないため、text_injection が候補から外れています。
+        - 残り 6 つは、親の new_kind を子が書いていない場合です。v_judge の系列 4 つは親が v_read と出て、v_read と teaching の 2 つは候補がありませんでした。
+
+        **含意**
+        端を自分の欄にすると、端による外れは消えました。ただ、受け継いだ new_kind と mod で同じ壁が残ります。体系の側で欄を足していくと、結局は書いた木の中身を各動詞に写すことになります。書いた木から独立にはなりません。
+
+        **新しい仮説（#571、登録だけ。識別子化に結んである）**
+        - 体系の側（h_verbs_state_own_kind_mod）: new_kind と mod も祖先から自分の欄として書き足すと、70/70 に揃う。当たっても、全部を書けば導けるという確認にとどまります。
+        - 規則の側（h_extends_unwritten_open）: 書いていない欄は比べない。その上で、極小は親の鎖で集めた端と mod で選ぶ。そうすると、自分で書いた欄だけから 70/70 に揃う。
+
+        #529 は、手で見てもらうのを待っています。次の周回は 23:53Z です。
+
+        本線 a 識別子化、d_cscl_display_derived の下
+facts:
+- {is: v_say, from: session_model, to: 01M7XMGZPX5YJRFD89WCK1YDAM}
+- {is: exp.v_answer, from: 01M7XMGZPX5YJRFD89WCK1YDAM, to: 01M7WWGV7ZZZW7ZQW70Z7XJP8V}
+- {is: v_refer, from: 01M7XMGZPX5YJRFD89WCK1YDAM, to: exp.text_injection}
+- {is: v_refer, from: 01M7XMGZPX5YJRFD89WCK1YDAM, to: syntax.new_kind}
+- {is: v_refer, from: 01M7XMGZPX5YJRFD89WCK1YDAM, to: exp.v_judge}
+- {is: v_refer, from: 01M7XMGZPX5YJRFD89WCK1YDAM, to: exp.v_read}
