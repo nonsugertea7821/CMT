@@ -306,7 +306,7 @@ individuals:
   o_sys_limit_paired_open: {is: exp.observation}
   h_checker_words_by_formula: {is: exp.hyp_mixed}
   b_checker_words_by_formula: {is: exp.item_done}
-  h_refer_by_exact_holds: {is: exp.hyp_untested}
+  h_refer_by_exact_holds: {is: exp.hyp_supported}
   b_refer_by_exact_holds: {is: exp.item_queued}
   o_sys_limit_subj_unpaired: {is: exp.observation}
   o_sys_mod_no_stated_false: {is: exp.observation}
@@ -658,6 +658,10 @@ individuals:
   o_sys_rna_post: {is: exp.observation}
   o_sys_rna_law: {is: exp.observation}
   o_sys_rna_off: {is: exp.observation}
+  o_sys_reh_missing: {is: exp.observation}
+  o_sys_reh_extra: {is: exp.observation}
+  o_sys_reh_name: {is: exp.observation}
+  o_sys_reh_form: {is: exp.observation}
   o_sys_fic_errors: {is: exp.observation}
   o_sys_fic_laws: {is: exp.observation}
   o_sys_fic_rel: {is: exp.observation}
@@ -1321,6 +1325,12 @@ facts:
   - {is: v_refer, from: o_sys_rna_law, to: {is: v_level, from: sys_rule_nouns_agree_runtime.N_law_specific.mean_value, to: 0.0}}
   - {is: exp.v_contradict, from: o_sys_rna_law, to: h_rule_nouns_agree_runtime}
   - {is: v_refer, from: o_sys_rna_off, to: {is: v_level, from: sys_rule_nouns_agree_runtime.N_off_agree.mean_value, to: 0.0}}
+  - {is: v_refer, from: o_sys_reh_missing, to: {is: v_level, from: sys_refer_by_exact_holds.missing.mean_value, to: 0.0}}
+  - {is: exp.v_support, from: o_sys_reh_missing, to: h_refer_by_exact_holds}
+  - {is: v_refer, from: o_sys_reh_extra, to: {is: v_level, from: sys_refer_by_exact_holds.extra.mean_value, to: 0.0}}
+  - {is: exp.v_support, from: o_sys_reh_extra, to: h_refer_by_exact_holds}
+  - {is: v_refer, from: o_sys_reh_name, to: {is: v_level, from: sys_refer_by_exact_holds.n_name.mean_value, to: 19.0}}
+  - {is: v_refer, from: o_sys_reh_form, to: {is: v_level, from: sys_refer_by_exact_holds.n_form_300.mean_value, to: 26.0}}
   - {is: v_refer, from: o_sys_fic_errors, to: {is: v_level, from: sys_fact_id_by_content.C_errors.mean_value, to: 0.0}}
   - {is: exp.v_support, from: o_sys_fic_errors, to: h_fact_id_by_content}
   - {is: v_refer, from: o_sys_fic_laws, to: {is: v_level, from: sys_fact_id_by_content.C_laws_same.mean_value, to: 1.0}}
