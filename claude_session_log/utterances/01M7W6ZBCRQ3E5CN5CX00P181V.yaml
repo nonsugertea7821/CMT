@@ -1,0 +1,29 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-20T10:10:30.936Z（UTC）
+individuals:
+  01M7W6ZBCRQ3E5CN5CX00P181V:
+    is: model_utterance
+    display: 発言 3020
+    val:
+      order: 3020
+      text: |
+        `h_phrase_in_checker`（#470）は支持でした。PR は #471 です。検査器と文法を実際に変えたので、手で見てください。今回は訂正なしで通りました。
+
+        **変更**
+        - 検査器に `mod_phrases` を足しました。部分の限定の句を、限定の式から作ります。句は、限定の表示語の文として事実に書かれます。
+        - 表示語の法則 `disp_*` 三つと、それが読んでいた関係 `says_*` 三つを、文法から外しました。合わせて 20 行です。検査器の `part_words` も外しました。
+
+        **結果**
+        - tc と ec は通りました。
+        - 部分の限定 99 すべてに句が付きました。
+        - 手で書いた表示語 91 個に逆の向きの言い方を書き足しても、誤りは一つも増えませんでした。書き足しが検査器に届いていることは、別の写しで確かめてあります。
+
+        **解釈**
+        部分の限定については、表示語はもう手で書いたものではなく、式から作ったものです。手書きの表示語を見張る法則は要らなくなったので、外しました。
+
+        **新しく登録した仮説**
+        - `h_mod_phrase_any_verb`（`d_cscl_display_derived` に結んであります）: いま句を作れるのは部分の動詞の限定だけです。ほかの動詞の限定でも、動詞の位置から句を作れるかを確かめます。
+
+        ロードマップ: a（識別子化）で h_phrase_in_checker を確かめ、表示語の法則を体系から外した。次は h_mod_phrase_any_verb。
+facts:
+- {is: v_say, from: session_model, to: 01M7W6ZBCRQ3E5CN5CX00P181V}
+- {is: exp.v_answer, from: 01M7W6ZBCRQ3E5CN5CX00P181V, to: 01M7W6EFNH26TKMVRMASQW8ZFV}
