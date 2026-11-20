@@ -1,0 +1,173 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-20T01:35:03.061Z（UTC）
+individuals:
+  01M7V9FGCN59DZGV4JHK2S47ZW:
+    is: session_summary
+    display: 発言 2802
+    val:
+      order: 2802
+      text: |
+        This session is being continued from a previous conversation that ran out of context. The summary below covers the earlier portion of the conversation.
+
+        <system-reminder>
+        <tools-used-before-summary>AskUserQuestion, Bash, Edit, Grep, Read, ReadNotifications, Skill, TaskStop, ToolSearch, WebFetch, WebSearch, Write, mcp__claude-code-remote__create_trigger, mcp__claude-code-remote__delete_trigger, mcp__claude-code-remote__get_trigger, mcp__claude-code-remote__read_documentation, mcp__claude-code-remote__send_later, mcp__claude-code-remote__subscribe_pr_activity, mcp__claude-code-remote__update_trigger, mcp__github__actions_get, mcp__github__actions_list, mcp__github__add_issue_comment, mcp__github__create_pull_request, mcp__github__get_job_logs, mcp__github__issue_read, mcp__github__issue_write, mcp__github__list_issue_types, mcp__github__list_issues, mcp__github__list_pull_requests, mcp__github__pull_request_read, mcp__github__update_pull_request</tools-used-before-summary>
+        </system-reminder>
+        Summary:
+        1. Primary Request and Intent:
+
+        **Standing rules (in force)**
+        - Repo: nonsugertea7821/CMT at /home/user/CMT.
+        - Reply in plain, natural Japanese. Don't overclaim. Give interpretation.
+        - Restore files with `git show <rev>:<path> > <path>`. Never use checkout or stash to restore; `git switch` for branches is fine.
+        - Python: /home/user/venv/bin/python.
+        - Commit trailer:
+          `Co-Authored-By: Claude [モデル名を伏せた] <[メールアドレスを伏せた]>`
+          `Claude-Session: https://claude.ai/code/session_015KRKt6TNJZ7ZsQmEknANXK`
+        - A PR body ends with `🤖 Generated with [Claude Code](https://claude.com/claude-code)`, a blank line, then the session URL.
+        - No personal info and no model identifiers in pushed artifacts.
+        - Claude never merges.
+        - Every PR I open: call subscribe_pr_activity, and call issue_write update with assignees ["nonsugertea7821"].
+        - After a merge: `git fetch -q --prune origin`, `git switch -q main`, `git merge -q --ff-only origin/main`, `git branch -D <branch>`.
+        - No comments in system yaml. The hook `.claude/hooks/no_new_comments.py` blocks the whole Bash command when conflict markers are present, so run conflict resolution and commit as separate commands.
+        - Never rerun recorded experiment scripts. Use `git add -f` for exp/experiments files.
+        - CI belongs to GitHub.
+        - Proposals must be registered as untested hypotheses first.
+        - Every new hypothesis gets v_ground to a roadmap decision in the same PR, or is marked 「わき道」.
+        - Preregistration:
+          - The first commit is the script only, in a Draft PR.
+          - Results go in a later commit.
+          - Corrections are disclosed and committed before they are run, and written to `_fix.json`.
+          - Undraft only when the state is supported, refuted or mixed.
+        - Don't ask permission in conversation. Decide, and write the rationale in the PR.
+        - User's conceptual rule: names may be read only for signature and grammar words; other distinctions are written as expressions.
+
+        **Trigger**
+        - trig_01L92Xn7LSTHrmqt7enEcCPG, the 「仮説の周回（30分毎）」 trigger.
+        - At each fire, first call update_trigger with run_once_at about now + 31 min and enabled: true.
+        - Then:
+          - Check PRs and merges, and resolve conflicts.
+          - Follow the roadmap.
+          - Preregister, run, record.
+          - Look for implications and register new hypotheses in registration-only PRs with v_ground.
+          - Report in Japanese with one roadmap line.
+
+        2. Key Technical Concepts:
+        - tc is `cscl/bootstrap/type_checker/type_checker.py`. ec is `exp/src/exp_check.py`.
+        - syntax.yaml lives at `cscl/library/syntax/syntax.yaml`.
+        - `T.syntax_facts()` returns a list of (rel, tuple).
+          - Named modifiers are expanded into content keys (yaml dump strings) in mod/of/position/with/neg facts.
+          - `r_written(domain:name, qualified)` records each written name reference, but not which node wrote it.
+        - law_rule entries are applied at the single err site in `Ontology.check_laws`, via `evaluate()`.
+        - law_given entries are LAWS_HERE: part_fact_direction, part_display_explicit, named_mod, world_declared, definition_stratified.
+        - Recording pattern:
+          - exp.yaml family individuals go before `  sys_any_by_entail_before_fix: {is: measurement_family}`.
+          - exp.yaml facts go before `  - {is: v_file_of, from: sys_any_by_entail_before_fix.json, to: sys_any_by_entail_before_fix}`.
+          - claims.yaml observations go before `  o_sys_any_by_entail_passes_checks: {is: exp.observation}`.
+          - Observation facts go after the hypothesis's v_refer or v_check line.
+        - Conflict resolver: `/tmp/claude-0/-home-user-CMT/e05d2140-ce91-515f-a5fb-e6251e13d406/scratchpad/union2.py <files>`.
+          - Keyed lines (`  name: {...}`): if HEAD is untested/queued and origin isn't, take origin; otherwise keep HEAD.
+          - Origin's other lines are added unless their key or the exact line already exists.
+          - The older union.py is also there.
+
+        3. Files and Code Sections:
+
+        **exp/experiments/sys_cscl_self_hosting.py** (#414, merged; h_cscl_self_hosting refuted)
+        - AST census of `err(` sites, classified as:
+          - rule: inside check_laws
+          - given: inside GIVEN_FUNCS (check_world_declared, presumed_worlds, check_named_mod, check_definition_stratified, definition_edges, definition_cycles, check_parts, part_words)
+          - unnamed: everything else
+        - Result: 119 sites = rule 1, given 10, unnamed 108. There are 114 law_rule individuals and 5 law_given.
+        - Observations o_sys_csh_given (10.0) and o_sys_csh_unnamed (108.0), each with v_contradict. There is no b_ item.
+
+        **h_grammar_as_laws** (#415, merged)
+        - Content: `v_not_depend(syntax.grammar_rule, type_checker)`, with v_ground from d_cscl_display_derived.
+
+        **type_checker.py gather change** (#417, branch claude/road_japanese_depends_display, open, manual review, CI green)
+        - Applies the PATCH K1–K3 from `exp/experiments/sys_fact_slot_keeps_each_verb.py`:
+          - BV dict keyed by (subj, rel, verb).
+          - Conflict only when the same verb has more than one fact.
+          - Adds `I[s]["rel.verb"]` slots.
+        - Also adds to exp/src/exp.yaml, after the v_raise line: `{is: v_depend, from: d_road_japanese, to: lang.d_cscl_display_derived}`.
+
+        **exp/experiments/sys_law_given_as_rule.py** (#418, branch claude/h_law_given_as_rule, Draft)
+        - Cases inserted after the negated_limitation anchor in claims.yaml:
+          - C: `zz_m: {display: 試しの修飾語, extends: quality, of: [v_refer, from], with: quality}`
+          - N: zz_a and zz_b (extends quality) use `mod: zz_m`.
+          - I: zz_a and zz_b write `{of: [v_refer, from], with: quality}` inline.
+        - Judgment: refuted if the facts are equal, py_N=0, py_I≥1 and other=0. If the facts differ, it stays untested.
+        - Result: py_C 0, py_N 0, py_I 1; other_N = other_I = 5; facts_equal_NI = 0.
+          - The only difference is `r_written(lang:zz_m, lang.zz_m)` in N.
+          - The other errors are one_name, specific and 大きさ, because zz_a and zz_b have the same expression.
+        - Commits: prereg 0f7f117, results 3e434ee (results JSON plus exp.yaml family). No observations were added. CI is green.
+
+        4. Errors and fixes:
+        - #411 merge: my key-dedupe dropped list lines (all share the key `- {is`). Fixed by re-adding the v_refer and v_check for h_placement_without_domain.
+        - h_cscl_self_hosting record: the b_cscl_self_hosting anchor did not exist. Facts were placed after the h's v_refer line instead.
+        - The syntax.yaml path was wrong. Fixed before the prereg commit.
+        - The comment hook blocked a combined resolve-and-commit command. Fixed by running them separately.
+        - After #395 merged, d_road_japanese still failed ("関係 continuant の事実が2つ以上ある"), because #395 was only an experiment. Fixed by applying its patch to the real checker (#417).
+
+        5. Problem Solving:
+        - Roadmap a (識別子化) state:
+          - Refuted: refer_stratified, cscl_self_hosting.
+          - Supported: negation_formula; placement_in_laws (supported with a correction, #411 pending).
+          - Still open: h_law_given_as_rule (#418, untested, needs a disclosed correction) and h_grammar_as_laws (untested).
+        - a0 (one decision, multiple relations): same-verb case solved by #387; different-verb case solved by #417, pending review.
+
+        6. All user messages:
+        - 「396 マージコンフリクト」
+        - 「397マージコンフリクト」
+        - Earlier user messages, preserved:
+          - 「それやらないとロードマップ管理は難しいか それをやってから、それ以降の仮説はロードマップに結びながら管理してほしい じゃこんどこそ離席 よろしく」
+          - 「auto_merge で v_ground も登録として通るようにして」
+          - 「#384にマージコンフリクト」
+
+        7. Pending Tasks:
+        - Open PRs awaiting the user's merge:
+          - #397 (mixed, CI green)
+          - #411 (has a fix, CI green)
+          - #417 (checker change)
+          - #418 (Draft)
+        - After each merge: sync main, delete the branch, and check the others for conflicts (resolve with union2.py).
+        - #418: write a disclosed correction (a _fix script committed before running, results to _fix.json):
+          - Give zz_b a different expression so the other errors become 0.
+          - Add case M (one node uses the name, one writes it inline) and compare facts M vs N, to see whether per-node naming is distinguishable.
+        - Later: h_grammar_as_laws; the remaining law_given (world_declared, part_fact_direction, part_display_explicit); h_post_as_fact.
+
+        8. Current Work:
+        The trigger fired at 2026-11-20T01:34:25 UTC (「30分の周回…」). Before that I had:
+        - Synced main after #407 merged (main at 93020c9).
+        - Confirmed #397, #411, #417 and #418 merge cleanly with main.
+        - Noted #397 CI green at 3b813e8.
+
+        The update_trigger call for this fire has not yet been made.
+
+        9. Optional Next Step:
+        Per the trigger: 「始めたら、まず update_trigger で run_once_at を今から約31分後にし、enabled: true にする」.
+        - Call update_trigger(trig_01L92Xn7LSTHrmqt7enEcCPG, run_once_at ≈ 2026-11-20T02:06:00Z, enabled: true).
+        - Check PRs.
+        - Continue #418 with the disclosed correction planned in its PR body:
+          - 「zz_b に別の上位を与えて、ほかの誤りを 0 にする。」
+          - 「N と I に加えて、「一つは名前で、一つはその場に」の版 M を足す。M と N の文が等しければ、ノードごとの区別は文にない。」
+        - Report in Japanese with one roadmap line.
+
+        If you need specific details from before compaction (like exact code snippets, error messages, or content you generated), read the full transcript at: /root/.claude/projects/-home-user-CMT/e05d2140-ce91-515f-a5fb-e6251e13d406.jsonl
+        Continue the conversation from where it left off without asking the user any further questions. Resume directly — do not acknowledge the summary, do not recap what was happening, do not preface with "I'll continue" or similar. Pick up the last task as if the break never happened.
+
+        The messages after this summary are the most recent messages from before compaction, kept verbatim. The summary was written without seeing them, so something it says has not happened yet may already have happened in them.
+facts:
+- {is: v_say, from: session_model, to: 01M7V9FGCN59DZGV4JHK2S47ZW}
+- {is: v_refer, from: 01M7V9FGCN59DZGV4JHK2S47ZW, to: exp.v_ground}
+- {is: v_refer, from: 01M7V9FGCN59DZGV4JHK2S47ZW, to: lang.type_checker}
+- {is: v_refer, from: 01M7V9FGCN59DZGV4JHK2S47ZW, to: syntax.law_rule}
+- {is: v_refer, from: 01M7V9FGCN59DZGV4JHK2S47ZW, to: syntax.law_given}
+- {is: v_refer, from: 01M7V9FGCN59DZGV4JHK2S47ZW, to: exp.measurement_family}
+- {is: v_refer, from: 01M7V9FGCN59DZGV4JHK2S47ZW, to: exp.v_file_of}
+- {is: v_refer, from: 01M7V9FGCN59DZGV4JHK2S47ZW, to: exp.observation}
+- {is: v_refer, from: 01M7V9FGCN59DZGV4JHK2S47ZW, to: ontology.v_refer}
+- {is: v_refer, from: 01M7V9FGCN59DZGV4JHK2S47ZW, to: exp.v_check}
+- {is: v_refer, from: 01M7V9FGCN59DZGV4JHK2S47ZW, to: exp.v_contradict}
+- {is: v_refer, from: 01M7V9FGCN59DZGV4JHK2S47ZW, to: lang.v_not_depend}
+- {is: v_refer, from: 01M7V9FGCN59DZGV4JHK2S47ZW, to: syntax.grammar_rule}
+- {is: v_refer, from: 01M7V9FGCN59DZGV4JHK2S47ZW, to: exp.v_raise}
+- {is: v_refer, from: 01M7V9FGCN59DZGV4JHK2S47ZW, to: ontology.v_depend}
+- {is: v_refer, from: 01M7V9FGCN59DZGV4JHK2S47ZW, to: lang.negated_limitation}

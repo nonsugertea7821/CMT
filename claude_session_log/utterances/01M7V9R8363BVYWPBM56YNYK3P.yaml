@@ -1,0 +1,31 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-20T01:39:49.478Z（UTC）
+individuals:
+  01M7V9R8363BVYWPBM56YNYK3P:
+    is: model_utterance
+    display: 発言 2807
+    val:
+      order: 2807
+      text: |
+        h_law_given_as_rule（#418）は、訂正した手順で反証になりました。検査器がつける区別のうち、「その限定を名前で書いたか、その場に書いたか」は、規則が読む文（`syntax_facts`）に残っていません。
+
+        **結果（#418）**
+        - 前回は zz_a と zz_b が同じ式だったため、関係のない誤りが 5 つ出ていました。今回は二つに別の上位を与え、その誤りを 0 にしました。
+        - 比べた版は三つです。N は両方が名前で書き、M は片方だけ名前で書き、I は両方がその場に書きます。訂正の手順は、走らせる前に commit して開示しています。
+        - named_mod の誤りの数は、N が 0、M が 1、I が 1 でした。named_mod と関係のない誤りは、どの版も 0 です。
+        - M と N の文は、一つも違いませんでした。それでも named_mod は、M の zz_b だけを咎めます。
+        - つまり、今の文の上の規則では named_mod を書けません。この法則は、検査器が与える「どのノードが名前で書いたか」という区別に依存しています。
+        - 反証の範囲は named_mod だけです。残りの law_given 3 つ（world_declared、part_fact_direction、part_display_explicit）はまだ見ていません。
+        - 状態を反証に変え、tc と ec は手元で通りました。Draft は外しましたが、訂正があるので手でのマージが必要です。
+
+        **含意: 新しい仮説の対（#420、登録だけ）**
+        - h_named_mod_by_writer: 規則が読む文（導いた関係）に、「どの識別子が、どの修飾を書いたか」を持たせる。検査器の側に文を足して、named_mod を規則に移す道です。
+        - h_named_mod_is_spelling: 修飾の意味は、名前で書いたかどうかに依存しない。named_mod を定義の法則ではなく綴りの法則とみなし、one_spelling と同じ層に置く道です。「名前で読んでよいのはシグネチャと文法の語だけ」という型に沿います。
+        - どちらも識別子化の決定（d_cscl_display_derived）の根拠に結んでいます。
+
+        **手でのマージ待ち:** #397、#411、#417（検査器の変更）、#418。新しく立てた #420 は登録だけの PR なので、auto-merge に乗る見込みです。
+
+        ロードマップ: a（識別子化）の h_law_given_as_rule を named_mod について反証で閉じ、その解き方の対を登録しました。
+facts:
+- {is: v_say, from: session_model, to: 01M7V9R8363BVYWPBM56YNYK3P}
+- {is: exp.v_answer, from: 01M7V9R8363BVYWPBM56YNYK3P, to: 01M7TA7A145QS5NA0XWZR9ST0Q}
+- {is: v_refer, from: 01M7V9R8363BVYWPBM56YNYK3P, to: syntax.law_given}
