@@ -164,8 +164,8 @@ individuals:
   b_display_law_redundant: {is: exp.item_done}
   h_phrase_in_checker: {is: exp.hyp_supported}
   b_phrase_in_checker: {is: exp.item_done}
-  h_mod_phrase_any_verb: {is: exp.hyp_untested}
-  b_mod_phrase_any_verb: {is: exp.item_queued}
+  h_mod_phrase_any_verb: {is: exp.hyp_supported}
+  b_mod_phrase_any_verb: {is: exp.item_done}
   h_verb_stem_from_signature: {is: exp.hyp_supported}
   b_verb_stem_from_signature: {is: exp.item_done}
   h_with_needs_display: {is: exp.hyp_supported}
@@ -614,6 +614,12 @@ individuals:
   o_sys_pic_target: {is: exp.observation}
   o_sys_pic_mut_none: {is: exp.observation}
   o_sys_pic_mut_count: {is: exp.observation}
+  o_sys_apv_other_phrase: {is: exp.observation}
+  o_sys_apv_other: {is: exp.observation}
+  o_sys_apv_no_disp: {is: exp.observation}
+  o_sys_apv_no_new: {is: exp.observation}
+  o_sys_apv_named_agree: {is: exp.observation}
+  o_sys_apv_named: {is: exp.observation}
   o_sys_any_by_entail_passes_checks: {is: exp.observation}
   o_sys_any_by_entail_passes_ec: {is: exp.observation}
   o_sys_any_by_entail_ideal: {is: exp.observation}
@@ -1196,6 +1202,15 @@ facts:
   - {is: v_refer, from: o_sys_pic_mut_count, to: {is: v_level, from: sys_phrase_in_checker.n_mut.mean_value, to: 91.0}}
   - {is: v_refer, from: h_mod_phrase_any_verb, to: {is: v_depend, from: syntax.display, to: syntax.position}}
   - {is: exp.v_check, from: b_mod_phrase_any_verb, to: h_mod_phrase_any_verb}
+  - {is: v_refer, from: o_sys_apv_other_phrase, to: {is: v_level, from: sys_mod_phrase_any_verb.n_other_phrase.mean_value, to: 481.0}}
+  - {is: exp.v_support, from: o_sys_apv_other_phrase, to: h_mod_phrase_any_verb}
+  - {is: v_refer, from: o_sys_apv_other, to: {is: v_level, from: sys_mod_phrase_any_verb.n_other.mean_value, to: 481.0}}
+  - {is: v_refer, from: o_sys_apv_no_disp, to: {is: v_level, from: sys_mod_phrase_any_verb.n_no_disp.mean_value, to: 0.0}}
+  - {is: exp.v_support, from: o_sys_apv_no_disp, to: h_mod_phrase_any_verb}
+  - {is: v_refer, from: o_sys_apv_no_new, to: {is: v_level, from: sys_mod_phrase_any_verb.new_T.mean_value, to: 0.0}}
+  - {is: exp.v_support, from: o_sys_apv_no_new, to: h_mod_phrase_any_verb}
+  - {is: v_refer, from: o_sys_apv_named_agree, to: {is: v_level, from: sys_mod_phrase_any_verb.n_named_agree.mean_value, to: 42.0}}
+  - {is: v_refer, from: o_sys_apv_named, to: {is: v_level, from: sys_mod_phrase_any_verb.n_named.mean_value, to: 67.0}}
   - {is: v_refer, from: h_verb_stem_from_signature, to: {is: v_depend, from: syntax.display, to: syntax.from}}
   - {is: exp.v_check, from: b_verb_stem_from_signature, to: h_verb_stem_from_signature}
   - {is: v_refer, from: o_sys_vss_all_with_translated, to: {is: v_level, from: sys_verb_stem_from_signature.n_translated.mean_value, to: 92.0}}
