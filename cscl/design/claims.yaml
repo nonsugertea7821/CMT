@@ -206,6 +206,10 @@ individuals:
   b_required_by_laws: {is: exp.item_queued}
   h_check_immune_parts: {is: exp.hyp_refuted}
   b_check_immune_parts: {is: exp.item_done}
+  h_fact_id_by_content: {is: exp.hyp_untested}
+  b_fact_id_by_content: {is: exp.item_queued}
+  h_grammar_names_parts: {is: exp.hyp_untested}
+  b_grammar_names_parts: {is: exp.item_queued}
   h_layers_unhardcode: {is: exp.hyp_refuted}
   b_layers_unhardcode: {is: exp.item_done}
   h_concept_bounds_model_state: {is: exp.hyp_untested}
@@ -946,6 +950,11 @@ facts:
   - {is: v_refer, from: o_sys_cip_same, to: {is: v_level, from: sys_check_immune_parts_fix1.P_same.mean_value, to: 0.0}}
   - {is: exp.v_contradict, from: o_sys_cip_same, to: h_check_immune_parts}
   - {is: v_refer, from: o_sys_cip_lines, to: {is: v_level, from: sys_check_immune_parts_fix1.P_exp_lines_after.mean_value, to: 1707.0}}
+  - {is: v_refer, from: h_fact_id_by_content, to: {is: v_not_depend, from: syntax.identifier, to: syntax.passage}}
+  - {is: exp.v_check, from: b_fact_id_by_content, to: h_fact_id_by_content}
+  - {is: exp.v_ground, from: d_cscl_display_derived, to: h_fact_id_by_content}
+  - {is: v_refer, from: h_grammar_names_parts, to: {is: v_refer, from: syntax.grammar, to: syntax.passage}}
+  - {is: exp.v_check, from: b_grammar_names_parts, to: h_grammar_names_parts}
   - {is: v_refer, from: h_layers_unhardcode, to: {is: v_not_depend, from: type_checker, to: name_choice}}
   - {is: v_refer, from: h_layers_unhardcode, to: {is: v_depend, from: type_checker, to: [layer_placement, signature_class]}}
   - {is: exp.v_check, from: b_layers_unhardcode, to: h_layers_unhardcode}
