@@ -19,6 +19,11 @@
 開示: この手順を書く前に、#525 の extra 9 の new_kind を見ている。std.v_learn（realizable_entity）と
   exp.v_judge（information_entity）・exp.v_see（quality）、std.v_vary（quality）と exp.v_withdraw（role）は new_kind で分かれ、
   ontology.v_level（new_kind なし）と exp.v_near（tolerance）は残ると予想している。予想どおりなら、支持の根拠は 1 対だけになる。
+訂正（1 回目の実行の後に書き足す）:
+  1 回目（結果 sys_domain_special_extends.json）は、写しが results/ を除いたため、写しの上の tc が書き換えと無関係に落ちた
+  （測定値の欄が読めない）。その tc_ok は判定に使わない。
+  訂正: 写しは .git と __pycache__ だけを除く。対照として、書き換えない写しでも tc を走らせ、通ることを先に確かめる
+  （対照が落ちれば外れ、状態を変えない）。訂正後の結果は sys_domain_special_extends_fix.json に書く。判定の式は変えない。
 使い方:
   python exp/experiments/sys_domain_special_extends.py
 """
@@ -34,7 +39,7 @@ import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
-OUT = ROOT / "exp/experiments/results/sys_domain_special_extends.json"
+OUT = ROOT / "exp/experiments/results/sys_domain_special_extends_fix.json"
 sys.path[:0] = [str(ROOT / "cscl/bootstrap/type_checker")]
 KEYS = ("holds", "pre", "post")
 
@@ -130,7 +135,7 @@ def main():
         wname = W if dom(W) != dom(x) and W.split(".")[-1] not in tc.LOCALS.get(dom(x), []) else W.split(".")[-1]
         with tempfile.TemporaryDirectory() as tmp:
             dst = Path(tmp) / "repo"
-            shutil.copytree(ROOT, dst, ignore=shutil.ignore_patterns(".git", "results", "__pycache__"))
+            shutil.copytree(ROOT, dst, ignore=shutil.ignore_patterns(".git", "__pycache__"))
             f = dst / rel
             t = f.read_text(encoding="utf-8")
             t2 = re.sub(rf"^(  {re.escape(short)}: \{{.*?extends: )([^,}}]+)", lambda m: m.group(1) + wname, t, count=1, flags=re.M)
@@ -152,18 +157,24 @@ def main():
                 bad += kind == "word"
                 rbad += kind == "ref"
             pairs += [(x, W) for x in r["cross_extra"]]
+    with tempfile.TemporaryDirectory() as tmp:
+        dst = Path(tmp) / "repo"
+        shutil.copytree(ROOT, dst, ignore=shutil.ignore_patterns(".git", "__pycache__"))
+        p = subprocess.run([sys.executable, str(dst / "cscl/bootstrap/type_checker/type_checker.py")], cwd=dst, capture_output=True, text=True)
+        control = int("検査に成功" in p.stdout)
+    rows["control 書き換えない写し"] = {"tc_ok": control}
     n_fit = n_tc = 0
     for x, W in pairs:
         q = retarget(x, W)
         rows[f"pair {x} < {W}"] = q
         n_fit += q["fit"]
         n_tc += bool(q.get("tc_ok"))
-    if not targets:
+    if not targets or not control:
         verdict = "外れ"
     else:
         verdict = "支持" if bad == 0 and rbad == 0 and pairs and n_fit == len(pairs) and n_tc == len(pairs) else "反証"
     s = {"build_ok": 1, "n_targets": len(targets), "n_targets_off": bad, "targets": targets,
-         "n_refs": len(refs), "n_refs_off": rbad, "n_cross_extra_nk": len(pairs), "n_fit": n_fit, "n_tc_ok": n_tc, "verdict": verdict}
+         "n_refs": len(refs), "n_refs_off": rbad, "n_cross_extra_nk": len(pairs), "n_fit": n_fit, "n_tc_ok": n_tc, "control_tc_ok": control, "verdict": verdict}
     rows["summary 要約"] = s
     rev = subprocess.run(["git", "rev-parse", "--short", "HEAD"], cwd=ROOT, capture_output=True, text=True).stdout.strip()
     OUT.write_text(json.dumps({"rev": rev, "rows": rows}, ensure_ascii=False, indent=1), encoding="utf-8")
