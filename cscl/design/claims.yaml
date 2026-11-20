@@ -170,8 +170,8 @@ individuals:
   b_rule_roles_by_named_mod: {is: exp.item_done}
   h_premise_agrees_pre_rule: {is: exp.hyp_refuted}
   b_premise_agrees_pre_rule: {is: exp.item_done}
-  h_rule_nouns_agree_runtime: {is: exp.hyp_untested}
-  b_rule_nouns_agree_runtime: {is: exp.item_queued}
+  h_rule_nouns_agree_runtime: {is: exp.hyp_refuted}
+  b_rule_nouns_agree_runtime: {is: exp.item_done}
   h_verb_stem_from_signature: {is: exp.hyp_supported}
   b_verb_stem_from_signature: {is: exp.item_done}
   h_with_needs_display: {is: exp.hyp_supported}
@@ -643,6 +643,11 @@ individuals:
   o_sys_pap_L_common: {is: exp.observation}
   o_sys_pap_L_specific: {is: exp.observation}
   o_sys_pap_N_specific: {is: exp.observation}
+  o_sys_rna_errors: {is: exp.observation}
+  o_sys_rna_pre: {is: exp.observation}
+  o_sys_rna_post: {is: exp.observation}
+  o_sys_rna_law: {is: exp.observation}
+  o_sys_rna_off: {is: exp.observation}
   o_sys_any_by_entail_passes_checks: {is: exp.observation}
   o_sys_any_by_entail_passes_ec: {is: exp.observation}
   o_sys_any_by_entail_ideal: {is: exp.observation}
@@ -1262,6 +1267,12 @@ facts:
   - {is: v_refer, from: h_rule_nouns_agree_runtime, to: {is: v_agree, from: syntax.required, to: runtime.law_check}}
   - {is: exp.v_check, from: b_rule_nouns_agree_runtime, to: h_rule_nouns_agree_runtime}
   - {is: exp.v_ground, from: d_cscl_display_derived, to: h_rule_nouns_agree_runtime}
+  - {is: v_refer, from: o_sys_rna_errors, to: {is: v_level, from: sys_rule_nouns_agree_runtime.N_errors.mean_value, to: 0.0}}
+  - {is: v_refer, from: o_sys_rna_pre, to: {is: v_level, from: sys_rule_nouns_agree_runtime.N_pre_specific.mean_value, to: 1.0}}
+  - {is: v_refer, from: o_sys_rna_post, to: {is: v_level, from: sys_rule_nouns_agree_runtime.N_post_specific.mean_value, to: 1.0}}
+  - {is: v_refer, from: o_sys_rna_law, to: {is: v_level, from: sys_rule_nouns_agree_runtime.N_law_specific.mean_value, to: 0.0}}
+  - {is: exp.v_contradict, from: o_sys_rna_law, to: h_rule_nouns_agree_runtime}
+  - {is: v_refer, from: o_sys_rna_off, to: {is: v_level, from: sys_rule_nouns_agree_runtime.N_off_agree.mean_value, to: 0.0}}
   - {is: v_refer, from: o_sys_apv_other_phrase, to: {is: v_level, from: sys_mod_phrase_any_verb.n_other_phrase.mean_value, to: 481.0}}
   - {is: exp.v_support, from: o_sys_apv_other_phrase, to: h_mod_phrase_any_verb}
   - {is: v_refer, from: o_sys_apv_other, to: {is: v_level, from: sys_mod_phrase_any_verb.n_other.mean_value, to: 481.0}}
