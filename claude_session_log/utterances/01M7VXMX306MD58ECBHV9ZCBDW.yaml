@@ -1,0 +1,27 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-20T07:27:31.424Z（UTC）
+individuals:
+  01M7VXMX306MD58ECBHV9ZCBDW:
+    is: model_utterance
+    display: 発言 2955
+    val:
+      order: 2955
+      text: |
+        この周回では実験は回していません。#455 と #456 はまだマージ待ちなので、#456 の含意を仮説として登録する PR を一つ立てました。
+
+        **新しい仮説（PR #457、登録だけ）: `h_mod_phrase_from_formula`**
+        - 中身は、限定ごとに持つ表示語の句を、その限定の式だけから訳すことです。訳には、動詞の語幹と、部分か全体かの役割を使います。
+        - 訳した句は向きを取り違えようがないので、部分を言う法則（`part_display_explicit`）も、表示名の言い方の文（says_*）も要らなくなる見込みです。
+        - これは、#450 で反証になった「表示語を式から訳す」を立て直したものです。#450 では、上位の表示語に入っていた逆向きの句を法則が読んでしまいました。句を限定ごとに分ければ、その原因はなくなります。
+        - 識別子化の決定（`d_cscl_display_derived`）に結びました。概念を足さない登録だけの PR なので、条件を満たせば自動でマージされます。
+
+        **手でのマージ待ち**
+        - #455: 4 つの law_given を規則に移す変更です。
+        - #456: 表示語を限定ごとに持たせる仮説の確かめで、支持になりました。訂正を含みます。
+
+        #457 と #456 は claims.yaml の同じ辺りを触るので、後からマージされるほうで衝突が出るかもしれません。出たら main を取り込んで解きます。
+
+        ロードマップ: a（識別子化）は、#455・#456 が手でのマージ待ちで、次の確かめとして `h_mod_phrase_from_formula` を登録しました。
+facts:
+- {is: v_say, from: session_model, to: 01M7VXMX306MD58ECBHV9ZCBDW}
+- {is: exp.v_answer, from: 01M7VXMX306MD58ECBHV9ZCBDW, to: 01M7VECCMJ5B7GFVNBSFS4909M}
+- {is: v_refer, from: 01M7VXMX306MD58ECBHV9ZCBDW, to: syntax.law_given}
