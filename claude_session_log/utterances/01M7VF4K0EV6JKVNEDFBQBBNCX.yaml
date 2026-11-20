@@ -1,0 +1,33 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-20T03:13:56.750Z（UTC）
+individuals:
+  01M7VF4K0EV6JKVNEDFBQBBNCX:
+    is: model_utterance
+    display: 発言 2865
+    val:
+      order: 2865
+      text: |
+        この回では、PR を二つ立てました。
+
+        **#435: named_mod を Python の検査から規則へ移した（検査器の変更なので、手で見てください）**
+        - 検査器が作る文（事実）に、二つを足しました。
+          - どのノードが、修飾を名前で書いたか。
+          - 名前を付けた修飾語の中身は何か。
+        - その上で、syntax.yaml に named_mod を三つの規則として書き、Python で書いた named_mod の検査は消しました。
+        - 体系全体で tc と ec が通りました。
+        - 一時の写しにわざと違反を入れたところ、規則がちゃんと咎めることも確かめました。
+        - 一つ変わる点があります。誤りの文が規則の形になり、修飾の中身がそのまま入るので、文が複数行になります。
+
+        **#436: 含意を仮説として登録した（登録だけなので、自動マージに乗るはずです）**
+        - named_mod を規則で書けなかったのは、規則の書き方のせいではありませんでした。文に書き手が入っていないことが原因でした。
+        - 残る四つの law_given（part_fact_direction・part_display_explicit・world_declared・definition_stratified）も、足りない文を足せば規則で書けるのではないか、という仮説です。
+        - 名前は `h_law_given_by_facts` で、識別子化の決定（`d_cscl_display_derived`）に結んであります。
+
+        開いている PR は、ほかに #282・#286・#287・#289 があります。どれも古い Draft で、わき道（追従の系列）なので触っていません。
+
+        次の定期実行は 03:42 の予定です。
+
+        ロードマップ: a（識別子化）で、named_mod を規則にして本体に入れた（#435）。次は残る四つの law_given を一つずつ確かめる。
+facts:
+- {is: v_say, from: session_model, to: 01M7VF4K0EV6JKVNEDFBQBBNCX}
+- {is: exp.v_answer, from: 01M7VF4K0EV6JKVNEDFBQBBNCX, to: 01M7VECCMJ5B7GFVNBSFS4909M}
+- {is: v_refer, from: 01M7VF4K0EV6JKVNEDFBQBBNCX, to: syntax.law_given}
