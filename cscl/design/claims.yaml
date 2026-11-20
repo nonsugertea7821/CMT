@@ -130,6 +130,8 @@ individuals:
   b_above_individual: {is: exp.item_done}
   h_placement_in_laws: {is: exp.hyp_supported}
   b_placement_in_laws: {is: exp.item_done}
+  h_placement_without_domain: {is: exp.hyp_untested}
+  b_placement_without_domain: {is: exp.item_queued}
   h_above_sound: {is: exp.hyp_refuted}
   b_above_sound: {is: exp.item_done}
   h_renaming_invariant: {is: exp.hyp_refuted}
@@ -559,6 +561,7 @@ facts:
   - {is: exp.v_ground, from: d_cscl_display_derived, to: h_negation_formula}
   - {is: exp.v_ground, from: d_cscl_display_derived, to: h_law_given_as_rule}
   - {is: exp.v_ground, from: d_cscl_display_derived, to: h_placement_in_laws}
+  - {is: exp.v_ground, from: d_cscl_display_derived, to: h_placement_without_domain}
   - {is: exp.v_ground, from: d_cscl_display_derived, to: h_cscl_self_hosting}
   - {is: v_refer, from: d_cscl_trust_previous_version, to: {is: v_depend, from: type_checker, to: previous_checker}}
   - {is: v_refer, from: d_sig_depend_from, to: {is: extends, from: dependent, to: continuant}}
@@ -683,6 +686,8 @@ facts:
   - {is: exp.v_support, from: o_sys_pil_fix_agree, to: h_placement_in_laws}
   - {is: v_refer, from: o_sys_pil_fix_base_clean, to: {is: v_level, from: sys_placement_in_laws_fix.law_Q0.mean_value, to: 0.0}}
   - {is: exp.v_support, from: o_sys_pil_fix_base_clean, to: h_placement_in_laws}
+  - {is: v_refer, from: h_placement_without_domain, to: {is: v_not_depend, from: placement_by_above, to: syntax.domain}}
+  - {is: exp.v_check, from: b_placement_without_domain, to: h_placement_without_domain}
   - {is: v_refer, from: h_concept_kind_excludes_verb, to: {is: v_depend, from: concept_by_law, to: [syntax.pre, syntax.holds, syntax.extends]}}
   - {is: exp.v_check, from: b_concept_kind_excludes_verb, to: h_concept_kind_excludes_verb}
   - {is: v_refer, from: h_concept_kind_frame_free, to: {is: v_not_depend, from: concept_by_law, to: [syntax.pre, syntax.holds]}}
