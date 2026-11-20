@@ -158,8 +158,8 @@ individuals:
   b_display_as_part_tree: {is: exp.item_done}
   h_mod_phrase_from_formula: {is: exp.hyp_refuted}
   b_mod_phrase_from_formula: {is: exp.item_done}
-  h_mod_phrase_without_with: {is: exp.hyp_untested}
-  b_mod_phrase_without_with: {is: exp.item_queued}
+  h_mod_phrase_without_with: {is: exp.hyp_supported}
+  b_mod_phrase_without_with: {is: exp.item_done}
   h_display_law_redundant: {is: exp.hyp_untested}
   b_display_law_redundant: {is: exp.item_queued}
   h_verb_stem_from_signature: {is: exp.hyp_supported}
@@ -586,6 +586,13 @@ individuals:
   o_sys_vss_verb_form: {is: exp.observation}
   o_sys_vss_no_new: {is: exp.observation}
   o_sys_vss_law_clean: {is: exp.observation}
+  o_sys_mpw_no_with_translated: {is: exp.observation}
+  o_sys_mpw_no_with: {is: exp.observation}
+  o_sys_mpw_all_translated: {is: exp.observation}
+  o_sys_mpw_target: {is: exp.observation}
+  o_sys_mpw_no_kind_none: {is: exp.observation}
+  o_sys_mpw_no_new: {is: exp.observation}
+  o_sys_mpw_law_clean: {is: exp.observation}
   o_sys_any_by_entail_passes_checks: {is: exp.observation}
   o_sys_any_by_entail_passes_ec: {is: exp.observation}
   o_sys_any_by_entail_ideal: {is: exp.observation}
@@ -1120,6 +1127,18 @@ facts:
   - {is: exp.v_check, from: b_mod_phrase_from_formula, to: h_mod_phrase_from_formula}
   - {is: v_refer, from: h_mod_phrase_without_with, to: {is: v_depend, from: syntax.display, to: syntax.quant}}
   - {is: exp.v_check, from: b_mod_phrase_without_with, to: h_mod_phrase_without_with}
+  - {is: v_refer, from: o_sys_mpw_no_with_translated, to: {is: v_level, from: sys_mod_phrase_without_with_fix.n_no_with_translated.mean_value, to: 7.0}}
+  - {is: exp.v_support, from: o_sys_mpw_no_with_translated, to: h_mod_phrase_without_with}
+  - {is: v_refer, from: o_sys_mpw_no_with, to: {is: v_level, from: sys_mod_phrase_without_with_fix.n_no_with.mean_value, to: 7.0}}
+  - {is: v_refer, from: o_sys_mpw_all_translated, to: {is: v_level, from: sys_mod_phrase_without_with_fix.n_translated.mean_value, to: 99.0}}
+  - {is: exp.v_support, from: o_sys_mpw_all_translated, to: h_mod_phrase_without_with}
+  - {is: v_refer, from: o_sys_mpw_target, to: {is: v_level, from: sys_mod_phrase_without_with_fix.n_target.mean_value, to: 99.0}}
+  - {is: v_refer, from: o_sys_mpw_no_kind_none, to: {is: v_level, from: sys_mod_phrase_without_with_fix.n_no_kind.mean_value, to: 0.0}}
+  - {is: exp.v_support, from: o_sys_mpw_no_kind_none, to: h_mod_phrase_without_with}
+  - {is: v_refer, from: o_sys_mpw_no_new, to: {is: v_level, from: sys_mod_phrase_without_with_fix.new_T.mean_value, to: 0.0}}
+  - {is: exp.v_support, from: o_sys_mpw_no_new, to: h_mod_phrase_without_with}
+  - {is: v_refer, from: o_sys_mpw_law_clean, to: {is: v_level, from: sys_mod_phrase_without_with_fix.py_T.mean_value, to: 0.0}}
+  - {is: exp.v_support, from: o_sys_mpw_law_clean, to: h_mod_phrase_without_with}
   - {is: v_refer, from: h_display_law_redundant, to: {is: v_not_depend, from: syntax.display, to: syntax.laws}}
   - {is: exp.v_check, from: b_display_law_redundant, to: h_display_law_redundant}
   - {is: v_refer, from: h_verb_stem_from_signature, to: {is: v_depend, from: syntax.display, to: syntax.from}}
