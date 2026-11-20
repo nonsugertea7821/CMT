@@ -156,8 +156,8 @@ individuals:
   b_part_display_own_phrase: {is: exp.item_done}
   h_display_as_part_tree: {is: exp.hyp_supported}
   b_display_as_part_tree: {is: exp.item_done}
-  h_mod_phrase_from_formula: {is: exp.hyp_untested}
-  b_mod_phrase_from_formula: {is: exp.item_queued}
+  h_mod_phrase_from_formula: {is: exp.hyp_refuted}
+  b_mod_phrase_from_formula: {is: exp.item_done}
   h_comment_ban: {is: exp.hyp_supported}
   b_comment_ban: {is: exp.item_done}
   h_above_closed: {is: exp.hyp_supported}
@@ -562,6 +562,10 @@ individuals:
   o_sys_dpt_swap_flagged: {is: exp.observation}
   o_sys_dpt_vague_flagged: {is: exp.observation}
   o_sys_dpt_no_other: {is: exp.observation}
+  o_sys_mpf_target: {is: exp.observation}
+  o_sys_mpf_untranslated: {is: exp.observation}
+  o_sys_mpf_no_new: {is: exp.observation}
+  o_sys_mpf_law_clean: {is: exp.observation}
   o_sys_any_by_entail_passes_checks: {is: exp.observation}
   o_sys_any_by_entail_passes_ec: {is: exp.observation}
   o_sys_any_by_entail_ideal: {is: exp.observation}
@@ -1090,6 +1094,11 @@ facts:
   - {is: exp.v_support, from: o_sys_dpt_no_other, to: h_display_as_part_tree}
   - {is: v_refer, from: h_mod_phrase_from_formula, to: {is: v_depend, from: syntax.display, to: syntax.mod}}
   - {is: exp.v_check, from: b_mod_phrase_from_formula, to: h_mod_phrase_from_formula}
+  - {is: v_refer, from: o_sys_mpf_target, to: {is: v_level, from: sys_mod_phrase_from_formula.n_target.mean_value, to: 99.0}}
+  - {is: v_refer, from: o_sys_mpf_untranslated, to: {is: v_level, from: sys_mod_phrase_from_formula.n_translated.mean_value, to: 77.0}}
+  - {is: exp.v_contradict, from: o_sys_mpf_untranslated, to: h_mod_phrase_from_formula}
+  - {is: v_refer, from: o_sys_mpf_no_new, to: {is: v_level, from: sys_mod_phrase_from_formula.new_T.mean_value, to: 0.0}}
+  - {is: v_refer, from: o_sys_mpf_law_clean, to: {is: v_level, from: sys_mod_phrase_from_formula.py_T.mean_value, to: 0.0}}
   - {is: v_refer, from: h_stratified_by_rule, to: {is: v_depend, from: definition_cycle, to: syntax.law_relation}}
   - {is: exp.v_check, from: b_stratified_by_rule, to: h_stratified_by_rule}
   - {is: v_refer, from: o_sys_sbr_neg_cycle_agree, to: {is: v_level, from: sys_stratified_by_rule_fix.agree_V.mean_value, to: 1.0}}
