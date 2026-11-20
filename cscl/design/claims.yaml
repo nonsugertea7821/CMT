@@ -307,6 +307,8 @@ individuals:
   h_checker_words_by_formula: {is: exp.hyp_mixed}
   b_checker_words_by_formula: {is: exp.item_done}
   h_refer_by_exact_holds: {is: exp.hyp_supported}
+  h_checker_words_swap: {is: exp.hyp_untested}
+  b_checker_words_swap: {is: exp.item_queued}
   b_refer_by_exact_holds: {is: exp.item_queued}
   o_sys_limit_subj_unpaired: {is: exp.observation}
   o_sys_mod_no_stated_false: {is: exp.observation}
@@ -357,10 +359,12 @@ individuals:
   b_collect_by_formula: {is: exp.item_done}
   h_collect_by_end_order: {is: exp.hyp_untested}
   b_collect_by_end_order: {is: exp.item_queued}
-  h_verb_shape_two_phase: {is: exp.hyp_untested}
+  h_verb_shape_two_phase: {is: exp.hyp_refuted}
   b_verb_shape_two_phase: {is: exp.item_queued}
   h_refer_by_projection: {is: exp.hyp_untested}
   b_refer_by_projection: {is: exp.item_queued}
+  h_names_up_to_relabel: {is: exp.hyp_untested}
+  b_names_up_to_relabel: {is: exp.item_queued}
   h_same_shape_verbs_merge: {is: exp.hyp_untested}
   b_same_shape_verbs_merge: {is: exp.item_queued}
   h_shape_needs_ends: {is: exp.hyp_untested}
@@ -666,6 +670,9 @@ individuals:
   o_sys_rna_post: {is: exp.observation}
   o_sys_rna_law: {is: exp.observation}
   o_sys_rna_off: {is: exp.observation}
+  o_sys_vst_targets: {is: exp.observation}
+  o_sys_vst_off: {is: exp.observation}
+  o_sys_vst_refs_off: {is: exp.observation}
   o_sys_reh_missing: {is: exp.observation}
   o_sys_reh_extra: {is: exp.observation}
   o_sys_reh_name: {is: exp.observation}
@@ -1333,6 +1340,10 @@ facts:
   - {is: v_refer, from: o_sys_rna_law, to: {is: v_level, from: sys_rule_nouns_agree_runtime.N_law_specific.mean_value, to: 0.0}}
   - {is: exp.v_contradict, from: o_sys_rna_law, to: h_rule_nouns_agree_runtime}
   - {is: v_refer, from: o_sys_rna_off, to: {is: v_level, from: sys_rule_nouns_agree_runtime.N_off_agree.mean_value, to: 0.0}}
+  - {is: v_refer, from: o_sys_vst_targets, to: {is: v_level, from: sys_verb_shape_two_phase.n_targets.mean_value, to: 16.0}}
+  - {is: v_refer, from: o_sys_vst_off, to: {is: v_level, from: sys_verb_shape_two_phase.n_targets_off.mean_value, to: 7.0}}
+  - {is: exp.v_contradict, from: o_sys_vst_off, to: h_verb_shape_two_phase}
+  - {is: v_refer, from: o_sys_vst_refs_off, to: {is: v_level, from: sys_verb_shape_two_phase.n_refs_off.mean_value, to: 10.0}}
   - {is: v_refer, from: o_sys_reh_missing, to: {is: v_level, from: sys_refer_by_exact_holds.missing.mean_value, to: 0.0}}
   - {is: exp.v_support, from: o_sys_reh_missing, to: h_refer_by_exact_holds}
   - {is: v_refer, from: o_sys_reh_extra, to: {is: v_level, from: sys_refer_by_exact_holds.extra.mean_value, to: 0.0}}
@@ -1436,6 +1447,9 @@ facts:
   - {is: v_refer, from: h_refer_by_exact_holds, to: {is: v_depend, from: type_checker, to: syntax.holds}}
   - {is: exp.v_check, from: b_refer_by_exact_holds, to: h_refer_by_exact_holds}
   - {is: exp.v_ground, from: d_cscl_display_derived, to: h_refer_by_exact_holds}
+  - {is: v_refer, from: h_checker_words_swap, to: {is: v_not_depend, from: type_checker, to: syntax.identifier}}
+  - {is: exp.v_check, from: b_checker_words_swap, to: h_checker_words_swap}
+  - {is: exp.v_ground, from: d_cscl_display_derived, to: h_checker_words_swap}
   - {is: v_refer, from: o_sys_subsume_layer_not_all_usable, to: {is: v_come_before, from: sys_subsume.some_usable.mean_value, to: 1.0}}
   - {is: v_refer, from: o_sys_spelling_one_word_two_referents, to: {is: v_come_after, from: sys_spelling.multi.mean_value, to: 0.0}}
   - {is: v_refer, from: o_sys_special_outside_named, to: {is: v_come_after, from: sys_special.outside.mean_value, to: 0.0}}
@@ -1485,6 +1499,9 @@ facts:
   - {is: v_refer, from: h_refer_by_projection, to: {is: v_depend, from: state_relation, to: [syntax.variable, ontology.same]}}
   - {is: exp.v_check, from: b_refer_by_projection, to: h_refer_by_projection}
   - {is: exp.v_ground, from: d_cscl_display_derived, to: h_refer_by_projection}
+  - {is: v_refer, from: h_names_up_to_relabel, to: {is: v_depend, from: syntax.identifier, to: ontology.same}}
+  - {is: exp.v_check, from: b_names_up_to_relabel, to: h_names_up_to_relabel}
+  - {is: exp.v_ground, from: d_cscl_display_derived, to: h_names_up_to_relabel}
   - {is: v_refer, from: h_same_shape_verbs_merge, to: {is: v_depend, from: syntax.identifier, to: syntax.holds}}
   - {is: exp.v_check, from: b_same_shape_verbs_merge, to: h_same_shape_verbs_merge}
   - {is: exp.v_ground, from: d_cscl_display_derived, to: h_same_shape_verbs_merge}
