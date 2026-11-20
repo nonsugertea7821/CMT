@@ -363,6 +363,8 @@ individuals:
   b_verb_shape_two_phase: {is: exp.item_queued}
   h_refer_by_projection: {is: exp.hyp_untested}
   b_refer_by_projection: {is: exp.item_queued}
+  h_checker_find_by_ancestry: {is: exp.hyp_untested}
+  b_checker_find_by_ancestry: {is: exp.item_queued}
   h_wider_verb_lower: {is: exp.hyp_refuted}
   b_wider_verb_lower: {is: exp.item_queued}
   h_extends_follows_use: {is: exp.hyp_untested}
@@ -1574,6 +1576,9 @@ facts:
   - {is: v_refer, from: h_refer_by_projection, to: {is: v_depend, from: state_relation, to: [syntax.variable, ontology.same]}}
   - {is: exp.v_check, from: b_refer_by_projection, to: h_refer_by_projection}
   - {is: exp.v_ground, from: d_cscl_display_derived, to: h_refer_by_projection}
+  - {is: v_refer, from: h_checker_find_by_ancestry, to: {is: v_depend, from: type_checker, to: syntax.extends}}
+  - {is: exp.v_check, from: b_checker_find_by_ancestry, to: h_checker_find_by_ancestry}
+  - {is: exp.v_ground, from: d_cscl_display_derived, to: h_checker_find_by_ancestry}
   - {is: v_refer, from: h_wider_verb_lower, to: {is: v_depend, from: syntax.domain, to: [syntax.from, syntax.to]}}
   - {is: exp.v_check, from: b_wider_verb_lower, to: h_wider_verb_lower}
   - {is: exp.v_ground, from: d_cscl_display_derived, to: h_wider_verb_lower}
