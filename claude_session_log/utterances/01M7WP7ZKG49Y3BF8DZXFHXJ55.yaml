@@ -1,0 +1,51 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-20T14:37:22.416Z（UTC）
+individuals:
+  01M7WP7ZKG49Y3BF8DZXFHXJ55:
+    is: model_utterance
+    display: 発言 3122
+    val:
+      order: 3122
+      text: |
+        式になったのは基礎の関係 `refer` ではなく、動詞 `v_refer`（述べる）のほうです。`refer` は 8 つある基礎の関係の 1 つで、これまでどおり名前で読む素材のままです。動詞 `v_refer` は、その素材を組んだ「形」として読めた、という結果です。
+
+        **幾何的に言うと、動詞は小さな矢印の図です**
+
+        各動詞の holds は、位置（`from`・`to`・`new`）を点とし、基礎の関係をラベル付きの矢印として並べたものです。つまり動詞ひとつが小さなグラフになります。
+
+        ```
+        v_refer    from ──refer──▶ to                 矢印1本
+
+        v_measure  from ──refer──▶ to                 同じ2点に平行な矢印2本
+                   from ──depend─▶ to
+
+        v_answer   from ──refer──▶ to                 refer ＋ after
+                   from ──after──▶ to
+
+        v_agree    from ──refer──▶ new ◀──refer── to   2点から3点目へ集まる楔形
+        ```
+
+        **今回の読み方**
+
+        `v_refer` の下にある動詞は、「from から to への refer の矢印1本だけ」という図とまったく同じ図を持つものでした。そう読むと 19 個で、名前で拾う 19 個と一致しました。
+
+        **#300 で 7 個余った理由**
+
+        #300 では「refer の矢印を部分として含む」で読んでいました。これは図の包含なので、矢印を足したもの（v_measure・v_answer）や、矢印の向き先が違うもの（v_agree とその下位）まで拾ってしまいます。読み方を包含から図の一致に替えると、この 7 個が落ちました。
+
+        **限界も3つあります**
+
+        - 比べたのは、位置の名前をそのまま使った文字どおりの一致です。位置を入れ替えて同じになる形（同型）までは見ていません。たとえば `refer(to, from)` のような向きが逆の動詞は別物になります。
+        - 19 個はどれも図が同じなので、図ではこの 19 個を互いに区別できません。互いの違いは、端の点に何の種類が来るか（`from`・`to` の種類）と mod にあります。図で決まるのは辺の形まで、点のラベルは別の軸、という分担です。
+        - 19 個の多くは、自分で holds を書かずに上位から引き継いでいるだけです。一致の大半はこの引き継ぎによるものです。わかったのは「違う形で上書きしたものが1つもなかった」ことで、強い独立の証拠というより、矛盾がなかったという確認に近いです。
+
+        まとめると、`v_refer` は「矢印1本の形」という類で、その下の動詞は形が同じまま、端に置く種類だけを変えたもの、という見え方になりました。
+facts:
+- {is: v_say, from: session_model, to: 01M7WP7ZKG49Y3BF8DZXFHXJ55}
+- {is: exp.v_answer, from: 01M7WP7ZKG49Y3BF8DZXFHXJ55, to: 01M7WP79KK75KYS652BFKM7MVA}
+- {is: v_refer, from: 01M7WP7ZKG49Y3BF8DZXFHXJ55, to: ontology.v_refer}
+- {is: v_refer, from: 01M7WP7ZKG49Y3BF8DZXFHXJ55, to: syntax.from}
+- {is: v_refer, from: 01M7WP7ZKG49Y3BF8DZXFHXJ55, to: syntax.to}
+- {is: v_refer, from: 01M7WP7ZKG49Y3BF8DZXFHXJ55, to: syntax.new}
+- {is: v_refer, from: 01M7WP7ZKG49Y3BF8DZXFHXJ55, to: syntax.v_measure}
+- {is: v_refer, from: 01M7WP7ZKG49Y3BF8DZXFHXJ55, to: exp.v_answer}
+- {is: v_refer, from: 01M7WP7ZKG49Y3BF8DZXFHXJ55, to: ontology.v_agree}
