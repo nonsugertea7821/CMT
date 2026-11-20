@@ -1,0 +1,23 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-20T06:29:36.040Z（UTC）
+individuals:
+  01M7VTAV5849A1M2D9DE3HD71X:
+    is: model_utterance
+    display: 発言 2930
+    val:
+      order: 2930
+      text: |
+        h_part_display_own_phrase（#454）が main に入りました。そのせいで #439 と #450 がまた main と衝突したので、main を取り込んで解き、push しました。今は三つの PR とも main と衝突しません。
+
+        - **claims.yaml の衝突:** 解いたあと、各仮説の状態が main とそろっているかを確かめました。
+          - 前回の解き方のままだと、ブランチ側の「未検証」の行が main の「支持」を上書きするおそれがありました。そこで今回は、未検証でない側を残すように解いています。
+          - その結果、h_part_display_own_phrase は支持、h_part_display_from_formula は #450 で反証、h_stratified_by_rule は #439 で支持になっています。
+        - **exp.yaml の衝突（#450 だけ）:** 両方の側が、測定の族を同じ場所に書き足していました。両側の行を残して解いています。
+        - **確認:** 手元で tc と ec を走らせ、どちらも通りました。
+
+        #439・#443・#450 は、手で見てもらうマージを待っています。
+
+        ロードマップ: a（識別子化）は、表示語を式から導く道のうち、法則が自分の句だけを読めば通ることまで main に入りました。残りは、表示語を式の部分の木として持つ仮説 h_display_as_part_tree と、law_given を体系に組み込む PR です。
+facts:
+- {is: v_say, from: session_model, to: 01M7VTAV5849A1M2D9DE3HD71X}
+- {is: exp.v_answer, from: 01M7VTAV5849A1M2D9DE3HD71X, to: 01M7VECCMJ5B7GFVNBSFS4909M}
+- {is: v_refer, from: 01M7VTAV5849A1M2D9DE3HD71X, to: syntax.law_given}
