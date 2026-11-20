@@ -154,8 +154,8 @@ individuals:
   b_stratified_by_rule: {is: exp.item_done}
   h_part_display_own_phrase: {is: exp.hyp_supported}
   b_part_display_own_phrase: {is: exp.item_done}
-  h_display_as_part_tree: {is: exp.hyp_untested}
-  b_display_as_part_tree: {is: exp.item_queued}
+  h_display_as_part_tree: {is: exp.hyp_supported}
+  b_display_as_part_tree: {is: exp.item_done}
   h_mod_phrase_from_formula: {is: exp.hyp_refuted}
   b_mod_phrase_from_formula: {is: exp.item_done}
   h_mod_phrase_without_with: {is: exp.hyp_untested}
@@ -563,6 +563,13 @@ individuals:
   o_sys_pdo_synth_ok: {is: exp.observation}
   o_sys_pdo_derived_law_clean: {is: exp.observation}
   o_sys_pdo_derived_clean: {is: exp.observation}
+  o_sys_dpt_unchanged: {is: exp.observation}
+  o_sys_dpt_unchanged_gain: {is: exp.observation}
+  o_sys_dpt_flat_flags: {is: exp.observation}
+  o_sys_dpt_split_clean: {is: exp.observation}
+  o_sys_dpt_swap_flagged: {is: exp.observation}
+  o_sys_dpt_vague_flagged: {is: exp.observation}
+  o_sys_dpt_no_other: {is: exp.observation}
   o_sys_mpf_target: {is: exp.observation}
   o_sys_mpf_untranslated: {is: exp.observation}
   o_sys_mpf_no_new: {is: exp.observation}
@@ -1089,6 +1096,20 @@ facts:
   - {is: exp.v_support, from: o_sys_pdo_derived_clean, to: h_part_display_own_phrase}
   - {is: v_refer, from: h_display_as_part_tree, to: {is: v_depend, from: syntax.display, to: syntax.expression_part}}
   - {is: exp.v_check, from: b_display_as_part_tree, to: h_display_as_part_tree}
+  - {is: v_refer, from: o_sys_dpt_unchanged, to: {is: v_level, from: sys_display_as_part_tree_fix.lost.mean_value, to: 0.0}}
+  - {is: exp.v_support, from: o_sys_dpt_unchanged, to: h_display_as_part_tree}
+  - {is: v_refer, from: o_sys_dpt_unchanged_gain, to: {is: v_level, from: sys_display_as_part_tree_fix.gained.mean_value, to: 0.0}}
+  - {is: exp.v_support, from: o_sys_dpt_unchanged_gain, to: h_display_as_part_tree}
+  - {is: v_refer, from: o_sys_dpt_flat_flags, to: {is: v_level, from: sys_display_as_part_tree_fix.py_F.mean_value, to: 2.0}}
+  - {is: exp.v_support, from: o_sys_dpt_flat_flags, to: h_display_as_part_tree}
+  - {is: v_refer, from: o_sys_dpt_split_clean, to: {is: v_level, from: sys_display_as_part_tree_fix.py_M.mean_value, to: 0.0}}
+  - {is: exp.v_support, from: o_sys_dpt_split_clean, to: h_display_as_part_tree}
+  - {is: v_refer, from: o_sys_dpt_swap_flagged, to: {is: v_level, from: sys_display_as_part_tree_fix.py_X.mean_value, to: 2.0}}
+  - {is: exp.v_support, from: o_sys_dpt_swap_flagged, to: h_display_as_part_tree}
+  - {is: v_refer, from: o_sys_dpt_vague_flagged, to: {is: v_level, from: sys_display_as_part_tree_fix.py_G.mean_value, to: 1.0}}
+  - {is: exp.v_support, from: o_sys_dpt_vague_flagged, to: h_display_as_part_tree}
+  - {is: v_refer, from: o_sys_dpt_no_other, to: {is: v_level, from: sys_display_as_part_tree_fix.other_M.mean_value, to: 0.0}}
+  - {is: exp.v_support, from: o_sys_dpt_no_other, to: h_display_as_part_tree}
   - {is: v_refer, from: h_mod_phrase_from_formula, to: {is: v_depend, from: syntax.display, to: syntax.mod}}
   - {is: exp.v_check, from: b_mod_phrase_from_formula, to: h_mod_phrase_from_formula}
   - {is: v_refer, from: h_mod_phrase_without_with, to: {is: v_depend, from: syntax.display, to: syntax.quant}}
