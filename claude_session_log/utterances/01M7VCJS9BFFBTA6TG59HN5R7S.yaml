@@ -1,0 +1,27 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-20T02:29:16.203Z（UTC）
+individuals:
+  01M7VCJS9BFFBTA6TG59HN5R7S:
+    is: model_utterance
+    display: 発言 2836
+    val:
+      order: 2836
+      text: |
+        その通りだと思います。いまの検査器でも、cscl の文に実行の意味を与えているのは、いつも Python（機械の側）です。
+
+        - 規則で書いた法則（law_rule）でさえ、当てはめるのは Python の `evaluate()` です。#414 の「規則の箇所 1」は、そこを指しています。
+        - 意味を Python が与える法則（law_given）は、その翻訳を Python の中に直接書いたものです。
+
+        ですから self-hosting は、cscl で書いた検査器を何が走らせるかを決めないと閉じません。コンパイラの自己記述に最初の種が要るのと同じ構造です。
+
+        その道は二つ考えられるので、対で登録しました（#426）。
+        - **h_cscl_needs_translation（翻訳の道）:** cscl は、実行器が実行する言語に依存する。cscl から機械の言語へ翻訳する方法を持つ道で、ご指摘をそのまま式にしたものです。
+        - **h_checker_by_executor（実行器の道）:** 翻訳せず、検査を書き換え規則として cscl 自身の実行器（runtime の executor）で走らせる。runtime にはもう、書き換えの意味論（step・frame・halt）が書いてあります。
+
+        どちらの道でも、機械に残る部分は最後まで消えません。翻訳の道なら翻訳器の種が、実行器の道なら runtime の law_given（step・frame・halt など）が残ります。この見方に立つと、self-hosting の目標は「機械に残る部分をゼロにする」ことではなくなります。「それを、名前の付いた小さな集まりに絞る」ことになります。
+
+        #426 では「実行器が実行する言語」という概念を一つ足しました。概念を足す登録なので、手で見てください。どちらも識別子化の決定（d_cscl_display_derived）の根拠に結んであります。
+facts:
+- {is: v_say, from: session_model, to: 01M7VCJS9BFFBTA6TG59HN5R7S}
+- {is: exp.v_answer, from: 01M7VCJS9BFFBTA6TG59HN5R7S, to: 01M7VCDF5QTBDCT3HKPE9N9YR6}
+- {is: v_refer, from: 01M7VCJS9BFFBTA6TG59HN5R7S, to: syntax.law_rule}
+- {is: v_refer, from: 01M7VCJS9BFFBTA6TG59HN5R7S, to: syntax.law_given}
