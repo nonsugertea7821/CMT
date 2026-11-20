@@ -1,0 +1,48 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-20T09:59:07.969Z（UTC）
+individuals:
+  01M7W6AGE1FYECPG50SYXYDCC8:
+    is: model_utterance
+    display: 発言 3013
+    val:
+      order: 3013
+      text: |
+        今は、いちばん根元の段 `d_cscl_display_derived`（a, 識別子化）の、表示語の扱いを詰めているところです。
+
+        体系に書いてあるロードマップは、次の木です。
+
+        ```
+        d_goal（再定義がうまくいくこと）
+         └ d_metric（使い方をまたいだ一貫性で測る）
+            ├ d_road_region（領域）  ─┐
+            ├ d_road_checker（検査器）─┼→ d_cscl_display_derived（a: 識別子化）← いまここ
+            └ d_road_japanese（b: 日本語の自然さ）─┘
+        ```
+
+        この木では、領域・検査器・日本語の三つの道が、どれも a に頼っています。名前で読まず、式で書き、表示語は式から作る、という段です。a が固まらないと、上の三つは本格的には進められません。
+
+        **a の進み具合**
+        a の根拠として結んだ仮説は 45 あります。
+
+        | 状態 | 数 |
+        |---|---|
+        | 支持 | 18 |
+        | 反証 | 10 |
+        | mixed | 2 |
+        | 未検証 | 15 |
+
+        **a の中で、いま進めている流れ**
+        部分の限定の句を、手で書かずに式から作れるようにしています。
+        1. with のある限定 92 の句は、式から訳せた（#459・#464・#465）。
+        2. with のない限定 7 の句も、式から訳せた（#468）。これで部分の限定 99 はすべて訳せる。
+        3. 句を式から作れば、表示語の法則 `disp_*` は要らない（#469）。
+        4. 次は `h_phrase_in_checker`。検査器が実際に句を式から作るようにし、法則 `disp_*` を体系から外す。ここで初めて、体系と検査器そのものを変えます。
+
+        **a に残っている主な未検証の仮説**
+        - 文法を法則として書く系列: `h_grammar_as_laws`、`h_grammar_section_by_mod`、`h_law_given_by_facts`、`h_rule_roles_by_signature` など。検査器の Python に残る判断を、体系の側に移していきます。
+        - 機械語への翻訳の系列: `h_cscl_needs_translation`、`h_small_translation`、`h_optimization_in_system`、`h_meaning_preserving_rewrite`、`h_checker_by_executor`。self-hosting に向かう道です。
+
+        **日本語（b）について**
+        表示語が式から作れるようになったので、「どれかの」のような量化の語を入れるかといった自然さの問題は、b に渡せる状態に近づいています。ただ b はまだ tentative の決定で、手を付けていません。
+facts:
+- {is: v_say, from: session_model, to: 01M7W6AGE1FYECPG50SYXYDCC8}
+- {is: exp.v_answer, from: 01M7W6AGE1FYECPG50SYXYDCC8, to: 01M7W69QR93W8BP4YE0EPNDMC9}
