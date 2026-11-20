@@ -194,8 +194,8 @@ individuals:
   b_fact_slot_by_end: {is: exp.item_done}
   h_fact_slot_by_verb: {is: exp.hyp_supported}
   b_fact_slot_by_verb: {is: exp.item_done}
-  h_fact_slot_keeps_each_verb: {is: exp.hyp_untested}
-  b_fact_slot_keeps_each_verb: {is: exp.item_queued}
+  h_fact_slot_keeps_each_verb: {is: exp.hyp_supported}
+  b_fact_slot_keeps_each_verb: {is: exp.item_done}
   h_frame_both_sides: {is: exp.hyp_untested}
   h_rule_verbs_unhardcode: {is: exp.hyp_refuted}
   b_rule_verbs_unhardcode: {is: exp.item_done}
@@ -455,6 +455,8 @@ individuals:
   o_sys_fact_slot_verb_all_match: {is: exp.observation}
   o_sys_fact_slot_verb_clean: {is: exp.observation}
   o_sys_fact_slot_verb_no_refute: {is: exp.observation}
+  o_sys_slot_keep_all_hit: {is: exp.observation}
+  o_sys_slot_keep_two: {is: exp.observation}
   o_sys_collect_form_wide: {is: exp.observation}
   o_sys_collect_patch_differs: {is: exp.observation}
   o_sys_collect_grammar_n1_fails: {is: exp.observation}
@@ -1010,6 +1012,10 @@ facts:
   - {is: v_refer, from: o_sys_fact_slot_verb_no_refute, to: {is: v_level, from: sys_fact_slot_by_verb.refute.mean_value, to: 0.0}}
   - {is: exp.v_support, from: o_sys_fact_slot_verb_all_match, to: h_fact_slot_by_verb}
   - {is: exp.v_support, from: o_sys_fact_slot_verb_no_refute, to: h_fact_slot_by_verb}
+  - {is: v_refer, from: o_sys_slot_keep_all_hit, to: {is: v_level, from: sys_fact_slot_keeps_each_verb_fix2.n_hit.mean_value, to: 7.0}}
+  - {is: v_refer, from: o_sys_slot_keep_two, to: {is: v_level, from: sys_fact_slot_keeps_each_verb_fix2.kept_two.mean_value, to: 2.0}}
+  - {is: exp.v_support, from: o_sys_slot_keep_all_hit, to: h_fact_slot_keeps_each_verb}
+  - {is: exp.v_support, from: o_sys_slot_keep_two, to: h_fact_slot_keeps_each_verb}
   - {is: exp.v_ground, from: d_cscl_display_derived, to: h_fact_slot_by_end}
   - {is: v_refer, from: o_sys_any_by_entail_passes_checks, to: {is: v_level, from: sys_any_by_entail_after_fix.errors.mean_value, to: 0.0}}
   - {is: v_refer, from: o_sys_any_by_entail_passes_ec, to: {is: v_level, from: sys_any_by_entail_after_fix.ec_errors.mean_value, to: 0.0}}
