@@ -298,7 +298,12 @@ individuals:
   truth_only: {is: law_rule, display: 真偽の軸の値は true か false}
   part_fact_direction: {is: law_given, display: 部分の事実は、種類の限定と向きが逆にならない}
   world_declared: {is: law_given, display: 否定を前提に使う法則は、その法則の領域が閉世界を前提に置くときだけ当てはめる}
-  named_mod: {is: law_given, display: 2つ以上の概念が同じ限定を足すなら、その限定は名前を付けた修飾語で書く}
+  mod_by_name: {is: law_relation, display: 修飾を名前で書いた}
+  mod_content: {is: law_relation, display: 名前を付けた修飾語の中身である}
+  r_named_content: {is: law_relation, display: 名前のある中身である}
+  named_content: {is: law_rule, display: 名前を付けた修飾語の中身には名前がある}
+  named_mod_use: {is: law_rule, display: 名前のある中身は名前で書く}
+  named_mod_share: {is: law_rule, display: 二つのノードが同じ中身を足すなら、その中身には名前がある}
   definition_stratified: {is: law_given, display: 定義の循環は否定の限定を通らない（自分を限定するものは肯定の位置にだけ現れる）}
   part_display_explicit: {is: law_given, display: 部分の限定を持つ種類の表示名は、どちらが部分かを明示し、限定の向きと合う}
   r_in: {is: law_relation, display: 集まりに属する}
@@ -686,7 +691,15 @@ facts:
   - {is: v_require, from: truth_only, to: {is: same, from: var1, to: false}}
   - {is: v_govern, from: part_fact_direction, to: concept_expression}
   - {is: v_govern, from: part_display_explicit, to: concept_expression}
-  - {is: v_govern, from: named_mod, to: concept_expression}
+  - {is: v_assume, from: named_content, to: {is: mod_content, from: var1, to: var2}}
+  - {is: v_derive, from: named_content, to: {is: r_named_content, from: var2}}
+  - {is: v_assume, from: named_mod_use, to: {is: mod, from: var1, to: var2}}
+  - {is: v_assume, from: named_mod_use, to: {is: mod_content, from: var3, to: var2}}
+  - {is: v_require, from: named_mod_use, to: {is: mod_by_name, from: var1, to: var2}}
+  - {is: v_assume, from: named_mod_share, to: {is: mod, from: var1, to: var2}}
+  - {is: v_assume, from: named_mod_share, to: {is: mod, from: var3, to: var2}}
+  - {is: v_assume, from: named_mod_share, to: {is: same, from: var1, to: var3, neg: true}}
+  - {is: v_require, from: named_mod_share, to: {is: r_named_content, from: var2}}
   - {is: v_govern, from: world_declared, to: concept_expression}
   - {is: v_govern, from: definition_stratified, to: concept_expression}
   - {is: v_presume, from: syntax, to: closed_world}

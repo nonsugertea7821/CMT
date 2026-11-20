@@ -684,7 +684,7 @@ def evaluate(rules, F, V):
 # ---------------------------------------------------------------- 概念の体系
 # 法則のうち、この検査が当てはめるもの / 実行の検査（cscl/bootstrap/runtime/runtime.py）が当てはめるもの
 # 規則で書いた法則（law_rule）は、実行の検査がその規則を読んで当てはめる。ここには、意味を検査が与える法則（law_given）だけを挙げる。
-LAWS_HERE = {"part_fact_direction", "part_display_explicit", "named_mod", "world_declared", "definition_stratified"}
+LAWS_HERE = {"part_fact_direction", "part_display_explicit", "world_declared", "definition_stratified"}
 LAWS_RUN = {"unique_names", "step", "frame", "halt", "no_confusion"}
 
 
@@ -931,6 +931,8 @@ class Ontology:
                 add("axis", aid, a["extends"])
         for nid, n in self.N.items():
             add("exists", nid)
+            if "of" in n and not self.is_verb(nid):
+                add("mod_content", nid, dump({k: n[k] for k in ("of", "with", "neg", "at") if k in n}))
             add("domain", nid, self.domain(nid))
             if n.get("display"):
                 add("display", nid, n["display"])
@@ -954,9 +956,11 @@ class Ontology:
             for k in ("holds", "pre"):
                 for i, _ in enumerate(n.get(k) or []):
                     add(k, nid, i)
-            for m in n.get("mod") or []:
+            for i_m, m in enumerate(n.get("mod") or []):
                 t = dump(m) if isinstance(m, dict) else m
                 add("mod", nid, t)
+                if (nid, i_m) in self.mod_name:
+                    add("mod_by_name", nid, t)
                 if isinstance(m, dict):
                     if isinstance(m.get("of"), list) and len(m["of"]) == 2:
                         add("of", t, m["of"][0])
@@ -1514,26 +1518,6 @@ def check_definition_stratified(T):
             err(f"法則 definition_stratified に反する: 定義の循環 {sorted(c)} が否定の限定 {bad} を通る")
 
 
-def check_named_mod(T):
-    """法則 named_mod。2つ以上のノードが同じ限定を足すなら、その限定は名前を付けた修飾語で書く。
-    同じ中身の修飾語が既にあれば、その名前を使う。"""
-    key = lambda m: yaml.safe_dump(m, sort_keys=True, allow_unicode=True)
-    named = {}
-    for nid, n in T.N.items():
-        if "of" in n and not T.is_verb(nid):
-            named.setdefault(key({k: n[k] for k in ("of", "with", "neg", "at") if k in n}), nid)
-    inline = {}
-    for nid, n in T.N.items():
-        for i, m in enumerate(n.get("mod") or []):
-            if isinstance(m, dict) and (nid, i) not in T.mod_name:
-                inline.setdefault(key(m), []).append(nid)
-    for k, ids in inline.items():
-        if k in named:
-            err(f"法則 named_mod に反する: {', '.join(ids)} の限定は、修飾語 {named[k]} と同じ。名前で書く")
-        elif len(ids) > 1:
-            err(f"法則 named_mod に反する: {', '.join(ids)} が同じ限定を足している。名前を付けた修飾語にする")
-
-
 def check_parts(T):
     """法則 part_fact_direction と part_display_explicit。
     - 事実「a は b の部分」に対し、b の種類が「a の種類の部分である」と限定されている（または a の種類が「b の種類を部分に持つ」）なら、向きが逆。
@@ -1659,7 +1643,6 @@ def build():
     T.check_domains()
     T.check_laws()
     check_parts(T)
-    check_named_mod(T)
     check_definition_stratified(T)
     check_world_declared(T)
     for dom, (name, X) in Dm.items():
