@@ -1,0 +1,47 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-20T17:08:57.693Z（UTC）
+individuals:
+  01M7WYXHPX2E1YSVCRZFQHSCS8:
+    is: model_utterance
+    display: 発言 3179
+    val:
+      order: 3179
+      text: |
+        h_domain_special_extends（#527）を確かめました。判定は支持ですが、根拠は1つの対だけです。それより大きな発見は、領域をまたいで残った対のほとんどが、領域ではなく new_kind（その動詞が新しく生むものの種類）で分かれていたことです。結果は PR #529 で、手順を途中で直したので、手で見ていただく必要があります。
+
+        **手順の訂正**
+        - 1回目の実行には、手順の誤りがありました。検査（tc）を走らせるために作ったリポジトリの写しから、results/ が抜けていました。そのため、書き換えと関係なく検査が落ちていました。
+        - この1回目の結果は判定に使わず、ファイルとして残しました。
+        - 写しに results/ を含め、書き換えない写しでも検査が通ることを先に確かめる手順を足しました。判定の式は変えずにもう一度走らせ、その結果を別のファイルに書きました。
+
+        **結果**
+        - 形の比べ方に new_kind を足すと、#525 で領域をまたいで余分に拾われた9件のうち、8件が消えました。
+          - std.v_learn（生むのは realizable_entity）と、exp.v_judge（information_entity）・exp.v_see（quality）
+          - std.v_vary（quality）と exp.v_withdraw（role）
+        - 残ったのは1対だけです。exp.v_near（ほぼ同じ位置にある）と ontology.v_level（同じ位置にある）でした。
+          - exp.v_near を ontology.v_level の下位に置き換えても、写しの上で検査は通りました。
+          - この1対は、手順を書く前から残ると予想していたものです。そのため根拠としては弱いです。
+        - 正しい下位の動詞を落とした数は、どの対象でも0でした。
+
+        **含意**
+        前回の「領域で区別されている」というご指摘は、式の上では、多くが new_kind に現れていました。理由は二つあります。
+        - 生むものの種類が違うので、形が同じに見えても別の動詞として分かれていました。
+        - 本当に同じ形の対は、下位として結ぶべきものが書き漏らされていた対でした。
+
+        **新しく登録した仮説**（#530、登録だけなので自動でマージされます）
+        - **h_kind_in_shape**: 形で動詞を見分けるには new_kind が要る。
+        - **h_extends_by_kind**: 下位の関係（extends）は、領域ではなく、形と new_kind の包含で決まる。
+
+        ロードマップでは、本線 a の識別子化（d_cscl_display_derived の下）を進めました。
+facts:
+- {is: v_say, from: session_model, to: 01M7WYXHPX2E1YSVCRZFQHSCS8}
+- {is: exp.v_answer, from: 01M7WYXHPX2E1YSVCRZFQHSCS8, to: 01M7WWGV7ZZZW7ZQW70Z7XJP8V}
+- {is: v_refer, from: 01M7WYXHPX2E1YSVCRZFQHSCS8, to: syntax.new_kind}
+- {is: v_refer, from: 01M7WYXHPX2E1YSVCRZFQHSCS8, to: std.v_learn}
+- {is: v_refer, from: 01M7WYXHPX2E1YSVCRZFQHSCS8, to: ontology.realizable_entity}
+- {is: v_refer, from: 01M7WYXHPX2E1YSVCRZFQHSCS8, to: exp.v_judge}
+- {is: v_refer, from: 01M7WYXHPX2E1YSVCRZFQHSCS8, to: ontology.information_entity}
+- {is: v_refer, from: 01M7WYXHPX2E1YSVCRZFQHSCS8, to: exp.v_see}
+- {is: v_refer, from: 01M7WYXHPX2E1YSVCRZFQHSCS8, to: std.v_vary}
+- {is: v_refer, from: 01M7WYXHPX2E1YSVCRZFQHSCS8, to: exp.v_withdraw}
+- {is: v_refer, from: 01M7WYXHPX2E1YSVCRZFQHSCS8, to: exp.v_near}
+- {is: v_refer, from: 01M7WYXHPX2E1YSVCRZFQHSCS8, to: ontology.v_level}
