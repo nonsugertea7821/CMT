@@ -142,6 +142,8 @@ individuals:
   b_meaning_preserving_rewrite: {is: exp.item_queued}
   h_law_given_by_facts: {is: exp.hyp_untested}
   b_law_given_by_facts: {is: exp.item_queued}
+  h_stratified_by_rule: {is: exp.hyp_untested}
+  b_stratified_by_rule: {is: exp.item_queued}
   h_comment_ban: {is: exp.hyp_supported}
   b_comment_ban: {is: exp.item_done}
   h_above_closed: {is: exp.hyp_supported}
@@ -621,6 +623,7 @@ facts:
   - {is: exp.v_ground, from: d_cscl_display_derived, to: h_optimization_in_system}
   - {is: exp.v_ground, from: d_cscl_display_derived, to: h_meaning_preserving_rewrite}
   - {is: exp.v_ground, from: d_cscl_display_derived, to: h_law_given_by_facts}
+  - {is: exp.v_ground, from: d_cscl_display_derived, to: h_stratified_by_rule}
   - {is: exp.v_ground, from: d_cscl_display_derived, to: h_grammar_as_laws}
   - {is: v_refer, from: d_cscl_trust_previous_version, to: {is: v_depend, from: type_checker, to: previous_checker}}
   - {is: v_refer, from: d_sig_depend_from, to: {is: extends, from: dependent, to: continuant}}
@@ -962,6 +965,8 @@ facts:
   - {is: exp.v_check, from: b_meaning_preserving_rewrite, to: h_meaning_preserving_rewrite}
   - {is: v_refer, from: h_law_given_by_facts, to: {is: v_depend, from: syntax.law_given, to: syntax.law_relation}}
   - {is: exp.v_check, from: b_law_given_by_facts, to: h_law_given_by_facts}
+  - {is: v_refer, from: h_stratified_by_rule, to: {is: v_depend, from: definition_cycle, to: syntax.law_relation}}
+  - {is: exp.v_check, from: b_stratified_by_rule, to: h_stratified_by_rule}
   - {is: v_refer, from: o_sys_nmis_other_errors_same, to: {is: v_level, from: sys_named_mod_is_spelling.other_same.mean_value, to: 1.0}}
   - {is: exp.v_support, from: o_sys_nmis_other_errors_same, to: h_named_mod_is_spelling}
   - {is: v_refer, from: o_sys_nmis_facts_only_written, to: {is: v_level, from: sys_named_mod_is_spelling.n_diff_other.mean_value, to: 0.0}}
