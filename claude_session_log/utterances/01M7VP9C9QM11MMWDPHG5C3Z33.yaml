@@ -1,0 +1,189 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-20T05:18:53.751Z（UTC）
+individuals:
+  01M7VP9C9QM11MMWDPHG5C3Z33:
+    is: session_summary
+    display: 発言 2908
+    val:
+      order: 2908
+      text: |
+        This session is being continued from a previous conversation that ran out of context. The summary below covers the earlier portion of the conversation.
+
+        <system-reminder>
+        <tools-used-before-summary>AskUserQuestion, Bash, Edit, Grep, Read, ReadNotifications, Skill, TaskStop, ToolSearch, WebFetch, WebSearch, Write, mcp__claude-code-remote__create_trigger, mcp__claude-code-remote__delete_trigger, mcp__claude-code-remote__get_trigger, mcp__claude-code-remote__list_repos, mcp__claude-code-remote__read_documentation, mcp__claude-code-remote__send_later, mcp__claude-code-remote__subscribe_pr_activity, mcp__claude-code-remote__update_trigger, mcp__github__actions_get, mcp__github__actions_list, mcp__github__add_issue_comment, mcp__github__create_pull_request, mcp__github__get_job_logs, mcp__github__issue_read, mcp__github__issue_write, mcp__github__list_issue_types, mcp__github__list_issues, mcp__github__list_pull_requests, mcp__github__pull_request_read, mcp__github__update_pull_request</tools-used-before-summary>
+        </system-reminder>
+        Summary:
+        1. Primary Request and Intent:
+
+        **Standing rules (in force)**
+        - Repo: nonsugertea7821/CMT at /home/user/CMT.
+        - Reply in plain, natural Japanese. Don't overclaim. Give interpretation.
+        - Restore files with `git show <rev>:<path> > <path>`. Never use checkout or stash to restore; `git switch` for branches is fine.
+        - Python: /home/user/venv/bin/python.
+        - Commit trailer:
+          `Co-Authored-By: Claude [モデル名を伏せた] <[メールアドレスを伏せた]>`
+          `Claude-Session: https://claude.ai/code/session_015KRKt6TNJZ7ZsQmEknANXK`
+        - A PR body ends with `🤖 Generated with [Claude Code](https://claude.com/claude-code)`, a blank line, then the session URL.
+        - No personal info and no model identifiers in pushed artifacts.
+        - Claude never merges.
+        - Every PR I open: call subscribe_pr_activity, and call issue_write update with assignees ["nonsugertea7821"].
+        - After a merge: `git fetch -q --prune origin`, `git switch -q main`, `git merge -q --ff-only origin/main`, `git branch -D <branch>`.
+        - No comments in system yaml.
+        - Never rerun recorded experiment scripts. Use `git add -f` for exp/experiments files.
+        - CI belongs to GitHub.
+        - Proposals must be registered as untested hypotheses first, with v_ground to a decision in the same PR, or marked 「わき道」.
+        - Preregistration:
+          - The first commit is the script only, in a Draft PR.
+          - Results go in a later commit.
+          - Corrections: commit the original result as disclosure, then a _fix script, before it is run.
+          - Undraft only when the state is supported, refuted or mixed.
+        - Don't ask permission in conversation; decide and write the rationale in the PR.
+        - Names may be read only for signature and grammar words; other distinctions are written as expressions.
+        - User constraint: GitHub Actions should not hold a runner while waiting.
+
+        **Trigger**
+        - trig_01L92Xn7LSTHrmqt7enEcCPG fires about every 30 minutes.
+        - At each fire, first call update_trigger with run_once_at about now + 31 min and enabled: true.
+        - Then:
+          - Check PRs and merges; resolve conflicts by merging main.
+          - Follow the roadmap (mainline a: 識別子化).
+          - Preregister, run, record.
+          - Look for implications and register new hypotheses tied by v_ground.
+          - Report in Japanese with one roadmap line.
+
+        2. Key Technical Concepts:
+        - tc is `cscl/bootstrap/type_checker/type_checker.py`. ec is `exp/src/exp_check.py`.
+        - syntax.yaml: rules are law_rule (assume plus derive or require, no v_govern); law_given needs v_govern and an entry in LAWS_HERE.
+        - Variables: only var1..var5 exist (ontology.yaml).
+        - q_fact qualifies rule terms with qn(), except for the `position` relation's `to`. So literal from/to/new can be written only in position facts.
+        - Literals that work: 'true', `to: true` (bool), closed_world (it qualifies to syntax.closed_world). `same` works positive or negated.
+        - Existing derived relations: r_parent, r_ancestor, r_kind_up, r_below (reflexive, also includes `any`), r_end_from, r_end_to, r_end_new_kind.
+        - Individuals' fields: a non-many relation that appears twice gives 「関係 X の事実が2つ以上ある」. v_presume to world is not many.
+        - Experiment pattern:
+          - Copy cscl.yaml, cscl, exp/src and exp/experiments/results to a tempdir; patch the copy; run a PROBE subprocess around tc.build().
+          - Each version runs twice: with the additions and without (control). other = errors not from the py or rule laws and not in the control.
+        - Recording:
+          - exp.yaml family individuals go before `  sys_any_by_entail_before_fix: {is: measurement_family}`.
+          - Facts go before `  - {is: v_file_of, from: sys_any_by_entail_before_fix.json, to: sys_any_by_entail_before_fix}`. Each family gets v_file_of, v_rows_of [rows], v_axis_of, v_value_of/v_spell per key, v_entry_of '{cond}', v_metric_of mean_value.
+          - Claims observation individuals go before `  o_sys_any_by_entail_passes_checks: {is: exp.observation}`.
+          - Each observation gets v_refer v_level plus v_support, placed after the hypothesis's v_check. Set the h state and b_ to item_done.
+        - auto-merge flags a _fix script that comes after the results file as needing manual review. This is expected.
+
+        3. Files and Code Sections:
+        - **cscl/design/claims.yaml on main**
+          - Has h_world_by_presume_facts (untested on main), h_part_direction_by_facts (supported), h_part_display_by_word_facts and h_part_display_from_formula (untested), h_stratified_by_rule (untested on main). All have v_ground from d_cscl_display_derived.
+          - Expressions:
+            - h_world_by_presume_facts: v_depend syntax.law_relation → [syntax.world, syntax.domain]
+            - h_part_direction_by_facts: → [syntax.facts, syntax.holds]
+            - h_part_display_by_word_facts: → [syntax.display, syntax.holds]
+            - h_part_display_from_formula: v_depend syntax.display → syntax.holds
+          - Observations o_sys_pd_part_agree, o_sys_pd_whole_agree, o_sys_pd_sub_agree, o_sys_pd_right_dir_agree support h_part_direction_by_facts.
+        - **exp/experiments/sys_world_by_presume.py and _fix.py** (#443)
+          - TC_ADD inserted before `        for did, d in self.O["domains"].items():`:
+            - presume(dom, qn_raw(w, "syntax"))
+            - law_domain(lid, _idom)
+            - assume_neg(lid, 'true')
+          - Rules:
+            - world_unique: presume(var1,var2), presume(var1,var3), require same(var2,var3)
+            - world_rule: assume_neg(var1,'true'), law_domain(var1,var2), require presume(var2, closed_world)
+          - Versions B/R/D/Q.
+          - Fix result: all agree=1, other=0; py_R=rule_R=11; py_D=1, rule_D=2.
+          - Observations o_sys_wbp_neg_law_agree, o_sys_wbp_two_worlds_agree, o_sys_wbp_two_worlds_clean, o_sys_wbp_no_neg_law_agree.
+        - **exp/experiments/sys_part_direction.py** (#448, merged)
+          - Facts:
+            - holds_part h: part_of_verb(h,v), part_from(h, h+" from"), part_to(h, h+" to"), position(h+" from", pf), position(h+" to", pt)
+            - Per file fact: fact_verb, fact_from, fact_to
+          - Rules: vpart_XY; role_0..7 → r_t_part / r_t_whole; mod_part / mod_whole; *_up via r_parent; kind_is, kind_self; part_fact (r_vpart_ft); kmp, kmw; part_dir_part and part_dir_whole require r_below(var4,var3) neg.
+          - Displays are 試しの関係/試しの規則 plus an IROHA letter.
+          - Result: py=rule P1, W1, S2, B0, K0; all agree=1, other=0.
+        - **Scratchpad resolve.py** (/tmp/claude-0/-home-user-CMT/e05d2140-ce91-515f-a5fb-e6251e13d406/scratchpad/resolve.py)
+          - Resolves conflicts: keep theirs, replace state lines from ours by key, and put ours' extra lines first.
+          - Caveat: it can let an "ours" untested state override "theirs" supported. Check the h_ states against main after using it.
+
+        4. Errors and fixes:
+        - h_world_by_presume_facts first used verbs (v_presume, v_assume) as v_depend targets. tc rejected this (continuant required). Changed the targets to syntax.world and syntax.domain.
+        - sys_world_by_presume other_D=1 came from the existing slot check. Disclosed in commit 1261d29, then the _fix with a control run (ab4feb1).
+        - A conflict-resolution regression set h_part_direction_by_facts back to untested in #443. ec caught it; fixed with sed to supported and item_done.
+        - exp.yaml conflicts are resolved by keeping both sides' families.
+
+        5. Problem Solving:
+        - Four law_given checks are now shown expressible as rules: named_mod (in body), definition_stratified (#439), world_declared (#443), part_fact_direction (#448).
+        - Remaining: part_display_explicit, with the paired hypotheses (word facts vs display derived from formula).
+        - h_law_given_by_facts is still untested.
+
+        6. All user messages:
+        - No new genuine user messages since the earlier summary. Only trigger fires and GitHub notifications.
+        - Earlier user messages, preserved:
+          - 「機械語への翻訳って二進数とか物理装置の概念を詰めていったらごく一部だけの翻訳で表せないかな」
+          - 「とても遅くなるだろうか？ コンパイルが遅くなるのはわかるが」
+          - 「最適化の規則も仮説として登録しておいて」
+          - 「意味を保つ書き換えも式にできるか、は仮説だね」
+          - 「mainが進行してコンフリクトになった場合に通知を飛ばすのって困難かな」
+          - 「計算が終わらなければ30分後に再計算、とかでもいい気がする」
+          - 「待つ間はrunnnerを使う？ それは困るな……」
+          - 「あれ、selfhosting着手したんだ」
+          - 「型検査器は抽象的には機械語に翻訳しているから、機械語に翻訳する方法が必要になるだろうね」
+          - 「それやらないとロードマップ管理は難しいか それをやってから、それ以降の仮説はロードマップに結びながら管理してほしい じゃこんどこそ離席 よろしく」
+          - 「auto_merge で v_ground も登録として通るようにして」
+
+        7. Pending Tasks:
+        - #439 (claude/h_stratified_by_rule, head f921426) and #443 (claude/h_world_by_presume_facts, head 8f5bd4d) are green and await the user's manual merge.
+          - Each merge will likely conflict the other; resolve by merging main.
+          - Verify h_ states against main after resolving.
+        - After they merge: a body-integration PR that moves definition_stratified, world_declared (only world_rule plus its 3 facts) and part_fact_direction into syntax.yaml rules.
+          - Remove the matching Python checks, their LAWS_HERE entries, and the law_given lines with their v_govern.
+          - This PR needs manual review.
+        - Next experiment: part_display_explicit via the pair h_part_display_by_word_facts and h_part_display_from_formula (issues #446, #447).
+        - Leave old Draft PRs #282, #286, #287, #289 alone.
+
+        8. Current Work:
+        - The trigger fired at 05:18:06 UTC. Not yet acted on; update_trigger has not been called.
+        - Local branch: claude/h_world_by_presume_facts, pushed and clean.
+        - The github MCP server was reconnecting.
+
+        9. Optional Next Step:
+        1. Call update_trigger(trig_01L92Xn7LSTHrmqt7enEcCPG, run_once_at ≈ 2026-11-20T05:49:00Z, enabled: true).
+        2. Check open PRs (ToolSearch for mcp__github__list_pull_requests).
+           - If #439 or #443 merged: sync main, delete the branch, and resolve the other's conflict.
+           - Otherwise: preregister the part_display_explicit pair, starting with h_part_display_from_formula or h_part_display_by_word_facts, on branch claude/h_<name> as a Draft PR with the script only.
+        3. Report in Japanese with one roadmap line, e.g. 「ロードマップ: a（識別子化）で残る law_given を一つずつ規則にしている（残りは part_display_explicit のみ）」.
+
+        If you need specific details from before compaction (like exact code snippets, error messages, or content you generated), read the full transcript at: /root/.claude/projects/-home-user-CMT/e05d2140-ce91-515f-a5fb-e6251e13d406.jsonl
+        Continue the conversation from where it left off without asking the user any further questions. Resume directly — do not acknowledge the summary, do not recap what was happening, do not preface with "I'll continue" or similar. Pick up the last task as if the break never happened.
+
+        The messages after this summary are the most recent messages from before compaction, kept verbatim. The summary was written without seeing them, so something it says has not happened yet may already have happened in them.
+facts:
+- {is: v_say, from: session_model, to: 01M7VP9C9QM11MMWDPHG5C3Z33}
+- {is: v_refer, from: 01M7VP9C9QM11MMWDPHG5C3Z33, to: exp.v_ground}
+- {is: v_refer, from: 01M7VP9C9QM11MMWDPHG5C3Z33, to: lang.type_checker}
+- {is: v_refer, from: 01M7VP9C9QM11MMWDPHG5C3Z33, to: syntax.law_rule}
+- {is: v_refer, from: 01M7VP9C9QM11MMWDPHG5C3Z33, to: syntax.v_govern}
+- {is: v_refer, from: 01M7VP9C9QM11MMWDPHG5C3Z33, to: syntax.law_given}
+- {is: v_refer, from: 01M7VP9C9QM11MMWDPHG5C3Z33, to: syntax.position}
+- {is: v_refer, from: 01M7VP9C9QM11MMWDPHG5C3Z33, to: syntax.to}
+- {is: v_refer, from: 01M7VP9C9QM11MMWDPHG5C3Z33, to: syntax.closed_world}
+- {is: v_refer, from: 01M7VP9C9QM11MMWDPHG5C3Z33, to: ontology.same}
+- {is: v_refer, from: 01M7VP9C9QM11MMWDPHG5C3Z33, to: any}
+- {is: v_refer, from: 01M7VP9C9QM11MMWDPHG5C3Z33, to: syntax.v_presume}
+- {is: v_refer, from: 01M7VP9C9QM11MMWDPHG5C3Z33, to: exp.measurement_family}
+- {is: v_refer, from: 01M7VP9C9QM11MMWDPHG5C3Z33, to: exp.v_file_of}
+- {is: v_refer, from: 01M7VP9C9QM11MMWDPHG5C3Z33, to: exp.v_rows_of}
+- {is: v_refer, from: 01M7VP9C9QM11MMWDPHG5C3Z33, to: exp.v_axis_of}
+- {is: v_refer, from: 01M7VP9C9QM11MMWDPHG5C3Z33, to: exp.v_value_of}
+- {is: v_refer, from: 01M7VP9C9QM11MMWDPHG5C3Z33, to: exp.v_spell}
+- {is: v_refer, from: 01M7VP9C9QM11MMWDPHG5C3Z33, to: exp.v_entry_of}
+- {is: v_refer, from: 01M7VP9C9QM11MMWDPHG5C3Z33, to: exp.v_metric_of}
+- {is: v_refer, from: 01M7VP9C9QM11MMWDPHG5C3Z33, to: exp.mean_value}
+- {is: v_refer, from: 01M7VP9C9QM11MMWDPHG5C3Z33, to: exp.observation}
+- {is: v_refer, from: 01M7VP9C9QM11MMWDPHG5C3Z33, to: ontology.v_refer}
+- {is: v_refer, from: 01M7VP9C9QM11MMWDPHG5C3Z33, to: ontology.v_level}
+- {is: v_refer, from: 01M7VP9C9QM11MMWDPHG5C3Z33, to: exp.v_support}
+- {is: v_refer, from: 01M7VP9C9QM11MMWDPHG5C3Z33, to: exp.v_check}
+- {is: v_refer, from: 01M7VP9C9QM11MMWDPHG5C3Z33, to: exp.item_done}
+- {is: v_refer, from: 01M7VP9C9QM11MMWDPHG5C3Z33, to: ontology.v_depend}
+- {is: v_refer, from: 01M7VP9C9QM11MMWDPHG5C3Z33, to: syntax.law_relation}
+- {is: v_refer, from: 01M7VP9C9QM11MMWDPHG5C3Z33, to: syntax.world}
+- {is: v_refer, from: 01M7VP9C9QM11MMWDPHG5C3Z33, to: syntax.domain}
+- {is: v_refer, from: 01M7VP9C9QM11MMWDPHG5C3Z33, to: syntax.facts}
+- {is: v_refer, from: 01M7VP9C9QM11MMWDPHG5C3Z33, to: syntax.holds}
+- {is: v_refer, from: 01M7VP9C9QM11MMWDPHG5C3Z33, to: syntax.display}
+- {is: v_refer, from: 01M7VP9C9QM11MMWDPHG5C3Z33, to: syntax.v_assume}

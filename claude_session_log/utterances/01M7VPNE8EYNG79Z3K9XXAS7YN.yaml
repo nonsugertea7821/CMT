@@ -1,0 +1,22 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-20T05:25:28.974Z（UTC）
+individuals:
+  01M7VPNE8EYNG79Z3K9XXAS7YN:
+    is: model_utterance
+    display: 発言 2913
+    val:
+      order: 2913
+      text: |
+        part_display_explicit を規則で書けるかを確かめ、支持という結果が出ました。結果を体系に書き込み、#449 の Draft を外しました。
+
+        - **結果:** 7 つの版のすべてで、Python の検査と規則の検査の誤りが一致しました（agree=1）。それ以外の誤りは 0 で、事前に決めた支持の条件を満たしています。tc と ec も通りました。
+        - **#449 はマージ時に衝突する見込み:** #439・#443 と同じ claims.yaml と exp.yaml の箇所に書き足しているため、どちらかが先にマージされるとこの PR は衝突しそうです。そのときは main を取り込んで解き、各仮説の状態が main と食い違っていないか確かめます。
+        - **規則に移ったのは照合だけ:** 移せたのは、限定の役割と言い方を照らし合わせる部分です。表示名の文字列を読んで言い方の文を作る部分は、Python に残りました。
+        - **含意:** この法則は、表示名が式（holds の部分の文と限定の位置）をきちんと訳しているかを見張っているだけです。表示名を式から導けば、残った Python ごと要らなくなります。この道はすでに対の仮説 h_part_display_from_formula（#447、未検証）として登録してあるので、新しい仮説は足していません。
+        - **全体の状況:** law_given の五つ（named_mod、definition_stratified、world_declared、part_fact_direction、part_display_explicit）はどれも、事実を文にすれば規則で書けると示せました。
+        - **次の作業:** #439 と #443 は通っていて、マージを待っています。二つがマージされたら、五つの規則を syntax.yaml に移し、対応する Python の検査を消す PR を立てます。体系と検査器を変えるので、手で見てもらう PR になります。
+
+        ロードマップ: a（識別子化）で law_given を規則に移す作業の、確かめの段階が五つすべて終わりました。残りは体系への組み込みと、表示名を式から導く道（#447）です。
+facts:
+- {is: v_say, from: session_model, to: 01M7VPNE8EYNG79Z3K9XXAS7YN}
+- {is: exp.v_answer, from: 01M7VPNE8EYNG79Z3K9XXAS7YN, to: 01M7VECCMJ5B7GFVNBSFS4909M}
+- {is: v_refer, from: 01M7VPNE8EYNG79Z3K9XXAS7YN, to: syntax.law_given}
