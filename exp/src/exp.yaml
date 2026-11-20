@@ -1742,6 +1742,14 @@ individuals:
   sys_fact_id_by_content_cond_PC_other_errors: {is: axis_value, val: {text: PC_other_errors}}
   sys_fact_id_by_content_cond_n_fact_rows: {is: axis_value, val: {text: n_fact_rows}}
   sys_fact_id_by_content_cond_n_fact_distinct: {is: axis_value, val: {text: n_fact_distinct}}
+  sys_refer_by_exact_holds: {is: measurement_family}
+  sys_refer_by_exact_holds_cond: {is: family_axis, val: {text: cond}}
+  sys_refer_by_exact_holds_cond_build_ok: {is: axis_value, val: {text: build_ok}}
+  sys_refer_by_exact_holds_cond_n_name: {is: axis_value, val: {text: n_name}}
+  sys_refer_by_exact_holds_cond_n_exact: {is: axis_value, val: {text: n_exact}}
+  sys_refer_by_exact_holds_cond_missing: {is: axis_value, val: {text: missing}}
+  sys_refer_by_exact_holds_cond_extra: {is: axis_value, val: {text: extra}}
+  sys_refer_by_exact_holds_cond_n_form_300: {is: axis_value, val: {text: n_form_300}}
   sys_any_by_entail_before_fix: {is: measurement_family}
   sys_any_by_entail_before_fix_cond: {is: family_axis, val: {text: cond}}
   sys_any_by_entail_before_fix_cond_errors: {is: axis_value, val: {text: errors}}
@@ -3102,6 +3110,14 @@ individuals:
   b_axis_value_from_result: {is: item_queued}
   h_model_reads_by_name: {is: hyp_untested}
   b_model_reads_by_name: {is: item_queued}
+  h_functor_preserves_shape: {is: hyp_untested}
+  b_functor_preserves_shape: {is: item_queued}
+  h_refer_ops_share_direction: {is: hyp_untested}
+  b_refer_ops_share_direction: {is: item_queued}
+  h_refer_cuts_orthogonal: {is: hyp_untested}
+  b_refer_cuts_orthogonal: {is: item_queued}
+  h_refer_cut_spans_mods: {is: hyp_untested}
+  b_refer_cut_spans_mods: {is: item_queued}
   h_decision_link_by_role: {is: hyp_supported}
   b_decision_link_by_role: {is: item_done}
 facts:
@@ -6920,6 +6936,23 @@ facts:
   - {is: v_spell, from: sys_fact_id_by_content_cond_n_fact_distinct, to: n_fact_distinct}
   - {is: v_entry_of, from: '{cond}', to: sys_fact_id_by_content}
   - {is: v_metric_of, from: sys_fact_id_by_content, to: mean_value}
+  - {is: v_file_of, from: sys_refer_by_exact_holds.json, to: sys_refer_by_exact_holds}
+  - {is: v_rows_of, from: [rows], to: sys_refer_by_exact_holds}
+  - {is: v_axis_of, from: sys_refer_by_exact_holds_cond, to: sys_refer_by_exact_holds}
+  - {is: v_value_of, from: sys_refer_by_exact_holds_cond_build_ok, to: sys_refer_by_exact_holds_cond}
+  - {is: v_spell, from: sys_refer_by_exact_holds_cond_build_ok, to: build_ok}
+  - {is: v_value_of, from: sys_refer_by_exact_holds_cond_n_name, to: sys_refer_by_exact_holds_cond}
+  - {is: v_spell, from: sys_refer_by_exact_holds_cond_n_name, to: n_name}
+  - {is: v_value_of, from: sys_refer_by_exact_holds_cond_n_exact, to: sys_refer_by_exact_holds_cond}
+  - {is: v_spell, from: sys_refer_by_exact_holds_cond_n_exact, to: n_exact}
+  - {is: v_value_of, from: sys_refer_by_exact_holds_cond_missing, to: sys_refer_by_exact_holds_cond}
+  - {is: v_spell, from: sys_refer_by_exact_holds_cond_missing, to: missing}
+  - {is: v_value_of, from: sys_refer_by_exact_holds_cond_extra, to: sys_refer_by_exact_holds_cond}
+  - {is: v_spell, from: sys_refer_by_exact_holds_cond_extra, to: extra}
+  - {is: v_value_of, from: sys_refer_by_exact_holds_cond_n_form_300, to: sys_refer_by_exact_holds_cond}
+  - {is: v_spell, from: sys_refer_by_exact_holds_cond_n_form_300, to: n_form_300}
+  - {is: v_entry_of, from: '{cond}', to: sys_refer_by_exact_holds}
+  - {is: v_metric_of, from: sys_refer_by_exact_holds, to: mean_value}
   - {is: v_file_of, from: sys_any_by_entail_before_fix.json, to: sys_any_by_entail_before_fix}
   - {is: v_rows_of, from: [rows], to: sys_any_by_entail_before_fix}
   - {is: v_axis_of, from: sys_any_by_entail_before_fix_cond, to: sys_any_by_entail_before_fix}
@@ -8694,6 +8727,18 @@ facts:
   - {is: v_refer, from: h_model_reads_by_name, to: {is: v_read, from: model, to: syntax.identifier}}
   - {is: v_check, from: b_model_reads_by_name, to: h_model_reads_by_name}
   - {is: v_ground, from: d_road_checker, to: h_model_reads_by_name}
+  - {is: v_refer, from: h_functor_preserves_shape, to: {is: v_depend, from: hidden_state, to: syntax.holds}}
+  - {is: v_check, from: b_functor_preserves_shape, to: h_functor_preserves_shape}
+  - {is: v_ground, from: d_road_region, to: h_functor_preserves_shape}
+  - {is: v_refer, from: h_refer_ops_share_direction, to: {is: v_depend, from: hidden_state, to: [syntax.from, syntax.to]}}
+  - {is: v_check, from: b_refer_ops_share_direction, to: h_refer_ops_share_direction}
+  - {is: v_ground, from: d_road_region, to: h_refer_ops_share_direction}
+  - {is: v_refer, from: h_refer_cuts_orthogonal, to: {is: v_depend, from: hidden_state, to: ontology.same}}
+  - {is: v_check, from: b_refer_cuts_orthogonal, to: h_refer_cuts_orthogonal}
+  - {is: v_ground, from: d_road_region, to: h_refer_cuts_orthogonal}
+  - {is: v_refer, from: h_refer_cut_spans_mods, to: {is: v_depend, from: hidden_state, to: syntax.mod}}
+  - {is: v_check, from: b_refer_cut_spans_mods, to: h_refer_cut_spans_mods}
+  - {is: v_ground, from: d_road_region, to: h_refer_cut_spans_mods}
   - {is: v_refer, from: h_decision_link_by_role, to: {is: v_depend, from: decision, to: syntax.role}}
   - {is: v_check, from: b_decision_link_by_role, to: h_decision_link_by_role}
   - {is: v_refer, from: h_multi_layer_transfers_to_explain, to: {is: v_transfer, from: multi_layer_vector, to: usage_explain}}
