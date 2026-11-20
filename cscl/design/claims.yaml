@@ -146,12 +146,16 @@ individuals:
   b_world_by_presume_facts: {is: exp.item_queued}
   h_part_direction_by_facts: {is: exp.hyp_supported}
   b_part_direction_by_facts: {is: exp.item_done}
-  h_part_display_by_word_facts: {is: exp.hyp_untested}
-  b_part_display_by_word_facts: {is: exp.item_queued}
+  h_part_display_by_word_facts: {is: exp.hyp_supported}
+  b_part_display_by_word_facts: {is: exp.item_done}
   h_part_display_from_formula: {is: exp.hyp_untested}
   b_part_display_from_formula: {is: exp.item_queued}
   h_stratified_by_rule: {is: exp.hyp_supported}
   b_stratified_by_rule: {is: exp.item_done}
+  h_part_display_own_phrase: {is: exp.hyp_untested}
+  b_part_display_own_phrase: {is: exp.item_queued}
+  h_display_as_part_tree: {is: exp.hyp_untested}
+  b_display_as_part_tree: {is: exp.item_queued}
   h_comment_ban: {is: exp.hyp_supported}
   b_comment_ban: {is: exp.item_done}
   h_above_closed: {is: exp.hyp_supported}
@@ -531,6 +535,12 @@ individuals:
   o_sys_pd_whole_agree: {is: exp.observation}
   o_sys_pd_sub_agree: {is: exp.observation}
   o_sys_pd_right_dir_agree: {is: exp.observation}
+  o_sys_pdw_vague_agree: {is: exp.observation}
+  o_sys_pdw_part_rev_agree: {is: exp.observation}
+  o_sys_pdw_whole_rev_agree: {is: exp.observation}
+  o_sys_pdw_stage_rev_agree: {is: exp.observation}
+  o_sys_pdw_neg_quiet_agree: {is: exp.observation}
+  o_sys_pdw_right_quiet_agree: {is: exp.observation}
   o_sys_any_by_entail_passes_checks: {is: exp.observation}
   o_sys_any_by_entail_passes_ec: {is: exp.observation}
   o_sys_any_by_entail_ideal: {is: exp.observation}
@@ -643,6 +653,8 @@ facts:
   - {is: exp.v_ground, from: d_cscl_display_derived, to: h_part_direction_by_facts}
   - {is: exp.v_ground, from: d_cscl_display_derived, to: h_part_display_by_word_facts}
   - {is: exp.v_ground, from: d_cscl_display_derived, to: h_part_display_from_formula}
+  - {is: exp.v_ground, from: d_cscl_display_derived, to: h_part_display_own_phrase}
+  - {is: exp.v_ground, from: d_cscl_display_derived, to: h_display_as_part_tree}
   - {is: exp.v_ground, from: d_cscl_display_derived, to: h_stratified_by_rule}
   - {is: exp.v_ground, from: d_cscl_display_derived, to: h_grammar_as_laws}
   - {is: v_refer, from: d_cscl_trust_previous_version, to: {is: v_depend, from: type_checker, to: previous_checker}}
@@ -999,8 +1011,24 @@ facts:
   - {is: exp.v_support, from: o_sys_pd_right_dir_agree, to: h_part_direction_by_facts}
   - {is: v_refer, from: h_part_display_by_word_facts, to: {is: v_depend, from: syntax.law_relation, to: [syntax.display, syntax.holds]}}
   - {is: exp.v_check, from: b_part_display_by_word_facts, to: h_part_display_by_word_facts}
+  - {is: v_refer, from: o_sys_pdw_vague_agree, to: {is: v_level, from: sys_part_display_words.agree_V.mean_value, to: 1.0}}
+  - {is: exp.v_support, from: o_sys_pdw_vague_agree, to: h_part_display_by_word_facts}
+  - {is: v_refer, from: o_sys_pdw_part_rev_agree, to: {is: v_level, from: sys_part_display_words.agree_R.mean_value, to: 1.0}}
+  - {is: exp.v_support, from: o_sys_pdw_part_rev_agree, to: h_part_display_by_word_facts}
+  - {is: v_refer, from: o_sys_pdw_whole_rev_agree, to: {is: v_level, from: sys_part_display_words.agree_W.mean_value, to: 1.0}}
+  - {is: exp.v_support, from: o_sys_pdw_whole_rev_agree, to: h_part_display_by_word_facts}
+  - {is: v_refer, from: o_sys_pdw_stage_rev_agree, to: {is: v_level, from: sys_part_display_words.agree_S.mean_value, to: 1.0}}
+  - {is: exp.v_support, from: o_sys_pdw_stage_rev_agree, to: h_part_display_by_word_facts}
+  - {is: v_refer, from: o_sys_pdw_neg_quiet_agree, to: {is: v_level, from: sys_part_display_words.agree_N.mean_value, to: 1.0}}
+  - {is: exp.v_support, from: o_sys_pdw_neg_quiet_agree, to: h_part_display_by_word_facts}
+  - {is: v_refer, from: o_sys_pdw_right_quiet_agree, to: {is: v_level, from: sys_part_display_words.agree_K.mean_value, to: 1.0}}
+  - {is: exp.v_support, from: o_sys_pdw_right_quiet_agree, to: h_part_display_by_word_facts}
   - {is: v_refer, from: h_part_display_from_formula, to: {is: v_depend, from: syntax.display, to: syntax.holds}}
   - {is: exp.v_check, from: b_part_display_from_formula, to: h_part_display_from_formula}
+  - {is: v_refer, from: h_part_display_own_phrase, to: {is: v_depend, from: syntax.display, to: [syntax.holds, syntax.extends]}}
+  - {is: exp.v_check, from: b_part_display_own_phrase, to: h_part_display_own_phrase}
+  - {is: v_refer, from: h_display_as_part_tree, to: {is: v_depend, from: syntax.display, to: syntax.expression_part}}
+  - {is: exp.v_check, from: b_display_as_part_tree, to: h_display_as_part_tree}
   - {is: v_refer, from: h_stratified_by_rule, to: {is: v_depend, from: definition_cycle, to: syntax.law_relation}}
   - {is: exp.v_check, from: b_stratified_by_rule, to: h_stratified_by_rule}
   - {is: v_refer, from: o_sys_sbr_neg_cycle_agree, to: {is: v_level, from: sys_stratified_by_rule_fix.agree_V.mean_value, to: 1.0}}
