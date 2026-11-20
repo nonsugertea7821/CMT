@@ -1660,6 +1660,19 @@ individuals:
   sys_rule_roles_by_signature_cond_S0_errors: {is: axis_value, val: {text: S0_errors}}
   sys_rule_roles_by_signature_cond_control_differs: {is: axis_value, val: {text: control_differs}}
   sys_rule_roles_by_signature_cond_verdict_support: {is: axis_value, val: {text: verdict_support}}
+  sys_rule_roles_by_named_mod: {is: measurement_family}
+  sys_rule_roles_by_named_mod_cond: {is: family_axis, val: {text: cond}}
+  sys_rule_roles_by_named_mod_cond_N_errors: {is: axis_value, val: {text: N_errors}}
+  sys_rule_roles_by_named_mod_cond_N_ec_errors: {is: axis_value, val: {text: N_ec_errors}}
+  sys_rule_roles_by_named_mod_cond_N_laws_same: {is: axis_value, val: {text: N_laws_same}}
+  sys_rule_roles_by_named_mod_cond_N_n_role: {is: axis_value, val: {text: N_n_role}}
+  sys_rule_roles_by_named_mod_cond_n_only_L: {is: axis_value, val: {text: n_only_L}}
+  sys_rule_roles_by_named_mod_cond_n_only_N: {is: axis_value, val: {text: n_only_N}}
+  sys_rule_roles_by_named_mod_cond_n_diff_def: {is: axis_value, val: {text: n_diff_def}}
+  sys_rule_roles_by_named_mod_cond_n_diff_eval: {is: axis_value, val: {text: n_diff_eval}}
+  sys_rule_roles_by_named_mod_cond_N0_errors: {is: axis_value, val: {text: N0_errors}}
+  sys_rule_roles_by_named_mod_cond_control_differs: {is: axis_value, val: {text: control_differs}}
+  sys_rule_roles_by_named_mod_cond_verdict_support: {is: axis_value, val: {text: verdict_support}}
   sys_any_by_entail_before_fix: {is: measurement_family}
   sys_any_by_entail_before_fix_cond: {is: family_axis, val: {text: cond}}
   sys_any_by_entail_before_fix_cond_errors: {is: axis_value, val: {text: errors}}
@@ -6665,6 +6678,33 @@ facts:
   - {is: v_spell, from: sys_rule_roles_by_signature_cond_verdict_support, to: verdict_support}
   - {is: v_entry_of, from: '{cond}', to: sys_rule_roles_by_signature}
   - {is: v_metric_of, from: sys_rule_roles_by_signature, to: mean_value}
+  - {is: v_file_of, from: sys_rule_roles_by_named_mod.json, to: sys_rule_roles_by_named_mod}
+  - {is: v_rows_of, from: [rows], to: sys_rule_roles_by_named_mod}
+  - {is: v_axis_of, from: sys_rule_roles_by_named_mod_cond, to: sys_rule_roles_by_named_mod}
+  - {is: v_value_of, from: sys_rule_roles_by_named_mod_cond_N_errors, to: sys_rule_roles_by_named_mod_cond}
+  - {is: v_spell, from: sys_rule_roles_by_named_mod_cond_N_errors, to: N_errors}
+  - {is: v_value_of, from: sys_rule_roles_by_named_mod_cond_N_ec_errors, to: sys_rule_roles_by_named_mod_cond}
+  - {is: v_spell, from: sys_rule_roles_by_named_mod_cond_N_ec_errors, to: N_ec_errors}
+  - {is: v_value_of, from: sys_rule_roles_by_named_mod_cond_N_laws_same, to: sys_rule_roles_by_named_mod_cond}
+  - {is: v_spell, from: sys_rule_roles_by_named_mod_cond_N_laws_same, to: N_laws_same}
+  - {is: v_value_of, from: sys_rule_roles_by_named_mod_cond_N_n_role, to: sys_rule_roles_by_named_mod_cond}
+  - {is: v_spell, from: sys_rule_roles_by_named_mod_cond_N_n_role, to: N_n_role}
+  - {is: v_value_of, from: sys_rule_roles_by_named_mod_cond_n_only_L, to: sys_rule_roles_by_named_mod_cond}
+  - {is: v_spell, from: sys_rule_roles_by_named_mod_cond_n_only_L, to: n_only_L}
+  - {is: v_value_of, from: sys_rule_roles_by_named_mod_cond_n_only_N, to: sys_rule_roles_by_named_mod_cond}
+  - {is: v_spell, from: sys_rule_roles_by_named_mod_cond_n_only_N, to: n_only_N}
+  - {is: v_value_of, from: sys_rule_roles_by_named_mod_cond_n_diff_def, to: sys_rule_roles_by_named_mod_cond}
+  - {is: v_spell, from: sys_rule_roles_by_named_mod_cond_n_diff_def, to: n_diff_def}
+  - {is: v_value_of, from: sys_rule_roles_by_named_mod_cond_n_diff_eval, to: sys_rule_roles_by_named_mod_cond}
+  - {is: v_spell, from: sys_rule_roles_by_named_mod_cond_n_diff_eval, to: n_diff_eval}
+  - {is: v_value_of, from: sys_rule_roles_by_named_mod_cond_N0_errors, to: sys_rule_roles_by_named_mod_cond}
+  - {is: v_spell, from: sys_rule_roles_by_named_mod_cond_N0_errors, to: N0_errors}
+  - {is: v_value_of, from: sys_rule_roles_by_named_mod_cond_control_differs, to: sys_rule_roles_by_named_mod_cond}
+  - {is: v_spell, from: sys_rule_roles_by_named_mod_cond_control_differs, to: control_differs}
+  - {is: v_value_of, from: sys_rule_roles_by_named_mod_cond_verdict_support, to: sys_rule_roles_by_named_mod_cond}
+  - {is: v_spell, from: sys_rule_roles_by_named_mod_cond_verdict_support, to: verdict_support}
+  - {is: v_entry_of, from: '{cond}', to: sys_rule_roles_by_named_mod}
+  - {is: v_metric_of, from: sys_rule_roles_by_named_mod, to: mean_value}
   - {is: v_file_of, from: sys_any_by_entail_before_fix.json, to: sys_any_by_entail_before_fix}
   - {is: v_rows_of, from: [rows], to: sys_any_by_entail_before_fix}
   - {is: v_axis_of, from: sys_any_by_entail_before_fix_cond, to: sys_any_by_entail_before_fix}
