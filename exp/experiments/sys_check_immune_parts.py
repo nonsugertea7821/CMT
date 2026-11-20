@@ -31,6 +31,12 @@
   - 族は 217（数えるために exp.yaml の行を読んだ。結果は見ていない）。個体の行はどれも 1 行で書かれている。
   - 運用への影響（判定の外）: auto_merge.py は状態の変わるファイルを claims.yaml と exp.yaml に限る（R2）。
     分けると、結果の commit が families/*.yaml を触るので、auto_merge も合わせて変える必要がある。
+訂正 1（1 回目の実行の後。結果 sys_check_immune_parts.json は残す）:
+  1 回目は P0・P とも RecursionError で検査が走らず、判定は外れ。原因は (3) の置き換えが、(1) で足した
+  read_file の本文の yload((SPEC / name)...) まで read_file(name) にしたこと（自分を呼び続ける）。
+  訂正: (3) の置き換えを (1) の挿入の前に行う。ほかの手順と判定は変えない。出力は
+  sys_check_immune_parts_fix1.json。1 回目で L の値（errors 0、ec_errors 0、laws_hash、rel_hash）を見ている。
+  P の行数（exp.yaml 8601 → 1707、部分 217、移した行 6895、部分の最大 144 行）も見ている。
 使い方:
   python exp/experiments/sys_check_immune_parts.py
 """
@@ -45,7 +51,7 @@ from pathlib import Path
 import yaml
 
 ROOT = Path(__file__).resolve().parents[2]
-OUT = ROOT / "exp/experiments/results/sys_check_immune_parts.json"
+OUT = ROOT / "exp/experiments/results/sys_check_immune_parts_fix1.json"
 sys.path.insert(0, str(ROOT / "exp/experiments"))
 import sys_rule_roles_by_signature as PREV
 
@@ -81,11 +87,11 @@ def edit_checker(d):
     t = p.read_text(encoding="utf-8")
     n = 0
     assert t.count("\ndef load(name):") == 1 and t.count(LOAD_OLD) == 1
-    t = t.replace("\ndef load(name):", "\n" + MERGE, 1).replace(LOAD_OLD, LOAD_NEW, 1)
-    n += 2
     for r in READS:
         n += t.count(r)
         t = t.replace(r, "read_file(name)")
+    t = t.replace("\ndef load(name):", "\n" + MERGE, 1).replace(LOAD_OLD, LOAD_NEW, 1)
+    n += 2
     p.write_text(t, encoding="utf-8")
     return n
 
