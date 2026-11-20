@@ -1,0 +1,24 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-20T14:24:10.211Z（UTC）
+individuals:
+  01M7WNFSZ3DHQ456DPJWDZ4528:
+    is: model_utterance
+    display: 発言 3119
+    val:
+      order: 3119
+      text: |
+        `h_refer_by_exact_holds`（#503、issue #423）は支持でした。tc と ec は手元で通り、Draft も外してあります。
+
+        - **結果:** `v_refer` を名前ではなく式で読めることが分かりました。式は「成り立つ状態の指定（holds）の中身、つまり関係・始点・終点の組の全体が `v_refer` と同じもの」です。この式に当てはまる語は 19 個で、名前で拾う 19 個と完全に一致しました。
+        - **前回との違い:** #300 では「holds に関係 refer がある」で読んだため 26 個になり、7 個余っていました。余った分は、関係を足す動詞（v_answer・v_measure）と、位置が違う動詞（v_agree とその下位）などで、今回の読みでは全部外れます。
+        - **含意:** #300 で role と definition はすでに式で読めていました。今回で、型検査器が名前で読んでいる3語が、どれも式で読めることになります。
+
+        この含意を新しい仮説 `h_checker_words_swap` として、登録だけの PR #504 に出しました。中身は「型検査器の名前の読みを式の読みに置き換えても、検査の結果は変わらない」で、識別子化の決定に結んであります。最初は「3語に依存しない」と書きましたが、`v_refer` は動詞なのでその位置に置けず、tc が落ちました。そこで「識別子に依存しない」と書き直しています。
+
+        ロードマップ: 識別子化（d_cscl_display_derived）の本線のうち、型検査器が名前で読む語を式で読む系列を進めました。トリガーに挙がっていた本線 a はすでにすべて確かめ済みだったので、識別子化の決定に結ばれた未検証の仮説から選んでいます。
+facts:
+- {is: v_say, from: session_model, to: 01M7WNFSZ3DHQ456DPJWDZ4528}
+- {is: exp.v_answer, from: 01M7WNFSZ3DHQ456DPJWDZ4528, to: 01M7WGV5MB63ZH3P6JTJHH8QAR}
+- {is: v_refer, from: 01M7WNFSZ3DHQ456DPJWDZ4528, to: ontology.v_refer}
+- {is: v_refer, from: 01M7WNFSZ3DHQ456DPJWDZ4528, to: exp.v_answer}
+- {is: v_refer, from: 01M7WNFSZ3DHQ456DPJWDZ4528, to: syntax.v_measure}
+- {is: v_refer, from: 01M7WNFSZ3DHQ456DPJWDZ4528, to: ontology.v_agree}
