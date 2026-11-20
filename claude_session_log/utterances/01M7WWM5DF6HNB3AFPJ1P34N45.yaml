@@ -1,0 +1,40 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-20T16:28:53.039Z（UTC）
+individuals:
+  01M7WWM5DF6HNB3AFPJ1P34N45:
+    is: model_utterance
+    display: 発言 3164
+    val:
+      order: 3164
+      text: |
+        そのとおりです。「同じ意味の動詞を領域ごとに別々に立てている」と読んだのは、私の誤りでした。
+
+        ## なぜ取りこぼしたか
+        - 動詞がどの領域に属すかは、いまの体系ではファイルと名前の前置き（`exp.`・`ontology.`）でしか決まっていません。式には書かれていません。
+        - 私は「名前で読まず式で読む」と決めて、図（holds・pre・post）と端だけを比べました。そのため、領域の区別も名前と一緒に捨ててしまいました。
+        - その結果、区別が式に書かれていない対を見て「同じもの」と取り違えました。
+
+        ## 「領域は v_refer される対象」という読み
+        体系の中に、すでにその形があります。
+        - 領域は個体として、事実の端に立っています（例：`{is: syntax.v_use, from: exp, to: std}`）。`syntax.domain` もノードとしてあります。
+        - だから、動詞が領域に属すことを「領域への refer」として式に書けます。そうすれば、図が同じでも、refer する領域が違う動詞は式の上で別になります。
+
+        あなたの直観とも合います。refer が全体から軸を切り出す操作なら、領域はその切り出した先です。同じ図でも、切り出した空間が違えば別のものになります。
+
+        原典にも同じ形がありました（前回読んだ範囲の報告による）。
+        - DisCoCat：意味を「ベクトル空間と型の組」(W, p) として持ちます（定義 3.1）。意味がどの空間にあるかが、識別の一部になっています。
+        - ICS：形容詞「黄色い」を「色の領域だけを絞る関係」として書いています。同じ形の関係でも、どの領域に効くかで別の語になります。
+
+        ## 登録したもの（[#523](https://github.com/nonsugertea7821/CMT/pull/523)、登録だけの PR）
+        - h_domain_by_refer：同じ図の動詞の対は、refer する領域で区別されている。図と領域を合わせれば、名前の区別と同じ集合を読める。d_cscl_display_derived に結んでいます。
+        - これが正しければ、先に登録した h_same_shape_verbs_merge（#517、同じ図ならまとめる）は、領域をまたぐ対については逆向きになります。
+
+        一つ残る点があります。同じ exp の中にある群（exp.v_judge・exp.v_see・exp.v_read）は、領域を足しても分かれないはずです。ここは別の区別が要るか、本当に同じかのどちらかで、確かめるときに分けて見ます。
+facts:
+- {is: v_say, from: session_model, to: 01M7WWM5DF6HNB3AFPJ1P34N45}
+- {is: exp.v_answer, from: 01M7WWM5DF6HNB3AFPJ1P34N45, to: 01M7WWGV7ZZZW7ZQW70Z7XJP8V}
+- {is: v_refer, from: 01M7WWM5DF6HNB3AFPJ1P34N45, to: ontology.v_refer}
+- {is: v_refer, from: 01M7WWM5DF6HNB3AFPJ1P34N45, to: syntax.v_use}
+- {is: v_refer, from: 01M7WWM5DF6HNB3AFPJ1P34N45, to: syntax.domain}
+- {is: v_refer, from: 01M7WWM5DF6HNB3AFPJ1P34N45, to: exp.v_judge}
+- {is: v_refer, from: 01M7WWM5DF6HNB3AFPJ1P34N45, to: exp.v_see}
+- {is: v_refer, from: 01M7WWM5DF6HNB3AFPJ1P34N45, to: exp.v_read}
