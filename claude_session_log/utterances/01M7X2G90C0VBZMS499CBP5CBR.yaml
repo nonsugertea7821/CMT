@@ -1,0 +1,236 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-20T18:11:37.100Z（UTC）
+individuals:
+  01M7X2G90C0VBZMS499CBP5CBR:
+    is: session_summary
+    display: 発言 3200
+    val:
+      order: 3200
+      text: |
+        This session is being continued from a previous conversation that ran out of context. The summary below covers the earlier portion of the conversation.
+
+        <system-reminder>
+        <tools-used-before-summary>Agent, AskUserQuestion, Bash, Edit, Grep, Read, ReadNotifications, Skill, SubagentHandback, TaskStop, ToolSearch, WebFetch, WebSearch, Write, mcp__claude-code-remote__create_trigger, mcp__claude-code-remote__delete_trigger, mcp__claude-code-remote__get_trigger, mcp__claude-code-remote__list_repos, mcp__claude-code-remote__read_documentation, mcp__claude-code-remote__send_later, mcp__claude-code-remote__subscribe_pr_activity, mcp__claude-code-remote__unsubscribe_pr_activity, mcp__claude-code-remote__update_trigger, mcp__github__actions_get, mcp__github__actions_list, mcp__github__add_issue_comment, mcp__github__create_pull_request, mcp__github__get_job_logs, mcp__github__issue_read, mcp__github__issue_write, mcp__github__list_issue_types, mcp__github__list_issues, mcp__github__list_pull_requests, mcp__github__pull_request_read, mcp__github__update_pull_request</tools-used-before-summary>
+        </system-reminder>
+        Summary:
+        1. Primary Request and Intent:
+
+        **Standing rules (still in force)**
+        - Repo and tools
+          - Repo nonsugertea7821/CMT at /home/user/CMT.
+          - Python: /home/user/venv/bin/python.
+        - Replies
+          - Reply in plain, natural Japanese.
+          - Don't overclaim; separate verified facts from interpretation.
+        - Git
+          - Restore files with `git show <rev>:<path> > <path>`. Never checkout or stash to restore; `git switch` for branches is OK.
+          - Commit trailer:
+            - `Co-Authored-By: Claude [モデル名を伏せた] <[メールアドレスを伏せた]>`
+            - `Claude-Session: https://claude.ai/code/session_015KRKt6TNJZ7ZsQmEknANXK`
+          - PR body ends with `🤖 Generated with [Claude Code](https://claude.com/claude-code)`, then a blank line, then the session URL.
+          - No personal info and no model identifiers in pushed artifacts.
+          - Claude never merges.
+          - Every PR I open: subscribe_pr_activity and issue_write update with assignees ["nonsugertea7821"].
+          - After a merge: `git fetch -q --prune origin && git switch -q main && git merge -q --ff-only origin/main && git branch -D <branch>`.
+          - Resolve conflicts by merging origin/main into the branch, keeping both sides of adjacent insertions (HEAD first), then run tc and ec, then push.
+          - Run the conflict resolution and the commit as separate Bash calls. The no_new_comments hook falsely flags lines while conflict markers are present.
+        - System yaml and experiments
+          - No comments in system yaml.
+          - Never rerun recorded experiment scripts. Corrections are disclosed in the docstring and written to a separate output file.
+          - Use `git add -f` for exp/experiments files.
+          - CI belongs to GitHub.
+        - Hypotheses (CLAUDE.md)
+          - Anything I think "should be done" is first registered as an untested hypothesis.
+          - Ground it to d_cscl_display_derived in the same PR, or mark it 「わき道」.
+          - Registration-only PRs auto-merge.
+          - Hypothesis tests use branch `claude/h_<name>` and a Draft PR with "Closes #<issue>".
+            - First commit: the script only (pre-registration).
+            - Then a results commit, plus recording in exp.yaml and claims.yaml.
+            - Then tc and ec, then undraft.
+          - Don't ask permission in conversation; decide and write the rationale in the PR.
+
+        **Trigger**
+        - trig_01L92Xn7LSTHrmqt7enEcCPG, next fire at 2026-11-20T18:37:00Z.
+        - On each fire:
+          - First call update_trigger with run_once_at ≈ now+31min and enabled true.
+          - Then follow the stored prompt: check PRs and merges, do mainline work, record, derive implications into new hypotheses, report briefly in Japanese with a roadmap line ("本線 a 識別子化、d_cscl_display_derived の下").
+
+        **Latest user message (before this period)**
+        - 「同じなのではなく領域で区別されている / 領域ってv_referされる対象なのでは」. I have been testing this line.
+
+        2. Key Technical Concepts:
+
+        **Checks**
+        - tc: cscl/bootstrap/type_checker/type_checker.py; prints "検査に成功: ノード 741…".
+        - ec: exp/src/exp_check.py; silent, exit 0.
+
+        **Checker internals**
+        - `tc.build()`, T.N, T.is_a, T.ancestors, T.resolve.
+        - tc.LOCALS and tc.USES (domain → used domains).
+        - The checker identifies its words by formula at type_checker.py ~L727-731:
+          - `under_o = [x for x,n in N.items() if n.get("extends") == self.top_o]`
+          - `self.v_depend = one("依存する", [x for x in under_o if atoms(x)==[("depend","from","to",False)] and from==top_c and to==top_c])`
+          - Role grounding (L1190) uses `mod of [self.v_depend, "from"]`.
+          - So v_depend must sit directly under occurrent.
+
+        **Shape-identification line of experiments**
+        - shape = holds/pre/post atoms. Ends and new_kind are compared by subsumption, via `sub(a, b)`: b is None or "any", or a == b, or is_a.
+        - Domain reach is computed via USES.
+        - Findings:
+          - new_kind separates horizontally: std.v_learn realizable_entity vs exp.v_judge information_entity vs exp.v_see quality; std.v_vary quality vs exp.v_withdraw role.
+          - Domain reach fixes the direction of specialization.
+          - Identification needs shape + ends + new_kind + reach.
+          - The remaining extras are exp.v_near<ontology.v_level (missing extends; tc OK if added) and exp.v_ground/v_scope<exp.v_rely.
+
+        3. Files and Code Sections:
+
+        **Experiment scripts** (each with results json in exp/experiments/results/)
+        - `exp/experiments/sys_domain_by_refer.py` (#525, merged; refuted)
+          - Keys: build_ok, n_targets, n_targets_off, n_refs, n_refs_off, n_cross_extra (9), n_same_extra (9), n_eq_missing (9).
+          - Observations o_sys_dbr_*.
+        - `exp/experiments/sys_domain_special_extends.py` (#529, open, needs manual review)
+          - First run wrote sys_domain_special_extends.json (flawed: the copy excluded results).
+          - Correction writes sys_domain_special_extends_fix.json: control_tc_ok 1, n_cross_extra_nk 1, n_fit 1, n_tc_ok 1. Supported.
+          - Observations o_sys_dse_*. Family sys_domain_special_extends_fix.
+        - `exp/experiments/sys_kind_in_shape.py` (#533, merged; refuted)
+          - No reach condition. Allowed extras: (exp.v_near, ontology.v_level), (exp.v_ground, exp.v_rely), (exp.v_scope, exp.v_rely).
+          - Result: n_extra 9, n_extra_outside 6:
+            - ontology.v_design<std.v_compute
+            - ontology.v_depend, subj.v_allocate/v_live/v_place, syntax.v_use<exp.v_rely
+          - Observations o_sys_kis_*.
+        - `exp/experiments/sys_wider_verb_lower.py` (#537, merged; refuted)
+          - Temp copies:
+            - M1: move the exp.v_rely line into ontology.yaml before v_depend; set v_depend extends v_rely.
+            - M2: move the std.v_compute line before ontology v_design; set v_design extends v_compute.
+          - Each copy runs tc, then the copy's sys_kind_in_shape.py.
+          - Result: control 1, m1_tc_ok 0 (roles lose grounding), m2_tc_ok 1 (pass), n_pass 1.
+          - Observations o_sys_wvl_*.
+
+        **Recording pattern**
+        - exp/src/exp.yaml, inserted before `  sys_any_by_entail_before_fix:`:
+          - `F: {is: measurement_family}`
+          - `F_cond: {is: family_axis, val: {text: cond}}`
+          - `F_cond_<k>: {is: axis_value, val: {text: <k>}}`
+        - exp/src/exp.yaml, inserted before `  - {is: v_file_of, from: sys_any_by_entail_before_fix`:
+          - v_file_of, v_rows_of [rows], v_axis_of
+          - v_value_of and v_spell for each key
+          - v_entry_of '{cond}', v_metric_of mean_value
+        - cscl/design/claims.yaml:
+          - Observations go after `  o_sys_rna_off: {is: exp.observation}\n`.
+          - Facts go after the line starting `  - {is: v_refer, from: o_sys_rna_off,`, as `{is: v_refer, from: o, to: {is: v_level, from: F.key.mean_value, to: float}}` plus exp.v_support / exp.v_contradict.
+          - Change the status line `h_X: {is: exp.hyp_...}`.
+
+        **Registration pattern** (claims.yaml)
+        - Insert after `  b_refer_by_projection: {is: exp.item_queued}\n`:
+          - `h_X: {is: exp.hyp_untested}`
+          - `b_X: {is: exp.item_queued}`
+        - Insert after `  - {is: exp.v_ground, from: d_cscl_display_derived, to: h_refer_by_projection}\n`:
+          - the v_refer line
+          - the exp.v_check line
+          - the exp.v_ground line
+        - Note: a v_depend `to` must be a continuant. syntax.v_use failed this, so I used syntax.domain.
+
+        **Hypotheses registered this period**
+        - h_domain_special_extends (#527, supported, in #529)
+        - h_domain_in_formula (#528, untested)
+        - h_kind_in_shape (#531, refuted)
+        - h_extends_by_kind (#532, untested)
+        - h_wider_verb_lower (#535, refuted)
+        - h_extends_follows_use (#536, untested; v_depend(syntax.extends, syntax.domain))
+        - h_checker_find_by_ancestry (PR #538, issue pending; v_depend(type_checker, syntax.extends))
+
+        4. Errors and fixes:
+        - #526, #529 (twice) and #534 had merge conflicts from adjacent insertions in claims.yaml and exp.yaml. I merged main, kept both sides, ran tc and ec, and pushed.
+        - #529 first run: the temp copy excluded `results/`, so tc failed regardless of the edit. I committed the flawed result, then a correction commit (include results, add a control tc run, write the _fix file, same verdict formula), reran, and disclosed it in the PR. The auto-merge judgment marks it for manual review: two commits touch the script.
+        - #534 registration: `syntax.v_use` as a v_depend `to` failed tc (it is not a continuant). I changed it to syntax.domain.
+        - The no_new_comments PreToolUse hook blocked a combined command while conflict markers existed. Running the resolution and the commit separately fixed it.
+        - gh search/issues needs `is:issue` in the query.
+
+        5. Problem Solving:
+        - The user's "distinguished by domain" was refined by measurement:
+          - new_kind formulas distinguish most cross-domain same-shape pairs.
+          - Domain reach supplies the direction of specialization.
+          - Moving wider verbs down works for v_compute but breaks the checker for v_rely, because the checker locates 依存する by "directly under occurrent".
+        - Next solution candidates:
+          - h_checker_find_by_ancestry: the checker finds words by is_a and formula. This is a checker change and needs manual review.
+          - h_extends_follows_use (#536).
+        - Remaining untested in this line: h_domain_in_formula (#528), h_extends_by_kind (#532), h_extends_follows_use (#536), h_same_shape_verbs_merge (#517), h_names_up_to_relabel (#513), h_checker_words_swap (#515).
+
+        6. All user messages:
+        - No new user-authored messages this period. Trigger fires and GitHub notifications are not user messages.
+        - The last user message (before the prior compaction), quoting my sentence:
+          ```
+          対の多くは、exp と ontology、std と exp のように領域をまたいでいます。同じ意味の動詞を、領域ごとに別々に立てている可能性があります
+
+          同じなのではなく領域で区別されている
+
+          領域ってv_referされる対象なのでは
+          ```
+
+        7. Pending Tasks:
+        - Clean up after #537 merged: `git fetch -q --prune origin`, `git switch -q main`, ff-merge, then `git branch -D claude/h_wider_verb_lower`.
+        - Watch #538 (h_checker_find_by_ancestry registration) for auto-merge or conflicts. After merge, delete its local branch claude/register-checker-find-by-ancestry (currently checked out).
+        - #529 is open, waiting for user review. Keep it conflict-free by merging main when main changes.
+        - Next trigger at 18:37Z: re-arm first, then the routine. Candidate next test: h_extends_follows_use (#536) or h_checker_find_by_ancestry once its issue exists. A checker change requires manual review.
+        - Leave old Draft PRs #282, #286, #287, #289 alone.
+
+        8. Current Work:
+        - I just reported the #537 result (h_wider_verb_lower refuted) and opened #538 registering h_checker_find_by_ancestry; it is subscribed and assigned.
+        - Latest notifications:
+          - #537 merged (auto-unsubscribed).
+          - Subscription to #538 created.
+        - Local repo is on branch claude/register-checker-find-by-ancestry. Local branch claude/h_wider_verb_lower still exists and must be deleted.
+
+        9. Optional Next Step:
+        - Handle the #537 merge per standing rules: `git fetch -q --prune origin && git switch -q main && git merge -q --ff-only origin/main && git branch -D claude/h_wider_verb_lower`.
+        - Then check whether #529 or #538 need main merged in. #537 changed claims.yaml and exp.yaml, so adjacent-insert conflicts are likely; resolve by keeping both sides, run tc and ec, and push.
+        - Then wait for #538's auto-merge and the 18:37Z trigger.
+        - Briefly tell the user (in Japanese) that #537 merged and the cleanup or conflict status.
+
+        If you need specific details from before compaction (like exact code snippets, error messages, or content you generated), read the full transcript at: /root/.claude/projects/-home-user-CMT/e05d2140-ce91-515f-a5fb-e6251e13d406.jsonl
+        Continue the conversation from where it left off without asking the user any further questions. Resume directly — do not acknowledge the summary, do not recap what was happening, do not preface with "I'll continue" or similar. Pick up the last task as if the break never happened.
+
+        The messages after this summary are the most recent messages from before compaction, kept verbatim. The summary was written without seeing them, so something it says has not happened yet may already have happened in them.
+facts:
+- {is: v_say, from: session_model, to: 01M7X2G90C0VBZMS499CBP5CBR}
+- {is: v_refer, from: 01M7X2G90C0VBZMS499CBP5CBR, to: lang.type_checker}
+- {is: v_refer, from: 01M7X2G90C0VBZMS499CBP5CBR, to: ontology.v_depend}
+- {is: v_refer, from: 01M7X2G90C0VBZMS499CBP5CBR, to: syntax.new_kind}
+- {is: v_refer, from: 01M7X2G90C0VBZMS499CBP5CBR, to: std.v_learn}
+- {is: v_refer, from: 01M7X2G90C0VBZMS499CBP5CBR, to: ontology.realizable_entity}
+- {is: v_refer, from: 01M7X2G90C0VBZMS499CBP5CBR, to: exp.v_judge}
+- {is: v_refer, from: 01M7X2G90C0VBZMS499CBP5CBR, to: ontology.information_entity}
+- {is: v_refer, from: 01M7X2G90C0VBZMS499CBP5CBR, to: exp.v_see}
+- {is: v_refer, from: 01M7X2G90C0VBZMS499CBP5CBR, to: std.v_vary}
+- {is: v_refer, from: 01M7X2G90C0VBZMS499CBP5CBR, to: exp.v_withdraw}
+- {is: v_refer, from: 01M7X2G90C0VBZMS499CBP5CBR, to: exp.v_near}
+- {is: v_refer, from: 01M7X2G90C0VBZMS499CBP5CBR, to: ontology.v_level}
+- {is: v_refer, from: 01M7X2G90C0VBZMS499CBP5CBR, to: exp.v_ground}
+- {is: v_refer, from: 01M7X2G90C0VBZMS499CBP5CBR, to: exp.v_scope}
+- {is: v_refer, from: 01M7X2G90C0VBZMS499CBP5CBR, to: exp.v_rely}
+- {is: v_refer, from: 01M7X2G90C0VBZMS499CBP5CBR, to: ontology.v_design}
+- {is: v_refer, from: 01M7X2G90C0VBZMS499CBP5CBR, to: std.v_compute}
+- {is: v_refer, from: 01M7X2G90C0VBZMS499CBP5CBR, to: subj.v_allocate}
+- {is: v_refer, from: 01M7X2G90C0VBZMS499CBP5CBR, to: subj.v_live}
+- {is: v_refer, from: 01M7X2G90C0VBZMS499CBP5CBR, to: subj.v_place}
+- {is: v_refer, from: 01M7X2G90C0VBZMS499CBP5CBR, to: syntax.v_use}
+- {is: v_refer, from: 01M7X2G90C0VBZMS499CBP5CBR, to: exp.measurement_family}
+- {is: v_refer, from: 01M7X2G90C0VBZMS499CBP5CBR, to: exp.family_axis}
+- {is: v_refer, from: 01M7X2G90C0VBZMS499CBP5CBR, to: exp.axis_value}
+- {is: v_refer, from: 01M7X2G90C0VBZMS499CBP5CBR, to: exp.v_file_of}
+- {is: v_refer, from: 01M7X2G90C0VBZMS499CBP5CBR, to: exp.v_rows_of}
+- {is: v_refer, from: 01M7X2G90C0VBZMS499CBP5CBR, to: exp.v_axis_of}
+- {is: v_refer, from: 01M7X2G90C0VBZMS499CBP5CBR, to: exp.v_value_of}
+- {is: v_refer, from: 01M7X2G90C0VBZMS499CBP5CBR, to: exp.v_spell}
+- {is: v_refer, from: 01M7X2G90C0VBZMS499CBP5CBR, to: exp.v_entry_of}
+- {is: v_refer, from: 01M7X2G90C0VBZMS499CBP5CBR, to: exp.v_metric_of}
+- {is: v_refer, from: 01M7X2G90C0VBZMS499CBP5CBR, to: exp.mean_value}
+- {is: v_refer, from: 01M7X2G90C0VBZMS499CBP5CBR, to: exp.observation}
+- {is: v_refer, from: 01M7X2G90C0VBZMS499CBP5CBR, to: ontology.v_refer}
+- {is: v_refer, from: 01M7X2G90C0VBZMS499CBP5CBR, to: exp.v_support}
+- {is: v_refer, from: 01M7X2G90C0VBZMS499CBP5CBR, to: exp.v_contradict}
+- {is: v_refer, from: 01M7X2G90C0VBZMS499CBP5CBR, to: exp.item_queued}
+- {is: v_refer, from: 01M7X2G90C0VBZMS499CBP5CBR, to: exp.hyp_untested}
+- {is: v_refer, from: 01M7X2G90C0VBZMS499CBP5CBR, to: exp.v_check}
+- {is: v_refer, from: 01M7X2G90C0VBZMS499CBP5CBR, to: syntax.to}
+- {is: v_refer, from: 01M7X2G90C0VBZMS499CBP5CBR, to: syntax.domain}
+- {is: v_refer, from: 01M7X2G90C0VBZMS499CBP5CBR, to: syntax.extends}
