@@ -1,0 +1,35 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-20T02:25:41.210Z（UTC）
+individuals:
+  01M7VCC7AT1B67EWHA6F2CJT7X:
+    is: model_utterance
+    display: 発言 2833
+    val:
+      order: 2833
+      text: |
+        はい。ただし着手したのは、自己記述そのものではありません。「いま、どこまで書けていないか」を測ったところまでです。
+
+        **#414（h_cscl_self_hosting、反証）**
+        - 仮説は「型検査器は cscl で書ける」を、いまの形で述べたものです。
+        - 検査器の中で誤りを出す 119 箇所を数え、cscl に書いた法則とどれだけ結びつくかで分けました。
+
+        | 誤りを出す箇所 | 数 |
+        |---|---|
+        | 規則で書いた法則（law_rule）を当てはめる箇所 | 1（ここだけで 114 の法則を扱う） |
+        | 意味を Python が与える法則（law_given）の検査 | 10 |
+        | どの法則にも結びつかない検査（文法・形・読み込みなど） | 108 |
+
+        - 判定は「今書けているか」なので、反証です。「書けるようにできるか」は別の問いとして残しています。
+
+        **その後**
+        - law_given を一つずつ規則に移せるかを見ています。
+          - #418: named_mod は、いまの文の上の規則では書けませんでした。どのノードが名前で書いたかという区別が、検査器の中にしかないためです。
+          - #425: 名前は綴りだけで、意味には入っていないことを確かめました。named_mod は綴りの層の法則として置けます。
+        - 足りない文を足す道（h_named_mod_by_writer、#421）はまだ確かめていません。残りの law_given 3 つ（world_declared、part_fact_direction、part_display_explicit）もまだ見ていません。
+        - 数で一番大きい「どの法則にも結びつかない 108 箇所」には、まだ手をつけていません。h_grammar_as_laws（文法の規則も検査器に依存しない）がその入口の仮説です。
+
+        ロードマップの上では、self-hosting は識別子化（a）の一番上の層です。下から順に詰めてきて、いまそこに届いたところです。
+facts:
+- {is: v_say, from: session_model, to: 01M7VCC7AT1B67EWHA6F2CJT7X}
+- {is: exp.v_answer, from: 01M7VCC7AT1B67EWHA6F2CJT7X, to: 01M7VCBYSMASHE33YHDSWGS6CM}
+- {is: v_refer, from: 01M7VCC7AT1B67EWHA6F2CJT7X, to: syntax.law_rule}
+- {is: v_refer, from: 01M7VCC7AT1B67EWHA6F2CJT7X, to: syntax.law_given}
