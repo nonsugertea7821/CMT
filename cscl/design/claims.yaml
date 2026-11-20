@@ -160,8 +160,10 @@ individuals:
   b_mod_phrase_from_formula: {is: exp.item_done}
   h_mod_phrase_without_with: {is: exp.hyp_supported}
   b_mod_phrase_without_with: {is: exp.item_done}
-  h_display_law_redundant: {is: exp.hyp_untested}
-  b_display_law_redundant: {is: exp.item_queued}
+  h_display_law_redundant: {is: exp.hyp_supported}
+  b_display_law_redundant: {is: exp.item_done}
+  h_phrase_in_checker: {is: exp.hyp_untested}
+  b_phrase_in_checker: {is: exp.item_queued}
   h_verb_stem_from_signature: {is: exp.hyp_supported}
   b_verb_stem_from_signature: {is: exp.item_done}
   h_with_needs_display: {is: exp.hyp_supported}
@@ -593,6 +595,15 @@ individuals:
   o_sys_mpw_no_kind_none: {is: exp.observation}
   o_sys_mpw_no_new: {is: exp.observation}
   o_sys_mpw_law_clean: {is: exp.observation}
+  o_sys_dlr_orig_crash: {is: exp.observation}
+  o_sys_dlr_hand_caught: {is: exp.observation}
+  o_sys_dlr_mut_count: {is: exp.observation}
+  o_sys_dlr_derived_not_caught: {is: exp.observation}
+  o_sys_dlr_derived_clean: {is: exp.observation}
+  o_sys_dlr_nolaw_same: {is: exp.observation}
+  o_sys_dlr_mut_nolaw_same: {is: exp.observation}
+  o_sys_dlr_same_as_now: {is: exp.observation}
+  o_sys_dlr_mut_no_other: {is: exp.observation}
   o_sys_any_by_entail_passes_checks: {is: exp.observation}
   o_sys_any_by_entail_passes_ec: {is: exp.observation}
   o_sys_any_by_entail_ideal: {is: exp.observation}
@@ -710,6 +721,7 @@ facts:
   - {is: exp.v_ground, from: d_cscl_display_derived, to: h_mod_phrase_from_formula}
   - {is: exp.v_ground, from: d_cscl_display_derived, to: h_mod_phrase_without_with}
   - {is: exp.v_ground, from: d_cscl_display_derived, to: h_display_law_redundant}
+  - {is: exp.v_ground, from: d_cscl_display_derived, to: h_phrase_in_checker}
   - {is: exp.v_ground, from: d_cscl_display_derived, to: h_verb_stem_from_signature}
   - {is: exp.v_ground, from: d_cscl_display_derived, to: h_with_needs_display}
   - {is: exp.v_ground, from: d_cscl_display_derived, to: h_stratified_by_rule}
@@ -1141,6 +1153,22 @@ facts:
   - {is: exp.v_support, from: o_sys_mpw_law_clean, to: h_mod_phrase_without_with}
   - {is: v_refer, from: h_display_law_redundant, to: {is: v_not_depend, from: syntax.display, to: syntax.laws}}
   - {is: exp.v_check, from: b_display_law_redundant, to: h_display_law_redundant}
+  - {is: v_refer, from: o_sys_dlr_orig_crash, to: {is: v_level, from: sys_display_law_redundant.crash.mean_value, to: 1.0}}
+  - {is: v_refer, from: o_sys_dlr_hand_caught, to: {is: v_level, from: sys_display_law_redundant_fix.caught_O_mut.mean_value, to: 91.0}}
+  - {is: v_refer, from: o_sys_dlr_mut_count, to: {is: v_level, from: sys_display_law_redundant_fix.n_mut.mean_value, to: 91.0}}
+  - {is: v_refer, from: o_sys_dlr_derived_not_caught, to: {is: v_level, from: sys_display_law_redundant_fix.caught_T_mut.mean_value, to: 0.0}}
+  - {is: exp.v_support, from: o_sys_dlr_derived_not_caught, to: h_display_law_redundant}
+  - {is: v_refer, from: o_sys_dlr_derived_clean, to: {is: v_level, from: sys_display_law_redundant_fix.caught_T.mean_value, to: 0.0}}
+  - {is: exp.v_support, from: o_sys_dlr_derived_clean, to: h_display_law_redundant}
+  - {is: v_refer, from: o_sys_dlr_nolaw_same, to: {is: v_level, from: sys_display_law_redundant_fix.diff_T_nolaw.mean_value, to: 0.0}}
+  - {is: exp.v_support, from: o_sys_dlr_nolaw_same, to: h_display_law_redundant}
+  - {is: v_refer, from: o_sys_dlr_mut_nolaw_same, to: {is: v_level, from: sys_display_law_redundant_fix.diff_T_mut_nolaw.mean_value, to: 0.0}}
+  - {is: exp.v_support, from: o_sys_dlr_mut_nolaw_same, to: h_display_law_redundant}
+  - {is: v_refer, from: o_sys_dlr_same_as_now, to: {is: v_level, from: sys_display_law_redundant_fix.diff_T_O0.mean_value, to: 0.0}}
+  - {is: exp.v_support, from: o_sys_dlr_same_as_now, to: h_display_law_redundant}
+  - {is: v_refer, from: o_sys_dlr_mut_no_other, to: {is: v_level, from: sys_display_law_redundant_fix.new_T_mut.mean_value, to: 0.0}}
+  - {is: v_refer, from: h_phrase_in_checker, to: {is: v_depend, from: syntax.display, to: syntax.mod}}
+  - {is: exp.v_check, from: b_phrase_in_checker, to: h_phrase_in_checker}
   - {is: v_refer, from: h_verb_stem_from_signature, to: {is: v_depend, from: syntax.display, to: syntax.from}}
   - {is: exp.v_check, from: b_verb_stem_from_signature, to: h_verb_stem_from_signature}
   - {is: v_refer, from: o_sys_vss_all_with_translated, to: {is: v_level, from: sys_verb_stem_from_signature.n_translated.mean_value, to: 92.0}}
