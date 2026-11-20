@@ -363,6 +363,10 @@ individuals:
   b_verb_shape_two_phase: {is: exp.item_queued}
   h_refer_by_projection: {is: exp.hyp_untested}
   b_refer_by_projection: {is: exp.item_queued}
+  h_wider_verb_lower: {is: exp.hyp_untested}
+  b_wider_verb_lower: {is: exp.item_queued}
+  h_extends_follows_use: {is: exp.hyp_untested}
+  b_extends_follows_use: {is: exp.item_queued}
   h_kind_in_shape: {is: exp.hyp_refuted}
   b_kind_in_shape: {is: exp.item_queued}
   h_extends_by_kind: {is: exp.hyp_untested}
@@ -1548,6 +1552,12 @@ facts:
   - {is: v_refer, from: h_refer_by_projection, to: {is: v_depend, from: state_relation, to: [syntax.variable, ontology.same]}}
   - {is: exp.v_check, from: b_refer_by_projection, to: h_refer_by_projection}
   - {is: exp.v_ground, from: d_cscl_display_derived, to: h_refer_by_projection}
+  - {is: v_refer, from: h_wider_verb_lower, to: {is: v_depend, from: syntax.domain, to: [syntax.from, syntax.to]}}
+  - {is: exp.v_check, from: b_wider_verb_lower, to: h_wider_verb_lower}
+  - {is: exp.v_ground, from: d_cscl_display_derived, to: h_wider_verb_lower}
+  - {is: v_refer, from: h_extends_follows_use, to: {is: v_depend, from: syntax.extends, to: syntax.domain}}
+  - {is: exp.v_check, from: b_extends_follows_use, to: h_extends_follows_use}
+  - {is: exp.v_ground, from: d_cscl_display_derived, to: h_extends_follows_use}
   - {is: v_refer, from: h_kind_in_shape, to: {is: v_depend, from: type_checker, to: [syntax.holds, syntax.new_kind]}}
   - {is: exp.v_check, from: b_kind_in_shape, to: h_kind_in_shape}
   - {is: exp.v_ground, from: d_cscl_display_derived, to: h_kind_in_shape}
