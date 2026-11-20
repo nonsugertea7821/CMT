@@ -1,0 +1,23 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-20T04:47:03.175Z（UTC）
+individuals:
+  01M7VMF2G7TE8JAP133XN2K8F1:
+    is: model_utterance
+    display: 発言 2894
+    val:
+      order: 2894
+      text: |
+        この周回の報告です。
+
+        - **#439・#443**: どちらもまだマージ待ちです。CI は二つとも通っています。手順の訂正があるので、あなたに見てもらう形になっています。
+        - **新しい仮説の登録**: 残る二つの法則（どちらも Python の `check_parts` が検査）について、仮説を三つ登録しました（PR #444）。担当にあなたを入れ、見張りも始めています。登録だけの PR なので、自動マージに乗る見込みです。
+          - `h_part_direction_by_facts`: part_fact_direction（部分の事実と種類の限定の向きが逆にならない）は、二つを規則が読む文にすれば規則で書ける、という仮説です。ファイルに書いた個体の事実と、動詞の「部分である」という状態の式です。world_declared と同じ道です。
+          - part_display_explicit（表示名がどちらが部分かを明示し、向きと合う）は、表示名の文字列の中を見る検査です。規則にすると、名前を読むことに近くなります。そこで、解き方を二つ対にして置きました。
+            - `h_part_display_by_word_facts`: 表示名の言い方を文にして、規則で書く。
+            - `h_part_display_from_formula`: 表示名を式から訳せば、言い方と向きは食い違いようがなく、この法則そのものが要らなくなる。識別子化の本筋に沿うのはこちらです。
+          - 三つとも、識別子化の決定（d_cscl_display_derived）の根拠として結んであります。
+        - **次**: #444 がマージされたら、まず `h_part_direction_by_facts` の手順を事前登録して確かめます。
+
+        ロードマップ: a（識別子化）の中で、残る法則を一つずつ規則に移しています。三つ目まで確かめ終わり、残る二つの法則について仮説を登録したところです。
+facts:
+- {is: v_say, from: session_model, to: 01M7VMF2G7TE8JAP133XN2K8F1}
+- {is: exp.v_answer, from: 01M7VMF2G7TE8JAP133XN2K8F1, to: 01M7VECCMJ5B7GFVNBSFS4909M}
