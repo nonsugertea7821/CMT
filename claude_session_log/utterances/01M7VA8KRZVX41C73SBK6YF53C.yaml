@@ -1,0 +1,19 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-20T01:48:45.727Z（UTC）
+individuals:
+  01M7VA8KRZVX41C73SBK6YF53C:
+    is: model_utterance
+    display: 発言 2825
+    val:
+      order: 2825
+      text: |
+        最初の版では、待つ間 runner を 30 分つかんでいました。それをやめ、30 分ごとに見直す形に変えました。#424 に push し、本文も書き直してあります。
+
+        - **仕組み:** main への push のたびに調べるのは、これまでと同じです。加えて、毎時 17 分と 47 分に、開いている PR をいまの main と比べ直します。
+        - **runner の使い方:** 待つ間はつかみません。見直しの一回は API を数回呼ぶだけで、すぐ終わります。
+        - **コメントの重なり:** 同じ PR と同じ main について一度知らせたものは書き足さないので、見直しのたびにコメントが重なることはありません。
+        - **費用:** リポジトリは public なので、標準の runner に料金はかかりません。
+
+        見直しは、衝突がない日でも 1 日 48 回走ります。それも避けたいなら、ワークフローは足さずに、私の 30 分の周回で衝突を調べる形にもできます。ただし、周回が止まっているときは誰も気づけません。
+facts:
+- {is: v_say, from: session_model, to: 01M7VA8KRZVX41C73SBK6YF53C}
+- {is: exp.v_answer, from: 01M7VA8KRZVX41C73SBK6YF53C, to: 01M7VA7C3MYSDNRQKN8KHF9P5A}
