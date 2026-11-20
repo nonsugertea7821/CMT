@@ -363,6 +363,10 @@ individuals:
   b_verb_shape_two_phase: {is: exp.item_queued}
   h_refer_by_projection: {is: exp.hyp_untested}
   b_refer_by_projection: {is: exp.item_queued}
+  h_verbs_state_own_ends: {is: exp.hyp_untested}
+  b_verbs_state_own_ends: {is: exp.item_queued}
+  h_extends_min_by_collected: {is: exp.hyp_untested}
+  b_extends_min_by_collected: {is: exp.item_queued}
   h_verbs_state_own_shape: {is: exp.hyp_refuted}
   b_verbs_state_own_shape: {is: exp.item_queued}
   h_extends_own_fields_by_compat: {is: exp.hyp_refuted}
@@ -1681,6 +1685,12 @@ facts:
   - {is: v_refer, from: h_refer_by_projection, to: {is: v_depend, from: state_relation, to: [syntax.variable, ontology.same]}}
   - {is: exp.v_check, from: b_refer_by_projection, to: h_refer_by_projection}
   - {is: exp.v_ground, from: d_cscl_display_derived, to: h_refer_by_projection}
+  - {is: v_refer, from: h_verbs_state_own_ends, to: {is: v_depend, from: syntax.extends, to: [syntax.from, syntax.to]}}
+  - {is: exp.v_check, from: b_verbs_state_own_ends, to: h_verbs_state_own_ends}
+  - {is: exp.v_ground, from: d_cscl_display_derived, to: h_verbs_state_own_ends}
+  - {is: v_refer, from: h_extends_min_by_collected, to: {is: v_depend, from: syntax.extends, to: [syntax.mod, syntax.from, syntax.to]}}
+  - {is: exp.v_check, from: b_extends_min_by_collected, to: h_extends_min_by_collected}
+  - {is: exp.v_ground, from: d_cscl_display_derived, to: h_extends_min_by_collected}
   - {is: v_refer, from: h_verbs_state_own_shape, to: {is: v_depend, from: syntax.extends, to: syntax.holds}}
   - {is: exp.v_check, from: b_verbs_state_own_shape, to: h_verbs_state_own_shape}
   - {is: exp.v_ground, from: d_cscl_display_derived, to: h_verbs_state_own_shape}
