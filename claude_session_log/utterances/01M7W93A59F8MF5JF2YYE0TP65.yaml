@@ -1,0 +1,31 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-20T10:47:37.897Z（UTC）
+individuals:
+  01M7W93A59F8MF5JF2YYE0TP65:
+    is: model_utterance
+    display: 発言 3044
+    val:
+      order: 3044
+      text: |
+        2つ目の仮説を、言い直してもらった意味に合わせて書き換えました。名前は `h_state_unique_display` です。PR #475 はまだマージされていなかったので、名前ごと置き換えています。体系の検査（ec・tc）は手元で通りました。
+
+        **最初の登録とのずれ**
+
+        最初に登録した「概念ベクトルが式と一致する」は、ベクトルが式から作れるかという主張でした。言い直しの「何を考えているか一意に表示語に出来る」は、ベクトルから語を読み出せるかという主張です。向きが逆なので、置き換えました。
+
+        **新しい式**
+        - 隠れ状態は、ちょうど一つの表示語を指す（`hidden_state` → `display`、数は1）。
+        - 前半の「幾何空間の一部を指し示す」は、今回は式にしていません。隠れ状態が領域に落ちるという話は、既存の仮説 `h_ambiguity_is_region_choice` と、凸の度合いの測り方 `midpoint_membership` ですでに扱っています。新しい式には、結論の「一意」だけを書きました。
+        - 結ぶ先のロードマップの決定は、最終目標 `d_goal` のままです。
+
+        **確かめるときの分かれ目**
+
+        一意にならない場合が二通りありえます。
+        - **空白**: どの表示語の領域にも落ちない。体系にまだ語がない概念がある、という読みになります。
+        - **重なり**: 複数の表示語の領域に落ちる。多義の側の話で、`h_ambiguity_is_region_choice` とつながります。
+
+        1つ目の凸の仮説とも噛み合います。凸な領域に落ちる状態ほど一意に読めるはずで、それが同時に再定義を引き戻す引力にもなる、という見立てです。
+facts:
+- {is: v_say, from: session_model, to: 01M7W93A59F8MF5JF2YYE0TP65}
+- {is: exp.v_answer, from: 01M7W93A59F8MF5JF2YYE0TP65, to: 01M7W90VKNA75QDE5HA3F789GR}
+- {is: v_refer, from: 01M7W93A59F8MF5JF2YYE0TP65, to: exp.hidden_state}
+- {is: v_refer, from: 01M7W93A59F8MF5JF2YYE0TP65, to: syntax.display}
