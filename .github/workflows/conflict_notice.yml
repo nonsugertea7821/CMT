@@ -2,9 +2,13 @@ name: conflict-notice
 
 # main への push のたびに、開いている PR が main と衝突していないかを調べ、衝突していればコメントで知らせる。
 # PR を見張るセッションに、衝突は届かないが、コメントは届く。中身は .github/scripts/conflict_notice.py。
+# GitHub が push の直後に衝突の有無を計算し終えなかった PR は、30 分ごとの見直しで拾う。
+# 同じ head と同じ main について知らせたものは書き足さないので、見直しが同じコメントを重ねることはない。
 on:
   push:
     branches: [main]
+  schedule:
+    - cron: "17,47 * * * *"
 
 permissions:
   contents: read
