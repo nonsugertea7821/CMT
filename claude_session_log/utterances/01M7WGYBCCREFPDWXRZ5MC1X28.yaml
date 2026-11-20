@@ -1,0 +1,33 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-20T13:04:43.916Z（UTC）
+individuals:
+  01M7WGYBCCREFPDWXRZ5MC1X28:
+    is: model_utterance
+    display: 発言 3089
+    val:
+      order: 3089
+      text: |
+        その通りだと思います。削る案（#492）は、記録を一部捨てる道でした。
+
+        - 族の数や軸の鍵の数は、何をどれだけ測ってきたかの記録そのものです。体系の中で数えられることに意味があります。
+        - 結果ファイルから再生成すればよい、という見方は、体系に置かれていることの価値を見落としていました。
+
+        ファイルを分ける方が早いのも確かです。session_log の仕組みを見ました。
+        - 領域のファイルに `parts: claude_session_log/utterances/*.yaml` と書くと、部分のファイル（individuals と facts だけ）を読み込みます。
+        - 検査器はもうこれに対応しているので、新しく作るものがほとんどありません。
+
+        exp.yaml に当てはめると、次のようになります。
+        - 測定の族ごとに `exp/src/families/<族>.yaml` を作り、その族の個体（軸の値）と事実（v_file_of・v_value_of・v_spell など）を移します。いまの 224 族それぞれが、数十行の小さなファイルになります。
+        - 本体には、概念・仮説・観察・決定だけが残ります。行の総数は変わりませんが、私は1つの族を丸ごと読めるようになります。
+        - 新しい実験は、新しいファイルを1つ足すだけになります。本体の同じ所を2つの PR が触って衝突することも減るはずです。今日の #486 の衝突がその例でした。
+
+        **登録した仮説**
+        **h_check_immune_parts**（領域を部分のファイルに分けても検査は変わらない）を登録しました（#494、わき道）。#492 の「削る道」と対になる、別の解き方です。
+
+        **次にやること**
+        登録がマージされたら、写しで分割します。tc の errors・法則と、ec の仮説の状態が分割前と同じかを比べ、同じなら本体を分けます。
+facts:
+- {is: v_say, from: session_model, to: 01M7WGYBCCREFPDWXRZ5MC1X28}
+- {is: exp.v_answer, from: 01M7WGYBCCREFPDWXRZ5MC1X28, to: 01M7WGV5MB63ZH3P6JTJHH8QAR}
+- {is: v_refer, from: 01M7WGYBCCREFPDWXRZ5MC1X28, to: exp.v_file_of}
+- {is: v_refer, from: 01M7WGYBCCREFPDWXRZ5MC1X28, to: exp.v_value_of}
+- {is: v_refer, from: 01M7WGYBCCREFPDWXRZ5MC1X28, to: exp.v_spell}
