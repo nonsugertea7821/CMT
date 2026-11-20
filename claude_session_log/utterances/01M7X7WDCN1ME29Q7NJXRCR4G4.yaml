@@ -1,0 +1,43 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-20T19:45:37.685Z（UTC）
+individuals:
+  01M7X7WDCN1ME29Q7NJXRCR4G4:
+    is: model_utterance
+    display: 発言 3232
+    val:
+      order: 3232
+      text: |
+        h_extends_by_shape_closed を確かめ、**支持**でした（#546、Draft は外してあります）。
+
+        **結果**
+        一時の写しに次の 3 つを同時にあてました。体系のファイルと検査器は書き換えていません。
+        - 検査器が 依存する を、occurrent の直下だけでなく、その下のどこからでも探せるようにする。
+        - v_rely を ontology に下ろす（M1）。
+        - v_compute を ontology に下ろす（M2）。
+
+        結果は次のとおりです。
+        - tc は通りました。
+        - 動詞の形・端・new_kind から読んだ包含と、名前で書いた is_a が食い違うもの（missing）は、対象 16・参考 36 のどれも 0 でした。
+        - 読みが名前を越えてしまうもの（extra）は 1 つだけで、許した対の外（outside）は 0 でした。残った 1 つは exp.v_near < ontology.v_level で、extends を書き足せば揃うことが #529 で分かっています。
+
+        **含意**
+        あなたの「領域で区別されている」は、ここまでの測定で次のように言えます。
+        - 区別は、領域の名前ではなく new_kind の式でつきます。
+        - 層の向きは、端の広い動詞を下の層に置けば揃います。
+        - 揃うのを妨げていたのは、検査器が語を occurrent の直下だけで探していたことでした。
+
+        3 つを合わせると、extends は holds と new_kind の式から決められるところまで来ています。ただし、体系への実際の変更（検査器の置き換えと動詞の移し替え）はまだ入れていません。別の PR にまとめて、あなたに見てもらいます。
+
+        **新しい仮説**
+        h_extends_derived を登録だけの PR にしました（#547、d_cscl_display_derived に結んであります）。動詞の extends を書かずに、検査器が式から最も近い上位を導いて置いても、tc と読みが変わらないかを確かめます。
+
+        #529 は引き続きあなたの確認待ちです。
+
+        本線 a 識別子化、d_cscl_display_derived の下（extends を式で決める段）。
+facts:
+- {is: v_say, from: session_model, to: 01M7X7WDCN1ME29Q7NJXRCR4G4}
+- {is: exp.v_answer, from: 01M7X7WDCN1ME29Q7NJXRCR4G4, to: 01M7WWGV7ZZZW7ZQW70Z7XJP8V}
+- {is: v_refer, from: 01M7X7WDCN1ME29Q7NJXRCR4G4, to: exp.v_rely}
+- {is: v_refer, from: 01M7X7WDCN1ME29Q7NJXRCR4G4, to: std.v_compute}
+- {is: v_refer, from: 01M7X7WDCN1ME29Q7NJXRCR4G4, to: syntax.new_kind}
+- {is: v_refer, from: 01M7X7WDCN1ME29Q7NJXRCR4G4, to: exp.v_near}
+- {is: v_refer, from: 01M7X7WDCN1ME29Q7NJXRCR4G4, to: ontology.v_level}
