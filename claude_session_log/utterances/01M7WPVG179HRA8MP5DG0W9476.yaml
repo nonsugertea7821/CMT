@@ -1,0 +1,44 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-20T14:48:01.831Z（UTC）
+individuals:
+  01M7WPVG179HRA8MP5DG0W9476:
+    is: model_utterance
+    display: 発言 3138
+    val:
+      order: 3138
+      text: |
+        はい、思いきり先行研究です。しかも、あなたの直観の組み合わせ（概念は凸な範囲で、合成は圏）に近いものまであります。
+
+        **重なっているところ**
+        - **DisCoCat（Coecke・Sadrzadeh・Clark 2010）:** 文法の型を圏として書き、そこからベクトル空間の圏へ関手で写して意味を与えます。さっき私が言った「体系は圏で、モデルの表現はその関手」は、ほぼこの枠組みそのものです。
+        - **Interacting Conceptual Spaces I（Bolt・Coecke ら 2017）:** DisCoCat のベクトル空間を、凸関係の圏（convex relations）に置き換えています。これで Gärdenfors の凸な概念空間と、文法による合成を結んでいます。名詞・形容詞・動詞の概念空間の作り方まで書いてあるそうです。
+        - **DisCoCirc（Coecke 2019）:** 文から文章全体に広げ、意味を回路として書きます。写す先に、ベクトル空間のほか概念空間も選べるとされています。
+
+        **ずれていそうなところ**
+
+        どれもまだ私の見立てで、原典の全文は読めていません。
+        - これらの研究は、意味を合成する枠組みを作る側です。この体系でやっているのは、法則を持つ型体系を、訓練済みの言語モデルが関手のように実現しているかを測る側です。
+        - 「refer は無限次元から有限の軸を切り出す」「self・any・same が座標系を決める」は、DisCoCat の言葉ではおそらく別の形になります。たとえば名詞の空間への射影や、文の空間への縮約です。同じ形がすでにあるかは確かめていません。
+
+        なので、ここに新しさがあると言うには、原典に当たってからにすべきです。
+
+        さっきまでの話は、仮説 6 つとして登録だけの PR #505 に出しました。概念は足していないので、自動マージの対象です。
+        - **言語の側（識別子化の決定に結ぶ）:**
+          - `h_verb_shape_two_phase`: pre・post を持つ変位の動詞も、2相の図の一致で読める。
+          - `h_refer_by_projection`: refer を座標系からの射影として組み立てられる。
+        - **モデルの側（領域の決定に結ぶ）:**
+          - `h_functor_preserves_shape`: 同じ図の動詞は、モデルの中で似た一次変換になる。
+          - `h_refer_ops_share_direction`: v_refer の下の 19 語の変換は、一つの向きを共有する。
+          - `h_refer_cuts_orthogonal`: 別々の refer で切り出した空間は、互いにほぼ直交する。
+          - `h_refer_cut_spans_mods`: 切り出した中での動きは、限定の軸で張られる。
+
+        PR の本文には、上の先行研究との重なりも書いておきました。モデルの側の4つは、事前登録の前に Interacting Conceptual Spaces の本文を読み、すでに示されていることと重なっていないかを確かめてから進めます。
+
+        Sources:
+        - [Mathematical Foundations for a Compositional Distributional Model of Meaning (arXiv:1003.4394)](https://arxiv.org/abs/1003.4394)
+        - [Interacting Conceptual Spaces I: Grammatical Composition of Concepts (arXiv:1703.08314)](https://arxiv.org/abs/1703.08314v2)
+        - [Oxford CS: Interacting Conceptual Spaces I](https://www.cs.ox.ac.uk/publications/publication11038-abstract.html)
+        - [The Mathematics of Text Structure (DisCoCirc, arXiv:1904.03478)](https://arxiv.org/pdf/1904.03478.pdf)
+facts:
+- {is: v_say, from: session_model, to: 01M7WPVG179HRA8MP5DG0W9476}
+- {is: exp.v_answer, from: 01M7WPVG179HRA8MP5DG0W9476, to: 01M7WPMYH8GRBDCFVDGX75AACV}
+- {is: v_refer, from: 01M7WPVG179HRA8MP5DG0W9476, to: ontology.v_refer}
