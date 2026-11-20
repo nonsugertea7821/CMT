@@ -363,7 +363,7 @@ individuals:
   b_verb_shape_two_phase: {is: exp.item_queued}
   h_refer_by_projection: {is: exp.hyp_untested}
   b_refer_by_projection: {is: exp.item_queued}
-  h_extends_from_own_fields: {is: exp.hyp_untested}
+  h_extends_from_own_fields: {is: exp.hyp_refuted}
   b_extends_from_own_fields: {is: exp.item_queued}
   h_extends_rewrite_from_derived: {is: exp.hyp_untested}
   b_extends_rewrite_from_derived: {is: exp.item_queued}
@@ -737,6 +737,12 @@ individuals:
   o_sys_edmt_top: {is: exp.observation}
   o_sys_edmt_top_none: {is: exp.observation}
   o_sys_edmt_multi: {is: exp.observation}
+  o_sys_eof_apply: {is: exp.observation}
+  o_sys_eof_fixed: {is: exp.observation}
+  o_sys_eof_rounds: {is: exp.observation}
+  o_sys_eof_sub: {is: exp.observation}
+  o_sys_eof_sub_match: {is: exp.observation}
+  o_sys_eof_top_none: {is: exp.observation}
   o_sys_kis_targets_off: {is: exp.observation}
   o_sys_kis_refs_off: {is: exp.observation}
   o_sys_kis_extra: {is: exp.observation}
@@ -1462,6 +1468,13 @@ facts:
   - {is: v_refer, from: o_sys_edmt_top_none, to: {is: v_level, from: sys_extends_derived_meet.n_top_none.mean_value, to: 49.0}}
   - {is: exp.v_support, from: o_sys_edmt_top_none, to: h_extends_meet_of_minimal}
   - {is: v_refer, from: o_sys_edmt_multi, to: {is: v_level, from: sys_extends_derived_meet.n_multi_min.mean_value, to: 1.0}}
+  - {is: v_refer, from: o_sys_eof_apply, to: {is: v_level, from: sys_extends_from_own_fields.apply_tc_ok.mean_value, to: 1.0}}
+  - {is: v_refer, from: o_sys_eof_fixed, to: {is: v_level, from: sys_extends_from_own_fields.fixed.mean_value, to: 1.0}}
+  - {is: v_refer, from: o_sys_eof_rounds, to: {is: v_level, from: sys_extends_from_own_fields.rounds.mean_value, to: 2.0}}
+  - {is: v_refer, from: o_sys_eof_sub, to: {is: v_level, from: sys_extends_from_own_fields.n_sub.mean_value, to: 70.0}}
+  - {is: v_refer, from: o_sys_eof_sub_match, to: {is: v_level, from: sys_extends_from_own_fields.n_sub_match.mean_value, to: 3.0}}
+  - {is: exp.v_contradict, from: o_sys_eof_sub_match, to: h_extends_from_own_fields}
+  - {is: v_refer, from: o_sys_eof_top_none, to: {is: v_level, from: sys_extends_from_own_fields.n_top_none.mean_value, to: 49.0}}
   - {is: v_refer, from: o_sys_kis_targets_off, to: {is: v_level, from: sys_kind_in_shape.n_targets_off.mean_value, to: 0.0}}
   - {is: v_refer, from: o_sys_kis_refs_off, to: {is: v_level, from: sys_kind_in_shape.n_refs_off.mean_value, to: 0.0}}
   - {is: v_refer, from: o_sys_kis_extra, to: {is: v_level, from: sys_kind_in_shape.n_extra.mean_value, to: 9.0}}
