@@ -1,0 +1,54 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-20T10:34:50.822Z（UTC）
+individuals:
+  01M7W8BX263PM5F6BH1MRXA7DW:
+    is: model_utterance
+    display: 発言 3028
+    val:
+      order: 3028
+      text: |
+        そうです。三つに分けて答えます。
+
+        **1. 向きを決めているのは、限定（とそれが指す動詞の定義）**
+
+        倉庫の定義はこうです。
+
+        ```yaml
+        warehouse: {display: 倉庫, extends: continuant, mod: {of: [v_store, to]}}
+        v_store:   {display: 保管される, extends: v_compose, from: goods, to: warehouse}
+        ```
+
+        - 限定 `{of: [v_store, to]}` は、倉庫が v_store のどの位置に立つかを選びます。ここでは to の位置です。
+        - v_store の上位の v_compose（部分になる）の定義には、「from が部分、to が全体」と書いてあります。
+
+        この二つを合わせて、倉庫は全体の側、つまり商品を部分に持つ側だと決まります。向きを持っているのは限定ですが、限定だけでは向きは決まりません。限定が選ぶ「位置」と、動詞の定義が持つ「どの位置が部分か」の組み合わせで決まります。
+
+        今の句は、この向きしか言っていません。倉庫も商品分類も「商品を部分に持つ」になるのは、語幹を上位の v_compose から取っているからです。v_store（保管される）か v_classify（分類される）かの違い、物（continuant）か情報（information_entity）かの違いは、式には残っていますが、句には出ていません。
+
+        **2. 「倉庫」は辞書の項目**
+
+        そう捉えるのが正確だと思います。体系での倉庫の正体は、識別子 `subj.warehouse` とその式です。`display: 倉庫` は、それに日本語の語を当てる対応表の一行で、まさに辞書です。
+
+        ただ、いまの「倉庫」は純粋な対応表とは言い切れません。たとえば、建物であることや長く保管することは、式にまだ書いていません。その意味は、この語に預けたままです。CLAUDE.md の「式にできていない意味の置き場として表示語を使うときは、そう自覚して使う」は、ちょうどこの状態を指しています。式が詰まるほど、表示語は辞書の役割だけに近づきます。
+
+        **3. 「倉庫」という語が選ばれるのは、日本語の歴史による**
+
+        そう考えます。言語学でいう語彙化です。
+
+        - 式から出せるのは、言い換えの句（「商品を保管されるものとして部分に持つもの」のようなもの）までです。
+        - その概念に一語の名前があるかどうか、あるならどんな音や字かは、式からは決まりません。
+        - 「倉庫」は、倉と庫という、どちらも「くら」を意味する漢字を重ねた漢語です。その概念がよく使われたので一語にまとまり、漢語として定着した、という歴史の結果です。英語の warehouse は ware（品物）+ house で、同じ概念に別の経路で語が付いています。
+
+        ソシュールのいう記号の恣意性で、語と意味の結びつきは、その言語の慣習であり、式から導けません。なので、表示語は二つの層に分けて考えるのがよさそうです。
+
+        - **句**: 式から作れる言い回し。今回やったもの。
+        - **辞書の語**: 言語ごとの歴史が決める一語の名前。式からは作れず、対応として置くしかない。
+
+        ロードマップの b（日本語の自然さ）は、この二層の間の問題になりそうです。いつ句をそのまま使い、いつ辞書の一語に置き換えると自然か、という問題です。
+facts:
+- {is: v_say, from: session_model, to: 01M7W8BX263PM5F6BH1MRXA7DW}
+- {is: exp.v_answer, from: 01M7W8BX263PM5F6BH1MRXA7DW, to: 01M7W8B286EYSADTS60A14WFMS}
+- {is: v_refer, from: 01M7W8BX263PM5F6BH1MRXA7DW, to: subj.v_store}
+- {is: v_refer, from: 01M7W8BX263PM5F6BH1MRXA7DW, to: ontology.v_compose}
+- {is: v_refer, from: 01M7W8BX263PM5F6BH1MRXA7DW, to: subj.v_classify}
+- {is: v_refer, from: 01M7W8BX263PM5F6BH1MRXA7DW, to: ontology.information_entity}
+- {is: v_refer, from: 01M7W8BX263PM5F6BH1MRXA7DW, to: subj.warehouse}
