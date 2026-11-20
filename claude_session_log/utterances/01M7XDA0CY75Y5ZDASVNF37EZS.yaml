@@ -1,0 +1,29 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-20T21:20:26.014Z（UTC）
+individuals:
+  01M7XDA0CY75Y5ZDASVNF37EZS:
+    is: model_utterance
+    display: 発言 3258
+    val:
+      order: 3258
+      text: |
+        h_extends_meet_of_minimal を確かめた結果は支持でした（#557）。結果を記録し、Draft を外しました。
+
+        - **結果**: 極小の候補が複数あるときは、それらに共通する最も下の候補を親とする規則を足しました。下位の動詞 70 のすべてで、導いた親が書いた親と揃いました（#549 では 60、#553 では 69）。最上位の 49 は、導出でもすべて親なしになりました。
+        - **規則が効いた範囲**: 極小の候補が複数あったのは teacher_both だけで、親は teaching になりました。ほかの 69 の導出は、#553 と変わっていません。
+        - **言えること**: 形・端・new_kind・mod の式の包含と、この選び方を使えば、いまの体系の動詞の extends は名前で書かなくても導けます。
+        - **言えないこと**:
+          - 端・holds・mod は、書いた extends の祖先から集めています。そのため、導出は書いた木から独立していません。
+          - 「共通する親」の規則は teacher_both を見てから立てたもので、支える例も teacher_both の一つだけです。
+
+        **含意として出した次の仮説**（登録だけの PR #558。条件を満たせば自動でマージされます）
+        - **h_extends_from_own_fields**（読みの側）: 祖先から集めず、各動詞が自分で書いた欄だけから導いても、70/70 で揃う。
+        - **h_extends_rewrite_from_derived**（体系の側）: extends を導いた親で書き直しても tc が通り、祖先から集めた中身も変わらない。つまり、導いた木と書いた木が一致したまま保たれる。
+
+        #529 は、引き続きあなたが見てマージするのを待っています。
+
+        本線 a 識別子化、d_cscl_display_derived の下
+facts:
+- {is: v_say, from: session_model, to: 01M7XDA0CY75Y5ZDASVNF37EZS}
+- {is: exp.v_answer, from: 01M7XDA0CY75Y5ZDASVNF37EZS, to: 01M7WWGV7ZZZW7ZQW70Z7XJP8V}
+- {is: v_refer, from: 01M7XDA0CY75Y5ZDASVNF37EZS, to: exp.teacher_both}
+- {is: v_refer, from: 01M7XDA0CY75Y5ZDASVNF37EZS, to: syntax.new_kind}
