@@ -1,0 +1,28 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-20T21:51:36.846Z（UTC）
+individuals:
+  01M7XF33CETZV0A2XVEM24SDPV:
+    is: model_utterance
+    display: 発言 3266
+    val:
+      order: 3266
+      text: |
+        h_extends_from_own_fields は反証でした（#561）。結果を記録し、Draft を外しました。
+
+        **結果**
+        - 各動詞が自分で書いた欄だけから親を導くと、書いた親と揃ったのは下位の動詞 70 のうち 3 でした。
+        - 導き直しは 2 巡で止まりました。最上位の 49 は、導いた結果もすべて親なしでした。
+
+        **読み**
+        - 下位の動詞の多くは、親の holds を自分では書き直していません。そのため自分の欄だけでは形が上位と合わず、親の候補が出ないまま止まります。
+        - #557 で 70/70 揃ったのは、書いた extends をたどって集めた欄があったからでした。いまの書き方では、extends を書いた木と無関係に導くことはできません。
+
+        **含意として出した次の仮説**（登録だけの PR #562。条件を満たせば自動でマージされます）
+        - **h_verbs_state_own_shape**（体系の側）: 各動詞に、祖先から集めた holds を自分の欄として書き足す。そうすれば、自分の欄だけからでも 70/70 揃う。
+        - **h_extends_own_fields_by_compat**（規則の側）: 形が一致することは求めない。自分の欄が候補の欄と食い違わないことと、mod の包含で比べる。そうすれば、欄を書き足さなくても揃う。
+
+        #529 は、引き続きあなたが見てマージするのを待っています。
+
+        本線 a 識別子化、d_cscl_display_derived の下
+facts:
+- {is: v_say, from: session_model, to: 01M7XF33CETZV0A2XVEM24SDPV}
+- {is: exp.v_answer, from: 01M7XF33CETZV0A2XVEM24SDPV, to: 01M7WWGV7ZZZW7ZQW70Z7XJP8V}
