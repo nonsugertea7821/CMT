@@ -682,9 +682,8 @@ def evaluate(rules, F, V):
 
 
 # ---------------------------------------------------------------- 概念の体系
-# 法則のうち、この検査が当てはめるもの / 実行の検査（cscl/bootstrap/runtime/runtime.py）が当てはめるもの
-# 規則で書いた法則（law_rule）は、実行の検査がその規則を読んで当てはめる。ここには、意味を検査が与える法則（law_given）だけを挙げる。
-LAWS_HERE = {"part_fact_direction", "part_display_explicit", "world_declared", "definition_stratified"}
+# 意味を検査が与える法則（law_given）のうち、実行の検査（cscl/bootstrap/runtime/runtime.py）が当てはめるもの
+# 規則で書いた法則（law_rule）は、検査がその規則を読んで当てはめる。
 LAWS_RUN = {"unique_names", "step", "frame", "halt", "no_confusion"}
 
 
@@ -782,9 +781,9 @@ class Ontology:
                 for t in l["govern"]:
                     if t not in self.N:
                         err(f"{where}: 掛かる先 {t} がノードでない")
-                if lid not in LAWS_HERE | LAWS_RUN:
+                if lid not in LAWS_RUN:
                     err(f"{where}: 当てはめる検査がない")
-        for lid in (LAWS_HERE | LAWS_RUN) - {k for k, l in L.items() if l["kind"] == "law_given"}:
+        for lid in LAWS_RUN - {k for k, l in L.items() if l["kind"] == "law_given"}:
             err(f"法則 {lid} を検査が当てはめているが、law_given の個体として書かれていない")
         for k, v in self.O["runtime"].items():
             if k not in G["runtime"]:
@@ -1000,6 +999,45 @@ class Ontology:
             add("exists", aid)
             for v in a["value"] if isinstance(a["value"], list) else []:
                 add("value", aid, "true" if v is True else "false" if v is False else v)
+        for v in self.N:
+            if not self.is_verb(v):
+                continue
+            for i, h in enumerate(self.end(v, "holds") or []):
+                if isinstance(h, dict) and h.get("is") == "part":
+                    hp = f"holds_part {v} {i}"
+                    add("part_of_verb", hp, v)
+                    add("part_from", hp, hp + " from")
+                    add("part_to", hp, hp + " to")
+                    add("position", hp + " from", h.get("from"))
+                    add("position", hp + " to", h.get("to"))
+        for name, dom in lib_and_domain_files():
+            for j, f in enumerate(yload((SPEC / name).read_text(encoding="utf-8")).get("facts") or []):
+                if not isinstance(f, dict) or not isinstance(f.get("is"), str):
+                    continue
+                v = self.resolve(f["is"], dom)
+                r = lambda x: (x if x in self.I else (self.resolve(x, dom) or x)) if isinstance(x, str) else None
+                a, b = r(f.get("from")), r(f.get("to"))
+                if v and a and b:
+                    t = f"ifact {name} {j}"
+                    add("fact_verb", t, v)
+                    add("fact_from", t, a)
+                    add("fact_to", t, b)
+        _pw, _pv = part_words(self)
+        for nid, n in self.N.items():
+            disp = n.get("display") or ""
+            if any(w in disp for w in _pw["from"]):
+                add("says_part_side", nid)
+            if any(w in disp for w in _pw["to"]):
+                add("says_whole_side", nid)
+            if any(w in disp for w in _pv):
+                add("says_vague", nid)
+        for dom, ws in presumed_worlds().items():
+            for w in ws:
+                add("presume", dom, qn_raw(w, "syntax"))
+        for lid, l in self.O.get("laws", {}).items():
+            add("law_domain", lid, self.O["_idom"].get(lid))
+            if any(isinstance(a, dict) and a.get("neg") for a in l.get("assume") or []):
+                add("assume_neg", lid, "true")
         for did, d in self.O["domains"].items():
             for u in d["uses"]:
                 add("v_use", did, u)
@@ -1436,146 +1474,6 @@ def presumed_worlds():
     return out
 
 
-def check_world_declared(T):
-    """法則 world_declared。否定（示されていない）を前提に使う法則は、その法則の領域が閉世界を前提に置くときだけ当てはめる。
-    否定の前提を、閉世界を置かない領域で書けば誤り（その領域では、示されていない文は偽でなく不明）。"""
-    W = presumed_worlds()
-    for dom, ws in W.items():
-        if len(ws) > 1:
-            err(f"法則 world_declared: 領域 {dom} が、書かれていない文の扱いを2つ以上置いている（{sorted(ws)}）")
-    for lid, l in T.O.get("laws", {}).items():
-        if any(isinstance(a, dict) and a.get("neg") for a in l.get("assume") or []):
-            dom = T.O["_idom"].get(lid)
-            if "closed_world" not in W.get(dom, set()):
-                err(f"法則 world_declared に反する: 法則 {lid} は否定を前提に使うが、領域 {dom} は閉世界を前提に置いていない")
-
-
-def definition_edges(T):
-    """定義が使う語への辺 (ノード, 使う語, 否定か)。上位（extends）、名前を付けた修飾語、限定の with をたどる。"""
-    out = []
-    for nid, n in T.N.items():
-        if n.get("extends") in T.N:
-            out.append((nid, n["extends"], False))
-        if "of" in n and n.get("with") in T.N:
-            out.append((nid, n["with"], bool(n.get("neg"))))
-        ms = n.get("mod") or []
-        for m in ms if isinstance(ms, list) else [ms]:
-            if isinstance(m, str) and m in T.N:
-                out.append((nid, m, False))
-            elif isinstance(m, dict) and m.get("with") in T.N:
-                out.append((nid, m["with"], bool(m.get("neg"))))
-    return out
-
-
-def definition_cycles(edges):
-    """定義の循環（強連結成分のうち、2つ以上のノードか自分への辺を持つもの）を、ノードの集まりの並びで返す。"""
-    G = collections.defaultdict(set)
-    for a, b, _ in edges:
-        G[a].add(b)
-    index, low, stack, on, out = {}, {}, [], set(), []
-    for root in list(G):
-        if root in index:
-            continue
-        work = [(root, iter(sorted(G[root])))]
-        index[root] = low[root] = len(index)
-        stack.append(root)
-        on.add(root)
-        while work:
-            v, it = work[-1]
-            for w in it:
-                if w not in index:
-                    index[w] = low[w] = len(index)
-                    stack.append(w)
-                    on.add(w)
-                    work.append((w, iter(sorted(G[w]))))
-                    break
-                if w in on:
-                    low[v] = min(low[v], index[w])
-            else:
-                work.pop()
-                if work:
-                    low[work[-1][0]] = min(low[work[-1][0]], low[v])
-                if low[v] == index[v]:
-                    c = set()
-                    while True:
-                        w = stack.pop()
-                        on.discard(w)
-                        c.add(w)
-                        if w == v:
-                            break
-                    if len(c) > 1 or v in G[v]:
-                        out.append(c)
-    return out
-
-
-def check_definition_stratified(T):
-    """法則 definition_stratified。定義の循環は、否定の限定を通らない（自分を限定するものは、肯定の位置にだけ現れる）。
-    否定を通る循環は、C = {x | ¬v(x, C)} の形（Russell の逆理）になり、不動点がないことがある。法則の規則の層分け（strata）と同じ条件。"""
-    edges = definition_edges(T)
-    for c in definition_cycles(edges):
-        bad = [(a, b) for a, b, neg in edges if neg and a in c and b in c]
-        if bad:
-            err(f"法則 definition_stratified に反する: 定義の循環 {sorted(c)} が否定の限定 {bad} を通る")
-
-
-def check_parts(T):
-    """法則 part_fact_direction と part_display_explicit。
-    - 事実「a は b の部分」に対し、b の種類が「a の種類の部分である」と限定されている（または a の種類が「b の種類を部分に持つ」）なら、向きが逆。
-    - 部分の限定（holds に部分の文を持つ動詞による限定）を持つ種類の表示名は、どちらが部分かを曖昧な言い方で書かず、明示した言い方なら限定の向きと合う。"""
-    kind = lambda x: T.I.get(x, x if x in T.N else None)
-    isa = lambda a, b: a is not None and (a == b or T.is_a(a, b))
-
-    def parts(verb):
-        """動詞の holds のうち部分の文を、(部分の位置, 全体の位置) で。動詞の名前でなく、定義から読む。"""
-        return {(h["from"], h["to"]) for h in T.end(verb, "holds") or [] if isinstance(h, dict) and h.get("is") == "part"} if verb in T.N else set()
-
-    def role(m):
-        """限定 {of: [V, p], with: X} で、限定される種類が X の部分なら "part"、X を部分に持つなら "whole"。
-        X の位置は、第三のものを作る動詞なら new、そうでなければ p の反対の位置。"""
-        if not isinstance(m, dict) or not isinstance(m.get("of"), list) or len(m["of"]) != 2:
-            return None
-        v, pos = T.q(m["of"][0]), m["of"][1]
-        wpos = "new" if T.end(v, "new_kind") else ("to" if pos == "from" else "from")
-        P = parts(v)
-        return "part" if (pos, wpos) in P else "whole" if (wpos, pos) in P else None
-
-    def mods(k, r):
-        out, hops = [], 0
-        while k in T.N and hops < 50:
-            out += [m["with"] for m in T.N[k].get("mod") or [] if m_ok(m) and role(m) == r]
-            k, hops = T.up(k), hops + 1
-        return out
-    m_ok = lambda m: isinstance(m, dict) and m.get("with") and not m.get("neg")
-    for name, dom in lib_and_domain_files():
-        for f in yload((SPEC / name).read_text(encoding="utf-8")).get("facts") or []:
-            if not isinstance(f, dict) or not isinstance(f.get("is"), str):
-                continue
-            v = T.resolve(f["is"], dom)
-            if not v or ("from", "to") not in parts(v):
-                continue
-            r = lambda x: (x if x in T.I else (T.resolve(x, dom) or x)) if isinstance(x, str) else None
-            a, b = r(f.get("from")), r(f.get("to"))
-            for X in mods(kind(b), "part"):
-                if isa(kind(a), X):
-                    err(f"法則 part_fact_direction に反する: {name} の事実 {a} は {b} の部分だが、{b} の種類は {X} の部分と限定されている")
-            for X in mods(kind(a), "whole"):
-                if isa(kind(b), X):
-                    err(f"法則 part_fact_direction に反する: {name} の事実 {a} は {b} の部分だが、{a} の種類は {X} を部分に持つと限定されている")
-    PART_WORDS, PART_VAGUE = part_words(T)
-    for nid, n in T.N.items():
-        disp = n.get("display") or ""
-        if T.is_verb(nid):
-            continue
-        for m in n.get("mod") or []:
-            r = role(m)
-            if r is None:
-                continue
-            if any(w in disp for w in PART_VAGUE):
-                err(f"法則 part_display_explicit に反する: {nid} の表示名「{disp}」は、どちらが部分かが曖昧")
-            if any(w in disp for w in PART_WORDS["to" if r == "part" else "from"]) and not m.get("neg"):
-                err(f"法則 part_display_explicit に反する: {nid} の表示名「{disp}」が、限定の向き（{m['of'][1]}）と逆")
-
-
 def check_domain(name, D, T):
     """領域のファイルの形と、個体の種類・値・項目の数を確かめる。どの領域にも同じ検査をする。"""
     for k in D:
@@ -1642,9 +1540,6 @@ def build():
     T.check_grammar()
     T.check_domains()
     T.check_laws()
-    check_parts(T)
-    check_definition_stratified(T)
-    check_world_declared(T)
     for dom, (name, X) in Dm.items():
         check_domain(name, X, T)
     return T, O, Dm

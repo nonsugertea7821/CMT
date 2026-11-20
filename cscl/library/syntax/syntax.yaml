@@ -296,16 +296,88 @@ individuals:
   layered: {is: law_rule, display: 参照できるのは自分の領域と使う領域だけ}
   truth_two: {is: law_rule, display: 真偽の軸は true と false を持つ}
   truth_only: {is: law_rule, display: 真偽の軸の値は true か false}
-  part_fact_direction: {is: law_given, display: 部分の事実は、種類の限定と向きが逆にならない}
-  world_declared: {is: law_given, display: 否定を前提に使う法則は、その法則の領域が閉世界を前提に置くときだけ当てはめる}
   mod_by_name: {is: law_relation, display: 修飾を名前で書いた}
   mod_content: {is: law_relation, display: 名前を付けた修飾語の中身である}
   r_named_content: {is: law_relation, display: 名前のある中身である}
   named_content: {is: law_rule, display: 名前を付けた修飾語の中身には名前がある}
   named_mod_use: {is: law_rule, display: 名前のある中身は名前で書く}
   named_mod_share: {is: law_rule, display: 二つのノードが同じ中身を足すなら、その中身には名前がある}
-  definition_stratified: {is: law_given, display: 定義の循環は否定の限定を通らない（自分を限定するものは肯定の位置にだけ現れる）}
-  part_display_explicit: {is: law_given, display: 部分の限定を持つ種類の表示名は、どちらが部分かを明示し、限定の向きと合う}
+  part_of_verb: {is: law_relation, display: 部分の文を持つ動詞である}
+  part_from: {is: law_relation, display: 部分の文の部分の側の端である}
+  part_to: {is: law_relation, display: 部分の文の全体の側の端である}
+  fact_verb: {is: law_relation, display: 事実の動詞である}
+  fact_from: {is: law_relation, display: 事実の始点である}
+  fact_to: {is: law_relation, display: 事実の終点である}
+  says_part_side: {is: law_relation, display: 表示名が自分を部分の側と言う}
+  says_whole_side: {is: law_relation, display: 表示名が自分を全体の側と言う}
+  says_vague: {is: law_relation, display: 表示名がどちらが部分かを曖昧に言う}
+  r_t_part: {is: law_relation, display: 限定される種類を部分とする限定である}
+  r_t_whole: {is: law_relation, display: 限定される種類を全体とする限定である}
+  r_t_role: {is: law_relation, display: 部分と全体の限定である}
+  r_isverb: {is: law_relation, display: 動詞である}
+  r_mod_part: {is: law_relation, display: の部分と限定される}
+  r_mod_whole: {is: law_relation, display: を部分に持つと限定される}
+  r_mod_part_up: {is: law_relation, display: 自分か祖先が、の部分と限定される}
+  r_mod_whole_up: {is: law_relation, display: 自分か祖先が、を部分に持つと限定される}
+  r_kind: {is: law_relation, display: の種類である}
+  r_part_fact: {is: law_relation, display: 事実で、の部分である}
+  r_kmp: {is: law_relation, display: 種類が、の部分と限定される}
+  r_kmw: {is: law_relation, display: 種類が、を部分に持つと限定される}
+  r_vpart_ft: {is: law_relation, display: 始点を部分、終点を全体とする動詞である}
+  r_vpart_tf: {is: law_relation, display: 終点を部分、始点を全体とする動詞である}
+  r_vpart_fn: {is: law_relation, display: 始点を部分、作るものを全体とする動詞である}
+  r_vpart_tn: {is: law_relation, display: 終点を部分、作るものを全体とする動詞である}
+  r_vpart_nf: {is: law_relation, display: 作るものを部分、始点を全体とする動詞である}
+  r_vpart_nt: {is: law_relation, display: 作るものを部分、終点を全体とする動詞である}
+  vpart_ft: {is: law_rule, display: 部分の文の端の位置から、始点を部分、終点を全体とする動詞を導く}
+  vpart_tf: {is: law_rule, display: 部分の文の端の位置から、終点を部分、始点を全体とする動詞を導く}
+  vpart_fn: {is: law_rule, display: 部分の文の端の位置から、始点を部分、作るものを全体とする動詞を導く}
+  vpart_tn: {is: law_rule, display: 部分の文の端の位置から、終点を部分、作るものを全体とする動詞を導く}
+  vpart_nf: {is: law_rule, display: 部分の文の端の位置から、作るものを部分、始点を全体とする動詞を導く}
+  vpart_nt: {is: law_rule, display: 部分の文の端の位置から、作るものを部分、終点を全体とする動詞を導く}
+  role_part_from: {is: law_rule, display: 始点を部分、終点を全体とする動詞で、始点の位置の限定は作るものを持たないとき、限定される種類を部分とする}
+  role_part_to: {is: law_rule, display: 終点を部分、始点を全体とする動詞で、終点の位置の限定は作るものを持たないとき、限定される種類を部分とする}
+  role_part_from_new: {is: law_rule, display: 始点を部分、作るものを全体とする動詞で、始点の位置の限定は作るものを持つとき、限定される種類を部分とする}
+  role_part_to_new: {is: law_rule, display: 終点を部分、作るものを全体とする動詞で、終点の位置の限定は作るものを持つとき、限定される種類を部分とする}
+  role_whole_from: {is: law_rule, display: 終点を部分、始点を全体とする動詞で、始点の位置の限定は作るものを持たないとき、限定される種類を全体とする}
+  role_whole_to: {is: law_rule, display: 始点を部分、終点を全体とする動詞で、終点の位置の限定は作るものを持たないとき、限定される種類を全体とする}
+  role_whole_from_new: {is: law_rule, display: 作るものを部分、始点を全体とする動詞で、始点の位置の限定は作るものを持つとき、限定される種類を全体とする}
+  role_whole_to_new: {is: law_rule, display: 作るものを部分、終点を全体とする動詞で、終点の位置の限定は作るものを持つとき、限定される種類を全体とする}
+  mod_part: {is: law_rule, display: 肯定の限定で、限定される種類を部分とするものは、相手の部分と限定する}
+  mod_whole: {is: law_rule, display: 肯定の限定で、限定される種類を全体とするものは、相手を部分に持つと限定する}
+  mod_part_up_own: {is: law_rule, display: 自分の、部分の限定}
+  mod_part_up_step: {is: law_rule, display: 上位の、部分の限定を引き継ぐ}
+  mod_whole_up_own: {is: law_rule, display: 自分の、全体の限定}
+  mod_whole_up_step: {is: law_rule, display: 上位の、全体の限定を引き継ぐ}
+  kind_is: {is: law_rule, display: 個体の種類}
+  kind_self: {is: law_rule, display: 種類は自分の種類}
+  part_fact: {is: law_rule, display: 部分の動詞の事実は、始点が終点の部分}
+  kmp: {is: law_rule, display: 種類の、部分の限定}
+  kmw: {is: law_rule, display: 種類の、全体の限定}
+  part_dir_part: {is: law_rule, display: 事実で部分であるものの種類は、全体の種類が部分と限定された相手の下にない}
+  part_dir_whole: {is: law_rule, display: 事実で全体であるものの種類は、部分の種類が全体と限定された相手の下にない}
+  role_any_part: {is: law_rule, display: 部分とする限定は、部分と全体の限定}
+  role_any_whole: {is: law_rule, display: 全体とする限定は、部分と全体の限定}
+  isverb: {is: law_rule, display: 両端を持つものは動詞}
+  disp_vague: {is: law_rule, display: 部分と全体の限定を持つ種類の表示名は、どちらが部分かを曖昧に言わない}
+  disp_dir_part: {is: law_rule, display: 部分と限定される種類の表示名は、自分を全体の側と言わない}
+  disp_dir_whole: {is: law_rule, display: 全体と限定される種類の表示名は、自分を部分の側と言わない}
+  presume: {is: law_relation, display: 領域が前提に置く扱いである}
+  law_domain: {is: law_relation, display: 法則の領域である}
+  assume_neg: {is: law_relation, display: 否定を前提に使う}
+  world_unique: {is: law_rule, display: 一つの領域が置く扱いは一つ}
+  world_rule: {is: law_rule, display: 否定を前提に使う法則の領域は閉世界を置く}
+  r_def_edge: {is: law_relation, display: 定義の辺である}
+  r_def_neg: {is: law_relation, display: 否定の定義の辺である}
+  r_def_back: {is: law_relation, display: 否定の辺の始点へ戻る道にある}
+  def_by_extends: {is: law_rule, display: 上位は定義の辺}
+  def_by_with: {is: law_rule, display: 修飾語の限定は定義の辺}
+  def_by_mod: {is: law_rule, display: 限定は定義の辺}
+  def_neg_with: {is: law_rule, display: 修飾語の否定の限定は否定の定義の辺}
+  def_neg_mod: {is: law_rule, display: 否定の限定は否定の定義の辺}
+  def_back_start: {is: law_rule, display: 否定の辺の終点から始点へ戻る道を始める}
+  def_back_step: {is: law_rule, display: 定義の辺をたどって戻る道を延ばす}
+  stratified_rule: {is: law_rule, display: 否定の辺の終点から始点へ戻れない}
   r_in: {is: law_relation, display: 集まりに属する}
   r_ind_kind: {is: law_relation, display: 個体の種類か、その上位である}
   r_ternary: {is: law_relation, display: 二つから第三のものを作る動詞である}
@@ -689,8 +761,6 @@ facts:
   - {is: v_assume, from: truth_only, to: {is: value, from: truth, to: var1}}
   - {is: v_assume, from: truth_only, to: {is: same, from: var1, to: true, neg: true}}
   - {is: v_require, from: truth_only, to: {is: same, from: var1, to: false}}
-  - {is: v_govern, from: part_fact_direction, to: concept_expression}
-  - {is: v_govern, from: part_display_explicit, to: concept_expression}
   - {is: v_assume, from: named_content, to: {is: mod_content, from: var1, to: var2}}
   - {is: v_derive, from: named_content, to: {is: r_named_content, from: var2}}
   - {is: v_assume, from: named_mod_use, to: {is: mod, from: var1, to: var2}}
@@ -700,8 +770,180 @@ facts:
   - {is: v_assume, from: named_mod_share, to: {is: mod, from: var3, to: var2}}
   - {is: v_assume, from: named_mod_share, to: {is: same, from: var1, to: var3, neg: true}}
   - {is: v_require, from: named_mod_share, to: {is: r_named_content, from: var2}}
-  - {is: v_govern, from: world_declared, to: concept_expression}
-  - {is: v_govern, from: definition_stratified, to: concept_expression}
+  - {is: v_assume, from: vpart_ft, to: {is: part_of_verb, from: var1, to: var2}}
+  - {is: v_assume, from: vpart_ft, to: {is: part_from, from: var1, to: var3}}
+  - {is: v_assume, from: vpart_ft, to: {is: position, from: var3, to: from}}
+  - {is: v_assume, from: vpart_ft, to: {is: part_to, from: var1, to: var4}}
+  - {is: v_assume, from: vpart_ft, to: {is: position, from: var4, to: to}}
+  - {is: v_derive, from: vpart_ft, to: {is: r_vpart_ft, from: var2}}
+  - {is: v_assume, from: vpart_tf, to: {is: part_of_verb, from: var1, to: var2}}
+  - {is: v_assume, from: vpart_tf, to: {is: part_from, from: var1, to: var3}}
+  - {is: v_assume, from: vpart_tf, to: {is: position, from: var3, to: to}}
+  - {is: v_assume, from: vpart_tf, to: {is: part_to, from: var1, to: var4}}
+  - {is: v_assume, from: vpart_tf, to: {is: position, from: var4, to: from}}
+  - {is: v_derive, from: vpart_tf, to: {is: r_vpart_tf, from: var2}}
+  - {is: v_assume, from: vpart_fn, to: {is: part_of_verb, from: var1, to: var2}}
+  - {is: v_assume, from: vpart_fn, to: {is: part_from, from: var1, to: var3}}
+  - {is: v_assume, from: vpart_fn, to: {is: position, from: var3, to: from}}
+  - {is: v_assume, from: vpart_fn, to: {is: part_to, from: var1, to: var4}}
+  - {is: v_assume, from: vpart_fn, to: {is: position, from: var4, to: new}}
+  - {is: v_derive, from: vpart_fn, to: {is: r_vpart_fn, from: var2}}
+  - {is: v_assume, from: vpart_tn, to: {is: part_of_verb, from: var1, to: var2}}
+  - {is: v_assume, from: vpart_tn, to: {is: part_from, from: var1, to: var3}}
+  - {is: v_assume, from: vpart_tn, to: {is: position, from: var3, to: to}}
+  - {is: v_assume, from: vpart_tn, to: {is: part_to, from: var1, to: var4}}
+  - {is: v_assume, from: vpart_tn, to: {is: position, from: var4, to: new}}
+  - {is: v_derive, from: vpart_tn, to: {is: r_vpart_tn, from: var2}}
+  - {is: v_assume, from: vpart_nf, to: {is: part_of_verb, from: var1, to: var2}}
+  - {is: v_assume, from: vpart_nf, to: {is: part_from, from: var1, to: var3}}
+  - {is: v_assume, from: vpart_nf, to: {is: position, from: var3, to: new}}
+  - {is: v_assume, from: vpart_nf, to: {is: part_to, from: var1, to: var4}}
+  - {is: v_assume, from: vpart_nf, to: {is: position, from: var4, to: from}}
+  - {is: v_derive, from: vpart_nf, to: {is: r_vpart_nf, from: var2}}
+  - {is: v_assume, from: vpart_nt, to: {is: part_of_verb, from: var1, to: var2}}
+  - {is: v_assume, from: vpart_nt, to: {is: part_from, from: var1, to: var3}}
+  - {is: v_assume, from: vpart_nt, to: {is: position, from: var3, to: new}}
+  - {is: v_assume, from: vpart_nt, to: {is: part_to, from: var1, to: var4}}
+  - {is: v_assume, from: vpart_nt, to: {is: position, from: var4, to: to}}
+  - {is: v_derive, from: vpart_nt, to: {is: r_vpart_nt, from: var2}}
+  - {is: v_assume, from: role_part_from, to: {is: of, from: var1, to: var2}}
+  - {is: v_assume, from: role_part_from, to: {is: position, from: var1, to: from}}
+  - {is: v_assume, from: role_part_from, to: {is: r_end_new_kind, from: var2, to: var3, neg: true}}
+  - {is: v_assume, from: role_part_from, to: {is: r_vpart_ft, from: var2}}
+  - {is: v_derive, from: role_part_from, to: {is: r_t_part, from: var1}}
+  - {is: v_assume, from: role_part_to, to: {is: of, from: var1, to: var2}}
+  - {is: v_assume, from: role_part_to, to: {is: position, from: var1, to: to}}
+  - {is: v_assume, from: role_part_to, to: {is: r_end_new_kind, from: var2, to: var3, neg: true}}
+  - {is: v_assume, from: role_part_to, to: {is: r_vpart_tf, from: var2}}
+  - {is: v_derive, from: role_part_to, to: {is: r_t_part, from: var1}}
+  - {is: v_assume, from: role_part_from_new, to: {is: of, from: var1, to: var2}}
+  - {is: v_assume, from: role_part_from_new, to: {is: position, from: var1, to: from}}
+  - {is: v_assume, from: role_part_from_new, to: {is: r_end_new_kind, from: var2, to: var3}}
+  - {is: v_assume, from: role_part_from_new, to: {is: r_vpart_fn, from: var2}}
+  - {is: v_derive, from: role_part_from_new, to: {is: r_t_part, from: var1}}
+  - {is: v_assume, from: role_part_to_new, to: {is: of, from: var1, to: var2}}
+  - {is: v_assume, from: role_part_to_new, to: {is: position, from: var1, to: to}}
+  - {is: v_assume, from: role_part_to_new, to: {is: r_end_new_kind, from: var2, to: var3}}
+  - {is: v_assume, from: role_part_to_new, to: {is: r_vpart_tn, from: var2}}
+  - {is: v_derive, from: role_part_to_new, to: {is: r_t_part, from: var1}}
+  - {is: v_assume, from: role_whole_from, to: {is: of, from: var1, to: var2}}
+  - {is: v_assume, from: role_whole_from, to: {is: position, from: var1, to: from}}
+  - {is: v_assume, from: role_whole_from, to: {is: r_end_new_kind, from: var2, to: var3, neg: true}}
+  - {is: v_assume, from: role_whole_from, to: {is: r_vpart_tf, from: var2}}
+  - {is: v_derive, from: role_whole_from, to: {is: r_t_whole, from: var1}}
+  - {is: v_assume, from: role_whole_to, to: {is: of, from: var1, to: var2}}
+  - {is: v_assume, from: role_whole_to, to: {is: position, from: var1, to: to}}
+  - {is: v_assume, from: role_whole_to, to: {is: r_end_new_kind, from: var2, to: var3, neg: true}}
+  - {is: v_assume, from: role_whole_to, to: {is: r_vpart_ft, from: var2}}
+  - {is: v_derive, from: role_whole_to, to: {is: r_t_whole, from: var1}}
+  - {is: v_assume, from: role_whole_from_new, to: {is: of, from: var1, to: var2}}
+  - {is: v_assume, from: role_whole_from_new, to: {is: position, from: var1, to: from}}
+  - {is: v_assume, from: role_whole_from_new, to: {is: r_end_new_kind, from: var2, to: var3}}
+  - {is: v_assume, from: role_whole_from_new, to: {is: r_vpart_nf, from: var2}}
+  - {is: v_derive, from: role_whole_from_new, to: {is: r_t_whole, from: var1}}
+  - {is: v_assume, from: role_whole_to_new, to: {is: of, from: var1, to: var2}}
+  - {is: v_assume, from: role_whole_to_new, to: {is: position, from: var1, to: to}}
+  - {is: v_assume, from: role_whole_to_new, to: {is: r_end_new_kind, from: var2, to: var3}}
+  - {is: v_assume, from: role_whole_to_new, to: {is: r_vpart_nt, from: var2}}
+  - {is: v_derive, from: role_whole_to_new, to: {is: r_t_whole, from: var1}}
+  - {is: v_assume, from: mod_part, to: {is: mod, from: var1, to: var2}}
+  - {is: v_assume, from: mod_part, to: {is: with, from: var2, to: var3}}
+  - {is: v_assume, from: mod_part, to: {is: neg, from: var2, to: true, neg: true}}
+  - {is: v_assume, from: mod_part, to: {is: r_t_part, from: var2}}
+  - {is: v_derive, from: mod_part, to: {is: r_mod_part, from: var1, to: var3}}
+  - {is: v_assume, from: mod_part_up_own, to: {is: r_mod_part, from: var1, to: var2}}
+  - {is: v_derive, from: mod_part_up_own, to: {is: r_mod_part_up, from: var1, to: var2}}
+  - {is: v_assume, from: mod_part_up_step, to: {is: r_parent, from: var1, to: var3}}
+  - {is: v_assume, from: mod_part_up_step, to: {is: r_mod_part_up, from: var3, to: var2}}
+  - {is: v_derive, from: mod_part_up_step, to: {is: r_mod_part_up, from: var1, to: var2}}
+  - {is: v_assume, from: mod_whole, to: {is: mod, from: var1, to: var2}}
+  - {is: v_assume, from: mod_whole, to: {is: with, from: var2, to: var3}}
+  - {is: v_assume, from: mod_whole, to: {is: neg, from: var2, to: true, neg: true}}
+  - {is: v_assume, from: mod_whole, to: {is: r_t_whole, from: var2}}
+  - {is: v_derive, from: mod_whole, to: {is: r_mod_whole, from: var1, to: var3}}
+  - {is: v_assume, from: mod_whole_up_own, to: {is: r_mod_whole, from: var1, to: var2}}
+  - {is: v_derive, from: mod_whole_up_own, to: {is: r_mod_whole_up, from: var1, to: var2}}
+  - {is: v_assume, from: mod_whole_up_step, to: {is: r_parent, from: var1, to: var3}}
+  - {is: v_assume, from: mod_whole_up_step, to: {is: r_mod_whole_up, from: var3, to: var2}}
+  - {is: v_derive, from: mod_whole_up_step, to: {is: r_mod_whole_up, from: var1, to: var2}}
+  - {is: v_assume, from: kind_is, to: {is: is, from: var1, to: var2}}
+  - {is: v_derive, from: kind_is, to: {is: r_kind, from: var1, to: var2}}
+  - {is: v_assume, from: kind_self, to: {is: exists, from: var1}}
+  - {is: v_derive, from: kind_self, to: {is: r_kind, from: var1, to: var1}}
+  - {is: v_assume, from: part_fact, to: {is: fact_verb, from: var1, to: var2}}
+  - {is: v_assume, from: part_fact, to: {is: r_vpart_ft, from: var2}}
+  - {is: v_assume, from: part_fact, to: {is: fact_from, from: var1, to: var3}}
+  - {is: v_assume, from: part_fact, to: {is: fact_to, from: var1, to: var4}}
+  - {is: v_derive, from: part_fact, to: {is: r_part_fact, from: var3, to: var4}}
+  - {is: v_assume, from: kmp, to: {is: r_kind, from: var1, to: var2}}
+  - {is: v_assume, from: kmp, to: {is: r_mod_part_up, from: var2, to: var3}}
+  - {is: v_derive, from: kmp, to: {is: r_kmp, from: var1, to: var3}}
+  - {is: v_assume, from: kmw, to: {is: r_kind, from: var1, to: var2}}
+  - {is: v_assume, from: kmw, to: {is: r_mod_whole_up, from: var2, to: var3}}
+  - {is: v_derive, from: kmw, to: {is: r_kmw, from: var1, to: var3}}
+  - {is: v_assume, from: part_dir_part, to: {is: r_part_fact, from: var1, to: var2}}
+  - {is: v_assume, from: part_dir_part, to: {is: r_kmp, from: var2, to: var3}}
+  - {is: v_assume, from: part_dir_part, to: {is: r_kind, from: var1, to: var4}}
+  - {is: v_require, from: part_dir_part, to: {is: r_below, from: var4, to: var3, neg: true}}
+  - {is: v_assume, from: part_dir_whole, to: {is: r_part_fact, from: var1, to: var2}}
+  - {is: v_assume, from: part_dir_whole, to: {is: r_kmw, from: var1, to: var3}}
+  - {is: v_assume, from: part_dir_whole, to: {is: r_kind, from: var2, to: var4}}
+  - {is: v_require, from: part_dir_whole, to: {is: r_below, from: var4, to: var3, neg: true}}
+  - {is: v_assume, from: role_any_part, to: {is: r_t_part, from: var1}}
+  - {is: v_derive, from: role_any_part, to: {is: r_t_role, from: var1}}
+  - {is: v_assume, from: role_any_whole, to: {is: r_t_whole, from: var1}}
+  - {is: v_derive, from: role_any_whole, to: {is: r_t_role, from: var1}}
+  - {is: v_assume, from: isverb, to: {is: r_end_from, from: var1, to: var2}}
+  - {is: v_assume, from: isverb, to: {is: r_end_to, from: var1, to: var3}}
+  - {is: v_derive, from: isverb, to: {is: r_isverb, from: var1}}
+  - {is: v_assume, from: disp_vague, to: {is: mod, from: var1, to: var2}}
+  - {is: v_assume, from: disp_vague, to: {is: r_t_role, from: var2}}
+  - {is: v_assume, from: disp_vague, to: {is: r_isverb, from: var1, neg: true}}
+  - {is: v_require, from: disp_vague, to: {is: says_vague, from: var1, neg: true}}
+  - {is: v_assume, from: disp_dir_part, to: {is: mod, from: var1, to: var2}}
+  - {is: v_assume, from: disp_dir_part, to: {is: r_t_part, from: var2}}
+  - {is: v_assume, from: disp_dir_part, to: {is: neg, from: var2, to: true, neg: true}}
+  - {is: v_assume, from: disp_dir_part, to: {is: r_isverb, from: var1, neg: true}}
+  - {is: v_require, from: disp_dir_part, to: {is: says_whole_side, from: var1, neg: true}}
+  - {is: v_assume, from: disp_dir_whole, to: {is: mod, from: var1, to: var2}}
+  - {is: v_assume, from: disp_dir_whole, to: {is: r_t_whole, from: var2}}
+  - {is: v_assume, from: disp_dir_whole, to: {is: neg, from: var2, to: true, neg: true}}
+  - {is: v_assume, from: disp_dir_whole, to: {is: r_isverb, from: var1, neg: true}}
+  - {is: v_require, from: disp_dir_whole, to: {is: says_part_side, from: var1, neg: true}}
+  - {is: v_assume, from: world_unique, to: {is: presume, from: var1, to: var2}}
+  - {is: v_assume, from: world_unique, to: {is: presume, from: var1, to: var3}}
+  - {is: v_require, from: world_unique, to: {is: same, from: var2, to: var3}}
+  - {is: v_assume, from: world_rule, to: {is: assume_neg, from: var1, to: 'true'}}
+  - {is: v_assume, from: world_rule, to: {is: law_domain, from: var1, to: var2}}
+  - {is: v_require, from: world_rule, to: {is: presume, from: var2, to: closed_world}}
+  - {is: v_assume, from: def_by_extends, to: {is: extends, from: var1, to: var2}}
+  - {is: v_assume, from: def_by_extends, to: {is: exists, from: var2}}
+  - {is: v_derive, from: def_by_extends, to: {is: r_def_edge, from: var1, to: var2}}
+  - {is: v_assume, from: def_by_with, to: {is: with, from: var1, to: var2}}
+  - {is: v_assume, from: def_by_with, to: {is: exists, from: var1}}
+  - {is: v_assume, from: def_by_with, to: {is: exists, from: var2}}
+  - {is: v_derive, from: def_by_with, to: {is: r_def_edge, from: var1, to: var2}}
+  - {is: v_assume, from: def_by_mod, to: {is: mod, from: var1, to: var3}}
+  - {is: v_assume, from: def_by_mod, to: {is: with, from: var3, to: var2}}
+  - {is: v_assume, from: def_by_mod, to: {is: exists, from: var2}}
+  - {is: v_derive, from: def_by_mod, to: {is: r_def_edge, from: var1, to: var2}}
+  - {is: v_assume, from: def_neg_with, to: {is: with, from: var1, to: var2}}
+  - {is: v_assume, from: def_neg_with, to: {is: neg, from: var1, to: 'true'}}
+  - {is: v_assume, from: def_neg_with, to: {is: exists, from: var1}}
+  - {is: v_assume, from: def_neg_with, to: {is: exists, from: var2}}
+  - {is: v_derive, from: def_neg_with, to: {is: r_def_neg, from: var1, to: var2}}
+  - {is: v_assume, from: def_neg_mod, to: {is: mod, from: var1, to: var3}}
+  - {is: v_assume, from: def_neg_mod, to: {is: with, from: var3, to: var2}}
+  - {is: v_assume, from: def_neg_mod, to: {is: neg, from: var3, to: 'true'}}
+  - {is: v_assume, from: def_neg_mod, to: {is: exists, from: var2}}
+  - {is: v_derive, from: def_neg_mod, to: {is: r_def_neg, from: var1, to: var2}}
+  - {is: v_assume, from: def_back_start, to: {is: r_def_neg, from: var1, to: var2}}
+  - {is: v_derive, from: def_back_start, to: {is: r_def_back, from: var2, to: var1}}
+  - {is: v_assume, from: def_back_step, to: {is: r_def_back, from: var1, to: var2}}
+  - {is: v_assume, from: def_back_step, to: {is: r_def_edge, from: var1, to: var3}}
+  - {is: v_derive, from: def_back_step, to: {is: r_def_back, from: var3, to: var2}}
+  - {is: v_assume, from: stratified_rule, to: {is: r_def_neg, from: var1, to: var2}}
+  - {is: v_require, from: stratified_rule, to: {is: r_def_back, from: var1, to: var1, neg: true}}
   - {is: v_presume, from: syntax, to: closed_world}
   - {is: v_assume, from: in_by_collect, to: {is: of, from: var1, to: v_collect}}
   - {is: v_assume, from: in_by_collect, to: {is: from, from: var1, to: var2}}
