@@ -1,0 +1,48 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-20T16:36:14.039Z（UTC）
+individuals:
+  01M7WX1M2Q62YBVXYKX3E4YYTZ:
+    is: model_utterance
+    display: 発言 3170
+    val:
+      order: 3170
+      text: |
+        「領域で区別されている」を確かめた結果は、反証でした。領域だけでは分けきれません（PR #525、Draft を外したので確認待ちです）。
+
+        **測ったこと:** #522 の読み方（形と両端の包含）に、「x の領域から W の領域へ、USES をたどって届く」という条件を足しました。
+
+        **分かったこと:**
+        - **取りこぼし:** 対象 16・参照 36 のどれも 0 のままです。領域を足しても、取りこぼしは増えませんでした。
+        - **領域をまたぐ余分:** 9 件残りました。判定の条件は 0 件なので、ここで反証です。
+          - std.v_learn が拾う exp の動詞: exp.v_see、v_judge、v_read など 7 つ
+          - std.v_vary が拾う: exp.v_withdraw
+          - ontology.v_level が拾う: exp.v_near
+        - **領域を「等しい」で読んだ場合:** 余分は消えますが、正しい下位動詞を 9 件落とします（lang.v_not_depend < exp.v_immune など）。
+        - **同じ領域の中の余分（判定の外）:** 9 件。exp.v_see / v_judge / v_read の群と、exp.v_rely に v_ground・v_scope がつくものです。
+
+        **解釈（未検証）:** ご指摘のとおり、領域は区別を担っていると考えます。ただ、その区別がまだ式に書かれていません。残った余分は、どれも同じ形をしています。
+        - exp の動詞が、std や ontology の動詞と同じ形をしている。
+        - それなのに extends でつながっていない。
+
+        たとえば「exp で見る」は「std で学ぶ」を exp に向けたものだ、という特化が、名前とファイルにしか書かれていない、という読みです。
+
+        **次:** 二つの読み筋を仮説として登録しました（#526、登録だけなので自動でマージされます）。
+        - **h_domain_special_extends:** 使う側の領域で特化した動詞は、使われる側の同じ形の動詞を extends する。
+        - **h_domain_in_formula:** 領域を holds の式に入れれば、名前を見なくても分かれる。
+
+        ロードマップの位置は、本線 a（識別子化）で、d_cscl_display_derived の下です。
+facts:
+- {is: v_say, from: session_model, to: 01M7WX1M2Q62YBVXYKX3E4YYTZ}
+- {is: exp.v_answer, from: 01M7WX1M2Q62YBVXYKX3E4YYTZ, to: 01M7WWGV7ZZZW7ZQW70Z7XJP8V}
+- {is: v_refer, from: 01M7WX1M2Q62YBVXYKX3E4YYTZ, to: std.v_learn}
+- {is: v_refer, from: 01M7WX1M2Q62YBVXYKX3E4YYTZ, to: exp.v_see}
+- {is: v_refer, from: 01M7WX1M2Q62YBVXYKX3E4YYTZ, to: exp.v_judge}
+- {is: v_refer, from: 01M7WX1M2Q62YBVXYKX3E4YYTZ, to: exp.v_read}
+- {is: v_refer, from: 01M7WX1M2Q62YBVXYKX3E4YYTZ, to: std.v_vary}
+- {is: v_refer, from: 01M7WX1M2Q62YBVXYKX3E4YYTZ, to: exp.v_withdraw}
+- {is: v_refer, from: 01M7WX1M2Q62YBVXYKX3E4YYTZ, to: ontology.v_level}
+- {is: v_refer, from: 01M7WX1M2Q62YBVXYKX3E4YYTZ, to: exp.v_near}
+- {is: v_refer, from: 01M7WX1M2Q62YBVXYKX3E4YYTZ, to: lang.v_not_depend}
+- {is: v_refer, from: 01M7WX1M2Q62YBVXYKX3E4YYTZ, to: exp.v_immune}
+- {is: v_refer, from: 01M7WX1M2Q62YBVXYKX3E4YYTZ, to: exp.v_rely}
+- {is: v_refer, from: 01M7WX1M2Q62YBVXYKX3E4YYTZ, to: exp.v_ground}
+- {is: v_refer, from: 01M7WX1M2Q62YBVXYKX3E4YYTZ, to: exp.v_scope}
