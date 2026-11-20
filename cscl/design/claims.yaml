@@ -162,8 +162,8 @@ individuals:
   b_mod_phrase_without_with: {is: exp.item_queued}
   h_verb_stem_from_signature: {is: exp.hyp_untested}
   b_verb_stem_from_signature: {is: exp.item_queued}
-  h_with_needs_display: {is: exp.hyp_untested}
-  b_with_needs_display: {is: exp.item_queued}
+  h_with_needs_display: {is: exp.hyp_supported}
+  b_with_needs_display: {is: exp.item_done}
   h_comment_ban: {is: exp.hyp_supported}
   b_comment_ban: {is: exp.item_done}
   h_above_closed: {is: exp.hyp_supported}
@@ -565,6 +565,12 @@ individuals:
   o_sys_mpf_untranslated: {is: exp.observation}
   o_sys_mpf_no_new: {is: exp.observation}
   o_sys_mpf_law_clean: {is: exp.observation}
+  o_sys_wnd_all_with_display: {is: exp.observation}
+  o_sys_wnd_with_count: {is: exp.observation}
+  o_sys_wnd_ind_translated: {is: exp.observation}
+  o_sys_wnd_ind_ready: {is: exp.observation}
+  o_sys_wnd_no_new: {is: exp.observation}
+  o_sys_wnd_law_clean: {is: exp.observation}
   o_sys_any_by_entail_passes_checks: {is: exp.observation}
   o_sys_any_by_entail_passes_ec: {is: exp.observation}
   o_sys_any_by_entail_ideal: {is: exp.observation}
@@ -1088,6 +1094,14 @@ facts:
   - {is: exp.v_check, from: b_verb_stem_from_signature, to: h_verb_stem_from_signature}
   - {is: v_refer, from: h_with_needs_display, to: {is: v_depend, from: syntax.with, to: syntax.display}}
   - {is: exp.v_check, from: b_with_needs_display, to: h_with_needs_display}
+  - {is: v_refer, from: o_sys_wnd_all_with_display, to: {is: v_level, from: sys_with_needs_display_fix.n_with_disp.mean_value, to: 455.0}}
+  - {is: exp.v_support, from: o_sys_wnd_all_with_display, to: h_with_needs_display}
+  - {is: v_refer, from: o_sys_wnd_with_count, to: {is: v_level, from: sys_with_needs_display_fix.n_with.mean_value, to: 455.0}}
+  - {is: v_refer, from: o_sys_wnd_ind_translated, to: {is: v_level, from: sys_with_needs_display_fix.n_c_translated.mean_value, to: 7.0}}
+  - {is: exp.v_support, from: o_sys_wnd_ind_translated, to: h_with_needs_display}
+  - {is: v_refer, from: o_sys_wnd_ind_ready, to: {is: v_level, from: sys_with_needs_display_fix.n_c_ready.mean_value, to: 7.0}}
+  - {is: v_refer, from: o_sys_wnd_no_new, to: {is: v_level, from: sys_with_needs_display_fix.new_T.mean_value, to: 0.0}}
+  - {is: v_refer, from: o_sys_wnd_law_clean, to: {is: v_level, from: sys_with_needs_display_fix.py_T.mean_value, to: 0.0}}
   - {is: v_refer, from: o_sys_mpf_target, to: {is: v_level, from: sys_mod_phrase_from_formula.n_target.mean_value, to: 99.0}}
   - {is: v_refer, from: o_sys_mpf_untranslated, to: {is: v_level, from: sys_mod_phrase_from_formula.n_translated.mean_value, to: 77.0}}
   - {is: exp.v_contradict, from: o_sys_mpf_untranslated, to: h_mod_phrase_from_formula}
