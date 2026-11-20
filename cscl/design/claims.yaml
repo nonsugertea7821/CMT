@@ -144,8 +144,8 @@ individuals:
   b_law_given_by_facts: {is: exp.item_queued}
   h_world_by_presume_facts: {is: exp.hyp_untested}
   b_world_by_presume_facts: {is: exp.item_queued}
-  h_part_direction_by_facts: {is: exp.hyp_untested}
-  b_part_direction_by_facts: {is: exp.item_queued}
+  h_part_direction_by_facts: {is: exp.hyp_supported}
+  b_part_direction_by_facts: {is: exp.item_done}
   h_part_display_by_word_facts: {is: exp.hyp_untested}
   b_part_display_by_word_facts: {is: exp.item_queued}
   h_part_display_from_formula: {is: exp.hyp_untested}
@@ -527,6 +527,10 @@ individuals:
   o_sys_sbr_neg_cycle_flagged: {is: exp.observation}
   o_sys_sbr_pos_cycle_agree: {is: exp.observation}
   o_sys_sbr_neg_cycle_clean: {is: exp.observation}
+  o_sys_pd_part_agree: {is: exp.observation}
+  o_sys_pd_whole_agree: {is: exp.observation}
+  o_sys_pd_sub_agree: {is: exp.observation}
+  o_sys_pd_right_dir_agree: {is: exp.observation}
   o_sys_any_by_entail_passes_checks: {is: exp.observation}
   o_sys_any_by_entail_passes_ec: {is: exp.observation}
   o_sys_any_by_entail_ideal: {is: exp.observation}
@@ -985,6 +989,14 @@ facts:
   - {is: exp.v_check, from: b_world_by_presume_facts, to: h_world_by_presume_facts}
   - {is: v_refer, from: h_part_direction_by_facts, to: {is: v_depend, from: syntax.law_relation, to: [syntax.facts, syntax.holds]}}
   - {is: exp.v_check, from: b_part_direction_by_facts, to: h_part_direction_by_facts}
+  - {is: v_refer, from: o_sys_pd_part_agree, to: {is: v_level, from: sys_part_direction.agree_P.mean_value, to: 1.0}}
+  - {is: exp.v_support, from: o_sys_pd_part_agree, to: h_part_direction_by_facts}
+  - {is: v_refer, from: o_sys_pd_whole_agree, to: {is: v_level, from: sys_part_direction.agree_W.mean_value, to: 1.0}}
+  - {is: exp.v_support, from: o_sys_pd_whole_agree, to: h_part_direction_by_facts}
+  - {is: v_refer, from: o_sys_pd_sub_agree, to: {is: v_level, from: sys_part_direction.agree_S.mean_value, to: 1.0}}
+  - {is: exp.v_support, from: o_sys_pd_sub_agree, to: h_part_direction_by_facts}
+  - {is: v_refer, from: o_sys_pd_right_dir_agree, to: {is: v_level, from: sys_part_direction.agree_K.mean_value, to: 1.0}}
+  - {is: exp.v_support, from: o_sys_pd_right_dir_agree, to: h_part_direction_by_facts}
   - {is: v_refer, from: h_part_display_by_word_facts, to: {is: v_depend, from: syntax.law_relation, to: [syntax.display, syntax.holds]}}
   - {is: exp.v_check, from: b_part_display_by_word_facts, to: h_part_display_by_word_facts}
   - {is: v_refer, from: h_part_display_from_formula, to: {is: v_depend, from: syntax.display, to: syntax.holds}}
