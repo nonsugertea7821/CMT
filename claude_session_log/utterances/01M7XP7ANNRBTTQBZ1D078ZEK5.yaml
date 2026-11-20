@@ -1,0 +1,28 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-20T23:56:15.413Z（UTC）
+individuals:
+  01M7XP7ANNRBTTQBZ1D078ZEK5:
+    is: model_utterance
+    display: 発言 3293
+    val:
+      order: 3293
+      text: |
+        h_extends_unwritten_open（#574）を確かめた結果は反証でした。下位の動詞 70 のうち、書いた extends と一致したのは 7 です。上位の動詞は 49 のうち 47 が「親なし」と出ました。tc と ec は通り、PR は Draft を外しました。
+
+        **結果**
+        - 導いた親は exp.v_read が 31 で、None（親を決められなかったもの）が 27 です。
+        - 走らせる前に書いておいた懸念のとおりでした。端が None のときに包含とみなすと、端を書かない動詞が順序の下に来ます。
+        - v_read は to だけを書き、from と new_kind を書いていません。そのため、多くの動詞の極小になりました。#566 と同じ偏りです。
+
+        **含意**
+        - 書いていない欄を「何でも当てはまる」と読む規則では、どちらが具体的かという順序ができません。
+        - 規則の側で残る筋は、登録済みの h_extends_min_by_collected（#569）です。今回との違いは、None を包含とみなさない点だけです。違いがこの一点なので、#569 を確かめれば、この含意をそのまま問えます。
+        - このため、新しい仮説は足しませんでした。
+
+        #529 は、手で見てもらうのを待っています。次の周回は 00:24Z で、h_extends_min_by_collected（#569）を確かめます。
+
+        本線 a 識別子化、d_cscl_display_derived の下
+facts:
+- {is: v_say, from: session_model, to: 01M7XP7ANNRBTTQBZ1D078ZEK5}
+- {is: exp.v_answer, from: 01M7XP7ANNRBTTQBZ1D078ZEK5, to: 01M7WWGV7ZZZW7ZQW70Z7XJP8V}
+- {is: v_refer, from: 01M7XP7ANNRBTTQBZ1D078ZEK5, to: exp.v_read}
+- {is: v_refer, from: 01M7XP7ANNRBTTQBZ1D078ZEK5, to: syntax.new_kind}
