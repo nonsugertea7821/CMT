@@ -206,7 +206,7 @@ individuals:
   b_required_by_laws: {is: exp.item_queued}
   h_check_immune_parts: {is: exp.hyp_refuted}
   b_check_immune_parts: {is: exp.item_done}
-  h_fact_id_by_content: {is: exp.hyp_untested}
+  h_fact_id_by_content: {is: exp.hyp_supported}
   b_fact_id_by_content: {is: exp.item_queued}
   h_grammar_names_parts: {is: exp.hyp_untested}
   b_grammar_names_parts: {is: exp.item_queued}
@@ -658,6 +658,12 @@ individuals:
   o_sys_rna_post: {is: exp.observation}
   o_sys_rna_law: {is: exp.observation}
   o_sys_rna_off: {is: exp.observation}
+  o_sys_fic_errors: {is: exp.observation}
+  o_sys_fic_laws: {is: exp.observation}
+  o_sys_fic_rel: {is: exp.observation}
+  o_sys_fic_other: {is: exp.observation}
+  o_sys_fic_base: {is: exp.observation}
+  o_sys_fic_distinct: {is: exp.observation}
   o_sys_lca_errors: {is: exp.observation}
   o_sys_lca_laws: {is: exp.observation}
   o_sys_lca_diag: {is: exp.observation}
@@ -1315,6 +1321,16 @@ facts:
   - {is: v_refer, from: o_sys_rna_law, to: {is: v_level, from: sys_rule_nouns_agree_runtime.N_law_specific.mean_value, to: 0.0}}
   - {is: exp.v_contradict, from: o_sys_rna_law, to: h_rule_nouns_agree_runtime}
   - {is: v_refer, from: o_sys_rna_off, to: {is: v_level, from: sys_rule_nouns_agree_runtime.N_off_agree.mean_value, to: 0.0}}
+  - {is: v_refer, from: o_sys_fic_errors, to: {is: v_level, from: sys_fact_id_by_content.C_errors.mean_value, to: 0.0}}
+  - {is: exp.v_support, from: o_sys_fic_errors, to: h_fact_id_by_content}
+  - {is: v_refer, from: o_sys_fic_laws, to: {is: v_level, from: sys_fact_id_by_content.C_laws_same.mean_value, to: 1.0}}
+  - {is: exp.v_support, from: o_sys_fic_laws, to: h_fact_id_by_content}
+  - {is: v_refer, from: o_sys_fic_rel, to: {is: v_level, from: sys_fact_id_by_content.PC_rel_same_C.mean_value, to: 1.0}}
+  - {is: exp.v_support, from: o_sys_fic_rel, to: h_fact_id_by_content}
+  - {is: v_refer, from: o_sys_fic_other, to: {is: v_level, from: sys_fact_id_by_content.PC_other_errors.mean_value, to: 0.0}}
+  - {is: exp.v_support, from: o_sys_fic_other, to: h_fact_id_by_content}
+  - {is: v_refer, from: o_sys_fic_base, to: {is: v_level, from: sys_fact_id_by_content.C_rel_same_L.mean_value, to: 0.0}}
+  - {is: v_refer, from: o_sys_fic_distinct, to: {is: v_level, from: sys_fact_id_by_content.n_fact_distinct.mean_value, to: 5348.0}}
   - {is: v_refer, from: o_sys_lca_errors, to: {is: v_level, from: sys_law_check_by_always.X_errors.mean_value, to: 0.0}}
   - {is: exp.v_support, from: o_sys_lca_errors, to: h_law_check_by_always}
   - {is: v_refer, from: o_sys_lca_laws, to: {is: v_level, from: sys_law_check_by_always.X_laws_same.mean_value, to: 1.0}}
