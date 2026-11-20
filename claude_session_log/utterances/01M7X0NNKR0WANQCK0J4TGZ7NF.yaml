@@ -1,0 +1,40 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-20T17:39:36.696Z（UTC）
+individuals:
+  01M7X0NNKR0WANQCK0J4TGZ7NF:
+    is: model_utterance
+    display: 発言 3190
+    val:
+      order: 3190
+      text: |
+        h_kind_in_shape（#531）は反証でした（PR #533、Draft を外して確認待ちです）。ただ、#525 で「領域で区別されている」とご指摘いただいた点は、この結果で裏づけが強まりました。
+
+        **測ったこと**
+        #529 の比べ方（形・端・new_kind を包含で比べる）から、領域の到達の条件だけを外しました。
+
+        **結果**
+        - 取りこぼしは、全対象 16・参考 36 のどれでも 0 のままでした。
+        - 余分は 9 件出て、そのうち 6 件が、事前に許した 3 対の外にありました。どれも向きが逆でした。下の層の動詞が、上の層にある「同じ式で端だけ広い」動詞の下位として拾われています。
+          - ontology.v_depend・syntax.v_use と、subj の動詞 3 つ → exp.v_rely（端が any→any）の下位
+          - ontology.v_design → std.v_compute（to が any）の下位
+
+        **含意**
+        - 分けるには、二つの式の両方が要ります。
+          - new_kind は、生むものの種類で動詞を横に分けます（#529）。
+          - 領域の到達は、どちらがどちらの特化かという向きを決めます（今回）。
+        - #529 と合わせると、識別には形・端・new_kind・領域の到達がそろって要る、という読みになります。
+        - exp.v_rely や std.v_compute は、下の層の動詞の端だけを広げて、上の層に立て直した形に見えます。ただ、上の層の動詞を下の層の動詞の上位にすると、下の層が上の層を参照することになり、層の向きに反します。そのため、この関係は extends で書けません。
+
+        **新しい仮説（対で登録、#534、登録だけなので自動でマージされます）**
+        - **h_wider_verb_lower:** 端の広い動詞を下の層に置けば、extends を上へ書けるようになる。
+        - **h_extends_follows_use:** 上の層の広い動詞は、端を広げる代わりに、下の動詞の特化として書き直せる。
+
+        ロードマップでは、本線 a の識別子化（d_cscl_display_derived の下）を進めました。#529 は訂正を含むので、手で見ていただくのを待っています。
+facts:
+- {is: v_say, from: session_model, to: 01M7X0NNKR0WANQCK0J4TGZ7NF}
+- {is: exp.v_answer, from: 01M7X0NNKR0WANQCK0J4TGZ7NF, to: 01M7WWGV7ZZZW7ZQW70Z7XJP8V}
+- {is: v_refer, from: 01M7X0NNKR0WANQCK0J4TGZ7NF, to: syntax.new_kind}
+- {is: v_refer, from: 01M7X0NNKR0WANQCK0J4TGZ7NF, to: ontology.v_depend}
+- {is: v_refer, from: 01M7X0NNKR0WANQCK0J4TGZ7NF, to: syntax.v_use}
+- {is: v_refer, from: 01M7X0NNKR0WANQCK0J4TGZ7NF, to: exp.v_rely}
+- {is: v_refer, from: 01M7X0NNKR0WANQCK0J4TGZ7NF, to: ontology.v_design}
+- {is: v_refer, from: 01M7X0NNKR0WANQCK0J4TGZ7NF, to: std.v_compute}
