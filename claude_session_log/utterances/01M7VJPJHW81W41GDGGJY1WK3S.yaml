@@ -1,0 +1,30 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-20T04:16:11.836Z（UTC）
+individuals:
+  01M7VJPJHW81W41GDGGJY1WK3S:
+    is: model_utterance
+    display: 発言 2881
+    val:
+      order: 2881
+      text: |
+        この周回でやったことです。
+
+        - **#439（definition_stratified を規則で書けるか）**: CI は通っていて、Draft も外してあります。あなたのマージを待っています。マージされたら、その結果を本体に入れる PR を立てます。中身は、検査器の Python の検査をやめて、規則に置き換えるものです。
+        - **新しい仮説 `h_world_by_presume_facts`**: 登録の PR は #441 です。担当にあなたを入れ、見張りも始めました。登録だけの PR なので、自動マージに乗る見込みです。手元では tc と ec が通っています。
+          - **対象**: まだ規則にしていない法則のうち、world_declared です。「否定を前提に使う法則は、その領域が閉世界を置くときだけ当てはめる」という法則です。今は Python が、ファイルに書いたままの `v_presume` を直接読んで検査しています。
+          - **見立て**: 規則が読む文（syntax_facts）には、次の三つがまだ入っていません。これを足せば規則で書ける、と見ています。named_mod のとき、書き手の事実を足して規則にできたのと同じ道です。
+            - 領域が置く前提
+            - 法則の領域
+            - 前提が否定かどうか
+          - **最初の形の訂正**: はじめは依存の先を動詞（`v_presume`・`v_assume`）にしましたが、tc が受け付けませんでした。v_depend の終点には概念しか置けないためです。そこで終点を `syntax.world` と `syntax.domain` にしました。
+        - **次の周回**: #441 がマージされていたら、ブランチ `claude/h_world_by_presume_facts` で事前登録のスクリプトを書き、測ります。
+
+        ロードマップ: a（識別子化）の中で、残る law_given を一つずつ規則に移しています。named_mod は済み、definition_stratified はマージ待ちです。world_declared は登録したところで、残りは part_fact_direction と part_display_explicit です。
+facts:
+- {is: v_say, from: session_model, to: 01M7VJPJHW81W41GDGGJY1WK3S}
+- {is: exp.v_answer, from: 01M7VJPJHW81W41GDGGJY1WK3S, to: 01M7VECCMJ5B7GFVNBSFS4909M}
+- {is: v_refer, from: 01M7VJPJHW81W41GDGGJY1WK3S, to: syntax.v_presume}
+- {is: v_refer, from: 01M7VJPJHW81W41GDGGJY1WK3S, to: syntax.v_assume}
+- {is: v_refer, from: 01M7VJPJHW81W41GDGGJY1WK3S, to: ontology.v_depend}
+- {is: v_refer, from: 01M7VJPJHW81W41GDGGJY1WK3S, to: syntax.world}
+- {is: v_refer, from: 01M7VJPJHW81W41GDGGJY1WK3S, to: syntax.domain}
+- {is: v_refer, from: 01M7VJPJHW81W41GDGGJY1WK3S, to: syntax.law_given}
