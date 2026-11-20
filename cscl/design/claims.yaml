@@ -254,8 +254,8 @@ individuals:
   b_rule_frame_redundant: {is: exp.item_done}
   h_rule_roles_by_frame: {is: exp.hyp_supported}
   b_rule_roles_by_frame: {is: exp.item_done}
-  h_rule_roles_by_signature: {is: exp.hyp_untested}
-  b_rule_roles_by_signature: {is: exp.item_queued}
+  h_rule_roles_by_signature: {is: exp.hyp_refuted}
+  b_rule_roles_by_signature: {is: exp.item_done}
   h_case_frame_formula: {is: exp.hyp_refuted}
   b_case_frame_formula: {is: exp.item_done}
   h_case_frame_by_relation: {is: exp.hyp_refuted}
@@ -620,6 +620,12 @@ individuals:
   o_sys_apv_no_new: {is: exp.observation}
   o_sys_apv_named_agree: {is: exp.observation}
   o_sys_apv_named: {is: exp.observation}
+  o_sys_rrs_errors: {is: exp.observation}
+  o_sys_rrs_ec_errors: {is: exp.observation}
+  o_sys_rrs_laws_same: {is: exp.observation}
+  o_sys_rrs_roles: {is: exp.observation}
+  o_sys_rrs_diff_other: {is: exp.observation}
+  o_sys_rrs_control: {is: exp.observation}
   o_sys_any_by_entail_passes_checks: {is: exp.observation}
   o_sys_any_by_entail_passes_ec: {is: exp.observation}
   o_sys_any_by_entail_ideal: {is: exp.observation}
@@ -975,6 +981,14 @@ facts:
   - {is: exp.v_check, from: b_rule_roles_by_frame, to: h_rule_roles_by_frame}
   - {is: v_refer, from: h_rule_roles_by_signature, to: {is: v_depend, from: type_checker, to: [syntax.law_rule, signature_class]}}
   - {is: exp.v_check, from: b_rule_roles_by_signature, to: h_rule_roles_by_signature}
+  - {is: v_refer, from: o_sys_rrs_errors, to: {is: v_level, from: sys_rule_roles_by_signature.S_errors.mean_value, to: 3.0}}
+  - {is: exp.v_contradict, from: o_sys_rrs_errors, to: h_rule_roles_by_signature}
+  - {is: v_refer, from: o_sys_rrs_ec_errors, to: {is: v_level, from: sys_rule_roles_by_signature.S_ec_errors.mean_value, to: 3.0}}
+  - {is: v_refer, from: o_sys_rrs_laws_same, to: {is: v_level, from: sys_rule_roles_by_signature.S_laws_same.mean_value, to: 1.0}}
+  - {is: v_refer, from: o_sys_rrs_roles, to: {is: v_level, from: sys_rule_roles_by_signature.S_n_role.mean_value, to: 3.0}}
+  - {is: v_refer, from: o_sys_rrs_diff_other, to: {is: v_level, from: sys_rule_roles_by_signature.n_diff_other.mean_value, to: 793.0}}
+  - {is: exp.v_contradict, from: o_sys_rrs_diff_other, to: h_rule_roles_by_signature}
+  - {is: v_refer, from: o_sys_rrs_control, to: {is: v_level, from: sys_rule_roles_by_signature.control_differs.mean_value, to: 1.0}}
   - {is: v_refer, from: o_sys_boundary_post_passes, to: {is: v_level, from: sys_boundary_invariant.R_errors.mean_value, to: 0.0}}
   - {is: v_refer, from: o_sys_boundary_post_passes_ec, to: {is: v_level, from: sys_boundary_invariant.R_ec_errors.mean_value, to: 0.0}}
   - {is: v_refer, from: o_sys_boundary_post_unchanged, to: {is: v_level, from: sys_boundary_invariant.R_changed.mean_value, to: 0.0}}
