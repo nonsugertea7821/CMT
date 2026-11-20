@@ -1,0 +1,34 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-20T22:56:08.928Z（UTC）
+individuals:
+  01M7XJS8Q0PRAZ3JBP0TAC6TBY:
+    is: model_utterance
+    display: 発言 3283
+    val:
+      order: 3283
+      text: |
+        h_extends_own_fields_by_compat（#566）を確かめ、反証でした。書いた extends を当てたのは、下位の動詞 70 のうち 3 です。上位の動詞は 49 のうち 48 で、正しく「親なし」と出ました。tc と ec は通り、PR は Draft を外してあります。
+
+        **結果**
+        - 導いた親は、`exp.v_read` が 33、`lang.v_not_depend` が 10、出せなかったものが 23 です。
+        - 自分で書いた欄が少ない動詞ほど、ほかの動詞と食い違いません。そのため比べ方の上で「いちばん下」に来て、親に選ばれてしまいます。
+        - つまり、自分の欄どうしが食い違わないかで比べても、どちらがより具体的かという順序にはなりません。
+
+        **含意**
+        - 具体さを比べるには、祖先から集めた欄が要ります。集めるには親の鎖が要ります。
+        - これは #561（3/70）、#565（50/70）と同じ壁です。
+
+        **新しい仮説（#567、登録だけ）**
+        反証から、解き方を対で出しました。どちらも識別子化（d_cscl_display_derived）の根拠として結んであります。
+        - 体系の側（h_verbs_state_own_ends）: 端（from・to）を受け継ぐだけの動詞に、祖先の端を自分の欄として書き足します。そうすれば #565 の手順で 70/70 に揃う、という仮説です。#565 で候補が出なかった 15 は、書いていない受け継いだ端が原因でした。
+        - 規則の側（h_extends_min_by_collected）: 候補は今回の比べ方で選びます。そのうえで、いちばん下は親の鎖で集めた端と mod で決めます。
+
+        ほかの PR では、#529 が手で見てもらう待ちのままです。CI はすべて通っています。
+
+        次の周回は 23:22Z です。
+
+        本線 a 識別子化、d_cscl_display_derived の下
+facts:
+- {is: v_say, from: session_model, to: 01M7XJS8Q0PRAZ3JBP0TAC6TBY}
+- {is: exp.v_answer, from: 01M7XJS8Q0PRAZ3JBP0TAC6TBY, to: 01M7WWGV7ZZZW7ZQW70Z7XJP8V}
+- {is: v_refer, from: 01M7XJS8Q0PRAZ3JBP0TAC6TBY, to: exp.v_read}
+- {is: v_refer, from: 01M7XJS8Q0PRAZ3JBP0TAC6TBY, to: lang.v_not_depend}
