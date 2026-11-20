@@ -1,0 +1,24 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-20T13:52:51.013Z（UTC）
+individuals:
+  01M7WKPET5V0C6J7M4XJXRGM8X:
+    is: model_utterance
+    display: 発言 3111
+    val:
+      order: 3111
+      text: |
+        `h_fact_id_by_content`（#502）は支持でした。tc と ec は手元で通り、Draft も外してあります。
+
+        - **何をしたか:** 型検査器のコピーで、事実の名前を「ファイルの中の位置」から「動詞・始点・終点」に替えました。
+        - **名前を替えただけの場合:** 誤りは 0 で、法則の評価結果も main と同じでした。
+        - **exp.yaml を分けた場合:** 名前を替えたうえで exp.yaml を分けました。族 220 個を部分のファイルに移し、8703 行が 1707 行になりました。法則を評価した関係は、分ける前とまったく同じでした。誤りは「文法の語に `parts` がない」の1件だけです。
+        - **重なり:** 事実 5348 行は中身がすべて異なり、名前の重なりは起きませんでした。
+
+        含意として、exp.yaml を分けられない原因のうち、事実の名前の問題は解けました。残るのは、文法の語に `parts` がない問題（`h_grammar_names_parts`、#499）だけです。新しい仮説は足していません。
+
+        型検査器の実ファイルは、まだ変えていません。名前の付け方と部分のファイルの読み込みを実際に入れるときは、手で見てもらう変更になります。
+
+        ロードマップ: 識別子化のうち、事実の識別子を中身で作る件を進めました。
+facts:
+- {is: v_say, from: session_model, to: 01M7WKPET5V0C6J7M4XJXRGM8X}
+- {is: exp.v_answer, from: 01M7WKPET5V0C6J7M4XJXRGM8X, to: 01M7WGV5MB63ZH3P6JTJHH8QAR}
+- {is: v_refer, from: 01M7WKPET5V0C6J7M4XJXRGM8X, to: syntax.parts}
