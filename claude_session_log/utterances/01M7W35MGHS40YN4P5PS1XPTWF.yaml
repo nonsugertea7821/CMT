@@ -1,0 +1,25 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-20T09:04:02.577Z（UTC）
+individuals:
+  01M7W35MGHS40YN4P5PS1XPTWF:
+    is: model_utterance
+    display: 発言 2979
+    val:
+      order: 2979
+      text: |
+        h_verb_stem_from_signature（句の語幹を、動詞の表示語の語尾ではなく、動詞の定義から取る）を確かめて、支持でした。#465 は Draft を外しました。訂正がないので、CI が通れば auto-merge がマージするはずです。
+
+        **結果**
+        - with を持つ部分の限定 92 が、すべて句を訳せました。新しい誤りも、法則の誤りもありません。
+        - 表示語が「になる」で終わらない動詞の限定 8 は、次のように語幹を取りました。
+          - 6 は、上位の動詞「部分になる」から取りました（保管される・分類される・所在する）。
+          - 残る 2 は、holds の部分の事実から「部分」を語幹にしました（合成する）。
+        - これで部分の限定のうち訳せないのは、with のない 7 だけになりました。h_mod_phrase_without_with（#461）で確かめます。
+
+        **わかったこと**
+        - 訳した句は「倉庫の部分である」のような一般の言い方になり、保管・分類・所在という動詞ごとの意味は句から落ちます。
+        - どちらが部分かを法則が読むには、これで足ります。日本語として自然な句にするには別の道が要りますが、それはロードマップ b（日本語の自然さ）の範囲なので、今回は仮説にしていません。
+
+        ロードマップ: a（識別子化）で h_verb_stem_from_signature を確かめました（#465）。#455・#456・#464 は手でのマージ待ちで、次は h_mod_phrase_without_with（#461）です。
+facts:
+- {is: v_say, from: session_model, to: 01M7W35MGHS40YN4P5PS1XPTWF}
+- {is: exp.v_answer, from: 01M7W35MGHS40YN4P5PS1XPTWF, to: 01M7VECCMJ5B7GFVNBSFS4909M}
