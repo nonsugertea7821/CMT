@@ -367,7 +367,7 @@ individuals:
   b_names_up_to_relabel: {is: exp.item_queued}
   h_same_shape_verbs_merge: {is: exp.hyp_untested}
   b_same_shape_verbs_merge: {is: exp.item_queued}
-  h_shape_needs_ends: {is: exp.hyp_untested}
+  h_shape_needs_ends: {is: exp.hyp_refuted}
   b_shape_needs_ends: {is: exp.item_queued}
   o_sys_verbs_static_unlimited: {is: exp.observation}
   o_sys_verbs_dyn_limited: {is: exp.observation}
@@ -670,6 +670,9 @@ individuals:
   o_sys_rna_post: {is: exp.observation}
   o_sys_rna_law: {is: exp.observation}
   o_sys_rna_off: {is: exp.observation}
+  o_sys_sne_targets: {is: exp.observation}
+  o_sys_sne_off: {is: exp.observation}
+  o_sys_sne_refs_off: {is: exp.observation}
   o_sys_vst_targets: {is: exp.observation}
   o_sys_vst_off: {is: exp.observation}
   o_sys_vst_refs_off: {is: exp.observation}
@@ -1340,6 +1343,10 @@ facts:
   - {is: v_refer, from: o_sys_rna_law, to: {is: v_level, from: sys_rule_nouns_agree_runtime.N_law_specific.mean_value, to: 0.0}}
   - {is: exp.v_contradict, from: o_sys_rna_law, to: h_rule_nouns_agree_runtime}
   - {is: v_refer, from: o_sys_rna_off, to: {is: v_level, from: sys_rule_nouns_agree_runtime.N_off_agree.mean_value, to: 0.0}}
+  - {is: v_refer, from: o_sys_sne_targets, to: {is: v_level, from: sys_shape_needs_ends.n_targets.mean_value, to: 16.0}}
+  - {is: v_refer, from: o_sys_sne_off, to: {is: v_level, from: sys_shape_needs_ends.n_targets_off.mean_value, to: 8.0}}
+  - {is: exp.v_contradict, from: o_sys_sne_off, to: h_shape_needs_ends}
+  - {is: v_refer, from: o_sys_sne_refs_off, to: {is: v_level, from: sys_shape_needs_ends.n_refs_off.mean_value, to: 14.0}}
   - {is: v_refer, from: o_sys_vst_targets, to: {is: v_level, from: sys_verb_shape_two_phase.n_targets.mean_value, to: 16.0}}
   - {is: v_refer, from: o_sys_vst_off, to: {is: v_level, from: sys_verb_shape_two_phase.n_targets_off.mean_value, to: 7.0}}
   - {is: exp.v_contradict, from: o_sys_vst_off, to: h_verb_shape_two_phase}
