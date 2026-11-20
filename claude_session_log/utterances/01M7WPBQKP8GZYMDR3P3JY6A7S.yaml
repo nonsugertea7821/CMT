@@ -1,0 +1,47 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-20T14:39:25.302Z（UTC）
+individuals:
+  01M7WPBQKP8GZYMDR3P3JY6A7S:
+    is: model_utterance
+    display: 発言 3127
+    val:
+      order: 3127
+      text: |
+        そうでした。発言 2520 から 2525 の整理です。
+
+        - refer は、無限次元の全体から有限の軸を切り出す操作。
+        - 外から（ほかの無限の軸の側から）見ると、切り出したものは一点に固定した断面。
+        - 中から見ると、選んだ軸だけが動く空間。
+        - self が軸の1本、any が全体、same が内積（同じなら 1、違えば 0）にあたる。
+
+        この像に今回の結果を重ねると、次のように読めます。どれも私の読みで、測ったのは「holds の形が一致すれば、名前の集合と一致した」ことだけです。
+
+        **1. v_refer の下の 19 語は、すべて「切り出し1回だけ」の動詞**
+
+        holds が `refer(from, to)` の1本だけ、ということは、その動詞がフレームの中に置く制約は「from が to の断面を切り出す」ことだけです。19 語の違いは、端に何の種類が来るかだけです。つまり、何を切り出すか（to の種類）と、誰が切り出すか（from の種類）が違うだけで、操作としてはみな同じ一回の切り出しです。
+
+        **2. 落ちた 7 語は、切り出しの組み合わせ**
+        - **v_measure:** 切り出しに加えて、依存も張る（refer ＋ depend）。
+        - **v_answer:** 切り出しに加えて、前後関係も張る（refer ＋ after）。
+        - **v_agree:** from と to がそれぞれ同じ new を切り出す。二つの切り出しが一つの断面を共有する形です。#485・#488 で一致を「refer の共通の相手」で測ったのは、ちょうどこの形を数えていたことになります。
+
+        なので「holds の形」は、1つのフレームの中で切り出しをどう組んだかの図、と読めます。前の回答で「1相」と言ったのは、この組み方が静的で、時間の方向（w、pre・post）を含まないという意味です。
+
+        **3. 式にはなっていないところ**
+
+        今回の式は、基礎の関係 `refer` そのものを名前で読んでいます。規則上、基礎の関係は名前で読んでよい素材なので違反ではありません。ただ、「refer = 切り出し」という意味そのものは式から出しておらず、素材として置いたままです。
+
+        self・any・same の座標系から refer を組み立てられるか、たとえば「self の軸を選んで、ほかの軸を固定する射影」として書けるか、は未着手です。書けるなら、基礎の関係のうち少なくとも refer は、座標系の側から定義できることになります。
+
+        ここまでの読みで新しく言えそうなのは2つです。
+
+        - 一致（v_agree）は「切り出しの共有」と読める。
+        - refer は座標系からの射影として書けるかもしれない。
+
+        どちらも、前回の2相の形と合わせて、未検証の仮説として登録します。
+facts:
+- {is: v_say, from: session_model, to: 01M7WPBQKP8GZYMDR3P3JY6A7S}
+- {is: exp.v_answer, from: 01M7WPBQKP8GZYMDR3P3JY6A7S, to: 01M7WPAXWKN4F0FAT7BTY71SRS}
+- {is: v_refer, from: 01M7WPBQKP8GZYMDR3P3JY6A7S, to: ontology.v_refer}
+- {is: v_refer, from: 01M7WPBQKP8GZYMDR3P3JY6A7S, to: syntax.v_measure}
+- {is: v_refer, from: 01M7WPBQKP8GZYMDR3P3JY6A7S, to: exp.v_answer}
+- {is: v_refer, from: 01M7WPBQKP8GZYMDR3P3JY6A7S, to: ontology.v_agree}
