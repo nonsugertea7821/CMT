@@ -1414,6 +1414,14 @@ individuals:
   geo_genus_vs_interval_midpoint_cond_purity: {is: axis_value, val: {text: purity}}
   geo_genus_vs_interval_midpoint_cond_precondition: {is: axis_value, val: {text: precondition}}
   geo_genus_vs_interval_midpoint_cond_verdict_support: {is: axis_value, val: {text: verdict_support}}
+  sys_decision_link_by_role_fix: {is: measurement_family}
+  sys_decision_link_by_role_fix_cond: {is: family_axis, val: {text: cond}}
+  sys_decision_link_by_role_fix_cond_n_case: {is: axis_value, val: {text: n_case}}
+  sys_decision_link_by_role_fix_cond_n_match: {is: axis_value, val: {text: n_match}}
+  sys_decision_link_by_role_fix_cond_base_ok: {is: axis_value, val: {text: base_ok}}
+  sys_decision_link_by_role_fix_cond_clean: {is: axis_value, val: {text: clean}}
+  sys_decision_link_by_role_fix_cond_cross_ok: {is: axis_value, val: {text: cross_ok}}
+  sys_decision_link_by_role_fix_cond_verdict_support: {is: axis_value, val: {text: verdict_support}}
   sys_roadmap_reach: {is: measurement_family}
   sys_roadmap_reach_cond: {is: family_axis, val: {text: cond}}
   sys_roadmap_reach_cond_n_h: {is: axis_value, val: {text: n_h}}
@@ -2384,6 +2392,9 @@ individuals:
   o_geo_gvi_mixed: {is: observation}
   o_geo_gvi_gap: {is: observation}
   o_geo_gvi_all_above: {is: observation}
+  o_sys_decision_link_all_match: {is: observation}
+  o_sys_decision_link_ctrl_clean: {is: observation}
+  o_sys_decision_link_cross: {is: observation}
   o_sys_roadmap_share: {is: observation}
   o_sys_roadmap_detour: {is: observation}
   o_sys_roadmap_on_path: {is: observation}
@@ -2479,8 +2490,8 @@ individuals:
   b_roadmap_by_ground: {is: item_done}
   h_ambiguity_is_region_choice: {is: hyp_untested}
   b_ambiguity_is_region_choice: {is: item_queued}
-  h_decision_link_by_role: {is: hyp_untested}
-  b_decision_link_by_role: {is: item_queued}
+  h_decision_link_by_role: {is: hyp_supported}
+  b_decision_link_by_role: {is: item_done}
 facts:
   - {is: v_collect, from: residual_space, to: residual_vector}
   - {is: v_sum, from: layer_output, to: state_shift, new: shifted_hidden_state}
@@ -5497,6 +5508,29 @@ facts:
   - {is: v_refer, from: o_sys_roadmap_on_path, to: {is: v_level, from: sys_roadmap_reach.n_on_path.mean_value, to: 5}}
   - {is: v_contradict, from: o_sys_roadmap_share, to: h_roadmap_by_ground}
   - {is: v_contradict, from: o_sys_roadmap_detour, to: h_roadmap_by_ground}
+  - {is: v_file_of, from: sys_decision_link_by_role_fix.json, to: sys_decision_link_by_role_fix}
+  - {is: v_rows_of, from: [rows], to: sys_decision_link_by_role_fix}
+  - {is: v_axis_of, from: sys_decision_link_by_role_fix_cond, to: sys_decision_link_by_role_fix}
+  - {is: v_value_of, from: sys_decision_link_by_role_fix_cond_n_case, to: sys_decision_link_by_role_fix_cond}
+  - {is: v_spell, from: sys_decision_link_by_role_fix_cond_n_case, to: n_case}
+  - {is: v_value_of, from: sys_decision_link_by_role_fix_cond_n_match, to: sys_decision_link_by_role_fix_cond}
+  - {is: v_spell, from: sys_decision_link_by_role_fix_cond_n_match, to: n_match}
+  - {is: v_value_of, from: sys_decision_link_by_role_fix_cond_base_ok, to: sys_decision_link_by_role_fix_cond}
+  - {is: v_spell, from: sys_decision_link_by_role_fix_cond_base_ok, to: base_ok}
+  - {is: v_value_of, from: sys_decision_link_by_role_fix_cond_clean, to: sys_decision_link_by_role_fix_cond}
+  - {is: v_spell, from: sys_decision_link_by_role_fix_cond_clean, to: clean}
+  - {is: v_value_of, from: sys_decision_link_by_role_fix_cond_cross_ok, to: sys_decision_link_by_role_fix_cond}
+  - {is: v_spell, from: sys_decision_link_by_role_fix_cond_cross_ok, to: cross_ok}
+  - {is: v_value_of, from: sys_decision_link_by_role_fix_cond_verdict_support, to: sys_decision_link_by_role_fix_cond}
+  - {is: v_spell, from: sys_decision_link_by_role_fix_cond_verdict_support, to: verdict_support}
+  - {is: v_entry_of, from: '{cond}', to: sys_decision_link_by_role_fix}
+  - {is: v_metric_of, from: sys_decision_link_by_role_fix, to: mean_value}
+  - {is: v_refer, from: o_sys_decision_link_all_match, to: {is: v_level, from: sys_decision_link_by_role_fix.n_match.mean_value, to: 4}}
+  - {is: v_refer, from: o_sys_decision_link_ctrl_clean, to: {is: v_level, from: sys_decision_link_by_role_fix.clean.mean_value, to: 1}}
+  - {is: v_refer, from: o_sys_decision_link_cross, to: {is: v_level, from: sys_decision_link_by_role_fix.cross_ok.mean_value, to: 1}}
+  - {is: v_support, from: o_sys_decision_link_all_match, to: h_decision_link_by_role}
+  - {is: v_support, from: o_sys_decision_link_ctrl_clean, to: h_decision_link_by_role}
+  - {is: v_ground, from: d_road_checker, to: h_decision_link_by_role}
   - {is: v_file_of, from: geo_cross_genus_midpoint_models.json, to: geo_cross_genus_midpoint_models}
   - {is: v_rows_of, from: [rows], to: geo_cross_genus_midpoint_models}
   - {is: v_axis_of, from: geo_cross_genus_midpoint_models_cond, to: geo_cross_genus_midpoint_models}
