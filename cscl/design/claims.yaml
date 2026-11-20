@@ -367,7 +367,7 @@ individuals:
   b_verbs_state_own_kind_mod: {is: exp.item_queued}
   h_extends_unwritten_open: {is: exp.hyp_untested}
   b_extends_unwritten_open: {is: exp.item_queued}
-  h_verbs_state_own_ends: {is: exp.hyp_untested}
+  h_verbs_state_own_ends: {is: exp.hyp_refuted}
   b_verbs_state_own_ends: {is: exp.item_queued}
   h_extends_min_by_collected: {is: exp.hyp_untested}
   b_extends_min_by_collected: {is: exp.item_queued}
@@ -765,6 +765,11 @@ individuals:
   o_sys_eofc_sub: {is: exp.observation}
   o_sys_eofc_sub_match: {is: exp.observation}
   o_sys_eofc_top_none: {is: exp.observation}
+  o_sys_vsoe_apply: {is: exp.observation}
+  o_sys_vsoe_fixed: {is: exp.observation}
+  o_sys_vsoe_sub: {is: exp.observation}
+  o_sys_vsoe_sub_match: {is: exp.observation}
+  o_sys_vsoe_top_none: {is: exp.observation}
   o_sys_kis_targets_off: {is: exp.observation}
   o_sys_kis_refs_off: {is: exp.observation}
   o_sys_kis_extra: {is: exp.observation}
@@ -1509,6 +1514,12 @@ facts:
   - {is: v_refer, from: o_sys_eofc_sub_match, to: {is: v_level, from: sys_extends_own_fields_by_compat.n_sub_match.mean_value, to: 3.0}}
   - {is: exp.v_contradict, from: o_sys_eofc_sub_match, to: h_extends_own_fields_by_compat}
   - {is: v_refer, from: o_sys_eofc_top_none, to: {is: v_level, from: sys_extends_own_fields_by_compat.n_top_none.mean_value, to: 48.0}}
+  - {is: v_refer, from: o_sys_vsoe_apply, to: {is: v_level, from: sys_verbs_state_own_ends.apply_tc_ok.mean_value, to: 1.0}}
+  - {is: v_refer, from: o_sys_vsoe_fixed, to: {is: v_level, from: sys_verbs_state_own_ends.fixed.mean_value, to: 1.0}}
+  - {is: v_refer, from: o_sys_vsoe_sub, to: {is: v_level, from: sys_verbs_state_own_ends.n_sub.mean_value, to: 70.0}}
+  - {is: v_refer, from: o_sys_vsoe_sub_match, to: {is: v_level, from: sys_verbs_state_own_ends.n_sub_match.mean_value, to: 59.0}}
+  - {is: exp.v_contradict, from: o_sys_vsoe_sub_match, to: h_verbs_state_own_ends}
+  - {is: v_refer, from: o_sys_vsoe_top_none, to: {is: v_level, from: sys_verbs_state_own_ends.n_top_none.mean_value, to: 49.0}}
   - {is: v_refer, from: o_sys_kis_targets_off, to: {is: v_level, from: sys_kind_in_shape.n_targets_off.mean_value, to: 0.0}}
   - {is: v_refer, from: o_sys_kis_refs_off, to: {is: v_level, from: sys_kind_in_shape.n_refs_off.mean_value, to: 0.0}}
   - {is: v_refer, from: o_sys_kis_extra, to: {is: v_level, from: sys_kind_in_shape.n_extra.mean_value, to: 9.0}}
