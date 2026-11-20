@@ -363,6 +363,8 @@ individuals:
   b_verb_shape_two_phase: {is: exp.item_queued}
   h_refer_by_projection: {is: exp.hyp_untested}
   b_refer_by_projection: {is: exp.item_queued}
+  h_domain_by_refer: {is: exp.hyp_untested}
+  b_domain_by_refer: {is: exp.item_queued}
   h_ends_by_subsumption: {is: exp.hyp_supported}
   b_ends_by_subsumption: {is: exp.item_queued}
   h_names_up_to_relabel: {is: exp.hyp_untested}
@@ -1518,6 +1520,9 @@ facts:
   - {is: v_refer, from: h_refer_by_projection, to: {is: v_depend, from: state_relation, to: [syntax.variable, ontology.same]}}
   - {is: exp.v_check, from: b_refer_by_projection, to: h_refer_by_projection}
   - {is: exp.v_ground, from: d_cscl_display_derived, to: h_refer_by_projection}
+  - {is: v_refer, from: h_domain_by_refer, to: {is: v_depend, from: type_checker, to: [syntax.holds, syntax.domain]}}
+  - {is: exp.v_check, from: b_domain_by_refer, to: h_domain_by_refer}
+  - {is: exp.v_ground, from: d_cscl_display_derived, to: h_domain_by_refer}
   - {is: v_refer, from: h_ends_by_subsumption, to: {is: v_depend, from: type_checker, to: [syntax.from, syntax.to]}}
   - {is: exp.v_check, from: b_ends_by_subsumption, to: h_ends_by_subsumption}
   - {is: exp.v_ground, from: d_cscl_display_derived, to: h_ends_by_subsumption}
