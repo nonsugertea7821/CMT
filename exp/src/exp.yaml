@@ -1069,6 +1069,16 @@ individuals:
   sys_checker_words_by_formula_cond_n_match: {is: axis_value, val: {text: n_match}}
   sys_checker_words_by_formula_cond_verdict_support: {is: axis_value, val: {text: verdict_support}}
   sys_checker_words_by_formula_cond_verdict_refute: {is: axis_value, val: {text: verdict_refute}}
+  sys_frame_both_sides: {is: measurement_family}
+  sys_frame_both_sides_cond: {is: family_axis, val: {text: cond}}
+  sys_frame_both_sides_cond_base_ok: {is: axis_value, val: {text: base_ok}}
+  sys_frame_both_sides_cond_law_base_same: {is: axis_value, val: {text: law_base_same}}
+  sys_frame_both_sides_cond_pre_accepted: {is: axis_value, val: {text: pre_accepted}}
+  sys_frame_both_sides_cond_law_catches_pre: {is: axis_value, val: {text: law_catches_pre}}
+  sys_frame_both_sides_cond_law_spares_post: {is: axis_value, val: {text: law_spares_post}}
+  sys_frame_both_sides_cond_law_ok: {is: axis_value, val: {text: law_ok}}
+  sys_frame_both_sides_cond_verdict_support: {is: axis_value, val: {text: verdict_support}}
+  sys_frame_both_sides_cond_verdict_refute: {is: axis_value, val: {text: verdict_refute}}
   sys_fact_slot_keeps_each_verb_fix2: {is: measurement_family}
   sys_fact_slot_keeps_each_verb_fix2_cond: {is: family_axis, val: {text: cond}}
   sys_fact_slot_keeps_each_verb_fix2_cond_patch_ok: {is: axis_value, val: {text: patch_ok}}
@@ -1122,6 +1132,31 @@ individuals:
   sys_draw_on_with_shallow_cond_errors_C: {is: axis_value, val: {text: errors_C}}
   sys_draw_on_with_shallow_cond_named_mod_C: {is: axis_value, val: {text: named_mod_C}}
   sys_draw_on_with_shallow_cond_ec_errors_C: {is: axis_value, val: {text: ec_errors_C}}
+  sys_concept_kind_pair: {is: measurement_family}
+  sys_concept_kind_pair_cond: {is: family_axis, val: {text: cond}}
+  sys_concept_kind_pair_cond_errors_L: {is: axis_value, val: {text: errors_L}}
+  sys_concept_kind_pair_cond_ec_fail_L: {is: axis_value, val: {text: ec_fail_L}}
+  sys_concept_kind_pair_cond_n_both_L: {is: axis_value, val: {text: n_both_L}}
+  sys_concept_kind_pair_cond_n_concept_L: {is: axis_value, val: {text: n_concept_L}}
+  sys_concept_kind_pair_cond_rel_eq_f_L: {is: axis_value, val: {text: rel_eq_f_L}}
+  sys_concept_kind_pair_cond_errors_E: {is: axis_value, val: {text: errors_E}}
+  sys_concept_kind_pair_cond_ec_fail_E: {is: axis_value, val: {text: ec_fail_E}}
+  sys_concept_kind_pair_cond_n_both_E: {is: axis_value, val: {text: n_both_E}}
+  sys_concept_kind_pair_cond_n_concept_E: {is: axis_value, val: {text: n_concept_E}}
+  sys_concept_kind_pair_cond_rel_eq_f_E: {is: axis_value, val: {text: rel_eq_f_E}}
+  sys_concept_kind_pair_cond_errors_N: {is: axis_value, val: {text: errors_N}}
+  sys_concept_kind_pair_cond_ec_fail_N: {is: axis_value, val: {text: ec_fail_N}}
+  sys_concept_kind_pair_cond_n_both_N: {is: axis_value, val: {text: n_both_N}}
+  sys_concept_kind_pair_cond_n_concept_N: {is: axis_value, val: {text: n_concept_N}}
+  sys_concept_kind_pair_cond_rel_eq_f_N: {is: axis_value, val: {text: rel_eq_f_N}}
+  sys_concept_kind_pair_fix: {is: measurement_family}
+  sys_concept_kind_pair_fix_cond: {is: family_axis, val: {text: cond}}
+  sys_concept_kind_pair_fix_cond_ec_fail_L: {is: axis_value, val: {text: ec_fail_L}}
+  sys_concept_kind_pair_fix_cond_ec_lines_L: {is: axis_value, val: {text: ec_lines_L}}
+  sys_concept_kind_pair_fix_cond_ec_fail_E: {is: axis_value, val: {text: ec_fail_E}}
+  sys_concept_kind_pair_fix_cond_ec_lines_E: {is: axis_value, val: {text: ec_lines_E}}
+  sys_concept_kind_pair_fix_cond_ec_fail_N: {is: axis_value, val: {text: ec_fail_N}}
+  sys_concept_kind_pair_fix_cond_ec_lines_N: {is: axis_value, val: {text: ec_lines_N}}
   sys_negation_formula: {is: measurement_family}
   sys_negation_formula_cond: {is: family_axis, val: {text: cond}}
   sys_negation_formula_cond_py_P0: {is: axis_value, val: {text: py_P0}}
@@ -4932,6 +4967,27 @@ facts:
   - {is: v_spell, from: sys_checker_words_by_formula_cond_verdict_refute, to: verdict_refute}
   - {is: v_entry_of, from: '{cond}', to: sys_checker_words_by_formula}
   - {is: v_metric_of, from: sys_checker_words_by_formula, to: mean_value}
+  - {is: v_file_of, from: sys_frame_both_sides.json, to: sys_frame_both_sides}
+  - {is: v_rows_of, from: [rows], to: sys_frame_both_sides}
+  - {is: v_axis_of, from: sys_frame_both_sides_cond, to: sys_frame_both_sides}
+  - {is: v_value_of, from: sys_frame_both_sides_cond_base_ok, to: sys_frame_both_sides_cond}
+  - {is: v_spell, from: sys_frame_both_sides_cond_base_ok, to: base_ok}
+  - {is: v_value_of, from: sys_frame_both_sides_cond_law_base_same, to: sys_frame_both_sides_cond}
+  - {is: v_spell, from: sys_frame_both_sides_cond_law_base_same, to: law_base_same}
+  - {is: v_value_of, from: sys_frame_both_sides_cond_pre_accepted, to: sys_frame_both_sides_cond}
+  - {is: v_spell, from: sys_frame_both_sides_cond_pre_accepted, to: pre_accepted}
+  - {is: v_value_of, from: sys_frame_both_sides_cond_law_catches_pre, to: sys_frame_both_sides_cond}
+  - {is: v_spell, from: sys_frame_both_sides_cond_law_catches_pre, to: law_catches_pre}
+  - {is: v_value_of, from: sys_frame_both_sides_cond_law_spares_post, to: sys_frame_both_sides_cond}
+  - {is: v_spell, from: sys_frame_both_sides_cond_law_spares_post, to: law_spares_post}
+  - {is: v_value_of, from: sys_frame_both_sides_cond_law_ok, to: sys_frame_both_sides_cond}
+  - {is: v_spell, from: sys_frame_both_sides_cond_law_ok, to: law_ok}
+  - {is: v_value_of, from: sys_frame_both_sides_cond_verdict_support, to: sys_frame_both_sides_cond}
+  - {is: v_spell, from: sys_frame_both_sides_cond_verdict_support, to: verdict_support}
+  - {is: v_value_of, from: sys_frame_both_sides_cond_verdict_refute, to: sys_frame_both_sides_cond}
+  - {is: v_spell, from: sys_frame_both_sides_cond_verdict_refute, to: verdict_refute}
+  - {is: v_entry_of, from: '{cond}', to: sys_frame_both_sides}
+  - {is: v_metric_of, from: sys_frame_both_sides, to: mean_value}
   - {is: v_file_of, from: sys_fact_slot_keeps_each_verb_fix2.json, to: sys_fact_slot_keeps_each_verb_fix2}
   - {is: v_rows_of, from: [rows], to: sys_fact_slot_keeps_each_verb_fix2}
   - {is: v_axis_of, from: sys_fact_slot_keeps_each_verb_fix2_cond, to: sys_fact_slot_keeps_each_verb_fix2}
@@ -5043,6 +5099,58 @@ facts:
   - {is: v_spell, from: sys_draw_on_with_shallow_cond_ec_errors_C, to: ec_errors_C}
   - {is: v_entry_of, from: '{cond}', to: sys_draw_on_with_shallow}
   - {is: v_metric_of, from: sys_draw_on_with_shallow, to: mean_value}
+  - {is: v_file_of, from: sys_concept_kind_pair.json, to: sys_concept_kind_pair}
+  - {is: v_rows_of, from: [rows], to: sys_concept_kind_pair}
+  - {is: v_axis_of, from: sys_concept_kind_pair_cond, to: sys_concept_kind_pair}
+  - {is: v_value_of, from: sys_concept_kind_pair_cond_errors_L, to: sys_concept_kind_pair_cond}
+  - {is: v_spell, from: sys_concept_kind_pair_cond_errors_L, to: errors_L}
+  - {is: v_value_of, from: sys_concept_kind_pair_cond_ec_fail_L, to: sys_concept_kind_pair_cond}
+  - {is: v_spell, from: sys_concept_kind_pair_cond_ec_fail_L, to: ec_fail_L}
+  - {is: v_value_of, from: sys_concept_kind_pair_cond_n_both_L, to: sys_concept_kind_pair_cond}
+  - {is: v_spell, from: sys_concept_kind_pair_cond_n_both_L, to: n_both_L}
+  - {is: v_value_of, from: sys_concept_kind_pair_cond_n_concept_L, to: sys_concept_kind_pair_cond}
+  - {is: v_spell, from: sys_concept_kind_pair_cond_n_concept_L, to: n_concept_L}
+  - {is: v_value_of, from: sys_concept_kind_pair_cond_rel_eq_f_L, to: sys_concept_kind_pair_cond}
+  - {is: v_spell, from: sys_concept_kind_pair_cond_rel_eq_f_L, to: rel_eq_f_L}
+  - {is: v_value_of, from: sys_concept_kind_pair_cond_errors_E, to: sys_concept_kind_pair_cond}
+  - {is: v_spell, from: sys_concept_kind_pair_cond_errors_E, to: errors_E}
+  - {is: v_value_of, from: sys_concept_kind_pair_cond_ec_fail_E, to: sys_concept_kind_pair_cond}
+  - {is: v_spell, from: sys_concept_kind_pair_cond_ec_fail_E, to: ec_fail_E}
+  - {is: v_value_of, from: sys_concept_kind_pair_cond_n_both_E, to: sys_concept_kind_pair_cond}
+  - {is: v_spell, from: sys_concept_kind_pair_cond_n_both_E, to: n_both_E}
+  - {is: v_value_of, from: sys_concept_kind_pair_cond_n_concept_E, to: sys_concept_kind_pair_cond}
+  - {is: v_spell, from: sys_concept_kind_pair_cond_n_concept_E, to: n_concept_E}
+  - {is: v_value_of, from: sys_concept_kind_pair_cond_rel_eq_f_E, to: sys_concept_kind_pair_cond}
+  - {is: v_spell, from: sys_concept_kind_pair_cond_rel_eq_f_E, to: rel_eq_f_E}
+  - {is: v_value_of, from: sys_concept_kind_pair_cond_errors_N, to: sys_concept_kind_pair_cond}
+  - {is: v_spell, from: sys_concept_kind_pair_cond_errors_N, to: errors_N}
+  - {is: v_value_of, from: sys_concept_kind_pair_cond_ec_fail_N, to: sys_concept_kind_pair_cond}
+  - {is: v_spell, from: sys_concept_kind_pair_cond_ec_fail_N, to: ec_fail_N}
+  - {is: v_value_of, from: sys_concept_kind_pair_cond_n_both_N, to: sys_concept_kind_pair_cond}
+  - {is: v_spell, from: sys_concept_kind_pair_cond_n_both_N, to: n_both_N}
+  - {is: v_value_of, from: sys_concept_kind_pair_cond_n_concept_N, to: sys_concept_kind_pair_cond}
+  - {is: v_spell, from: sys_concept_kind_pair_cond_n_concept_N, to: n_concept_N}
+  - {is: v_value_of, from: sys_concept_kind_pair_cond_rel_eq_f_N, to: sys_concept_kind_pair_cond}
+  - {is: v_spell, from: sys_concept_kind_pair_cond_rel_eq_f_N, to: rel_eq_f_N}
+  - {is: v_entry_of, from: '{cond}', to: sys_concept_kind_pair}
+  - {is: v_metric_of, from: sys_concept_kind_pair, to: mean_value}
+  - {is: v_file_of, from: sys_concept_kind_pair_fix.json, to: sys_concept_kind_pair_fix}
+  - {is: v_rows_of, from: [rows], to: sys_concept_kind_pair_fix}
+  - {is: v_axis_of, from: sys_concept_kind_pair_fix_cond, to: sys_concept_kind_pair_fix}
+  - {is: v_value_of, from: sys_concept_kind_pair_fix_cond_ec_fail_L, to: sys_concept_kind_pair_fix_cond}
+  - {is: v_spell, from: sys_concept_kind_pair_fix_cond_ec_fail_L, to: ec_fail_L}
+  - {is: v_value_of, from: sys_concept_kind_pair_fix_cond_ec_lines_L, to: sys_concept_kind_pair_fix_cond}
+  - {is: v_spell, from: sys_concept_kind_pair_fix_cond_ec_lines_L, to: ec_lines_L}
+  - {is: v_value_of, from: sys_concept_kind_pair_fix_cond_ec_fail_E, to: sys_concept_kind_pair_fix_cond}
+  - {is: v_spell, from: sys_concept_kind_pair_fix_cond_ec_fail_E, to: ec_fail_E}
+  - {is: v_value_of, from: sys_concept_kind_pair_fix_cond_ec_lines_E, to: sys_concept_kind_pair_fix_cond}
+  - {is: v_spell, from: sys_concept_kind_pair_fix_cond_ec_lines_E, to: ec_lines_E}
+  - {is: v_value_of, from: sys_concept_kind_pair_fix_cond_ec_fail_N, to: sys_concept_kind_pair_fix_cond}
+  - {is: v_spell, from: sys_concept_kind_pair_fix_cond_ec_fail_N, to: ec_fail_N}
+  - {is: v_value_of, from: sys_concept_kind_pair_fix_cond_ec_lines_N, to: sys_concept_kind_pair_fix_cond}
+  - {is: v_spell, from: sys_concept_kind_pair_fix_cond_ec_lines_N, to: ec_lines_N}
+  - {is: v_entry_of, from: '{cond}', to: sys_concept_kind_pair_fix}
+  - {is: v_metric_of, from: sys_concept_kind_pair_fix, to: mean_value}
   - {is: v_file_of, from: sys_negation_formula.json, to: sys_negation_formula}
   - {is: v_rows_of, from: [rows], to: sys_negation_formula}
   - {is: v_axis_of, from: sys_negation_formula_cond, to: sys_negation_formula}
