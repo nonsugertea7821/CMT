@@ -148,8 +148,8 @@ individuals:
   b_part_direction_by_facts: {is: exp.item_done}
   h_part_display_by_word_facts: {is: exp.hyp_supported}
   b_part_display_by_word_facts: {is: exp.item_done}
-  h_part_display_from_formula: {is: exp.hyp_untested}
-  b_part_display_from_formula: {is: exp.item_queued}
+  h_part_display_from_formula: {is: exp.hyp_refuted}
+  b_part_display_from_formula: {is: exp.item_done}
   h_part_display_own_phrase: {is: exp.hyp_supported}
   b_part_display_own_phrase: {is: exp.item_done}
   h_display_as_part_tree: {is: exp.hyp_untested}
@@ -541,6 +541,9 @@ individuals:
   o_sys_pdw_stage_rev_agree: {is: exp.observation}
   o_sys_pdw_neg_quiet_agree: {is: exp.observation}
   o_sys_pdw_right_quiet_agree: {is: exp.observation}
+  o_sys_pdf_all_replaced: {is: exp.observation}
+  o_sys_pdf_new_errors: {is: exp.observation}
+  o_sys_pdf_law_flags_derived: {is: exp.observation}
   o_sys_pdo_lost_none: {is: exp.observation}
   o_sys_pdo_gained_none: {is: exp.observation}
   o_sys_pdo_synth_ok: {is: exp.observation}
@@ -1038,6 +1041,11 @@ facts:
   - {is: exp.v_support, from: o_sys_pdw_right_quiet_agree, to: h_part_display_by_word_facts}
   - {is: v_refer, from: h_part_display_from_formula, to: {is: v_depend, from: syntax.display, to: syntax.holds}}
   - {is: exp.v_check, from: b_part_display_from_formula, to: h_part_display_from_formula}
+  - {is: v_refer, from: o_sys_pdf_all_replaced, to: {is: v_level, from: sys_part_display_formula_fix.n_replaced.mean_value, to: 99.0}}
+  - {is: v_refer, from: o_sys_pdf_new_errors, to: {is: v_level, from: sys_part_display_formula_fix.new_D.mean_value, to: 3.0}}
+  - {is: exp.v_contradict, from: o_sys_pdf_new_errors, to: h_part_display_from_formula}
+  - {is: v_refer, from: o_sys_pdf_law_flags_derived, to: {is: v_level, from: sys_part_display_formula_fix.py_D.mean_value, to: 3.0}}
+  - {is: exp.v_contradict, from: o_sys_pdf_law_flags_derived, to: h_part_display_from_formula}
   - {is: v_refer, from: h_part_display_own_phrase, to: {is: v_depend, from: syntax.display, to: [syntax.holds, syntax.extends]}}
   - {is: exp.v_check, from: b_part_display_own_phrase, to: h_part_display_own_phrase}
   - {is: v_refer, from: o_sys_pdo_lost_none, to: {is: v_level, from: sys_part_display_own_phrase.lost.mean_value, to: 0.0}}

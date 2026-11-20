@@ -1441,6 +1441,26 @@ individuals:
   sys_part_display_words_cond_agree_K: {is: axis_value, val: {text: agree_K}}
   sys_part_display_words_cond_other_K: {is: axis_value, val: {text: other_K}}
   sys_part_display_words_cond_ctrl_K: {is: axis_value, val: {text: ctrl_K}}
+  sys_part_display_formula: {is: measurement_family}
+  sys_part_display_formula_cond: {is: family_axis, val: {text: cond}}
+  sys_part_display_formula_cond_n_target: {is: axis_value, val: {text: n_target}}
+  sys_part_display_formula_cond_n_replaced: {is: axis_value, val: {text: n_replaced}}
+  sys_part_display_formula_cond_py_B: {is: axis_value, val: {text: py_B}}
+  sys_part_display_formula_cond_py_D: {is: axis_value, val: {text: py_D}}
+  sys_part_display_formula_cond_err_B: {is: axis_value, val: {text: err_B}}
+  sys_part_display_formula_cond_new_D: {is: axis_value, val: {text: new_D}}
+  sys_part_display_formula_cond_same_disp: {is: axis_value, val: {text: same_disp}}
+  sys_part_display_formula_fix: {is: measurement_family}
+  sys_part_display_formula_fix_cond: {is: family_axis, val: {text: cond}}
+  sys_part_display_formula_fix_cond_n_target: {is: axis_value, val: {text: n_target}}
+  sys_part_display_formula_fix_cond_n_replaced: {is: axis_value, val: {text: n_replaced}}
+  sys_part_display_formula_fix_cond_py_B: {is: axis_value, val: {text: py_B}}
+  sys_part_display_formula_fix_cond_py_D: {is: axis_value, val: {text: py_D}}
+  sys_part_display_formula_fix_cond_err_B: {is: axis_value, val: {text: err_B}}
+  sys_part_display_formula_fix_cond_new_D: {is: axis_value, val: {text: new_D}}
+  sys_part_display_formula_fix_cond_crash_B: {is: axis_value, val: {text: crash_B}}
+  sys_part_display_formula_fix_cond_crash_D: {is: axis_value, val: {text: crash_D}}
+  sys_part_display_formula_fix_cond_same_disp: {is: axis_value, val: {text: same_disp}}
   sys_part_display_own_phrase: {is: measurement_family}
   sys_part_display_own_phrase_cond: {is: family_axis, val: {text: cond}}
   sys_part_display_own_phrase_cond_lost: {is: axis_value, val: {text: lost}}
@@ -6003,6 +6023,48 @@ facts:
   - {is: v_spell, from: sys_part_display_words_cond_ctrl_K, to: ctrl_K}
   - {is: v_entry_of, from: '{cond}', to: sys_part_display_words}
   - {is: v_metric_of, from: sys_part_display_words, to: mean_value}
+  - {is: v_file_of, from: sys_part_display_formula.json, to: sys_part_display_formula}
+  - {is: v_rows_of, from: [rows], to: sys_part_display_formula}
+  - {is: v_axis_of, from: sys_part_display_formula_cond, to: sys_part_display_formula}
+  - {is: v_value_of, from: sys_part_display_formula_cond_n_target, to: sys_part_display_formula_cond}
+  - {is: v_spell, from: sys_part_display_formula_cond_n_target, to: n_target}
+  - {is: v_value_of, from: sys_part_display_formula_cond_n_replaced, to: sys_part_display_formula_cond}
+  - {is: v_spell, from: sys_part_display_formula_cond_n_replaced, to: n_replaced}
+  - {is: v_value_of, from: sys_part_display_formula_cond_py_B, to: sys_part_display_formula_cond}
+  - {is: v_spell, from: sys_part_display_formula_cond_py_B, to: py_B}
+  - {is: v_value_of, from: sys_part_display_formula_cond_py_D, to: sys_part_display_formula_cond}
+  - {is: v_spell, from: sys_part_display_formula_cond_py_D, to: py_D}
+  - {is: v_value_of, from: sys_part_display_formula_cond_err_B, to: sys_part_display_formula_cond}
+  - {is: v_spell, from: sys_part_display_formula_cond_err_B, to: err_B}
+  - {is: v_value_of, from: sys_part_display_formula_cond_new_D, to: sys_part_display_formula_cond}
+  - {is: v_spell, from: sys_part_display_formula_cond_new_D, to: new_D}
+  - {is: v_value_of, from: sys_part_display_formula_cond_same_disp, to: sys_part_display_formula_cond}
+  - {is: v_spell, from: sys_part_display_formula_cond_same_disp, to: same_disp}
+  - {is: v_entry_of, from: '{cond}', to: sys_part_display_formula}
+  - {is: v_metric_of, from: sys_part_display_formula, to: mean_value}
+  - {is: v_file_of, from: sys_part_display_formula_fix.json, to: sys_part_display_formula_fix}
+  - {is: v_rows_of, from: [rows], to: sys_part_display_formula_fix}
+  - {is: v_axis_of, from: sys_part_display_formula_fix_cond, to: sys_part_display_formula_fix}
+  - {is: v_value_of, from: sys_part_display_formula_fix_cond_n_target, to: sys_part_display_formula_fix_cond}
+  - {is: v_spell, from: sys_part_display_formula_fix_cond_n_target, to: n_target}
+  - {is: v_value_of, from: sys_part_display_formula_fix_cond_n_replaced, to: sys_part_display_formula_fix_cond}
+  - {is: v_spell, from: sys_part_display_formula_fix_cond_n_replaced, to: n_replaced}
+  - {is: v_value_of, from: sys_part_display_formula_fix_cond_py_B, to: sys_part_display_formula_fix_cond}
+  - {is: v_spell, from: sys_part_display_formula_fix_cond_py_B, to: py_B}
+  - {is: v_value_of, from: sys_part_display_formula_fix_cond_py_D, to: sys_part_display_formula_fix_cond}
+  - {is: v_spell, from: sys_part_display_formula_fix_cond_py_D, to: py_D}
+  - {is: v_value_of, from: sys_part_display_formula_fix_cond_err_B, to: sys_part_display_formula_fix_cond}
+  - {is: v_spell, from: sys_part_display_formula_fix_cond_err_B, to: err_B}
+  - {is: v_value_of, from: sys_part_display_formula_fix_cond_new_D, to: sys_part_display_formula_fix_cond}
+  - {is: v_spell, from: sys_part_display_formula_fix_cond_new_D, to: new_D}
+  - {is: v_value_of, from: sys_part_display_formula_fix_cond_crash_B, to: sys_part_display_formula_fix_cond}
+  - {is: v_spell, from: sys_part_display_formula_fix_cond_crash_B, to: crash_B}
+  - {is: v_value_of, from: sys_part_display_formula_fix_cond_crash_D, to: sys_part_display_formula_fix_cond}
+  - {is: v_spell, from: sys_part_display_formula_fix_cond_crash_D, to: crash_D}
+  - {is: v_value_of, from: sys_part_display_formula_fix_cond_same_disp, to: sys_part_display_formula_fix_cond}
+  - {is: v_spell, from: sys_part_display_formula_fix_cond_same_disp, to: same_disp}
+  - {is: v_entry_of, from: '{cond}', to: sys_part_display_formula_fix}
+  - {is: v_metric_of, from: sys_part_display_formula_fix, to: mean_value}
   - {is: v_file_of, from: sys_part_display_own_phrase.json, to: sys_part_display_own_phrase}
   - {is: v_rows_of, from: [rows], to: sys_part_display_own_phrase}
   - {is: v_axis_of, from: sys_part_display_own_phrase_cond, to: sys_part_display_own_phrase}
