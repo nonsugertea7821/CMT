@@ -307,6 +307,8 @@ individuals:
   h_checker_words_by_formula: {is: exp.hyp_mixed}
   b_checker_words_by_formula: {is: exp.item_done}
   h_refer_by_exact_holds: {is: exp.hyp_untested}
+  h_checker_words_swap: {is: exp.hyp_untested}
+  b_checker_words_swap: {is: exp.item_queued}
   b_refer_by_exact_holds: {is: exp.item_queued}
   o_sys_limit_subj_unpaired: {is: exp.observation}
   o_sys_mod_no_stated_false: {is: exp.observation}
@@ -1418,6 +1420,9 @@ facts:
   - {is: v_refer, from: h_refer_by_exact_holds, to: {is: v_depend, from: type_checker, to: syntax.holds}}
   - {is: exp.v_check, from: b_refer_by_exact_holds, to: h_refer_by_exact_holds}
   - {is: exp.v_ground, from: d_cscl_display_derived, to: h_refer_by_exact_holds}
+  - {is: v_refer, from: h_checker_words_swap, to: {is: v_not_depend, from: type_checker, to: syntax.identifier}}
+  - {is: exp.v_check, from: b_checker_words_swap, to: h_checker_words_swap}
+  - {is: exp.v_ground, from: d_cscl_display_derived, to: h_checker_words_swap}
   - {is: v_refer, from: o_sys_subsume_layer_not_all_usable, to: {is: v_come_before, from: sys_subsume.some_usable.mean_value, to: 1.0}}
   - {is: v_refer, from: o_sys_spelling_one_word_two_referents, to: {is: v_come_after, from: sys_spelling.multi.mean_value, to: 0.0}}
   - {is: v_refer, from: o_sys_special_outside_named, to: {is: v_come_after, from: sys_special.outside.mean_value, to: 0.0}}
