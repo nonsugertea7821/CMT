@@ -1,0 +1,47 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-20T03:47:53.371Z（UTC）
+individuals:
+  01M7VH2QWVZAKT5ARRAQRC8W3N:
+    is: model_utterance
+    display: 発言 2872
+    val:
+      order: 2872
+      text: |
+        definition_stratified（定義の循環は否定の限定を通らない）は、規則で書けました。PR #439 は Draft を外したので、あなたが見てマージしてください。
+
+        **何をしたか**
+        - 仮説 `h_stratified_by_rule` を、#438 で登録しました（自動でマージ済み）。
+        - Python の検査を使わず、規則だけで同じ判定ができるかを試しました。
+          - 定義の辺をたどる規則と、否定の辺から始点へ戻れるかを見る規則を書きました。
+          - 戻れるかは、自分を呼ぶ規則で道を一歩ずつ延ばして調べます。
+        - 四つの版で、Python の判定と比べました。
+          - B: 何も足さない。
+          - V: 否定の循環。
+          - P: 肯定の循環。
+          - W: 循環しない否定。
+
+        **最初の手順は誤りだった**
+        - V と P では、本題と関係のないエラーが 2 件出ました。試しに足したノードに、自分の限定を書き忘れていたためです。
+        - 事前の判定どおり、これは手順の誤りとして開示し、状態は変えていません。
+        - そのノードに限定を足す訂正を書き、実行する前に commit してから測り直しました。
+        - 訂正があるので、自動マージには乗りません。
+
+        **訂正後の結果**
+        - 四つの版すべてで、規則と Python が同じ辺を咎めました。
+        - 本題と関係のないエラーは 0 件でした。
+        - 咎めたのは否定の循環（V）だけです。肯定の循環（P）と、循環しない否定（W）は咎めませんでした。
+        - 手元で tc と ec が通りました。
+
+        **含意**
+        - named_mod には、書き手の文を新しく足す必要がありました。definition_stratified は、検査器に今ある文だけで書けました。law_given ごとに、足りないものが違います。
+        - 新しい仮説はまだ登録していません。
+
+        **次**
+        - 本体への反映（Python の検査を消し、規則を syntax.yaml に置く）は、#439 がマージされたあとに別の PR で行います。
+        - まとめの仮説 `h_law_given_by_facts` は、まだ「未検証」のままです。今回確かめたのは四つのうち一つで、残りは part_fact_direction・part_display_explicit・world_declared です。
+        - 次の定期実行は 04:13 の予定です。
+
+        ロードマップ: a（識別子化）で、残る law_given 四つのうち一つ（definition_stratified）を規則で書けると確かめた。
+facts:
+- {is: v_say, from: session_model, to: 01M7VH2QWVZAKT5ARRAQRC8W3N}
+- {is: exp.v_answer, from: 01M7VH2QWVZAKT5ARRAQRC8W3N, to: 01M7VECCMJ5B7GFVNBSFS4909M}
+- {is: v_refer, from: 01M7VH2QWVZAKT5ARRAQRC8W3N, to: syntax.law_given}
