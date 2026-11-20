@@ -1,0 +1,38 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-20T15:30:31.020Z（UTC）
+individuals:
+  01M7WS99FCQE8C983WJ0A54R39:
+    is: model_utterance
+    display: 発言 3155
+    val:
+      order: 3155
+      text: |
+        This round tested h_shape_needs_ends, and it was refuted ([#519](https://github.com/nonsugertea7821/CMT/pull/519)). It is out of Draft and waiting for you to review.
+
+        **Result**
+        - The hypothesis: the verbs that had the same diagram under different names (from #514) would split apart once their end types were added to the diagram. Ends here means the types each verb takes in from and to.
+        - Instead the misses went up, from 7 to 8 of 16 target verbs. Among the reference verbs they went from 10 to 14 of 36.
+        - First cause: verbs below a name narrow their end types. syntax.v_refer has `to: any`, while the 18 verbs under it have narrower types. My procedure compared ends by equality, so those 18 dropped out from under the name. Ends should have been compared by inclusion. That was my mistake in the procedure, but I recorded the result as a refutation, exactly as pre-registered.
+        - Second cause: some pairs stay identical even with ends added:
+          - exp.v_withdraw and std.v_vary
+          - exp.v_judge, exp.v_see and std.v_learn
+          - exp.v_near and ontology.v_level
+
+          All of these run continuant → continuant. Nothing in the system's formulas tells them apart.
+
+        **Implication**
+        - These pairs cannot be told apart by diagram plus ends. Either they get merged (h_same_shape_verbs_merge, #517), or a distinction outside the diagram has to be added as a formula.
+
+        **New hypothesis ([#520](https://github.com/nonsugertea7821/CMT/pull/520), registration only, should auto-merge)**
+        - h_ends_by_subsumption: compare ends by inclusion instead of equality, and nothing under a name is missed. I expect the misses to drop back to 0 and the identical pairs to remain. It is grounded to d_cscl_display_derived.
+
+        Roadmap: this was mainline a (identifier-ization), under d_cscl_display_derived — the step of telling verbs apart by structure. Next round is at 15:58 UTC.
+facts:
+- {is: v_say, from: session_model, to: 01M7WS99FCQE8C983WJ0A54R39}
+- {is: exp.v_answer, from: 01M7WS99FCQE8C983WJ0A54R39, to: 01M7WPWQZG274EKPGRQDN76YB2}
+- {is: v_refer, from: 01M7WS99FCQE8C983WJ0A54R39, to: exp.v_withdraw}
+- {is: v_refer, from: 01M7WS99FCQE8C983WJ0A54R39, to: std.v_vary}
+- {is: v_refer, from: 01M7WS99FCQE8C983WJ0A54R39, to: exp.v_judge}
+- {is: v_refer, from: 01M7WS99FCQE8C983WJ0A54R39, to: exp.v_see}
+- {is: v_refer, from: 01M7WS99FCQE8C983WJ0A54R39, to: std.v_learn}
+- {is: v_refer, from: 01M7WS99FCQE8C983WJ0A54R39, to: exp.v_near}
+- {is: v_refer, from: 01M7WS99FCQE8C983WJ0A54R39, to: ontology.v_level}
