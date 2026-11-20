@@ -158,6 +158,12 @@ individuals:
   b_display_as_part_tree: {is: exp.item_queued}
   h_mod_phrase_from_formula: {is: exp.hyp_refuted}
   b_mod_phrase_from_formula: {is: exp.item_done}
+  h_mod_phrase_without_with: {is: exp.hyp_untested}
+  b_mod_phrase_without_with: {is: exp.item_queued}
+  h_verb_stem_from_signature: {is: exp.hyp_untested}
+  b_verb_stem_from_signature: {is: exp.item_queued}
+  h_with_needs_display: {is: exp.hyp_untested}
+  b_with_needs_display: {is: exp.item_queued}
   h_comment_ban: {is: exp.hyp_supported}
   b_comment_ban: {is: exp.item_done}
   h_above_closed: {is: exp.hyp_supported}
@@ -674,6 +680,9 @@ facts:
   - {is: exp.v_ground, from: d_cscl_display_derived, to: h_part_display_own_phrase}
   - {is: exp.v_ground, from: d_cscl_display_derived, to: h_display_as_part_tree}
   - {is: exp.v_ground, from: d_cscl_display_derived, to: h_mod_phrase_from_formula}
+  - {is: exp.v_ground, from: d_cscl_display_derived, to: h_mod_phrase_without_with}
+  - {is: exp.v_ground, from: d_cscl_display_derived, to: h_verb_stem_from_signature}
+  - {is: exp.v_ground, from: d_cscl_display_derived, to: h_with_needs_display}
   - {is: exp.v_ground, from: d_cscl_display_derived, to: h_stratified_by_rule}
   - {is: exp.v_ground, from: d_cscl_display_derived, to: h_grammar_as_laws}
   - {is: v_refer, from: d_cscl_trust_previous_version, to: {is: v_depend, from: type_checker, to: previous_checker}}
@@ -1073,6 +1082,12 @@ facts:
   - {is: exp.v_check, from: b_display_as_part_tree, to: h_display_as_part_tree}
   - {is: v_refer, from: h_mod_phrase_from_formula, to: {is: v_depend, from: syntax.display, to: syntax.mod}}
   - {is: exp.v_check, from: b_mod_phrase_from_formula, to: h_mod_phrase_from_formula}
+  - {is: v_refer, from: h_mod_phrase_without_with, to: {is: v_depend, from: syntax.display, to: syntax.quant}}
+  - {is: exp.v_check, from: b_mod_phrase_without_with, to: h_mod_phrase_without_with}
+  - {is: v_refer, from: h_verb_stem_from_signature, to: {is: v_depend, from: syntax.display, to: syntax.from}}
+  - {is: exp.v_check, from: b_verb_stem_from_signature, to: h_verb_stem_from_signature}
+  - {is: v_refer, from: h_with_needs_display, to: {is: v_depend, from: syntax.with, to: syntax.display}}
+  - {is: exp.v_check, from: b_with_needs_display, to: h_with_needs_display}
   - {is: v_refer, from: o_sys_mpf_target, to: {is: v_level, from: sys_mod_phrase_from_formula.n_target.mean_value, to: 99.0}}
   - {is: v_refer, from: o_sys_mpf_untranslated, to: {is: v_level, from: sys_mod_phrase_from_formula.n_translated.mean_value, to: 77.0}}
   - {is: exp.v_contradict, from: o_sys_mpf_untranslated, to: h_mod_phrase_from_formula}
