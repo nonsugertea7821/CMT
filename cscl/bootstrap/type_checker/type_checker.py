@@ -730,7 +730,6 @@ class Ontology:
         self.v_is = one("属する", [x for x, n in N.items() if n.get("extends") == self.v_relate and "to" in n and "holds" not in n])
         self.v_depend = one("依存する", [x for x in under_o if atoms(x) == [("depend", "from", "to", False)]
                                        and N[x].get("from") == self.top_c and N[x].get("to") == self.top_c])
-        self.v_parts = [x for x in under_o if atoms(x) == [("part", "from", "to", False)]]
         self.sdc = one("特定依存持続体", [x for x in N if any(m.get("of") == [self.v_depend, "from"] and (m.get("at") or {}).get("count") == 1
                                                          and not m.get("neg") and "with" not in m for m in mods(x))])
         self.quality = one("質", [x for x, n in N.items() if n.get("extends") == self.sdc and any(m.get("neg") for m in mods(x))])
@@ -922,6 +921,7 @@ class Ontology:
         """体系の書き方を、文法の語を関係とする文に直す。法則の規則は、この文に当てはめる。"""
         out, dump = [], lambda x: yaml.safe_dump(x, sort_keys=True, allow_unicode=True).strip()
         add = lambda rel, *xs: out.append((rel, tuple(xs)))
+        phrases = mod_phrases(self)   # 部分の限定の句は、限定の式から作り、限定の表示語として書く
         for (dom, w), rs in WRITTEN.items():   # 法則 one_spelling が読む
             for r in rs:
                 add("r_written", f"{dom}:{w}", r)
@@ -958,6 +958,8 @@ class Ontology:
             for i_m, m in enumerate(n.get("mod") or []):
                 t = dump(m) if isinstance(m, dict) else m
                 add("mod", nid, t)
+                if (nid, i_m) in phrases:
+                    add("display", t, phrases[(nid, i_m)])
                 if (nid, i_m) in self.mod_name:
                     add("mod_by_name", nid, t)
                 if isinstance(m, dict):
@@ -1022,15 +1024,6 @@ class Ontology:
                     add("fact_verb", t, v)
                     add("fact_from", t, a)
                     add("fact_to", t, b)
-        _pw, _pv = part_words(self)
-        for nid, n in self.N.items():
-            disp = n.get("display") or ""
-            if any(w in disp for w in _pw["from"]):
-                add("says_part_side", nid)
-            if any(w in disp for w in _pw["to"]):
-                add("says_whole_side", nid)
-            if any(w in disp for w in _pv):
-                add("says_vague", nid)
         for dom, ws in presumed_worlds().items():
             for w in ws:
                 add("presume", dom, qn_raw(w, "syntax"))
@@ -1452,13 +1445,50 @@ def register_domains(O):
     return [(d, files[d]) for d in order]
 
 
-def part_words(T):
-    """部分の言い方。部分の動詞（holds が部分の文だけの動詞）の表示語から作る。
-    (明示した言い方 {from: 部分である側, to: 部分に持つ側}, 曖昧な言い方)。助詞と語尾は日本語の文法なので、ここに書く。"""
-    stems = [T.N[v]["display"].removesuffix("になる") for v in T.v_parts if T.N[v].get("display")]
-    words = {"from": tuple(f"の{s}である" for s in stems), "to": tuple(f"を{s}に持つ" for s in stems)}
-    vague = tuple(f"{p}{T.N[v]['display']}" for v in T.v_parts if T.N[v].get("display") for p in ("から", "へ"))
-    return words, vague
+def mod_phrases(T):
+    """部分の限定の句を、限定の式から作る: {(ノード, 限定の番号): 句}。名前で読まず、動詞の定義（holds の part・位置・new_kind・上位）から読む。
+    相手は with（なければ、その位置に来る種類のどれか: new_kind か、反対の位置の種類）。助詞と語尾は日本語の文法なので、ここに書く。"""
+    ind = dict(T.O.get("individuals") or {})
+    for name, _ in lib_and_domain_files():
+        ind |= (load(name) or {}).get("individuals") or {}
+
+    def disp(x):
+        if not isinstance(x, str):
+            return None
+        if (T.N.get(T.q(x)) or {}).get("display"):
+            return T.N[T.q(x)]["display"]
+        for k in (x, x.split(".")[-1]):
+            if isinstance(ind.get(k), dict) and isinstance(ind[k].get("display"), str):
+                return ind[k]["display"]
+        return None
+
+    def stem(v):
+        a, hops = v, 0
+        while a in T.N and hops < 50:
+            if (T.N[a].get("display") or "").endswith("になる"):
+                return T.N[a]["display"].removesuffix("になる")
+            a, hops = T.up(a), hops + 1
+        return None
+
+    out = {}
+    for nid, n in T.N.items():
+        if T.is_verb(nid):
+            continue
+        for i, m in enumerate(n.get("mod") or []):
+            if not isinstance(m, dict) or not isinstance(m.get("of"), list) or len(m["of"]) != 2 or T.q(m["of"][0]) not in T.N:
+                continue
+            v, pos = T.q(m["of"][0]), m["of"][1]
+            wpos = "new" if T.end(v, "new_kind") else ("to" if pos == "from" else "from")
+            parts = {(h["from"], h["to"]) for h in T.end(v, "holds") or [] if isinstance(h, dict) and h.get("is") == "part"}
+            r = "part" if (pos, wpos) in parts else "whole" if (wpos, pos) in parts else None
+            if r is None:
+                continue
+            w = m.get("with") if isinstance(m.get("with"), str) else (T.end(v, "new_kind") or T.end(v, wpos))
+            s = stem(v) or "部分"
+            if disp(w):
+                say = (f"の{s}でない" if m.get("neg") else f"の{s}である") if r == "part" else (f"を{s}に持たない" if m.get("neg") else f"を{s}に持つ")
+                out[(nid, i)] = disp(w) + say
+    return out
 
 
 def presumed_worlds():
