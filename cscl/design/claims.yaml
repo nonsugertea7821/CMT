@@ -53,7 +53,9 @@ nodes:
 individuals:
   lang: {is: domain, display: 言語}
 
-  h_cscl_self_hosting: {is: exp.hyp_untested}
+  h_cscl_self_hosting: {is: exp.hyp_refuted}
+  h_grammar_as_laws: {is: exp.hyp_untested}
+  b_grammar_as_laws: {is: exp.item_queued}
 
   d_cscl_laws_in_cscl: {is: lang_dec_adopted}
   d_cscl_closed_world: {is: lang_dec_adopted}
@@ -120,6 +122,8 @@ individuals:
   b_gloss_formula: {is: exp.item_done}
   h_negation_formula: {is: exp.hyp_supported}
   b_negation_formula: {is: exp.item_done}
+  h_law_given_as_rule: {is: exp.hyp_untested}
+  b_law_given_as_rule: {is: exp.item_queued}
   h_comment_ban: {is: exp.hyp_supported}
   b_comment_ban: {is: exp.item_done}
   h_above_closed: {is: exp.hyp_supported}
@@ -127,6 +131,8 @@ individuals:
   h_above_individual: {is: exp.hyp_supported}
   b_above_individual: {is: exp.item_done}
   h_placement_in_laws: {is: exp.hyp_untested}
+  h_placement_without_domain: {is: exp.hyp_untested}
+  b_placement_without_domain: {is: exp.item_queued}
   b_placement_in_laws: {is: exp.item_queued}
   h_above_sound: {is: exp.hyp_refuted}
   b_above_sound: {is: exp.item_done}
@@ -188,8 +194,8 @@ individuals:
   b_fact_slot_by_end: {is: exp.item_done}
   h_fact_slot_by_verb: {is: exp.hyp_supported}
   b_fact_slot_by_verb: {is: exp.item_done}
-  h_fact_slot_keeps_each_verb: {is: exp.hyp_untested}
-  b_fact_slot_keeps_each_verb: {is: exp.item_queued}
+  h_fact_slot_keeps_each_verb: {is: exp.hyp_supported}
+  b_fact_slot_keeps_each_verb: {is: exp.item_done}
   h_frame_both_sides: {is: exp.hyp_untested}
   h_rule_verbs_unhardcode: {is: exp.hyp_refuted}
   b_rule_verbs_unhardcode: {is: exp.item_done}
@@ -206,10 +212,10 @@ individuals:
   b_case_frame_formula: {is: exp.item_done}
   h_case_frame_by_relation: {is: exp.hyp_refuted}
   b_case_frame_by_relation: {is: exp.item_done}
-  h_concept_kind_excludes_verb: {is: exp.hyp_untested}
-  b_concept_kind_excludes_verb: {is: exp.item_queued}
-  h_concept_kind_frame_free: {is: exp.hyp_untested}
-  b_concept_kind_frame_free: {is: exp.item_queued}
+  h_concept_kind_excludes_verb: {is: exp.hyp_supported}
+  b_concept_kind_excludes_verb: {is: exp.item_done}
+  h_concept_kind_frame_free: {is: exp.hyp_refuted}
+  b_concept_kind_frame_free: {is: exp.item_done}
   h_case_frame_by_role: {is: exp.hyp_withdrawn}
   h_case_frame_by_signature: {is: exp.hyp_refuted}
   b_case_frame_by_signature: {is: exp.item_done}
@@ -449,6 +455,8 @@ individuals:
   o_sys_fact_slot_verb_all_match: {is: exp.observation}
   o_sys_fact_slot_verb_clean: {is: exp.observation}
   o_sys_fact_slot_verb_no_refute: {is: exp.observation}
+  o_sys_slot_keep_all_hit: {is: exp.observation}
+  o_sys_slot_keep_two: {is: exp.observation}
   o_sys_collect_form_wide: {is: exp.observation}
   o_sys_collect_patch_differs: {is: exp.observation}
   o_sys_collect_grammar_n1_fails: {is: exp.observation}
@@ -460,8 +468,14 @@ individuals:
   o_sys_dows_c_fails: {is: exp.observation}
   o_sys_rs_same_domain: {is: exp.observation}
   o_sys_rs_cross_few: {is: exp.observation}
+  o_sys_ckp_e_no_both: {is: exp.observation}
+  o_sys_ckp_e_passes: {is: exp.observation}
+  o_sys_ckp_e_ec_passes: {is: exp.observation}
+  o_sys_ckp_n_fails: {is: exp.observation}
   o_sys_nf_agree: {is: exp.observation}
   o_sys_nf_base_clean: {is: exp.observation}
+  o_sys_csh_given: {is: exp.observation}
+  o_sys_csh_unnamed: {is: exp.observation}
   o_sys_any_by_entail_passes_checks: {is: exp.observation}
   o_sys_any_by_entail_passes_ec: {is: exp.observation}
   o_sys_any_by_entail_ideal: {is: exp.observation}
@@ -538,6 +552,10 @@ facts:
   - {is: syntax.v_use, from: lang, to: runtime}
   - {is: syntax.v_use, from: lang, to: exp}
   - {is: v_refer, from: h_cscl_self_hosting, to: {is: v_express, from: type_checker, to: cscl}}
+  - {is: v_refer, from: o_sys_csh_given, to: {is: v_level, from: sys_cscl_self_hosting.n_given.mean_value, to: 10.0}}
+  - {is: exp.v_contradict, from: o_sys_csh_given, to: h_cscl_self_hosting}
+  - {is: v_refer, from: o_sys_csh_unnamed, to: {is: v_level, from: sys_cscl_self_hosting.n_unnamed.mean_value, to: 108.0}}
+  - {is: exp.v_contradict, from: o_sys_csh_unnamed, to: h_cscl_self_hosting}
   - {is: v_refer, from: d_cscl_laws_in_cscl, to: {is: v_express, from: law_rule, to: cscl}}
   - {is: v_refer, from: d_cscl_closed_world, to: {is: syntax.v_presume, from: runtime, to: syntax.closed_world}}
   - {is: v_refer, from: d_cscl_std_on_axiom, to: {is: v_depend, from: std_layer, to: axiom_layer}}
@@ -554,8 +572,11 @@ facts:
   - {is: exp.v_ground, from: d_cscl_display_derived, to: h_collect_by_formula}
   - {is: exp.v_ground, from: d_cscl_display_derived, to: h_collect_agree_in_grammar}
   - {is: exp.v_ground, from: d_cscl_display_derived, to: h_negation_formula}
+  - {is: exp.v_ground, from: d_cscl_display_derived, to: h_law_given_as_rule}
   - {is: exp.v_ground, from: d_cscl_display_derived, to: h_placement_in_laws}
+  - {is: exp.v_ground, from: d_cscl_display_derived, to: h_placement_without_domain}
   - {is: exp.v_ground, from: d_cscl_display_derived, to: h_cscl_self_hosting}
+  - {is: exp.v_ground, from: d_cscl_display_derived, to: h_grammar_as_laws}
   - {is: v_refer, from: d_cscl_trust_previous_version, to: {is: v_depend, from: type_checker, to: previous_checker}}
   - {is: v_refer, from: d_sig_depend_from, to: {is: extends, from: dependent, to: continuant}}
   - {is: v_refer, from: d_sig_depend_to, to: {is: extends, from: depended, to: continuant}}
@@ -674,10 +695,20 @@ facts:
   - {is: exp.v_check, from: b_above_individual, to: h_above_individual}
   - {is: v_refer, from: h_placement_in_laws, to: {is: v_not_depend, from: placement_by_above, to: type_checker}}
   - {is: exp.v_check, from: b_placement_in_laws, to: h_placement_in_laws}
+  - {is: v_refer, from: h_placement_without_domain, to: {is: v_not_depend, from: placement_by_above, to: syntax.domain}}
+  - {is: exp.v_check, from: b_placement_without_domain, to: h_placement_without_domain}
   - {is: v_refer, from: h_concept_kind_excludes_verb, to: {is: v_depend, from: concept_by_law, to: [syntax.pre, syntax.holds, syntax.extends]}}
   - {is: exp.v_check, from: b_concept_kind_excludes_verb, to: h_concept_kind_excludes_verb}
   - {is: v_refer, from: h_concept_kind_frame_free, to: {is: v_not_depend, from: concept_by_law, to: [syntax.pre, syntax.holds]}}
   - {is: exp.v_check, from: b_concept_kind_frame_free, to: h_concept_kind_frame_free}
+  - {is: v_refer, from: o_sys_ckp_e_no_both, to: {is: v_level, from: sys_concept_kind_pair.n_both_E.mean_value, to: 0.0}}
+  - {is: exp.v_support, from: o_sys_ckp_e_no_both, to: h_concept_kind_excludes_verb}
+  - {is: v_refer, from: o_sys_ckp_e_passes, to: {is: v_level, from: sys_concept_kind_pair.errors_E.mean_value, to: 0.0}}
+  - {is: exp.v_support, from: o_sys_ckp_e_passes, to: h_concept_kind_excludes_verb}
+  - {is: v_refer, from: o_sys_ckp_e_ec_passes, to: {is: v_level, from: sys_concept_kind_pair_fix.ec_fail_E.mean_value, to: 0.0}}
+  - {is: exp.v_support, from: o_sys_ckp_e_ec_passes, to: h_concept_kind_excludes_verb}
+  - {is: v_refer, from: o_sys_ckp_n_fails, to: {is: v_level, from: sys_concept_kind_pair.errors_N.mean_value, to: 937.0}}
+  - {is: exp.v_contradict, from: o_sys_ckp_n_fails, to: h_concept_kind_frame_free}
   - {is: v_refer, from: h_above_sound, to: {is: v_depend, from: above_falsity, to: mod_lack}}
   - {is: exp.v_check, from: b_above_sound, to: h_above_sound}
   - {is: v_refer, from: h_renaming_invariant, to: {is: v_not_depend, from: type_checker, to: name_choice}}
@@ -842,6 +873,10 @@ facts:
   - {is: exp.v_support, from: o_sys_nf_agree, to: h_negation_formula}
   - {is: v_refer, from: o_sys_nf_base_clean, to: {is: v_level, from: sys_negation_formula.other_P0.mean_value, to: 0.0}}
   - {is: exp.v_support, from: o_sys_nf_base_clean, to: h_negation_formula}
+  - {is: v_refer, from: h_law_given_as_rule, to: {is: v_not_depend, from: syntax.law_given, to: type_checker}}
+  - {is: v_refer, from: h_grammar_as_laws, to: {is: v_not_depend, from: syntax.grammar_rule, to: type_checker}}
+  - {is: exp.v_check, from: b_grammar_as_laws, to: h_grammar_as_laws}
+  - {is: exp.v_check, from: b_law_given_as_rule, to: h_law_given_as_rule}
   - {is: v_refer, from: h_comment_ban, to: {is: v_not_depend, from: definition, to: annotation}}
   - {is: exp.v_check, from: b_comment_ban, to: h_comment_ban}
   - {is: v_refer, from: o_sys_tops_ind_continuant, to: {is: v_level, from: sys_tops.ind_continuant.mean_value, to: 1.0}}
@@ -994,6 +1029,10 @@ facts:
   - {is: v_refer, from: o_sys_fact_slot_verb_no_refute, to: {is: v_level, from: sys_fact_slot_by_verb.refute.mean_value, to: 0.0}}
   - {is: exp.v_support, from: o_sys_fact_slot_verb_all_match, to: h_fact_slot_by_verb}
   - {is: exp.v_support, from: o_sys_fact_slot_verb_no_refute, to: h_fact_slot_by_verb}
+  - {is: v_refer, from: o_sys_slot_keep_all_hit, to: {is: v_level, from: sys_fact_slot_keeps_each_verb_fix2.n_hit.mean_value, to: 7.0}}
+  - {is: v_refer, from: o_sys_slot_keep_two, to: {is: v_level, from: sys_fact_slot_keeps_each_verb_fix2.kept_two.mean_value, to: 2.0}}
+  - {is: exp.v_support, from: o_sys_slot_keep_all_hit, to: h_fact_slot_keeps_each_verb}
+  - {is: exp.v_support, from: o_sys_slot_keep_two, to: h_fact_slot_keeps_each_verb}
   - {is: exp.v_ground, from: d_cscl_display_derived, to: h_fact_slot_by_end}
   - {is: v_refer, from: o_sys_any_by_entail_passes_checks, to: {is: v_level, from: sys_any_by_entail_after_fix.errors.mean_value, to: 0.0}}
   - {is: v_refer, from: o_sys_any_by_entail_passes_ec, to: {is: v_level, from: sys_any_by_entail_after_fix.ec_errors.mean_value, to: 0.0}}
