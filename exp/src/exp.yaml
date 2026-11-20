@@ -3110,6 +3110,14 @@ individuals:
   b_axis_value_from_result: {is: item_queued}
   h_model_reads_by_name: {is: hyp_untested}
   b_model_reads_by_name: {is: item_queued}
+  h_functor_preserves_shape: {is: hyp_untested}
+  b_functor_preserves_shape: {is: item_queued}
+  h_refer_ops_share_direction: {is: hyp_untested}
+  b_refer_ops_share_direction: {is: item_queued}
+  h_refer_cuts_orthogonal: {is: hyp_untested}
+  b_refer_cuts_orthogonal: {is: item_queued}
+  h_refer_cut_spans_mods: {is: hyp_untested}
+  b_refer_cut_spans_mods: {is: item_queued}
   h_decision_link_by_role: {is: hyp_supported}
   b_decision_link_by_role: {is: item_done}
 facts:
@@ -8719,6 +8727,18 @@ facts:
   - {is: v_refer, from: h_model_reads_by_name, to: {is: v_read, from: model, to: syntax.identifier}}
   - {is: v_check, from: b_model_reads_by_name, to: h_model_reads_by_name}
   - {is: v_ground, from: d_road_checker, to: h_model_reads_by_name}
+  - {is: v_refer, from: h_functor_preserves_shape, to: {is: v_depend, from: hidden_state, to: syntax.holds}}
+  - {is: v_check, from: b_functor_preserves_shape, to: h_functor_preserves_shape}
+  - {is: v_ground, from: d_road_region, to: h_functor_preserves_shape}
+  - {is: v_refer, from: h_refer_ops_share_direction, to: {is: v_depend, from: hidden_state, to: [syntax.from, syntax.to]}}
+  - {is: v_check, from: b_refer_ops_share_direction, to: h_refer_ops_share_direction}
+  - {is: v_ground, from: d_road_region, to: h_refer_ops_share_direction}
+  - {is: v_refer, from: h_refer_cuts_orthogonal, to: {is: v_depend, from: hidden_state, to: ontology.same}}
+  - {is: v_check, from: b_refer_cuts_orthogonal, to: h_refer_cuts_orthogonal}
+  - {is: v_ground, from: d_road_region, to: h_refer_cuts_orthogonal}
+  - {is: v_refer, from: h_refer_cut_spans_mods, to: {is: v_depend, from: hidden_state, to: syntax.mod}}
+  - {is: v_check, from: b_refer_cut_spans_mods, to: h_refer_cut_spans_mods}
+  - {is: v_ground, from: d_road_region, to: h_refer_cut_spans_mods}
   - {is: v_refer, from: h_decision_link_by_role, to: {is: v_depend, from: decision, to: syntax.role}}
   - {is: v_check, from: b_decision_link_by_role, to: h_decision_link_by_role}
   - {is: v_refer, from: h_multi_layer_transfers_to_explain, to: {is: v_transfer, from: multi_layer_vector, to: usage_explain}}
