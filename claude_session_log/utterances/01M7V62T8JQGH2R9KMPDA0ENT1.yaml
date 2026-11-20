@@ -1,0 +1,29 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-20T00:35:41.458Z（UTC）
+individuals:
+  01M7V62T8JQGH2R9KMPDA0ENT1:
+    is: model_utterance
+    display: 発言 2769
+    val:
+      order: 2769
+      text: |
+        h_cscl_self_hosting は反証でした（#414）。検査器（`type_checker.py`）が誤りを出す箇所は 119 あり、その内訳は次のとおりです。
+
+        | どこから出るか | 箇所 |
+        |---|---|
+        | 規則の法則（`law_rule`）を当てはめて出す | 1 |
+        | 意味を Python が与える法則（`law_given`）の関数の中 | 10 |
+        | どの法則にも結びつかない | 108 |
+
+        - **読み方:** 規則の法則は 114 個も書けていますが、それらは全部 `check_laws` の 1 箇所から当てはめられています。検査器の残りの検査の多くは、法則の個体を持たないまま Python で書かれています。法則が足りないのではなく、どの検査も法則として名前を持つ段にまだ来ていない、と読んでいます。
+        - **数え方の限界:** 箇所の数は静的に数えたものです。1 箇所が複数の誤りを出すことも、法則と重なる検査があることも数えていないので、比は大まかです。
+        - **判定のしかた:** 仮説は「今、cscl で書けている」と述べていたので、事前登録どおり反証としました。「書けるようにできるか」は別に問います。
+        - **Draft と自動マージ:** 状態が反証になったので Draft を外しました。訂正がなく、触ったのは実験と体系のファイルだけなので、自動マージに乗るはずです。
+
+        含意として、新しい仮説 h_grammar_as_laws を登録だけの PR で出しました（#415）。「文法の規則の意味は検査器に依存しない」と書いたもので、結びつかない 108 箇所のうち最も大きい群の一つ、`check_grammar` の 20 箇所を規則の法則に移せるかを問います。given の 10 箇所は、登録済みの h_law_given_as_rule が受け持ちます。この二つを、反証から出した別々の解き方の対にしました。どちらも決定 d_cscl_display_derived（識別子化）の根拠に結んでいます。
+
+        ロードマップ a（識別子化）の仮説は、これで全部ひととおり確かめ終えました。この層の続きは、h_law_given_as_rule と h_grammar_as_laws です。
+facts:
+- {is: v_say, from: session_model, to: 01M7V62T8JQGH2R9KMPDA0ENT1}
+- {is: exp.v_answer, from: 01M7V62T8JQGH2R9KMPDA0ENT1, to: 01M7TA7A145QS5NA0XWZR9ST0Q}
+- {is: v_refer, from: 01M7V62T8JQGH2R9KMPDA0ENT1, to: syntax.law_rule}
+- {is: v_refer, from: 01M7V62T8JQGH2R9KMPDA0ENT1, to: syntax.law_given}
