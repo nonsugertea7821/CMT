@@ -196,10 +196,12 @@ individuals:
   b_fact_slot_by_verb: {is: exp.item_done}
   h_fact_slot_keeps_each_verb: {is: exp.hyp_supported}
   b_fact_slot_keeps_each_verb: {is: exp.item_done}
-  h_frame_both_sides: {is: exp.hyp_untested}
+  h_frame_both_sides: {is: exp.hyp_mixed}
+  h_post_as_fact: {is: exp.hyp_untested}
+  b_post_as_fact: {is: exp.item_queued}
   h_rule_verbs_unhardcode: {is: exp.hyp_refuted}
   b_rule_verbs_unhardcode: {is: exp.item_done}
-  b_frame_both_sides: {is: exp.item_queued}
+  b_frame_both_sides: {is: exp.item_done}
   h_frame_enters_relations: {is: exp.hyp_supported}
   b_frame_enters_relations: {is: exp.item_done}
   h_rule_frame_redundant: {is: exp.hyp_refuted}
@@ -455,6 +457,8 @@ individuals:
   o_sys_fact_slot_verb_all_match: {is: exp.observation}
   o_sys_fact_slot_verb_clean: {is: exp.observation}
   o_sys_fact_slot_verb_no_refute: {is: exp.observation}
+  o_sys_frame_no_pre_only: {is: exp.observation}
+  o_sys_frame_law_fails: {is: exp.observation}
   o_sys_slot_keep_all_hit: {is: exp.observation}
   o_sys_slot_keep_two: {is: exp.observation}
   o_sys_collect_form_wide: {is: exp.observation}
@@ -784,6 +788,13 @@ facts:
   - {is: exp.v_check, from: b_rule_verbs_unhardcode, to: h_rule_verbs_unhardcode}
   - {is: v_refer, from: h_frame_both_sides, to: {is: v_depend, from: syntax.pre, to: syntax.post}}
   - {is: exp.v_check, from: b_frame_both_sides, to: h_frame_both_sides}
+  - {is: v_refer, from: o_sys_frame_no_pre_only, to: {is: v_level, from: sys_frame_both_sides.verdict_refute.mean_value, to: 0.0}}
+  - {is: v_refer, from: o_sys_frame_law_fails, to: {is: v_level, from: sys_frame_both_sides.law_ok.mean_value, to: 0.0}}
+  - {is: exp.v_support, from: o_sys_frame_no_pre_only, to: h_frame_both_sides}
+  - {is: exp.v_contradict, from: o_sys_frame_law_fails, to: h_frame_both_sides}
+  - {is: v_refer, from: h_post_as_fact, to: {is: v_depend, from: type_checker, to: syntax.post}}
+  - {is: exp.v_check, from: b_post_as_fact, to: h_post_as_fact}
+  - {is: exp.v_ground, from: d_cscl_display_derived, to: h_post_as_fact}
   - {is: v_refer, from: h_frame_enters_relations, to: {is: v_depend, from: syntax.law_relation, to: [syntax.pre, syntax.holds]}}
   - {is: exp.v_check, from: b_frame_enters_relations, to: h_frame_enters_relations}
   - {is: v_refer, from: h_rule_frame_redundant, to: {is: v_depend, from: type_checker, to: [syntax.pre, syntax.post, syntax.holds, syntax.law_relation]}}
