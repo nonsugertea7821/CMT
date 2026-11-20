@@ -122,8 +122,8 @@ individuals:
   b_gloss_formula: {is: exp.item_done}
   h_negation_formula: {is: exp.hyp_supported}
   b_negation_formula: {is: exp.item_done}
-  h_law_given_as_rule: {is: exp.hyp_untested}
-  b_law_given_as_rule: {is: exp.item_queued}
+  h_law_given_as_rule: {is: exp.hyp_refuted}
+  b_law_given_as_rule: {is: exp.item_done}
   h_comment_ban: {is: exp.hyp_supported}
   b_comment_ban: {is: exp.item_done}
   h_above_closed: {is: exp.hyp_supported}
@@ -474,6 +474,8 @@ individuals:
   o_sys_nf_base_clean: {is: exp.observation}
   o_sys_csh_given: {is: exp.observation}
   o_sys_csh_unnamed: {is: exp.observation}
+  o_sys_lgr_mixed_flagged: {is: exp.observation}
+  o_sys_lgr_mixed_same_facts: {is: exp.observation}
   o_sys_any_by_entail_passes_checks: {is: exp.observation}
   o_sys_any_by_entail_passes_ec: {is: exp.observation}
   o_sys_any_by_entail_ideal: {is: exp.observation}
@@ -872,6 +874,10 @@ facts:
   - {is: v_refer, from: h_grammar_as_laws, to: {is: v_not_depend, from: syntax.grammar_rule, to: type_checker}}
   - {is: exp.v_check, from: b_grammar_as_laws, to: h_grammar_as_laws}
   - {is: exp.v_check, from: b_law_given_as_rule, to: h_law_given_as_rule}
+  - {is: v_refer, from: o_sys_lgr_mixed_flagged, to: {is: v_level, from: sys_law_given_as_rule_fix.py_M.mean_value, to: 1.0}}
+  - {is: exp.v_contradict, from: o_sys_lgr_mixed_flagged, to: h_law_given_as_rule}
+  - {is: v_refer, from: o_sys_lgr_mixed_same_facts, to: {is: v_level, from: sys_law_given_as_rule_fix.facts_equal_MN.mean_value, to: 1.0}}
+  - {is: exp.v_contradict, from: o_sys_lgr_mixed_same_facts, to: h_law_given_as_rule}
   - {is: v_refer, from: h_comment_ban, to: {is: v_not_depend, from: definition, to: annotation}}
   - {is: exp.v_check, from: b_comment_ban, to: h_comment_ban}
   - {is: v_refer, from: o_sys_tops_ind_continuant, to: {is: v_level, from: sys_tops.ind_continuant.mean_value, to: 1.0}}
