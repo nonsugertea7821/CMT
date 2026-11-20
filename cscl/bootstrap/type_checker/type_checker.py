@@ -413,6 +413,7 @@ def gather(D, T, name):
     - v_refer の終点が事実の形をしていれば、それは文が述べる中身（主張ではない）。s, p, o と、動詞が新しく取る位置の値 new として読む。"""
     dom, local, I = D["domain"], D["_local"], D["individuals"]
     q = lambda v: [qualify(y, local, dom) for y in v] if isinstance(v, list) else qualify(v, local, dom)
+    BV = {}
     for i, f in enumerate(D.get("facts") or []):
         where = f"{name} facts[{i}]"
         if not isinstance(f, dict) or set(f) - set(T.G["facts"]) or "is" not in f:
@@ -462,12 +463,15 @@ def gather(D, T, name):
             err(f"{where}: 始点 {subj} が個体でない")
             continue
         I[subj].setdefault(rel, []).append(val)
+        BV.setdefault((subj, rel, short(verb)), []).append(val)
     for subj, x in I.items():
         for rel, vs in list(x.items()):
             if isinstance(vs, list) and rel not in T.G["individuals"] and rel not in ("o", "_at"):
-                if rel not in T.many and len(vs) > 1:
+                if rel not in T.many and any(len(w) > 1 for (s2, r2, _), w in BV.items() if s2 == subj and r2 == rel):
                     err(f"{name} {subj}: 関係 {rel} の事実が2つ以上ある")
                 x[rel] = vs if rel in T.many else vs[0]
+    for (s2, r2, v2), w in BV.items():
+        I[s2][f"{r2}.{v2}"] = w if r2 in T.many else w[0]
 
 
 def compare_claims(T, a, b):
