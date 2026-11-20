@@ -1,0 +1,30 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-20T03:02:27.132Z（UTC）
+individuals:
+  01M7VEFHHW1BB5Q302CMZSK75T:
+    is: model_utterance
+    display: 発言 2859
+    val:
+      order: 2859
+      text: |
+        最適化の規則についての仮説を登録しました（PR #432）。概念を一つ足したので、自動ではマージされません。あなたが中身を見てマージしてください。手元では tc と ec が通りました。
+
+        **仮説 `h_optimization_in_system`**
+        - 中身は「ステップの列へ述べる定義は、実行器が実行する言語に依存しない」です。
+        - 言いたいのは次のことです。
+          - 実行の速さを決める最適化は、多くが「この形をこの形に書き換えてよい」という規則で書ける。
+          - そうした規則は、機械語ではなく体系の側に置ける。
+        - 前の h_small_translation と同じ決定（`d_cscl_display_derived`）に結んであります。
+
+        **足した概念（ここを見てほしい）**
+        - `steps_definition`（ステップの列へ述べる定義）を lang に足しました。
+        - ただし、式で言えているのは「ステップの列へ述べる定義」までです。「意味を保ったまま書き換える」という最適化の肝は、まだ式にできていません。表示語もその範囲に留めました。
+        - この概念は、runtime の `choice`（当てはまる動詞の選び方）と同じ限定を足していたので、named_mod の法則に反しました。
+        - そこで runtime に、名前を付けた修飾語 `refer_from_steps` を置き、両方がそれを名前で使うようにしました。`choice` の意味は変わりません。名前が綴りにすぎないことは、#425 で確かめてあります。
+
+        「意味を保つ書き換え」を式にできれば、この仮説はもっと正確になります。それ自体を、次に詰める候補としておきます。
+
+        ロードマップ: a（識別子化）の途中で、自己ホスティングの仮説を一つ足した（最適化の規則は体系の側に置ける）。
+facts:
+- {is: v_say, from: session_model, to: 01M7VEFHHW1BB5Q302CMZSK75T}
+- {is: exp.v_answer, from: 01M7VEFHHW1BB5Q302CMZSK75T, to: 01M7VECCMJ5B7GFVNBSFS4909M}
+- {is: v_refer, from: 01M7VEFHHW1BB5Q302CMZSK75T, to: runtime.choice}
