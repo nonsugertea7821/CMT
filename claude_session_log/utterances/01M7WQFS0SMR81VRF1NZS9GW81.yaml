@@ -1,0 +1,52 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-20T14:59:06.393Z（UTC）
+individuals:
+  01M7WQFS0SMR81VRF1NZS9GW81:
+    is: model_utterance
+    display: 発言 3148
+    val:
+      order: 3148
+      text: |
+        今回の周回で検証した仮説 h_verb_shape_two_phase は、反証でした。動詞が自分の名前の下に持つ動詞は、図の一致ですべて拾えました。ただ、図が同じなのに名前の違う動詞が、名前の外に見つかりました。
+
+        **周回の作業**
+        - #504（綴りの付け替え仮説の登録）が main と衝突していました。main を取り込んで解き、tc と ec が通ったので push しました。
+        - 次の周回の予約を 15:26（UTC）に入れ直しました。
+
+        **h_verb_shape_two_phase の検証（[#514](https://github.com/nonsugertea7821/CMT/pull/514)、Draft を外しました）**
+        - 仮説：pre・post を持つ動詞（変位）も、#503 の v_refer と同じく、2 相の図（holds・pre・post）が同じかどうかで、名前と同じ集合を読める。
+        - 対象の 16 動詞のうち 7 つで外れました。
+        - 名前の下にあるのに図が違う動詞（取りこぼし）は、どれも 0 でした。
+        - 外れはすべて、図がまったく同じで名前だけ違う相手が、名前の外にいた場合です。
+          - exp.v_withdraw と std.v_vary
+          - ontology.v_design と std.v_compute
+          - exp.v_see・exp.v_judge・std.v_learn・exp.v_read などの群
+        - 参考に数えた holds だけの動詞でも、36 のうち 10 で同じことが起きました。例は exp.v_cause と ontology.v_trigger、exp.v_happen_after と ontology.v_come_after です。
+
+        **含意**
+        - さっき原典で確かめた「構造は名前を付け替えを除いてしか決めない」が、体系の上でそのまま出ました。#512 の仮説 h_names_up_to_relabel と同じ向きです。
+        - #503 で v_refer がうまくいったのは、v_refer と同じ図を持つ別名が、たまたまなかったからだと読めます。
+        - 対の多くは、exp と ontology、std と exp のように領域をまたいでいます。同じ意味の動詞を、領域ごとに別々に立てている可能性があります。
+
+        **新しい仮説（[#516](https://github.com/nonsugertea7821/CMT/pull/516)、登録だけの PR）**
+
+        反証から、別々の解き方を対で二つ出しました。どちらも d_cscl_display_derived に結んでいます。
+        - h_same_shape_verbs_merge：図が同じ別名は、一つにまとめても検査も事実も壊れない（体系の側で直す道）。
+        - h_shape_needs_ends：図に端の種類（from・to が取る型）を足せば、別名の対が分かれる（読み方の側で直す道）。
+
+        ロードマップ：本線 a（識別子化、d_cscl_display_derived の下）の、変位の動詞の段を進めました。
+facts:
+- {is: v_say, from: session_model, to: 01M7WQFS0SMR81VRF1NZS9GW81}
+- {is: exp.v_answer, from: 01M7WQFS0SMR81VRF1NZS9GW81, to: 01M7WPWQZG274EKPGRQDN76YB2}
+- {is: v_refer, from: 01M7WQFS0SMR81VRF1NZS9GW81, to: ontology.v_refer}
+- {is: v_refer, from: 01M7WQFS0SMR81VRF1NZS9GW81, to: exp.v_withdraw}
+- {is: v_refer, from: 01M7WQFS0SMR81VRF1NZS9GW81, to: std.v_vary}
+- {is: v_refer, from: 01M7WQFS0SMR81VRF1NZS9GW81, to: ontology.v_design}
+- {is: v_refer, from: 01M7WQFS0SMR81VRF1NZS9GW81, to: std.v_compute}
+- {is: v_refer, from: 01M7WQFS0SMR81VRF1NZS9GW81, to: exp.v_see}
+- {is: v_refer, from: 01M7WQFS0SMR81VRF1NZS9GW81, to: exp.v_judge}
+- {is: v_refer, from: 01M7WQFS0SMR81VRF1NZS9GW81, to: std.v_learn}
+- {is: v_refer, from: 01M7WQFS0SMR81VRF1NZS9GW81, to: exp.v_read}
+- {is: v_refer, from: 01M7WQFS0SMR81VRF1NZS9GW81, to: exp.v_cause}
+- {is: v_refer, from: 01M7WQFS0SMR81VRF1NZS9GW81, to: ontology.v_trigger}
+- {is: v_refer, from: 01M7WQFS0SMR81VRF1NZS9GW81, to: exp.v_happen_after}
+- {is: v_refer, from: 01M7WQFS0SMR81VRF1NZS9GW81, to: ontology.v_come_after}
