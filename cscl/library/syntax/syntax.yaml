@@ -308,9 +308,6 @@ individuals:
   fact_verb: {is: law_relation, display: 事実の動詞である}
   fact_from: {is: law_relation, display: 事実の始点である}
   fact_to: {is: law_relation, display: 事実の終点である}
-  says_part_side: {is: law_relation, display: 表示名が自分を部分の側と言う}
-  says_whole_side: {is: law_relation, display: 表示名が自分を全体の側と言う}
-  says_vague: {is: law_relation, display: 表示名がどちらが部分かを曖昧に言う}
   r_t_part: {is: law_relation, display: 限定される種類を部分とする限定である}
   r_t_whole: {is: law_relation, display: 限定される種類を全体とする限定である}
   r_t_role: {is: law_relation, display: 部分と全体の限定である}
@@ -359,9 +356,6 @@ individuals:
   role_any_part: {is: law_rule, display: 部分とする限定は、部分と全体の限定}
   role_any_whole: {is: law_rule, display: 全体とする限定は、部分と全体の限定}
   isverb: {is: law_rule, display: 両端を持つものは動詞}
-  disp_vague: {is: law_rule, display: 部分と全体の限定を持つ種類の表示名は、どちらが部分かを曖昧に言わない}
-  disp_dir_part: {is: law_rule, display: 部分と限定される種類の表示名は、自分を全体の側と言わない}
-  disp_dir_whole: {is: law_rule, display: 全体と限定される種類の表示名は、自分を部分の側と言わない}
   presume: {is: law_relation, display: 領域が前提に置く扱いである}
   law_domain: {is: law_relation, display: 法則の領域である}
   assume_neg: {is: law_relation, display: 否定を前提に使う}
@@ -896,20 +890,6 @@ facts:
   - {is: v_assume, from: isverb, to: {is: r_end_from, from: var1, to: var2}}
   - {is: v_assume, from: isverb, to: {is: r_end_to, from: var1, to: var3}}
   - {is: v_derive, from: isverb, to: {is: r_isverb, from: var1}}
-  - {is: v_assume, from: disp_vague, to: {is: mod, from: var1, to: var2}}
-  - {is: v_assume, from: disp_vague, to: {is: r_t_role, from: var2}}
-  - {is: v_assume, from: disp_vague, to: {is: r_isverb, from: var1, neg: true}}
-  - {is: v_require, from: disp_vague, to: {is: says_vague, from: var1, neg: true}}
-  - {is: v_assume, from: disp_dir_part, to: {is: mod, from: var1, to: var2}}
-  - {is: v_assume, from: disp_dir_part, to: {is: r_t_part, from: var2}}
-  - {is: v_assume, from: disp_dir_part, to: {is: neg, from: var2, to: true, neg: true}}
-  - {is: v_assume, from: disp_dir_part, to: {is: r_isverb, from: var1, neg: true}}
-  - {is: v_require, from: disp_dir_part, to: {is: says_whole_side, from: var1, neg: true}}
-  - {is: v_assume, from: disp_dir_whole, to: {is: mod, from: var1, to: var2}}
-  - {is: v_assume, from: disp_dir_whole, to: {is: r_t_whole, from: var2}}
-  - {is: v_assume, from: disp_dir_whole, to: {is: neg, from: var2, to: true, neg: true}}
-  - {is: v_assume, from: disp_dir_whole, to: {is: r_isverb, from: var1, neg: true}}
-  - {is: v_require, from: disp_dir_whole, to: {is: says_part_side, from: var1, neg: true}}
   - {is: v_assume, from: world_unique, to: {is: presume, from: var1, to: var2}}
   - {is: v_assume, from: world_unique, to: {is: presume, from: var1, to: var3}}
   - {is: v_require, from: world_unique, to: {is: same, from: var2, to: var3}}
