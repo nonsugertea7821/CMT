@@ -204,8 +204,8 @@ individuals:
   b_law_check_by_always: {is: exp.item_queued}
   h_required_by_laws: {is: exp.hyp_untested}
   b_required_by_laws: {is: exp.item_queued}
-  h_check_immune_parts: {is: exp.hyp_untested}
-  b_check_immune_parts: {is: exp.item_queued}
+  h_check_immune_parts: {is: exp.hyp_refuted}
+  b_check_immune_parts: {is: exp.item_done}
   h_layers_unhardcode: {is: exp.hyp_refuted}
   b_layers_unhardcode: {is: exp.item_done}
   h_concept_bounds_model_state: {is: exp.hyp_untested}
@@ -654,6 +654,10 @@ individuals:
   o_sys_rna_post: {is: exp.observation}
   o_sys_rna_law: {is: exp.observation}
   o_sys_rna_off: {is: exp.observation}
+  o_sys_cip_control: {is: exp.observation}
+  o_sys_cip_errors: {is: exp.observation}
+  o_sys_cip_same: {is: exp.observation}
+  o_sys_cip_lines: {is: exp.observation}
   o_sys_any_by_entail_passes_checks: {is: exp.observation}
   o_sys_any_by_entail_passes_ec: {is: exp.observation}
   o_sys_any_by_entail_ideal: {is: exp.observation}
@@ -936,6 +940,12 @@ facts:
   - {is: exp.v_ground, from: d_cscl_display_derived, to: h_required_by_laws}
   - {is: v_refer, from: h_check_immune_parts, to: {is: v_not_depend, from: type_checker, to: syntax.passage}}
   - {is: exp.v_check, from: b_check_immune_parts, to: h_check_immune_parts}
+  - {is: v_refer, from: o_sys_cip_control, to: {is: v_level, from: sys_check_immune_parts_fix1.P0_same.mean_value, to: 1.0}}
+  - {is: v_refer, from: o_sys_cip_errors, to: {is: v_level, from: sys_check_immune_parts_fix1.P_errors.mean_value, to: 1.0}}
+  - {is: exp.v_contradict, from: o_sys_cip_errors, to: h_check_immune_parts}
+  - {is: v_refer, from: o_sys_cip_same, to: {is: v_level, from: sys_check_immune_parts_fix1.P_same.mean_value, to: 0.0}}
+  - {is: exp.v_contradict, from: o_sys_cip_same, to: h_check_immune_parts}
+  - {is: v_refer, from: o_sys_cip_lines, to: {is: v_level, from: sys_check_immune_parts_fix1.P_exp_lines_after.mean_value, to: 1707.0}}
   - {is: v_refer, from: h_layers_unhardcode, to: {is: v_not_depend, from: type_checker, to: name_choice}}
   - {is: v_refer, from: h_layers_unhardcode, to: {is: v_depend, from: type_checker, to: [layer_placement, signature_class]}}
   - {is: exp.v_check, from: b_layers_unhardcode, to: h_layers_unhardcode}
