@@ -1742,6 +1742,14 @@ individuals:
   sys_fact_id_by_content_cond_PC_other_errors: {is: axis_value, val: {text: PC_other_errors}}
   sys_fact_id_by_content_cond_n_fact_rows: {is: axis_value, val: {text: n_fact_rows}}
   sys_fact_id_by_content_cond_n_fact_distinct: {is: axis_value, val: {text: n_fact_distinct}}
+  sys_refer_by_exact_holds: {is: measurement_family}
+  sys_refer_by_exact_holds_cond: {is: family_axis, val: {text: cond}}
+  sys_refer_by_exact_holds_cond_build_ok: {is: axis_value, val: {text: build_ok}}
+  sys_refer_by_exact_holds_cond_n_name: {is: axis_value, val: {text: n_name}}
+  sys_refer_by_exact_holds_cond_n_exact: {is: axis_value, val: {text: n_exact}}
+  sys_refer_by_exact_holds_cond_missing: {is: axis_value, val: {text: missing}}
+  sys_refer_by_exact_holds_cond_extra: {is: axis_value, val: {text: extra}}
+  sys_refer_by_exact_holds_cond_n_form_300: {is: axis_value, val: {text: n_form_300}}
   sys_any_by_entail_before_fix: {is: measurement_family}
   sys_any_by_entail_before_fix_cond: {is: family_axis, val: {text: cond}}
   sys_any_by_entail_before_fix_cond_errors: {is: axis_value, val: {text: errors}}
@@ -6920,6 +6928,23 @@ facts:
   - {is: v_spell, from: sys_fact_id_by_content_cond_n_fact_distinct, to: n_fact_distinct}
   - {is: v_entry_of, from: '{cond}', to: sys_fact_id_by_content}
   - {is: v_metric_of, from: sys_fact_id_by_content, to: mean_value}
+  - {is: v_file_of, from: sys_refer_by_exact_holds.json, to: sys_refer_by_exact_holds}
+  - {is: v_rows_of, from: [rows], to: sys_refer_by_exact_holds}
+  - {is: v_axis_of, from: sys_refer_by_exact_holds_cond, to: sys_refer_by_exact_holds}
+  - {is: v_value_of, from: sys_refer_by_exact_holds_cond_build_ok, to: sys_refer_by_exact_holds_cond}
+  - {is: v_spell, from: sys_refer_by_exact_holds_cond_build_ok, to: build_ok}
+  - {is: v_value_of, from: sys_refer_by_exact_holds_cond_n_name, to: sys_refer_by_exact_holds_cond}
+  - {is: v_spell, from: sys_refer_by_exact_holds_cond_n_name, to: n_name}
+  - {is: v_value_of, from: sys_refer_by_exact_holds_cond_n_exact, to: sys_refer_by_exact_holds_cond}
+  - {is: v_spell, from: sys_refer_by_exact_holds_cond_n_exact, to: n_exact}
+  - {is: v_value_of, from: sys_refer_by_exact_holds_cond_missing, to: sys_refer_by_exact_holds_cond}
+  - {is: v_spell, from: sys_refer_by_exact_holds_cond_missing, to: missing}
+  - {is: v_value_of, from: sys_refer_by_exact_holds_cond_extra, to: sys_refer_by_exact_holds_cond}
+  - {is: v_spell, from: sys_refer_by_exact_holds_cond_extra, to: extra}
+  - {is: v_value_of, from: sys_refer_by_exact_holds_cond_n_form_300, to: sys_refer_by_exact_holds_cond}
+  - {is: v_spell, from: sys_refer_by_exact_holds_cond_n_form_300, to: n_form_300}
+  - {is: v_entry_of, from: '{cond}', to: sys_refer_by_exact_holds}
+  - {is: v_metric_of, from: sys_refer_by_exact_holds, to: mean_value}
   - {is: v_file_of, from: sys_any_by_entail_before_fix.json, to: sys_any_by_entail_before_fix}
   - {is: v_rows_of, from: [rows], to: sys_any_by_entail_before_fix}
   - {is: v_axis_of, from: sys_any_by_entail_before_fix_cond, to: sys_any_by_entail_before_fix}
