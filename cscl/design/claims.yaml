@@ -188,8 +188,8 @@ individuals:
   b_appear_root: {is: exp.item_done}
   h_boundary_invariant: {is: exp.hyp_supported}
   b_boundary_invariant: {is: exp.item_done}
-  h_refer_stratified: {is: exp.hyp_untested}
-  b_refer_stratified: {is: exp.item_queued}
+  h_refer_stratified: {is: exp.hyp_refuted}
+  b_refer_stratified: {is: exp.item_done}
   h_fact_slot_by_end: {is: exp.hyp_supported}
   b_fact_slot_by_end: {is: exp.item_done}
   h_fact_slot_by_verb: {is: exp.hyp_supported}
@@ -470,6 +470,8 @@ individuals:
   o_sys_dows_a_reproduces: {is: exp.observation}
   o_sys_dows_b_fails: {is: exp.observation}
   o_sys_dows_c_fails: {is: exp.observation}
+  o_sys_rs_same_domain: {is: exp.observation}
+  o_sys_rs_cross_few: {is: exp.observation}
   o_sys_ckp_e_no_both: {is: exp.observation}
   o_sys_ckp_e_passes: {is: exp.observation}
   o_sys_ckp_e_ec_passes: {is: exp.observation}
@@ -776,6 +778,9 @@ facts:
   - {is: exp.v_check, from: b_boundary_invariant, to: h_boundary_invariant}
   - {is: v_refer, from: h_refer_stratified, to: {is: v_depend, from: type_checker, to: [referred_sentence, syntax.domain]}}
   - {is: exp.v_check, from: b_refer_stratified, to: h_refer_stratified}
+  - {is: v_refer, from: o_sys_rs_same_domain, to: {is: v_level, from: sys_refer_stratified_fix.R_same.mean_value, to: 202.0}}
+  - {is: exp.v_contradict, from: o_sys_rs_same_domain, to: h_refer_stratified}
+  - {is: v_refer, from: o_sys_rs_cross_few, to: {is: v_level, from: sys_refer_stratified_fix.R_cross.mean_value, to: 2.0}}
   - {is: v_refer, from: h_fact_slot_by_end, to: {is: v_depend, from: type_checker, to: [syntax.position, syntax.many]}}
   - {is: exp.v_check, from: b_fact_slot_by_end, to: h_fact_slot_by_end}
   - {is: v_refer, from: h_fact_slot_by_verb, to: {is: v_depend, from: type_checker, to: syntax.refer_from_occurrent}}
