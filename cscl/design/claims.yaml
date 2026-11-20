@@ -202,7 +202,7 @@ individuals:
   b_layers_neg_dual: {is: exp.item_done}
   h_law_check_by_always: {is: exp.hyp_untested}
   b_law_check_by_always: {is: exp.item_queued}
-  h_required_by_laws: {is: exp.hyp_untested}
+  h_required_by_laws: {is: exp.hyp_refuted}
   b_required_by_laws: {is: exp.item_queued}
   h_check_immune_parts: {is: exp.hyp_refuted}
   b_check_immune_parts: {is: exp.item_done}
@@ -654,6 +654,10 @@ individuals:
   o_sys_rna_post: {is: exp.observation}
   o_sys_rna_law: {is: exp.observation}
   o_sys_rna_off: {is: exp.observation}
+  o_sys_rbl_errors: {is: exp.observation}
+  o_sys_rbl_laws: {is: exp.observation}
+  o_sys_rbl_diag: {is: exp.observation}
+  o_sys_rbl_in: {is: exp.observation}
   o_sys_cip_control: {is: exp.observation}
   o_sys_cip_errors: {is: exp.observation}
   o_sys_cip_same: {is: exp.observation}
@@ -1297,6 +1301,11 @@ facts:
   - {is: v_refer, from: o_sys_rna_law, to: {is: v_level, from: sys_rule_nouns_agree_runtime.N_law_specific.mean_value, to: 0.0}}
   - {is: exp.v_contradict, from: o_sys_rna_law, to: h_rule_nouns_agree_runtime}
   - {is: v_refer, from: o_sys_rna_off, to: {is: v_level, from: sys_rule_nouns_agree_runtime.N_off_agree.mean_value, to: 0.0}}
+  - {is: v_refer, from: o_sys_rbl_errors, to: {is: v_level, from: sys_required_by_laws.X_errors.mean_value, to: 3.0}}
+  - {is: exp.v_contradict, from: o_sys_rbl_errors, to: h_required_by_laws}
+  - {is: v_refer, from: o_sys_rbl_laws, to: {is: v_level, from: sys_required_by_laws.X_laws_same.mean_value, to: 1.0}}
+  - {is: v_refer, from: o_sys_rbl_diag, to: {is: v_level, from: sys_required_by_laws.X_diag_agree.mean_value, to: 3.0}}
+  - {is: v_refer, from: o_sys_rbl_in, to: {is: v_level, from: sys_required_by_laws.X_laws_in_R.mean_value, to: 1.0}}
   - {is: v_refer, from: o_sys_apv_other_phrase, to: {is: v_level, from: sys_mod_phrase_any_verb.n_other_phrase.mean_value, to: 481.0}}
   - {is: exp.v_support, from: o_sys_apv_other_phrase, to: h_mod_phrase_any_verb}
   - {is: v_refer, from: o_sys_apv_other, to: {is: v_level, from: sys_mod_phrase_any_verb.n_other.mean_value, to: 481.0}}
