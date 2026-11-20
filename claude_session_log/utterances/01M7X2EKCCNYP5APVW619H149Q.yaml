@@ -1,0 +1,32 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-20T18:10:42.188Z（UTC）
+individuals:
+  01M7X2EKCCNYP5APVW619H149Q:
+    is: model_utterance
+    display: 発言 3199
+    val:
+      order: 3199
+      text: |
+        h_wider_verb_lower（#535）は反証でした（PR #537、Draft を外して確認待ちです）。端の広い動詞を下の層へ移す解き方は、二つのうち一つでしか通りませんでした。
+
+        **測ったこと**
+        一時の写しの上で、端の広い動詞を ontology へ移し、狭い動詞をその下位にしました。
+        - M2：std.v_compute を移し、v_design をその下位にしました。tc（型検査）は通り、取りこぼしも余分も 0 でした。
+        - M1：exp.v_rely を移し、v_depend をその下位にしました。tc が落ち、役割 13 個すべてで「根拠となる定義がない」と出ました。
+
+        **落ちた理由**（検査器を読んで確かめました）
+        検査器は「依存する」を、名前ではなく式で探しています。条件は「occurrent の直下にあり、depend(from, to) を持ち、両端が continuant」です。v_depend を v_rely の下に入れると、この「直下」の条件に合う動詞がなくなります。そのため、役割の根拠が読めなくなります。
+
+        **含意**
+        検査器が自分の語を「直下」で探していることが、体系の上下の組み替えを縛っています。名前ではなく式で探す方向にはすでに来ていますが、式の中に「直下」という位置の条件が残っている、という読みです。
+
+        **新しい仮説**（#538、登録だけなので自動でマージされます）
+        - **h_checker_find_by_ancestry**：検査器が語を、直下ではなく包含と式で探せば、体系の上下を組み替えても検査が保たれる。対になる解き方は、上の層の広い動詞を下の動詞の特化として書き直す h_extends_follows_use（#536）で、登録済みです。
+
+        ロードマップでは、本線 a の識別子化（d_cscl_display_derived の下）を進めました。h_checker_words_by_formula（#300）の系列にもつながる結果です。#529 は、手で確かめていただくのを待っています。
+facts:
+- {is: v_say, from: session_model, to: 01M7X2EKCCNYP5APVW619H149Q}
+- {is: exp.v_answer, from: 01M7X2EKCCNYP5APVW619H149Q, to: 01M7WWGV7ZZZW7ZQW70Z7XJP8V}
+- {is: v_refer, from: 01M7X2EKCCNYP5APVW619H149Q, to: std.v_compute}
+- {is: v_refer, from: 01M7X2EKCCNYP5APVW619H149Q, to: ontology.v_design}
+- {is: v_refer, from: 01M7X2EKCCNYP5APVW619H149Q, to: exp.v_rely}
+- {is: v_refer, from: 01M7X2EKCCNYP5APVW619H149Q, to: ontology.v_depend}
