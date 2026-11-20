@@ -1,0 +1,28 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-20T08:34:44.161Z（UTC）
+individuals:
+  01M7W1FZA1A12GBB8FAT1VKKXB:
+    is: model_utterance
+    display: 発言 2974
+    val:
+      order: 2974
+      text: |
+        h_with_needs_display（限定の with が指すものには表示語が要る）を確かめて、支持でした。ただし訂正が一度入っています。#464 は Draft を外してあり、訂正があるので手で見てほしいです。
+
+        **訂正の経緯**
+        - 最初の測り方は、個体の表示語を公理の個体からしか探していませんでした。そのため、領域の個体（sunday・honshu・opt_no など）の表示語が見つからず、「455 のうち 441 にしか表示語がない」と出ました。
+        - この結果は誤りとして開示し、領域のファイルの個体からも探す訂正を、実行の前に commit しました。
+
+        **結果（訂正後）**
+        - with が指す 455 は、ノードも個体も、すべて表示語を持っていました。
+        - with が個体の部分の限定は 10 あり、そのうち動詞の形が合う 7 はすべて句を訳せました。
+        - 訳せた限定は 77 から 84 に増え、新しい誤りは出ませんでした。
+
+        **わかったこと**
+        - #459 で原因 (c)「with が個体で表示語がない」と読んだのは、体系の欠けではなく、測り方の見落としでした。#459 の反証は (a) と (b) だけでも成り立つので、変わりません。
+        - 残る 15 は二つです。with のない限定の 7 は #461（h_mod_phrase_without_with）で、動詞の表示語の形の 8 は #462（h_verb_stem_from_signature）で確かめます。
+        - 型検査器からは、領域の個体の表示語に届きません。表示語を式から訳す仕事を検査器に置くなら、個体の表示語も検査器が持つ必要があります。新しい仮説にはせず、#464 の本文に書きました。
+
+        ロードマップ: a（識別子化）で h_with_needs_display を確かめました（#464）。#455・#456・#464 が手でのマージ待ちで、次は h_mod_phrase_without_with（#461）と h_verb_stem_from_signature（#462）です。
+facts:
+- {is: v_say, from: session_model, to: 01M7W1FZA1A12GBB8FAT1VKKXB}
+- {is: exp.v_answer, from: 01M7W1FZA1A12GBB8FAT1VKKXB, to: 01M7VECCMJ5B7GFVNBSFS4909M}
