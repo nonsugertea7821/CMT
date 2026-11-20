@@ -1,0 +1,25 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-20T01:45:07.571Z（UTC）
+individuals:
+  01M7VA1YQKRZ820DZD0AQMQXZA:
+    is: model_utterance
+    display: 発言 2818
+    val:
+      order: 2818
+      text: |
+        難しくありません。その仕組みはもうあって、今日も動いています。
+
+        - **仕組み:** ワークフロー `conflict-notice`（`.github/workflows/conflict_notice.yml` と `.github/scripts/conflict_notice.py`）が、main への push のたびに開いている PR を調べます。main と衝突している PR があれば、「main と衝突しています」とコメントします。
+        - **今日の例:** #420 がマージされた直後、#418 にこのコメントが付きました（01:40）。
+        - **届く先:**
+          - このセッション: PR を見張っている間は、コメントとして届きます。PR の衝突そのものは届きませんが、コメントは届くので、それを拾う作りです。
+          - あなた: PR の作者で assignee でもあるので、GitHub の通知でも届くはずです。
+
+        穴は三つあります。
+        - **計算が遅れたとき:** GitHub が衝突の有無を計算し終えるまで、約 60 秒しか待ちません。間に合わなければ、その push では知らせずに終わります。そのあと main への push がなければ、気づかれないままになります。
+        - **セッションが止まっているとき:** 私の側には届かないので、気づくのは次の周回か、あなたの GitHub の通知になります。
+        - **PR のないブランチ:** セッションの記録のブランチのような、PR を立てていないブランチは調べません。
+
+        一つ目は、待つ時間を延ばすか、計算が終わらなかった PR を後でもう一度調べるようにすれば塞げます。ほかの二つは今の作りでも困らないと考えています。直したほうがよければ、仮説として登録してから PR にします。
+facts:
+- {is: v_say, from: session_model, to: 01M7VA1YQKRZ820DZD0AQMQXZA}
+- {is: exp.v_answer, from: 01M7VA1YQKRZ820DZD0AQMQXZA, to: 01M7VA1GS7PJCFC4SQ8VJCBVWM}
