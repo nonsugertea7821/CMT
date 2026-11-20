@@ -1,0 +1,40 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-20T18:42:37.782Z（UTC）
+individuals:
+  01M7X4922PTH9C8PZND22G5YS5:
+    is: model_utterance
+    display: 発言 3211
+    val:
+      order: 3211
+      text: |
+        h_checker_find_by_ancestry を確かめ、**支持**でした（#540）。Draft は外してあります。
+
+        **結果**
+        一時の写しで、検査器と体系の組み合わせを 4 通り作り、それぞれ tc を走らせました。体系のファイルと検査器は書き換えていません。m1 は、前回の実験と同じく exp.v_rely を ontology へ移し、v_depend をその下に置いた体系です。
+
+        | | 体系そのまま | m1 |
+        |---|---|---|
+        | 今の検査器 | 通る | 落ちる |
+        | 祖先で探す検査器 | 通る | 通る |
+
+        - 前回 m1 が落ちた原因は一点でした。最初の誤りは「依存する が式から1つに決まらない」で、そこから特定依存持続体と役割の根拠が連鎖して落ちていました。
+        - 依存する を探す範囲を「occurrent の直下」から「occurrent を祖先に持つもの全部」に広げても、候補は 1 つに決まりました。v_rely の端は any、v_depend の端は continuant なので、端の条件で区別がつきます。
+
+        **含意**
+        示せたのは、名前ではなく式（端の条件）で語を見つけていれば、層の置き場所を変えても検査器が壊れないことです。広い動詞を下の層に置く道が開きます。
+
+        まだ確かめていないことが二つあります。
+        - 前回は tc で止まったので、動詞の識別まで届いていません。
+        - 関係づける など、ほかの語も同じ「直下」の探し方をしているので、同じ置き換えが要るかは未検証です。
+
+        **新しい仮説**
+        h_wider_verb_lower_by_ancestry を登録だけの PR にしました（#541）。祖先で探す検査器のもとで m1 を置き、動詞の識別まで確かめます。#533 で外に出た対（ontology.v_depend、subj の 3 つ、syntax.v_use）が説明されるかを見ます。d_cscl_display_derived に結んであります。
+
+        検査器を実際に変えるのは別の PR にし、あなたに見てもらいます。#529 は引き続きあなたの確認待ちです。
+
+        本線 a 識別子化、d_cscl_display_derived の下（検査器が語を式で見つける段）。
+facts:
+- {is: v_say, from: session_model, to: 01M7X4922PTH9C8PZND22G5YS5}
+- {is: exp.v_answer, from: 01M7X4922PTH9C8PZND22G5YS5, to: 01M7WWGV7ZZZW7ZQW70Z7XJP8V}
+- {is: v_refer, from: 01M7X4922PTH9C8PZND22G5YS5, to: exp.v_rely}
+- {is: v_refer, from: 01M7X4922PTH9C8PZND22G5YS5, to: ontology.v_depend}
+- {is: v_refer, from: 01M7X4922PTH9C8PZND22G5YS5, to: syntax.v_use}
