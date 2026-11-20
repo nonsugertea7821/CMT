@@ -1,0 +1,177 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-20T13:18:33.464Z（UTC）
+individuals:
+  01M7WHQNFR9ZCV5BSHABZFVEHF:
+    is: session_summary
+    display: 発言 3095
+    val:
+      order: 3095
+      text: |
+        This session is being continued from a previous conversation that ran out of context. The summary below covers the earlier portion of the conversation.
+
+        <system-reminder>
+        <tools-used-before-summary>AskUserQuestion, Bash, Edit, Grep, Read, ReadNotifications, Skill, TaskStop, ToolSearch, WebFetch, WebSearch, Write, mcp__claude-code-remote__create_trigger, mcp__claude-code-remote__delete_trigger, mcp__claude-code-remote__get_trigger, mcp__claude-code-remote__list_repos, mcp__claude-code-remote__read_documentation, mcp__claude-code-remote__send_later, mcp__claude-code-remote__subscribe_pr_activity, mcp__claude-code-remote__unsubscribe_pr_activity, mcp__claude-code-remote__update_trigger, mcp__github__actions_get, mcp__github__actions_list, mcp__github__add_issue_comment, mcp__github__create_pull_request, mcp__github__get_job_logs, mcp__github__issue_read, mcp__github__issue_write, mcp__github__list_issue_types, mcp__github__list_issues, mcp__github__list_pull_requests, mcp__github__pull_request_read, mcp__github__update_pull_request</tools-used-before-summary>
+        </system-reminder>
+        Summary:
+        1. Primary Request and Intent:
+
+        **Standing rules (still in force)**
+        - Repo: nonsugertea7821/CMT at /home/user/CMT. Python: /home/user/venv/bin/python.
+        - Reply in plain, natural Japanese. Don't overclaim. Give interpretation.
+        - Restore files with `git show <rev>:<path> > <path>`. Never use checkout or stash to restore; `git switch` for branches is fine.
+        - Commit trailer:
+          `Co-Authored-By: Claude [モデル名を伏せた] <[メールアドレスを伏せた]>`
+          `Claude-Session: https://claude.ai/code/session_015KRKt6TNJZ7ZsQmEknANXK`
+        - PR body ends with `🤖 Generated with [Claude Code](https://claude.com/claude-code)`, a blank line, then the session URL.
+        - No personal info and no model identifiers in pushed artifacts.
+        - Claude never merges.
+        - Every PR I open:
+          - Call subscribe_pr_activity.
+          - Call issue_write update with assignees ["nonsugertea7821"].
+        - After a merge: `git fetch -q --prune origin && git switch -q main && git merge -q --ff-only origin/main && git branch -D <branch>`.
+        - No comments in system yaml.
+        - Never rerun recorded experiment scripts that overwrite results. Exploratory scratchpad analysis that doesn't write the results file is acceptable if disclosed.
+        - Use `git add -f` for exp/experiments files.
+        - CI belongs to GitHub.
+
+        **Hypothesis registration**
+        - Anything I think "should be done" is registered as a hypothesis first.
+        - New hypotheses get v_ground to a decision in the same PR, or are marked 「わき道」.
+        - Registration-only PRs:
+          - Use a branch NOT starting with `claude/h_` (e.g. `claude/register-...`).
+          - Contain only h_, b_, v_refer, v_check and v_ground lines.
+        - Hypothesis test PRs:
+          - Use branch `claude/h_<name>` and open a Draft PR with "Closes #<issue>".
+          - The first commit is the script only; the results commit follows; then undraft.
+          - Corrections are appended to the procedure docstring, written to a new output file, and disclosed. They require manual review.
+        - If the preregistration says "1つでも外れれば反証", don't add v_support links (ec would compute mixed).
+        - Don't ask permission in conversation. Decide and write the rationale in the PR.
+
+        **Trigger**
+        - trig_01L92Xn7LSTHrmqt7enEcCPG; next fire is 13:48Z.
+        - At each fire, first call update_trigger with run_once_at ≈ now+31min and enabled: true.
+        - Then follow mainline a, record results, look for implications and register new hypotheses, report in Japanese with a roadmap line.
+
+        **User's latest stance**: identification work grows linearly in time but proceed sequentially (「時間かかるだけなら逐次進めればいいか」).
+
+        2. Key Technical Concepts:
+        - tc: cscl/bootstrap/type_checker/type_checker.py; success prints "検査に成功".
+        - ec: exp/src/exp_check.py; silent, exit 0. It computes hypothesis state from support/contradict links.
+        - v_agree holds: refer(from,new), refer(to,new). Agreement is measured as common `refer` targets in `F.by["refer"]` after `tc.evaluate(tc.law_rules(O), F, tc.variables(O))`, with specificity n_src ≤ 20.
+        - Lists in from/to are read as a cross product (sync_issues: `for a in ss for b in oo`). For pairwise claims, write multiple v_refer lines from the same h_ (precedent: h_layers_unhardcode).
+        - Variant N (from #484) is the named-mod system:
+          - premise→refer_from_pre, derived→refer_from_post, required→refer_from_always, pre_rule→refer_from_pre.
+          - The checker uses RULE_ROLE.
+          - Reused via `import sys_rule_roles_by_named_mod as NM; NM.edit_system(d); NM.edit_checker(d)`.
+        - PREV = sys_rule_roles_by_signature provides copy_tree(d) and probe(d) (returns errors, ec_errors, laws_hash, rel list, etc.).
+        - merge_parts (domain `parts:` glob) exists only on branch claude/session-log-nonsugertea7821, not on main. syntax.yaml grammar.domain = [domain, axes, nodes, individuals, facts] lacks `parts`.
+        - The checker names facts by position ("ifact exp/src/exp.yaml <n>").
+        - auto_merge.py R2 limits status files to claims.yaml and exp.yaml. A preregistered script touched by more than one commit forces manual review.
+        - Measurement families in exp.yaml:
+          - Individuals: F {is: measurement_family}, F_cond family_axis, F_cond_<key> axis_value. Insert them before `  sys_any_by_entail_before_fix:`.
+          - Facts: v_file_of F.json, v_rows_of [rows], v_axis_of, v_value_of+v_spell per key, v_entry_of '{cond}', v_metric_of mean_value. Insert them before the `v_file_of, from: sys_any_by_entail_before_fix` line.
+        - Observations in claims.yaml: `o_x: {is: exp.observation}`, plus `{is: v_refer, from: o_x, to: {is: v_level, from: F.key.mean_value, to: <float>}}` and exp.v_contradict/v_support.
+
+        3. Files and Code Sections:
+        - **exp/experiments/sys_premise_agrees_pre_rule.py** (+ results json) — #485, merged.
+          - PROBE collects refer rows and computes A, B, C, n_src. Verdict on L.
+        - **exp/experiments/sys_rule_nouns_agree_runtime.py** (+ results json) — #488, merged.
+          - NOUNS = [syntax.premise, syntax.derived, syntax.required]; RUNS = [runtime.pre_rule, runtime.post_rule, runtime.law_check].
+          - Computes pairs with diag flags; summary keys N_errors, N_diag_agree, N_off_agree, N_pre/post/law_specific, L_*.
+        - **exp/experiments/sys_check_immune_parts.py** (+ sys_check_immune_parts.json, the failed run, and sys_check_immune_parts_fix1.json) — #496, merged.
+          - edit_checker inserts MERGE (merge_parts + read_file) before `def load(name):`.
+          - It wraps LOAD_OLD with merge_parts and replaces `yload((SPEC / name).read_text(encoding="utf-8"))` and `yload(open(SPEC / name))` with read_file(name). After the fix, the replacement happens BEFORE the insertion.
+          - split_exp moves family individuals and facts (ids via v_axis_of and v_value_of) to exp/src/families/<F>.yaml and adds `parts: exp/src/families/*.yaml`.
+        - **cscl/design/claims.yaml** current state (main):
+          - h_premise_agrees_pre_rule refuted, observations o_sys_pap_*.
+          - h_rule_nouns_agree_runtime refuted, with 3 v_refer lines; observations o_sys_rna_errors/pre/post/law/off (only law has v_contradict).
+          - h_law_check_by_always and h_required_by_laws untested; they sit before h_layers_unhardcode.
+          - h_check_immune_parts refuted, observations o_sys_cip_control/errors/same/lines.
+          - Pending in #497: h_fact_id_by_content and h_grammar_names_parts, inserted before h_layers_unhardcode.
+        - **exp/src/exp.yaml**:
+          - Families sys_premise_agrees_pre_rule, sys_rule_nouns_agree_runtime and sys_check_immune_parts_fix1.
+          - h_axis_value_from_result (untested, わき道) sits before h_model_reads_by_name.
+        - Relevant definitions:
+          - syntax.yaml line 35: `refer_from_laws: {display: 法則へ述べる（始点）, extends: quality, of: [v_refer, from], with: laws}`.
+          - syntax.yaml line 111: always node.
+          - syntax.yaml line 116: laws node.
+          - syntax.yaml line 121: `required: {..., mod: {of: [v_require, to], with: law_rule}, many: true}`.
+          - runtime.yaml line 24: `post_rule: {..., mod: refer_from_post}`.
+          - runtime.yaml line 26: `law_check: {display: 法則を確かめる時点, extends: strategy, mod: refer_from_laws}`.
+
+        4. Errors and fixes:
+        - **#486 merge conflict with #485.** Resolved by keeping main's state lines plus the new lines (python conflict resolver).
+        - **Cross-product formula** in h_rule_nouns_agree_runtime. Corrected before results to 3 v_refer lines; disclosed as a correction (manual merge).
+        - **ec computed mixed** for h_rule_nouns_agree_runtime. Removed the v_support lines, per "1つでも外れれば反証".
+        - **RecursionError in sys_check_immune_parts.** The replacement also hit read_file's own body. Kept the first json, appended 訂正 1, reordered, output to _fix1.
+        - **Bot conflict comment on #486.** It was stale (it referred to the pre-merge head); no action needed.
+
+        5. Problem Solving:
+        - Agreement of law-rule role nouns with runtime strategies appears only when the nouns are written by content (named mods). In N, pre and post agree; required (always) vs law_check (laws) do not.
+        - Splitting exp.yaml preserves content, but two things block it:
+          - The grammar lacks `parts`.
+          - Fact ids are positional.
+        - Next fixes are registered as hypotheses.
+
+        6. All user messages:
+        - 「exp.yamlが10000行を超えたらさすがに読み込みがきついんじゃないか？ そんなことないかな」
+        - 「削減もいいけど個体の数量ってそれ自体が実験のデータになるんじゃないの session_logと同じ方法でファイル分けた方が手っ取り早くないか？」
+        - 「式の識別子化と相互依存か 厄介だな……識別子化のための情報を集めるほど線形に時間が伸びる」
+        - 「とはいえ時間かかるだけなら逐次進めればいいか。」
+        - (Other turns were trigger fires and GitHub notifications, not user messages.)
+
+        7. Pending Tasks:
+        - Watch PR #497 (registration: h_fact_id_by_content, h_grammar_names_parts). After it merges, delete local branch claude/register-parts-pair.
+        - Test h_law_check_by_always (issue #490) and h_required_by_laws (issue #491), one branch each.
+        - Later: h_fact_id_by_content (then splitting exp.yaml); h_grammar_names_parts; h_axis_value_from_result (わき道).
+        - Later: apply the named-mod change to the real system/checker (manual review).
+        - Leave old Draft PRs #282, #286, #287, #289 alone.
+
+        8. Current Work:
+        Trigger fired 13:16 and was re-armed to 13:48. I was preparing to test h_law_check_by_always (#490) and h_required_by_laws (#491).
+        - Verified refer_from_laws, law_check and required definitions; local is on main at 8419a9c.
+        - Plan: a script per hypothesis based on variant N (NM.edit_system and NM.edit_checker).
+          - Variant A (h_law_check_by_always): change the runtime.yaml law_check `mod: refer_from_laws` to `mod: refer_from_always`.
+          - Variant B (h_required_by_laws): give required an additional mod refer_from_laws, e.g. a mod list [refer_from_always, refer_from_laws].
+        - Measures: errors, ec_errors, laws_hash vs N, and the required↔law_check specific common referent. The other diagonal pairs should still agree and the off-diagonal pairs stay 0.
+        - Supported if the target pair agrees with errors 0 and nothing else breaks.
+
+        9. Optional Next Step:
+        Create branch `claude/h_law_check_by_always` from main and open a Draft PR "Closes #490". The first commit is the preregistration script exp/experiments/sys_law_check_by_always.py, built on N + law_check mod → refer_from_always, measuring pair agreement as in sys_rule_nouns_agree_runtime. Then run it, record, and undraft. Repeat for h_required_by_laws (#491) on `claude/h_required_by_laws`. This follows the trigger's step 5 and the last action: 「#489 で登録した2つ（h_law_check_by_always と h_required_by_laws）を確かめます」.
+
+        If you need specific details from before compaction (like exact code snippets, error messages, or content you generated), read the full transcript at: /root/.claude/projects/-home-user-CMT/e05d2140-ce91-515f-a5fb-e6251e13d406.jsonl
+        Continue the conversation from where it left off without asking the user any further questions. Resume directly — do not acknowledge the summary, do not recap what was happening, do not preface with "I'll continue" or similar. Pick up the last task as if the break never happened.
+
+        The messages after this summary are the most recent messages from before compaction, kept verbatim. The summary was written without seeing them, so something it says has not happened yet may already have happened in them.
+facts:
+- {is: v_say, from: session_model, to: 01M7WHQNFR9ZCV5BSHABZFVEHF}
+- {is: v_refer, from: 01M7WHQNFR9ZCV5BSHABZFVEHF, to: exp.v_ground}
+- {is: v_refer, from: 01M7WHQNFR9ZCV5BSHABZFVEHF, to: ontology.v_refer}
+- {is: v_refer, from: 01M7WHQNFR9ZCV5BSHABZFVEHF, to: exp.v_check}
+- {is: v_refer, from: 01M7WHQNFR9ZCV5BSHABZFVEHF, to: exp.v_support}
+- {is: v_refer, from: 01M7WHQNFR9ZCV5BSHABZFVEHF, to: lang.type_checker}
+- {is: v_refer, from: 01M7WHQNFR9ZCV5BSHABZFVEHF, to: ontology.v_agree}
+- {is: v_refer, from: 01M7WHQNFR9ZCV5BSHABZFVEHF, to: runtime.refer_from_post}
+- {is: v_refer, from: 01M7WHQNFR9ZCV5BSHABZFVEHF, to: runtime.pre_rule}
+- {is: v_refer, from: 01M7WHQNFR9ZCV5BSHABZFVEHF, to: syntax.parts}
+- {is: v_refer, from: 01M7WHQNFR9ZCV5BSHABZFVEHF, to: exp.measurement_family}
+- {is: v_refer, from: 01M7WHQNFR9ZCV5BSHABZFVEHF, to: exp.family_axis}
+- {is: v_refer, from: 01M7WHQNFR9ZCV5BSHABZFVEHF, to: exp.axis_value}
+- {is: v_refer, from: 01M7WHQNFR9ZCV5BSHABZFVEHF, to: exp.v_file_of}
+- {is: v_refer, from: 01M7WHQNFR9ZCV5BSHABZFVEHF, to: exp.v_rows_of}
+- {is: v_refer, from: 01M7WHQNFR9ZCV5BSHABZFVEHF, to: exp.v_axis_of}
+- {is: v_refer, from: 01M7WHQNFR9ZCV5BSHABZFVEHF, to: exp.v_value_of}
+- {is: v_refer, from: 01M7WHQNFR9ZCV5BSHABZFVEHF, to: exp.v_spell}
+- {is: v_refer, from: 01M7WHQNFR9ZCV5BSHABZFVEHF, to: exp.v_entry_of}
+- {is: v_refer, from: 01M7WHQNFR9ZCV5BSHABZFVEHF, to: exp.v_metric_of}
+- {is: v_refer, from: 01M7WHQNFR9ZCV5BSHABZFVEHF, to: exp.mean_value}
+- {is: v_refer, from: 01M7WHQNFR9ZCV5BSHABZFVEHF, to: exp.observation}
+- {is: v_refer, from: 01M7WHQNFR9ZCV5BSHABZFVEHF, to: ontology.v_level}
+- {is: v_refer, from: 01M7WHQNFR9ZCV5BSHABZFVEHF, to: exp.v_contradict}
+- {is: v_refer, from: 01M7WHQNFR9ZCV5BSHABZFVEHF, to: syntax.premise}
+- {is: v_refer, from: 01M7WHQNFR9ZCV5BSHABZFVEHF, to: syntax.derived}
+- {is: v_refer, from: 01M7WHQNFR9ZCV5BSHABZFVEHF, to: syntax.required}
+- {is: v_refer, from: 01M7WHQNFR9ZCV5BSHABZFVEHF, to: runtime.post_rule}
+- {is: v_refer, from: 01M7WHQNFR9ZCV5BSHABZFVEHF, to: runtime.law_check}
+- {is: v_refer, from: 01M7WHQNFR9ZCV5BSHABZFVEHF, to: runtime.refer_from_laws}
+- {is: v_refer, from: 01M7WHQNFR9ZCV5BSHABZFVEHF, to: syntax.v_require}
+- {is: v_refer, from: 01M7WHQNFR9ZCV5BSHABZFVEHF, to: syntax.law_rule}

@@ -1,0 +1,30 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-20T13:26:47.634Z（UTC）
+individuals:
+  01M7WJ6R2JVWXA9RMYHCTYE5HB:
+    is: model_utterance
+    display: 発言 3101
+    val:
+      order: 3101
+      text: |
+        #488 で残っていた食い違いを解く2つの向き、#490 と #491 を確かめました。どちらも体系の実ファイルには手を入れず、写しの上で変えて測っています。
+
+        - **h_law_check_by_always（#500）: 支持。** 実行時の「法則を確かめる時点」(law_check) の中身を laws から always（どのステップでも成り立つ状態）に替えました。
+          - これで、法則が求める文 (required) と共通の相手 always を持つようになりました。
+          - 規則の名詞と実行時点の対応する3組がすべて一致し、対応しない組の一致は 0 のままです。
+          - エラーは 0 で、法則の検査結果も基準と同じでした。
+          - 読み取れるのは、law_check が laws を指していても検査の振る舞いには効いていなかった、ということです。
+        - **h_required_by_laws（#501）: 反証。** 逆向きに、required の中身に laws を足しました。
+          - 一致の形はでき、対応する3組とも一致しました。
+          - ただしエラーが 3 件出ました。「1つのノードが足せる限定は1つだけ」という法則に反するためです。
+          - この向きは、その法則を変えない限り取れません。
+
+        #501 には測り方の都合で、#500 と同じ中身のスクリプトを実行前に足しました。中身が同一なので、どちらを先にマージしても衝突しません。
+
+        2つとも tc と ec は手元で通り、Draft を外してあります。訂正はないので、自動マージの条件に当たれば自動で入ります。外れたものは確認とマージをお願いします。
+
+        ロードマップ: 規則の役割語と実行時点を揃える件は、今回で決着しました。名前のある中身の書き方（変種 N）に、law_check の中身を always にする変更を加えれば、法則に反さずに3組とも揃います。残りは exp.yaml の分割（事実の識別子を位置でなく中身にする件と、文法に `parts` を足す件。登録は #497 で確認待ち）と、この変更を実際の体系に入れる手作業の確認です。
+facts:
+- {is: v_say, from: session_model, to: 01M7WJ6R2JVWXA9RMYHCTYE5HB}
+- {is: exp.v_answer, from: 01M7WJ6R2JVWXA9RMYHCTYE5HB, to: 01M7WGV5MB63ZH3P6JTJHH8QAR}
+- {is: v_refer, from: 01M7WJ6R2JVWXA9RMYHCTYE5HB, to: runtime.law_check}
+- {is: v_refer, from: 01M7WJ6R2JVWXA9RMYHCTYE5HB, to: syntax.parts}
