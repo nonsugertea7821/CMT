@@ -1,0 +1,21 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-20T00:47:52.816Z（UTC）
+individuals:
+  01M7V6S4FG35W1K51AHBPVQYYV:
+    is: model_utterance
+    display: 発言 2779
+    val:
+      order: 2779
+      text: |
+        #387（h_decision_link_by_role）がマージされたので、main を合わせて手元のブランチを消しました。続けて a0-3（#379 で結べなかった決定どうしの関係を足す）を試しました。
+
+        - **d_metric から二つの決定へ:** #387 で many の役割の書き方（`v_depend` の終点を並びにする）が入ったので、`d_metric → [d_road_region, d_road_checker]` はすでに main で通っています。
+        - **d_road_japanese → 識別子化への依存:** 一時の branch で `v_depend` を足すと、tc が「関係 continuant の事実が2つ以上ある」で落ちました。d_road_japanese には `v_raise → d_metric` がすでにあり、別の動詞で終点の種類が同じ二つめの事実は、今の検査器では残せません。これは並びにしても解けません。
+
+        二つめの関係は、検査器の側を直す #395（h_fact_slot_keeps_each_verb）がマージされるまで足せません。#395 は手で見てもらう待ちです。試した変更は戻し、PR は立てていません。#395 が入ったら、この一行を手で見てもらう PR として出します。
+
+        ロードマップ a0（決定から関係を二つ出す制限）: 同じ動詞のぶんは #387 で解けました。別の動詞のぶんは #395 待ちです。
+facts:
+- {is: v_say, from: session_model, to: 01M7V6S4FG35W1K51AHBPVQYYV}
+- {is: exp.v_answer, from: 01M7V6S4FG35W1K51AHBPVQYYV, to: 01M7TA7A145QS5NA0XWZR9ST0Q}
+- {is: v_refer, from: 01M7V6S4FG35W1K51AHBPVQYYV, to: ontology.v_depend}
+- {is: v_refer, from: 01M7V6S4FG35W1K51AHBPVQYYV, to: exp.v_raise}
