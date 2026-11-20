@@ -363,7 +363,7 @@ individuals:
   b_verb_shape_two_phase: {is: exp.item_queued}
   h_refer_by_projection: {is: exp.hyp_untested}
   b_refer_by_projection: {is: exp.item_queued}
-  h_ends_by_subsumption: {is: exp.hyp_untested}
+  h_ends_by_subsumption: {is: exp.hyp_supported}
   b_ends_by_subsumption: {is: exp.item_queued}
   h_names_up_to_relabel: {is: exp.hyp_untested}
   b_names_up_to_relabel: {is: exp.item_queued}
@@ -672,6 +672,10 @@ individuals:
   o_sys_rna_post: {is: exp.observation}
   o_sys_rna_law: {is: exp.observation}
   o_sys_rna_off: {is: exp.observation}
+  o_sys_ebs_targets: {is: exp.observation}
+  o_sys_ebs_off: {is: exp.observation}
+  o_sys_ebs_refs_off: {is: exp.observation}
+  o_sys_ebs_extra: {is: exp.observation}
   o_sys_sne_targets: {is: exp.observation}
   o_sys_sne_off: {is: exp.observation}
   o_sys_sne_refs_off: {is: exp.observation}
@@ -1345,6 +1349,12 @@ facts:
   - {is: v_refer, from: o_sys_rna_law, to: {is: v_level, from: sys_rule_nouns_agree_runtime.N_law_specific.mean_value, to: 0.0}}
   - {is: exp.v_contradict, from: o_sys_rna_law, to: h_rule_nouns_agree_runtime}
   - {is: v_refer, from: o_sys_rna_off, to: {is: v_level, from: sys_rule_nouns_agree_runtime.N_off_agree.mean_value, to: 0.0}}
+  - {is: v_refer, from: o_sys_ebs_targets, to: {is: v_level, from: sys_ends_by_subsumption.n_targets.mean_value, to: 16.0}}
+  - {is: v_refer, from: o_sys_ebs_off, to: {is: v_level, from: sys_ends_by_subsumption.n_targets_off.mean_value, to: 0.0}}
+  - {is: exp.v_support, from: o_sys_ebs_off, to: h_ends_by_subsumption}
+  - {is: v_refer, from: o_sys_ebs_refs_off, to: {is: v_level, from: sys_ends_by_subsumption.n_refs_off.mean_value, to: 0.0}}
+  - {is: exp.v_support, from: o_sys_ebs_refs_off, to: h_ends_by_subsumption}
+  - {is: v_refer, from: o_sys_ebs_extra, to: {is: v_level, from: sys_ends_by_subsumption.n_targets_extra.mean_value, to: 6.0}}
   - {is: v_refer, from: o_sys_sne_targets, to: {is: v_level, from: sys_shape_needs_ends.n_targets.mean_value, to: 16.0}}
   - {is: v_refer, from: o_sys_sne_off, to: {is: v_level, from: sys_shape_needs_ends.n_targets_off.mean_value, to: 8.0}}
   - {is: exp.v_contradict, from: o_sys_sne_off, to: h_shape_needs_ends}
