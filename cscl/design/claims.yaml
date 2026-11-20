@@ -152,8 +152,8 @@ individuals:
   b_part_display_from_formula: {is: exp.item_queued}
   h_stratified_by_rule: {is: exp.hyp_supported}
   b_stratified_by_rule: {is: exp.item_done}
-  h_part_display_own_phrase: {is: exp.hyp_untested}
-  b_part_display_own_phrase: {is: exp.item_queued}
+  h_part_display_own_phrase: {is: exp.hyp_supported}
+  b_part_display_own_phrase: {is: exp.item_done}
   h_display_as_part_tree: {is: exp.hyp_untested}
   b_display_as_part_tree: {is: exp.item_queued}
   h_comment_ban: {is: exp.hyp_supported}
@@ -541,6 +541,11 @@ individuals:
   o_sys_pdw_stage_rev_agree: {is: exp.observation}
   o_sys_pdw_neg_quiet_agree: {is: exp.observation}
   o_sys_pdw_right_quiet_agree: {is: exp.observation}
+  o_sys_pdo_lost_none: {is: exp.observation}
+  o_sys_pdo_gained_none: {is: exp.observation}
+  o_sys_pdo_synth_ok: {is: exp.observation}
+  o_sys_pdo_derived_law_clean: {is: exp.observation}
+  o_sys_pdo_derived_clean: {is: exp.observation}
   o_sys_any_by_entail_passes_checks: {is: exp.observation}
   o_sys_any_by_entail_passes_ec: {is: exp.observation}
   o_sys_any_by_entail_ideal: {is: exp.observation}
@@ -1027,6 +1032,16 @@ facts:
   - {is: exp.v_check, from: b_part_display_from_formula, to: h_part_display_from_formula}
   - {is: v_refer, from: h_part_display_own_phrase, to: {is: v_depend, from: syntax.display, to: [syntax.holds, syntax.extends]}}
   - {is: exp.v_check, from: b_part_display_own_phrase, to: h_part_display_own_phrase}
+  - {is: v_refer, from: o_sys_pdo_lost_none, to: {is: v_level, from: sys_part_display_own_phrase.lost.mean_value, to: 0.0}}
+  - {is: exp.v_support, from: o_sys_pdo_lost_none, to: h_part_display_own_phrase}
+  - {is: v_refer, from: o_sys_pdo_gained_none, to: {is: v_level, from: sys_part_display_own_phrase.gained.mean_value, to: 0.0}}
+  - {is: exp.v_support, from: o_sys_pdo_gained_none, to: h_part_display_own_phrase}
+  - {is: v_refer, from: o_sys_pdo_synth_ok, to: {is: v_level, from: sys_part_display_own_phrase.ok_synth.mean_value, to: 1.0}}
+  - {is: exp.v_support, from: o_sys_pdo_synth_ok, to: h_part_display_own_phrase}
+  - {is: v_refer, from: o_sys_pdo_derived_law_clean, to: {is: v_level, from: sys_part_display_own_phrase.py_D.mean_value, to: 0.0}}
+  - {is: exp.v_support, from: o_sys_pdo_derived_law_clean, to: h_part_display_own_phrase}
+  - {is: v_refer, from: o_sys_pdo_derived_clean, to: {is: v_level, from: sys_part_display_own_phrase.new_D.mean_value, to: 0.0}}
+  - {is: exp.v_support, from: o_sys_pdo_derived_clean, to: h_part_display_own_phrase}
   - {is: v_refer, from: h_display_as_part_tree, to: {is: v_depend, from: syntax.display, to: syntax.expression_part}}
   - {is: exp.v_check, from: b_display_as_part_tree, to: h_display_as_part_tree}
   - {is: v_refer, from: h_stratified_by_rule, to: {is: v_depend, from: definition_cycle, to: syntax.law_relation}}
