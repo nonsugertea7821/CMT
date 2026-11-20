@@ -212,10 +212,10 @@ individuals:
   b_case_frame_formula: {is: exp.item_done}
   h_case_frame_by_relation: {is: exp.hyp_refuted}
   b_case_frame_by_relation: {is: exp.item_done}
-  h_concept_kind_excludes_verb: {is: exp.hyp_untested}
-  b_concept_kind_excludes_verb: {is: exp.item_queued}
-  h_concept_kind_frame_free: {is: exp.hyp_untested}
-  b_concept_kind_frame_free: {is: exp.item_queued}
+  h_concept_kind_excludes_verb: {is: exp.hyp_supported}
+  b_concept_kind_excludes_verb: {is: exp.item_done}
+  h_concept_kind_frame_free: {is: exp.hyp_refuted}
+  b_concept_kind_frame_free: {is: exp.item_done}
   h_case_frame_by_role: {is: exp.hyp_withdrawn}
   h_case_frame_by_signature: {is: exp.hyp_refuted}
   b_case_frame_by_signature: {is: exp.item_done}
@@ -466,6 +466,10 @@ individuals:
   o_sys_dows_a_reproduces: {is: exp.observation}
   o_sys_dows_b_fails: {is: exp.observation}
   o_sys_dows_c_fails: {is: exp.observation}
+  o_sys_ckp_e_no_both: {is: exp.observation}
+  o_sys_ckp_e_passes: {is: exp.observation}
+  o_sys_ckp_e_ec_passes: {is: exp.observation}
+  o_sys_ckp_n_fails: {is: exp.observation}
   o_sys_nf_agree: {is: exp.observation}
   o_sys_nf_base_clean: {is: exp.observation}
   o_sys_csh_given: {is: exp.observation}
@@ -695,6 +699,14 @@ facts:
   - {is: exp.v_check, from: b_concept_kind_excludes_verb, to: h_concept_kind_excludes_verb}
   - {is: v_refer, from: h_concept_kind_frame_free, to: {is: v_not_depend, from: concept_by_law, to: [syntax.pre, syntax.holds]}}
   - {is: exp.v_check, from: b_concept_kind_frame_free, to: h_concept_kind_frame_free}
+  - {is: v_refer, from: o_sys_ckp_e_no_both, to: {is: v_level, from: sys_concept_kind_pair.n_both_E.mean_value, to: 0.0}}
+  - {is: exp.v_support, from: o_sys_ckp_e_no_both, to: h_concept_kind_excludes_verb}
+  - {is: v_refer, from: o_sys_ckp_e_passes, to: {is: v_level, from: sys_concept_kind_pair.errors_E.mean_value, to: 0.0}}
+  - {is: exp.v_support, from: o_sys_ckp_e_passes, to: h_concept_kind_excludes_verb}
+  - {is: v_refer, from: o_sys_ckp_e_ec_passes, to: {is: v_level, from: sys_concept_kind_pair_fix.ec_fail_E.mean_value, to: 0.0}}
+  - {is: exp.v_support, from: o_sys_ckp_e_ec_passes, to: h_concept_kind_excludes_verb}
+  - {is: v_refer, from: o_sys_ckp_n_fails, to: {is: v_level, from: sys_concept_kind_pair.errors_N.mean_value, to: 937.0}}
+  - {is: exp.v_contradict, from: o_sys_ckp_n_fails, to: h_concept_kind_frame_free}
   - {is: v_refer, from: h_above_sound, to: {is: v_depend, from: above_falsity, to: mod_lack}}
   - {is: exp.v_check, from: b_above_sound, to: h_above_sound}
   - {is: v_refer, from: h_renaming_invariant, to: {is: v_not_depend, from: type_checker, to: name_choice}}
