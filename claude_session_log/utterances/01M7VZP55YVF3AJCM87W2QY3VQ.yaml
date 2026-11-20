@@ -1,0 +1,31 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-20T08:03:09.630Z（UTC）
+individuals:
+  01M7VZP55YVF3AJCM87W2QY3VQ:
+    is: model_utterance
+    display: 発言 2965
+    val:
+      order: 2965
+      text: |
+        h_mod_phrase_from_formula（限定ごとの句を、その限定の式から訳す）を確かめて、事前の判定どおり反証になりました。#459 は Draft を外してあり、マージを待っています。
+
+        **結果**
+        - 体系の中で部分を表す限定は 99 あり、そのうち 77 は式から句を訳せました。
+        - 訳した句を入れても、新しい誤りは出ませんでした。書き手が逆向きの句を書いた試しでも、訳が上書きするので法則には届きませんでした。訳し方そのものは働いています。
+        - 残りの 22 は訳せず、原因は次の三つです。
+          - (a) 限定に with（相手）がない。「何かを…」のような存在の限定です。例は ontology.continuant。
+          - (b) 動詞の表示語が「になる」で終わらない。例は「合成する」や「商品分類で分類される」です。語幹を表示語の語尾から切り出しているので、表示語の書き方に頼ってしまっています。
+          - (c) with が個体を指していて、その個体に表示語がない。例は opt_no や this_design。
+
+        **わかったこと**
+        「表示語は式から訳す」を限定の句まで広げるには、表示語の書き方に頼らず、式の側を足す必要があります。三つの原因に一つずつ仮説を立て、#460 で登録しました。概念は足していないので、auto-merge の対象です。
+        - h_mod_phrase_without_with: with のない限定の句は、数量化の指定から訳す。
+        - h_verb_stem_from_signature: 句の語幹は、動詞の表示語の語尾ではなく、動詞の始点と終点から訳す。
+        - h_with_needs_display: with が指すものには、個体であっても表示語が要る。
+
+        三つとも、ロードマップの決定 d_cscl_display_derived（表示語は式から訳す）の根拠に結びました。
+
+        ロードマップ: a（識別子化）は、#455・#456・#459 が手でのマージ待ちです。h_mod_phrase_from_formula は反証になり、次の仮説三つを #460 で登録しました。
+facts:
+- {is: v_say, from: session_model, to: 01M7VZP55YVF3AJCM87W2QY3VQ}
+- {is: exp.v_answer, from: 01M7VZP55YVF3AJCM87W2QY3VQ, to: 01M7VECCMJ5B7GFVNBSFS4909M}
+- {is: v_refer, from: 01M7VZP55YVF3AJCM87W2QY3VQ, to: ontology.continuant}
