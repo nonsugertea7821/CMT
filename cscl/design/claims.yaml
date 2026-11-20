@@ -125,8 +125,8 @@ individuals:
   b_negation_formula: {is: exp.item_done}
   h_law_given_as_rule: {is: exp.hyp_refuted}
   b_law_given_as_rule: {is: exp.item_done}
-  h_named_mod_by_writer: {is: exp.hyp_untested}
-  b_named_mod_by_writer: {is: exp.item_queued}
+  h_named_mod_by_writer: {is: exp.hyp_supported}
+  b_named_mod_by_writer: {is: exp.item_done}
   h_named_mod_is_spelling: {is: exp.hyp_supported}
   b_named_mod_is_spelling: {is: exp.item_done}
   h_checker_by_executor: {is: exp.hyp_untested}
@@ -500,6 +500,10 @@ individuals:
   o_sys_lgr_mixed_same_facts: {is: exp.observation}
   o_sys_nmis_other_errors_same: {is: exp.observation}
   o_sys_nmis_facts_only_written: {is: exp.observation}
+  o_sys_nmbw_mixed_agree: {is: exp.observation}
+  o_sys_nmbw_inline_agree: {is: exp.observation}
+  o_sys_nmbw_shared_agree: {is: exp.observation}
+  o_sys_nmbw_shared_clean: {is: exp.observation}
   o_sys_any_by_entail_passes_checks: {is: exp.observation}
   o_sys_any_by_entail_passes_ec: {is: exp.observation}
   o_sys_any_by_entail_ideal: {is: exp.observation}
@@ -923,6 +927,14 @@ facts:
   - {is: exp.v_contradict, from: o_sys_lgr_mixed_same_facts, to: h_law_given_as_rule}
   - {is: v_refer, from: h_named_mod_by_writer, to: {is: v_depend, from: syntax.law_relation, to: [syntax.mod, syntax.identifier]}}
   - {is: exp.v_check, from: b_named_mod_by_writer, to: h_named_mod_by_writer}
+  - {is: v_refer, from: o_sys_nmbw_mixed_agree, to: {is: v_level, from: sys_named_mod_by_writer_fix.agree_M.mean_value, to: 1.0}}
+  - {is: exp.v_support, from: o_sys_nmbw_mixed_agree, to: h_named_mod_by_writer}
+  - {is: v_refer, from: o_sys_nmbw_inline_agree, to: {is: v_level, from: sys_named_mod_by_writer_fix.agree_I.mean_value, to: 1.0}}
+  - {is: exp.v_support, from: o_sys_nmbw_inline_agree, to: h_named_mod_by_writer}
+  - {is: v_refer, from: o_sys_nmbw_shared_agree, to: {is: v_level, from: sys_named_mod_by_writer_fix.agree_S.mean_value, to: 1.0}}
+  - {is: exp.v_support, from: o_sys_nmbw_shared_agree, to: h_named_mod_by_writer}
+  - {is: v_refer, from: o_sys_nmbw_shared_clean, to: {is: v_level, from: sys_named_mod_by_writer_fix.other_S.mean_value, to: 0.0}}
+  - {is: exp.v_support, from: o_sys_nmbw_shared_clean, to: h_named_mod_by_writer}
   - {is: v_refer, from: h_named_mod_is_spelling, to: {is: v_not_depend, from: syntax.mod, to: syntax.identifier}}
   - {is: exp.v_check, from: b_named_mod_is_spelling, to: h_named_mod_is_spelling}
   - {is: v_refer, from: h_checker_by_executor, to: {is: v_depend, from: type_checker, to: runtime.executor}}
