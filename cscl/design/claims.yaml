@@ -367,7 +367,7 @@ individuals:
   b_domain_special_extends: {is: exp.item_queued}
   h_domain_in_formula: {is: exp.hyp_untested}
   b_domain_in_formula: {is: exp.item_queued}
-  h_domain_by_refer: {is: exp.hyp_untested}
+  h_domain_by_refer: {is: exp.hyp_refuted}
   b_domain_by_refer: {is: exp.item_queued}
   h_ends_by_subsumption: {is: exp.hyp_supported}
   b_ends_by_subsumption: {is: exp.item_queued}
@@ -678,6 +678,11 @@ individuals:
   o_sys_rna_post: {is: exp.observation}
   o_sys_rna_law: {is: exp.observation}
   o_sys_rna_off: {is: exp.observation}
+  o_sys_dbr_targets_off: {is: exp.observation}
+  o_sys_dbr_refs_off: {is: exp.observation}
+  o_sys_dbr_cross: {is: exp.observation}
+  o_sys_dbr_same: {is: exp.observation}
+  o_sys_dbr_eq_missing: {is: exp.observation}
   o_sys_ebs_targets: {is: exp.observation}
   o_sys_ebs_off: {is: exp.observation}
   o_sys_ebs_refs_off: {is: exp.observation}
@@ -1355,6 +1360,12 @@ facts:
   - {is: v_refer, from: o_sys_rna_law, to: {is: v_level, from: sys_rule_nouns_agree_runtime.N_law_specific.mean_value, to: 0.0}}
   - {is: exp.v_contradict, from: o_sys_rna_law, to: h_rule_nouns_agree_runtime}
   - {is: v_refer, from: o_sys_rna_off, to: {is: v_level, from: sys_rule_nouns_agree_runtime.N_off_agree.mean_value, to: 0.0}}
+  - {is: v_refer, from: o_sys_dbr_targets_off, to: {is: v_level, from: sys_domain_by_refer.n_targets_off.mean_value, to: 0.0}}
+  - {is: v_refer, from: o_sys_dbr_refs_off, to: {is: v_level, from: sys_domain_by_refer.n_refs_off.mean_value, to: 0.0}}
+  - {is: v_refer, from: o_sys_dbr_cross, to: {is: v_level, from: sys_domain_by_refer.n_cross_extra.mean_value, to: 9.0}}
+  - {is: exp.v_contradict, from: o_sys_dbr_cross, to: h_domain_by_refer}
+  - {is: v_refer, from: o_sys_dbr_same, to: {is: v_level, from: sys_domain_by_refer.n_same_extra.mean_value, to: 9.0}}
+  - {is: v_refer, from: o_sys_dbr_eq_missing, to: {is: v_level, from: sys_domain_by_refer.n_eq_missing.mean_value, to: 9.0}}
   - {is: v_refer, from: o_sys_ebs_targets, to: {is: v_level, from: sys_ends_by_subsumption.n_targets.mean_value, to: 16.0}}
   - {is: v_refer, from: o_sys_ebs_off, to: {is: v_level, from: sys_ends_by_subsumption.n_targets_off.mean_value, to: 0.0}}
   - {is: exp.v_support, from: o_sys_ebs_off, to: h_ends_by_subsumption}
