@@ -1,0 +1,44 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-20T19:13:49.745Z（UTC）
+individuals:
+  01M7X6265HCYNNS52Y5ZG55RWS:
+    is: model_utterance
+    display: 発言 3220
+    val:
+      order: 3220
+      text: |
+        h_wider_verb_lower_by_ancestry を確かめ、**支持**でした（#543、Draft は外してあります）。
+
+        **結果**
+        一時の写しに二つの操作を両方あて、#533 の読み（形・端・new_kind による識別）を走らせました。体系のファイルと検査器は書き換えていません。
+        - 検査器が 依存する を祖先までたどって探すようにする。
+        - v_rely を ontology に下ろし、v_depend をその下に置く（#537 の M1）。
+
+        tc は通りました。全対象と参考で、読みが名前の is_a と食い違ったもの（missing）は 0 でした。ontology.v_rely の extra は空でした。
+
+        読みが名前の is_a と合わない対（outside）は、#533 の 6 から 1 に減りました。
+        - 消えた 5: ontology.v_depend、subj の 3 つ、syntax.v_use が v_rely に包含されていた分。
+        - 残る 1: ontology.v_design < std.v_compute。#537 の M2 で、tc が通ると分かっている移し替えです。
+
+        **含意**
+        あなたの「領域で区別されている」は、ここまでで次のように言い直せます。
+        - 区別は new_kind の式でつく。
+        - 層の向きは、広い動詞を名前でたどれる層に置くことで揃う。
+        - それを妨げていたのは、検査器が語を「occurrent の直下」だけで探していたことでした。
+
+        検査器そのものの変更は、まだ入れていません。別の PR にして、あなたに見てもらいます。
+
+        **新しい仮説**
+        h_extends_by_shape_closed を登録だけの PR にしました（#544、d_cscl_display_derived に結んであります）。M1 と M2 を同時にあてれば outside が 0 になり、形の式と名前の is_a が全部揃うかを確かめます。
+
+        #529 は引き続きあなたの確認待ちです。
+
+        本線 a 識別子化、d_cscl_display_derived の下（検査器が語を式で見つける段から、extends を式で決める段へ）。
+facts:
+- {is: v_say, from: session_model, to: 01M7X6265HCYNNS52Y5ZG55RWS}
+- {is: exp.v_answer, from: 01M7X6265HCYNNS52Y5ZG55RWS, to: 01M7WWGV7ZZZW7ZQW70Z7XJP8V}
+- {is: v_refer, from: 01M7X6265HCYNNS52Y5ZG55RWS, to: syntax.new_kind}
+- {is: v_refer, from: 01M7X6265HCYNNS52Y5ZG55RWS, to: exp.v_rely}
+- {is: v_refer, from: 01M7X6265HCYNNS52Y5ZG55RWS, to: ontology.v_depend}
+- {is: v_refer, from: 01M7X6265HCYNNS52Y5ZG55RWS, to: syntax.v_use}
+- {is: v_refer, from: 01M7X6265HCYNNS52Y5ZG55RWS, to: ontology.v_design}
+- {is: v_refer, from: 01M7X6265HCYNNS52Y5ZG55RWS, to: std.v_compute}
