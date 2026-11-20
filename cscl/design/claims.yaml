@@ -129,6 +129,8 @@ individuals:
   h_above_individual: {is: exp.hyp_supported}
   b_above_individual: {is: exp.item_done}
   h_placement_in_laws: {is: exp.hyp_untested}
+  h_placement_without_domain: {is: exp.hyp_untested}
+  b_placement_without_domain: {is: exp.item_queued}
   b_placement_in_laws: {is: exp.item_queued}
   h_above_sound: {is: exp.hyp_refuted}
   b_above_sound: {is: exp.item_done}
@@ -556,6 +558,7 @@ facts:
   - {is: exp.v_ground, from: d_cscl_display_derived, to: h_negation_formula}
   - {is: exp.v_ground, from: d_cscl_display_derived, to: h_law_given_as_rule}
   - {is: exp.v_ground, from: d_cscl_display_derived, to: h_placement_in_laws}
+  - {is: exp.v_ground, from: d_cscl_display_derived, to: h_placement_without_domain}
   - {is: exp.v_ground, from: d_cscl_display_derived, to: h_cscl_self_hosting}
   - {is: v_refer, from: d_cscl_trust_previous_version, to: {is: v_depend, from: type_checker, to: previous_checker}}
   - {is: v_refer, from: d_sig_depend_from, to: {is: extends, from: dependent, to: continuant}}
@@ -675,6 +678,8 @@ facts:
   - {is: exp.v_check, from: b_above_individual, to: h_above_individual}
   - {is: v_refer, from: h_placement_in_laws, to: {is: v_not_depend, from: placement_by_above, to: type_checker}}
   - {is: exp.v_check, from: b_placement_in_laws, to: h_placement_in_laws}
+  - {is: v_refer, from: h_placement_without_domain, to: {is: v_not_depend, from: placement_by_above, to: syntax.domain}}
+  - {is: exp.v_check, from: b_placement_without_domain, to: h_placement_without_domain}
   - {is: v_refer, from: h_concept_kind_excludes_verb, to: {is: v_depend, from: concept_by_law, to: [syntax.pre, syntax.holds, syntax.extends]}}
   - {is: exp.v_check, from: b_concept_kind_excludes_verb, to: h_concept_kind_excludes_verb}
   - {is: v_refer, from: h_concept_kind_frame_free, to: {is: v_not_depend, from: concept_by_law, to: [syntax.pre, syntax.holds]}}
