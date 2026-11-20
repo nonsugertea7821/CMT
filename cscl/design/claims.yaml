@@ -357,6 +357,10 @@ individuals:
   b_collect_by_formula: {is: exp.item_done}
   h_collect_by_end_order: {is: exp.hyp_untested}
   b_collect_by_end_order: {is: exp.item_queued}
+  h_verb_shape_two_phase: {is: exp.hyp_untested}
+  b_verb_shape_two_phase: {is: exp.item_queued}
+  h_refer_by_projection: {is: exp.hyp_untested}
+  b_refer_by_projection: {is: exp.item_queued}
   o_sys_verbs_static_unlimited: {is: exp.observation}
   o_sys_verbs_dyn_limited: {is: exp.observation}
   o_sys_verbs_dyn_exists_more: {is: exp.observation}
@@ -1471,6 +1475,12 @@ facts:
   - {is: v_refer, from: h_collect_by_end_order, to: {is: v_depend, from: type_checker, to: [syntax.from, syntax.to]}}
   - {is: exp.v_check, from: b_collect_by_end_order, to: h_collect_by_end_order}
   - {is: exp.v_ground, from: d_cscl_display_derived, to: h_collect_by_end_order}
+  - {is: v_refer, from: h_verb_shape_two_phase, to: {is: v_depend, from: type_checker, to: [syntax.holds, syntax.pre, syntax.post]}}
+  - {is: exp.v_check, from: b_verb_shape_two_phase, to: h_verb_shape_two_phase}
+  - {is: exp.v_ground, from: d_cscl_display_derived, to: h_verb_shape_two_phase}
+  - {is: v_refer, from: h_refer_by_projection, to: {is: v_depend, from: state_relation, to: [syntax.variable, ontology.same]}}
+  - {is: exp.v_check, from: b_refer_by_projection, to: h_refer_by_projection}
+  - {is: exp.v_ground, from: d_cscl_display_derived, to: h_refer_by_projection}
   - {is: v_refer, from: o_sys_diff_narrow_not_typical, to: {is: v_come_before, from: sys_differentiation.narrow_end.mean_value, to: 245.0}}
   - {is: v_refer, from: o_sys_overext_steps_small_ratio, to: {is: v_come_before, from: sys_overextension_steps.all_low_rate.mean_value, to: 0.2178}}
   - {is: v_refer, from: o_sys_overext_steps_unseen_small_ratio, to: {is: v_come_before, from: sys_overextension_steps.unseen_low_rate.mean_value, to: 0.1242}}
