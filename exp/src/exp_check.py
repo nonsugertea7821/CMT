@@ -210,6 +210,8 @@ def check_claims(C, values, T):
     hyps, decs = C["hypotheses"], C["decisions"]
 
     def triple(x, where, structural_ok=False):
+        if any(k not in x for k in ("s", "p", "o")):
+            return err(f"{where}: 中身（v_refer で述べる文）がない")
         ss = x["s"] if isinstance(x["s"], list) else [x["s"]]
         oo = x["o"] if isinstance(x["o"], list) else [x["o"]]
         for t in ss + oo:
