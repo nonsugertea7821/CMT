@@ -204,6 +204,8 @@ individuals:
   b_law_check_by_always: {is: exp.item_queued}
   h_required_by_laws: {is: exp.hyp_untested}
   b_required_by_laws: {is: exp.item_queued}
+  h_check_immune_parts: {is: exp.hyp_untested}
+  b_check_immune_parts: {is: exp.item_queued}
   h_layers_unhardcode: {is: exp.hyp_refuted}
   b_layers_unhardcode: {is: exp.item_done}
   h_concept_bounds_model_state: {is: exp.hyp_untested}
@@ -932,6 +934,8 @@ facts:
   - {is: v_refer, from: h_required_by_laws, to: {is: v_depend, from: syntax.required, to: syntax.laws}}
   - {is: exp.v_check, from: b_required_by_laws, to: h_required_by_laws}
   - {is: exp.v_ground, from: d_cscl_display_derived, to: h_required_by_laws}
+  - {is: v_refer, from: h_check_immune_parts, to: {is: v_not_depend, from: type_checker, to: syntax.passage}}
+  - {is: exp.v_check, from: b_check_immune_parts, to: h_check_immune_parts}
   - {is: v_refer, from: h_layers_unhardcode, to: {is: v_not_depend, from: type_checker, to: name_choice}}
   - {is: v_refer, from: h_layers_unhardcode, to: {is: v_depend, from: type_checker, to: [layer_placement, signature_class]}}
   - {is: exp.v_check, from: b_layers_unhardcode, to: h_layers_unhardcode}
