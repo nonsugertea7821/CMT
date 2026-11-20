@@ -10,6 +10,7 @@ runtime:
 
 nodes:
   refer_from_v_execute: {display: 実行するへ述べる（始点）, extends: quality, of: [v_refer, from], with: v_execute}
+  refer_from_steps: {display: ステップの列へ述べる（始点）, extends: quality, of: [v_refer, from], with: steps}
 
   v_execute: {display: 実行する, extends: occurrent, from: continuant, to: state, new_kind: state,
               pre: [{is: exists, from: new, neg: true}], post: [{is: exists, from: new}, {is: after, from: new, to: to}]}
@@ -26,7 +27,7 @@ nodes:
   every_step: {display: 1歩ごとに確かめる, extends: law_check, mod: {of: [v_come_after, from], with: steps}}
   binding: {display: 位置への個体の割り当て方, extends: strategy, mod: refer_from_individuals}
   distinct: {display: 位置ごとに別の個体を割り当てる, extends: binding, cmp: [{axis: text, a: from, b: to, rel: differ}]}
-  choice: {display: 当てはまる動詞の選び方, extends: strategy, mod: {of: [v_refer, from], with: steps}}
+  choice: {display: 当てはまる動詞の選び方, extends: strategy, mod: refer_from_steps}
   recorded: {display: 実行の記録が選び方を与える, extends: choice, mod: {of: [v_depend, from], with: run}}
   progress: {display: 当てはまるとみなす条件, extends: strategy, mod: {of: [v_refer, from], with: halted}}
   changes_state: {display: 前の状態が成り立ち後の状態がまだ成り立っていない, extends: progress, mod: come_before_from_post}
