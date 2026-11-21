@@ -1,0 +1,39 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-21T00:28:44.547Z（UTC）
+individuals:
+  01M7XR2T431VCW7P53HSVGHPYN:
+    is: model_utterance
+    display: 発言 3325
+    val:
+      order: 3325
+      text: |
+        h_verb_extends_primitive を確かめ、事前に決めた判定どおり**支持**になりました（#582、Draft を外しました。確認をお願いします）。
+
+        **結果**
+        - 動詞 119 を、自分で書いた欄（holds・pre・post・from・to・new_kind・mod）で群に分けると 118 群になりました。
+        - 書いた extends が 2 種類ある群（収斂）は 1 つだけでした。
+          - `exp.channel` は、自分の欄が `to: definition` だけで、親は `v_deliver` です。
+          - `exp.v_judge_definition` も、自分の欄が `to: definition` だけで、親は `v_judge` です。
+        - この 2 つは、自分の欄だけからは親を区別できません。ほかの 117 群は、欄だけで動詞が一つに決まります。
+
+        **解釈**
+        - 欄は動詞をほぼ識別しますが、親は欄の関数ではありません。
+        - #557（継いだ中身を含めれば、70/70 で親が出る）と合わせると、さっきの一つの式 D(x) = D(親) ＋ 差異 と合います。親を決める情報は、差異の側ではなく類の側にあります。
+        - ただし支持の根拠は収斂 1 組だけなので、強い証拠ではありません。
+
+        **含意と新しい仮説**（#583、`d_cscl_display_derived` に結んでいます）
+        - 収斂が起きたのは、類の違う 2 つの間だけでした。
+        - 元の設計の分化の条件「兄弟では失敗するテストがある」から、**h_differentia_by_genus** を出しました。同じ親を持つ兄弟の間では、自分の欄が必ず違う（差異は類に相対的に一意）という仮説です。
+        - これは h_verb_extends_primitive と対になります。親は欄から決まりませんが、親を与えれば欄が一意に効く、という見方です。
+        - 確かめは、兄弟の組で欄が同じものを数えます。0 なら支持です。
+
+        ロードマップでは、識別子化（a）の下にある extends の系列を一つ進めました。
+
+        本線 a 識別子化、d_cscl_display_derived の下
+facts:
+- {is: v_say, from: session_model, to: 01M7XR2T431VCW7P53HSVGHPYN}
+- {is: exp.v_answer, from: 01M7XR2T431VCW7P53HSVGHPYN, to: 01M7XQP83TQBY2412HXFRAQCHK}
+- {is: v_refer, from: 01M7XR2T431VCW7P53HSVGHPYN, to: syntax.new_kind}
+- {is: v_refer, from: 01M7XR2T431VCW7P53HSVGHPYN, to: exp.channel}
+- {is: v_refer, from: 01M7XR2T431VCW7P53HSVGHPYN, to: exp.v_deliver}
+- {is: v_refer, from: 01M7XR2T431VCW7P53HSVGHPYN, to: exp.v_judge_definition}
+- {is: v_refer, from: 01M7XR2T431VCW7P53HSVGHPYN, to: exp.v_judge}
