@@ -1,0 +1,32 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-21T05:12:56.615Z（UTC）
+individuals:
+  01M7Y8B6H73GB85NMSKGE7DKB8:
+    is: model_utterance
+    display: 発言 3528
+    val:
+      order: 3528
+      text: |
+        I opened a Draft PR (#640) for the round-trip hypothesis (issue #639) and started the run. It should take about 2 hours.
+
+        The setup in brief:
+
+        - **Data:** 12 pairs of sibling concepts. 4 pairs come from the existing G3 set and 8 are new ones I wrote. Each pair has 4 teaching questions and 4 held-out test questions, 48 test questions in all.
+        - **Teaching methods compared:** each one gets 24 training steps.
+          - **none:** no teaching.
+          - **both:** recite the definitions and answer the teaching questions mixed together at every step. This is the same as E3's `teacher_both`.
+          - **round:** 4 cycles of 3 steps on definitions, then 3 steps on application. Each cycle re-teaches the definitions the model just confused and drills the questions it just got wrong.
+        - **Pre-registered verdict:**
+          - Supported if round beats both by at least 0.10 on the share of test questions answered right in both option orders, and also has a higher mean margin.
+          - Refuted if round is no better than both.
+          - Excluded (status unchanged) if both doesn't beat none, since then the comparison means nothing.
+        - **What I changed or disclosed:**
+          - I dropped the definition-only and examples-only methods, because the verdict doesn't use them and they would have doubled the run time.
+          - Because the step counts are equal, both processes more material per step than round. That works against the hypothesis.
+
+        When the run finishes I'll add the results and the write-up to the PR.
+
+        本線 d_consolidation_in_vector の下（h_round_trip_raises_sibling、issue #639）
+facts:
+- {is: v_say, from: session_model, to: 01M7Y8B6H73GB85NMSKGE7DKB8}
+- {is: exp.v_answer, from: 01M7Y8B6H73GB85NMSKGE7DKB8, to: 01M7Y7HJ5BJB110253MWRK61SN}
+- {is: v_refer, from: 01M7Y8B6H73GB85NMSKGE7DKB8, to: exp.teacher_both}
