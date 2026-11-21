@@ -1,0 +1,37 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-21T13:46:38.701Z（UTC）
+individuals:
+  01M7Z5QT7DF0MCFMKP74VC9SDP:
+    is: model_utterance
+    display: 発言 3803
+    val:
+      order: 3803
+      text: |
+        ここまでの結果は全部 main にマージされていて、開いている PR はありません。重い実験もいまは走っていません。
+
+        **今日マージしたもの**
+        - **E34（#642）: 反証。** モデルの内部状態が、表示語をちょうど一つ指すかを確かめる実験でした。
+          - 語を隠した 199 の状態のうち、正しい一語にだけ絞れたのは 0.407 でした。反証の線は 0.5 以下と事前に決めていました。
+          - 状態は平均で 2.9 語くらいに広がっていて、外れは「改訂 → 改定」のように音や字の近い語に流れていました。
+          - 当プロジェクトの意味で使う語は 0.31 で、ふつうの意味で使う語の 0.54 より絞れていません。
+        - **#682: 上位の関係に form からの上位を足すと、法則が壊れる。**
+          - `above` に `r_kind_up` を足すと、違反が 0 から 570 に増えました。
+          - なので、`above` に含めるという仮説は反証、分けたままにするという仮説は支持です。
+        - **反証から出した対の仮説を登録しました（どちらも登録だけ）。**
+          - #683: h_ancestor_includes_kind_up と h_display_reads_kind_up。
+          - #686: h_state_points_region（状態は一語ではなく、近い語の領域を指す）と h_expression_makes_state_unique（概念式を文脈に添えれば一意になる）。
+
+        **途中で起きたこと（どれも PR に開示済み）**
+        - #683 と #686 は、最初の式が検査で落ちました。直して通っています。
+          - 個体の `r_ancestor` や `r_kind_up` は、ほかの領域から参照できない。
+          - exp.yaml からは lang の決定に `v_ground` で結べない。
+        - #682 と #642 は、ほかの PR が先にマージされて衝突し、自動マージが 405 で止まりました。main を取り込んで通しました。
+        - コメント禁止のフックが、引用符の中の `'#'` をコメントと見て一度止めました。誤検知のようです。
+
+        **次**
+        いまちょうど 30 分の周回（13:46）の時刻です。重い列が空いたので、H2 の h_explain_transfers_to_apply を始めます。それとは別に、新しく登録した h_expression_makes_state_unique も候補です。E34 と同じ設問に概念式を添えるだけで測れて、目的に近いです。
+
+        ロードマップの位置: L1 の核の h_state_unique_display（d_goal）を閉じました。次は H2（d_metric）に進みます。
+facts:
+- {is: v_say, from: session_model, to: 01M7Z5QT7DF0MCFMKP74VC9SDP}
+- {is: exp.v_answer, from: 01M7Z5QT7DF0MCFMKP74VC9SDP, to: 01M7Z5QF3V26FDCAVEYKDJKR5M}
+- {is: v_refer, from: 01M7Z5QT7DF0MCFMKP74VC9SDP, to: exp.v_ground}
