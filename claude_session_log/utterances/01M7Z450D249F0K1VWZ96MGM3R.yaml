@@ -1,0 +1,28 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-21T13:18:53.858Z（UTC）
+individuals:
+  01M7Z450D249F0K1VWZ96MGM3R:
+    is: model_utterance
+    display: 発言 3775
+    val:
+      order: 3775
+      text: |
+        I tested the pair from #679: whether `above` should also contain the parent types derived from `form`. Results, with the details in PR #682:
+
+        - **Result:** I added one rule that derives `above` from `r_kind_up` and changed nothing else. Violations went from 0 to 570.
+          - 537 come from the transitivity law (`above_transitive`).
+          - 33 come from the law that `above` must be an ancestor (`above_is_ancestor`).
+        - **Verdict:** as pre-registered, h_above_includes_form is refuted and h_above_split_written_derived is supported. The 29 words that were 0 in #678 do now reach their parent type (0 → 1.0), but the laws break.
+        - **Interpretation:** the laws written for `above` assume that `above` is the ancestor along the written `extends`. As I disclosed in the pre-registration, I tested only "add one rule"; folding `form` in by also rewriting those laws was not tested.
+        - **New hypotheses (registration only, PR #683):** a pair of alternative fixes drawn from this refutation.
+          - h_ancestor_includes_kind_up: derive the ancestor relation itself from `r_kind_up`.
+          - h_display_reads_kind_up: keep `above` as it is and have the display side read `r_kind_up`.
+        - **Running in the background:** E34 had stopped, so I restarted it from its saved progress file. The next check is at 13:23.
+
+        #682 is still a draft; I'll take it out of draft once the spec passes.
+
+        Roadmap position: moved light lane L1 (`d_cscl_display_derived`) forward; heavy lane H2 (E34) is still measuring.
+facts:
+- {is: v_say, from: session_model, to: 01M7Z450D249F0K1VWZ96MGM3R}
+- {is: exp.v_answer, from: 01M7Z450D249F0K1VWZ96MGM3R, to: 01M7YQNY4SHZ5CPQ9Z096V99D4}
+- {is: v_refer, from: 01M7Z450D249F0K1VWZ96MGM3R, to: syntax.form}
+- {is: v_refer, from: 01M7Z450D249F0K1VWZ96MGM3R, to: syntax.extends}
