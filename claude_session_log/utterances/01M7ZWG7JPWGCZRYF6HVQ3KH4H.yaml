@@ -1,0 +1,251 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-21T20:24:27.478Z（UTC）
+individuals:
+  01M7ZWG7JPWGCZRYF6HVQ3KH4H:
+    is: session_summary
+    display: 発言 4063
+    val:
+      order: 4063
+      text: |
+        This session is being continued from a previous conversation that ran out of context. The summary below covers the earlier portion of the conversation.
+
+        <system-reminder>
+        <tools-used-before-summary>Agent, Artifact, AskUserQuestion, Bash, Edit, Grep, Monitor, Read, ReadNotifications, Skill, SubagentHandback, TaskStop, ToolSearch, WebFetch, WebSearch, Write, mcp__claude-code-remote__add_repo, mcp__claude-code-remote__create_trigger, mcp__claude-code-remote__delete_trigger, mcp__claude-code-remote__get_trigger, mcp__claude-code-remote__list_repos, mcp__claude-code-remote__read_documentation, mcp__claude-code-remote__send_later, mcp__claude-code-remote__subscribe_pr_activity, mcp__claude-code-remote__unsubscribe_pr_activity, mcp__claude-code-remote__update_trigger, mcp__github__actions_get, mcp__github__actions_list, mcp__github__actions_run_trigger, mcp__github__add_issue_comment, mcp__github__create_pull_request, mcp__github__get_job_logs, mcp__github__issue_read, mcp__github__issue_write, mcp__github__list_issue_types, mcp__github__list_issues, mcp__github__list_pull_requests, mcp__github__pull_request_read, mcp__github__update_pull_request</tools-used-before-summary>
+        </system-reminder>
+        Summary:
+        1. Primary Request and Intent
+
+        **Standing rules (unchanged)**
+        - Repo and tools
+          - Repo nonsugertea7821/CMT, at /home/user/CMT.
+          - Python is /home/user/venv/bin/python. CPU only, 15 GB cgroup.
+        - Language and tone
+          - Write replies and PR bodies in plain Japanese.
+          - Don't overclaim. Separate facts from interpretation.
+          - End each report with a roadmap-position line. Label side paths わき道.
+        - Git
+          - Restore files with `git show <rev>:<path> > <path>`. No checkout, no stash.
+          - Commit trailer:
+            ```
+            Co-Authored-By: Claude [モデル名を伏せた] <[メールアドレスを伏せた]>
+            Claude-Session: https://claude.ai/code/session_015KRKt6TNJZ7ZsQmEknANXK
+            ```
+          - PR body ends with `🤖 Generated with [Claude Code](https://claude.com/claude-code)`, a blank line, then the session URL.
+        - Prohibitions
+          - No personal info and no model IDs in pushed artifacts.
+          - Claude never merges.
+        - Every PR I open: subscribe_pr_activity, then issue_write update with assignees ["nonsugertea7821"].
+        - System YAML gets no comments.
+        - Experiments
+          - Pre-register: the first commit contains the script only; results go in a later commit.
+          - Add experiment files with `git add -f`.
+          - Never rerun a recorded script.
+          - No local tc or ec; let CI run them.
+          - Undraft once spec passes and the status is supported, refuted or mixed.
+        - Hypotheses: register proposals first, with v_ground in the same PR or labelled わき道.
+        - Don't ask permission in conversation.
+        - Light work goes in /home/user/CMT/.wt_* worktrees. After a merge, remove the local worktree and branch.
+
+        **Security constraints (verbatim)**
+        - 「Pagesに出すなら脆弱性気を付けてね」
+        - 「あとsession_logは読まないように」
+        - Later clarified:
+          - 「いやまあログの中身は読んだってかまわないんだけど 何のために残してるかって「過去の参照」のためだから」
+          - 「読もうと思えばsession_logも読めるよ 無差別に読んでほしくないからPagesに出してないだけ」
+          - 「あとブランチ切れば消えるってのもある」
+        - Net effect: I may read session logs for past reference. Pages and the ledger must never include claude/session-log-*.
+
+        **Stop hook "Wait—turn that observation into a hypothesis?"**
+        - Classify each listed sentence as 1 (verified fact), 2 (unverified claim, so register h_/b_/v_refer/v_check/v_ground) or 3 (progress report).
+        - End by naming what was registered and why the rest was not.
+
+        **Earlier user requests (still in force)**
+        - "体系には「誤りの種類」を表す概念がありません。this is hypothesis"
+        - "いやー、まあ英語で考えること自体は禁止したくないから ただ私がスムーズに読めなくて困るだけで、読みたいときは言う"
+
+        2. Key Technical Concepts
+
+        - **30-minute cycle trigger** trig_01L92Xn7LSTHrmqt7enEcCPG
+          - On fire, first update_trigger run_once_at about 31 minutes ahead with enabled true.
+          - Now set to 2026-11-21T20:43:00Z.
+        - **H/L roadmap columns**
+          - H2 = h_explain_transfers_to_apply (done, refuted) → h_multi_layer_transfers_to_explain (E39, refuted).
+          - Next heavy item: H3 h_model_reads_by_name (d_road_checker).
+        - **ec**
+          - stat(rows, cond, name) computes accuracy as the share of rows with margin > 0.
+          - v_level is compared with tolerance 1e-6.
+          - v_rows_of [items,'{cond}'] gives rows; v_entry_of names the key (apply / explain / explain_noans).
+        - **Hypothesis status**
+          - hyp_mixed = has both support and contradict.
+          - So "above none" observations are recorded but not linked to the hypothesis.
+        - **Verb signatures**
+          - v_depend takes continuant → continuant.
+          - v_rely and v_transfer take any → any. v_rely holds depend(from, to).
+          - usage_* extends usage, which extends inference (not a continuant).
+        - **E8 vectors**
+          - File: exp/experiments/results/e8_L2-13_d0.001.pt, local only.
+          - sha256 20456ffd24bbcf677f83993036eaa9dbc3427d9884700f73b5a7968287804a8a.
+          - Layers 2–13, teacher defqa.
+          - E8's G2c apply: none 0.375, vec 0.833.
+
+        3. Files and Code Sections
+
+        - **.wt_e36 (branch claude/h_explain_transfers_to_apply, PR #702)**
+          - Results commit fe051ff, then merge 67f6191.
+          - exp.yaml additions:
+            - Concepts `reasons_only: {display: 理由だけ, extends: passage, mod: {of: [v_compose, to], with: reason}}` and `teacher_reasons: {display: 理由を教師にする, extends: teaching, from: reasons_only}`.
+            - Families e36_apply, e36_explain and e36_explain_noans, each with cond none, ex and qa. They denote no_channel, teacher_reasons and teacher_examples.
+            - Observations, as v_level:
+              - o_e36_apply_none 0.375
+              - o_e36_apply_ex 0.6666667
+              - o_e36_apply_qa 0.7916667
+              - o_e36_explain_none 0.4166667
+              - o_e36_explain_ex 1.0
+              - o_e36_explain_qa 0.4583333
+            - o_e36_apply_ex_below_threshold (v_come_before 0.75) is linked with v_contradict.
+            - o_e36_apply_ex_above_none and o_e36_explain_ex_above_none are recorded but not linked.
+            - Status: h_explain_transfers_to_apply → hyp_refuted; b_ → item_done.
+          - Results JSON added with -f.
+          - The #702 body is updated and the PR is undrafted. Its CI passed.
+          - The bot judged manual review: 2 commits touch the script.
+          - The E36 monitor, checks and sampler are stopped.
+        - **#713 (merged)**
+          - Registered h_apply_depends_explain with `{is: v_rely, from: usage_apply, to: usage_explain}`, plus b_, v_check and `v_ground from d_metric`.
+          - Worktree and branch removed.
+        - **.wt_e39 (branch claude/h_multi_layer_transfers_to_explain, PR #715 Draft, issue #270)**
+          - Results contains symlinks to e8_L2-13_d0.001.pt, e3_..._L8_defqa.pt and e3_..._L8_qa.pt. They are not committed.
+          - exp/experiments/e39_multi_layer_explain.py, pre-registered in 92405f1:
+            - It loads E8's multi-layer vectors (ml) and checks their sha256.
+            - It loads E3's L8 defqa vector (sl) and places it at layer index 8 in a zero [12, d] tensor.
+            - It uses E8's MultiInjector with layers 2–13, plus label_mask.
+            - `margin()` computes two choices over both option orders.
+            - apply uses question_text. explain and explain_noans use E20's EXPLAIN / EXPLAIN_NOANS with reason options.
+            - Judgment:
+              - pre_apply: ml − none ≥ 0.25 on apply.
+              - pre_ceiling: none's explain < 0.75.
+              - transfer: ml's explain ≥ 0.75 and ≥ none + 0.25.
+            - Output: results/e39_Qwen2.5-1.5B-Instruct_L2-13.json.
+          - Results (commit bfa1d05, pushed after merging origin/main):
+
+            | cond | apply | explain | explain_noans |
+            |---|---|---|---|
+            | none | 0.375 | 0.417 | 0.333 |
+            | ml | 0.833 | 0.333 | 0.417 |
+            | sl | 0.792 | 0.417 | 0.458 |
+
+            - Verdict: pre_apply true, pre_ceiling true, no_transfer.
+          - exp.yaml:
+            - Families e39_apply, e39_explain and e39_explain_noans, each with cond none, ml and sl.
+              - none denotes no_channel.
+              - ml denotes multi_layer_vector and teacher_both.
+              - sl denotes teacher_both.
+            - Observations, as v_level:
+              - o_e39_apply_none 0.375
+              - o_e39_apply_ml 0.8333333
+              - o_e39_apply_sl 0.7916667
+              - o_e39_explain_none 0.4166667
+              - o_e39_explain_ml 0.3333333
+              - o_e39_explain_sl 0.4166667
+            - o_e39_apply_ml_above_none (v_come_after) is not linked.
+            - Two observations are linked with v_contradict to h_multi_layer_transfers_to_explain:
+              - o_e39_explain_ml_below_threshold (v_come_before 0.75).
+              - o_e39_explain_ml_below_none (v_come_before e39_explain.none.accuracy).
+            - Status: h_ → hyp_refuted; b_ → item_done. No concepts were added and there was no correction, so it may auto-merge.
+
+        4. Errors and fixes
+
+        - **#713 tc failure**: "exp.usage_apply は動詞 ontology.v_depend の from（ontology.continuant）に来られない". Fixed by switching to v_rely (commit b222dfd).
+        - **Earlier E36 problems**, already disclosed in #702:
+          - 4 OOM kills, fixed with `--micro 4` and MALLOC_ARENA_MAX=2.
+          - A false "running" report caused by pgrep, fixed with a PID file.
+
+        5. Problem Solving
+
+        - E36 is done and refuted, waiting for the user's manual review.
+        - E38 (#710) is waiting for the user's review.
+        - E39 is done and refuted, pending CI.
+        - Interpretation of E39, not formalized:
+          - Multi-layer and single-layer vectors both affect apply but not explain.
+          - With E36 in view, explain was reached only when explain was the teacher.
+          - The cause lies in the teaching usage, not in how layers are split.
+          - This is a possible implication to register (step 5 of the cycle).
+        - h_rejection_by_few_laws (E39 was the planned number; renumber, since E39 is now taken): waiting for #710 to merge. The peek at named_laws must be disclosed, and the analysis should use the per-line unit.
+
+        6. All user messages
+
+        - No new genuine user messages in this period. All turns were system notifications, scheduled triggers or Stop-hook feedback.
+        - Earlier user messages, still in force: the security constraints in section 1, plus:
+          - "体系には「誤りの種類」を表す概念がありません。this is hypothesis"
+          - "Wait—turn that observation into a hypothesis? という名前でStopフックを組もう トリガーは「していません」系の動詞で"
+          - "英語と中国語もだね、結構な頻度で応答言語が守れてないから"
+          - "いやー、まあ英語で考えること自体は禁止したくないから ただ私がスムーズに読めなくて困るだけで、読みたいときは言う"
+
+        7. Pending Tasks
+
+        - **#715**
+          - Wait for the CI check on bfa1d05.
+          - Then update the PR body:
+            - The results table.
+            - The verdict: refuted.
+            - The interpretation.
+            - Disclosure that the E8 .pt is local and verified by sha256.
+            - Status: refuted.
+          - Undraft once spec passes. It may auto-merge.
+        - **Cleanup**
+          - Delete the pending send_later trig_01YHSY1nc8R9sX42qqejALGs ("E39 check" at 20:24) if it has not fired. If it fired, just note that E39 has finished.
+          - Stop monitor blm7zo7d8 if it is still running.
+        - **Implications to consider registering (registration-only PR, v_ground d_metric)**
+          - Transfer beyond the taught usage depends on the teaching usage, not on the layer split.
+          - For example, a teacher combining explain and apply.
+        - **Wait for user merges**
+          - #702 (E36) and #710 (E38).
+          - After each merge, remove .wt_e36 / .wt_e38 and their local branches.
+        - **30-minute cycle at 20:43**: update the trigger first. The next heavy item is H3 h_model_reads_by_name.
+        - **Later**
+          - h_rejection_by_few_laws, after #710.
+          - h_unnamed_error_as_law_rule.
+
+        8. Current Work
+
+        - I had just committed and pushed the E39 results (bfa1d05, "E39 の結果: 複数層のベクトルは説明に転移しない（h_multi_layer_transfers_to_explain 反証）") to claude/h_multi_layer_transfers_to_explain (PR #715).
+        - I have not yet reported the result to the user or updated the #715 body.
+
+        9. Optional Next Step
+
+        - Report the E39 result in Japanese:
+          - Refuted: ml's explain is 0.333, below the 0.75 threshold and below none's 0.417.
+          - ml's apply is 0.833.
+          - Include the interpretation and the roadmap line: H2 is complete, with both items refuted.
+        - Delete send_later trig_01YHSY1nc8R9sX42qqejALGs and stop monitor blm7zo7d8.
+        - When the #715 check_run event arrives and passes:
+          - Update the #715 body.
+          - Undraft #715 with update_pull_request draft:false.
+
+        If you need specific details from before compaction (like exact code snippets, error messages, or content you generated), read the full transcript at: /root/.claude/projects/-home-user-CMT/e05d2140-ce91-515f-a5fb-e6251e13d406.jsonl
+        Continue the conversation from where it left off without asking the user any further questions. Resume directly — do not acknowledge the summary, do not recap what was happening, do not preface with "I'll continue" or similar. Pick up the last task as if the break never happened.
+
+        The messages after this summary are the most recent messages from before compaction, kept verbatim. The summary was written without seeing them, so something it says has not happened yet may already have happened in them.
+facts:
+- {is: v_say, from: session_model, to: 01M7ZWG7JPWGCZRYF6HVQ3KH4H}
+- {is: v_refer, from: 01M7ZWG7JPWGCZRYF6HVQ3KH4H, to: exp.v_ground}
+- {is: v_refer, from: 01M7ZWG7JPWGCZRYF6HVQ3KH4H, to: ontology.v_refer}
+- {is: v_refer, from: 01M7ZWG7JPWGCZRYF6HVQ3KH4H, to: exp.v_check}
+- {is: v_refer, from: 01M7ZWG7JPWGCZRYF6HVQ3KH4H, to: ontology.v_level}
+- {is: v_refer, from: 01M7ZWG7JPWGCZRYF6HVQ3KH4H, to: exp.v_rows_of}
+- {is: v_refer, from: 01M7ZWG7JPWGCZRYF6HVQ3KH4H, to: exp.v_entry_of}
+- {is: v_refer, from: 01M7ZWG7JPWGCZRYF6HVQ3KH4H, to: exp.hyp_mixed}
+- {is: v_refer, from: 01M7ZWG7JPWGCZRYF6HVQ3KH4H, to: ontology.v_depend}
+- {is: v_refer, from: 01M7ZWG7JPWGCZRYF6HVQ3KH4H, to: exp.v_rely}
+- {is: v_refer, from: 01M7ZWG7JPWGCZRYF6HVQ3KH4H, to: exp.v_transfer}
+- {is: v_refer, from: 01M7ZWG7JPWGCZRYF6HVQ3KH4H, to: ontology.v_compose}
+- {is: v_refer, from: 01M7ZWG7JPWGCZRYF6HVQ3KH4H, to: exp.no_channel}
+- {is: v_refer, from: 01M7ZWG7JPWGCZRYF6HVQ3KH4H, to: exp.teacher_examples}
+- {is: v_refer, from: 01M7ZWG7JPWGCZRYF6HVQ3KH4H, to: ontology.v_come_before}
+- {is: v_refer, from: 01M7ZWG7JPWGCZRYF6HVQ3KH4H, to: exp.v_contradict}
+- {is: v_refer, from: 01M7ZWG7JPWGCZRYF6HVQ3KH4H, to: exp.hyp_refuted}
+- {is: v_refer, from: 01M7ZWG7JPWGCZRYF6HVQ3KH4H, to: exp.item_done}
+- {is: v_refer, from: 01M7ZWG7JPWGCZRYF6HVQ3KH4H, to: exp.usage_apply}
+- {is: v_refer, from: 01M7ZWG7JPWGCZRYF6HVQ3KH4H, to: exp.usage_explain}
+- {is: v_refer, from: 01M7ZWG7JPWGCZRYF6HVQ3KH4H, to: exp.multi_layer_vector}
+- {is: v_refer, from: 01M7ZWG7JPWGCZRYF6HVQ3KH4H, to: exp.teacher_both}
+- {is: v_refer, from: 01M7ZWG7JPWGCZRYF6HVQ3KH4H, to: ontology.v_come_after}
+- {is: v_refer, from: 01M7ZWG7JPWGCZRYF6HVQ3KH4H, to: ontology.continuant}
