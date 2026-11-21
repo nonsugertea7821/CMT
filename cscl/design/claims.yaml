@@ -363,6 +363,10 @@ individuals:
   b_verb_shape_two_phase: {is: exp.item_queued}
   h_refer_by_projection: {is: exp.hyp_untested}
   b_refer_by_projection: {is: exp.item_queued}
+  h_verb_extends_primitive: {is: exp.hyp_untested}
+  b_verb_extends_primitive: {is: exp.item_queued}
+  h_concept_extends_deduced: {is: exp.hyp_untested}
+  b_concept_extends_deduced: {is: exp.item_queued}
   h_verbs_state_own_kind_mod: {is: exp.hyp_untested}
   b_verbs_state_own_kind_mod: {is: exp.item_queued}
   h_extends_unwritten_open: {is: exp.hyp_refuted}
@@ -1724,6 +1728,12 @@ facts:
   - {is: v_refer, from: h_refer_by_projection, to: {is: v_depend, from: state_relation, to: [syntax.variable, ontology.same]}}
   - {is: exp.v_check, from: b_refer_by_projection, to: h_refer_by_projection}
   - {is: exp.v_ground, from: d_cscl_display_derived, to: h_refer_by_projection}
+  - {is: v_refer, from: h_verb_extends_primitive, to: {is: v_depend, from: syntax.extends, to: [syntax.holds, syntax.from, syntax.to, syntax.mod], neg: true}}
+  - {is: exp.v_check, from: b_verb_extends_primitive, to: h_verb_extends_primitive}
+  - {is: exp.v_ground, from: d_cscl_display_derived, to: h_verb_extends_primitive}
+  - {is: v_refer, from: h_concept_extends_deduced, to: {is: v_depend, from: syntax.extends, to: [syntax.mod, syntax.law_rule]}}
+  - {is: exp.v_check, from: b_concept_extends_deduced, to: h_concept_extends_deduced}
+  - {is: exp.v_ground, from: d_cscl_display_derived, to: h_concept_extends_deduced}
   - {is: v_refer, from: h_verbs_state_own_kind_mod, to: {is: v_depend, from: syntax.extends, to: [syntax.new_kind, syntax.mod]}}
   - {is: exp.v_check, from: b_verbs_state_own_kind_mod, to: h_verbs_state_own_kind_mod}
   - {is: exp.v_ground, from: d_cscl_display_derived, to: h_verbs_state_own_kind_mod}
