@@ -369,6 +369,8 @@ individuals:
   b_parent_alone_by_law: {is: exp.item_queued}
   h_basic_vocab_fits: {is: exp.hyp_untested}
   b_basic_vocab_fits: {is: exp.item_queued}
+  h_vocab_domain_invariant: {is: exp.hyp_untested}
+  b_vocab_domain_invariant: {is: exp.item_queued}
   b_concept_extends_deduced_vocab: {is: exp.item_queued}
   b_differentia_by_genus_vocab: {is: exp.item_queued}
   b_verb_extends_primitive_vocab: {is: exp.item_queued}
@@ -1762,6 +1764,9 @@ facts:
   - {is: v_refer, from: h_basic_vocab_fits, to: {is: v_depend, from: syntax.extends, to: [syntax.mod, syntax.holds, syntax.from, syntax.to]}}
   - {is: exp.v_check, from: b_basic_vocab_fits, to: h_basic_vocab_fits}
   - {is: exp.v_ground, from: d_cscl_display_derived, to: h_basic_vocab_fits}
+  - {is: v_refer, from: h_vocab_domain_invariant, to: {is: v_depend, from: syntax.extends, to: syntax.domain, neg: true}}
+  - {is: exp.v_check, from: b_vocab_domain_invariant, to: h_vocab_domain_invariant}
+  - {is: exp.v_ground, from: d_cscl_display_derived, to: h_vocab_domain_invariant}
   - {is: exp.v_check, from: b_concept_extends_deduced_vocab, to: h_concept_extends_deduced}
   - {is: exp.v_check, from: b_differentia_by_genus_vocab, to: h_differentia_by_genus}
   - {is: exp.v_check, from: b_verb_extends_primitive_vocab, to: h_verb_extends_primitive}
