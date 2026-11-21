@@ -1,10 +1,12 @@
 """Wait—turn that observation into a hypothesis?（Stop）
 
-応答を終える前に、最後の応答の文に「していません」系の否定（ません・ていない・がない など）があれば、
+応答を終える前に、最後の応答の文に「していません」系の否定（ません・ていない・がない など。英語の not・n't、中国語の 没有・不是 なども）があれば、
 止まるのを一度だけ止めて、その否定を未検証の仮説として登録するかを Claude に問い直させる。
 
 「体系に〜がない」「〜していない」は、確かめた事実のこともあるが、確かめていない主張のことも多い。
 確かめていない主張なら、それを理由に何かを見送る前に、仮説として登録する（CLAUDE.md の「提案」）。
+
+応答が英語や中国語に流れたときにも働くよう、英語と中国語の否定も拾う。そのときは、日本語で書くことも促す。
 
 連鎖を防ぐため、stop_hook_active のとき（このフックで続けた後の停止）は何もしない。
 """
@@ -13,7 +15,18 @@ import re
 import sys
 
 TITLE = "Wait—turn that observation into a hypothesis?"
-NEG = re.compile(r"(ません|ていない|でいない|していない|がない|はない|もない|できない|られない|わからない|分からない)")
+NEG_JA = re.compile(r"(ません|ていない|でいない|していない|がない|はない|もない|できない|られない|わからない|分からない)")
+NEG_EN = re.compile(r"(?i)\b(not|no|never|none|nothing|cannot|without|\w+n't)\b")
+NEG_ZH = re.compile(r"(没有|没|不是|不能|不会|无法|并未|尚未|不存在|未能)")
+KANA = re.compile(r"[\u3040-\u30ff]")
+
+
+def negations(s):
+    return NEG_JA.search(s) or NEG_EN.search(s) or NEG_ZH.search(s)
+
+
+def foreign(s):
+    return not KANA.search(s) and (NEG_EN.search(s) or NEG_ZH.search(s))
 
 
 def last_text(data):
@@ -51,8 +64,8 @@ def last_text(data):
 def sentences(text):
     text = re.sub(r"```.*?```", "", text, flags=re.S)
     text = re.sub(r"`[^`]*`", "", text)
-    parts = re.split(r"(?<=[。！？\n])", text)
-    return [s.strip(" -*\n") for s in parts if NEG.search(s)]
+    parts = re.split(r"(?<=[。！？\n])|(?<=[.!?])\s+", text)
+    return [s.strip(" -*\n") for s in parts if s and negations(s)]
 
 
 def main():
@@ -76,6 +89,8 @@ def main():
         "3. 進みの報告（走っている・終わっていない など）は、そのまま終えてよい。\n"
         "登録したものと、登録しなかった理由を一言ずつ添えて終える。"
     )
+    if any(foreign(x) for x in hits):
+        reason += "\nまた、英語か中国語の文がある。応答は日本語で書く（取り決め）。日本語で書き直して終える。"
     print(json.dumps({"decision": "block", "reason": reason}, ensure_ascii=False))
 
 
