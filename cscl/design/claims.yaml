@@ -373,8 +373,8 @@ individuals:
   b_basic_vocab_fits: {is: exp.item_done}
   h_vocab_domain_invariant: {is: exp.hyp_untested}
   b_vocab_domain_invariant: {is: exp.item_queued}
-  h_translation_by_display: {is: exp.hyp_untested}
-  b_translation_by_display: {is: exp.item_queued}
+  h_translation_by_display: {is: exp.hyp_supported}
+  b_translation_by_display: {is: exp.item_done}
   h_display_unique_per_language: {is: exp.hyp_untested}
   b_display_unique_per_language: {is: exp.item_queued}
   h_formal_real_by_law: {is: exp.hyp_supported}
@@ -643,6 +643,10 @@ individuals:
   o_sys_lwd_d_verb: {is: exp.observation}
   o_sys_lwd_c_concept: {is: exp.observation}
   o_sys_lwd_c_verb: {is: exp.observation}
+  o_sys_tbd_t_rel: {is: exp.observation}
+  o_sys_tbd_t_viol: {is: exp.observation}
+  o_sys_tbd_b_rel: {is: exp.observation}
+  o_sys_tbd_b_viol: {is: exp.observation}
   o_sys_nf_agree: {is: exp.observation}
   o_sys_nf_base_clean: {is: exp.observation}
   o_sys_pil_raw_base_flags: {is: exp.observation}
@@ -1862,6 +1866,14 @@ facts:
   - {is: v_refer, from: h_translation_by_display, to: {is: v_depend, from: syntax.display, to: syntax.language}}
   - {is: exp.v_check, from: b_translation_by_display, to: h_translation_by_display}
   - {is: exp.v_ground, from: d_cscl_display_derived, to: h_translation_by_display}
+  - {is: v_refer, from: o_sys_tbd_t_rel, to: {is: v_level, from: sys_translation_by_display.same_rel_T.mean_value, to: 1.0}}
+  - {is: exp.v_support, from: o_sys_tbd_t_rel, to: h_translation_by_display}
+  - {is: v_refer, from: o_sys_tbd_t_viol, to: {is: v_level, from: sys_translation_by_display.same_viol_T.mean_value, to: 1.0}}
+  - {is: exp.v_support, from: o_sys_tbd_t_viol, to: h_translation_by_display}
+  - {is: v_refer, from: o_sys_tbd_b_rel, to: {is: v_level, from: sys_translation_by_display.same_rel_B.mean_value, to: 1.0}}
+  - {is: exp.v_support, from: o_sys_tbd_b_rel, to: h_translation_by_display}
+  - {is: v_refer, from: o_sys_tbd_b_viol, to: {is: v_level, from: sys_translation_by_display.same_viol_B.mean_value, to: 1.0}}
+  - {is: exp.v_support, from: o_sys_tbd_b_viol, to: h_translation_by_display}
   - {is: v_refer, from: h_display_unique_per_language, to: {is: v_depend, from: syntax.display, to: [syntax.domain, syntax.language]}}
   - {is: exp.v_check, from: b_display_unique_per_language, to: h_display_unique_per_language}
   - {is: exp.v_ground, from: d_cscl_display_derived, to: h_display_unique_per_language}
