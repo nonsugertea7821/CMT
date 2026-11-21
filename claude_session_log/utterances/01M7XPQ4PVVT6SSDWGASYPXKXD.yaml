@@ -1,0 +1,46 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-21T00:04:53.595Z（UTC）
+individuals:
+  01M7XPQ4PVVT6SSDWGASYPXKXD:
+    is: model_utterance
+    display: 発言 3298
+    val:
+      order: 3298
+      text: |
+        はい、詰まっています。いまやっているのは「extends（動詞の親）を、手で書かずに式から導けるか」という細い枝です。ここ 5 回の確かめはすべて反証で、同じ壁に当たっています。
+
+        **いまの位置**
+        - 周回の最優先（一つの決定から関係を二つ出せない制限、#380）は済んでいます。h_fact_slot_by_end も h_decision_link_by_role も支持です。
+        - その下の本線 a（識別子化）を進めていて、extends を導く枝に入っています。
+
+        **この枝でわかったこと**
+        - 書いた祖先の木を通して欄を集めると、extends は 70/70 で導けます（#557、支持）。extends は式と矛盾しません。
+        - ただし、書いた木を使わずに導こうとすると、すべて外れました。
+
+        | PR | やったこと | 下位の動詞 70 のうち一致 |
+        |---|---|---|
+        | #561 | 自分の欄だけ | 3 |
+        | #565 | 形だけ祖先から | 50 |
+        | #566 | 自分の欄の食い違いで比べる | 3 |
+        | #570 | 端も自分の欄にする | 59 |
+        | #574 | 書いていない欄は比べない | 7 |
+
+        **なぜ詰まっているか**
+        - 親を決める情報は、子が書いていない「受け継いだ欄」にあります（端、new_kind、mod）。
+        - 体系の側で各動詞にその欄を書き足していくと、結局は書いた木の中身を写すことになります。
+        - 規則の側で書いていない欄を推そうとすると、「どちらがより具体的か」の順序が作れません。欄の少ない v_read のような動詞に、多くの動詞の親が集まってしまいます。
+        - 私の読みでは、これはほぼ答えが出ています。extends は自分の欄だけからは決まらない情報を運んでいて、その情報は書いた木にしかありません。それなのに、反証のたびに対の仮説を出して、細かい変種を回し続けていました。
+
+        **どうするのがよいか**
+        - 残りの h_extends_min_by_collected（#569）を確かめて、この枝を閉じるのがよいと考えます。これで外れれば、規則の側の筋は尽きます。
+        - 体系の側の h_verbs_state_own_kind_mod は、当たっても「全部書けば導ける」という確認にしかならないので、回さずに置きます。
+        - extends 系で残っている未検証の 4 つ（#536・#552・#556・#560）も同じ壁に当たる見込みが高いので、後に回します。
+        - そのあとは、本線 a の木に戻ります。h_frame_both_sides と h_checker_words_by_formula が mixed のまま残っているので、そこを詰めます。
+
+        このとおりに進めるつもりです。extends の枝をまだ掘りたい、あるいは別のところを先にしたい場合は言ってください。
+
+        本線 a 識別子化、d_cscl_display_derived の下
+facts:
+- {is: v_say, from: session_model, to: 01M7XPQ4PVVT6SSDWGASYPXKXD}
+- {is: exp.v_answer, from: 01M7XPQ4PVVT6SSDWGASYPXKXD, to: 01M7XPPEM9JGEWGC3XMFGA3DKK}
+- {is: v_refer, from: 01M7XPQ4PVVT6SSDWGASYPXKXD, to: syntax.new_kind}
+- {is: v_refer, from: 01M7XPQ4PVVT6SSDWGASYPXKXD, to: exp.v_read}
