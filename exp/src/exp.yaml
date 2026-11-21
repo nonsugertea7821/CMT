@@ -2632,6 +2632,17 @@ individuals:
   e34_state_unique_display_m_share_unique: {is: axis_value, val: {text: share_unique}}
   e34_state_unique_display_m_share_hit: {is: axis_value, val: {text: share_hit}}
   e34_state_unique_display_m_mean_n_eff: {is: axis_value, val: {text: mean_n_eff}}
+  e37_writing_checker_version: {is: measurement_family}
+  e37_writing_checker_version_c: {is: family_axis, val: {text: c}}
+  e37_writing_checker_version_c_written: {is: axis_value, val: {text: written}}
+  e37_writing_checker_version_c_gold: {is: axis_value, val: {text: gold}}
+  e37_writing_checker_version_m: {is: family_axis, val: {text: m}}
+  e37_writing_checker_version_m_n_flip: {is: axis_value, val: {text: n_flip}}
+  e37_writing_checker_version_m_n_now: {is: axis_value, val: {text: n_now}}
+  e37_writing_checker_version_m_n_reproduced_checked: {is: axis_value, val: {text: n_reproduced_checked}}
+  e37_writing_checker_version_m_n_reproduced_match: {is: axis_value, val: {text: n_reproduced_match}}
+  e37_writing_checker_version_m_n_then_ok: {is: axis_value, val: {text: n_then_ok}}
+  e37_writing_checker_version_m_n_now_ok: {is: axis_value, val: {text: n_now_ok}}
   e35_expression_makes_state_unique: {is: measurement_family}
   e35_expression_makes_state_unique_c: {is: family_axis, val: {text: c}}
   e35_expression_makes_state_unique_c_none_S: {is: axis_value, val: {text: none_S}}
@@ -3560,8 +3571,13 @@ individuals:
   b_prosody_carries_reliability: {is: item_queued}
   h_model_attachment_differs: {is: hyp_untested}
   b_model_attachment_differs: {is: item_queued}
-  h_writing_depends_checker: {is: hyp_untested}
-  b_writing_depends_checker: {is: item_queued}
+  h_writing_depends_checker: {is: hyp_refuted}
+  b_writing_depends_checker: {is: item_done}
+  o_e37_flip_written: {is: observation}
+  o_e37_now_written: {is: observation}
+  o_e37_reproduced_written: {is: observation}
+  o_e37_ok_written: {is: observation}
+  o_e37_flip_gold: {is: observation}
   h_check_reports_contentless: {is: hyp_supported}
   b_check_reports_contentless: {is: item_done}
   h_qualification_depends_above: {is: hyp_untested}
@@ -9238,6 +9254,29 @@ facts:
   - {is: v_spell, from: e34_state_unique_display_m_mean_n_eff, to: mean_n_eff}
   - {is: v_entry_of, from: '{m}', to: e34_state_unique_display}
   - {is: v_metric_of, from: e34_state_unique_display, to: mean_value}
+  - {is: v_file_of, from: e37_writing_checker_version.json, to: e37_writing_checker_version}
+  - {is: v_rows_of, from: [summary], to: e37_writing_checker_version}
+  - {is: v_axis_of, from: e37_writing_checker_version_c, to: e37_writing_checker_version}
+  - {is: v_keys_of, from: '#', to: e37_writing_checker_version_c}
+  - {is: v_value_of, from: e37_writing_checker_version_c_written, to: e37_writing_checker_version_c}
+  - {is: v_spell, from: e37_writing_checker_version_c_written, to: ['written']}
+  - {is: v_value_of, from: e37_writing_checker_version_c_gold, to: e37_writing_checker_version_c}
+  - {is: v_spell, from: e37_writing_checker_version_c_gold, to: ['gold']}
+  - {is: v_axis_of, from: e37_writing_checker_version_m, to: e37_writing_checker_version}
+  - {is: v_value_of, from: e37_writing_checker_version_m_n_flip, to: e37_writing_checker_version_m}
+  - {is: v_spell, from: e37_writing_checker_version_m_n_flip, to: n_flip}
+  - {is: v_value_of, from: e37_writing_checker_version_m_n_now, to: e37_writing_checker_version_m}
+  - {is: v_spell, from: e37_writing_checker_version_m_n_now, to: n_now}
+  - {is: v_value_of, from: e37_writing_checker_version_m_n_reproduced_checked, to: e37_writing_checker_version_m}
+  - {is: v_spell, from: e37_writing_checker_version_m_n_reproduced_checked, to: n_reproduced_checked}
+  - {is: v_value_of, from: e37_writing_checker_version_m_n_reproduced_match, to: e37_writing_checker_version_m}
+  - {is: v_spell, from: e37_writing_checker_version_m_n_reproduced_match, to: n_reproduced_match}
+  - {is: v_value_of, from: e37_writing_checker_version_m_n_then_ok, to: e37_writing_checker_version_m}
+  - {is: v_spell, from: e37_writing_checker_version_m_n_then_ok, to: n_then_ok}
+  - {is: v_value_of, from: e37_writing_checker_version_m_n_now_ok, to: e37_writing_checker_version_m}
+  - {is: v_spell, from: e37_writing_checker_version_m_n_now_ok, to: n_now_ok}
+  - {is: v_entry_of, from: '{m}', to: e37_writing_checker_version}
+  - {is: v_metric_of, from: e37_writing_checker_version, to: mean_value}
   - {is: v_file_of, from: e35_expression_makes_state_unique.json, to: e35_expression_makes_state_unique}
   - {is: v_rows_of, from: [s], to: e35_expression_makes_state_unique}
   - {is: v_axis_of, from: e35_expression_makes_state_unique_c, to: e35_expression_makes_state_unique}
@@ -10252,6 +10291,12 @@ facts:
   - {is: v_check, from: b_model_attachment_differs, to: h_model_attachment_differs}
   - {is: v_refer, from: h_writing_depends_checker, to: {is: v_depend, from: formalization_accuracy, to: lang.type_checker}}
   - {is: v_check, from: b_writing_depends_checker, to: h_writing_depends_checker}
+  - {is: v_refer, from: o_e37_flip_written, to: {is: v_level, from: e37_writing_checker_version.written.n_flip.mean_value, to: 0}}
+  - {is: v_contradict, from: o_e37_flip_written, to: h_writing_depends_checker}
+  - {is: v_refer, from: o_e37_now_written, to: {is: v_level, from: e37_writing_checker_version.written.n_now.mean_value, to: 74}}
+  - {is: v_refer, from: o_e37_reproduced_written, to: {is: v_level, from: e37_writing_checker_version.written.n_reproduced_match.mean_value, to: 74}}
+  - {is: v_refer, from: o_e37_ok_written, to: {is: v_level, from: e37_writing_checker_version.written.n_now_ok.mean_value, to: 9}}
+  - {is: v_refer, from: o_e37_flip_gold, to: {is: v_level, from: e37_writing_checker_version.gold.n_flip.mean_value, to: 0}}
   - {is: v_refer, from: h_check_reports_contentless, to: {is: v_depend, from: type_check_result, to: syntax.refer_to_sentence}}
   - {is: v_check, from: b_check_reports_contentless, to: h_check_reports_contentless}
   - {is: v_ground, from: d_road_checker, to: h_check_reports_contentless}
