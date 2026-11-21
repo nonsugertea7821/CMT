@@ -3703,6 +3703,8 @@ individuals:
   b_model_misses_extends: {is: item_queued}
   h_verdict_by_question_format: {is: hyp_untested}
   b_verdict_by_question_format: {is: item_queued}
+  h_verdict_by_checker: {is: hyp_untested}
+  b_verdict_by_checker: {is: item_queued}
   b_model_reads_by_word: {is: item_queued}
   b_model_reads_by_name: {is: item_queued}
   h_functor_preserves_shape: {is: hyp_untested}
@@ -10496,6 +10498,9 @@ facts:
   - {is: v_refer, from: h_verdict_by_question_format, to: {is: v_rely, from: verdict, to: question_format}}
   - {is: v_check, from: b_verdict_by_question_format, to: h_verdict_by_question_format}
   - {is: v_ground, from: d_road_checker, to: h_verdict_by_question_format}
+  - {is: v_refer, from: h_verdict_by_checker, to: {is: v_rely, from: verdict, to: lang.type_checker}}
+  - {is: v_check, from: b_verdict_by_checker, to: h_verdict_by_checker}
+  - {is: v_ground, from: d_road_checker, to: h_verdict_by_checker}
   - {is: v_refer, from: h_functor_preserves_shape, to: {is: v_depend, from: hidden_state, to: syntax.holds}}
   - {is: v_check, from: b_functor_preserves_shape, to: h_functor_preserves_shape}
   - {is: v_ground, from: d_road_region, to: h_functor_preserves_shape}
