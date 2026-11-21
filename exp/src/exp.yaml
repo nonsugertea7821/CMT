@@ -244,6 +244,8 @@ nodes:
   teacher_examples: {display: 適用例を教師にする, extends: teaching, from: examples_only}
   teacher_both: {display: 定義文の暗唱と適用例の両方を教師にする, extends: teaching, from: def_and_examples}
   teacher_round_trip: {display: 抽象と具体の往復を教師にする, extends: teaching, from: round_trip_material}
+  teacher_round_trip_bound: {display: 兄弟概念の組を既に組み立てる層への、抽象と具体の往復の教示, extends: teacher_round_trip, to: layer_with_sibling}
+  teacher_round_trip_form: {display: 兄弟概念の組を組み立てない層への、抽象と具体の往復の教示, extends: teacher_round_trip, to: layer_without_sibling}
   taught_vector: {display: 教示で得られたベクトル, extends: realizable_entity, mod: {of: [teaching, new]}}
   teaching_material: {display: 教示の材料, form: [teaching, from]}
 
@@ -256,6 +258,8 @@ nodes:
   untaught_usage: {display: 教えていない使い方, extends: usage, mod: {of: [v_refer, to], with: teaching_material, neg: true}}
 
   layer: {display: 層, extends: artifact_compute_from, mod: compose_from_model}
+  layer_with_sibling: {display: 兄弟概念の組を既に組み立てる層, extends: layer, mod: {of: [v_compose, to], with: sibling_pair}}
+  layer_without_sibling: {display: 兄弟概念の組を組み立てない層, extends: layer, mod: {of: [v_compose, to], with: sibling_pair, neg: true}}
   open_weight_model: {display: 重みが公開されたモデル, extends: model, mod: {of: [v_expose, from], with: weights}}
   api_only_model: {display: APIでしか使えないモデル, extends: model, mod: {of: [v_expose, from], with: weights, neg: true}}
   attention: {display: 注意機構, extends: artifact_compute_from, mod: {of: [v_compose, from], with: layer}}
@@ -3178,6 +3182,10 @@ individuals:
   b_merge_verdict_by_spec: {is: item_queued}
   h_round_trip_raises_sibling: {is: hyp_untested}
   b_round_trip_raises_sibling: {is: item_queued}
+  h_round_trip_bounds_present: {is: hyp_untested}
+  b_round_trip_bounds_present: {is: item_queued}
+  h_round_trip_forms_absent: {is: hyp_untested}
+  b_round_trip_forms_absent: {is: item_queued}
   h_attribution_logged: {is: hyp_refuted}
   b_attribution_logged: {is: item_done}
   o_sys_attribution_absent: {is: observation}
@@ -9336,6 +9344,12 @@ facts:
   - {is: v_refer, from: h_round_trip_raises_sibling, to: {is: v_raise, from: teacher_round_trip, to: sibling_discrimination}}
   - {is: v_check, from: b_round_trip_raises_sibling, to: h_round_trip_raises_sibling}
   - {is: v_ground, from: d_consolidation_in_vector, to: h_round_trip_raises_sibling}
+  - {is: v_refer, from: h_round_trip_bounds_present, to: {is: v_raise, from: teacher_round_trip_bound, to: sibling_discrimination}}
+  - {is: v_check, from: b_round_trip_bounds_present, to: h_round_trip_bounds_present}
+  - {is: v_ground, from: d_consolidation_in_vector, to: h_round_trip_bounds_present}
+  - {is: v_refer, from: h_round_trip_forms_absent, to: {is: v_raise, from: teacher_round_trip_form, to: sibling_discrimination}}
+  - {is: v_check, from: b_round_trip_forms_absent, to: h_round_trip_forms_absent}
+  - {is: v_ground, from: d_consolidation_in_vector, to: h_round_trip_forms_absent}
   - {is: v_refer, from: h_attribution_logged, to: {is: v_agree, from: attribution, to: operator_speech}}
   - {is: v_check, from: b_attribution_logged, to: h_attribution_logged}
   - {is: v_refer, from: o_sys_attribution_absent, to: {is: v_come_after, from: sys_attribution.n_absent.mean_value, to: 0}}
