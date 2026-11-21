@@ -419,10 +419,15 @@ individuals:
   o_sys_fgg_cover_r_parent: {is: exp.observation}
   o_sys_fgg_cover_r_kind_up: {is: exp.observation}
   o_sys_fgg_n_target: {is: exp.observation}
-  h_above_includes_form: {is: exp.hyp_untested}
-  b_above_includes_form: {is: exp.item_queued}
-  h_above_split_written_derived: {is: exp.hyp_untested}
-  b_above_split_written_derived: {is: exp.item_queued}
+  h_above_includes_form: {is: exp.hyp_refuted}
+  b_above_includes_form: {is: exp.item_done}
+  h_above_split_written_derived: {is: exp.hyp_supported}
+  b_above_split_written_derived: {is: exp.item_done}
+  o_sys_aif_viol_l: {is: exp.observation}
+  o_sys_aif_viol_i: {is: exp.observation}
+  o_sys_aif_dviol_i: {is: exp.observation}
+  o_sys_aif_cover_above_i: {is: exp.observation}
+  o_sys_aif_build_ok_i: {is: exp.observation}
   b_concept_extends_deduced_vocab: {is: exp.item_queued}
   b_differentia_by_genus_vocab: {is: exp.item_queued}
   b_verb_extends_primitive_vocab: {is: exp.item_queued}
@@ -1988,6 +1993,13 @@ facts:
   - {is: v_refer, from: h_above_split_written_derived, to: {is: v_refer, from: syntax.form, to: ontology.v_above, neg: true}}
   - {is: exp.v_check, from: b_above_split_written_derived, to: h_above_split_written_derived}
   - {is: exp.v_ground, from: d_cscl_display_derived, to: h_above_split_written_derived}
+  - {is: v_refer, from: o_sys_aif_viol_l, to: {is: v_level, from: sys_above_includes_form.viol_L.mean_value, to: 0}}
+  - {is: v_refer, from: o_sys_aif_viol_i, to: {is: v_level, from: sys_above_includes_form.viol_I.mean_value, to: 570}}
+  - {is: v_refer, from: o_sys_aif_dviol_i, to: {is: v_level, from: sys_above_includes_form.dviol_I.mean_value, to: 570}}
+  - {is: v_refer, from: o_sys_aif_cover_above_i, to: {is: v_level, from: sys_above_includes_form.cover_above_I.mean_value, to: 1.0}}
+  - {is: v_refer, from: o_sys_aif_build_ok_i, to: {is: v_level, from: sys_above_includes_form.build_ok_I.mean_value, to: 1}}
+  - {is: exp.v_contradict, from: o_sys_aif_dviol_i, to: h_above_includes_form}
+  - {is: exp.v_support, from: o_sys_aif_dviol_i, to: h_above_split_written_derived}
   - {is: exp.v_check, from: b_concept_extends_deduced_vocab, to: h_concept_extends_deduced}
   - {is: exp.v_check, from: b_differentia_by_genus_vocab, to: h_differentia_by_genus}
   - {is: exp.v_check, from: b_verb_extends_primitive_vocab, to: h_verb_extends_primitive}
