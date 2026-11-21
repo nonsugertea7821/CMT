@@ -1,0 +1,26 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-21T05:26:22.127Z（UTC）
+individuals:
+  01M7Y93S5FVEAMA1DNRF5S1Z3G:
+    is: model_utterance
+    display: 発言 3537
+    val:
+      order: 3537
+      text: |
+        E33 は 9 分ごとに、続けるか止めるかを確かめる形にしました。
+
+        **止める条件**（実験の手順に書き足し、commit して push しました）
+        - 落ちたとき、または 9 分の間にログが一行も進まないとき。
+        - 12 組の半分の 6 組を終えた時点で、both の正答数の合計が none の合計を上回らないとき。教えても効かないので、比べる意味がない、という外れの条件に近い状態です。
+
+        止めた場合は「外れ」として扱い、仮説の状態は未検証のまま変えません。そこまでのログは PR で開示します。
+
+        この条件は、走らせ始めた後、1 組目の結果を見てから足したものです。そのことも手順に書きました。
+
+        **確かめ方**
+        - 9 分ごとに、進んだかどうかと、終わった組の数の知らせが届くようにしました。
+        - 知らせの仕組みは 30 分で切れるので、切れるたびにかけ直します。
+
+        本線 d_consolidation_in_vector の下（h_round_trip_raises_sibling、issue #639）
+facts:
+- {is: v_say, from: session_model, to: 01M7Y93S5FVEAMA1DNRF5S1Z3G}
+- {is: exp.v_answer, from: 01M7Y93S5FVEAMA1DNRF5S1Z3G, to: 01M7Y92S86PB0ZTXN79PWCHQQP}
