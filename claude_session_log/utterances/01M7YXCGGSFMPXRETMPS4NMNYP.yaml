@@ -1,0 +1,237 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-21T11:20:39.705Z（UTC）
+individuals:
+  01M7YXCGGSFMPXRETMPS4NMNYP:
+    is: session_summary
+    display: 発言 3722
+    val:
+      order: 3722
+      text: |
+        This session is being continued from a previous conversation that ran out of context. The summary below covers the earlier portion of the conversation.
+
+        <system-reminder>
+        <tools-used-before-summary>Agent, AskUserQuestion, Bash, Edit, Grep, Monitor, Read, ReadNotifications, Skill, SubagentHandback, TaskStop, ToolSearch, WebFetch, WebSearch, Write, mcp__claude-code-remote__add_repo, mcp__claude-code-remote__create_trigger, mcp__claude-code-remote__delete_trigger, mcp__claude-code-remote__get_trigger, mcp__claude-code-remote__list_repos, mcp__claude-code-remote__read_documentation, mcp__claude-code-remote__send_later, mcp__claude-code-remote__subscribe_pr_activity, mcp__claude-code-remote__unsubscribe_pr_activity, mcp__claude-code-remote__update_trigger, mcp__github__actions_get, mcp__github__actions_list, mcp__github__actions_run_trigger, mcp__github__add_issue_comment, mcp__github__create_pull_request, mcp__github__get_job_logs, mcp__github__issue_read, mcp__github__issue_write, mcp__github__list_issue_types, mcp__github__list_issues, mcp__github__list_pull_requests, mcp__github__pull_request_read, mcp__github__update_pull_request</tools-used-before-summary>
+        </system-reminder>
+        Summary:
+        1. Primary Request and Intent
+
+        **Standing rules (unchanged)**
+        - Repo and tools
+          - Repo nonsugertea7821/CMT at /home/user/CMT. Python is /home/user/venv/bin/python. CPU only.
+        - Language and tone
+          - Write all replies and PR bodies in plain, natural Japanese.
+          - Don't overclaim; separate facts from interpretation.
+          - End each report with a roadmap-position line. Mark side-path work as 「わき道」.
+        - Git
+          - Restore files with `git show <rev>:<path> > <path>`. No checkout, no stash.
+          - Commit trailer:
+            ```
+            Co-Authored-By: Claude [モデル名を伏せた] <[メールアドレスを伏せた]>
+            Claude-Session: https://claude.ai/code/session_015KRKt6TNJZ7ZsQmEknANXK
+            ```
+          - PR body ends with `🤖 Generated with [Claude Code](https://claude.com/claude-code)`, a blank line, then the session URL.
+          - No personal info and no model IDs in pushed artifacts.
+          - Claude never merges. Branch deletion is done by the user or the workflow; locally I remove worktrees and branches after merge.
+        - Every PR I open: subscribe_pr_activity, plus issue_write update with assignees ["nonsugertea7821"].
+        - System yaml
+          - No comments (a hook checks this).
+          - Distinctions go in formulas.
+        - Experiments
+          - Pre-register before running; the first commit is the script only.
+          - Never rerun recorded scripts.
+          - Use `git add -f` for exp/experiments files.
+          - No local tc or ec; the runner's spec runs them.
+        - Hypotheses: anything I think should be done is first registered with v_ground to a decision, or labeled わき道.
+        - Don't ask permission in conversation.
+        - Principle: all information produced has value; keep it.
+        - Container restarts often. Heavy experiments need checkpoint and resume, with a 9-minute send_later resume check.
+        - Run one heavy experiment at a time. Do light work in worktrees /home/user/CMT/.wt_*.
+
+        **30-minute cycle routine (trig_01L92Xn7LSTHrmqt7enEcCPG)**
+        - On fire: first call update_trigger with run_once_at about 31 minutes from now and enabled true. Then run the cycle:
+          1. Check open PRs and merges.
+          2. Follow the lane order: heavy H1–H4, light L1–L4.
+          3. Pre-register, run, record, then undraft.
+          4. Look for implications and register new hypotheses.
+          5. Report briefly in Japanese with a roadmap line.
+
+        2. Key Technical Concepts
+
+        - **Type checker (tc)**
+          - `tc.build()` returns T, O.
+          - `T.syntax_facts()` returns a list of (rel, tuple args).
+          - `tc.Facts(items)`.
+          - `tc.evaluate(tc.law_rules(O), F, tc.variables(O))` returns violations as (lid, bindings, f).
+          - Relations live in F.by; derived relations start with `r_`.
+        - **Laws that touch display, spelling and names**
+          - unique_in_domain is the only law that reads display, and it only compares values for equality.
+          - one_spelling reads r_written.
+          - one_name.
+        - **Signature**
+          - Individuals in O get domain "signature" (fact line 999). The only node in the signature domain is `any`.
+        - **How ec reads results (exp/src/exp_check.py)**
+          - `rows_of(file, at)` follows the row path into the JSON.
+          - `stat(rows, cond_entry, metric)` computes the metric; `mean_value` averages the values.
+          - `v_keys_of` pattern (e.g. '#') together with list-valued v_spell filters rows by key.
+        - **Observation verbs**: v_level, v_come_after (greater), v_come_before (less), v_near.
+        - **Status kinds**
+          - Hypotheses: hyp_untested, hyp_supported, hyp_refuted, hyp_mixed.
+          - Backlog items: item_queued, item_done.
+          - In claims.yaml these take the `exp.` prefix.
+        - **v_depend's `to` end must be a continuant.** Putting ontology.occurrent there fails tc.
+        - **Auto-merge (spec workflow)**
+          - It gets 405 when the PR conflicts with main; the fix is to merge main into the branch.
+          - It sends a PR to manual review when more than one commit touches the experiment script (that is, when there are corrections).
+
+        3. Files and Code Sections
+
+        - **exp/experiments/sys_translation_by_display.py (PR #665, merged)**
+          - Variants:
+            - L: as is.
+            - T: replace each display value with "en:"+node.
+            - B: keep ja and add the en display facts.
+            - P: copy a domain into `__en__` (descriptive only).
+          - Result: same_rel and same_viol were 1 for both T and B, so supported. Display facts: L 889, B 1778. Violations were 0 in L, T and B.
+          - P picked domain prior_mfg and hit one_spelling 12 times, an artifact of how I copied the domain.
+          - Recorded as family sys_translation_by_display in exp.yaml, with cond values same_rel_T, same_viol_T, same_rel_B, same_viol_B and metric mean_value.
+          - Recorded in claims.yaml as o_sys_tbd_{t_rel,t_viol,b_rel,b_viol}, each v_level 1.0 with exp.v_support. Hypothesis set to exp.hyp_supported and b_ to item_done.
+
+        - **claims.yaml, PR #666 (merged)**
+          - Registered h_display_unique_per_language / b_:
+            ```yaml
+            - {is: v_refer, from: h_display_unique_per_language, to: {is: v_depend, from: syntax.display, to: [syntax.domain, syntax.language]}}
+            ```
+            plus v_check, and v_ground from d_cscl_display_derived.
+
+        - **E33, PR #640 (branch claude/h_round_trip_raises_sibling, in the main tree)**
+          - Result s:
+
+            | Condition | acc | acc_both | mean_margin |
+            |---|---|---|---|
+            | none | 0.521 | 0.125 | 0.070 |
+            | both | 0.646 | 0.208 | 1.007 |
+            | round | 0.521 | 0.083 | 0.011 |
+
+          - Refuted: round ≤ both. Round's wrong counts stayed mostly at 4 throughout.
+          - Recorded in exp.yaml as family e33_round_trip_sibling:
+            - rows [s].
+            - Axis c with `v_keys_of '#'`; values none/both/round spelled as lists ['none'] etc.
+            - Axis m with values acc_both and mean_margin; entry '{m}'; metric mean_value.
+          - Observations:
+            - o_e33_both_over_none (v_come_after).
+            - o_e33_round_below_both (v_come_before, v_contradict).
+            - o_e33_round_margin_below_both (v_contradict).
+            - o_e33_round_below_none.
+          - Hypothesis set to hyp_refuted and b_ to item_done.
+          - Committed the results json and log. The partial file had been auto-deleted when the run finished.
+          - Merged main and resolved conflicts: main had added h_round_trip_bounds_present, h_round_trip_forms_absent and others.
+          - Pushed 89a50d1. Spec passed and I undrafted the PR.
+          - Bot judgment: manual review, because 3 commits touch the script.
+
+        - **exp/experiments/sys_signature_all_charts.py (PR #668, auto-merged)**
+          - Direct reading: n_domain 24, n_I 0, any_all 0, so refuted.
+          - Closure reading: closure_any_all 1, closure_n_I 15 (1 signature word, `any`, plus 14 ontology words).
+          - The 14 ontology words: continuant, dependent, occurrent, process, realizable_entity, specifically_dependent_continuant, v_compose, v_depend, v_design, v_express, v_involve, v_perform, v_stage, v_trigger.
+          - Disclosed misreading: n_sig came out as 292 because O individuals get the signature domain. It does not affect the judgment.
+          - Recorded the family with cond values n_I, any_all, closure_any_all, closure_n_I_sig, closure_n_I_nonsig.
+          - Observations o_sys_sac_n_i and o_sys_sac_any are v_contradict; three closure observations are descriptive.
+
+        - **claims.yaml, PR #669 (merged)**
+          - Registered h_charts_meet_at_ontology_top:
+            ```yaml
+            - {is: v_refer, from: h_charts_meet_at_ontology_top, to: {is: v_depend, from: syntax.domain, to: ontology.continuant}}
+            ```
+            plus v_check, and v_ground from d_cscl_display_derived.
+
+        - **E34 (/home/user/CMT/.wt_sud, branch claude/h_state_unique_display, PR #642 Draft)**
+          - Script: exp/experiments/e34_state_unique_display.py. It has partial resume via results/e34_state_unique_display.partial.json.
+          - Started at about 11:09 with nohup (pid 542).
+          - Log lines look like `D/制作 top=制作 q_max=0.92 n_eff=1.33`.
+
+        4. Errors and fixes
+
+        - **First git add for E33 failed** because the partial.json path did not exist. I redid the add without it.
+        - **Merge conflicts**: claims.yaml for #665 and #669, exp.yaml for #640. Each was resolved with a Python regex that keeps both sides. I committed the merge in a separate call.
+        - **Auto-merge 405s** were caused by conflicts with main. Fixed by merging main into the branch.
+        - **#669 failed tc**: "ontology.occurrent は動詞 ontology.v_depend の to（ontology.continuant）に来られない". Fixed by making `to` ontology.continuant alone.
+
+        5. Problem Solving
+
+        | Item | Outcome |
+        |---|---|
+        | L1 h_translation_by_display | Done (supported) |
+        | H1 E33 | Done (refuted); awaiting user review |
+        | L2 h_signature_all_charts | Done (refuted) |
+
+        - h_display_unique_per_language was not tested, because without real translations the test would be tautological.
+        - Branches merged on GitHub (for the user to delete if the workflow didn't): claude/h_translation_by_display, claude/reg_display_unique_language, claude/h_signature_all_charts, claude/reg_charts_meet_ontology_top. Older ones from before: claude/prior_domains, claude/reg_axis_naming, claude/reg_width_region, claude/prior_geometry.
+
+        6. All user messages
+
+        There were no new user messages in this period; only scheduled-trigger and GitHub notifications arrived. Earlier user messages still in force are listed in the standing rules: Japanese replies, 9-minute resume checks, triaging lanes, the goal principle, and 「巨人の肩にはどんどん乗るべきだ。」.
+
+        7. Pending Tasks
+
+        - **E34 resume check (fired at 11:19:56, not yet handled)**
+          - Run `pgrep -f e34_state_unique_display`.
+          - If it has stopped and /home/user/CMT/.wt_sud/exp/experiments/results/e34_state_unique_display.json is missing, restart it:
+            `cd /home/user/CMT/.wt_sud/exp/experiments && nohup /home/user/venv/bin/python e34_state_unique_display.py >> results/e34_state_unique_display.log 2>&1 &`
+          - If the result exists, record it: observations, v_support or v_contradict, and the PR #642 body. Merge main into the branch first if needed.
+          - Otherwise re-arm send_later for 9 minutes.
+        - **PR #640**: awaiting the user's manual review. No action needed.
+        - **Next 30-minute cycle at 11:41**: update the trigger first, then continue with light lanes (L2: h_domain_in_formula, h_vocab_domain_invariant, the new h_charts_meet_at_ontology_top, and others).
+        - **Earlier pending items**
+          - Chung capacity measurement for h_dimension_from_expression_parts.
+          - Holonomy, bounding and prior-work registrations.
+          - Citation checks.
+
+        8. Current Work
+
+        The E34 resume-check notification had just been read. It said: 「E34 の再開の確かめ。pgrep -f e34_state_unique_display で見て、止まっていて …results/e34_state_unique_display.json がなければ…再開する（partial から続く）。結果があれば記録へ進み（観察と v_support/v_contradict、PR #642 の本文）、なければ 9 分後の send_later を置き直す。」
+
+        9. Optional Next Step
+
+        1. Check E34 with pgrep.
+        2. If it has stopped and there is no result json, restart it with the nohup command above.
+        3. Schedule send_later for 9 minutes with the same E34 resume-check message.
+        4. If the result json exists, read the pre-registered judgment in e34_state_unique_display.py's docstring and record the result in the system on claude/h_state_unique_display. Then update PR #642.
+
+        If you need specific details from before compaction (like exact code snippets, error messages, or content you generated), read the full transcript at: /root/.claude/projects/-home-user-CMT/e05d2140-ce91-515f-a5fb-e6251e13d406.jsonl
+        Continue the conversation from where it left off without asking the user any further questions. Resume directly — do not acknowledge the summary, do not recap what was happening, do not preface with "I'll continue" or similar. Pick up the last task as if the break never happened.
+
+        The messages after this summary are the most recent messages from before compaction, kept verbatim. The summary was written without seeing them, so something it says has not happened yet may already have happened in them.
+facts:
+- {is: v_say, from: session_model, to: 01M7YXCGGSFMPXRETMPS4NMNYP}
+- {is: v_refer, from: 01M7YXCGGSFMPXRETMPS4NMNYP, to: exp.v_ground}
+- {is: v_refer, from: 01M7YXCGGSFMPXRETMPS4NMNYP, to: any}
+- {is: v_refer, from: 01M7YXCGGSFMPXRETMPS4NMNYP, to: exp.mean_value}
+- {is: v_refer, from: 01M7YXCGGSFMPXRETMPS4NMNYP, to: exp.v_keys_of}
+- {is: v_refer, from: 01M7YXCGGSFMPXRETMPS4NMNYP, to: exp.v_spell}
+- {is: v_refer, from: 01M7YXCGGSFMPXRETMPS4NMNYP, to: ontology.v_level}
+- {is: v_refer, from: 01M7YXCGGSFMPXRETMPS4NMNYP, to: ontology.v_come_after}
+- {is: v_refer, from: 01M7YXCGGSFMPXRETMPS4NMNYP, to: ontology.v_come_before}
+- {is: v_refer, from: 01M7YXCGGSFMPXRETMPS4NMNYP, to: exp.v_near}
+- {is: v_refer, from: 01M7YXCGGSFMPXRETMPS4NMNYP, to: exp.hyp_untested}
+- {is: v_refer, from: 01M7YXCGGSFMPXRETMPS4NMNYP, to: exp.hyp_supported}
+- {is: v_refer, from: 01M7YXCGGSFMPXRETMPS4NMNYP, to: exp.hyp_refuted}
+- {is: v_refer, from: 01M7YXCGGSFMPXRETMPS4NMNYP, to: exp.hyp_mixed}
+- {is: v_refer, from: 01M7YXCGGSFMPXRETMPS4NMNYP, to: exp.item_queued}
+- {is: v_refer, from: 01M7YXCGGSFMPXRETMPS4NMNYP, to: exp.item_done}
+- {is: v_refer, from: 01M7YXCGGSFMPXRETMPS4NMNYP, to: ontology.v_depend}
+- {is: v_refer, from: 01M7YXCGGSFMPXRETMPS4NMNYP, to: syntax.to}
+- {is: v_refer, from: 01M7YXCGGSFMPXRETMPS4NMNYP, to: ontology.occurrent}
+- {is: v_refer, from: 01M7YXCGGSFMPXRETMPS4NMNYP, to: exp.v_support}
+- {is: v_refer, from: 01M7YXCGGSFMPXRETMPS4NMNYP, to: ontology.v_refer}
+- {is: v_refer, from: 01M7YXCGGSFMPXRETMPS4NMNYP, to: syntax.display}
+- {is: v_refer, from: 01M7YXCGGSFMPXRETMPS4NMNYP, to: syntax.domain}
+- {is: v_refer, from: 01M7YXCGGSFMPXRETMPS4NMNYP, to: exp.v_check}
+- {is: v_refer, from: 01M7YXCGGSFMPXRETMPS4NMNYP, to: exp.v_contradict}
+- {is: v_refer, from: 01M7YXCGGSFMPXRETMPS4NMNYP, to: ontology.realizable_entity}
+- {is: v_refer, from: 01M7YXCGGSFMPXRETMPS4NMNYP, to: ontology.specifically_dependent_continuant}
+- {is: v_refer, from: 01M7YXCGGSFMPXRETMPS4NMNYP, to: ontology.v_compose}
+- {is: v_refer, from: 01M7YXCGGSFMPXRETMPS4NMNYP, to: ontology.v_design}
+- {is: v_refer, from: 01M7YXCGGSFMPXRETMPS4NMNYP, to: ontology.v_express}
+- {is: v_refer, from: 01M7YXCGGSFMPXRETMPS4NMNYP, to: ontology.v_involve}
+- {is: v_refer, from: 01M7YXCGGSFMPXRETMPS4NMNYP, to: ontology.v_perform}
+- {is: v_refer, from: 01M7YXCGGSFMPXRETMPS4NMNYP, to: ontology.v_stage}
+- {is: v_refer, from: 01M7YXCGGSFMPXRETMPS4NMNYP, to: ontology.v_trigger}
+- {is: v_refer, from: 01M7YXCGGSFMPXRETMPS4NMNYP, to: ontology.continuant}
