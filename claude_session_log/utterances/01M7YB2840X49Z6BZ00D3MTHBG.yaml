@@ -1,0 +1,23 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-21T06:00:29.056Z（UTC）
+individuals:
+  01M7YB2840X49Z6BZ00D3MTHBG:
+    is: model_utterance
+    display: 発言 3570
+    val:
+      order: 3570
+      text: |
+        E33 の 2 組目「A変更/B変更」まで終わり、3 組目「一類利用者/二類利用者」に入りました。プロセスは止まらず走っています。
+
+        | 組 | none | both | round |
+        |---|---|---|---|
+        | 1 acc_both | 0/4 | 1/4 | 0/4（wrong はほぼ 4） |
+        | 2 A変更/B変更 | 1/4 | 1/4 | 0/4（wrong はほぼ 4） |
+
+        2 組とも、round（往復させる条件）は none より上がっていません。むしろ wrong がほぼすべて 4 に寄っています。ただ、12 組のうちまだ 2 組なので、判定は事前に決めたとおり全部そろってから行います。
+
+        続行の確かめは 06:09 にもう一度置きました。
+
+        本線 a 識別子化、d_cscl_display_derived の下（E33 は h_round_trip_raises_sibling、PR #640）
+facts:
+- {is: v_say, from: session_model, to: 01M7YB2840X49Z6BZ00D3MTHBG}
+- {is: exp.v_answer, from: 01M7YB2840X49Z6BZ00D3MTHBG, to: 01M7Y9FZPNT8NJWJYMMN5D5Z6Y}

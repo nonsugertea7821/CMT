@@ -1,0 +1,186 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-21T06:00:22.802Z（UTC）
+individuals:
+  01M7YB220J4X2V6KRHS263PJCA:
+    is: session_summary
+    display: 発言 3569
+    val:
+      order: 3569
+      text: |
+        This session is being continued from a previous conversation that ran out of context. The summary below covers the earlier portion of the conversation.
+
+        <system-reminder>
+        <tools-used-before-summary>Agent, AskUserQuestion, Bash, Edit, Grep, Monitor, Read, ReadNotifications, Skill, SubagentHandback, TaskStop, ToolSearch, WebFetch, WebSearch, Write, mcp__claude-code-remote__add_repo, mcp__claude-code-remote__create_trigger, mcp__claude-code-remote__delete_trigger, mcp__claude-code-remote__get_trigger, mcp__claude-code-remote__list_repos, mcp__claude-code-remote__read_documentation, mcp__claude-code-remote__send_later, mcp__claude-code-remote__subscribe_pr_activity, mcp__claude-code-remote__unsubscribe_pr_activity, mcp__claude-code-remote__update_trigger, mcp__github__actions_get, mcp__github__actions_list, mcp__github__actions_run_trigger, mcp__github__add_issue_comment, mcp__github__create_pull_request, mcp__github__get_job_logs, mcp__github__issue_read, mcp__github__issue_write, mcp__github__list_issue_types, mcp__github__list_issues, mcp__github__list_pull_requests, mcp__github__pull_request_read, mcp__github__update_pull_request</tools-used-before-summary>
+        </system-reminder>
+        Summary:
+        1. Primary Request and Intent
+
+        **Standing rules (unchanged)**
+        - Repo and tools
+          - Repo nonsugertea7821/CMT at /home/user/CMT.
+          - Python is /home/user/venv/bin/python. CPU only.
+        - Language and tone
+          - Write all replies and PR bodies in plain, natural Japanese (user: 「日本語で」).
+          - Don't overclaim; separate facts from interpretation.
+        - Report ending
+          - End each report with a roadmap-position line, e.g. 「本線 a 識別子化、d_cscl_display_derived の下」.
+          - Mark side-path work as 「わき道」.
+        - Git
+          - Restore files with `git show <rev>:<path> > <path>`. No checkout or stash.
+          - Commit trailer: `Co-Authored-By: Claude [モデル名を伏せた] <[メールアドレスを伏せた]>` and `Claude-Session: https://claude.ai/code/session_015KRKt6TNJZ7ZsQmEknANXK`.
+          - PR body ends with `🤖 Generated with [Claude Code](https://claude.com/claude-code)`, a blank line, then the session URL.
+          - No personal info and no model IDs in pushed artifacts.
+          - Claude never merges.
+        - Every PR I open: call subscribe_pr_activity and issue_write update with assignees ["nonsugertea7821"].
+        - System yaml and experiments
+          - No comments in system yaml.
+          - Never rerun recorded experiment scripts (they overwrite result files).
+          - Use `git add -f` for exp/experiments files.
+          - Do not run tc or ec locally; let the runner's spec run them.
+          - External source texts are not put in the repo.
+        - Hypotheses
+          - Anything I think "should be done" is first registered as an untested hypothesis, grounded with v_ground or labeled わき道.
+          - Registration-only PRs auto-merge.
+        - Test flow
+          1. Branch claude/h_<name>.
+          2. Draft PR with "Closes #issue".
+          3. First commit is the script only.
+          4. Run.
+          5. Record the results in the system and push.
+          6. Undraft after spec passes.
+        - Don't ask permission in conversation.
+        - Principle (CLAUDE.md, PR #641, merged): the goal is consistent concept recognition in the model, not producing experiment results. All information produced along the way has value (outliers, refutations, mixed results, stopped runs, check failures, misreadings). Keep it in the system or in commits and PRs.
+        - The container restarts. Heavy experiments must checkpoint and resume, with a send_later resume check every 9 minutes.
+        - Run one heavy (model) experiment at a time; do light work during the wait.
+        - While E33 runs, the main tree must stay on branch claude/h_round_trip_raises_sibling. Do other branch work in git worktrees under /home/user/CMT/.wt_*.
+
+        **Triggers**
+        - trig_01L92Xn7LSTHrmqt7enEcCPG (30-minute cycle) is next at 06:28Z. On fire:
+          1. update_trigger run_once_at to now+31min, enabled true.
+          2. Follow the prompt: check PRs and the heavy experiment, follow the triage order H1–H4 / L1–L4, look for implications and register new hypotheses.
+        - E33 resume-check send_later: the last one fired at 05:59:36 and has NOT yet been handled. Its prompt:
+          1. `pgrep -f e33_round_trip_sibling`.
+          2. If it isn't running and results/e33_round_trip_sibling.json doesn't exist, restart with `cd /home/user/CMT/exp/experiments && nohup /home/user/venv/bin/python e33_round_trip_sibling.py >> results/e33_round_trip_sibling.log 2>&1 &`.
+          3. If the final result exists, record it (observations, v_support / v_contradict, push, update the #640 body), then run E34 (in /home/user/CMT/.wt_sud, PR #642) with resume.
+          4. Otherwise re-arm send_later in 9 minutes with the same message.
+          5. Report briefly, in Japanese, only when something changed.
+
+        2. Key Technical Concepts
+
+        - **E33** (h_round_trip_raises_sibling, PR #640 Draft, Closes #639)
+          - Conditions none / both / round over 12 pairs; checkpoints to results/e33_round_trip_sibling.partial.json.
+          - Pair 1 (acc_both): none 0/4, both 1/4 (517 s), round 0/4 with wrong=[4,4,4,4,4,4,4,3] (351 s). Same as the first run.
+          - Pair 2 none: 1/4. The PID was 3776.
+        - **ec reading of results**
+          - rows_of(file, row_collection); stat(mean_value) averages r[cond] over rows having that key.
+          - v_rows_of may be omitted (then the row collection is the top level, e.g. the sys_checker_words_swap file with top-level keys name_1 / name_2 / form / s).
+        - **Type checker name reads**
+          - occupies `self.is_a(end, "role")`
+          - grounding `self.is_a(m["with"], "definition")`
+          - check `self.is_a(nid, "role")`
+          - gather `short(verb) == "v_refer"`
+          - field_ok `m["of"] == ["syntax.v_refer", "from"]`
+        - **syntax_facts sentences**
+          - "axis" is emitted from three places: AX upper (line 930), the node's axis key, and the mod at-axis.
+          - The laws that use axis: own_by_axis, entail_by_axis, entail_by_axis_step, at_axis.
+          - Relations in laws must be base relations, node short names, or law_relation individuals.
+
+        3. Files and Code Sections
+
+        - **exp/experiments/e34_state_unique_display.py** (worktree /home/user/CMT/.wt_sud, branch claude/h_state_unique_display, PR #642 Draft, Closes #477; pre-registration pushed, spec passed, NOT yet run)
+          - States (199):
+            - D: 55 definitions from data/concepts_ja.json defs; the word in the body is masked to ＿＿; candidates are the 55 words.
+            - S_new: 72 sentences from data/sense_pairs_ja.json["pairs"]; candidates are the 24 words.
+            - S_old: 72 sentences, same candidates.
+          - Readout: `log P(w」 | chat(prompt)+「)` over the candidates, normalized to q.
+          - hit = argmax is correct; n_eff = exp(H); unique = hit and n_eff < 2.
+          - Verdict on all share_unique: ≥0.8 supported, ≤0.5 refuted, otherwise mixed; outlier if fewer than 100 states.
+          - The partial file e34_state_unique_display.partial.json supports resume.
+        - **exp/experiments/sys_checker_words_swap.py** (PR #643, auto-merged; worktree removed)
+          - Swaps the 5 sites in memory and compares errors / roles / Dm digest / check_all digest.
+          - Result: supported. All the same; 0 disagreements.
+            - Calls per site: A 829, B 29, C 734, D 8315, E 0 (never called).
+          - Recorded:
+            - Family sys_checker_words_swap in exp.yaml (conds same_errors, same_roles, same_dm, same_out, n_disagree, n_site_hit).
+            - Observations o_sys_cws_{err, roles, dm, out} → v_support; o_sys_cws_dis (0) and o_sys_cws_hit (4) not linked.
+            - h_checker_words_swap is hyp_supported; b is item_done.
+        - **exp/experiments/sys_placement_without_domain.py** and **_fix.py** (worktree /home/user/CMT/.wt_pwd, branch claude/h_placement_without_domain, PR #644, Closes #413, undrafted; needs manual review because of corrections)
+          - Reuses sys_placement_in_laws (base). The exists premise is kept.
+          - Splits the checker's `add("axis", aid, a["extends"])` into axis_up, and switches the entail_by_axis axis(var1, var2) and entail_by_axis_step axis(var2, var3) premises to axis_up.
+          - Correction 1 (before running): LAW_IND_ANCHOR changed to the `defined_inherit` line (the definition_stratified line no longer exists).
+          - First run: agree 7, law_Q0 0, other_Q0 2 → outlier (axis_up was undeclared).
+          - The _fix script adds `axis_up: {is: law_relation, display: 軸の上位である}` to LAW_INDS. Result: agree 7, law_Q0 0, other_Q0 0 → supported.
+          - Recorded:
+            - Two families in exp.yaml (sys_placement_without_domain and _fix, cond axis py/law/other_Q0..Q6 plus agree, rows [rows]).
+            - Observations o_sys_pwd_raw_{other, agree, base_clean} (not linked) and o_sys_pwd_fix_{other, agree, base_clean} → v_support.
+            - h_placement_without_domain is hyp_supported; b is item_done.
+          - The spec passed and the PR is undrafted.
+        - **Held draft:** /tmp/claude-0/-home-user-CMT/e05d2140-ce91-515f-a5fb-e6251e13d406/scratchpad/held/sys_undecided_from_indistinct.py.
+
+        4. Errors and fixes
+
+        - E34: `KeyError 'new'` because sense_pairs_ja.json nests the data under "pairs". I fixed the loader and the counts (24 words, 199 states) before committing.
+        - placement: the anchor count was 0 after I had already pushed the pre-registration. I disclosed the correction before running.
+        - The axis_up relation was undeclared, so the first run was an outlier. I committed that result with its interpretation, then pre-registered the _fix script and ran it.
+        - E33 earlier issues are as in the prior summary.
+
+        5. Problem Solving
+
+        - PR #641 (principle) was merged by the user. PR #643 was auto-merged. Local branches and worktrees for both were cleaned up.
+        - Implication from #644, not yet registered:
+          - Other syntax_facts sentence words are emitted from two sources: node items and mod items (display, of, position, with, neg, at, quant).
+          - Candidate hypothesis: sentence words whose first argument has multiple sources make laws misfire unless a premise narrows the type; a single source removes the need for domain.
+          - Plan: count the first-argument sources per sentence word, then register.
+        - L1 remaining: h_translation_by_display (#607). It likely needs a grammar-level per-language display design (manual review); deferred for now.
+
+        6. All user messages
+
+        - None in this period; there were only trigger and GitHub notifications. Earlier user messages, which still apply:
+          - 「日本語で」
+          - 「それ9分毎に続行チェックのいる実験だよ」
+          - 「違う、この環境のコンテナが再起動するから」
+          - 「式の識別子化の方はどうなってる？」
+          - 「目的に到達していなければ増えた仮説を別の路線と合わせてトリアージしてその路線の順序を決めよう / で、別の路線の待ち時間でやろう」
+          - 「実験の結果を出すことが目的ではなく、それによって一貫したモデルの概念認識を実現することが目的で、その過程で出た情報にはすべて価値がある、というのを原則として覚えておいて」
+
+        7. Pending Tasks
+
+        - Handle the 05:59:36 E33 resume check: pgrep, restart if needed, re-arm send_later in 9 minutes, and report only on change.
+        - When E33 finishes:
+          - Record the results.
+          - Update #640 and undraft it.
+          - Run E34 in .wt_sud with send_later resume checks.
+          - Record E34 and update #642.
+        - Watch #644 (manual review). After it merges: `git worktree remove .wt_pwd` and `git branch -D claude/h_placement_without_domain`.
+        - Watch #642 and #640.
+        - Implication follow-up: count the first-argument sources of the syntax_facts sentence words, then register a hypothesis (grounded to d_cscl_display_derived).
+        - Continue light lanes: h_translation_by_display (deferred, needs design), then L2 (h_domain_in_formula and the others), L3, L4.
+        - 30-minute cycle at 06:28.
+
+        8. Current Work
+
+        The E33 resume-check trigger had just fired (05:59:36). Before that, I undrafted #644 after its spec passed and reported. E33 was last seen running (PID 3776) on pair 2.
+
+        9. Optional Next Step
+
+        Handle the trigger per its prompt: 「1. `pgrep -f e33_round_trip_sibling` で走っているかを見る。… 4. まだ走っている（か再開した）なら、send_later で 9 分後にこの確かめをもう一度置く。」
+        - Run `cd /home/user/CMT/exp/experiments && pgrep -f e33_round_trip_sibling; ls results/e33_round_trip_sibling.json; tail -n 2 results/e33_round_trip_sibling.log`.
+        - Restart if it stopped.
+        - Re-arm send_later (9 minutes) with the same message, including the E34 follow-on step.
+        - Report briefly in Japanese if progress changed (e.g. pair 2 both/round results).
+
+        If you need specific details from before compaction (like exact code snippets, error messages, or content you generated), read the full transcript at: /root/.claude/projects/-home-user-CMT/e05d2140-ce91-515f-a5fb-e6251e13d406.jsonl
+        Continue the conversation from where it left off without asking the user any further questions. Resume directly — do not acknowledge the summary, do not recap what was happening, do not preface with "I'll continue" or similar. Pick up the last task as if the break never happened.
+
+        The messages after this summary are the most recent messages from before compaction, kept verbatim. The summary was written without seeing them, so something it says has not happened yet may already have happened in them.
+facts:
+- {is: v_say, from: session_model, to: 01M7YB220J4X2V6KRHS263PJCA}
+- {is: v_refer, from: 01M7YB220J4X2V6KRHS263PJCA, to: exp.v_ground}
+- {is: v_refer, from: 01M7YB220J4X2V6KRHS263PJCA, to: exp.v_support}
+- {is: v_refer, from: 01M7YB220J4X2V6KRHS263PJCA, to: exp.v_contradict}
+- {is: v_refer, from: 01M7YB220J4X2V6KRHS263PJCA, to: exp.row_collection}
+- {is: v_refer, from: 01M7YB220J4X2V6KRHS263PJCA, to: exp.mean_value}
+- {is: v_refer, from: 01M7YB220J4X2V6KRHS263PJCA, to: exp.v_rows_of}
+- {is: v_refer, from: 01M7YB220J4X2V6KRHS263PJCA, to: ontology.v_refer}
+- {is: v_refer, from: 01M7YB220J4X2V6KRHS263PJCA, to: syntax.law_relation}
+- {is: v_refer, from: 01M7YB220J4X2V6KRHS263PJCA, to: exp.hyp_supported}
+- {is: v_refer, from: 01M7YB220J4X2V6KRHS263PJCA, to: exp.item_done}
