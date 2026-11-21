@@ -1,0 +1,20 @@
+domain: en_basic
+
+nodes:
+  send: {display: 向かわせる, extends: v_trigger, to: go}
+
+  animal: {display: 動物, extends: performer, mod: {of: [go, from]}}
+  position: {display: 場所, extends: continuant, mod: {of: [come, to]}}
+  meat: {display: 食肉, extends: component, mod: {of: [v_compose, from], with: animal}}
+  grip: {display: 握っていること, extends: process, mod: {of: [v_stage, to], with: keep}}
+  attraction: {display: 引力, extends: disposition, mod: {of: [v_trigger, from], with: come}}
+  experience: {display: 経験, extends: information_entity, mod: {of: [see, new]}}
+  map: {display: 軍用地図, extends: information_entity, mod: {of: [v_refer, from], with: position}}
+
+individuals:
+  en_basic: {is: domain, display: 英語の基礎語彙}
+
+facts:
+  - {is: v_use, from: en_basic, to: syntax}
+  - {is: v_use, from: en_basic, to: std}
+  - {is: v_presume, from: en_basic, to: closed_world}
