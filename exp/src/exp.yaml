@@ -2029,6 +2029,13 @@ individuals:
   sys_lawless_verb_anchor_cond_n_formal: {is: axis_value, val: {text: n_formal}}
   sys_lawless_verb_anchor_cond_n_real: {is: axis_value, val: {text: n_real}}
   sys_lawless_verb_anchor_cond_mean_J: {is: axis_value, val: {text: mean_J}}
+  sys_reading_excludes_claims: {is: measurement_family}
+  sys_reading_excludes_claims_cond: {is: family_axis, val: {text: cond}}
+  sys_reading_excludes_claims_cond_n_verb: {is: axis_value, val: {text: n_verb}}
+  sys_reading_excludes_claims_cond_n_drop: {is: axis_value, val: {text: n_drop}}
+  sys_reading_excludes_claims_cond_n_flip: {is: axis_value, val: {text: n_flip}}
+  sys_reading_excludes_claims_cond_share_shift: {is: axis_value, val: {text: share_shift}}
+  sys_reading_excludes_claims_cond_mean_abs_dJ: {is: axis_value, val: {text: mean_abs_dJ}}
   ops_sync_duration: {is: measurement_family}
   ops_sync_duration_cond: {is: family_axis, val: {text: cond}}
   ops_sync_duration_cond_n_run: {is: axis_value, val: {text: n_run}}
@@ -3327,6 +3334,7 @@ individuals:
   o_sys_seb_move: {is: observation}
   o_sys_obs_n_dep: {is: observation}
   o_ops_sync_r2: {is: observation}
+  o_sys_rec_shift: {is: observation}
 
   h_prosody_carries_mod: {is: hyp_untested}
   b_prosody_carries_mod: {is: item_queued}
@@ -3428,8 +3436,8 @@ individuals:
   b_std_exp_biased: {is: item_done}
   h_observation_by_scale: {is: hyp_refuted}
   b_observation_by_scale: {is: item_done}
-  h_reading_excludes_claims: {is: hyp_untested}
-  b_reading_excludes_claims: {is: item_queued}
+  h_reading_excludes_claims: {is: hyp_refuted}
+  b_reading_excludes_claims: {is: item_done}
   h_claims_apart_by_domain: {is: hyp_untested}
   b_claims_apart_by_domain: {is: item_queued}
   h_sync_scan_quadratic: {is: hyp_refuted}
@@ -7887,6 +7895,22 @@ facts:
   - {is: v_spell, from: sys_lawless_verb_anchor_cond_mean_J, to: mean_J}
   - {is: v_entry_of, from: '{cond}', to: sys_lawless_verb_anchor}
   - {is: v_metric_of, from: sys_lawless_verb_anchor, to: mean_value}
+  - {is: v_file_of, from: sys_reading_excludes_claims.json, to: sys_reading_excludes_claims}
+  - {is: v_axis_of, from: sys_reading_excludes_claims_cond, to: sys_reading_excludes_claims}
+  - {is: v_value_of, from: sys_reading_excludes_claims_cond_n_verb, to: sys_reading_excludes_claims_cond}
+  - {is: v_spell, from: sys_reading_excludes_claims_cond_n_verb, to: n_verb}
+  - {is: v_value_of, from: sys_reading_excludes_claims_cond_n_drop, to: sys_reading_excludes_claims_cond}
+  - {is: v_spell, from: sys_reading_excludes_claims_cond_n_drop, to: n_drop}
+  - {is: v_value_of, from: sys_reading_excludes_claims_cond_n_flip, to: sys_reading_excludes_claims_cond}
+  - {is: v_spell, from: sys_reading_excludes_claims_cond_n_flip, to: n_flip}
+  - {is: v_value_of, from: sys_reading_excludes_claims_cond_share_shift, to: sys_reading_excludes_claims_cond}
+  - {is: v_spell, from: sys_reading_excludes_claims_cond_share_shift, to: share_shift}
+  - {is: v_value_of, from: sys_reading_excludes_claims_cond_mean_abs_dJ, to: sys_reading_excludes_claims_cond}
+  - {is: v_spell, from: sys_reading_excludes_claims_cond_mean_abs_dJ, to: mean_abs_dJ}
+  - {is: v_entry_of, from: '{cond}', to: sys_reading_excludes_claims}
+  - {is: v_metric_of, from: sys_reading_excludes_claims, to: mean_value}
+  - {is: v_refer, from: o_sys_rec_shift, to: {is: v_level, from: sys_reading_excludes_claims.share_shift.mean_value, to: 0.4}}
+  - {is: v_contradict, from: o_sys_rec_shift, to: h_reading_excludes_claims}
   - {is: v_file_of, from: ops_sync_duration.json, to: ops_sync_duration}
   - {is: v_axis_of, from: ops_sync_duration_cond, to: ops_sync_duration}
   - {is: v_value_of, from: ops_sync_duration_cond_n_run, to: ops_sync_duration_cond}
