@@ -40,12 +40,10 @@
 開示: 評価の 48 問は少なく、0.10 は 5 問に当たる。乱数は使わない（初期値ゼロ、順は固定）ので、繰り返しの幅は測れない。
   新しい組の語（丙・丁、子・丑など）は、意味の手がかりにならないように選んだが、偏りは確かめていない。
   走らせる前に、数は計算していない。
-続行の確かめ（走らせ始めた後に足した。利用者の指示。足した時点で、組 1 の 3 条件の結果を見ている）:
-  9 分ごとに進みを見て、次のどれかなら走らせるのを止め、状態を変えない（外れ）。止めたときは、そこまでのログを開示する。
-  - 落ちた（Traceback など）か、9 分の間にログが一行も進まない。
-  - 6 組（半分）を終えた時点で、both の acc_both の合計が none の合計を上回らない
-    （外れの条件に近く、残りの組で覆る見込みが薄い）。
-  それ以外は最後まで走らせ、上の判定に従う。
+再開（走らせ始めた後に足した。手順と判定は変えていない）:
+  この環境のコンテナは再起動するので、組と条件ごとに、そこまでの行を e33_round_trip_sibling.partial.json に書く。
+  走らせ直すと、書いてある組と条件を飛ばして続ける。乱数を使わないので、飛ばしても値は同じ。
+  最初の起動は組 2 の途中で止め、この仕組みを足して走らせ直した（止めた時点で組 1 の 3 条件の結果を見ている）。
 使い方:
   python exp/experiments/e33_round_trip_sibling.py
 """
@@ -321,7 +319,8 @@ def main():
     for p in r.model.parameters():
         p.requires_grad_(False)
     inj = Injector(r.model, LAYER)
-    rows = {}
+    part = HERE / "results" / "e33_round_trip_sibling.partial.json"
+    rows = json.loads(part.read_text(encoding="utf-8")) if part.exists() else {}
     for pi, pair in enumerate(PAIRS):
         train_items = [item(q, k, pair) for q, k in TRAIN[pi]]
         eval_items = [it for it in g3 if set(it["defs"]) == set(pair)]
@@ -329,9 +328,14 @@ def main():
                       for it in eval_items]
         eval_items += [dict(item(q, k, pair), id=f"P{pi + 1:02d}-{j + 1}") for j, (q, k) in enumerate(EVAL_NEW[pi])]
         assert len(eval_items) == 4, (pair, len(eval_items))
+        pk = f"P{pi + 1:02d}"
+        row = rows.setdefault(pk, {"pair": list(pair)})
+        if all(c in row for c in CONDS):
+            continue
         pt = PairTrainer(r, inj, pair, defs, train_items)
-        row = {"pair": list(pair)}
         for cond in CONDS:
+            if cond in row:
+                continue
             t0 = time.time()
             V, log = pt.train(cond)
             res = {}
@@ -344,7 +348,7 @@ def main():
             print(f"[{pi + 1:02d} {pair[0]}/{pair[1]}] {cond}: "
                   f"acc_both={sum(x['both'] for x in res.values())}/4 wrong={log['wrong']} {time.time() - t0:.0f}s",
                   flush=True)
-        rows[f"P{pi + 1:02d}"] = row
+            part.write_text(json.dumps(rows, ensure_ascii=False, indent=1) + "\n", encoding="utf-8")
     s = {}
     for cond in CONDS:
         xs = [x for row in rows.values() for x in row[cond]["items"].values()]
@@ -354,6 +358,7 @@ def main():
     out = HERE / "results" / "e33_round_trip_sibling.json"
     out.write_text(json.dumps({"model": MODEL, "layer": LAYER, "steps": STEPS, "rows": rows, "s": s},
                               ensure_ascii=False, indent=1) + "\n", encoding="utf-8")
+    part.unlink()
     print(json.dumps(s, ensure_ascii=False))
 
 
