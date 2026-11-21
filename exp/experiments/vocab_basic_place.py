@@ -42,6 +42,12 @@
   そのため判定の基準は弱い。記述として次を足す。
     n_inter_en / n_inter_ja: 語彙の領域に足した、選んだ語でないノードの数（中間の種類）。
     n_dup_en / n_dup_ja: 同じ領域で、extends と mod と from・to・holds が同じになった、置いた語の組の数（式で区別できていない）。
+追記 2（置き始めたあと、judge の前。判定は変えない）:
+  型検査器は、動詞でない概念に mod・val・cmp か二つ以上の上位を、動詞に holds か pre/post（上位が動詞なら from・to・mod）を求める。
+  置き方の取り決め: 式は ontology・syntax・std の語と、同じ領域に足した語だけで書く。val で見出しを値に持たせることはしない
+  （名前を式の代わりにすることになるため）。式で区別できず、型検査器の法則（specific・one_name・unique_in_domain など）に
+  当たる語は置かず、置けないと数える。日本語で一つの見出しに重なる英語の語（make・do・take が「為す」）は、
+  標本の順で最初の語の識別子に置き、残りは置けないと数える。
 使い方:
   python -I exp/experiments/vocab_basic_place.py sample <be.html> <wnjpn.db>
   python -I exp/experiments/vocab_basic_place.py judge
