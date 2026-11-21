@@ -1,0 +1,30 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-21T22:01:33.968Z（UTC）
+individuals:
+  01M80221GGBE9V6CP6GGTVXQ3W:
+    is: model_utterance
+    display: 発言 4117
+    val:
+      order: 4117
+      text: |
+        E43 を、#721 のブランチ（h_model_reads_by_word の確かめ）に事前登録し、実行を始めました。
+
+        **E43 で確かめること**
+        - 問いは h_model_reads_by_word（モデルは依存を名前の字面で読む）です。
+        - 問い方は E42 と同じ比べ（「意味が変わるのは P と Q のどちらか」）にし、新しい 24 項目（seed 1）で測ります。
+        - 対照の条件 control を足しました。
+          - decoy と同じ定義で、Q の行に入れる文字だけを、どこにも出ない別の名前に変えたものです。
+          - これで、decoy で Q が選ばれる理由が「A の名前の文字があること」かどうかを分けられます。
+        - 判定（事前登録）:
+          - 前提: extends の正答率が 0.625 以上。この線は E42 の 0.708 を見てから決めたので、そのことも開示しています。
+          - 支持: decoy が 0.25 以下で、かつ control が decoy より 0.25 以上高い。
+          - 反証: decoy が 0.5 以上。
+          - それ以外は判定しません。
+
+        **進み**
+        - PR #725（E42）の結果の commit は CI を通りました。PR は Draft のままです。
+        - 22:11 に E43 の進みの確かめを置いてあります。
+
+        ロードマップの位置: H3（検査器の道 d_road_checker）で E43 を実行中。
+facts:
+- {is: v_say, from: session_model, to: 01M80221GGBE9V6CP6GGTVXQ3W}
+- {is: exp.v_answer, from: 01M80221GGBE9V6CP6GGTVXQ3W, to: 01M7ZG4RFFK1A28D1ZVQK01AG8}
