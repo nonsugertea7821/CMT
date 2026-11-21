@@ -1,0 +1,23 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-21T21:16:30.387Z（UTC）
+individuals:
+  01M7ZZFH9K1GVB3KXAATJ3TSK0:
+    is: model_utterance
+    display: 発言 4092
+    val:
+      order: 4092
+      text: |
+        この周回では、E40 の続きとして E41 を始めました。事前登録を commit して Draft の PR #721 を立て、いま走らせています。
+
+        - **確かめたいこと:** モデルが依存を、名前の位置ではなく語の字面で読むか（`h_model_reads_by_word`）。
+        - **E40 との違い 1（モデル）:** 手元で一番大きい Qwen3-4B を使います。E40 の 1.5B では前提が崩れたためです。
+        - **E40 との違い 2（decoy の条件）:** A の文字列を、依存しない側（Q）の行だけに置きます。依存する P の行には A の文字列がありません。
+          - 字面で読むモデルは、依存しない Q の方を選ぶはずです。
+          - 判定: 前提（extends で 0.75 以上）が成り立ったうえで、decoy で正しく選べる割合が 0.25 以下なら支持、それ以外は反証です。
+        - **新しい開示:** E41 は、E40 の結果を見たあとに手順を書きました。PR に書いてあります。
+
+        9 分後に、止まっていないかを確かめます。#702・#710・#718 は手で確認してもらうのを待っています。
+
+        ロードマップ上の位置: d_road_checker の下の重い列 H3 の続きです。
+facts:
+- {is: v_say, from: session_model, to: 01M7ZZFH9K1GVB3KXAATJ3TSK0}
+- {is: exp.v_answer, from: 01M7ZZFH9K1GVB3KXAATJ3TSK0, to: 01M7ZG4RFFK1A28D1ZVQK01AG8}
