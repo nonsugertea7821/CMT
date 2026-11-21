@@ -22,20 +22,39 @@ concurrency: issues-sync
 jobs:
   sync:
     runs-on: ubuntu-latest
+    env:
+      APPLY: ${{ inputs.apply || (github.event_name == 'push' && vars.ISSUE_SYNC == 'on') }}
     steps:
       - uses: actions/checkout@v4
+      # 体系と同期の入力が前回に書いたときと同じなら、何もしない（手動実行は常に行う）
+      - id: seen
+        if: github.event_name == 'push'
+        uses: actions/cache/restore@v4
+        with:
+          path: .sync-done
+          key: issues-sync-${{ hashFiles('cscl.yaml', 'cscl/**', 'exp/**', '.github/scripts/**') }}
+          lookup-only: true
       - uses: actions/setup-python@v5
+        if: steps.seen.outputs.cache-hit != 'true'
         with:
           python-version: "3.12"
-      - run: pip install pyyaml
-      - name: 下書き
-        run: python .github/scripts/sync_issues.py --out drafts
+      - if: steps.seen.outputs.cache-hit != 'true'
+        run: pip install pyyaml
+      # 下書きと書き込みを一度の実行で行う（体系の組み立ては一度だけ）
+      - name: 下書きと書き込み
+        if: steps.seen.outputs.cache-hit != 'true'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: python .github/scripts/sync_issues.py --out drafts $([ "$APPLY" = true ] && echo --apply)
       - uses: actions/upload-artifact@v4
+        if: steps.seen.outputs.cache-hit != 'true'
         with:
           name: issue-drafts
           path: drafts
-      - name: issue に書く
-        if: inputs.apply || (github.event_name == 'push' && vars.ISSUE_SYNC == 'on')
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: python .github/scripts/sync_issues.py --apply
+      - if: steps.seen.outputs.cache-hit != 'true' && env.APPLY == 'true'
+        run: touch .sync-done
+      - if: steps.seen.outputs.cache-hit != 'true' && env.APPLY == 'true'
+        uses: actions/cache/save@v4
+        with:
+          path: .sync-done
+          key: issues-sync-${{ hashFiles('cscl.yaml', 'cscl/**', 'exp/**', '.github/scripts/**') }}

@@ -87,6 +87,17 @@ def claims():
             return None
         text = "_体系の測定値から生成。手で編集しない。_ 正答率などの測定値。`<` は左が小さい。\n\n" + "\n".join(lines)
         return text + ("\n\n" + LEGEND if re.search(r"G2[ck]", text) else "")
+    index = {}
+    for f in ROOT.glob("**/*.yaml"):
+        if f.parts[len(ROOT.parts)] in ("exp", "cscl"):
+            for l in f.read_text(encoding="utf-8").splitlines():
+                ids = set(re.findall(r"(?:from|to): (\w+)[,}]", l))
+                m = re.match(r"\s+(\w+):", l)
+                if m:
+                    ids.add(m.group(1))
+                for i in ids:
+                    index.setdefault(i, []).append(l.strip())
+    lines_of = lambda cid: index.get(cid, [])
     out = []
     for sect, kind in (("hypotheses", "仮説"), ("decisions", "決定")):
         for cid, x in C[sect].items():
@@ -105,9 +116,7 @@ def claims():
                 vs = vs if isinstance(vs, list) else [vs]
                 if vs:
                     lines.append(f"- {name}: " + "、".join(f"`{type_checker.short(v)}`" if ja(v) == v else f"{ja(v)}（`{type_checker.short(v)}`）" for v in vs))
-            src = [l.strip() for f in ROOT.glob("**/*.yaml") if f.parts[len(ROOT.parts)] in ("exp", "cscl")
-                   for l in f.read_text(encoding="utf-8").splitlines()
-                   if re.search(rf"(from|to): {re.escape(cid)}[,}}]", l) or re.match(rf"\s+{re.escape(cid)}:", l)]
+            src = lines_of(cid)
             body_def = "\n".join(lines) + "\n\n<details><summary>体系での記述</summary>\n\n```yaml\n" + "\n".join(l for l in src if "v_prior_" not in l) + "\n```\n</details>"
             h = hashlib.sha256(body_def.encode()).hexdigest()[:12]
             pw = [(m.group(1), m.group(2) if m.group(3) == cid else m.group(3)) for l in src
