@@ -1,0 +1,32 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-21T17:03:29.473Z（UTC）
+individuals:
+  01M7ZH0861CW6332PWQ0SCVVYP:
+    is: model_utterance
+    display: 発言 3957
+    val:
+      order: 3957
+      text: |
+        フックが拾った 5 つの文を分けて、1 つを仮説として登録しました（PR #708）。
+
+        | 拾われた文 | 分け方 | 扱い |
+        |---|---|---|
+        | 表の 2 行（「来られない」「上位がない」） | 確かめた事実 | 検査器が出した誤りの文を、そのまま引いたもの |
+        | 「文の中で法則を名指ししていません」 | 確かめた事実 | 誤りの文を読んで確かめた |
+        | 「law_given にあたる見込みがある」 | 確かめていない主張 | 仮説 `h_unnamed_error_is_law_given` として登録した |
+        | 「誤りの種類は法則で与えられていない」 | 確かめていない主張 | 登録済みの `h_error_kind_is_law` を反証する向きの読みなので、新しくは登録しない。その実験で確かめる |
+        | 「名前を出していないだけ、という読み方もできる」 | 確かめていない主張 | 上で登録したものと同じ中身 |
+
+        `h_unnamed_error_is_law_given` は `v_depend(type_check_result, syntax.law_given)` と書き、d_road_checker に v_ground で結びました。`h_error_kind_is_law`（syntax.laws）と対になります。
+
+        - 立てば、誤りの種類は法則で与えられていて、足りないのは検査器が法則の名前を出すことだけです。
+        - 崩れれば、誤りの種類を表す概念が別に要ります。
+
+        ロードマップ上の位置: 検査器の道 d_road_checker に、対の仮説の片方を足しました。H2（d_metric の直下の E36）は 10/24 まで進んでいます。
+facts:
+- {is: v_say, from: session_model, to: 01M7ZH0861CW6332PWQ0SCVVYP}
+- {is: exp.v_answer, from: 01M7ZH0861CW6332PWQ0SCVVYP, to: 01M7ZG4RFFK1A28D1ZVQK01AG8}
+- {is: v_refer, from: 01M7ZH0861CW6332PWQ0SCVVYP, to: syntax.law_given}
+- {is: v_refer, from: 01M7ZH0861CW6332PWQ0SCVVYP, to: ontology.v_depend}
+- {is: v_refer, from: 01M7ZH0861CW6332PWQ0SCVVYP, to: exp.type_check_result}
+- {is: v_refer, from: 01M7ZH0861CW6332PWQ0SCVVYP, to: exp.v_ground}
+- {is: v_refer, from: 01M7ZH0861CW6332PWQ0SCVVYP, to: syntax.laws}
