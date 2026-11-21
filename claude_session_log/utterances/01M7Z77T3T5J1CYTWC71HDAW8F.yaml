@@ -1,0 +1,313 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-21T14:12:51.450Z（UTC）
+individuals:
+  01M7Z77T3T5J1CYTWC71HDAW8F:
+    is: session_summary
+    display: 発言 3831
+    val:
+      order: 3831
+      text: |
+        This session is being continued from a previous conversation that ran out of context. The summary below covers the earlier portion of the conversation.
+
+        <system-reminder>
+        <tools-used-before-summary>Agent, Artifact, AskUserQuestion, Bash, Edit, Grep, Monitor, Read, ReadNotifications, Skill, SubagentHandback, TaskStop, ToolSearch, WebFetch, WebSearch, Write, mcp__claude-code-remote__add_repo, mcp__claude-code-remote__create_trigger, mcp__claude-code-remote__delete_trigger, mcp__claude-code-remote__get_trigger, mcp__claude-code-remote__list_repos, mcp__claude-code-remote__read_documentation, mcp__claude-code-remote__send_later, mcp__claude-code-remote__subscribe_pr_activity, mcp__claude-code-remote__unsubscribe_pr_activity, mcp__claude-code-remote__update_trigger, mcp__github__actions_get, mcp__github__actions_list, mcp__github__actions_run_trigger, mcp__github__add_issue_comment, mcp__github__create_pull_request, mcp__github__get_job_logs, mcp__github__issue_read, mcp__github__issue_write, mcp__github__list_issue_types, mcp__github__list_issues, mcp__github__list_pull_requests, mcp__github__pull_request_read, mcp__github__update_pull_request</tools-used-before-summary>
+        </system-reminder>
+        Summary:
+        1. Primary Request and Intent
+
+        **Standing rules (unchanged)**
+        - Repo and tools
+          - Repo nonsugertea7821/CMT (public) at /home/user/CMT.
+          - Python is /home/user/venv/bin/python. CPU only.
+        - Language and tone
+          - Write replies and PR bodies in plain, natural Japanese.
+          - Don't overclaim, and separate facts from interpretation.
+          - End each report with a roadmap-position line, and label side paths 「わき道」.
+        - Git
+          - Restore files with `git show <rev>:<path> > <path>`. No checkout, no stash.
+          - Commit trailer:
+            ```
+            Co-Authored-By: Claude [モデル名を伏せた] <[メールアドレスを伏せた]>
+            Claude-Session: https://claude.ai/code/session_015KRKt6TNJZ7ZsQmEknANXK
+            ```
+          - PR body ends with: `🤖 Generated with [Claude Code](https://claude.com/claude-code)`, a blank line, then the session URL.
+        - Prohibitions
+          - No personal info and no model IDs in pushed artifacts.
+          - Claude never merges.
+          - Branch deletion is done by the user or the workflow; I remove only local worktrees and branches after a merge.
+        - For every PR I open:
+          - Call subscribe_pr_activity.
+          - Call issue_write update with assignees ["nonsugertea7821"].
+        - System YAML
+          - No comments.
+          - The hook falsely flags a quoted `'#'` when committed together with a conflict resolve; commit separately.
+        - Experiments
+          - Pre-register: the first commit contains the script only.
+          - Never rerun a recorded script.
+          - Add experiment files with `git add -f`.
+          - No local tc or ec; the runner's spec runs them.
+        - Hypotheses
+          - Register any proposal as a hypothesis first.
+          - Link it with v_ground to a decision, or label it わき道.
+        - Don't ask permission in conversation.
+        - Principle: all information has value; keep it.
+        - The container restarts often:
+          - Heavy experiments need checkpoint and resume.
+          - Set a 9-minute send_later resume check.
+          - Do light work in worktrees /home/user/CMT/.wt_*.
+
+        **User requests this session**
+        - 「ここまでの結果を全部並べてみて」: done; first artifact at https://claude.ai/artifact/NKkMT3eNk8tGxSfE9iDXKk.
+        - 「mixedの仮説を重点的に見ていこう。仮説間の共通事項は？」: answered with three groups.
+          - Group 1: four hypotheses where the effect is opposite between G2c (conflict) and G2k (control).
+          - Group 2: four hypotheses that are better than none but worse than text.
+          - Group 3: seven system-side hypotheses where "all" was claimed but "most" was found.
+          - Registered #692.
+        - 「それ数学に含意が無いか？ 極限まで引き上げる（微積）ことで0/1になるのがdepend…」: answered.
+          - Derivative reading: depend means a nonzero derivative; raise and lower are its sign.
+          - Limit reading: proportion, threshold, natural density.
+          - Registered #694.
+        - 「割合や密度って今本当に書けないの？ だとしたらそれ自体を一つの仮説として扱うべき」: answered and registered #695.
+          - `ratio` exists as a measurement axis, but no formula `at` has ever used it, and tc gives it no meaning.
+          - Density cannot be written.
+        - 「仮説台帳はこの形で流されてもヒューマンフレンドリーじゃないね。ロードマップを中心にインタラクティブにしてほしい。あと仮説の内容も自然な日本語で示して。」: in progress.
+        - 「というか、リポジトリに入れてもいいんじゃない？ これ見たい人は見たいでしょ」: in progress.
+          - Decision: commit the generator plus a workflow that deploys to GitHub Pages.
+          - Do not commit the generated output; it would break auto-merge of registration PRs and force regeneration on every PR.
+        - **Security constraint (user, verbatim): 「Pagesに出すなら脆弱性気を付けてね」**
+        - **Constraint (user, verbatim): 「あとsession_logは読まないように」**
+          - The ledger and its workflow must not read the session-log branch `claude/session-log-*`.
+          - Read only main's system yaml (cscl/, exp/) and issue numbers.
+
+        2. Key Technical Concepts
+
+        - **Pipeline**
+          - `exp_check.build()` returns T, O, S, M, C.
+          - C has keys observations, hypotheses, decisions, backlog, side.
+        - **Hypothesis entries**: p, s, o, status, evidence, against, scope.
+        - **Decision entries**
+          - p, s, o, status, basis (v_ground hypotheses), supersedes.
+          - Edges appear under keys like `continuant.v_depend` and `continuant.v_raise`.
+        - **Display and status helpers**
+          - `display.sentence(T, verb, a, b, I)` and `display.ja`.
+          - `sync_issues.individuals()`, `status_label`, `SYM`, `LEGEND`, `GitHub().issues()`.
+          - Issues carry the marker `<!-- cscl-claim: ID -->`.
+        - **Measured values**: `exp_check.expand(M, T)`.
+        - **Roadmap graph**
+          - d_goal → d_metric (depend).
+          - d_metric → d_road_region and d_road_checker (depend).
+          - d_road_japanese → d_metric (raise).
+          - All roads → lang.d_cscl_display_derived (depend).
+          - Supersede edges: d_goal→d_avoid_redefinition, d_metric→d_metric_following.
+        - **Type-checker constraints learned**
+          - v_depend's `to` must be a continuant (exp.channel is not one).
+          - A lang claim in claims.yaml cannot reference exp words; move such hypotheses to exp.yaml.
+          - exp hypotheses can ground only to exp decisions (d_goal, d_metric, d_road_*).
+        - **auto_merge.py**
+          - Registration PRs touch only claims.yaml and exp.yaml.
+          - Workflow or script changes need manual review.
+          - spec.yml runs `build_readme.py --check`.
+        - **Case particle problem in display.sentence**
+          - Its case_mark wrongly gives を for displays without a particle: 「を依存する」 (240 occurrences), 「を述べる」, 「を一致する」, 「をの影響を受けない」, 「をの原因である」.
+          - README already shows 「標準の語彙の層が公理の層を依存する」.
+          - This is an active research line: h_case_frame_formula, h_case_frame_by_relation, and h_case_frame_by_signature are refuted; h_ja_case_frame is supported.
+          - A human-judged particle table `GOLD` exists in exp/experiments/sys_case_frame_formula.py.
+            - Keys are like "ontology.v_depend": "に", "ontology.v_agree": "と", "ontology.v_refer": "を", "ontology.v_compose": "の", "ontology.v_express": "で".
+            - It covers 57 verbs; its docstring says 「一人（Claude）が表示語だけを見て付けた…判断で、外の基準ではない」.
+
+        3. Files and Code Sections
+
+        **Merged PRs this session**
+        - #689 (sound/glyph).
+        - #692: h_channel_lowers_prior_verdict.
+          - In exp.yaml: `{is: v_lower, from: channel, to: verdict_by_prior}`, plus b_ and `v_ground d_goal`.
+        - #694: h_cscl_depends_while_raise_splits.
+          - In exp.yaml: `{is: v_depend, from: redefinition_following, to: cscl}`, plus `v_ground d_goal`.
+          - Renamed from h_channel_depends_while_raise_splits after the tc failure.
+
+        **Open PR #695 (branch claude/reg_mixed_ratio, worktree /home/user/CMT/.wt_rmr)**
+        - h_mixed_from_missing_ratio in exp.yaml:
+          - `{is: v_refer, from: h_mixed_from_missing_ratio, to: {is: v_depend, from: hyp_mixed, to: syntax.at}}`
+          - b_mixed_from_missing_ratio with v_check.
+          - `{is: v_ground, from: d_metric, to: h_mixed_from_missing_ratio}`
+        - The merge with main was resolved (07da09b, keeping both sides) and pushed. Awaiting CI and auto-merge.
+
+        **New branch claude/ledger (worktree /home/user/CMT/.wt_led, based on origin/main; not committed yet)**
+
+        - `.github/scripts/build_ledger.py` (created)
+          - Docstring explains:
+            - It builds the page from the system and centers it on the roadmap.
+            - Output is not committed.
+            - The ledger workflow deploys to Pages.
+          - Imports: base64, contextlib, hashlib, io, json, os, re, sys, Path; sync_issues, display, exp_check, type_checker (stdout suppressed).
+          - Constants:
+            - `TEMPLATE = Path(__file__).with_name("ledger_template.html")`
+            - `WORD = {"<":"より小さい", ">":"より大きい", "≈":"とほぼ同じ", "=":"と同じ", "≥":"以上", "≤":"以下"}`
+            - `EDGE = {"v_depend":"depend", "v_raise":"raise", "v_supersede":"supersede"}`
+          - `issue_numbers()`: when GITHUB_TOKEN and GITHUB_REPOSITORY are set, maps the cscl-claim marker to issue number via `sync_issues.GitHub().issues()`.
+          - `build()` returns:
+            `{repo, legend, decisions: {id: {side, status, text[], edges[{kind,to}], issue}}, hypotheses: {id: {side, status, text[], subject, scope[], evidence[obs], against[obs], decisions[], issue}}}`
+            - obs is `{id, a: {key?, v}, rel, b: {key?, v}}`.
+            - text comes from display.sentence; is_a uses 「AはBの一種である」.
+            - grounded is the reverse of decision basis.
+          - `csp(html)` builds a sha256 hash of each `<script>` and `<style>` block and returns:
+            `default-src 'none'; script-src <hashes>; style-src <hashes>; img-src 'none'; connect-src 'none'; font-src 'none'; base-uri 'none'; form-action 'none'`
+          - `main()`:
+            - Output directory is argv[1] or `_site`.
+            - Data JSON escapes `<`, `>`, `&`, U+2028, and U+2029 as `\uXXXX`.
+            - Replaces `/*LEDGER_DATA*/null` and `/*LEDGER_CSP*/`.
+            - Writes index.html.
+
+        - `.github/scripts/ledger_template.html` (created and edited)
+          - Full HTML document with:
+            - `<meta http-equiv="Content-Security-Policy" content="/*LEDGER_CSP*/">` and `<meta name="referrer" content="no-referrer">`.
+            - System fonts only; no Google Fonts.
+            - Light and dark color tokens.
+          - Roadmap section:
+            - `#road` contains an SVG `#wires` and `#tiers`.
+            - Decision nodes are buttons `.node[data-d]` showing the sentence, a status bar, the decision status pill (採用 / 仮の決定 / 取り下げ), and the hypothesis count.
+            - A わき道 node `data-d="__side"`.
+            - Legend.
+          - Chips for decisions that are not on the map.
+          - `#detail` panel:
+            - Header with the decision sentence and relations (clickable `data-go`).
+            - Search input `#q` (searches all hypotheses).
+            - Status filter chips (`data-st`).
+            - Hypothesis cards grouped by status: the natural sentence, the id in code, an issue link or issue search link, other grounded decisions, and collapsible observations (＋ for evidence, − for against).
+            - わき道 groups cards by subject (「…について」).
+          - Hash routing `#<decision id>`.
+          - Inline style attributes were removed for CSP:
+            - Bars use `<span class="f-<status>" data-w="..">` and `widths()` sets `el.style.width`.
+            - Wires use `class="wire"` and `"wire dash"`.
+            - `.top` and `.dhead .meta` classes replaced inline styles.
+          - Every inserted value goes through `esc()`; selectors use `CSS.escape`.
+
+        - Local preview build at /tmp/claude-0/-home-user-CMT/e05d2140-ce91-515f-a5fb-e6251e13d406/scratchpad/res/site/index.html
+          - Desktop 1200 and phone 400 render with no console errors and no horizontal overflow.
+          - Data: 309 hypotheses (supported 107, untested 95, refuted 88, mixed 16, withdrawn 3) and 55 decisions.
+          - Screenshot: scratchpad/res/shot_desk.png. Script: scratchpad/res/shot.js.
+
+        - Scratch data from earlier: scratchpad/res/data.json, data2.json, build.py (my own particle templates; superseded), ledger.html (first artifact).
+
+        4. Errors and fixes
+
+        - **#694 tc failure**: 「exp.channel は動詞 ontology.v_depend の to（ontology.continuant）に来られない」.
+          - Fixed by changing `to` to cscl and renaming the hypothesis; PR body updated with a 訂正 section.
+        - **#695 tc failure**: 「lang の主張が、lang と言語の層以外の語を参照している（['exp']）」.
+          - Fixed by restoring claims.yaml from origin/main and moving the hypothesis to exp.yaml, grounded to d_metric; PR body updated.
+        - **#695 merge conflict** (github-actions comment) after #694 merged.
+          - Merged origin/main and resolved with a regex that keeps both sides; pushed.
+        - **CSP with hashes blocks inline style attributes**: replaced them with classes plus JS-set `style.width`.
+        - **Roadmap tiering is wrong** (seen in the screenshot):
+          - d_road_japanese appears at tier 0 next to d_goal, because nothing points to it.
+          - The labels 目標, 測り方, 道筋, and 言語の土台 then mismatch.
+          - Planned fix:
+            - Ignore raise edges for layering.
+            - Compute tier as maxHeight − height, where height = 1 + max height of depend targets.
+            - Drop the hardcoded tier labels.
+            - Draw an upward raise edge from the top of the source to the bottom of the target.
+        - **Unnatural Japanese from display.sentence** (「を依存する」 and others): still open; see Pending.
+
+        5. Problem Solving
+
+        - Mixed analysis: the three groups above produced hypotheses #692, #694, and #695.
+        - Security for Pages, done so far:
+          - CSP with hashes; no external resources; no-referrer.
+          - Data escaping and esc on all values.
+        - Security for Pages, planned in the workflow:
+          - Triggers: push to main and workflow_dispatch only.
+          - Permissions: contents: read, issues: read, pages: write, id-token: write.
+          - `persist-credentials: false`.
+          - Separate build and deploy jobs; concurrency group pages.
+          - Check out main only, so session-log is never read.
+          - The repo is public, so Pages exposes nothing new.
+          - The user must enable Pages (Source: GitHub Actions).
+        - Background work:
+          - E35 running in .wt_ems: 59 of 144 states at 14:00.
+          - send_later resume check trig_01YCTgjJpaZJgpteWuKEJLKx at 14:10Z.
+          - 30-minute cycle trigger trig_01L92Xn7LSTHrmqt7enEcCPG set for 14:18Z.
+
+        6. All user messages
+
+        - 「ここまでの結果を全部並べてみて」 (from before the earlier summary; answered).
+        - 「mixedの仮説を重点的に見ていこう。仮説間の共通事項は？」
+        - 「それ数学に含意が無いか？ 極限まで引き上げる（微積）ことで0/1になるのがdepend、みたいな 勿論直観だから見当はずれなこと言ってる可能性もあるけど」
+        - 「割合や密度って今本当に書けないの？ だとしたらそれ自体を一つの仮説として扱うべきだと思う」
+        - 「あと仮説台帳はこの形で流されてもヒューマンフレンドリーじゃないね ロードマップを中心にインタラクティブにしてほしい。あと仮説の内容も自然な日本語で示して。」
+        - 「というか、リポジトリに入れてもいいんじゃない？ これ見たい人は見たいでしょ」
+        - 「Pagesに出すなら脆弱性気を付けてね」
+        - 「あとsession_logは読まないように」
+
+        7. Pending Tasks
+
+        - **Ledger PR (branch claude/ledger)**
+          - Fix tiering and wires.
+          - Fix the Japanese naturalness.
+            - Planned approach: in build_ledger, use GOLD from sys_case_frame_formula as a human-judged particle table for verbs whose display lacks a particle, falling back to display.sentence.
+            - Disclose this in the PR, and consider registering a hypothesis about it per the rule that proposals are registered first.
+            - Alternatively, fix case_mark's 「の…」-start bug, which gives 「をの影響を受けない」.
+          - Add `.github/workflows/ledger.yml` with the secure Pages deployment.
+          - Commit and push, open a PR (manual review), then subscribe and assign.
+          - PR body must cover:
+            - Security measures.
+            - That session_log is never read.
+            - That Pages must be enabled by the user.
+            - That the generator was run locally only to preview the page.
+          - Republish the artifact with the new page (or point to Pages) and reply in Japanese with a roadmap line.
+        - **#695**: await CI and auto-merge; then remove .wt_rmr and the branch claude/reg_mixed_ratio.
+        - **E35**
+          - At the 14:10 check: if stopped and there is no json, restart:
+            `cd /home/user/CMT/.wt_ems/exp/experiments && nohup /home/user/venv/bin/python e35_expression_makes_state_unique.py >> results/e35_expression_makes_state_unique.log 2>&1 &`
+          - When done, record:
+            - Family, observations, and v_support or v_contradict.
+            - Draft PR on claude/h_expression_makes_state_unique (subscribe and assign); undraft after spec passes.
+        - **14:18 cycle**: update the trigger run_once_at about 31 minutes ahead first, then run the cycle.
+
+        8. Current Work
+
+        I was building the in-repo interactive ledger in /home/user/CMT/.wt_led.
+        - build_ledger.py and ledger_template.html exist and render without errors.
+        - Most recently I examined the GOLD particle table in exp/experiments/sys_case_frame_formula.py to fix the unnatural 「を依存する」 output from display.sentence.
+        - I had told the user: 「session_log は読みません。台帳を作るスクリプトが読むのは、main の体系のファイル（cscl/ と exp/ の yaml）と issue の番号だけです…」
+        - I had also listed the security measures (CSP with hashes, no external resources, escaping, minimal workflow permissions, main push only).
+
+        9. Optional Next Step
+
+        Continue the ledger work per 「ロードマップを中心にインタラクティブにしてほしい。あと仮説の内容も自然な日本語で示して。」, 「リポジトリに入れてもいいんじゃない？」, and 「Pagesに出すなら脆弱性気を付けてね」:
+        - Implement particle correction in build_ledger.py using GOLD, with a display.sentence fallback.
+        - Fix the tier computation (ignore raise edges; height-based tiers; remove hardcoded tier labels) and the upward wire drawing.
+        - Write `.github/workflows/ledger.yml`:
+          - Triggers: push to main and workflow_dispatch.
+          - Permissions: contents: read, issues: read, pages: write, id-token: write.
+          - Checkout of main with persist-credentials: false.
+          - Run `python .github/scripts/build_ledger.py _site` with GITHUB_TOKEN.
+          - actions/upload-pages-artifact, then actions/deploy-pages in a separate job.
+          - Never touch session-log branches.
+        - Rebuild the preview, take one screenshot check, then commit, push, and open the PR (subscribe and assign).
+        - Reply in Japanese with the link, the security notes, the note that Pages must be enabled in Settings, and a roadmap line.
+
+        If you need specific details from before compaction (like exact code snippets, error messages, or content you generated), read the full transcript at: /root/.claude/projects/-home-user-CMT/e05d2140-ce91-515f-a5fb-e6251e13d406.jsonl
+        Continue the conversation from where it left off without asking the user any further questions. Resume directly — do not acknowledge the summary, do not recap what was happening, do not preface with "I'll continue" or similar. Pick up the last task as if the break never happened.
+
+        The messages after this summary are the most recent messages from before compaction, kept verbatim. The summary was written without seeing them, so something it says has not happened yet may already have happened in them.
+facts:
+- {is: v_say, from: session_model, to: 01M7Z77T3T5J1CYTWC71HDAW8F}
+- {is: v_refer, from: 01M7Z77T3T5J1CYTWC71HDAW8F, to: exp.v_ground}
+- {is: v_refer, from: 01M7Z77T3T5J1CYTWC71HDAW8F, to: syntax.at}
+- {is: v_refer, from: 01M7Z77T3T5J1CYTWC71HDAW8F, to: ontology.v_depend}
+- {is: v_refer, from: 01M7Z77T3T5J1CYTWC71HDAW8F, to: syntax.to}
+- {is: v_refer, from: 01M7Z77T3T5J1CYTWC71HDAW8F, to: exp.channel}
+- {is: v_refer, from: 01M7Z77T3T5J1CYTWC71HDAW8F, to: ontology.v_agree}
+- {is: v_refer, from: 01M7Z77T3T5J1CYTWC71HDAW8F, to: ontology.v_refer}
+- {is: v_refer, from: 01M7Z77T3T5J1CYTWC71HDAW8F, to: ontology.v_compose}
+- {is: v_refer, from: 01M7Z77T3T5J1CYTWC71HDAW8F, to: ontology.v_express}
+- {is: v_refer, from: 01M7Z77T3T5J1CYTWC71HDAW8F, to: exp.v_lower}
+- {is: v_refer, from: 01M7Z77T3T5J1CYTWC71HDAW8F, to: exp.verdict_by_prior}
+- {is: v_refer, from: 01M7Z77T3T5J1CYTWC71HDAW8F, to: exp.redefinition_following}
+- {is: v_refer, from: 01M7Z77T3T5J1CYTWC71HDAW8F, to: exp.hyp_mixed}
+- {is: v_refer, from: 01M7Z77T3T5J1CYTWC71HDAW8F, to: exp.v_check}
+- {is: v_refer, from: 01M7Z77T3T5J1CYTWC71HDAW8F, to: lang.type_checker}
+- {is: v_refer, from: 01M7Z77T3T5J1CYTWC71HDAW8F, to: exp.v_raise}
+- {is: v_refer, from: 01M7Z77T3T5J1CYTWC71HDAW8F, to: exp.v_supersede}
+- {is: v_refer, from: 01M7Z77T3T5J1CYTWC71HDAW8F, to: ontology.continuant}
+- {is: v_refer, from: 01M7Z77T3T5J1CYTWC71HDAW8F, to: exp.v_support}
+- {is: v_refer, from: 01M7Z77T3T5J1CYTWC71HDAW8F, to: exp.v_contradict}
