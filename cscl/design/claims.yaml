@@ -373,10 +373,10 @@ individuals:
   b_vocab_domain_invariant: {is: exp.item_queued}
   h_translation_by_display: {is: exp.hyp_untested}
   b_translation_by_display: {is: exp.item_queued}
-  h_formal_real_by_law: {is: exp.hyp_untested}
-  b_formal_real_by_law: {is: exp.item_queued}
-  h_real_axis_by_domain: {is: exp.hyp_untested}
-  b_real_axis_by_domain: {is: exp.item_queued}
+  h_formal_real_by_law: {is: exp.hyp_supported}
+  b_formal_real_by_law: {is: exp.item_done}
+  h_real_axis_by_domain: {is: exp.hyp_mixed}
+  b_real_axis_by_domain: {is: exp.item_done}
   h_domain_choice_is_refer: {is: exp.hyp_untested}
   b_domain_choice_is_refer: {is: exp.item_queued}
   h_std_by_law: {is: exp.hyp_refuted}
@@ -812,6 +812,9 @@ individuals:
   o_sys_vep_verbs: {is: exp.observation}
   o_vbj_share_ja: {is: exp.observation}
   o_sys_sd_jac_law: {is: exp.observation}
+  o_sys_fra_bal: {is: exp.observation}
+  o_sys_fra_single: {is: exp.observation}
+  o_sys_fra_real_single: {is: exp.observation}
   o_sys_sd_jac_use: {is: exp.observation}
   o_vbj_share_en: {is: exp.observation}
   o_vbj_both_fit: {is: exp.observation}
@@ -1598,6 +1601,12 @@ facts:
   - {is: v_refer, from: o_sys_sd_jac_use, to: {is: v_level, from: sys_std_definition.jac_use.mean_value, to: 0.24615384615384617}}
   - {is: exp.v_contradict, from: o_sys_sd_jac_law, to: h_std_by_law}
   - {is: exp.v_contradict, from: o_sys_sd_jac_use, to: h_std_by_shared_use}
+  - {is: v_refer, from: o_sys_fra_bal, to: {is: v_level, from: sys_formal_real_axis.bal_acc.mean_value, to: 0.8072478991596639}}
+  - {is: v_refer, from: o_sys_fra_single, to: {is: v_level, from: sys_formal_real_axis.share_real_single.mean_value, to: 0.7394957983193278}}
+  - {is: v_refer, from: o_sys_fra_real_single, to: {is: v_level, from: sys_formal_real_axis.n_real_single.mean_value, to: 88.0}}
+  - {is: exp.v_support, from: o_sys_fra_bal, to: h_formal_real_by_law}
+  - {is: exp.v_support, from: o_sys_fra_real_single, to: h_real_axis_by_domain}
+  - {is: exp.v_contradict, from: o_sys_fra_single, to: h_real_axis_by_domain}
   - {is: v_refer, from: o_sys_dbg_groups, to: {is: v_level, from: sys_differentia_by_genus.n_sib_groups.mean_value, to: 12.0}}
   - {is: v_refer, from: o_sys_dbg_pairs, to: {is: v_level, from: sys_differentia_by_genus.n_sib_pairs.mean_value, to: 1529.0}}
   - {is: v_refer, from: o_sys_dbg_clash, to: {is: v_level, from: sys_differentia_by_genus.n_clash.mean_value, to: 0.0}}
