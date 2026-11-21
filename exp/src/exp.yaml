@@ -2992,6 +2992,14 @@ individuals:
   e9_cond: {is: family_axis, val: {text: cond}}
   e9_cond_direct: {is: axis_value, val: {text: direct}}
   e9_cond_cot: {is: axis_value, val: {text: cot}}
+  e27: {is: measurement_family}
+  e27_group: {is: family_axis, val: {text: group}}
+  e27_group_G2c: {is: axis_value, val: {text: G2c}}
+  e27_group_G2k: {is: axis_value, val: {text: G2k}}
+  e27_cond: {is: family_axis, val: {text: cond}}
+  e27_cond_real: {is: axis_value, val: {text: real}}
+  e27_cond_nonce: {is: axis_value, val: {text: nonce}}
+  e27_cond_bare: {is: axis_value, val: {text: bare}}
   e10_group: {is: family_axis, val: {text: group}}
   e10_group_G2c: {is: axis_value, val: {text: G2c}}
   e10_group_G2k: {is: axis_value, val: {text: G2k}}
@@ -3214,6 +3222,10 @@ individuals:
   o_e9_scratchpad_like_direct_remap_4b: {is: observation}
   o_e9_scratchpad_not_below_direct_remap_control_4b: {is: observation}
   o_e9_scratchpad_below_direct_remap_control_15b: {is: observation}
+  o_e27_bare_conflict_above_control: {is: observation}
+  o_e27_bare_robust_control_level_zero: {is: observation}
+  o_e27_nonce_near_real_conflict: {is: observation}
+  o_e27_nonce_above_real_control: {is: observation}
   o_e10_expr_above_none_conflict: {is: observation}
   o_e10_expr_below_none_control: {is: observation}
   o_e11_write_below_direct_conflict: {is: observation}
@@ -3296,6 +3308,7 @@ individuals:
   h_chain_length_lowers_following: {is: hyp_mixed}
   h_scratchpad_raises_rule_following: {is: hyp_refuted}
   h_number_comparison_lowers_rule_following: {is: hyp_untested}
+  b_number_comparison_unbiased: {is: item_queued}
   h_scratchpad_lowers_remap_following: {is: hyp_supported}
   h_scratchpad_raises_rule_following_4b: {is: hyp_supported}
   h_scratchpad_lowers_remap_following_4b: {is: hyp_refuted}
@@ -4220,6 +4233,28 @@ facts:
   - {is: v_entry_of, from: '{cond}', to: e9}
   - {is: v_metric_of, from: e9, to: accuracy}
   - {is: v_metric_of, from: e9, to: order_robust_accuracy}
+  - {is: v_file_of, from: 'e27_Qwen2.5-1.5B-Instruct.json', to: e27}
+  - {is: v_rows_of, from: [items], to: e27}
+  - {is: v_axis_of, from: e27_group, to: e27}
+  - {is: v_value_of, from: e27_group_G2c, to: e27_group}
+  - {is: v_denote, from: e27_group_G2c, to: g_redef_conflict}
+  - {is: v_value_of, from: e27_group_G2k, to: e27_group}
+  - {is: v_denote, from: e27_group_G2k, to: g_redef_control}
+  - {is: v_axis_of, from: e27_cond, to: e27}
+  - {is: v_value_of, from: e27_cond_real, to: e27_cond}
+  - {is: v_denote, from: e27_cond_real, to: text_injection}
+  - {is: v_denote, from: e27_cond_real, to: definition_text}
+  - {is: v_denote, from: e27_cond_real, to: single_pass}
+  - {is: v_value_of, from: e27_cond_nonce, to: e27_cond}
+  - {is: v_denote, from: e27_cond_nonce, to: text_injection}
+  - {is: v_denote, from: e27_cond_nonce, to: definition_text}
+  - {is: v_denote, from: e27_cond_nonce, to: single_pass}
+  - {is: v_value_of, from: e27_cond_bare, to: e27_cond}
+  - {is: v_denote, from: e27_cond_bare, to: number_comparison}
+  - {is: v_filter_of, from: {group: '{group}'}, to: e27}
+  - {is: v_entry_of, from: '{cond}', to: e27}
+  - {is: v_metric_of, from: e27, to: accuracy}
+  - {is: v_metric_of, from: e27, to: order_robust_accuracy}
   - {is: v_file_of, from: 'e10_Qwen2.5-1.5B-Instruct.json', to: e10}
   - {is: v_rows_of, from: [items], to: e10}
   - {is: v_axis_of, from: e10_group, to: e10}
@@ -9615,6 +9650,10 @@ facts:
   - {is: v_refer, from: o_e9_scratchpad_like_direct_remap_4b, to: {is: v_level, from: e9.4b.G2c.remap.cot.accuracy, to: e9.4b.G2c.remap.direct.accuracy}}
   - {is: v_refer, from: o_e9_scratchpad_not_below_direct_remap_control_4b, to: {is: v_not_before, from: e9.4b.G2k.remap.cot.accuracy, to: e9.4b.G2k.remap.direct.accuracy}}
   - {is: v_refer, from: o_e9_scratchpad_below_direct_remap_control_15b, to: {is: v_come_before, from: e9.15b.G2k.remap.cot.accuracy, to: e9.15b.G2k.remap.direct.accuracy}}
+  - {is: v_refer, from: o_e27_bare_conflict_above_control, to: {is: v_come_after, from: e27.G2c.bare.accuracy, to: e27.G2k.bare.accuracy}}
+  - {is: v_refer, from: o_e27_bare_robust_control_level_zero, to: {is: v_near, from: e27.G2k.bare.order_robust_accuracy, to: 0.0, new: 0.01}}
+  - {is: v_refer, from: o_e27_nonce_near_real_conflict, to: {is: v_near, from: e27.G2c.nonce.accuracy, to: e27.G2c.real.accuracy, new: 0.12}}
+  - {is: v_refer, from: o_e27_nonce_above_real_control, to: {is: v_come_after, from: e27.G2k.nonce.accuracy, to: e27.G2k.real.accuracy}}
   - {is: v_refer, from: o_e10_expr_above_none_conflict, to: {is: v_come_after, from: e10.G2c.expr.accuracy, to: e10.G2c.none.accuracy}}
   - {is: v_refer, from: o_e10_expr_below_none_control, to: {is: v_come_before, from: e10.G2k.expr.accuracy, to: e10.G2k.none.accuracy}}
   - {is: v_refer, from: o_e11_write_below_direct_conflict, to: {is: v_come_before, from: e11.G2c.write.accuracy, to: e11.G2c.direct.accuracy}}
@@ -9681,6 +9720,7 @@ facts:
   - {is: v_scope, from: rule_redefinition, to: h_number_comparison_lowers_rule_following}
   - {is: v_scope, from: scratchpad, to: h_number_comparison_lowers_rule_following}
   - {is: v_qualify, from: lim_unquantified, to: h_number_comparison_lowers_rule_following}
+  - {is: v_check, from: b_number_comparison_unbiased, to: h_number_comparison_lowers_rule_following}
   - {is: v_refer, from: h_scratchpad_lowers_remap_following, to: {is: v_lower, from: scratchpad, to: redefinition_following}}
   - {is: v_scope, from: model_15b, to: h_scratchpad_lowers_remap_following}
   - {is: v_scope, from: remap_redefinition, to: h_scratchpad_lowers_remap_following}
