@@ -18,6 +18,9 @@ nodes:
   refer_from_question: {display: 設問へ述べる（始点）, extends: quality, of: [v_refer, from], with: question}
   compose_from_question: {display: 設問へ部分になる（始点）, extends: quality, of: [v_compose, from], with: question}
   depend_from_label_token_positions: {display: 語のトークン位置へ依存する（始点）, extends: quality, of: [v_depend, from], with: label_token_positions}
+  depend_from_concept_expression: {display: 概念式へ依存する（始点）, extends: quality, of: [v_depend, from], with: concept_expression}
+  depend_from_sibling_pair: {display: 兄弟概念の組へ依存する（始点）, extends: quality, of: [v_depend, from], with: sibling_pair}
+  compose_to_hidden_state: {display: 隠れ状態へ部分になる（終点）, extends: quality, of: [v_compose, to], with: hidden_state}
   depend_from_preceding_definitions_set: {display: 前に並ぶ定義へ依存する（始点）, extends: quality, of: [v_depend, from], with: preceding_definitions_set}
   measure_from_verdict: {display: 判定へ測る（始点）, extends: quality, of: [v_measure, from], with: verdict}
   not_agree_to_against: {display: 反する観察へ一致する（否定）（終点）, extends: quality, of: [v_agree, to], with: against, neg: true}
@@ -267,8 +270,12 @@ nodes:
   layer_output: {display: 層の出力, extends: residual_vector, mod: {of: [v_compute, to], with: layer}}
   hidden_state: {display: 隠れ状態, extends: layer_output, mod: depend_from_label_token_positions}
   state_shift: {display: 隠れ状態のずれ, extends: residual_vector, mod: {of: [v_sum, from], with: shifted_hidden_state}}
-  shifted_hidden_state: {display: ずれを足した隠れ状態, extends: residual_vector, mod: {of: [v_compose, to], with: hidden_state}}
+  shifted_hidden_state: {display: ずれを足した隠れ状態, extends: residual_vector, mod: compose_to_hidden_state}
   shift_unseen_by_layer: {display: 層から分けて見えない隠れ状態のずれ, extends: state_shift, mod: {of: [v_see, to], with: layer, neg: true}}
+  sibling_difference_vector: {display: 兄弟の概念ベクトルの差, extends: concept_vector, mod: depend_from_sibling_pair}
+  formula_part_direction: {display: 概念式の部品の向き, extends: state_shift, mod: depend_from_concept_expression}
+  output_word_direction: {display: 語を出す向き, extends: state_shift, mod: {of: [v_compute, to], with: word}}
+  state_feature_direction: {display: 隠れ状態を組み立てる特徴の向き, extends: state_shift, mod: compose_to_hidden_state}
   term_server: {display: 用語サーバー, extends: artifact, mod: {of: [v_judge_definition, from]}}
   model_design: {display: モデルについての設計, extends: information_entity_design_to, mod: {of: [v_refer, from], with: model}}
   information_entity_design_to: {display: 設計する先の情報, extends: information_entity, mod: design_to}
@@ -290,7 +297,7 @@ nodes:
   quality_measure_to: {display: 測る先の質, extends: quality, mod: {of: [v_measure, to]}}
   behavior_expression: {display: 狙った振る舞いの現れ, extends: quality_measure_to, mod: {of: [v_depend, from], with: state_shift}}
   task_performance: {display: 問いに答える課題の成績, extends: quality_measure_to, mod: {of: [v_depend, from], with: question}}
-  formalization_accuracy: {display: 形式言語で書いた文の正しさ, extends: quality_measure_to, mod: {of: [v_depend, from], with: concept_expression}}
+  formalization_accuracy: {display: 形式言語で書いた文の正しさ, extends: quality_measure_to, mod: depend_from_concept_expression}
   traceability: {display: 推論の根拠をたどれること, extends: quality_measure_to, mod: {of: [v_depend, from], with: depended_information}}
   structure_embedding: {display: 形式の構造から作った埋め込み, extends: information_entity, mod: {of: [v_compute, to], with: typed_graph}}
   type_check_result: {display: 型検査の結果, extends: information_entity, mod: {of: [v_compute, to], with: concept_expression}}
@@ -301,7 +308,7 @@ nodes:
   redefinition_success: {display: 再定義の成功, extends: quality_measure_to, mod: depend_from_redefinition}
   cross_usage_consistency: {display: 使い方をまたぐ一貫性, extends: quality_measure_to, mod: {of: [v_measure, from], with: usage, quant: all}}
   preceding_definition_effect: {display: 前に並ぶ定義による追従の低下, extends: quality_measure_to, mod: depend_from_preceding_definitions_set}
-  sibling_discrimination: {display: 兄弟概念の弁別, extends: quality_measure_to, mod: {of: [v_depend, from], with: sibling_pair}}
+  sibling_discrimination: {display: 兄弟概念の弁別, extends: quality_measure_to, mod: depend_from_sibling_pair}
 
   accuracy: {display: 正答率, extends: metric, mod: measure_from_verdict, axis: ratio}
   order_robust_accuracy: {display: 選択肢の順序に頑健な正答率, extends: metric, mod: {of: [v_measure, from], with: verdict_pair}, axis: ratio}
@@ -3241,6 +3248,14 @@ individuals:
   h_round_trip_forms_absent: {is: hyp_untested}
   b_round_trip_forms_absent: {is: item_queued}
   h_prior_claims_supply_siblings: {is: hyp_untested}
+  h_sibling_difference_on_part: {is: hyp_untested}
+  b_sibling_difference_on_part: {is: item_queued}
+  h_part_named_by_output_word: {is: hyp_untested}
+  b_part_named_by_output_word: {is: item_queued}
+  h_part_named_by_state_feature: {is: hyp_untested}
+  b_part_named_by_state_feature: {is: item_queued}
+  h_sibling_discrimination_on_part: {is: hyp_untested}
+  b_sibling_discrimination_on_part: {is: item_queued}
   b_prior_claims_supply_siblings: {is: item_queued}
   h_attribution_logged: {is: hyp_refuted}
   b_attribution_logged: {is: item_done}
@@ -9523,6 +9538,18 @@ facts:
   - {is: v_check, from: b_prior_claims_supply_siblings, to: h_prior_claims_supply_siblings}
   - {is: v_ground, from: d_consolidation_in_vector, to: h_prior_claims_supply_siblings}
   - {is: v_ground, from: d_road_region, to: h_prior_claims_supply_siblings}
+  - {is: v_refer, from: h_sibling_difference_on_part, to: {is: v_rely, from: sibling_difference_vector, to: formula_part_direction}}
+  - {is: v_check, from: b_sibling_difference_on_part, to: h_sibling_difference_on_part}
+  - {is: v_ground, from: d_consolidation_in_vector, to: h_sibling_difference_on_part}
+  - {is: v_refer, from: h_part_named_by_output_word, to: {is: v_rely, from: formula_part_direction, to: output_word_direction}}
+  - {is: v_check, from: b_part_named_by_output_word, to: h_part_named_by_output_word}
+  - {is: v_ground, from: d_consolidation_in_vector, to: h_part_named_by_output_word}
+  - {is: v_refer, from: h_part_named_by_state_feature, to: {is: v_rely, from: formula_part_direction, to: state_feature_direction}}
+  - {is: v_check, from: b_part_named_by_state_feature, to: h_part_named_by_state_feature}
+  - {is: v_ground, from: d_consolidation_in_vector, to: h_part_named_by_state_feature}
+  - {is: v_refer, from: h_sibling_discrimination_on_part, to: {is: v_rely, from: sibling_discrimination, to: formula_part_direction}}
+  - {is: v_check, from: b_sibling_discrimination_on_part, to: h_sibling_discrimination_on_part}
+  - {is: v_ground, from: d_consolidation_in_vector, to: h_sibling_discrimination_on_part}
   - {is: v_refer, from: h_attribution_logged, to: {is: v_agree, from: attribution, to: operator_speech}}
   - {is: v_check, from: b_attribution_logged, to: h_attribution_logged}
   - {is: v_refer, from: o_sys_attribution_absent, to: {is: v_come_after, from: sys_attribution.n_absent.mean_value, to: 0}}
