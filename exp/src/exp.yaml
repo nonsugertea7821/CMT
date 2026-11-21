@@ -2036,6 +2036,13 @@ individuals:
   sys_reading_excludes_claims_cond_n_flip: {is: axis_value, val: {text: n_flip}}
   sys_reading_excludes_claims_cond_share_shift: {is: axis_value, val: {text: share_shift}}
   sys_reading_excludes_claims_cond_mean_abs_dJ: {is: axis_value, val: {text: mean_abs_dJ}}
+  sys_claims_apart_by_domain: {is: measurement_family}
+  sys_claims_apart_by_domain_cond: {is: family_axis, val: {text: cond}}
+  sys_claims_apart_by_domain_cond_n_verb: {is: axis_value, val: {text: n_verb}}
+  sys_claims_apart_by_domain_cond_n_agree: {is: axis_value, val: {text: n_agree}}
+  sys_claims_apart_by_domain_cond_n_lost: {is: axis_value, val: {text: n_lost}}
+  sys_claims_apart_by_domain_cond_share_agree: {is: axis_value, val: {text: share_agree}}
+  sys_claims_apart_by_domain_cond_mean_abs_dJ: {is: axis_value, val: {text: mean_abs_dJ}}
   sys_measure_excludes_claim_kinds: {is: measurement_family}
   sys_measure_excludes_claim_kinds_cond: {is: family_axis, val: {text: cond}}
   sys_measure_excludes_claim_kinds_cond_n_snap: {is: axis_value, val: {text: n_snap}}
@@ -3346,6 +3353,8 @@ individuals:
   o_sys_obs_n_dep: {is: observation}
   o_ops_sync_r2: {is: observation}
   o_sys_rec_shift: {is: observation}
+  o_sys_cad_agree: {is: observation}
+  o_sys_cad_dj: {is: observation}
   o_sys_mek_ratio: {is: observation}
 
   h_prosody_carries_mod: {is: hyp_untested}
@@ -3450,8 +3459,8 @@ individuals:
   b_observation_by_scale: {is: item_done}
   h_reading_excludes_claims: {is: hyp_refuted}
   b_reading_excludes_claims: {is: item_done}
-  h_claims_apart_by_domain: {is: hyp_untested}
-  b_claims_apart_by_domain: {is: item_queued}
+  h_claims_apart_by_domain: {is: hyp_mixed}
+  b_claims_apart_by_domain: {is: item_done}
   h_measure_excludes_claim_kinds: {is: hyp_supported}
   b_measure_excludes_claim_kinds: {is: item_done}
   h_sync_scan_quadratic: {is: hyp_refuted}
@@ -7928,6 +7937,24 @@ facts:
   - {is: v_metric_of, from: sys_reading_excludes_claims, to: mean_value}
   - {is: v_refer, from: o_sys_rec_shift, to: {is: v_level, from: sys_reading_excludes_claims.share_shift.mean_value, to: 0.4}}
   - {is: v_contradict, from: o_sys_rec_shift, to: h_reading_excludes_claims}
+  - {is: v_file_of, from: sys_claims_apart_by_domain.json, to: sys_claims_apart_by_domain}
+  - {is: v_axis_of, from: sys_claims_apart_by_domain_cond, to: sys_claims_apart_by_domain}
+  - {is: v_value_of, from: sys_claims_apart_by_domain_cond_n_verb, to: sys_claims_apart_by_domain_cond}
+  - {is: v_spell, from: sys_claims_apart_by_domain_cond_n_verb, to: n_verb}
+  - {is: v_value_of, from: sys_claims_apart_by_domain_cond_n_agree, to: sys_claims_apart_by_domain_cond}
+  - {is: v_spell, from: sys_claims_apart_by_domain_cond_n_agree, to: n_agree}
+  - {is: v_value_of, from: sys_claims_apart_by_domain_cond_n_lost, to: sys_claims_apart_by_domain_cond}
+  - {is: v_spell, from: sys_claims_apart_by_domain_cond_n_lost, to: n_lost}
+  - {is: v_value_of, from: sys_claims_apart_by_domain_cond_share_agree, to: sys_claims_apart_by_domain_cond}
+  - {is: v_spell, from: sys_claims_apart_by_domain_cond_share_agree, to: share_agree}
+  - {is: v_value_of, from: sys_claims_apart_by_domain_cond_mean_abs_dJ, to: sys_claims_apart_by_domain_cond}
+  - {is: v_spell, from: sys_claims_apart_by_domain_cond_mean_abs_dJ, to: mean_abs_dJ}
+  - {is: v_entry_of, from: '{cond}', to: sys_claims_apart_by_domain}
+  - {is: v_metric_of, from: sys_claims_apart_by_domain, to: mean_value}
+  - {is: v_refer, from: o_sys_cad_agree, to: {is: v_level, from: sys_claims_apart_by_domain.share_agree.mean_value, to: 0.9230769230769231}}
+  - {is: v_support, from: o_sys_cad_agree, to: h_claims_apart_by_domain}
+  - {is: v_refer, from: o_sys_cad_dj, to: {is: v_level, from: sys_claims_apart_by_domain.mean_abs_dJ.mean_value, to: 0.07604918890633176}}
+  - {is: v_contradict, from: o_sys_cad_dj, to: h_claims_apart_by_domain}
   - {is: v_file_of, from: sys_measure_excludes_claim_kinds.json, to: sys_measure_excludes_claim_kinds}
   - {is: v_axis_of, from: sys_measure_excludes_claim_kinds_cond, to: sys_measure_excludes_claim_kinds}
   - {is: v_value_of, from: sys_measure_excludes_claim_kinds_cond_n_snap, to: sys_measure_excludes_claim_kinds_cond}
