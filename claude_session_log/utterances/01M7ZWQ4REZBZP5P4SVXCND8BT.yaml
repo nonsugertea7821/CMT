@@ -1,0 +1,20 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-21T20:28:13.966Z（UTC）
+individuals:
+  01M7ZWQ4REZBZP5P4SVXCND8BT:
+    is: model_utterance
+    display: 発言 4070
+    val:
+      order: 4070
+      text: |
+        #702（E36）は、#715 と #716 が main に入ったあと、main と衝突していました。main を取り込んで衝突を解き、push しました（fdad4cb）。
+
+        - 衝突はすべて `exp/src/exp.yaml` で、両方の側が同じ場所に書き足していたためです。
+          - 測定の族と観察: E36 と E39 の両方を残しました。
+          - 仮説の状態: E39 の仮説（`h_multi_layer_transfers_to_explain`）は main 側の「反証」、E36 の仮説（`h_explain_transfers_to_apply`）はこのブランチ側の「反証」を取りました。
+        - 手元では YAML として読めることと、キーの重複がないことだけを確かめました。tc と ec はランナーの CI に任せていて、その結果を待っています。
+        - #702 は、自動マージの対象ではなく手で見てもらう扱いのままです（スクリプトに触れる commit が 2 つあるため）。
+
+        ロードマップ上の位置: d_metric の下の重い列 H2 は閉じました（#702 は確認待ち）。次の重い項目は、d_road_checker の下の H3 `h_model_reads_by_name` です。
+facts:
+- {is: v_say, from: session_model, to: 01M7ZWQ4REZBZP5P4SVXCND8BT}
+- {is: exp.v_answer, from: 01M7ZWQ4REZBZP5P4SVXCND8BT, to: 01M7ZG4RFFK1A28D1ZVQK01AG8}
