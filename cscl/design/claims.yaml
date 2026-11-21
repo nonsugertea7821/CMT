@@ -377,6 +377,10 @@ individuals:
   b_formal_real_by_law: {is: exp.item_queued}
   h_real_axis_by_domain: {is: exp.hyp_untested}
   b_real_axis_by_domain: {is: exp.item_queued}
+  h_formal_verbs_need_laws: {is: exp.hyp_untested}
+  b_formal_verbs_need_laws: {is: exp.item_queued}
+  h_lawless_verbs_are_real: {is: exp.hyp_untested}
+  b_lawless_verbs_are_real: {is: exp.item_queued}
   h_domain_choice_is_refer: {is: exp.hyp_untested}
   b_domain_choice_is_refer: {is: exp.item_queued}
   h_std_by_law: {is: exp.hyp_refuted}
@@ -1803,6 +1807,12 @@ facts:
   - {is: v_refer, from: h_real_axis_by_domain, to: {is: v_depend, from: syntax.axis, to: syntax.domain}}
   - {is: exp.v_check, from: b_real_axis_by_domain, to: h_real_axis_by_domain}
   - {is: exp.v_ground, from: d_cscl_display_derived, to: h_real_axis_by_domain}
+  - {is: v_refer, from: h_formal_verbs_need_laws, to: {is: v_refer, from: syntax.law_rule, to: [ontology.v_express, ontology.v_trigger, ontology.v_stage, ontology.v_involve, ontology.v_perform, ontology.v_come_after]}}
+  - {is: exp.v_check, from: b_formal_verbs_need_laws, to: h_formal_verbs_need_laws}
+  - {is: exp.v_ground, from: d_cscl_display_derived, to: h_formal_verbs_need_laws}
+  - {is: v_refer, from: h_lawless_verbs_are_real, to: {is: v_refer, from: syntax.domain, to: [ontology.v_express, ontology.v_trigger, ontology.v_stage, ontology.v_involve, ontology.v_perform, ontology.v_come_after]}}
+  - {is: exp.v_check, from: b_lawless_verbs_are_real, to: h_lawless_verbs_are_real}
+  - {is: exp.v_ground, from: d_cscl_display_derived, to: h_lawless_verbs_are_real}
   - {is: v_refer, from: h_domain_choice_is_refer, to: {is: v_refer, from: syntax.domain, to: syntax.concept_expression}}
   - {is: exp.v_check, from: b_domain_choice_is_refer, to: h_domain_choice_is_refer}
   - {is: exp.v_ground, from: d_cscl_display_derived, to: h_domain_choice_is_refer}
