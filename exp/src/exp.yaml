@@ -126,6 +126,7 @@ nodes:
   definition_text: {display: 定義文, extends: passage, mod: {of: [v_compose, to], with: definition}}
   examples_only: {display: 適用例だけ, extends: passage, mod: {of: [v_compose, to], with: application_example}}
   def_and_examples: {display: 定義文と適用例, extends: definition_text, mod: {of: [is, from], with: examples_only}}
+  round_trip_material: {display: 判定に依って直す定義文と適用例, extends: def_and_examples, mod: {of: [v_depend, from], with: verdict}}
   filler_text: {display: 無関係な文章, extends: passage, mod: not_agree_from_question}
   context: {display: 文脈, extends: passage, mod: {of: [v_read, to], with: model}}
   glossary: {display: 用語集, extends: information_entity, mod: {of: [v_compose, to], with: definition, at: {count: {gt: 1}}}}
@@ -242,6 +243,7 @@ nodes:
   teacher_recite: {display: 定義文の暗唱を教師にする, extends: teaching, from: definition_text}
   teacher_examples: {display: 適用例を教師にする, extends: teaching, from: examples_only}
   teacher_both: {display: 定義文の暗唱と適用例の両方を教師にする, extends: teaching, from: def_and_examples}
+  teacher_round_trip: {display: 抽象と具体の往復を教師にする, extends: teaching, from: round_trip_material}
   taught_vector: {display: 教示で得られたベクトル, extends: realizable_entity, mod: {of: [teaching, new]}}
   teaching_material: {display: 教示の材料, form: [teaching, from]}
 
@@ -295,6 +297,7 @@ nodes:
   redefinition_success: {display: 再定義の成功, extends: quality_measure_to, mod: depend_from_redefinition}
   cross_usage_consistency: {display: 使い方をまたぐ一貫性, extends: quality_measure_to, mod: {of: [v_measure, from], with: usage, quant: all}}
   preceding_definition_effect: {display: 前に並ぶ定義による追従の低下, extends: quality_measure_to, mod: depend_from_preceding_definitions_set}
+  sibling_discrimination: {display: 兄弟概念の弁別, extends: quality_measure_to, mod: {of: [v_depend, from], with: sibling_pair}}
 
   accuracy: {display: 正答率, extends: metric, mod: measure_from_verdict, axis: ratio}
   order_robust_accuracy: {display: 選択肢の順序に頑健な正答率, extends: metric, mod: {of: [v_measure, from], with: verdict_pair}, axis: ratio}
@@ -3165,6 +3168,8 @@ individuals:
   h_auto_merge_uncorrected: {is: hyp_untested}
   h_merge_verdict_by_spec: {is: hyp_untested}
   b_merge_verdict_by_spec: {is: item_queued}
+  h_round_trip_raises_sibling: {is: hyp_untested}
+  b_round_trip_raises_sibling: {is: item_queued}
   h_attribution_logged: {is: hyp_refuted}
   b_attribution_logged: {is: item_done}
   o_sys_attribution_absent: {is: observation}
@@ -9304,6 +9309,9 @@ facts:
   - {is: v_check, from: b_auto_merge_uncorrected, to: h_auto_merge_uncorrected}
   - {is: v_refer, from: h_merge_verdict_by_spec, to: {is: v_depend, from: merge_verdict, to: type_check_result}}
   - {is: v_check, from: b_merge_verdict_by_spec, to: h_merge_verdict_by_spec}
+  - {is: v_refer, from: h_round_trip_raises_sibling, to: {is: v_raise, from: teacher_round_trip, to: sibling_discrimination}}
+  - {is: v_check, from: b_round_trip_raises_sibling, to: h_round_trip_raises_sibling}
+  - {is: v_ground, from: d_consolidation_in_vector, to: h_round_trip_raises_sibling}
   - {is: v_refer, from: h_attribution_logged, to: {is: v_agree, from: attribution, to: operator_speech}}
   - {is: v_check, from: b_attribution_logged, to: h_attribution_logged}
   - {is: v_refer, from: o_sys_attribution_absent, to: {is: v_come_after, from: sys_attribution.n_absent.mean_value, to: 0}}
