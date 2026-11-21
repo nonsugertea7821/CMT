@@ -1,0 +1,26 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-21T20:55:07.235Z（UTC）
+individuals:
+  01M7ZY8C73T0WD1WMD4VHCAZXQ:
+    is: model_utterance
+    display: 発言 4087
+    val:
+      order: 4087
+      text: |
+        フックが挙げた文のうち 1 つは確かめていない主張だったので、その中身を仮説 `h_model_reads_by_word` として登録し、#719 を立てました。
+
+        - **登録したもの:** 「名前の文字列を指す概念が体系にないので登録しない」と書いた文です。
+          - 確かめると `syntax.word`（語）があったので、この主張は誤りでした。#719 の本文に訂正として書きました。
+          - 見送っていた中身は、「モデルは依存を、位置によらず語の字面で読む」という仮説です（`v_read(model, syntax.word)`）。根拠のロードマップの決定は d_road_checker です。
+          - これを `h_model_reads_by_name`（名前の位置で読む）と対にしました。
+          - 概念は足していないので、自動マージの対象のはずです。
+        - **登録しなかったもの:**
+          - 「1.5B のモデルはほぼ読めていない」「Y にも『変わる』が多い」は、E40 で測った値なので事実です。
+          - 「この設問では 2 つの読みを区別できない」は、設問の作りから確かめた事実です。どの条件でも、A の文字列が X の側にあります。
+          - 「ec が読む形でない」は、ec のコードを読んで確かめました。「自動マージに乗らない」は、CLAUDE.md の条件を読んで確かめました。
+          - 「CI はまだ届いていない」「仮説に結んでいない」は、進みと記録の報告です。
+
+        ロードマップ上の位置: d_road_checker の下の重い列 H3 です。E40 は判定しないまま止まり、その含意として、対になる仮説を登録しました。
+facts:
+- {is: v_say, from: session_model, to: 01M7ZY8C73T0WD1WMD4VHCAZXQ}
+- {is: exp.v_answer, from: 01M7ZY8C73T0WD1WMD4VHCAZXQ, to: 01M7ZG4RFFK1A28D1ZVQK01AG8}
+- {is: v_refer, from: 01M7ZY8C73T0WD1WMD4VHCAZXQ, to: exp.v_read}
