@@ -3614,6 +3614,10 @@ individuals:
   b_state_points_region: {is: item_queued}
   h_expression_makes_state_unique: {is: hyp_untested}
   b_expression_makes_state_unique: {is: item_queued}
+  h_state_confuses_by_sound: {is: hyp_untested}
+  b_state_confuses_by_sound: {is: item_queued}
+  h_state_confuses_by_glyph: {is: hyp_untested}
+  b_state_confuses_by_glyph: {is: item_queued}
   h_axis_value_from_result: {is: hyp_untested}
   b_axis_value_from_result: {is: item_queued}
   h_model_reads_by_name: {is: hyp_untested}
@@ -10255,6 +10259,14 @@ facts:
   - {is: v_refer, from: h_expression_makes_state_unique, to: {is: v_depend, from: hidden_state, to: syntax.concept_expression}}
   - {is: v_check, from: b_expression_makes_state_unique, to: h_expression_makes_state_unique}
   - {is: v_ground, from: d_goal, to: h_expression_makes_state_unique}
+  - {is: v_refer, from: h_state_confuses_by_sound, to: {is: v_depend, from: hidden_state, to: prosody}}
+  - {is: v_check, from: b_state_confuses_by_sound, to: h_state_confuses_by_sound}
+  - {is: v_ground, from: d_road_japanese, to: h_state_confuses_by_sound}
+  - {is: v_ground, from: d_goal, to: h_state_confuses_by_sound}
+  - {is: v_refer, from: h_state_confuses_by_glyph, to: {is: v_depend, from: hidden_state, to: prosody, neg: true}}
+  - {is: v_check, from: b_state_confuses_by_glyph, to: h_state_confuses_by_glyph}
+  - {is: v_ground, from: d_road_japanese, to: h_state_confuses_by_glyph}
+  - {is: v_ground, from: d_goal, to: h_state_confuses_by_glyph}
   - {is: v_refer, from: h_axis_value_from_result, to: {is: v_depend, from: axis_value, to: result_file}}
   - {is: v_check, from: b_axis_value_from_result, to: h_axis_value_from_result}
   - {is: v_refer, from: h_model_reads_by_name, to: {is: v_read, from: model, to: syntax.identifier}}
