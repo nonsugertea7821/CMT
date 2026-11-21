@@ -1,6 +1,7 @@
 """仮説台帳のページを、体系から作る。ロードマップ（決定とそのつながり）を左に木で置き、仮説を決定ごとに並べる。
 
 文は体系の式から訳す。名前を固定で持たない。
+仮説は登録の順に並べ、いつ支持・反証されたかを main の履歴（git log）から出す。履歴の全体が要る（checkout は fetch-depth: 0）。
 ロードマップの形は、決定どうしの事実（v_depend・v_raise・v_supersede）と、決定から仮説への v_ground から作る。
 
 仮説ごとの説明は、その仮説を名指ししたマージ済みの PR の本文から取る（確かめたときの手順・結果・読みが書いてある）。
@@ -25,6 +26,7 @@ import io
 import json
 import os
 import re
+import subprocess
 import sys
 import urllib.request
 from pathlib import Path
@@ -84,6 +86,32 @@ def issue_numbers():
         m = re.search(r"<!-- cscl-claim: (\S+) -->", x.get("body") or "")
         if m and isinstance(x["number"], int):
             out[m.group(1)] = x["number"]
+    return out
+
+
+def history():
+    """仮説の登録と状態の移りを、main の履歴（体系の yaml）から読む。
+    仮説の行 `h_名前: {is: hyp_状態}` が初めて足された commit を登録とし、状態が変わった commit をその日の出来事とする。
+    返すのは {名前: {"seq": 登録の順番, "events": [{"at": 日時, "commit": 短い hash, "status": 状態}]}}。"""
+    try:
+        log = subprocess.run(["git", "log", "--reverse", "--format=@@%h %cI", "-U0", "-p", "--",
+                              "cscl.yaml", "cscl", "exp/src"], cwd=ROOT, capture_output=True, text=True, check=True).stdout
+    except Exception as e:
+        print("履歴を読めなかった:", e, file=sys.stderr)
+        return {}
+    out, commit, at = {}, None, None
+    line = re.compile(r"^\+\s+(h_\w+): \{is: (?:exp\.)?hyp_(\w+)\}")
+    for l in log.splitlines():
+        if l.startswith("@@") and not l.startswith("@@ "):
+            commit, at = l[2:].split(" ", 1)
+            continue
+        m = line.match(l)
+        if not m:
+            continue
+        name, st = m.groups()
+        x = out.setdefault(name, {"seq": len(out), "events": []})
+        if not x["events"] or x["events"][-1]["status"] != st:
+            x["events"].append({"at": at, "commit": commit, "status": st})
     return out
 
 
@@ -229,6 +257,7 @@ def build():
         print("issue を読めなかった:", e, file=sys.stderr)
         nums = {}
     linked, prs = pulls_by_claim(set(C["hypotheses"]) | set(C["decisions"]), nums)
+    past = history()
     grounded, decisions, hyps = {}, {}, {}
     for cid, x in C["decisions"].items():
         edges = []
@@ -244,7 +273,8 @@ def build():
         hyps[cid] = {"side": C["side"][cid], "status": status(x), "text": sentences(x),
                      "subject": ja(as_list(x["s"])[0]),
                      "scope": [ja(v) for v in as_list(x.get("scope"))],
-                     "decisions": grounded.get(cid, []), "issue": nums.get(cid), "prs": linked.get(cid, [])}
+                     "decisions": grounded.get(cid, []), "issue": nums.get(cid), "prs": linked.get(cid, []),
+                     "seq": (past.get(cid) or {}).get("seq", 10 ** 6), "events": (past.get(cid) or {}).get("events", [])}
     used = {p["n"] for x in [*decisions.values(), *hyps.values()] for p in x["prs"]}
     return {"repo": REPO, "decisions": decisions, "hypotheses": hyps,
             "prs": {n: v for n, v in prs.items() if n in used}}

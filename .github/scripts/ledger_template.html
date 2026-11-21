@@ -72,6 +72,10 @@ button{font:inherit;color:inherit}
 .chip .n{font-family:var(--mono);color:var(--muted);margin-left:4px}
 .group{display:grid;gap:8px}
 .group h3{font-size:.9rem;margin:8px 0 0;display:flex;gap:8px;align-items:center}
+.tl{display:flex;flex-wrap:wrap;align-items:center;gap:2px 6px;font-size:.78rem;color:var(--muted)}
+.ev{display:inline-flex;align-items:center;gap:4px;white-space:nowrap}
+.dot{width:8px;height:8px;border-radius:50%;display:inline-block}
+.arrow{color:var(--line)}
 .subhead{font-size:.8rem;color:var(--muted);margin-top:4px}
 .hyp{background:var(--panel);border:1px solid var(--line);border-radius:8px;min-width:0}
 .hyp>summary{list-style:none;cursor:pointer;padding:10px 14px;display:grid;gap:4px}
@@ -189,11 +193,22 @@ function prBlock(ns){
     shown.map(full).join("")+
     (more.length?`<div class="others">ほかにこの仮説に触れた PR: ${more.map(p=>`<span>${link(p.n)} ${esc(P[p.n].title)}</span>`).join("")}</div>`:"");
 }
+const SW={untested:"登録",supported:"支持",refuted:"反証",mixed:"mixed",withdrawn:"取り下げ"};
+function day(t){return String(t||"").slice(0,10)}
+function timeline(x){
+  if(!x.events.length)return "";
+  const ev=x.events.map((e,i)=>{
+    const label=i===0?(e.status==="untested"?"登録":`登録（${SW[e.status]||e.status}）`):(e.status==="untested"?"未検証に戻す":SW[e.status]||e.status);
+    const days=i?Math.round((Date.parse(e.at)-Date.parse(x.events[0].at))/864e5):null;
+    return `<span class="ev"><span class="dot f-${esc(e.status)}"></span>${esc(label)} <a href="https://github.com/${DATA.repo}/commit/${esc(e.commit)}" target="_blank" rel="noopener noreferrer" title="${esc(e.at)}">${esc(day(e.at))}</a>${days?`<span class="note">（${days} 日後）</span>`:""}</span>`;
+  });
+  return `<span class="tl">${ev.join('<span class="arrow">→</span>')}</span>`;
+}
 function card(h){
   const x=H[h];
   const decs=x.decisions.filter(d=>d!==current).map(d=>`<button class="chip" data-go="${esc(d)}">${esc(say(D[d]))}</button>`).join("");
   const iss=x.issue?`<a href="https://github.com/${DATA.repo}/issues/${x.issue}" target="_blank" rel="noopener noreferrer">issue #${x.issue}</a>`:"";
-  return `<details class="hyp" data-h="${esc(h)}"><summary><span class="say">${esc(say(x))}</span>
+  return `<details class="hyp" data-h="${esc(h)}"><summary><span class="say">${esc(say(x))}</span>${timeline(x)}
     <span class="meta"><span class="pill s-${esc(x.status)}">${HS[x.status]||esc(x.status)}</span><code>${esc(h)}</code>${x.prs.length?`<span>PR ${x.prs.length} 件</span>`:""}${x.scope.length?`<span>範囲: ${esc(x.scope.join("・"))}</span>`:""}</span></summary>
     <div class="in">${prBlock(x.prs)}${decs||iss?`<div class="meta">${iss}${decs?`<span>ほかに根拠にしている決定:</span>${decs}`:""}</div>`:""}</div></details>`;
 }
@@ -222,17 +237,9 @@ function head(d){
 function render(){
   const d=current,all=listFor(d),c=counts(all);
   const list=only.size?all.filter(h=>only.has(H[h].status)):all;
-  const tools=`<div class="chips">${HST.filter(([s])=>c[s]).map(([s,l])=>`<button class="chip" data-st="${s}" aria-pressed="${only.has(s)}"><span class="pill s-${s}">${l}</span><span class="n">${c[s]}</span></button>`).join("")}<span class="note">${list.length} / ${all.length} 件。押すと PR の説明が開く。</span></div>`;
-  let body="";
-  for(const [s,l] of HST){
-    const hs=list.filter(h=>H[h].status===s);if(!hs.length)continue;
-    body+=`<section class="group"><h3><span class="pill s-${s}">${l}</span><span class="note">${hs.length}</span></h3>`;
-    if(d===SIDE&&!query){
-      const g={};for(const h of hs)(g[H[h].subject]??=[]).push(h);
-      for(const [k,v] of Object.entries(g).sort((a,b)=>b[1].length-a[1].length))body+=`<div class="subhead">${esc(k)}について</div>`+v.map(card).join("");
-    }else body+=hs.map(card).join("");
-    body+="</section>";
-  }
+  const tools=`<div class="chips">${HST.filter(([s])=>c[s]).map(([s,l])=>`<button class="chip" data-st="${s}" aria-pressed="${only.has(s)}"><span class="pill s-${s}">${l}</span><span class="n">${c[s]}</span></button>`).join("")}<span class="note">${list.length} / ${all.length} 件。登録の順（古いものが上）。押すと PR の説明が開く。</span></div>`;
+  const sorted=[...list].sort((a,b)=>H[a].seq-H[b].seq);
+  const body=sorted.length?`<section class="group">${sorted.map(card).join("")}</section>`:"";
   $("detail").innerHTML=head(d)+tools+(body||`<p class="empty">ここに結んだ仮説はない。</p>`);
   document.querySelectorAll("[data-st]").forEach(b=>b.addEventListener("click",()=>{const s=b.dataset.st;only.has(s)?only.delete(s):only.add(s);render()}));
   document.querySelectorAll("[data-go]").forEach(b=>b.addEventListener("click",e=>{e.preventDefault();query="";$("q").value="";select(b.dataset.go);reveal(b.dataset.go)}));
