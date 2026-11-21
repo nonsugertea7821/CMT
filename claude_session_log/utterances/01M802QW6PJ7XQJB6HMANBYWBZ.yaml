@@ -1,0 +1,40 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-21T22:13:29.430Z（UTC）
+individuals:
+  01M802QW6PJ7XQJB6HMANBYWBZ:
+    is: model_utterance
+    display: 発言 4122
+    val:
+      order: 4122
+      text: |
+        E43 で、h_model_reads_by_word（モデルは依存を名前の字面で読む）は事前登録の線で支持になりました。
+
+        **結果**（Qwen3-4B、新しい 24 項目、比べる問い方）
+
+        | 条件 | 正答率 |
+        |---|---|
+        | extends | 0.75 |
+        | decoy | 0.125 |
+        | control | 0.417 |
+
+        - 前提（extends ≥ 0.625）を満たしました。
+        - decoy は 0.125 で、control との差は 0.29 です。支持の線（decoy ≤ 0.25 かつ差 ≥ 0.25）を満たしました。
+        - 依存しない行でも、A の名前を文字として val に置くだけで、24 のうち 21 でその行を「意味が変わる側」に選びました。文字を別の名前に変えると 14/24 に下がります。
+        - 体系には、族 e43 と観察 2 つ（v_support）を書き、仮説の状態を支持にしました。#721 の本文も更新しました。spec が通れば Draft を外します。
+
+        **限界**
+        - モデルは Qwen3-4B の一つだけです。
+        - 比べる問い方でだけ出た傾向で、E41 の二択では出ませんでした。問い方への依存は、#725 の h_verdict_by_question_format の側で扱います。
+        - control でも 0.417 です。字面の影響を除いても、2 段の依存（mod: M → M with A）はほぼ読めていません。
+        - 選択肢の順を入れ替えた両方で正しかった項目は、decoy と control で 0 でした。選択肢の順にも強く頼っています。
+
+        **含意と、新しい仮説**
+        - 読む側が依存を自分で解けないなら、検査器が解いた依存を判定に渡せばよい、と考えました。
+        - そこで h_verdict_by_checker（判定は型検査器の出力に頼れる）を、d_road_checker に v_ground で結んで登録しました。登録だけの PR #726 です。
+        - 確かめ方の案は、E43 と同じ項目に「P → A」という依存の辺を添えて、decoy の正答率が上がるかを見ることです。
+
+        ロードマップの位置: H3（検査器の道 d_road_checker）。h_model_reads_by_word を支持で記録し、次の候補 h_verdict_by_checker を登録しました。
+facts:
+- {is: v_say, from: session_model, to: 01M802QW6PJ7XQJB6HMANBYWBZ}
+- {is: exp.v_answer, from: 01M802QW6PJ7XQJB6HMANBYWBZ, to: 01M7ZG4RFFK1A28D1ZVQK01AG8}
+- {is: v_refer, from: 01M802QW6PJ7XQJB6HMANBYWBZ, to: exp.v_support}
+- {is: v_refer, from: 01M802QW6PJ7XQJB6HMANBYWBZ, to: exp.v_ground}
