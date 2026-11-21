@@ -1,0 +1,27 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-21T20:25:32.390Z（UTC）
+individuals:
+  01M7ZWJ6Z6BYP15BXQZPSTK4FB:
+    is: model_utterance
+    display: 発言 4065
+    val:
+      order: 4065
+      text: |
+        前の報告の最後の解釈の文は、確かめていない主張でした。これを仮説 `h_explain_relies_on_teaching` として登録し、#716 を立てました。
+
+        - **登録した中身:** 説明に届くかどうかは、層の分け方ではなく、何を教師にしたかで決まる、という読みです。
+          - 式は「説明は教示に頼る」（`v_rely usage_explain → teaching`）。根拠のロードマップの決定は d_metric です。
+          - 概念は足していないので、登録だけの PR として自動マージされるはずです。
+          - どの教師なら説明に届くかを式で分けるには、「理由を教師にする」概念（`teacher_reasons`）が要ります。これは #702 に入っていてまだ main にないので、確かめる実験の事前登録の時点で使って絞ります。
+        - **登録しなかった文:** 残りの文は、測った数か読んだ事実なので、そのまま終えました。
+          - 「適用は上がるが説明は上がらない」と表の数、前提が成り立ったこと、反証の判定は、E39 で測った結果です。
+          - none の数が E36・E8 と同じなのは、両方の記録と照らして確かめました。
+          - E8 のベクトルファイル（.pt）がリポジトリにないのは、手元で確かめた事実です。
+
+        #716 と #715 は見張っています。#715 は spec が通ったら Draft を外します。
+
+        ロードマップ上の位置: d_metric の下の重い列 H2 は 2 本とも反証で終わり、その含意を新しい仮説として登録したところです。次の重い項目は H3 の `h_model_reads_by_name` です。
+facts:
+- {is: v_say, from: session_model, to: 01M7ZWJ6Z6BYP15BXQZPSTK4FB}
+- {is: exp.v_answer, from: 01M7ZWJ6Z6BYP15BXQZPSTK4FB, to: 01M7ZG4RFFK1A28D1ZVQK01AG8}
+- {is: v_refer, from: 01M7ZWJ6Z6BYP15BXQZPSTK4FB, to: exp.v_rely}
+- {is: v_refer, from: 01M7ZWJ6Z6BYP15BXQZPSTK4FB, to: exp.usage_explain}
