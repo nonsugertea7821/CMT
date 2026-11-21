@@ -1,0 +1,30 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-21T05:37:12.470Z（UTC）
+individuals:
+  01M7Y9QM8PWQ3FTQ7A8BTVRCEA:
+    is: model_utterance
+    display: 発言 3552
+    val:
+      order: 3552
+      text: |
+        待ち時間に、軽い列の最初の仮説 h_state_unique_display の検証（E34）を事前登録し、Draft の PR #642 を立てました。実行は E33 が終わってからです。重い実験は一つずつ回します。
+
+        **E34 の中身**
+        - 問い：語を隠した説明や文を読ませたとき、モデル自身の読み出しが、候補の語のうち正しい一つに集まるか。
+        - 材料は三組で、計 199 文です。
+          - 定義文 55 個（候補 55 語）
+          - 当プロジェクトの意味で語を使った文 72 個（候補 24 語）
+          - ふつうの意味で語を使った文 72 個（候補 24 語）
+        - 「一意」の数え方：一番確率の高い語が正しく、かつ確率が集まっている語の実効の数が 2 未満。
+        - 判定：一意の割合が 0.8 以上なら支持、0.5 以下なら反証、その間なら mixed。
+        - 開示：体系の hidden_state は語の位置の出力です。ここでは語を隠すので、設問の最後の位置の状態を使っています。このずれは PR の本文に書きました。
+        - 再起動に備えて、途中の結果を文ごとに書き残し、そこから再開できます。
+
+        **E33**
+        - 組 1 をやり直し中です（全部で 12 組）。none は 0/4、both は 1/4 で、どちらも最初の実行と同じ値でした。いまは round を学習しています。
+        - 9 分ごとの続行チェックは続いています。
+
+        本線 d_goal の下（E34）。E33 は本線 d_consolidation_in_vector の下。
+facts:
+- {is: v_say, from: session_model, to: 01M7Y9QM8PWQ3FTQ7A8BTVRCEA}
+- {is: exp.v_answer, from: 01M7Y9QM8PWQ3FTQ7A8BTVRCEA, to: 01M7Y9FZPNT8NJWJYMMN5D5Z6Y}
+- {is: v_refer, from: 01M7Y9QM8PWQ3FTQ7A8BTVRCEA, to: exp.hidden_state}

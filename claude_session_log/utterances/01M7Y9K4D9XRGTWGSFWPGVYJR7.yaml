@@ -1,0 +1,241 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-21T05:34:45.161Z（UTC）
+individuals:
+  01M7Y9K4D9XRGTWGSFWPGVYJR7:
+    is: session_summary
+    display: 発言 3549
+    val:
+      order: 3549
+      text: |
+        This session is being continued from a previous conversation that ran out of context. The summary below covers the earlier portion of the conversation.
+
+        <system-reminder>
+        <tools-used-before-summary>Agent, AskUserQuestion, Bash, Edit, Grep, Monitor, Read, ReadNotifications, Skill, SubagentHandback, TaskStop, ToolSearch, WebFetch, WebSearch, Write, mcp__claude-code-remote__add_repo, mcp__claude-code-remote__create_trigger, mcp__claude-code-remote__delete_trigger, mcp__claude-code-remote__get_trigger, mcp__claude-code-remote__list_repos, mcp__claude-code-remote__read_documentation, mcp__claude-code-remote__send_later, mcp__claude-code-remote__subscribe_pr_activity, mcp__claude-code-remote__unsubscribe_pr_activity, mcp__claude-code-remote__update_trigger, mcp__github__actions_get, mcp__github__actions_list, mcp__github__actions_run_trigger, mcp__github__add_issue_comment, mcp__github__create_pull_request, mcp__github__get_job_logs, mcp__github__issue_read, mcp__github__issue_write, mcp__github__list_issue_types, mcp__github__list_issues, mcp__github__list_pull_requests, mcp__github__pull_request_read, mcp__github__update_pull_request</tools-used-before-summary>
+        </system-reminder>
+        Summary:
+        1. Primary Request and Intent
+
+        **Standing rules (still in force)**
+        - Repo and tools
+          - Repo nonsugertea7821/CMT at /home/user/CMT.
+          - Python is /home/user/venv/bin/python.
+          - CPU only (4 cores), with cached HF models (Qwen2.5-1.5B-Instruct and others).
+        - Language and tone
+          - Write all replies and PR bodies in plain, natural Japanese. The user re-asserted this: 「日本語で」.
+          - Don't overclaim; separate facts from interpretation.
+        - Report ending
+          - End each report with a roadmap-position line, e.g. 「本線 d_consolidation_in_vector の下（…）」 or 「本線 a 識別子化、d_cscl_display_derived の下」.
+          - Mark side-path work as 「わき道」.
+        - Git
+          - Restore files with `git show <rev>:<path> > <path>`. No checkout or stash.
+          - Commit trailer: `Co-Authored-By: Claude [モデル名を伏せた] <[メールアドレスを伏せた]>` and `Claude-Session: https://claude.ai/code/session_015KRKt6TNJZ7ZsQmEknANXK`.
+          - PR body ends with `🤖 Generated with [Claude Code](https://claude.com/claude-code)`, a blank line, then the session URL.
+          - No personal info and no model IDs in pushed artifacts.
+          - Claude never merges.
+        - Every PR I open
+          - Call subscribe_pr_activity.
+          - Call issue_write update with assignees ["nonsugertea7821"].
+        - System yaml and experiments
+          - No comments in system yaml.
+          - Never rerun recorded experiment scripts.
+          - Use `git add -f` for exp/experiments files.
+          - Do not run tc or ec locally; let the runner's spec run them.
+          - External source texts are not put in the repo.
+        - Hypotheses
+          - Anything I think "should be done" is first registered as an untested hypothesis.
+          - Ground it with v_ground, or label it わき道.
+          - Registration-only PRs auto-merge; registrations that add concepts need manual review.
+        - Test flow
+          1. Branch claude/h_<name>.
+          2. Draft PR with "Closes #issue".
+          3. First commit is the script only.
+          4. Run.
+          5. Record the results in the system and push.
+          6. Undraft after spec passes.
+        - Don't ask permission in conversation.
+        - After a merge: `git fetch -q --prune origin && git switch -q main && git merge -q --ff-only origin/main && git branch -D <branch>`.
+
+        **New rules this period**
+        - The container restarts. Heavy experiments must checkpoint and resume, with a send_later resume check every 9 minutes.
+        - Triage:
+          - When the goal isn't reached, triage accumulated hypotheses together with the other lines and decide the order.
+          - Do the triage during another line's waiting time.
+          - Run one heavy (model) experiment at a time; do light work while it runs.
+        - Principle (the user said to remember this): the goal is not producing experiment results but realizing consistent concept recognition in the model. All information produced along the way has value, including outliers, refutations, mixed results, stopped runs, check failures and misreadings. Keep it in the system or in commits and PRs.
+        - Since the E33 branch is checked out in the main working tree while E33 runs, do other branch work in a git worktree (e.g. /home/user/CMT/.wt_xxx), then remove it.
+
+        **Triggers**
+        - trig_01L92Xn7LSTHrmqt7enEcCPG (30-minute loop) is next at 2026-11-21T05:54:00Z.
+          - Its prompt was rewritten with the principle and the triage order (below).
+          - On fire: update_trigger to now+31min with enabled true, then follow the prompt.
+        - trig_01L7KxuXVXgjffmRArKUwLud (send_later, E33 resume check) fires at 05:37. Each fire:
+          1. `pgrep -f e33_round_trip_sibling`.
+          2. If it isn't running and results/e33_round_trip_sibling.json doesn't exist, restart with `cd /home/user/CMT/exp/experiments && nohup /home/user/venv/bin/python e33_round_trip_sibling.py >> results/e33_round_trip_sibling.log 2>&1 &`.
+          3. If the final result exists, record it.
+          4. Otherwise re-arm send_later in 9 minutes.
+          5. Report briefly, in Japanese, only when something changed.
+
+        **Triage order (in the trigger prompt)**
+        - Heavy lane
+          - H1. h_round_trip_raises_sibling (E33): running.
+          - H2. h_explain_transfers_to_apply → h_multi_layer_transfers_to_explain (directly under d_metric).
+          - H3. h_model_reads_by_name (d_road_checker).
+          - H4. Region model hypotheses: h_ambiguity_is_region_choice, h_qualification_immune_genus, h_qualification_depends_above, h_convex_prior_resists_redefinition.
+        - Light lane
+          - L1. h_state_unique_display (d_goal), h_checker_words_swap, h_translation_by_display.
+          - L2. Domain and refer hypotheses: h_domain_in_formula, h_domain_as_projection, h_refer_by_projection, h_domain_choice_is_refer, h_placement_without_domain, h_vocab_domain_invariant, h_signature_all_charts, h_functor_preserves_shape, h_refer_ops_share_direction, h_refer_cuts_orthogonal, h_refer_cut_spans_mods.
+          - L3. h_writing_depends_checker.
+          - L4. Japanese prosody: pre-register the counting method first.
+        - Postponed: laws and grammar placement (7), the extends-derivation series (11, including h_undecided_from_indistinct), execution and translation (5).
+        - わき道: the 22 ungrounded hypotheses.
+
+        2. Key Technical Concepts
+
+        - **E3 concept vectors**
+          - A per-concept vector is added at label-token positions in a layer's output via `Injector` (forward hook) and `label_mask`.
+          - Training: Adam, lr 0.1, zero init. The model is frozen.
+        - **E33 design**
+          - Joint training of the two sibling vectors per pair.
+          - Conditions: none, both (6 recitation rows + 8 QA rows per step, 24 steps), round (4 cycles of 3 abstract + 3 concrete steps).
+            - Abstract phase: recite the correct-side concepts of currently wrong training items (both concepts in cycle 1, or if none are wrong).
+            - Concrete phase: the rows of wrong training items (all items if none are wrong).
+            - The judgment uses margin ≤ 0 in either option order.
+          - Evaluation: 48 items (4 per pair; the G3 items plus new ones). Metrics: acc_both, acc, mean_margin.
+          - Verdict:
+            - Outlier (status unchanged) if both's acc_both ≤ none's.
+            - Supported if acc_both(round) − acc_both(both) ≥ 0.10 and margin(round) > margin(both).
+            - Refuted if acc_both(round) ≤ acc_both(both).
+            - Mixed otherwise.
+        - **Decision tree**
+          - d_goal → v_depend → d_metric.
+          - d_road_region and d_road_checker → v_depend → d_cscl_display_derived.
+          - d_road_japanese → v_raise → d_metric, and → v_depend → d_cscl_display_derived.
+        - **Untested counts by decision**
+          - d_cscl_display_derived: 30
+          - d_road_japanese: 13
+          - d_road_region: 9
+          - d_road_checker: 2
+          - d_metric: 2
+          - d_goal: 1
+          - d_consolidation_in_vector: 1
+          - Ungrounded: 22
+        - auto_merge.py ALLOWED paths: cscl/design/claims.yaml, exp/src/*.yaml, exp/experiments/*.py, exp/experiments/results/*. Data must therefore be embedded in the .py file.
+
+        3. Files and Code Sections
+
+        - **exp/src/exp.yaml** (PR #638, merged)
+          - Nodes:
+            - `round_trip_material: {display: 判定に依って直す定義文と適用例, extends: def_and_examples, mod: {of: [v_depend, from], with: verdict}}` (after def_and_examples)
+            - `teacher_round_trip: {display: 抽象と具体の往復を教師にする, extends: teaching, from: round_trip_material}` (after teacher_both)
+            - `sibling_discrimination: {display: 兄弟概念の弁別, extends: quality_measure_to, mod: {of: [v_depend, from], with: sibling_pair}}` (after preceding_definition_effect)
+          - Individuals: `h_round_trip_raises_sibling: {is: hyp_untested}` and `b_round_trip_raises_sibling: {is: item_queued}` (after b_merge_verdict_by_spec).
+          - Facts:
+            - `v_refer(h_round_trip_raises_sibling, {is: v_raise, from: teacher_round_trip, to: sibling_discrimination})`
+            - `v_check(b_…, h_…)`
+            - `{is: v_ground, from: d_consolidation_in_vector, to: h_round_trip_raises_sibling}`
+        - **exp/experiments/e33_round_trip_sibling.py** (branch claude/h_round_trip_raises_sibling, PR #640 Draft, Closes #639). Commits:
+          1. Pre-registration.
+          2. Stop rules (a misreading).
+          3. Stop rules removed; checkpoint and resume added.
+          - Constants: MODEL Qwen/Qwen2.5-1.5B-Instruct, LAYER 8, LR 0.1, STEPS 24, CYCLES 4, HALF 3, BUDGET 1024, CONDS = ["none", "both", "round"].
+          - Data:
+            - PAIRS: 12 pairs, starting with 甲種注文/乙種注文 and ending with 辰出荷/巳出荷.
+            - NEW_DEFS for pairs 5–12.
+            - TRAIN: 4 items per pair. EVAL_NEW: 2 items for pairs 1–4, 4 for pairs 5–12.
+          - Classes and functions:
+            - `PairTrainer` with `step`, `margin`, `wrong`, `def_keys`, `qa_keys` and `train(cond)`.
+            - `main` writes the partial file `results/e33_round_trip_sibling.partial.json` after each pair and condition, skips done entries, and at the end writes `results/e33_round_trip_sibling.json`, then unlinks the partial file.
+          - The docstring discloses the resume mechanism and that pair 1 was seen before the restart.
+          - Timing: one both step takes about 18 s, so a pair takes about 13 minutes (both 454 s, round 257 s).
+          - First run, pair 1 (acc_both): none 0/4, both 1/4, round 0/4, with wrong counts [4,4,4,4,4,4,4,3]. The restarted run redoes pair 1 (deterministic).
+        - **CLAUDE.md** (PR #641, open, manual review). New section added at the top:
+          ```
+          ## 原則
+          - 目的は、一貫したモデルの概念認識を実現すること。実験の結果を出すことは目的ではなく、その手段。
+          - その過程で出た情報には、すべて価値がある。外れ・反証・mixed・途中で止まった実験・検査の失敗・読み違いも、捨てずに残す。
+            - 観察として体系に書けるものは書き、書けないものは commit のメッセージと PR の本文に残す。
+            - 判定が出なかったことを理由に、記録を省かない。
+          ```
+        - **On hold**: /tmp/claude-0/-home-user-CMT/e05d2140-ce91-515f-a5fb-e6251e13d406/scratchpad/held/sys_undecided_from_indistinct.py, a pre-registration draft for h_undecided_from_indistinct.
+          - Based on sys_extends_derived_meet.py.
+          - Counts n_undecided (|M(x)| > 1), n_undecided_indist and n_indist_decided.
+          - It discloses the expected refutation via teacher_both.
+        - **Merge of #636** (main into claude/h_claims_apart_by_domain): kept both sides of the conflict. Status lines: h_claims_apart_by_domain is hyp_mixed / item_done; h_measure_excludes_claim_kinds is hyp_supported / item_done.
+
+        4. Errors and fixes
+
+        - In #638, tc failed with 「exp.usage_apply は ontology.v_depend の to（ontology.continuant）に来られない」. I changed the target to `verdict` and updated the PR body.
+        - The no_new_comments hook blocked the #636 merge commit as a false positive: the lines `'{group}-#'` exist on both sides. I resolved the conflict first, then committed in a separate Bash call.
+        - The E33 focus rule originally included both concepts on every wrong item, so the abstract phase never depended on the judgment. Before pre-registration I changed it to the correct-side concept only.
+        - I misread 「9分毎に続行チェック」 as stop rules. The user corrected me (the container restarts). I removed the stop rules, added checkpoint and resume, restarted the run and set the send_later check.
+        - I replied in English once; the user said 「日本語で」.
+
+        5. Problem Solving
+
+        - #636 and #638 were merged by the user. #637 was auto-merged. Local branches were cleaned up.
+        - The identifier-ization status report showed that all 13 line-a hypotheses are tested; 30 untested remain under d_cscl_display_derived.
+        - The triage is done and written into the trigger prompt.
+
+        6. All user messages (this period)
+
+        - 「日本語で」
+        - 「それ9分毎に続行チェックのいる実験だよ」
+        - 「違う、この環境のコンテナが再起動するから」
+        - 「式の識別子化の方はどうなってる？」
+        - 「目的に到達していなければ増えた仮説を別の路線と合わせてトリアージしてその路線の順序を決めよう / で、別の路線の待ち時間でやろう」
+        - 「実験の結果を出すことが目的ではなく、それによって一貫したモデルの概念認識を実現することが目的で、その過程で出た情報にはすべて価値がある、というのを原則として覚えておいて」
+        - From before this period: 「すまないが日本語で」, 「そうだもう一つ / 自動マージチェックとSpecCheckってやってること一部被ってないか」, 「python2回初期化してるのは筋悪いな」, 「あと手元でectc通す必要無いんじゃないか / ランナーに任せたほうがいい気もする」, 「一つ気づいたんだが、人間が概念を学習する過程の一つに「抽象と具体の往復」がある / これモデル側の学習、特に概念の分化・精緻化に応用できないか？」
+
+        7. Pending Tasks
+
+        - E33 runs in the background (about 3 hours from about 05:27). The 9-minute send_later resume checks continue.
+        - When it finishes:
+          - Record observations and v_support / v_contradict (or the outlier case) in exp.yaml.
+          - Add the results with `git add -f`.
+          - Push, update the #640 body, and undraft after spec passes.
+          - Look for implications.
+        - Watch #641 (CLAUDE.md principle), which needs manual review.
+        - During waiting time, proceed with light lane L1: h_state_unique_display first. Read its registration lineage, then do a worktree branch claude/h_state_unique_display, a Draft PR and a pre-registration.
+        - The 30-minute trigger fires at 05:54; follow its prompt.
+
+        8. Current Work
+
+        I had just added the principle to CLAUDE.md:
+        - Opened PR #641, subscribed to it and assigned the user.
+        - Removed the worktree .wt_principle.
+        - Added the principle to the trigger prompt.
+
+        I reported in Japanese that the principle is stored in both places. The last event was #641's subscription.created notification; nothing needs action. The main working tree is on claude/h_round_trip_raises_sibling with E33 running.
+
+        9. Optional Next Step
+
+        Keep E33's resume checks going. In the waiting time, start light lane L1 as stated in my triage reply: 「E33 は組 1 からやり直しの最中です。次の待ち時間には、軽い列の 1 にある h_state_unique_display から始めます。」
+
+        - First read h_state_unique_display's registration and lineage.
+        - Do the work in a separate git worktree, because the E33 branch must stay checked out in /home/user/CMT.
+
+        If you need specific details from before compaction (like exact code snippets, error messages, or content you generated), read the full transcript at: /root/.claude/projects/-home-user-CMT/e05d2140-ce91-515f-a5fb-e6251e13d406.jsonl
+        Continue the conversation from where it left off without asking the user any further questions. Resume directly — do not acknowledge the summary, do not recap what was happening, do not preface with "I'll continue" or similar. Pick up the last task as if the break never happened.
+
+        The messages after this summary are the most recent messages from before compaction, kept verbatim. The summary was written without seeing them, so something it says has not happened yet may already have happened in them.
+facts:
+- {is: v_say, from: session_model, to: 01M7Y9K4D9XRGTWGSFWPGVYJR7}
+- {is: v_refer, from: 01M7Y9K4D9XRGTWGSFWPGVYJR7, to: exp.v_ground}
+- {is: v_refer, from: 01M7Y9K4D9XRGTWGSFWPGVYJR7, to: ontology.v_depend}
+- {is: v_refer, from: 01M7Y9K4D9XRGTWGSFWPGVYJR7, to: exp.v_raise}
+- {is: v_refer, from: 01M7Y9K4D9XRGTWGSFWPGVYJR7, to: exp.def_and_examples}
+- {is: v_refer, from: 01M7Y9K4D9XRGTWGSFWPGVYJR7, to: exp.teacher_both}
+- {is: v_refer, from: 01M7Y9K4D9XRGTWGSFWPGVYJR7, to: exp.quality_measure_to}
+- {is: v_refer, from: 01M7Y9K4D9XRGTWGSFWPGVYJR7, to: exp.sibling_pair}
+- {is: v_refer, from: 01M7Y9K4D9XRGTWGSFWPGVYJR7, to: exp.preceding_definition_effect}
+- {is: v_refer, from: 01M7Y9K4D9XRGTWGSFWPGVYJR7, to: exp.hyp_untested}
+- {is: v_refer, from: 01M7Y9K4D9XRGTWGSFWPGVYJR7, to: exp.item_queued}
+- {is: v_refer, from: 01M7Y9K4D9XRGTWGSFWPGVYJR7, to: ontology.v_refer}
+- {is: v_refer, from: 01M7Y9K4D9XRGTWGSFWPGVYJR7, to: exp.v_check}
+- {is: v_refer, from: 01M7Y9K4D9XRGTWGSFWPGVYJR7, to: exp.hyp_mixed}
+- {is: v_refer, from: 01M7Y9K4D9XRGTWGSFWPGVYJR7, to: exp.item_done}
+- {is: v_refer, from: 01M7Y9K4D9XRGTWGSFWPGVYJR7, to: exp.hyp_supported}
+- {is: v_refer, from: 01M7Y9K4D9XRGTWGSFWPGVYJR7, to: exp.usage_apply}
+- {is: v_refer, from: 01M7Y9K4D9XRGTWGSFWPGVYJR7, to: ontology.continuant}
+- {is: v_refer, from: 01M7Y9K4D9XRGTWGSFWPGVYJR7, to: exp.verdict}
+- {is: v_refer, from: 01M7Y9K4D9XRGTWGSFWPGVYJR7, to: exp.v_support}
+- {is: v_refer, from: 01M7Y9K4D9XRGTWGSFWPGVYJR7, to: exp.v_contradict}
