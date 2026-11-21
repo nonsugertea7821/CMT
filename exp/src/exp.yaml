@@ -3440,6 +3440,8 @@ individuals:
   b_reading_excludes_claims: {is: item_done}
   h_claims_apart_by_domain: {is: hyp_untested}
   b_claims_apart_by_domain: {is: item_queued}
+  h_measure_excludes_claim_kinds: {is: hyp_untested}
+  b_measure_excludes_claim_kinds: {is: item_queued}
   h_sync_scan_quadratic: {is: hyp_refuted}
   b_sync_scan_quadratic: {is: item_done}
   h_sync_by_diff: {is: hyp_untested}
@@ -7783,6 +7785,9 @@ facts:
   - {is: v_refer, from: h_claims_apart_by_domain, to: {is: v_depend, from: hypothesis, to: [syntax.domain, measurement_family]}}
   - {is: v_check, from: b_claims_apart_by_domain, to: h_claims_apart_by_domain}
   - {is: v_ground, from: d_metric, to: h_claims_apart_by_domain}
+  - {is: v_refer, from: h_measure_excludes_claim_kinds, to: {is: v_depend, from: measurement_family, to: hypothesis, neg: true}}
+  - {is: v_check, from: b_measure_excludes_claim_kinds, to: h_measure_excludes_claim_kinds}
+  - {is: v_ground, from: d_metric, to: h_measure_excludes_claim_kinds}
   - {is: v_refer, from: h_sync_scan_quadratic, to: {is: v_depend, from: magnitude, to: [hypothesis, decision, syntax.nodes]}}
   - {is: v_check, from: b_sync_scan_quadratic, to: h_sync_scan_quadratic}
   - {is: v_refer, from: h_sync_by_diff, to: {is: v_depend, from: magnitude, to: [differ, decision]}}
