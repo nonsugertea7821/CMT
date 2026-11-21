@@ -403,7 +403,7 @@ individuals:
   b_kind_in_shape: {is: exp.item_queued}
   h_extends_by_kind: {is: exp.hyp_untested}
   b_extends_by_kind: {is: exp.item_queued}
-  h_domain_special_extends: {is: exp.hyp_untested}
+  h_domain_special_extends: {is: exp.hyp_supported}
   b_domain_special_extends: {is: exp.item_queued}
   h_domain_in_formula: {is: exp.hyp_untested}
   b_domain_in_formula: {is: exp.item_queued}
@@ -718,6 +718,11 @@ individuals:
   o_sys_rna_post: {is: exp.observation}
   o_sys_rna_law: {is: exp.observation}
   o_sys_rna_off: {is: exp.observation}
+  o_sys_dse_targets_off: {is: exp.observation}
+  o_sys_dse_refs_off: {is: exp.observation}
+  o_sys_dse_cross_nk: {is: exp.observation}
+  o_sys_dse_tc_ok: {is: exp.observation}
+  o_sys_dse_control: {is: exp.observation}
   o_sys_wvl_control: {is: exp.observation}
   o_sys_wvl_m1: {is: exp.observation}
   o_sys_wvl_m2: {is: exp.observation}
@@ -1461,6 +1466,14 @@ facts:
   - {is: v_refer, from: o_sys_rna_law, to: {is: v_level, from: sys_rule_nouns_agree_runtime.N_law_specific.mean_value, to: 0.0}}
   - {is: exp.v_contradict, from: o_sys_rna_law, to: h_rule_nouns_agree_runtime}
   - {is: v_refer, from: o_sys_rna_off, to: {is: v_level, from: sys_rule_nouns_agree_runtime.N_off_agree.mean_value, to: 0.0}}
+  - {is: v_refer, from: o_sys_dse_targets_off, to: {is: v_level, from: sys_domain_special_extends_fix.n_targets_off.mean_value, to: 0.0}}
+  - {is: exp.v_support, from: o_sys_dse_targets_off, to: h_domain_special_extends}
+  - {is: v_refer, from: o_sys_dse_refs_off, to: {is: v_level, from: sys_domain_special_extends_fix.n_refs_off.mean_value, to: 0.0}}
+  - {is: exp.v_support, from: o_sys_dse_refs_off, to: h_domain_special_extends}
+  - {is: v_refer, from: o_sys_dse_cross_nk, to: {is: v_level, from: sys_domain_special_extends_fix.n_cross_extra_nk.mean_value, to: 1.0}}
+  - {is: v_refer, from: o_sys_dse_tc_ok, to: {is: v_level, from: sys_domain_special_extends_fix.n_tc_ok.mean_value, to: 1.0}}
+  - {is: exp.v_support, from: o_sys_dse_tc_ok, to: h_domain_special_extends}
+  - {is: v_refer, from: o_sys_dse_control, to: {is: v_level, from: sys_domain_special_extends_fix.control_tc_ok.mean_value, to: 1.0}}
   - {is: v_refer, from: o_sys_wvl_control, to: {is: v_level, from: sys_wider_verb_lower.control_tc_ok.mean_value, to: 1.0}}
   - {is: v_refer, from: o_sys_wvl_m1, to: {is: v_level, from: sys_wider_verb_lower.m1_tc_ok.mean_value, to: 0.0}}
   - {is: exp.v_contradict, from: o_sys_wvl_m1, to: h_wider_verb_lower}
