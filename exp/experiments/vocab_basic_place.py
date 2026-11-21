@@ -37,6 +37,11 @@
   置けなかった語は、理由を commit に書く。置けなかった語は収まらないと数える（分母から除かない）。
   三つの確かめ直し（b_*_vocab）は、この実験では数えない。置いた結果の上で、別に事前登録する。
   走らせる前に数は計算していない。
+追記（段 1 のあと、置く前。判定は変えない）:
+  ontology には物質的な持続体の層がなく、continuant の下に直接置けば、どの名詞も「収まる」。
+  そのため判定の基準は弱い。記述として次を足す。
+    n_inter_en / n_inter_ja: 語彙の領域に足した、選んだ語でないノードの数（中間の種類）。
+    n_dup_en / n_dup_ja: 同じ領域で、extends と mod と from・to・holds が同じになった、置いた語の組の数（式で区別できていない）。
 使い方:
   python -I exp/experiments/vocab_basic_place.py sample <be.html> <wnjpn.db>
   python -I exp/experiments/vocab_basic_place.py judge
@@ -157,6 +162,16 @@ def judge():
     s = {"n_pair": n, "fit_en": fe, "fit_ja": fj, "share_fit_en": fe / n, "share_fit_ja": fj / n,
          "n_new_root": n_new_root, "n_new_law": n_new_law, "n_both_fit": len(both),
          "n_mismatch": sum(r["en_basic"]["anchor"] != r["ja_basic"]["anchor"] for r in both)}
+    keys = {"en_basic": {w.replace(" ", "_") for w in rows}, "ja_basic": {"j_" + w.replace(" ", "_") for w in rows}}
+    for d, tag in (("en_basic", "en"), ("ja_basic", "ja")):
+        mine = [x for x in N if x.split(".", 1)[0] == d]
+        s[f"n_inter_{tag}"] = sum(1 for x in mine if x.split(".", 1)[1] not in keys[d])
+        sig = {}
+        for x in mine:
+            if x.split(".", 1)[1] in keys[d]:
+                k = json.dumps({f: N[x].get(f) for f in ("extends", "mod", "from", "to", "holds")}, sort_keys=True, default=str)
+                sig[k] = sig.get(k, 0) + 1
+        s[f"n_dup_{tag}"] = sum(c * (c - 1) // 2 for c in sig.values())
     (RES / "vocab_basic_judge.json").write_text(json.dumps({"rows": rows, "s": s}, ensure_ascii=False, indent=1) + "\n")
     print(json.dumps(s, ensure_ascii=False))
 
