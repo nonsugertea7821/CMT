@@ -267,6 +267,7 @@ nodes:
   layer_output: {display: 層の出力, extends: residual_vector, mod: {of: [v_compute, to], with: layer}}
   hidden_state: {display: 隠れ状態, extends: layer_output, mod: depend_from_label_token_positions}
   wide_hidden_state: {display: 次元の多い隠れ状態, extends: hidden_state, mod: {of: [v_compose, to], with: component, at: {count: {gt: 1536}}}}
+  discrimination_dimension: {display: 弁別に要る次元の数, extends: quality_measure_to, mod: {of: [v_depend, to], with: sibling_discrimination}}
   state_shift: {display: 隠れ状態のずれ, extends: residual_vector, mod: {of: [v_sum, from], with: shifted_hidden_state}}
   shifted_hidden_state: {display: ずれを足した隠れ状態, extends: residual_vector, mod: {of: [v_compose, to], with: hidden_state}}
   shift_unseen_by_layer: {display: 層から分けて見えない隠れ状態のずれ, extends: state_shift, mod: {of: [v_see, to], with: layer, neg: true}}
@@ -3511,6 +3512,8 @@ individuals:
   b_width_raises_sibling_discrimination: {is: item_queued}
   h_sibling_discrimination_relies_on_width: {is: hyp_untested}
   b_sibling_discrimination_relies_on_width: {is: item_queued}
+  h_dimension_from_expression_parts: {is: hyp_untested}
+  b_dimension_from_expression_parts: {is: item_queued}
   h_state_unique_display: {is: hyp_untested}
   b_state_unique_display: {is: item_queued}
   h_axis_value_from_result: {is: hyp_untested}
@@ -9970,6 +9973,9 @@ facts:
   - {is: v_refer, from: h_sibling_discrimination_relies_on_width, to: {is: v_rely, from: sibling_discrimination, to: wide_hidden_state}}
   - {is: v_check, from: b_sibling_discrimination_relies_on_width, to: h_sibling_discrimination_relies_on_width}
   - {is: v_ground, from: d_road_region, to: h_sibling_discrimination_relies_on_width}
+  - {is: v_refer, from: h_dimension_from_expression_parts, to: {is: v_depend, from: discrimination_dimension, to: expression_part}}
+  - {is: v_check, from: b_dimension_from_expression_parts, to: h_dimension_from_expression_parts}
+  - {is: v_ground, from: d_road_region, to: h_dimension_from_expression_parts}
   - {is: v_refer, from: h_state_unique_display, to: {is: v_refer, from: hidden_state, to: syntax.display, at: {count: 1}}}
   - {is: v_check, from: b_state_unique_display, to: h_state_unique_display}
   - {is: v_ground, from: d_goal, to: h_state_unique_display}
