@@ -1,0 +1,37 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-21T22:31:02.016Z（UTC）
+individuals:
+  01M803R0406NHC15JWR4503Q2M:
+    is: model_utterance
+    display: 発言 4136
+    val:
+      order: 4136
+      text: |
+        E44 は判定の間に入り、h_verdict_by_checker は未検証のままです。記録は済ませ、#729 は Draft のままにしています。
+
+        **結果**（Qwen3-4B、E43 と同じ 24 項目に検査器の出力を一行添えた）
+
+        | 条件 | 正答率 | 出力を添えない E43 |
+        |---|---|---|
+        | decoy + closure（たどった先までの依存） | 0.542 | decoy 0.125 |
+        | decoy + edges（直接の依存） | 0.208 | decoy 0.125 |
+        | control + edges（直接の依存） | 0.292 | control 0.417 |
+
+        - decoy_closure は 0.542 で、反証の線 0.5 と支持の線 0.75 の間に入りました。事前登録どおり判定せず、観察も仮説に結んでいません。
+
+        **解釈**
+        - 答えをほぼ含む closure を渡すと、decoy は 0.125 から 0.542 に上がりました。検査器の出力に頼る向きはありますが、弱いです。
+        - 直接の辺（edges）を渡しても、E43 とほぼ同じか下がりました。検査器が渡す辺からも、2 段の依存をたどれていません。h_model_misses_mod と同じ向きです。
+        - 選択肢の順を入れ替えた両方で正しかった項目は、どの条件でも 0 でした。
+          - これは E43 の decoy と control でも同じです。
+          - 比べる問い方の答えは選択肢の位置に強く引かれていて、正答率はその偏りの上の小さな差で決まっています。
+          - E43 の支持は事前登録した指標に従ったものですが、この偏りの上での差として読むべきかもしれません。
+
+        **新しい仮説**
+        - h_verdict_by_option（比べる問い方の判定は、選択肢そのものに頼る）を、d_road_checker に v_ground で結んで登録しました。登録だけの PR #730 です。
+        - 体系に「選択肢の位置」を指す概念が見当たらなかったので、option で近づけています。表示語に意味を預けていることは PR に書きました。
+
+        ロードマップの位置: H3（検査器の道 d_road_checker）。E44 は判定の間で、h_verdict_by_option を登録しました。
+facts:
+- {is: v_say, from: session_model, to: 01M803R0406NHC15JWR4503Q2M}
+- {is: exp.v_answer, from: 01M803R0406NHC15JWR4503Q2M, to: 01M7ZG4RFFK1A28D1ZVQK01AG8}
+- {is: v_refer, from: 01M803R0406NHC15JWR4503Q2M, to: exp.v_ground}
