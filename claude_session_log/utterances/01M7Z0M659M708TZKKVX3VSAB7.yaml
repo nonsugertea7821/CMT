@@ -1,0 +1,36 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-21T12:17:16.969Z（UTC）
+individuals:
+  01M7Z0M659M708TZKKVX3VSAB7:
+    is: model_utterance
+    display: 発言 3745
+    val:
+      order: 3745
+      text: |
+        This cycle supported h_dependent_continuant_extends (PR #675, Draft), and I registered one new hypothesis it points to (PR #676).
+
+        **The result**
+        - What it tested: whether the system's formulas already contain "a specifically dependent continuant is a continuant."
+        - Reading the form path: I let a word defined by `form: [v_depend, from]` take the type of v_depend's `from` slot, which is continuant, as its parent.
+          - With that path added, both specifically_ and generically_dependent_continuant have continuant as an ancestor. That is the support.
+          - The share of typed words that reach continuant or occurrent goes from 0.039 to 1.0, across all 23 domains with no exceptions.
+        - The refutation in #671 happened because the type chain did not follow form, not because the formula was missing.
+        - Writing `extends: continuant` into dependent explicitly is not needed, and it breaks one law.
+          - A diagnostic I ran once, separately from the recorded script, showed the broken law is placed_deduced (on exp.unseen_relation).
+          - I restored ontology.yaml straight after that run.
+
+        **New hypothesis (#676, registration only)**
+        - h_form_gives_genus: the parent type can also be derived from form.
+        - It tests whether, if the checker holds "parent derived from form" as a relation, the type chain closes without writing anything in.
+        - It is grounded to d_cscl_display_derived, so it is not a side path.
+
+        **Background experiment**
+        - E34 has 53 items done and keeps resuming from its partial file. The next check is at 12:22.
+
+        Roadmap position: moved L2 (prerequisites of d_road_region) forward and pinned down the cause of the #671 refutation. H2 (E34) is still measuring.
+facts:
+- {is: v_say, from: session_model, to: 01M7Z0M659M708TZKKVX3VSAB7}
+- {is: exp.v_answer, from: 01M7Z0M659M708TZKKVX3VSAB7, to: 01M7YQNY4SHZ5CPQ9Z096V99D4}
+- {is: v_refer, from: 01M7Z0M659M708TZKKVX3VSAB7, to: ontology.v_depend}
+- {is: v_refer, from: 01M7Z0M659M708TZKKVX3VSAB7, to: syntax.from}
+- {is: v_refer, from: 01M7Z0M659M708TZKKVX3VSAB7, to: ontology.generically_dependent_continuant}
+- {is: v_refer, from: 01M7Z0M659M708TZKKVX3VSAB7, to: exp.unseen_relation}
