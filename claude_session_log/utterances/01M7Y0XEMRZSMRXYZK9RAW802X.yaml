@@ -1,0 +1,40 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-21T03:03:06.136Z（UTC）
+individuals:
+  01M7Y0XEMRZSMRXYZK9RAW802X:
+    is: model_utterance
+    display: 発言 3433
+    val:
+      order: 3433
+      text: |
+        形式と実在の軸を分ける実験（#614）が終わりました。結果は「法則で分けられる」が支持で、ただし根拠は狭いです。「領域で分けられる」は支持と反証が混ざりました。手順の途中で訂正を 1 回したため自動マージには乗らず、#614 はあなたの確認待ちです。
+
+        **結果（127 動詞）**
+
+        | 仮説 | 状態 | 主な数字 |
+        |---|---|---|
+        | h_formal_real_by_law（法則に出る動詞が形式の軸） | 支持 | 分け方の正しさ（bal_acc）0.807 |
+        | h_real_axis_by_domain（実在の軸は領域ごと） | mixed | 一つの領域だけで使う実在の動詞は 88 語。ただし複数の領域で共有されるものを見分けられた割合は 0.739 |
+
+        - **支持が狭い理由:** 法則に出てくる動詞は 8 語しかなく、その少なさの上に立った支持です。
+        - **食い違い:** 法則に出てこないのに複数の領域で使われる動詞が 31 語ありました。
+          - 11 語は ontology の動詞（v_express、v_trigger など）で、直観では形式の語に見えますが、どの法則にも出てきません。
+          - 10 語は、exp の状態を表す動詞 9 語と lang.v_not_depend です。exp と lang が互いに寄りかかっている結果に見えます。
+        - **訂正の中身:** 事実の始点がリストになっている所でスクリプトが止まったので、始点が単独の語の事実だけを数えるように直しました。数字を見る前に直し、スクリプトの説明文に書いています。
+
+        **ここから言えそうなこと（解釈）**
+        法則の層が、形式の語をまだ覆いきれていない、という読みです。ただ、それらの語が実は実在の語だという読みも残ります。そこで ontology の代表 6 語について、二つの読み方を対の仮説として登録しました（#615）。
+        - `h_formal_verbs_need_laws`: これらは形式の語で、足りないのは法則の側。
+        - `h_lawless_verbs_are_real`: これらは実在の語で、領域の側に属する。
+
+        最初は依存の関係で書こうとしましたが、型検査器に「動詞は依存の始点に来られない」と拒まれました。そこで、法則または領域がこれらの動詞を述べる、という向きで書いています。#615 は登録だけなので、検査が通れば自動でマージされます。
+
+        **次にやること**
+        合意した順に、`h_observation_by_scale`（#610、観察の正しさは体系の規模に依存する）に進みます。
+
+        本線 a 識別子化、d_cscl_display_derived の下
+facts:
+- {is: v_say, from: session_model, to: 01M7Y0XEMRZSMRXYZK9RAW802X}
+- {is: exp.v_answer, from: 01M7Y0XEMRZSMRXYZK9RAW802X, to: 01M7Y0JCR0P8PYMHA8TP3NABF1}
+- {is: v_refer, from: 01M7Y0XEMRZSMRXYZK9RAW802X, to: ontology.v_express}
+- {is: v_refer, from: 01M7Y0XEMRZSMRXYZK9RAW802X, to: ontology.v_trigger}
+- {is: v_refer, from: 01M7Y0XEMRZSMRXYZK9RAW802X, to: lang.v_not_depend}
