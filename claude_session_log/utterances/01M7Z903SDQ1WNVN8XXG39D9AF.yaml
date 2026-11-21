@@ -1,0 +1,27 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-21T14:43:36.365Z（UTC）
+individuals:
+  01M7Z903SDQ1WNVN8XXG39D9AF:
+    is: model_utterance
+    display: 発言 3872
+    val:
+      order: 3872
+      text: |
+        止めました。いま入れた commit（351a9c8）の push では spec が走っていないことを Actions で確かめました。以後のログの追加もこの commit の上に積まれるので、走らないはずです。
+
+        **原因**
+        - GitHub は、push されたブランチに置いてある workflow のファイルで、走らせるかどうかを決めます。
+        - main の `spec.yml` は、ブランチへの push では走らない作りになっています。
+        - ところがログのブランチには古い版の `spec.yml` が残っていて、その `push:` にはどのブランチかの絞り込みがありませんでした。
+        - そのため、ログを足すたびに spec が走っていました。このブランチでの実行は、これまでに 1288 回あります。
+
+        **やったこと**
+        - ログのブランチ `claude/session-log-nonsugertea7821` から、`.github/workflows/` の `spec.yml` と `issues.yml` を消して push しました。
+        - `claude_session_log/` には触れていませんし、ログの中身も読んでいません。
+        - 戻したいときは、この commit を revert すれば元に戻ります。
+
+        ログのブランチは、作業用に決められたブランチ以外への push ですが、止めてほしいという依頼として受け取って進めました。
+
+        ロードマップ上の位置：わき道（CI の無駄な実行を止める）
+facts:
+- {is: v_say, from: session_model, to: 01M7Z903SDQ1WNVN8XXG39D9AF}
+- {is: exp.v_answer, from: 01M7Z903SDQ1WNVN8XXG39D9AF, to: 01M7Z8YVCVQA0KAZBRPQ9Z07Q1}
