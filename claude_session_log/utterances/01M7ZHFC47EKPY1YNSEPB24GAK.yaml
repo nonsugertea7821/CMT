@@ -1,0 +1,222 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-21T17:11:45.031Z（UTC）
+individuals:
+  01M7ZHFC47EKPY1YNSEPB24GAK:
+    is: session_summary
+    display: 発言 3961
+    val:
+      order: 3961
+      text: |
+        This session is being continued from a previous conversation that ran out of context. The summary below covers the earlier portion of the conversation.
+
+        <system-reminder>
+        <tools-used-before-summary>Agent, Artifact, AskUserQuestion, Bash, Edit, Grep, Monitor, Read, ReadNotifications, Skill, SubagentHandback, TaskStop, ToolSearch, WebFetch, WebSearch, Write, mcp__claude-code-remote__add_repo, mcp__claude-code-remote__create_trigger, mcp__claude-code-remote__delete_trigger, mcp__claude-code-remote__get_trigger, mcp__claude-code-remote__list_repos, mcp__claude-code-remote__read_documentation, mcp__claude-code-remote__send_later, mcp__claude-code-remote__subscribe_pr_activity, mcp__claude-code-remote__unsubscribe_pr_activity, mcp__claude-code-remote__update_trigger, mcp__github__actions_get, mcp__github__actions_list, mcp__github__actions_run_trigger, mcp__github__add_issue_comment, mcp__github__create_pull_request, mcp__github__get_job_logs, mcp__github__issue_read, mcp__github__issue_write, mcp__github__list_issue_types, mcp__github__list_issues, mcp__github__list_pull_requests, mcp__github__pull_request_read, mcp__github__update_pull_request</tools-used-before-summary>
+        </system-reminder>
+        Summary:
+        1. Primary Request and Intent
+
+        **Standing rules (unchanged)**
+        - Repo and tools
+          - Repo nonsugertea7821/CMT, at /home/user/CMT.
+          - Python is /home/user/venv/bin/python. CPU only, 15 GB RAM cgroup.
+        - Language and tone
+          - Write replies and PR bodies in plain Japanese.
+          - Don't overclaim. Separate facts from interpretation.
+          - End each report with a roadmap-position line. Label side paths わき道.
+        - Git
+          - Restore files with `git show <rev>:<path> > <path>`. No checkout, no stash.
+          - Commit trailer:
+            ```
+            Co-Authored-By: Claude [モデル名を伏せた] <[メールアドレスを伏せた]>
+            Claude-Session: https://claude.ai/code/session_015KRKt6TNJZ7ZsQmEknANXK
+            ```
+          - PR body ends with `🤖 Generated with [Claude Code](https://claude.com/claude-code)`, a blank line, then the session URL.
+        - Prohibitions
+          - No personal info and no model IDs in pushed artifacts.
+          - Claude never merges.
+        - Every PR I open: subscribe_pr_activity, then issue_write update with assignees ["nonsugertea7821"].
+        - System YAML gets no comments.
+        - Experiments
+          - Pre-register: the first commit contains the script only; results go in a later commit.
+          - Add experiment files with `git add -f`.
+          - Never rerun a recorded script.
+          - No local tc or ec.
+          - Undraft once spec passes and the status is supported, refuted or mixed.
+        - Hypotheses: register proposals first, with v_ground in the same PR or labelled わき道.
+        - Don't ask permission in conversation.
+        - Light work goes in /home/user/CMT/.wt_* worktrees. After a merge, remove the local worktree and branch.
+
+        **Security constraints (verbatim)**
+        - 「Pagesに出すなら脆弱性気を付けてね」
+        - 「あとsession_logは読まないように」
+        - Later clarified:
+          - 「いやまあログの中身は読んだってかまわないんだけど 何のために残してるかって「過去の参照」のためだから」
+          - 「読もうと思えばsession_logも読めるよ 無差別に読んでほしくないからPagesに出してないだけ」
+          - 「あとブランチ切れば消えるってのもある」
+        - Net effect: I may read session logs for past reference. Pages and the ledger must never include claude/session-log-*.
+
+        **This period's user requests**
+        - "体系には「誤りの種類」を表す概念がありません。this is hypothesis"
+          - Negative or absence claims are hypotheses to register, not reasons to skip.
+        - "Wait—turn that observation into a hypothesis? という名前でStopフックを組もう トリガーは「していません」系の動詞で"
+        - "英語と中国語もだね、結構な頻度で応答言語が守れてないから"
+        - "いやー、まあ英語で考えること自体は禁止したくないから ただ私がスムーズに読めなくて困るだけで、読みたいときは言う"
+          - Don't force rewriting in Japanese. The user will ask when they want to read something.
+
+        2. Key Technical Concepts
+
+        - **Stop hook**
+          - Returns `{"decision":"block","reason":...}` to keep the turn going.
+          - The `stop_hook_active` guard prevents loops.
+          - Reads `last_assistant_message`, falling back to the end of the transcript.
+        - **The 30-minute cycle trigger** (trig_01L92Xn7LSTHrmqt7enEcCPG)
+          - On fire: update_trigger run_once_at about 31 minutes ahead with enabled true.
+          - Follow its stored prompt: H/L columns; one heavy job at a time.
+        - **ec family pattern** (exp_check.py)
+          - v_file_of / v_rows_of [path] / v_axis_of / v_keys_of '#' with list spells.
+          - Row keys are filtered before stat.
+          - v_entry_of '{m}' and v_metric_of mean_value.
+          - Observations: `v_refer o → {is: v_level, from: fam.c.m.mean_value, to: N}`, plus v_support or v_contradict.
+        - **Type checker errors**
+          - `err(msg)` appends free text; 111 call sites.
+          - Only check_laws emits 「法則 {lid}（display）に反する」 (law_rule).
+          - syntax.laws has subkinds law_rule and law_given.
+        - **Auto-merge** handles registration-only and uncorrected supported or refuted PRs. A hook change, or a PR with no added hypothesis, goes to manual review.
+
+        3. Files and Code Sections
+
+        - **exp/src/exp.yaml** (via #703, merged)
+          - Nodes: `e37_writing_checker_version`, axes `_c` (written, gold) and `_m` (n_flip, n_now, n_reproduced_checked, n_reproduced_match, n_then_ok, n_now_ok).
+          - Edges: rows `[summary]`, keys '#', entry '{m}', mean_value.
+          - Observations:
+            - o_e37_flip_written = 0 (v_contradict)
+            - o_e37_now_written = 74
+            - o_e37_reproduced_written = 74
+            - o_e37_ok_written = 9
+            - o_e37_flip_gold = 0
+          - h_writing_depends_checker: hyp_refuted; b_ → item_done.
+        - **exp/src/exp.yaml** (via #704 and #708, merged), all hyp_untested with b_ item_queued, v_check, and `v_ground from d_road_checker`:
+          - `h_error_kind_is_law`: `{is: v_depend, from: type_check_result, to: syntax.laws}`
+          - `h_rejection_by_few_laws`: `{is: v_depend, from: formalization_accuracy, to: syntax.laws}`
+          - `h_unnamed_error_is_law_given`: `{is: v_depend, from: type_check_result, to: syntax.law_given}`
+        - **.claude/hooks/observation_to_hypothesis.py** (via #707, merged; final version)
+          - TITLE: "Wait—turn that observation into a hypothesis?"
+          - Patterns:
+            - `NEG_JA = (ません|ていない|でいない|していない|がない|はない|もない|できない|られない|わからない|分からない)`
+            - `NEG_EN = (?i)\b(not|no|never|none|nothing|cannot|without|\w+n't)\b`
+            - `NEG_ZH = (没有|没|不是|不能|不会|无法|并未|尚未|不存在|未能)`
+          - Behaviour:
+            - Strips code blocks and inline code.
+            - Splits sentences on 。！？\n and on `.!?` followed by whitespace.
+            - Lists up to 8 hit sentences.
+          - The block reason asks me to classify each hit as one of: 1. verified fact; 2. unverified claim, so register it (h_/b_/v_refer/v_check/v_ground); 3. progress report. Then name what was registered and why the rest was not.
+          - No language-rewrite reminder (removed at the user's request).
+        - **.claude/settings.json**: Stop hook added:
+          ```json
+          {"hooks":[{"type":"command","command":"python3 \"$CLAUDE_PROJECT_DIR\"/.claude/hooks/observation_to_hypothesis.py","timeout":30,"statusMessage":"Wait—turn that observation into a hypothesis?"}]}
+          ```
+          - /home/user/CMT was moved with `git switch --detach origin/main` (05938f8). The hook is active and has fired this session.
+        - **exp/experiments/e36_explain_to_apply.py** (branch claude/h_explain_transfers_to_apply, worktree .wt_e36, pre-registration commit 2eb096a; unchanged)
+          - Saves a partial after each concept: results/e36_Qwen2.5-1.5B-Instruct_L8.partial.pt.
+          - Output: results/e36_Qwen2.5-1.5B-Instruct_L8.json.
+          - Judgment:
+            - pre_explain: ex − none explain acc ≥ 0.25.
+            - pre_ceiling: none apply acc < 0.75.
+            - transfer: ex apply acc ≥ 0.75 and ex − none ≥ 0.25.
+
+        4. Errors and fixes
+
+        - **Background waiters killed at the 30-minute limit** (bmnrn7z06, bhh8r8eld)
+          - Replaced with a single until-loop job with a 7200000 ms timeout (b5vd9ra5c).
+          - It resumed E36 at 16:09.
+        - **I wrongly treated an absence claim as a reason to skip registration**
+          - User: "this is hypothesis".
+          - Fixed by registering #704, then building the Stop hook.
+        - **I added a "rewrite in Japanese" reminder**
+          - The user didn't want to forbid English thinking, so I removed it (commit f79372b).
+        - **Stray Artifact read call with url "none"**: an error with no effect.
+        - **Protocol issue (must disclose)**
+          - I peeked at the E37 error texts before pre-registering h_error_kind_is_law.
+          - The pre-registration must disclose this and the counts: about 30 「来られない」, 11 「動詞でない」, 9 「法則 X に反する」, about 9 checker crashes, out of 65 rejected lines.
+          - That PR should go to manual review.
+
+        5. Problem Solving
+
+        - E37: done and merged (refuted).
+        - Registrations #704, #707 and #708: merged.
+        - **Memory constraint**
+          - With E36 running, the cgroup is about 13 GB of 15 GB (E36 RSS about 11.6 GB).
+          - Don't run tc-heavy light experiments concurrently.
+          - Defer h_error_kind_is_law, h_unnamed_error_is_law_given and h_rejection_by_few_laws until E36 finishes.
+          - Writing the pre-registration script now is fine.
+
+        6. All user messages
+
+        - "体系には「誤りの種類」を表す概念がありません。this is hypothesis"
+        - "Wait—turn that observation into a hypothesis? という名前でStopフックを組もう トリガーは「していません」系の動詞で"
+        - "英語と中国語もだね、結構な頻度で応答言語が守れてないから"
+        - "いやー、まあ英語で考えること自体は禁止したくないから ただ私がスムーズに読めなくて困るだけで、読みたいときは言う"
+        - Earlier, still in force: the security constraints in section 1.
+
+        7. Pending Tasks
+
+        - **E36 (PR #702, Draft)**: 11 of 24 concepts trained (latest 平日), about 6–10 minutes each.
+          - Keep send_later checks every 9 minutes. Next: trig_01VLMHy4a4b1zxTps6JDnwsp at 17:11.
+          - If the process has stopped, rerun from .wt_e36/exp/experiments:
+            `nohup /home/user/venv/bin/python e36_explain_to_apply.py --model Qwen/Qwen2.5-1.5B-Instruct >> /tmp/claude-0/-home-user-CMT/e05d2140-ce91-515f-a5fb-e6251e13d406/scratchpad/e36.log 2>&1 &`
+          - When it finishes:
+            - Write an e36 family, observations, v_support or v_contradict, status and b_ item_done into exp.yaml.
+            - `git add -f` the results JSON in a later commit and push.
+            - Update the #702 body, disclosing the OOM kill after 4 concepts (E37 ran concurrently) and the resume from the partial.
+            - Undraft when spec passes and the status is supported or refuted.
+        - **Monitor bh43fffw0** tails e36.log and expires about 30 minutes after 16:40. Re-arm on expiry.
+        - **The 30-minute cycle** fires at 17:33. On fire, update_trigger run_once_at about 31 minutes ahead with enabled true, then follow the stored prompt.
+        - **After E36**:
+          - Pre-register and run h_error_kind_is_law, paired with h_unnamed_error_is_law_given, disclosing the data peek; then h_rejection_by_few_laws.
+          - Then H2's next step, h_multi_layer_transfers_to_explain.
+          - Step 5: look for implications of the E36 result.
+        - **Stop-hook discipline**: when the hook fires, classify each listed sentence (fact / register / progress) and register unverified claims.
+
+        8. Current Work
+
+        - The last event was the Monitor reporting `[train] 平日: loss 1.17 -> 0.00 |v|=21.9 442s`.
+        - I reported: 「E36 は 11 個目の概念（平日）の学習が済みました。残りは 13 概念です。」
+        - No open PRs except #702 (E36, Draft). All worktrees except .wt_e36 have been removed.
+
+        9. Optional Next Step
+
+        - On the next E36 check (send_later at 17:11) or Monitor event:
+          - Confirm E36 is running (`pgrep -f e36_explain`); if it stopped, resume from the partial.
+          - Schedule the next 9-minute check.
+        - When the 17:33 cycle fires, update the trigger first.
+        - While E36 runs, optionally draft (not run) the h_error_kind_is_law pre-registration script, disclosing the earlier data peek.
+        - When E36 completes, record its results to exp.yaml and PR #702 as described in Pending Tasks.
+
+        If you need specific details from before compaction (like exact code snippets, error messages, or content you generated), read the full transcript at: /root/.claude/projects/-home-user-CMT/e05d2140-ce91-515f-a5fb-e6251e13d406.jsonl
+        Continue the conversation from where it left off without asking the user any further questions. Resume directly — do not acknowledge the summary, do not recap what was happening, do not preface with "I'll continue" or similar. Pick up the last task as if the break never happened.
+
+        The messages after this summary are the most recent messages from before compaction, kept verbatim. The summary was written without seeing them, so something it says has not happened yet may already have happened in them.
+facts:
+- {is: v_say, from: session_model, to: 01M7ZHFC47EKPY1YNSEPB24GAK}
+- {is: v_refer, from: 01M7ZHFC47EKPY1YNSEPB24GAK, to: exp.v_ground}
+- {is: v_refer, from: 01M7ZHFC47EKPY1YNSEPB24GAK, to: exp.v_file_of}
+- {is: v_refer, from: 01M7ZHFC47EKPY1YNSEPB24GAK, to: exp.v_rows_of}
+- {is: v_refer, from: 01M7ZHFC47EKPY1YNSEPB24GAK, to: exp.v_axis_of}
+- {is: v_refer, from: 01M7ZHFC47EKPY1YNSEPB24GAK, to: exp.v_keys_of}
+- {is: v_refer, from: 01M7ZHFC47EKPY1YNSEPB24GAK, to: exp.v_entry_of}
+- {is: v_refer, from: 01M7ZHFC47EKPY1YNSEPB24GAK, to: exp.v_metric_of}
+- {is: v_refer, from: 01M7ZHFC47EKPY1YNSEPB24GAK, to: exp.mean_value}
+- {is: v_refer, from: 01M7ZHFC47EKPY1YNSEPB24GAK, to: ontology.v_refer}
+- {is: v_refer, from: 01M7ZHFC47EKPY1YNSEPB24GAK, to: ontology.v_level}
+- {is: v_refer, from: 01M7ZHFC47EKPY1YNSEPB24GAK, to: exp.v_support}
+- {is: v_refer, from: 01M7ZHFC47EKPY1YNSEPB24GAK, to: exp.v_contradict}
+- {is: v_refer, from: 01M7ZHFC47EKPY1YNSEPB24GAK, to: syntax.law_rule}
+- {is: v_refer, from: 01M7ZHFC47EKPY1YNSEPB24GAK, to: syntax.laws}
+- {is: v_refer, from: 01M7ZHFC47EKPY1YNSEPB24GAK, to: syntax.law_given}
+- {is: v_refer, from: 01M7ZHFC47EKPY1YNSEPB24GAK, to: exp.hyp_refuted}
+- {is: v_refer, from: 01M7ZHFC47EKPY1YNSEPB24GAK, to: exp.item_done}
+- {is: v_refer, from: 01M7ZHFC47EKPY1YNSEPB24GAK, to: exp.hyp_untested}
+- {is: v_refer, from: 01M7ZHFC47EKPY1YNSEPB24GAK, to: exp.item_queued}
+- {is: v_refer, from: 01M7ZHFC47EKPY1YNSEPB24GAK, to: exp.v_check}
+- {is: v_refer, from: 01M7ZHFC47EKPY1YNSEPB24GAK, to: ontology.v_depend}
+- {is: v_refer, from: 01M7ZHFC47EKPY1YNSEPB24GAK, to: exp.type_check_result}
+- {is: v_refer, from: 01M7ZHFC47EKPY1YNSEPB24GAK, to: exp.formalization_accuracy}
