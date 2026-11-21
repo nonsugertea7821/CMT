@@ -1,0 +1,44 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-21T05:31:09.223Z（UTC）
+individuals:
+  01M7Y9CHH7PN9949C99BJFWRD1:
+    is: model_utterance
+    display: 発言 3546
+    val:
+      order: 3546
+      text: |
+        目的にはまだ届いていません。目的は使い方をまたぐ一貫性（d_metric）で、そこに届くまでの決定に結んだ仮説のうち、58 件が未検証で残っています。
+
+        そこで路線を合わせてトリアージし、順を決めました。E33 を走らせている待ち時間で行っています。周回のプロンプトもこの順に書き換えました。#380 の件と本線 a の並びは、どちらも終わっていたので外しています。
+
+        **決め方**
+        - 目的（d_goal → d_metric）に近い順に並べます。
+        - 重い実験（モデル）は一度に一つだけ走らせ、その待ち時間に軽い実験（体系を読むもの、登録）を進めます。
+
+        **重い列（モデルの実験）**
+        1. h_round_trip_raises_sibling（E33）: いま走っています。
+        2. d_metric の直下: h_explain_transfers_to_apply → h_multi_layer_transfers_to_explain。目的の指標を直接測る仮説です。
+        3. 検査器の道: h_model_reads_by_name。モデルが識別子を名前で読んでいるかを問います。識別子化の意味を、モデルの側から確かめるものです。
+        4. 領域の道のモデルの仮説（4 件）。
+
+        **軽い列（体系を読む実験・登録）**
+        1. 表示を式から導く核: h_state_unique_display、h_checker_words_swap、h_translation_by_display。識別子化の決定そのものを問う 3 件です。
+        2. 領域: 領域の道（d_road_region）が前提にしている、領域と refer の仮説（11 件）。
+        3. 検査器: h_writing_depends_checker。
+        4. 日本語の道: 先に、韻律の句切りの数え方を事前登録で決めます。
+
+        **後回し**（どの道も塞いでいないため）
+        - 法則・文法の置き場（7 件）
+        - extends の導出の系列（11 件）: さっき事前登録を書いていた h_undecided_from_indistinct もここに入ります。下書きは /tmp/claude-0/-home-user-CMT/e05d2140-ce91-515f-a5fb-e6251e13d406/scratchpad/held/sys_undecided_from_indistinct.py に退け、ブランチは消しました。
+        - 実行と翻訳（5 件）
+
+        **わき道**
+        決定に結んでいない仮説の 22 件（追従・安定の系列、運用の仮説など）は選びません。
+
+        識別子化の未検証の 30 件のうち、すぐ進めるのは表示の核と領域の 9 件だけで、残りの 21 件は後回しにしました。
+
+        E33 は組 1 からやり直しの最中です。次の待ち時間には、軽い列の 1 にある h_state_unique_display から始めます。
+
+        本線のトリアージ（d_goal → d_metric の下）
+facts:
+- {is: v_say, from: session_model, to: 01M7Y9CHH7PN9949C99BJFWRD1}
+- {is: exp.v_answer, from: 01M7Y9CHH7PN9949C99BJFWRD1, to: 01M7Y96XQ96M485ZBTP8G2HSCS}
