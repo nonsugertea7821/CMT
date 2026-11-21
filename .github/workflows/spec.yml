@@ -1,11 +1,21 @@
 name: spec
 
-# main への push と、PR（開いた・push した）で走る。PR のないブランチへの push（セッションの記録など）では走らない。
+# main への push と、PR（開いた・push した・Draft を外した）で走る。PR のないブランチへの push（セッションの記録など）では走らない。
 # 同じ PR に続けて push したら、古い実行を止める。
+# 検査がすべて通った後、同じジョブの中で自動マージの判定をする（Python の準備と検査を一度で済ませる）。
+# 判定の条件は .github/scripts/auto_merge.py。対象は claude/ のブランチの、Draft でない PR。
+# 条件から外れたものはマージせず、外れた条件を PR のコメントに書く（手で見てマージする）。マージした後、ブランチを消し、issue の同期をここで走らせる
+# （GITHUB_TOKEN でマージした push では、ワークフロー issues と conflict-notice が起きないため）。衝突の知らせもここで走らせる。
 on:
   push:
     branches: [main]
   pull_request:
+    types: [opened, synchronize, reopened, ready_for_review]
+
+permissions:
+  contents: write
+  pull-requests: write
+  issues: write
 
 concurrency:
   group: spec-${{ github.event.pull_request.number || github.ref }}
@@ -14,14 +24,22 @@ concurrency:
 jobs:
   check:
     runs-on: ubuntu-latest
+    env:
+      AUTO: >-
+        ${{ github.event_name == 'pull_request' && startsWith(github.head_ref, 'claude/') &&
+        !github.event.pull_request.draft && github.event.pull_request.head.repo.full_name == github.repository }}
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
       - run: pip install pyyaml
       - name: 型検査
         run: python cscl/bootstrap/type_checker/type_checker.py
+      - name: exp の検査
+        run: python exp/src/exp_check.py
       - name: 実行の記録の検査
         run: python cscl/bootstrap/runtime/runtime.py
       - name: 世界の対称性の確認
@@ -32,3 +50,32 @@ jobs:
         run: python .github/scripts/test_auto_merge.py
       - name: README の生成する部分の確認
         run: python .github/scripts/build_readme.py --check
+      - name: 自動マージの判定とマージ
+        id: decide
+        if: env.AUTO == 'true'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          HEAD_REF: ${{ github.head_ref }}
+          DRAFT: ${{ github.event.pull_request.draft }}
+        run: >-
+          python .github/scripts/auto_merge.py
+          ${{ github.event.pull_request.base.sha }} ${{ github.event.pull_request.head.sha }} --merge
+      - name: ブランチを消す
+        if: steps.decide.outputs.merge == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: gh api -X DELETE "repos/${{ github.repository }}/git/refs/heads/${{ github.head_ref }}"
+      - name: main を取る
+        if: steps.decide.outputs.merge == 'true'
+        run: git fetch -q origin main && git checkout -q FETCH_HEAD
+      - name: issue の同期
+        if: steps.decide.outputs.merge == 'true' && vars.ISSUE_SYNC == 'on'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: python .github/scripts/sync_issues.py --apply
+      - name: 衝突の知らせ
+        if: steps.decide.outputs.merge == 'true'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: python .github/scripts/conflict_notice.py "$(git rev-parse HEAD)"
