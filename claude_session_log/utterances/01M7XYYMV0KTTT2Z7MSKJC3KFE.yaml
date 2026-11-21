@@ -1,0 +1,34 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-21T02:28:48.096Z（UTC）
+individuals:
+  01M7XYYMV0KTTT2Z7MSKJC3KFE:
+    is: model_utterance
+    display: 発言 3383
+    val:
+      order: 3383
+      text: |
+        日本語と英語の語彙を入れる実験を、事前登録して、語の抽選まで済ませました（PR #605、Draft）。
+
+        **選んだ語**
+        - 58 語を引きました。動詞は Basic English の operator 18 語、名詞は 40 語で、名詞は種 593 で抽選しました。
+        - 日本語 WordNet で日本語の見出しが取れなかった 5 語（give, may, will, harbour, trousers）を除き、53 組を置きます。
+        - 日本語の見出しは、事前に決めた機械的な規則（同じ synset の中で wordid が最小のもの）で選びました。そのため、少し変わった語が混じっています。
+          - pig は「猪の子」、head は「雁首」、umbrella は「端折傘」になりました。
+          - 規則を後から変えると事前登録を崩すので、このまま置きます。
+
+        **置く前に分かった弱点（追記で開示済み）**
+        - ontology には、物質的なもの（物体・物質）の層がありません。
+        - そのため、pig も umbrella も continuant の下に直接置けば、判定上はどれも「収まる」になります。つまり判定の基準が甘いです。
+        - 判定は変えずに、記述として二つの数を足しました。
+          - 語彙の領域に足した中間の種類の数。
+          - 式で区別できず、同じ中身になってしまった組の数。
+        - 実質的な答えは、この二つの数から読むことになると思います。
+        - 「物体・物質の層が ontology にない」こと自体も、std の定義の議論につながる観察です。
+
+        **このあと**
+        - 日本語の領域を先に置き、そのあと英語の領域を置きます。
+        - 合わせて 100 ノードを超える手作業なので、少し時間がかかります。
+
+        本線 a 識別子化、d_cscl_display_derived の下
+facts:
+- {is: v_say, from: session_model, to: 01M7XYYMV0KTTT2Z7MSKJC3KFE}
+- {is: exp.v_answer, from: 01M7XYYMV0KTTT2Z7MSKJC3KFE, to: 01M7XYTG8D025DFYKKAJ7038T6}
