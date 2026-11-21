@@ -1,0 +1,38 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-21T02:14:22.639Z（UTC）
+individuals:
+  01M7XY47NFSB7Y6H5MTF81T6D1:
+    is: model_utterance
+    display: 発言 3366
+    val:
+      order: 3366
+      text: |
+        いいえ、lang はこの言語の語彙ではありません。この言語（CSCL）について述べるための領域で、ファイルは `cscl/design/claims.yaml` です。
+
+        **lang に入っているもの**
+        - 言語についての仮説と観察。たとえば h_basic_vocab_fits や h_differentia_by_genus。
+        - 言語の設計の決定。たとえば d_cscl_display_derived。
+        - それらを述べるのに要る語が少し。型検査器、公理の層、標準の語彙の層などです。
+
+        **この言語の語彙はどこにあるか**
+        - 言語そのものの語彙は `cscl/library/` の下にあります。
+        - 層は signature → syntax → ontology → runtime → std の順です。
+        - std はその一番上の「標準の語彙」です。
+
+        **さっきの結果への影響**
+        前の実験では、lang の主張を std の使い手に数えていました。lang が使っている std の語は二つです。
+        - **artifact**: 型検査器（type_checker）の上位に使っています。
+        - **compose_from_model**: 「モデルの部分である状態」（model_internal_state）の限定に使っています。
+
+        このため、機械学習の語の一部が std に残りました。言語の語彙そのものからの使用ではなく、言語について述べる文が使っていたものです。
+
+        **含意（未検証）**
+        「std に何が残るか」を語彙として問うなら、lang も exp と同じく「語彙の使い手」の側に置いて数え直すほうが、問いに合っているかもしれません。lang も使い手として数えるなら、model の系列は lang の型検査器とモデルの状態の話に引かれて残っているだけ、と読めます。
+
+        この数え直しは、まず仮説として登録しておきます。
+
+        本線 a 識別子化、d_cscl_display_derived の下
+facts:
+- {is: v_say, from: session_model, to: 01M7XY47NFSB7Y6H5MTF81T6D1}
+- {is: exp.v_answer, from: 01M7XY47NFSB7Y6H5MTF81T6D1, to: 01M7XY3X1SF4DV9R3XY90N73BQ}
+- {is: v_refer, from: 01M7XY47NFSB7Y6H5MTF81T6D1, to: lang.type_checker}
+- {is: v_refer, from: 01M7XY47NFSB7Y6H5MTF81T6D1, to: std.compose_from_model}
