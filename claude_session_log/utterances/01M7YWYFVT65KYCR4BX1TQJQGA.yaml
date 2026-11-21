@@ -1,0 +1,29 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-21T11:13:00.282Z（UTC）
+individuals:
+  01M7YWYFVT65KYCR4BX1TQJQGA:
+    is: model_utterance
+    display: 発言 3712
+    val:
+      order: 3712
+      text: |
+        この周回で、軽い列 L2 の h_signature_all_charts を確かめ、反証になりました（PR #668）。
+
+        **結果**
+        - 主の読み（各領域が直に使う語）では、24 の領域すべてに共通する語が一つもありませんでした。any を直に使う領域も、すべてではありません。事前に決めた判定どおり、反証です。
+        - 記述だけで出した閉包の読み（引数を辿って届く語）では、24 の領域すべてが any に届きました。共通部分は 15 語で、signature の語は any だけ、残りの 14 語は ontology の最上位の語でした（continuant・occurrent・process・v_depend など）。
+        - 読み違いを一つ開示しています。「signature の語」を領域の値で数えたため、法則の名前なども入って 292 語になりました。判定は共通部分の語の数と any の使い方で決まるので、結論は変わりません。
+
+        **含意と新しい仮説（#669、登録だけの PR）**
+        - どの領域も signature の上に立つのは、上位を辿って届く形でだけでした。しかも共通に立つ場所は signature だけでなく、ontology の最上位（続く物と出来事の区別）まで含んでいました。
+        - そこで h_charts_meet_at_ontology_top（どの領域も、続く物と出来事の区別に依存する）を登録し、d_cscl_display_derived に結びました。
+
+        **ほかの進み**
+        - E33 の記録（PR #640、反証）は spec の結果を待っています。
+        - E34（h_state_unique_display）は走っています。まだ途中なので、結果はまだ出ていません。
+        - 軽い列 L1 の残りのうち、h_display_unique_per_language は今回は回していません。本物の訳がないと、検査の言い換えになってしまう見込みが強いためです。
+
+        ロードマップ: 軽い列 L2（d_road_region が前提にする領域）を進めました。重い列は E34（L1 の h_state_unique_display）が走行中です。
+facts:
+- {is: v_say, from: session_model, to: 01M7YWYFVT65KYCR4BX1TQJQGA}
+- {is: exp.v_answer, from: 01M7YWYFVT65KYCR4BX1TQJQGA, to: 01M7YQNY4SHZ5CPQ9Z096V99D4}
+- {is: v_refer, from: 01M7YWYFVT65KYCR4BX1TQJQGA, to: ontology.v_depend}
