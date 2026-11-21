@@ -1,0 +1,58 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-21T09:08:03.252Z（UTC）
+individuals:
+  01M7YNSPHM0WEGZ6TRW6NRYNM9:
+    is: model_utterance
+    display: 発言 3636
+    val:
+      order: 3636
+      text: |
+        一つの数には、体系の言葉で言える意味はありません。体系が意味の単位として持っているのは、ベクトル全体と、ベクトルどうしの和や差です。1536 個のうちの1成分を指す概念は、体系にありません。
+
+        **v_丙 は体系では何か**
+
+        exp.yaml では、次の系列にあたります。
+        - `concept_vector`（概念ベクトル）は、`state_shift`（隠れ状態のずれ）の下位で、語のトークン位置に依ります。
+        - `state_shift` は `residual_vector`（残差の流れのベクトル）の下位です。
+        - 足した結果は `shifted_hidden_state`（ずれを足した隠れ状態）で、`hidden_state` を組み立てます。
+
+        どれも、1536 個をひとまとまりの一つの個体として扱っています。
+
+        **体系にある、ベクトルを分ける言葉**
+
+        分け方は、成分の番号ごとではなく、ベクトルの和と差です。
+        - `common_vector_component`（概念ベクトルの共通成分）と `specific_vector_component`（固有成分）
+        - `qualification_vector`（限定の差分ベクトル）。下位の概念ベクトルから上位の概念ベクトルを引いたものです。
+
+        **丙票に当てはめると**
+
+        丙票の定義を体系の式に書くと、たとえば次の形です（説明のための例で、体系には入っていません）。
+
+        `丙票: {extends: 票, mod: {of: [v_circulate, scope], with: 社内}}`
+
+        体系が v_丙 に期待しているのは、この式の部品に合わせて分かれることです。
+        - `extends: 票` に当たる上位の向き（票の概念ベクトル）
+        - `mod` に当たる限定の差分（`qualification_vector`）
+
+        1536 次元の中の向きのそれぞれは、1536 個の数の組み合わせで決まります。逆に、一つの数（たとえば第 731 成分）には、多くの向きが重なって入っています。
+
+        先行研究の領域に入れたものも、同じことを述べています。
+        - `pwc_elhage2022_superposition`: 網は、次元の数より多い特徴を、ほぼ直交する方向に重ねて持ちます。
+        - `pwc_park2024_linear_representation`: 概念は「成分」ではなく「方向」として表され、方向を比べるための内積があります。
+
+        **まとめ**
+        - 体系の言葉で意味を持ちうるのは、v_丙 全体、v_丙 − v_票（限定の差分）、v_丙 − v_丁（兄弟の差）のような、ベクトルとその和や差です。
+        - 一つの数は、モデルの表現の座標軸1本への射影にすぎません。その座標軸は、体系のどの語にも対応していません。
+
+        本線 a 往復の教示（h_round_trip_raises_sibling、PR #640）
+facts:
+- {is: v_say, from: session_model, to: 01M7YNSPHM0WEGZ6TRW6NRYNM9}
+- {is: exp.v_answer, from: 01M7YNSPHM0WEGZ6TRW6NRYNM9, to: 01M7YNRYWN0ZVFA4AB6HS77J0A}
+- {is: v_refer, from: 01M7YNSPHM0WEGZ6TRW6NRYNM9, to: exp.concept_vector}
+- {is: v_refer, from: 01M7YNSPHM0WEGZ6TRW6NRYNM9, to: exp.state_shift}
+- {is: v_refer, from: 01M7YNSPHM0WEGZ6TRW6NRYNM9, to: exp.residual_vector}
+- {is: v_refer, from: 01M7YNSPHM0WEGZ6TRW6NRYNM9, to: exp.shifted_hidden_state}
+- {is: v_refer, from: 01M7YNSPHM0WEGZ6TRW6NRYNM9, to: exp.hidden_state}
+- {is: v_refer, from: 01M7YNSPHM0WEGZ6TRW6NRYNM9, to: exp.common_vector_component}
+- {is: v_refer, from: 01M7YNSPHM0WEGZ6TRW6NRYNM9, to: exp.specific_vector_component}
+- {is: v_refer, from: 01M7YNSPHM0WEGZ6TRW6NRYNM9, to: exp.qualification_vector}
+- {is: v_refer, from: 01M7YNSPHM0WEGZ6TRW6NRYNM9, to: syntax.mod}
