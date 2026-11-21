@@ -1,0 +1,262 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-21T09:14:46.619Z（UTC）
+individuals:
+  01M7YP60EVPJ0CDDP6ETEAM6CV:
+    is: session_summary
+    display: 発言 3644
+    val:
+      order: 3644
+      text: |
+        This session is being continued from a previous conversation that ran out of context. The summary below covers the earlier portion of the conversation.
+
+        <system-reminder>
+        <tools-used-before-summary>Agent, AskUserQuestion, Bash, Edit, Grep, Monitor, Read, ReadNotifications, Skill, SubagentHandback, TaskStop, ToolSearch, WebFetch, WebSearch, Write, mcp__claude-code-remote__add_repo, mcp__claude-code-remote__create_trigger, mcp__claude-code-remote__delete_trigger, mcp__claude-code-remote__get_trigger, mcp__claude-code-remote__list_repos, mcp__claude-code-remote__read_documentation, mcp__claude-code-remote__send_later, mcp__claude-code-remote__subscribe_pr_activity, mcp__claude-code-remote__unsubscribe_pr_activity, mcp__claude-code-remote__update_trigger, mcp__github__actions_get, mcp__github__actions_list, mcp__github__actions_run_trigger, mcp__github__add_issue_comment, mcp__github__create_pull_request, mcp__github__get_job_logs, mcp__github__issue_read, mcp__github__issue_write, mcp__github__list_issue_types, mcp__github__list_issues, mcp__github__list_pull_requests, mcp__github__pull_request_read, mcp__github__update_pull_request</tools-used-before-summary>
+        </system-reminder>
+        Summary:
+        1. Primary Request and Intent
+
+        **Standing rules (unchanged)**
+        - Repo and tools
+          - Repo nonsugertea7821/CMT at /home/user/CMT.
+          - Python is /home/user/venv/bin/python. CPU only.
+        - Language and tone
+          - Write all replies and PR bodies in plain, natural Japanese.
+          - Don't overclaim; separate facts from interpretation.
+        - Report ending
+          - End each report with a roadmap-position line, e.g. 「本線 a 往復の教示（h_round_trip_raises_sibling、PR #640）」.
+          - Mark side-path work as 「わき道」.
+        - Git
+          - Restore files with `git show <rev>:<path> > <path>`. No checkout or stash.
+          - Commit trailer:
+            ```
+            Co-Authored-By: Claude [モデル名を伏せた] <[メールアドレスを伏せた]>
+            Claude-Session: https://claude.ai/code/session_015KRKt6TNJZ7ZsQmEknANXK
+            ```
+          - PR body ends with `🤖 Generated with [Claude Code](https://claude.com/claude-code)`, a blank line, then `https://claude.ai/code/session_015KRKt6TNJZ7ZsQmEknANXK`.
+          - No personal info and no model IDs in pushed artifacts.
+          - Claude never merges. Branch deletion is done by the user or the workflow.
+        - Every PR I open: call subscribe_pr_activity and issue_write update with assignees ["nonsugertea7821"].
+        - System yaml
+          - No comments in system yaml.
+          - Distinctions are written in formulas; names may be read only for signature and grammar words.
+          - Display text can consciously serve as a placeholder for meaning not yet in formulas.
+        - Experiments
+          - Pre-register the procedure and judgment before running.
+          - Never rerun recorded experiment scripts.
+          - Use `git add -f` for exp/experiments files.
+          - Do not run tc or ec locally; the runner's spec runs them.
+          - External source texts are not put in the repo.
+        - Hypotheses
+          - Anything I think "should be done" is first registered as an untested hypothesis, grounded with v_ground or labeled わき道.
+          - Registration-only PRs auto-merge. Concept-adding registrations need manual review.
+        - Test flow
+          1. Branch claude/h_<name>.
+          2. Draft PR.
+          3. First commit is the script only.
+          4. Run.
+          5. Record the results in the system and push.
+          6. Undraft after spec passes.
+        - Don't ask permission in conversation.
+        - Principle: the goal is consistent concept recognition. All information produced along the way has value; keep it.
+        - The container restarts often. Heavy experiments need checkpoint and resume, with a send_later resume check every 9 minutes.
+        - Run one heavy experiment at a time.
+        - While E33 runs, the main tree stays on claude/h_round_trip_raises_sibling. Do other work in worktrees /home/user/CMT/.wt_*.
+
+        **User intent in this period**
+        The user is digging, step by step, into what E33's training is concretely and what "meaning" in vector space is:
+        - why pair 5 got 2/4 correct before training and then failed;
+        - the training operation;
+        - what a vector is;
+        - dimensions vs. binary;
+        - what one component means in system terms;
+        - how to identify the projection axis, drawing on prior research;
+        - inner-product definition vs. the intuition that the concept space is a "立体" (solid).
+
+        2. Key Technical Concepts
+
+        - **E33 mechanism**
+          - Qwen2.5-1.5B-Instruct: 28 layers, hidden size 1536, frozen.
+          - Injector hook adds per-position deltas to the layer-8 output.
+          - Two 1536-dim float32 vectors per pair, initialized to zero, trained with Adam lr 0.1 for 24 steps.
+          - The vector is added only at the token positions of the concept label, found by label_mask; 丙票 tokenizes as ['丙', '票'].
+          - Recitation rows: 3 TEMPLATES × 2 concepts, target is the definition text.
+          - QA rows: 4 items × 2 option orders, target is the digit "1" or "2".
+          - Conditions:
+            - none: no training.
+            - both: all 14 rows every step.
+            - round: 4 cycles; each cycle is 3 abstract steps on the definitions of the wrong items, then 3 concrete steps on the wrong QA items.
+          - Evaluation: margin = logit difference, averaged over the two option orders. acc_both counts an item only if both orders are correct.
+          - Learned vectors are not saved.
+        - **Label-bias finding**
+          - Under none, margins alternate in sign with the correct label in every pair. Example: pair 7 gives +3.4 on 松返品 items and −1.9 on 竹返品 items.
+          - Under both, label bias becomes a likely position bias.
+          - Under round, margins go to about 0 (indifference). That is why round's wrong count is always 4.
+          - mean_margin cancels label bias; acc_both does not.
+        - **Meaning of vectors in system terms**
+          - concept_vector ⊂ state_shift ⊂ residual_vector; qualification_vector; common_vector_component and specific_vector_component.
+          - No system node corresponds to a single coordinate.
+          - Supporting prior work: pwc_elhage2022_superposition, pwc_park2024_linear_representation.
+        - **Axis candidates (registered as hypotheses in #652)**
+          - output embedding / logit lens (nostalgebraist 2020, tuned lens Belrose et al. 2023);
+          - sparse autoencoders (Bricken et al. 2023, Templeton et al. 2024);
+          - difference of means from formula parts (Marks & Tegmark 2023, Zou et al. 2023);
+          - link to E33 discrimination.
+          - E22 earlier supported difference vectors (h_qualification_vector_transfers_to_unseen_genus).
+          - h_axis_readout_raises_midpoint was refuted earlier.
+        - **Region view (latest answer)**
+          - An inner-product definition already implies half-spaces.
+          - Under a region view, the inner product serves as the metric for shape (e.g. an ellipsoid).
+          - Formula parts become set operations: extends = inclusion, siblings = disjoint within the genus, mod = intersection, neg = complement. Same shape as Gärdenfors 2000.
+          - Each component is the region's shadow (an interval) on one axis, which loses the shape. Box embeddings (Vilnis et al. 2018) are the axis-aligned exception.
+          - Reading E33 this way: v_丙 is a translation into R_丙; a margin of about 0 means the point sits on the boundary; label bias is a prior offset.
+          - Aligns with d_road_region (h_convex_prior_resists_redefinition, h_ambiguity_is_region_choice).
+
+        3. Files and Code Sections
+
+        - **exp/src/prior_*.yaml** (PR #650, merged; worktree removed)
+          - Citation fixes, applied by sed in the files and in scratchpad/prior/gen.py:
+            - Kalman: "Proceedings of the First IFAC Congress 1(1), 491–502".
+            - Kirchhoff: "Annalen der Physik und Chemie 64（通巻 140）, 497–514".
+            - Kadanoff and Bell: "Physics Physique Fizika 2(6), 263–272" and "Physics Physique Fizika 1(3), 195–200".
+            - Gabor: "Theory of communication. Part 1: The analysis of information（Journal of the IEE Part III 93(26), 429–441）".
+          - Commits 51723be and 4a69c65.
+          - Left unverified: Tresca 1864 volume and pages, Mendeleev 1869 pages, Schmitt 1938 pages (24–26 vs. 156–158), Bloch year (1928 vs. 1929).
+          - 55 entries not yet checked.
+
+        - **exp/experiments/e33_round_trip_sibling.py** (read only)
+          - PAIRS, NEW_DEFS (e.g. "丙票：票のうち、社内だけで回覧するもの。"), TRAIN, EVAL_NEW.
+          - PairTrainer: step, margin, wrong, train.
+          - Judgment:
+            - support: acc_both(round) − acc_both(both) ≥ 0.10 and mean_margin(round) > mean_margin(both);
+            - refute: acc_both(round) ≤ acc_both(both);
+            - outside (state unchanged): both ≤ none;
+            - otherwise mixed.
+
+        - **exp/src/exp.yaml in worktree /home/user/CMT/.wt_axis** (branch claude/reg_axis_naming, PR #652)
+          - Commit a2084bc added:
+            - Concepts after shift_unseen_by_layer: sibling_difference_vector, formula_part_direction, output_word_direction, state_feature_direction.
+            - h_/b_ pairs: sibling_difference_on_part, part_named_by_output_word, part_named_by_state_feature, sibling_discrimination_on_part.
+            - Facts: v_refer + v_check + `{is: v_ground, from: d_consolidation_in_vector, to: h_…}` for each.
+          - Commit be0d8ad (fix) added named qualities after depend_from_label_token_positions:
+            ```yaml
+            depend_from_concept_expression: {display: 概念式へ依存する（始点）, extends: quality, of: [v_depend, from], with: concept_expression}
+            depend_from_sibling_pair: {display: 兄弟概念の組へ依存する（始点）, extends: quality, of: [v_depend, from], with: sibling_pair}
+            compose_to_hidden_state: {display: 隠れ状態へ部分になる（終点）, extends: quality, of: [v_compose, to], with: hidden_state}
+            ```
+            It also switched shifted_hidden_state, formalization_accuracy and sibling_discrimination to use these named mods.
+          - Final concepts:
+            ```yaml
+            sibling_difference_vector: {display: 兄弟の概念ベクトルの差, extends: concept_vector, mod: depend_from_sibling_pair}
+            formula_part_direction: {display: 概念式の部品の向き, extends: state_shift, mod: depend_from_concept_expression}
+            output_word_direction: {display: 語を出す向き, extends: state_shift, mod: {of: [v_compute, to], with: word}}
+            state_feature_direction: {display: 隠れ状態を組み立てる特徴の向き, extends: state_shift, mod: compose_to_hidden_state}
+            ```
+          - Formulas:
+            - h_sibling_difference_on_part: v_rely(sibling_difference_vector, formula_part_direction)
+            - h_part_named_by_output_word: v_rely(formula_part_direction, output_word_direction)
+            - h_part_named_by_state_feature: v_rely(formula_part_direction, state_feature_direction)
+            - h_sibling_discrimination_on_part: v_rely(sibling_discrimination, formula_part_direction)
+
+        - **cscl/design/claims.yaml and worktree .wt_lwd** (branch claude/h_law_without_domain, at main 9776444)
+          - h_law_without_domain: v_not_depend(concept_by_law, syntax.domain).
+          - Template for the pre-registration: exp/experiments/sys_concept_kind_pair.py. It copies cscl.yaml, cscl and exp/src to a temp dir, edits syntax.yaml, and runs a PROBE that:
+            - builds with tc.build();
+            - builds tc.Facts(T.syntax_facts());
+            - runs tc.evaluate(tc.law_rules(O), F, tc.variables(O));
+            - counts the r_concept and r_verb items and runs exp_check.
+          - Laws with a domain premise in syntax.yaml: sees, unique_in_domain, visible_self, layered. world_rule uses law_domain.
+
+        4. Errors and fixes
+
+        - **PR #652 spec failed** on two laws:
+          - named_mod_share (shared mod content needs a name): fixed by adding named qualities and using them in both the old and the new nodes.
+          - op_defined (residual_vector direct children need v_sum): fixed by moving the three direction concepts under state_shift.
+          - The check after the fix (be0d8ad) is pending.
+        - **E33 stopped repeatedly** because of container restarts. Each time I restarted it with nohup; it resumes from the partial file.
+
+        5. Problem Solving
+
+        - Explained pair 5's none 2/4 as label bias toward 丁票, confirmed from the per-item margins across pairs 1–8.
+        - Under both, the bias likely becomes a position bias (unverified, because per-order margins were not saved). Under round, the model becomes indifferent.
+        - The E33 judgment stays as pre-registered. When recording, I will disclose that none's value reflects label bias and that mean_margin is the bias-robust indicator.
+
+        6. All user messages
+
+        - 「むしろなんでこれ5は2回最初に当たってて、学習後は外してるんだ……？？？？」
+        - 「これ学習って具体的にどういう操作をしてる？」
+        - 「ベクトルとは？ちょっと具体的に考えていこう」
+        - 「その3072個の数っていうのは、3072個の次元ってこと？それともその数は2進？0/1だけ？」
+        - 「そのうち一つの数は何を意味する？体系の言葉で」
+        - 「モデルの表現の座標軸1本 / これを特定できないと射影できないな / 何か可能性は？先行研究とかの含意を拾ってもいい」
+        - 「1536 次元の内積として「意味」が定義される？ / 仮にそれが「定義」されているとして、ベクトルの成分は幾何的にはどういう対応になる？ / そしておそらくこれまでの観察から「定義」はされていない、その内積は「概念空間」を指しており、直観的には「立体」だ / この場合は？」
+        - Earlier messages that still apply: 「日本語で」; the 9-minute resume checks; triage the remaining hypotheses with other lanes; the goal principle; 「OK,全部入れよう / AIが研究することの最大のメリットはそのビックデータ索引性だ。巨人の肩にはどんどん乗るべきだ。」
+
+        7. Pending Tasks
+
+        - **E33 resume checks**
+          - Next send_later fires at 09:22.
+          - At each check: if E33 is not running, restart it with `cd /home/user/CMT/exp/experiments && nohup /home/user/venv/bin/python e33_round_trip_sibling.py >> results/e33_round_trip_sibling.log 2>&1 &`.
+          - Re-arm a 9-minute send_later each time.
+          - When results/e33_round_trip_sibling.json exists:
+            1. Record observations and v_support / v_contradict, including the label-bias disclosure.
+            2. Update and undraft #640.
+            3. Run E34 in .wt_sud (PR #642) with resume checks.
+        - **30-minute cycle**: next fire at 09:31. On fire, first call update_trigger(trig_01L92Xn7LSTHrmqt7enEcCPG, run_once_at ≈ +31 minutes, enabled true).
+        - **PR #652**: watch the spec after be0d8ad and fix if it fails. It needs manual review.
+        - **Register the region-measurement hypothesis** (promised in the last answer): measure concepts as solids, e.g. clouds of hidden states for many contexts of a concept, an estimated region, inclusion in the genus region, and disjointness from the sibling. Register it before describing the procedure. Ground it to d_road_region (and d_consolidation_in_vector if fitting).
+        - **h_law_without_domain pre-registration** in .wt_lwd: variant removing the domain facts, and a variant collapsing all domains to one. Compare the r_concept and r_verb sets. Script only in the first commit.
+        - **Citations**: check the remaining 55 entries in a later light lane (#650 is merged, so the fixes need a new PR).
+        - **Other registrations still pending**: holonomy as the d_metric consistency measure; Saxe / Zeeman / roughing-before-finishing as prior support for the bounding hypothesis; the (A) bounding experiment with known sibling pairs.
+        - **Branch deletion needed by the user**: claude/prior_domains (#650 merged).
+
+        8. Current Work
+
+        I had just answered the user's latest question about the inner product and the "立体" view of the concept space:
+        - Inner-product definition implies half-spaces; components are projections; white-space rotation invariance.
+        - Observations are mixed: E22 support vs. the midpoint refutation and E33 indifference.
+        - Region view: the inner product as the metric; set operations matching the CSCL formula parts; components as interval shadows; box embeddings as the exception; low-dimensional slabs and superposition.
+        - E33 reread: translation into R_丙, the boundary at margin ≈ 0, label bias as a prior offset.
+        - Link to d_road_region.
+
+        I ended with: 「立体として測る具体的な手順は、別に仮説として登録してからお伝えします。」
+
+        Meanwhile, PR #652's spec rerun is pending and E33 is running pair 8 round.
+
+        9. Optional Next Step
+
+        Register the region-measurement hypothesis promised in the last reply, as a registration PR from a new worktree based on origin/main. Formulate it with existing concepts where possible (e.g. sibling_discrimination, hidden_state, midpoint_membership, layer_with_sibling), ground it to d_road_region, then give the user the concrete procedure.
+
+        Quote from the last reply: 「この直観は、ロードマップの領域の道 d_road_region と同じ向きです。すでに未検証の仮説としてあるのは、たとえば次の二つです。… 立体として測る具体的な手順は、別に仮説として登録してからお伝えします。」
+
+        Also handle the pending E33 resume check (09:22) and the PR #652 check result as they arrive.
+
+        If you need specific details from before compaction (like exact code snippets, error messages, or content you generated), read the full transcript at: /root/.claude/projects/-home-user-CMT/e05d2140-ce91-515f-a5fb-e6251e13d406.jsonl
+        Continue the conversation from where it left off without asking the user any further questions. Resume directly — do not acknowledge the summary, do not recap what was happening, do not preface with "I'll continue" or similar. Pick up the last task as if the break never happened.
+
+        The messages after this summary are the most recent messages from before compaction, kept verbatim. The summary was written without seeing them, so something it says has not happened yet may already have happened in them.
+facts:
+- {is: v_say, from: session_model, to: 01M7YP60EVPJ0CDDP6ETEAM6CV}
+- {is: v_refer, from: 01M7YP60EVPJ0CDDP6ETEAM6CV, to: exp.v_ground}
+- {is: v_refer, from: 01M7YP60EVPJ0CDDP6ETEAM6CV, to: exp.concept_vector}
+- {is: v_refer, from: 01M7YP60EVPJ0CDDP6ETEAM6CV, to: exp.state_shift}
+- {is: v_refer, from: 01M7YP60EVPJ0CDDP6ETEAM6CV, to: exp.residual_vector}
+- {is: v_refer, from: 01M7YP60EVPJ0CDDP6ETEAM6CV, to: exp.qualification_vector}
+- {is: v_refer, from: 01M7YP60EVPJ0CDDP6ETEAM6CV, to: exp.common_vector_component}
+- {is: v_refer, from: 01M7YP60EVPJ0CDDP6ETEAM6CV, to: exp.specific_vector_component}
+- {is: v_refer, from: 01M7YP60EVPJ0CDDP6ETEAM6CV, to: exp.shift_unseen_by_layer}
+- {is: v_refer, from: 01M7YP60EVPJ0CDDP6ETEAM6CV, to: ontology.v_refer}
+- {is: v_refer, from: 01M7YP60EVPJ0CDDP6ETEAM6CV, to: exp.v_check}
+- {is: v_refer, from: 01M7YP60EVPJ0CDDP6ETEAM6CV, to: exp.depend_from_label_token_positions}
+- {is: v_refer, from: 01M7YP60EVPJ0CDDP6ETEAM6CV, to: ontology.v_depend}
+- {is: v_refer, from: 01M7YP60EVPJ0CDDP6ETEAM6CV, to: syntax.concept_expression}
+- {is: v_refer, from: 01M7YP60EVPJ0CDDP6ETEAM6CV, to: exp.sibling_pair}
+- {is: v_refer, from: 01M7YP60EVPJ0CDDP6ETEAM6CV, to: ontology.v_compose}
+- {is: v_refer, from: 01M7YP60EVPJ0CDDP6ETEAM6CV, to: exp.hidden_state}
+- {is: v_refer, from: 01M7YP60EVPJ0CDDP6ETEAM6CV, to: exp.shifted_hidden_state}
+- {is: v_refer, from: 01M7YP60EVPJ0CDDP6ETEAM6CV, to: exp.formalization_accuracy}
+- {is: v_refer, from: 01M7YP60EVPJ0CDDP6ETEAM6CV, to: std.v_compute}
+- {is: v_refer, from: 01M7YP60EVPJ0CDDP6ETEAM6CV, to: exp.v_rely}
+- {is: v_refer, from: 01M7YP60EVPJ0CDDP6ETEAM6CV, to: lang.v_not_depend}
+- {is: v_refer, from: 01M7YP60EVPJ0CDDP6ETEAM6CV, to: syntax.domain}
+- {is: v_refer, from: 01M7YP60EVPJ0CDDP6ETEAM6CV, to: std.v_sum}
+- {is: v_refer, from: 01M7YP60EVPJ0CDDP6ETEAM6CV, to: exp.v_support}
+- {is: v_refer, from: 01M7YP60EVPJ0CDDP6ETEAM6CV, to: exp.v_contradict}
