@@ -1,0 +1,229 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-21T10:36:15.553Z（UTC）
+individuals:
+  01M7YTV6T13JNSQ4W93F1NQCCN:
+    is: session_summary
+    display: 発言 3691
+    val:
+      order: 3691
+      text: |
+        This session is being continued from a previous conversation that ran out of context. The summary below covers the earlier portion of the conversation.
+
+        <system-reminder>
+        <tools-used-before-summary>Agent, AskUserQuestion, Bash, Edit, Grep, Monitor, Read, ReadNotifications, Skill, SubagentHandback, TaskStop, ToolSearch, WebFetch, WebSearch, Write, mcp__claude-code-remote__add_repo, mcp__claude-code-remote__create_trigger, mcp__claude-code-remote__delete_trigger, mcp__claude-code-remote__get_trigger, mcp__claude-code-remote__list_repos, mcp__claude-code-remote__read_documentation, mcp__claude-code-remote__send_later, mcp__claude-code-remote__subscribe_pr_activity, mcp__claude-code-remote__unsubscribe_pr_activity, mcp__claude-code-remote__update_trigger, mcp__github__actions_get, mcp__github__actions_list, mcp__github__actions_run_trigger, mcp__github__add_issue_comment, mcp__github__create_pull_request, mcp__github__get_job_logs, mcp__github__issue_read, mcp__github__issue_write, mcp__github__list_issue_types, mcp__github__list_issues, mcp__github__list_pull_requests, mcp__github__pull_request_read, mcp__github__update_pull_request</tools-used-before-summary>
+        </system-reminder>
+        Summary:
+        1. Primary Request and Intent
+
+        **Standing rules (unchanged)**
+        - Repo and tools
+          - Repo nonsugertea7821/CMT at /home/user/CMT. Python is /home/user/venv/bin/python. CPU only.
+        - Language and tone
+          - Write all replies and PR bodies in plain, natural Japanese.
+          - Don't overclaim; separate facts from interpretation.
+          - End each report with a roadmap-position line. Mark side-path work as 「わき道」.
+        - Git
+          - Restore files with `git show <rev>:<path> > <path>`. No checkout, no stash.
+          - Commit trailer:
+            ```
+            Co-Authored-By: Claude [モデル名を伏せた] <[メールアドレスを伏せた]>
+            Claude-Session: https://claude.ai/code/session_015KRKt6TNJZ7ZsQmEknANXK
+            ```
+          - PR body ends with `🤖 Generated with [Claude Code](https://claude.com/claude-code)`, a blank line, then the session URL.
+          - No personal info and no model IDs in pushed artifacts.
+          - Claude never merges. Branch deletion is done by the user or the workflow.
+        - Every PR I open: subscribe_pr_activity, plus issue_write update with assignees ["nonsugertea7821"].
+        - System yaml
+          - No comments (a hook checks this).
+          - Distinctions go in formulas.
+          - Display text may consciously serve as a placeholder for meaning not yet in formulas.
+        - Experiments
+          - Pre-register before running; the first commit is the script only.
+          - Never rerun recorded scripts.
+          - Use `git add -f` for exp/experiments files.
+          - No local tc or ec; the runner's spec runs them.
+          - External source texts are not put in the repo.
+        - Hypotheses: anything I think should be done is first registered as untested, with v_ground to a decision, or labeled わき道.
+        - Don't ask permission in conversation.
+        - Principle: all information produced has value; keep it.
+        - Container restarts often. Heavy experiments need checkpoint and resume, with a 9-minute send_later resume check.
+        - Run one heavy experiment at a time. Do other work in worktrees /home/user/CMT/.wt_*. The main tree stays on claude/h_round_trip_raises_sibling.
+
+        **User intent in this period**
+        The user is exploring the geometry of concepts:
+        - whether the model thinks with shadows (projections) of concept solids;
+        - whether higher dimensions perceive the shape better;
+        - whether the view differs from 1536 vs. 3072 dimensions;
+        - the paradox that low-parameter models would need external mechanisms;
+        - that humans' imperfect discrimination may be "few dimensions", and perfect discrimination may need infinite dimensions;
+        - inferring the needed dimensions from system size, to choose a model per project (the user called this the biggest merit);
+        - whether this line implies intervention is impossible;
+        - suggested researchers to use as references: Melanie Mitchell, Joshua Tenenbaum, SueYeon Chung.
+
+        2. Key Technical Concepts
+
+        - **Region view**
+          - Concepts as solids. Inner product as metric.
+          - Formula parts as set operations: extends = inclusion, siblings = disjoint, mod = intersection, neg = complement.
+          - Components are interval shadows.
+        - **The model reads shadows**
+          - Every read is a projection ⟨h, w⟩ on oblique directions. MLP neurons threshold these, giving half-spaces that combine into polytopes (CT-like).
+          - Qwen2.5-1.5B has MLP width 8960.
+        - **Dimension and separability**
+          - Number of near-orthogonal directions grows exponentially with dimension (superposition).
+          - Projection to lower dimensions can make disjoint solids overlap.
+          - Separating hyperplane theorem: finitely many disjoint convex sets are separable in finite dimensions. The RBF kernel corresponds to infinite dimensions.
+          - Johnson–Lindenstrauss: log N dims if error is tolerated; exact orthogonal needs about N.
+        - **Ways around a dimension limit**
+          - Cover's theorem lift (the MLP).
+          - Depth folding (Montúfar 2014).
+          - Context-wise reuse via attention.
+          - Subtracting the common component (E22).
+        - **Chung, Lee & Sompolinsky 2018 manifold capacity**: separable manifolds ∝ N, with a coefficient set by manifold radius and dimension. Needed dims ≈ P / α_c, so the inference reduces to measuring cloud radius and dimension.
+        - **E33 failure caveat**: 2×1536 free parameters is ample. Margin ≈ 0 is likely optimization conflict, not capacity.
+        - **Human imperfect discrimination**: two explanations — few dimensions, or vague boundaries (sorites; h_ambiguity_is_region_choice).
+        - **Existing decisions**: d_vector_needs_open_weights, d_text_for_api_models, d_explanation_by_text.
+
+        3. Files and Code Sections
+
+        - **exp/src/exp.yaml, PR #653 (merged)**
+          - Registered h_sibling_discrimination_on_region / b_ with:
+            ```yaml
+            - {is: v_refer, from: h_sibling_discrimination_on_region, to: {is: v_rely, from: sibling_discrimination, to: midpoint_membership}}
+            ```
+          - Plus v_check, and v_ground from d_road_region.
+          - Inserted after `b_convex_prior_resists_redefinition` and after its v_ground line.
+
+        - **exp/src/exp.yaml, PR #655 (merged)**
+          - Concepts added after hidden_state:
+            ```yaml
+            wide_hidden_state: {display: 次元の多い隠れ状態, extends: hidden_state, mod: {of: [v_compose, to], with: component, at: {count: {gt: 1536}}}}
+            discrimination_dimension: {display: 弁別に要る次元の数, extends: quality_measure_to, mod: {of: [v_depend, to], with: sibling_discrimination}}
+            ```
+          - Hypotheses, each with b_, v_check and v_ground d_road_region:
+            - h_width_raises_sibling_discrimination: v_raise(wide_hidden_state, sibling_discrimination)
+            - h_sibling_discrimination_relies_on_width: v_rely(sibling_discrimination, wide_hidden_state)
+            - h_dimension_from_expression_parts: v_depend(discrimination_dimension, expression_part)
+          - Grammar notes: no `lt` in count (only gt/ge/is). Negating a shared mod triggers named_mod_share.
+
+        - **exp/src/prior_ai.yaml and prior_cog.yaml, PR #664 (merged)**
+          - Entries take the form `pw_x: {is: exp.prior_work, display: "先行研究: …"}` and `pwc_x: {is: exp.prior_claim, display: "要旨: …"}`, plus `{is: exp.v_state, from: pw_x, to: pwc_x}`.
+          - Added to prior_ai: pw/pwc_chung2018_manifold_capacity (PRX 8(3), 031003), cohen2020_object_manifolds (Nat Commun 11, 746), sorscher2022_few_shot_geometry (PNAS 119(43), e2200800119).
+          - Added a formula fact:
+            ```yaml
+            - {is: syntax.v_refer, from: pwc_chung2018_manifold_capacity, to: {is: exp.v_raise, from: exp.wide_hidden_state, to: exp.sibling_discrimination}}
+            ```
+          - Added to prior_cog: kemp2008_structural_form (PNAS 105(31), 10687–10692), lake2015_program_induction (Science 350(6266), 1332–1338), mitchell2021_abstraction (Ann NY Acad Sci 1505(1), 79–101).
+          - All citations were verified by web search.
+
+        - **exp/experiments/sys_law_without_domain.py (PR #656, merged)**
+          - Builds with tc.build() and filters T.syntax_facts() before tc.Facts.
+          - Variants: L as is; D drops relation "domain"; C sets the domain value to "__one__".
+          - Runs tc.evaluate(tc.law_rules(O), F, tc.variables(O)) and compares the r_concept and r_verb sets.
+          - Records changed r_ relations.
+          - Output: results/sys_law_without_domain.json, with summary keys same_concept_D/same_verb_D/same_concept_C/same_verb_C.
+          - Result: all 1, so supported.
+            - L had 5350 domain facts, 610 concept items, 130 verb items.
+            - D: r_candidate and r_missing each lost 15219 items; r_visible lost 25.
+            - C: r_candidate and r_missing each gained 10475; r_visible lost 25 and gained 1.
+          - Recording, in the same style as sys_concept_kind_pair_fix:
+            - Measurement family in exp.yaml: `sys_law_without_domain: {is: measurement_family}`, `_cond` family_axis, axis_values, then v_file_of, v_rows_of [rows], v_axis_of, v_value_of+v_spell, v_entry_of '{cond}', and v_metric_of mean_value.
+            - In claims.yaml: observations o_sys_lwd_d_concept, o_sys_lwd_d_verb, o_sys_lwd_c_concept, o_sys_lwd_c_verb, each `v_level … .mean_value to 1.0` with exp.v_support.
+            - h_law_without_domain set to hyp_supported and b_ to item_done.
+
+        4. Errors and fixes
+
+        - **No-comment hook blocked the merge commit on #655.** The PreToolUse hook ran while conflict markers were still in the file, so yaml.scan failed and every `#` counted as a comment. Fix: resolve the markers in one Bash call, then commit in a separate call.
+        - **#655 merged before my prior-work push (9487211).** I cherry-picked the commit onto a new branch claude/prior_geometry and opened PR #664, which merged.
+        - **E33 is repeatedly killed by container restarts.** I restart it with nohup each time; it resumes from partial. The round condition (~300s) and the both condition (~400–580s) restart from their beginning.
+
+        5. Problem Solving
+
+        E33 pair results so far, as acc_both (none / both / round):
+
+        | Pair | none | both | round |
+        |---|---|---|---|
+        | 8 | ― | 1/4 | 1/4 |
+        | 9 | 1/4 | 3/4 | 0/4 |
+        | 10 | 1/4 | 0/4 | 1/4 (wrong counts varied 2–4; first pair where round beat both) |
+        | 11 | 1/4 | 0/4 | in progress |
+
+        6. All user messages
+
+        - 「概念空間の立体の「影」、ある軸に落ちた数値を思考の材料として使っている？ / 高パラメータモデルは「認知できる次元数」が多いために、立体の形状を正確に認知できている可能性？ / 立体そのものを見ていない？あるいは、立体を……ああ、見る向きか / 1536 次元から見る場合と、その倍、2倍の次元からそれぞれ見る場合では立体の範囲に対する認識が異なり得るのか / その可能性はあるな」
+        - 「これが事実なら、逆説的に「低パラメーターモデルが概念を弁別するには外部機構が必要になる」が真になってしまうだろうな / 数学的操作で解ける可能性もあるが」
+        - 「ちなみになんだが、人間も概念の弁別を必ずしも正確にできるわけではない / これは「次元数が少ない」という状態の可能性がある / 「完全な概念の弁別」には「無限の次元が必要」という仮説もあり得るな」
+        - 「式の部品の数が有限なので、必要な次元も有限で、上から抑えられるはず / ああーなるほど / これが最大のメリットだ。体系の規模から「弁別に必要な次元数」を逆算できる可能性がある / これが成り立てばプロジェクト毎にどのレベルのモデルを使うべきか定められる」
+        - 「結局モデルの内部状態に介入して概念を弁別させるのは現実的でない、あるいは不可能という結論になり得るのかな、この路線が支持されると」
+        - 「この辺参考にしても良いかもね / 研究者 特に近い研究上の性質 CMTとの接点 / Melanie Mitchell 抽象化・類推・概念形成 分野横断と概念生成 / Joshua Tenenbaum 概念学習・形式モデル・実験 概念の分化と検証 / SueYeon Chung 高次元表現の幾何学 ベクトル・概念領域・識別」
+        - Earlier messages still in force: 「日本語で」; the 9-minute resume checks; triage the remaining hypotheses with other lanes; the goal principle; 「巨人の肩にはどんどん乗るべきだ。」
+
+        7. Pending Tasks
+
+        - **30-minute cycle (just fired at 10:35:18)**: first call update_trigger(trig_01L92Xn7LSTHrmqt7enEcCPG, run_once_at ≈ 11:06Z, enabled true). Then run the cycle steps.
+        - **E33 resume checks**
+          - Next send_later fires at 10:36 (trig_014cVu4Fj1mJigc8p3E6r3oU).
+          - Restart command: `cd /home/user/CMT/exp/experiments && nohup /home/user/venv/bin/python e33_round_trip_sibling.py >> results/e33_round_trip_sibling.log 2>&1 &`
+          - Re-arm the 9-minute send_later each time.
+          - When results/e33_round_trip_sibling.json exists:
+            1. Record observations and v_support / v_contradict, with the label-bias disclosure.
+            2. Update and undraft PR #640.
+            3. Run E34 in .wt_sud (claude/h_state_unique_display, PR #642).
+        - **Light lane L1: h_translation_by_display** (`v_depend(syntax.display, syntax.language)`)
+          - Origin: #605, where English and Japanese copies of the same formulas in separate domains hit the law one_name. en_basic is now nearly empty.
+          - Pre-register a temp-copy test of per-language display on one node. This is a grammar change, so it needs manual review.
+        - **Other pending items**
+          - Combine Chung's capacity quantities with the region-measurement procedure for h_dimension_from_expression_parts (procedure: project to k dims and find the minimal k across subset sizes).
+          - Registrations: holonomy as d_metric consistency; Saxe / Zeeman / roughing-before-finishing as prior support for bounding; the (A) bounding experiment.
+          - Citations: 55 remaining entries to check, plus the unverified Tresca, Mendeleev, Schmitt and Bloch details.
+        - **Branches for the user to delete**: claude/prior_domains, claude/reg_axis_naming, claude/reg_width_region, claude/prior_geometry.
+
+        8. Current Work
+
+        - The 30-minute cycle trigger fired at 10:35:18 UTC, and I haven't acted on it yet.
+        - Current worktrees: /home/user/CMT (claude/h_round_trip_raises_sibling), .wt_sud, and the session-log worktree. All other worktrees are removed.
+        - Open PRs: #640 (E33) and #642 (E34).
+        - E33 was last restarted at 10:26 and is on pair 11 round.
+
+        9. Optional Next Step
+
+        Follow the fired cycle prompt: 「30分の周回。始めたら、まず update_trigger で run_once_at を今から約31分後にし、enabled: true にする」.
+        1. update_trigger trig_01L92Xn7LSTHrmqt7enEcCPG to about 11:06Z.
+        2. Check E33; restart it if stopped.
+        3. Proceed with the light lane: pre-register h_translation_by_display in a new worktree on branch claude/h_translation_by_display, with a Draft PR and a script-only first commit.
+
+        If you need specific details from before compaction (like exact code snippets, error messages, or content you generated), read the full transcript at: /root/.claude/projects/-home-user-CMT/e05d2140-ce91-515f-a5fb-e6251e13d406.jsonl
+        Continue the conversation from where it left off without asking the user any further questions. Resume directly — do not acknowledge the summary, do not recap what was happening, do not preface with "I'll continue" or similar. Pick up the last task as if the break never happened.
+
+        The messages after this summary are the most recent messages from before compaction, kept verbatim. The summary was written without seeing them, so something it says has not happened yet may already have happened in them.
+facts:
+- {is: v_say, from: session_model, to: 01M7YTV6T13JNSQ4W93F1NQCCN}
+- {is: v_refer, from: 01M7YTV6T13JNSQ4W93F1NQCCN, to: exp.v_ground}
+- {is: v_refer, from: 01M7YTV6T13JNSQ4W93F1NQCCN, to: ontology.v_refer}
+- {is: v_refer, from: 01M7YTV6T13JNSQ4W93F1NQCCN, to: exp.v_rely}
+- {is: v_refer, from: 01M7YTV6T13JNSQ4W93F1NQCCN, to: exp.v_check}
+- {is: v_refer, from: 01M7YTV6T13JNSQ4W93F1NQCCN, to: exp.hidden_state}
+- {is: v_refer, from: 01M7YTV6T13JNSQ4W93F1NQCCN, to: ontology.v_compose}
+- {is: v_refer, from: 01M7YTV6T13JNSQ4W93F1NQCCN, to: exp.quality_measure_to}
+- {is: v_refer, from: 01M7YTV6T13JNSQ4W93F1NQCCN, to: ontology.v_depend}
+- {is: v_refer, from: 01M7YTV6T13JNSQ4W93F1NQCCN, to: exp.v_raise}
+- {is: v_refer, from: 01M7YTV6T13JNSQ4W93F1NQCCN, to: syntax.expression_part}
+- {is: v_refer, from: 01M7YTV6T13JNSQ4W93F1NQCCN, to: syntax.lt}
+- {is: v_refer, from: 01M7YTV6T13JNSQ4W93F1NQCCN, to: exp.prior_work}
+- {is: v_refer, from: 01M7YTV6T13JNSQ4W93F1NQCCN, to: exp.prior_claim}
+- {is: v_refer, from: 01M7YTV6T13JNSQ4W93F1NQCCN, to: exp.v_state}
+- {is: v_refer, from: 01M7YTV6T13JNSQ4W93F1NQCCN, to: exp.measurement_family}
+- {is: v_refer, from: 01M7YTV6T13JNSQ4W93F1NQCCN, to: exp.family_axis}
+- {is: v_refer, from: 01M7YTV6T13JNSQ4W93F1NQCCN, to: exp.v_file_of}
+- {is: v_refer, from: 01M7YTV6T13JNSQ4W93F1NQCCN, to: exp.v_rows_of}
+- {is: v_refer, from: 01M7YTV6T13JNSQ4W93F1NQCCN, to: exp.v_axis_of}
+- {is: v_refer, from: 01M7YTV6T13JNSQ4W93F1NQCCN, to: exp.v_value_of}
+- {is: v_refer, from: 01M7YTV6T13JNSQ4W93F1NQCCN, to: exp.v_spell}
+- {is: v_refer, from: 01M7YTV6T13JNSQ4W93F1NQCCN, to: exp.v_entry_of}
+- {is: v_refer, from: 01M7YTV6T13JNSQ4W93F1NQCCN, to: exp.v_metric_of}
+- {is: v_refer, from: 01M7YTV6T13JNSQ4W93F1NQCCN, to: exp.mean_value}
+- {is: v_refer, from: 01M7YTV6T13JNSQ4W93F1NQCCN, to: ontology.v_level}
+- {is: v_refer, from: 01M7YTV6T13JNSQ4W93F1NQCCN, to: exp.v_support}
+- {is: v_refer, from: 01M7YTV6T13JNSQ4W93F1NQCCN, to: exp.hyp_supported}
+- {is: v_refer, from: 01M7YTV6T13JNSQ4W93F1NQCCN, to: exp.item_done}
+- {is: v_refer, from: 01M7YTV6T13JNSQ4W93F1NQCCN, to: exp.v_contradict}
+- {is: v_refer, from: 01M7YTV6T13JNSQ4W93F1NQCCN, to: syntax.display}
