@@ -1,0 +1,40 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-21T21:59:49.610Z（UTC）
+individuals:
+  01M801YVKAQKNTDNDHPQ21BRH5:
+    is: model_utterance
+    display: 発言 4114
+    val:
+      order: 4114
+      text: |
+        E42 は終わりましたが、2 つの仮説はどちらも判定できませんでした。体系への記録と PR #725 の本文の更新は済ませ、PR は Draft のままです。
+
+        **結果**（Qwen3-4B、24 項目。「意味が変わるのは P と Q のどちらか」と比べる問い方）
+
+        | 条件 | 正答率 |
+        |---|---|
+        | extends | 0.708 |
+        | inline | 0.583 |
+        | named | 0.375 |
+        | decoy | 0.167 |
+
+        - extends は 0.708 で、事前登録の判定しない範囲（0.583 と 0.75 の間）に入りました。支持の線 0.75 まで 1 項目足りません。
+        - そのため、h_verdict_by_question_format（判定が設問の形に引っぱられている）と h_model_misses_extends（モデルは extends を読まない）は、どちらも未検証のままです。
+        - 観察 o_e42_* は体系に書きましたが、どの仮説にも結んでいません。
+
+        **含意**
+        - 問い方を比べにすると、extends の正答率は E41 の 0.417 から 0.708 に上がりました。設問の形が判定を偏らせているという向きとは合います。
+        - 目立つのは decoy です。24 項目のうち 20 で、モデルは依存しない側（A の名前を文字として行に含む Q）を選びました。
+          - 比べる問い方では、依存を字面で読むという傾向（h_model_reads_by_word）がはっきり出ています。
+          - E41 の二択では、decoy は 0.542 で、この傾向は出ませんでした。
+          - ただし decoy は、この実験では判定に使わない参考の条件です。
+
+        **次**
+        - h_model_reads_by_word はまだ未検証です。比べる問い方で、新しい項目を使って事前登録して確かめます（E43）。
+        - E43 は #721 のブランチに足す予定です。
+
+        新しい仮説は登録しませんでした。decoy に出た傾向は、既にある h_model_reads_by_word のことを言っているためです。
+
+        ロードマップの位置: H3（検査器の道 d_road_checker）。E42 を記録し、次は E43。
+facts:
+- {is: v_say, from: session_model, to: 01M801YVKAQKNTDNDHPQ21BRH5}
+- {is: exp.v_answer, from: 01M801YVKAQKNTDNDHPQ21BRH5, to: 01M7ZG4RFFK1A28D1ZVQK01AG8}
