@@ -2622,6 +2622,16 @@ individuals:
   e32_specific_expression_rsa_cond_rho_full: {is: axis_value, val: {text: rho_full}}
   e32_specific_expression_rsa_cond_p_full: {is: axis_value, val: {text: p_full}}
   e32_specific_expression_rsa_cond_n_pairs: {is: axis_value, val: {text: n_pairs}}
+  e34_state_unique_display: {is: measurement_family}
+  e34_state_unique_display_c: {is: family_axis, val: {text: c}}
+  e34_state_unique_display_c_D: {is: axis_value, val: {text: D}}
+  e34_state_unique_display_c_S_new: {is: axis_value, val: {text: S_new}}
+  e34_state_unique_display_c_S_old: {is: axis_value, val: {text: S_old}}
+  e34_state_unique_display_c_all: {is: axis_value, val: {text: all}}
+  e34_state_unique_display_m: {is: family_axis, val: {text: m}}
+  e34_state_unique_display_m_share_unique: {is: axis_value, val: {text: share_unique}}
+  e34_state_unique_display_m_share_hit: {is: axis_value, val: {text: share_hit}}
+  e34_state_unique_display_m_mean_n_eff: {is: axis_value, val: {text: mean_n_eff}}
   e33_round_trip_sibling: {is: measurement_family}
   e33_round_trip_sibling_c: {is: family_axis, val: {text: c}}
   e33_round_trip_sibling_c_none: {is: axis_value, val: {text: none}}
@@ -3593,8 +3603,13 @@ individuals:
   b_dimension_from_expression_parts: {is: item_queued}
   h_sibling_discrimination_on_region: {is: hyp_untested}
   b_sibling_discrimination_on_region: {is: item_queued}
-  h_state_unique_display: {is: hyp_untested}
-  b_state_unique_display: {is: item_queued}
+  h_state_unique_display: {is: hyp_refuted}
+  b_state_unique_display: {is: item_done}
+  o_e34_unique_all: {is: observation}
+  o_e34_hit_all: {is: observation}
+  o_e34_unique_s_old: {is: observation}
+  o_e34_unique_s_new: {is: observation}
+  o_e34_unique_d: {is: observation}
   h_state_points_region: {is: hyp_untested}
   b_state_points_region: {is: item_queued}
   h_expression_makes_state_unique: {is: hyp_untested}
@@ -9173,6 +9188,27 @@ facts:
   - {is: v_spell, from: e32_specific_expression_rsa_cond_n_pairs, to: n_pairs}
   - {is: v_entry_of, from: '{cond}', to: e32_specific_expression_rsa}
   - {is: v_metric_of, from: e32_specific_expression_rsa, to: mean_value}
+  - {is: v_file_of, from: e34_state_unique_display.json, to: e34_state_unique_display}
+  - {is: v_rows_of, from: [s], to: e34_state_unique_display}
+  - {is: v_axis_of, from: e34_state_unique_display_c, to: e34_state_unique_display}
+  - {is: v_keys_of, from: '#', to: e34_state_unique_display_c}
+  - {is: v_value_of, from: e34_state_unique_display_c_D, to: e34_state_unique_display_c}
+  - {is: v_spell, from: e34_state_unique_display_c_D, to: ['D']}
+  - {is: v_value_of, from: e34_state_unique_display_c_S_new, to: e34_state_unique_display_c}
+  - {is: v_spell, from: e34_state_unique_display_c_S_new, to: ['S_new']}
+  - {is: v_value_of, from: e34_state_unique_display_c_S_old, to: e34_state_unique_display_c}
+  - {is: v_spell, from: e34_state_unique_display_c_S_old, to: ['S_old']}
+  - {is: v_value_of, from: e34_state_unique_display_c_all, to: e34_state_unique_display_c}
+  - {is: v_spell, from: e34_state_unique_display_c_all, to: ['all']}
+  - {is: v_axis_of, from: e34_state_unique_display_m, to: e34_state_unique_display}
+  - {is: v_value_of, from: e34_state_unique_display_m_share_unique, to: e34_state_unique_display_m}
+  - {is: v_spell, from: e34_state_unique_display_m_share_unique, to: share_unique}
+  - {is: v_value_of, from: e34_state_unique_display_m_share_hit, to: e34_state_unique_display_m}
+  - {is: v_spell, from: e34_state_unique_display_m_share_hit, to: share_hit}
+  - {is: v_value_of, from: e34_state_unique_display_m_mean_n_eff, to: e34_state_unique_display_m}
+  - {is: v_spell, from: e34_state_unique_display_m_mean_n_eff, to: mean_n_eff}
+  - {is: v_entry_of, from: '{m}', to: e34_state_unique_display}
+  - {is: v_metric_of, from: e34_state_unique_display, to: mean_value}
   - {is: v_file_of, from: e33_round_trip_sibling.json, to: e33_round_trip_sibling}
   - {is: v_rows_of, from: [s], to: e33_round_trip_sibling}
   - {is: v_axis_of, from: e33_round_trip_sibling_c, to: e33_round_trip_sibling}
@@ -10207,6 +10243,12 @@ facts:
   - {is: v_refer, from: h_state_unique_display, to: {is: v_refer, from: hidden_state, to: syntax.display, at: {count: 1}}}
   - {is: v_check, from: b_state_unique_display, to: h_state_unique_display}
   - {is: v_ground, from: d_goal, to: h_state_unique_display}
+  - {is: v_refer, from: o_e34_unique_all, to: {is: v_level, from: e34_state_unique_display.all.share_unique.mean_value, to: 0.40703517587939697}}
+  - {is: v_contradict, from: o_e34_unique_all, to: h_state_unique_display}
+  - {is: v_refer, from: o_e34_hit_all, to: {is: v_level, from: e34_state_unique_display.all.share_hit.mean_value, to: 0.6030150753768844}}
+  - {is: v_refer, from: o_e34_unique_s_old, to: {is: v_level, from: e34_state_unique_display.S_old.share_unique.mean_value, to: 0.5416666666666666}}
+  - {is: v_refer, from: o_e34_unique_s_new, to: {is: v_level, from: e34_state_unique_display.S_new.share_unique.mean_value, to: 0.3055555555555556}}
+  - {is: v_refer, from: o_e34_unique_d, to: {is: v_level, from: e34_state_unique_display.D.share_unique.mean_value, to: 0.36363636363636365}}
   - {is: v_refer, from: h_state_points_region, to: {is: v_refer, from: hidden_state, to: syntax.display, at: {count: {gt: 1}}}}
   - {is: v_check, from: b_state_points_region, to: h_state_points_region}
   - {is: v_ground, from: d_goal, to: h_state_points_region}
