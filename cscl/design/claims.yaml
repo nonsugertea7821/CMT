@@ -375,10 +375,10 @@ individuals:
   b_translation_by_display: {is: exp.item_queued}
   h_domain_choice_is_refer: {is: exp.hyp_untested}
   b_domain_choice_is_refer: {is: exp.item_queued}
-  h_std_by_law: {is: exp.hyp_untested}
-  b_std_by_law: {is: exp.item_queued}
-  h_std_by_shared_use: {is: exp.hyp_untested}
-  b_std_by_shared_use: {is: exp.item_queued}
+  h_std_by_law: {is: exp.hyp_refuted}
+  b_std_by_law: {is: exp.item_done}
+  h_std_by_shared_use: {is: exp.hyp_refuted}
+  b_std_by_shared_use: {is: exp.item_done}
   h_signature_all_charts: {is: exp.hyp_untested}
   b_signature_all_charts: {is: exp.item_queued}
   b_concept_extends_deduced_vocab: {is: exp.item_queued}
@@ -807,6 +807,8 @@ individuals:
   o_sys_euo_top_none: {is: exp.observation}
   o_sys_vep_verbs: {is: exp.observation}
   o_vbj_share_ja: {is: exp.observation}
+  o_sys_sd_jac_law: {is: exp.observation}
+  o_sys_sd_jac_use: {is: exp.observation}
   o_vbj_share_en: {is: exp.observation}
   o_vbj_both_fit: {is: exp.observation}
   o_sys_vep_groups: {is: exp.observation}
@@ -1588,6 +1590,10 @@ facts:
   - {is: v_refer, from: o_vbj_share_en, to: {is: v_level, from: vocab_basic_judge.share_fit_en.mean_value, to: 0.0}}
   - {is: v_refer, from: o_vbj_both_fit, to: {is: v_level, from: vocab_basic_judge.n_both_fit.mean_value, to: 0.0}}
   - {is: exp.v_contradict, from: o_vbj_share_ja, to: h_basic_vocab_fits}
+  - {is: v_refer, from: o_sys_sd_jac_law, to: {is: v_level, from: sys_std_definition.jac_law.mean_value, to: 0.10714285714285714}}
+  - {is: v_refer, from: o_sys_sd_jac_use, to: {is: v_level, from: sys_std_definition.jac_use.mean_value, to: 0.24615384615384617}}
+  - {is: exp.v_contradict, from: o_sys_sd_jac_law, to: h_std_by_law}
+  - {is: exp.v_contradict, from: o_sys_sd_jac_use, to: h_std_by_shared_use}
   - {is: v_refer, from: o_sys_dbg_groups, to: {is: v_level, from: sys_differentia_by_genus.n_sib_groups.mean_value, to: 12.0}}
   - {is: v_refer, from: o_sys_dbg_pairs, to: {is: v_level, from: sys_differentia_by_genus.n_sib_pairs.mean_value, to: 1529.0}}
   - {is: v_refer, from: o_sys_dbg_clash, to: {is: v_level, from: sys_differentia_by_genus.n_clash.mean_value, to: 0.0}}
