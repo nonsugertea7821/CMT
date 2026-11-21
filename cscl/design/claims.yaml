@@ -367,8 +367,8 @@ individuals:
   b_differentia_by_genus: {is: exp.item_queued}
   h_parent_alone_by_law: {is: exp.hyp_untested}
   b_parent_alone_by_law: {is: exp.item_queued}
-  h_basic_vocab_fits: {is: exp.hyp_untested}
-  b_basic_vocab_fits: {is: exp.item_queued}
+  h_basic_vocab_fits: {is: exp.hyp_refuted}
+  b_basic_vocab_fits: {is: exp.item_done}
   h_vocab_domain_invariant: {is: exp.hyp_untested}
   b_vocab_domain_invariant: {is: exp.item_queued}
   h_translation_by_display: {is: exp.hyp_untested}
@@ -806,6 +806,9 @@ individuals:
   o_sys_euo_sub_match: {is: exp.observation}
   o_sys_euo_top_none: {is: exp.observation}
   o_sys_vep_verbs: {is: exp.observation}
+  o_vbj_share_ja: {is: exp.observation}
+  o_vbj_share_en: {is: exp.observation}
+  o_vbj_both_fit: {is: exp.observation}
   o_sys_vep_groups: {is: exp.observation}
   o_sys_vep_conv: {is: exp.observation}
   o_sys_vep_conv_nonempty: {is: exp.observation}
@@ -1581,6 +1584,10 @@ facts:
   - {is: v_refer, from: o_sys_vep_conv, to: {is: v_level, from: sys_verb_extends_primitive.n_conv.mean_value, to: 1.0}}
   - {is: v_refer, from: o_sys_vep_conv_nonempty, to: {is: v_level, from: sys_verb_extends_primitive.n_conv_nonempty.mean_value, to: 1.0}}
   - {is: exp.v_support, from: o_sys_vep_conv_nonempty, to: h_verb_extends_primitive}
+  - {is: v_refer, from: o_vbj_share_ja, to: {is: v_level, from: vocab_basic_judge.share_fit_ja.mean_value, to: 0.4339622641509434}}
+  - {is: v_refer, from: o_vbj_share_en, to: {is: v_level, from: vocab_basic_judge.share_fit_en.mean_value, to: 0.0}}
+  - {is: v_refer, from: o_vbj_both_fit, to: {is: v_level, from: vocab_basic_judge.n_both_fit.mean_value, to: 0.0}}
+  - {is: exp.v_contradict, from: o_vbj_share_ja, to: h_basic_vocab_fits}
   - {is: v_refer, from: o_sys_dbg_groups, to: {is: v_level, from: sys_differentia_by_genus.n_sib_groups.mean_value, to: 12.0}}
   - {is: v_refer, from: o_sys_dbg_pairs, to: {is: v_level, from: sys_differentia_by_genus.n_sib_pairs.mean_value, to: 1529.0}}
   - {is: v_refer, from: o_sys_dbg_clash, to: {is: v_level, from: sys_differentia_by_genus.n_clash.mean_value, to: 0.0}}

@@ -1,0 +1,73 @@
+domain: ja_basic
+
+nodes:
+  j_object: {display: 物, extends: continuant}
+  j_substance: {display: 物質の種類, extends: continuant}
+  j_animal: {display: 動物, extends: j_object}
+  j_body: {display: 体, extends: j_object}
+  j_body_part: {display: 体の部分, extends: j_object, mod: {of: [v_compose, from], with: j_body}}
+  j_act: {display: 行い, extends: process, mod: perform_to}
+
+  j_go: {display: 動く, extends: occurrent, from: continuant, to: continuant}
+  j_come: {display: 到来, extends: j_go, from: continuant, to: continuant}
+  j_have: {display: 有する, extends: occurrent, from: continuant, to: continuant}
+  j_get: {display: 得る, extends: occurrent, from: continuant, to: continuant, post: [{is: involve, from: from, to: to}]}
+  j_keep: {display: 続ける, extends: occurrent, from: continuant, to: occurrent}
+  j_let: {display: 許す, extends: occurrent, from: continuant, to: occurrent}
+  j_make: {display: 為す, extends: v_perform}
+  j_do: {display: 為す, extends: v_perform}
+  j_take: {display: 為す, extends: v_perform}
+  j_put: {display: 置く, extends: occurrent, from: continuant, to: continuant}
+  j_seem: {display: 見える, extends: occurrent, from: continuant, to: quality}
+  j_be: {display: ではある, extends: occurrent, from: continuant, to: quality, holds: [{is: depend, from: to, to: from}]}
+  j_say: {display: 発語, extends: v_refer}
+  j_see: {display: ご覧になる, extends: occurrent, from: continuant, to: continuant}
+  j_send: {display: 向かわせる, extends: v_trigger}
+
+  j_artifact: {display: 為された物, extends: j_object, mod: {of: [j_make, to]}}
+  j_invention: {display: 発明, extends: j_artifact}
+  j_loss: {display: 損失, extends: magnitude}
+  j_learning: {display: 修得, extends: process}
+  j_step: {display: 方策, extends: j_act}
+  j_chalk: {display: 白墨, extends: j_artifact, mod: {of: [v_express, to]}}
+  j_substance_of_mass: {display: 物質, extends: j_substance}
+  j_position: {display: 場所, extends: continuant}
+  j_week: {display: 週間, extends: magnitude}
+  j_thing: {display: もの, extends: continuant}
+  j_meat: {display: 食肉, extends: j_substance, mod: {of: [v_compose, from], with: j_animal}}
+  j_trick: {display: 謀略, extends: j_act}
+  j_stop: {display: 途中下車, extends: process}
+  j_move: {display: 手, extends: j_act}
+  j_smell: {display: 匂い, extends: quality}
+  j_addition: {display: 添, extends: j_act}
+  j_disgust: {display: むかつき, extends: quality}
+  j_degree: {display: レヴェル, extends: magnitude}
+  j_mark: {display: 点数, extends: magnitude}
+  j_attraction: {display: 引力, extends: disposition}
+  j_experience: {display: 経験, extends: information_entity}
+  j_existence: {display: 存在, extends: quality}
+  j_cause: {display: 導因, extends: occurrent, mod: {of: [v_trigger, from]}}
+  j_name: {display: 呼称, extends: word}
+  j_science: {display: 科学, extends: information_entity}
+  j_wind: {display: ウィンド, extends: process}
+  j_company: {display: 企業, extends: continuant}
+  j_building: {display: 家屋, extends: j_artifact}
+  j_air: {display: エアー, extends: j_substance}
+  j_grip: {display: 握っていること, extends: j_act}
+  j_pig: {display: 猪の子, extends: j_animal}
+  j_umbrella: {display: 端折傘, extends: j_artifact}
+  j_chest: {display: 胸元, extends: j_body_part}
+  j_head: {display: 雁首, extends: j_body_part}
+  j_map: {display: 軍用地図, extends: information_entity}
+  j_basket: {display: バスケット, extends: j_artifact}
+  j_bath: {display: 水槽, extends: j_artifact}
+  j_basin: {display: 洗面器, extends: j_artifact}
+  j_station: {display: ステイション, extends: j_artifact}
+
+individuals:
+  ja_basic: {is: domain, display: 日本語の基礎語彙}
+
+facts:
+  - {is: v_use, from: ja_basic, to: syntax}
+  - {is: v_use, from: ja_basic, to: std}
+  - {is: v_presume, from: ja_basic, to: closed_world}
