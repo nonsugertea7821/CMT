@@ -32,6 +32,15 @@ ex の学習（E3 の train_vector と同じ最適化: ゼロから、Adam、lr 
   転移しない（反証）: それ以外。
   qa と explain_noans は判定に使わない。
 
+訂正（実行の途中で書き足す。開示）:
+  学習の一歩をまとめて1回で計算すると、メモリの上限（15 GB）を超えてプロセスが止められた。
+  ほかの重い処理を同時に走らせていないときにも、果物で1回、社員で2回止められた（前の果物は再開で通った）。
+  そこで --micro k を足した。一歩の損失（例ごとの平均損失の、例についての平均）を、k 例ずつに分けて計算し、
+  勾配を足し合わせてから1歩進める。式は同じで、違いは浮動小数の丸めだけ。
+  --micro なし（事前登録のまま）で学習した概念は、そのまま使う。--micro で学習した概念は train の micro に記録する。
+  判定と評価は変えない。
+  あわせて、再開のときに環境変数 MALLOC_ARENA_MAX=2 を付けた（メモリの割り当ての設定。計算は変えない）。
+
 途中保存: 概念ごとに results/e36_<model>_L8.partial.pt に書き、再実行で続きから学習する。
 
 使い方:
@@ -63,7 +72,7 @@ def explain_pairs(r, label, qa, pair):
     return out
 
 
-def train_explain(r, inj, label, pairs, steps, lr):
+def train_explain(r, inj, label, pairs, steps, lr, micro=None):
     d_model = r.model.config.hidden_size
     v = torch.zeros(d_model).requires_grad_(True)
     opt = torch.optim.Adam([v], lr=lr)
@@ -85,18 +94,24 @@ def train_explain(r, inj, label, pairs, steps, lr):
         lab_b[i, n_prompt:k] = torch.tensor(ids[n_prompt:])
         msk_b[i, :k, 0] = torch.tensor(mask, dtype=torch.float32)
     losses = []
+    chunks = [slice(0, n)] if not micro else [slice(i, min(i + micro, n)) for i in range(0, n, micro)]
     for _ in range(steps):
         opt.zero_grad()
-        inj.delta = msk_b * v.view(1, 1, -1)
-        logits = r.model(ids_b, attention_mask=att_b).logits
-        per_tok = torch.nn.functional.cross_entropy(
-            logits[:, :-1].reshape(-1, logits.shape[-1]), lab_b[:, 1:].reshape(-1), reduction="none"
-        ).view(n, -1)
-        valid = (lab_b[:, 1:] != -100).float()
-        loss = ((per_tok * valid).sum(1) / valid.sum(1)).mean()
-        loss.backward()
+        total = 0.0
+        for s in chunks:
+            inj.delta = msk_b[s] * v.view(1, 1, -1)
+            logits = r.model(ids_b[s], attention_mask=att_b[s]).logits
+            k = logits.shape[0]
+            per_tok = torch.nn.functional.cross_entropy(
+                logits[:, :-1].reshape(-1, logits.shape[-1]), lab_b[s, 1:].reshape(-1), reduction="none"
+            ).view(k, -1)
+            valid = (lab_b[s, 1:] != -100).float()
+            loss = ((per_tok * valid).sum(1) / valid.sum(1)).sum() / n
+            loss.backward()
+            total += loss.item()
+            del logits, per_tok, loss
         opt.step()
-        losses.append(loss.item())
+        losses.append(total)
     inj.delta = None
     return v.detach(), losses
 
@@ -107,6 +122,7 @@ def main():
     ap.add_argument("--layer", type=int, default=8)
     ap.add_argument("--steps", type=int, default=30)
     ap.add_argument("--lr", type=float, default=0.1)
+    ap.add_argument("--micro", type=int, default=None)
     args = ap.parse_args()
     short = args.model.split("/")[-1]
     data = json.loads((ROOT / "data" / "concepts_ja.json").read_text(encoding="utf-8"))
@@ -127,9 +143,10 @@ def main():
         if c in ex:
             continue
         t0 = time.time()
-        v, losses = train_explain(r, inj, c, explain_pairs(r, c, qa[c], pairs[c]), args.steps, args.lr)
+        v, losses = train_explain(r, inj, c, explain_pairs(r, c, qa[c], pairs[c]), args.steps, args.lr, args.micro)
         ex[c] = v
-        log[c] = {"loss_first": losses[0], "loss_last": losses[-1], "norm": v.norm().item(), "n_train": 2 * len(qa[c])}
+        log[c] = {"loss_first": losses[0], "loss_last": losses[-1], "norm": v.norm().item(), "n_train": 2 * len(qa[c]),
+                  "micro": args.micro}
         print(f"[train] {c}: loss {losses[0]:.2f} -> {losses[-1]:.2f} |v|={v.norm():.1f} {time.time() - t0:.0f}s", flush=True)
         torch.save((ex, log), part)
     torch.save(ex, ROOT / "results" / f"{run}_ex.pt")
