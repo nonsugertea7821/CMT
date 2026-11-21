@@ -1,0 +1,30 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-21T11:13:43.375Z（UTC）
+individuals:
+  01M7YWZSYFD0P7QZEF43TY6MS1:
+    is: model_utterance
+    display: 発言 3714
+    val:
+      order: 3714
+      text: |
+        #669（h_charts_meet_at_ontology_top の登録）が、型検査で落ちていました。直して push し、本文にも経緯を書き足しました。
+
+        - **原因**: 依存（v_depend）の終点は続く物（continuant）に限られていて、出来事（occurrent）は置けません。終点に continuant と occurrent を並べて書いていたのが誤りでした。
+        - **直し方**: 終点を ontology.continuant だけにし、仮説を「どの領域も、続く物の最上位に依存する」としました。
+        - **限界**: 出来事の側への依存は、この式では問えません。
+
+        ほかの PR はこうなっています。
+
+        | PR | 中身 | 状態 |
+        |---|---|---|
+        | #669 | h_charts_meet_at_ontology_top の登録 | spec 待ち（通れば自動マージの段に乗る） |
+        | #640 | E33 の記録 | 確認待ち |
+        | #668 | h_signature_all_charts の記録 | spec 待ち |
+
+        E34 は走行中です。
+
+        ロードマップ: 軽い列 L2 を進めています。重い列は E34 が走行中です。
+facts:
+- {is: v_say, from: session_model, to: 01M7YWZSYFD0P7QZEF43TY6MS1}
+- {is: exp.v_answer, from: 01M7YWZSYFD0P7QZEF43TY6MS1, to: 01M7YQNY4SHZ5CPQ9Z096V99D4}
+- {is: v_refer, from: 01M7YWZSYFD0P7QZEF43TY6MS1, to: ontology.v_depend}
+- {is: v_refer, from: 01M7YWZSYFD0P7QZEF43TY6MS1, to: ontology.continuant}
