@@ -1,0 +1,34 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-21T13:25:19.179Z（UTC）
+individuals:
+  01M7Z4GRPBK5KHYM1SKHJ80W23:
+    is: model_utterance
+    display: 発言 3790
+    val:
+      order: 3790
+      text: |
+        E34 has finished and is recorded: the hypothesis that a hidden state points to exactly one display word (h_state_unique_display) is refuted. With the target word hidden, only 40.7% of the 199 states read out as exactly one correct word, against a pre-registered refutation cutoff of 0.5.
+
+        | Set | Unique | Correct | Average words pointed at |
+        |---|---|---|---|
+        | Words in ordinary meaning (S_old) | 0.54 | 0.71 | 2.17 |
+        | Definition sentences (D) | 0.36 | 0.58 | 3.55 |
+        | Words in this project's meaning (S_new) | 0.31 | 0.51 | 3.04 |
+        | Overall | 0.41 | 0.60 | 2.87 |
+
+        - **Where it misses:** answers drift to words with the same sound or similar characters (改訂 → 改定, 追及 → 追究). Project-defined words whose meaning isn't visible from the name also miss (甲種注文 → 欠席).
+        - **Interpretation:** as far as the model's own readout shows, a state spreads over about three words rather than landing on one. Words used in this project's meaning are less unique than words in their ordinary meaning.
+        - **Records:** the observations are in `exp/src/exp.yaml`, and the results and their interpretation are in the body of #642. #642 stays a draft until the checks pass.
+        - **New hypotheses:** from this refutation I registered a pair of alternative explanations (#686, registration only).
+          - h_state_points_region: a state points to a region of two or more display words, and the unique display comes from somewhere else.
+          - h_expression_makes_state_unique: giving the concept expression in context makes the readout unique. This one is also tied to `d_cscl_display_derived`.
+
+        **Other PRs:**
+        - #683 has merged.
+        - #682 is waiting for checks to rerun after I merged main into it.
+
+        **Next:** the heavy lane is now free. Next cycle I'll pick from H2 onward.
+
+        Roadmap position: closed the L1 core hypothesis h_state_unique_display (`d_goal`).
+facts:
+- {is: v_say, from: session_model, to: 01M7Z4GRPBK5KHYM1SKHJ80W23}
+- {is: exp.v_answer, from: 01M7Z4GRPBK5KHYM1SKHJ80W23, to: 01M7YQNY4SHZ5CPQ9Z096V99D4}
