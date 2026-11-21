@@ -1,0 +1,27 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-21T12:47:06.949Z（UTC）
+individuals:
+  01M7Z2AT65DXGWKCS5JPE68S6B:
+    is: model_utterance
+    display: 発言 3756
+    val:
+      order: 3756
+      text: |
+        I checked h_form_gives_genus and it came out refuted (PR #678, still Draft). From that result I registered two competing hypotheses in PR #679.
+
+        **The result**
+        - Of the 29 words whose parent type comes from form, none reached that type through `above`, which was the relation I fixed in advance as the main one. `r_ancestor` and `r_parent` also had 0.
+        - In `r_kind_up`, all 29 words reached it (1.0). I kept this as a descriptive finding.
+        - So the checker already derives the parent type from form. It just stores it in a different relation from the parent relation `above`, so "parent" ends up split across two relations.
+
+        **New hypotheses (#679, registration only, both grounded in d_cscl_display_derived)**
+        - h_above_includes_form: merge them, so `above` also contains the parents derived from form.
+        - h_above_split_written_derived: keep them separate on purpose. `above` holds parents written with extends, and `r_kind_up` holds parents derived from form; they do different jobs.
+
+        **Other**
+        - E34 is resuming from its partial file each time it stops. It was at 122 items, and the next check is at 12:53.
+        - When I first wrote the #678 description, I got the result commit's reference wrong. I've corrected it to da91a06 and noted the correction in the description.
+
+        Roadmap position: moved L2 (prerequisites for d_road_region) forward; it's now narrowed to which relation to read the type chain from. H2 (E34) is still being measured.
+facts:
+- {is: v_say, from: session_model, to: 01M7Z2AT65DXGWKCS5JPE68S6B}
+- {is: exp.v_answer, from: 01M7Z2AT65DXGWKCS5JPE68S6B, to: 01M7YQNY4SHZ5CPQ9Z096V99D4}
