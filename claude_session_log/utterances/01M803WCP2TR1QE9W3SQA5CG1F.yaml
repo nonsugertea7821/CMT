@@ -1,0 +1,20 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-21T22:33:25.954Z（UTC）
+individuals:
+  01M803WCP2TR1QE9W3SQA5CG1F:
+    is: model_utterance
+    display: 発言 4141
+    val:
+      order: 4141
+      text: |
+        指摘された 2 文はどちらも、tc が言ったことをそのまま書いた事実（1）なので、登録していません。
+
+        ただ、その途中で私が「検査器の出力を指す概念がない」と、確かめずに言っていたことが分かりました。体系を grep すると、`type_check_result`（型検査の結果）が exp.yaml にありました。前の直し（h_verdict_ignores_checker への書き換え）は、この誤りの上に立っていたことになります。
+
+        そこで、h_model_misses_checker_output を、最初の意図のまま `v_read model→type_check_result, neg: true` で書き直して push しました。読み違いから 2 度の書き換えまでの経緯は、PR #730 の本文に順に書いて開示しています。新しく登録した仮説はありません。
+
+        ロードマップの位置: H3（検査器の道 d_road_checker）。登録の PR #730 は CI 待ち。
+facts:
+- {is: v_say, from: session_model, to: 01M803WCP2TR1QE9W3SQA5CG1F}
+- {is: exp.v_answer, from: 01M803WCP2TR1QE9W3SQA5CG1F, to: 01M7ZG4RFFK1A28D1ZVQK01AG8}
+- {is: v_refer, from: 01M803WCP2TR1QE9W3SQA5CG1F, to: exp.type_check_result}
+- {is: v_refer, from: 01M803WCP2TR1QE9W3SQA5CG1F, to: exp.v_read}
