@@ -371,6 +371,10 @@ individuals:
   b_basic_vocab_fits: {is: exp.item_queued}
   h_vocab_domain_invariant: {is: exp.hyp_untested}
   b_vocab_domain_invariant: {is: exp.item_queued}
+  h_std_by_law: {is: exp.hyp_untested}
+  b_std_by_law: {is: exp.item_queued}
+  h_std_by_shared_use: {is: exp.hyp_untested}
+  b_std_by_shared_use: {is: exp.item_queued}
   b_concept_extends_deduced_vocab: {is: exp.item_queued}
   b_differentia_by_genus_vocab: {is: exp.item_queued}
   b_verb_extends_primitive_vocab: {is: exp.item_queued}
@@ -1767,6 +1771,12 @@ facts:
   - {is: v_refer, from: h_vocab_domain_invariant, to: {is: v_depend, from: syntax.extends, to: syntax.domain, neg: true}}
   - {is: exp.v_check, from: b_vocab_domain_invariant, to: h_vocab_domain_invariant}
   - {is: exp.v_ground, from: d_cscl_display_derived, to: h_vocab_domain_invariant}
+  - {is: v_refer, from: h_std_by_law, to: {is: v_depend, from: std_layer, to: syntax.law_rule}}
+  - {is: exp.v_check, from: b_std_by_law, to: h_std_by_law}
+  - {is: exp.v_ground, from: d_cscl_display_derived, to: h_std_by_law}
+  - {is: v_refer, from: h_std_by_shared_use, to: {is: v_depend, from: std_layer, to: syntax.domain}}
+  - {is: exp.v_check, from: b_std_by_shared_use, to: h_std_by_shared_use}
+  - {is: exp.v_ground, from: d_cscl_display_derived, to: h_std_by_shared_use}
   - {is: exp.v_check, from: b_concept_extends_deduced_vocab, to: h_concept_extends_deduced}
   - {is: exp.v_check, from: b_differentia_by_genus_vocab, to: h_differentia_by_genus}
   - {is: exp.v_check, from: b_verb_extends_primitive_vocab, to: h_verb_extends_primitive}
