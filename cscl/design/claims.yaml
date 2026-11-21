@@ -377,10 +377,10 @@ individuals:
   b_formal_real_by_law: {is: exp.item_queued}
   h_real_axis_by_domain: {is: exp.hyp_untested}
   b_real_axis_by_domain: {is: exp.item_queued}
-  h_formal_verbs_need_laws: {is: exp.hyp_untested}
-  b_formal_verbs_need_laws: {is: exp.item_queued}
-  h_lawless_verbs_are_real: {is: exp.hyp_untested}
-  b_lawless_verbs_are_real: {is: exp.item_queued}
+  h_formal_verbs_need_laws: {is: exp.hyp_refuted}
+  b_formal_verbs_need_laws: {is: exp.item_done}
+  h_lawless_verbs_are_real: {is: exp.hyp_supported}
+  b_lawless_verbs_are_real: {is: exp.item_done}
   h_domain_choice_is_refer: {is: exp.hyp_untested}
   b_domain_choice_is_refer: {is: exp.item_queued}
   h_std_by_law: {is: exp.hyp_refuted}
@@ -816,6 +816,8 @@ individuals:
   o_sys_vep_verbs: {is: exp.observation}
   o_vbj_share_ja: {is: exp.observation}
   o_sys_sd_jac_law: {is: exp.observation}
+  o_sys_lva_formal: {is: exp.observation}
+  o_sys_lva_real: {is: exp.observation}
   o_sys_sd_jac_use: {is: exp.observation}
   o_vbj_share_en: {is: exp.observation}
   o_vbj_both_fit: {is: exp.observation}
@@ -1813,6 +1815,10 @@ facts:
   - {is: v_refer, from: h_lawless_verbs_are_real, to: {is: v_refer, from: syntax.domain, to: [ontology.v_express, ontology.v_trigger, ontology.v_stage, ontology.v_involve, ontology.v_perform, ontology.v_come_after]}}
   - {is: exp.v_check, from: b_lawless_verbs_are_real, to: h_lawless_verbs_are_real}
   - {is: exp.v_ground, from: d_cscl_display_derived, to: h_lawless_verbs_are_real}
+  - {is: v_refer, from: o_sys_lva_formal, to: {is: v_level, from: sys_lawless_verb_anchor.n_formal.mean_value, to: 0.0}}
+  - {is: exp.v_contradict, from: o_sys_lva_formal, to: h_formal_verbs_need_laws}
+  - {is: v_refer, from: o_sys_lva_real, to: {is: v_level, from: sys_lawless_verb_anchor.n_real.mean_value, to: 6.0}}
+  - {is: exp.v_support, from: o_sys_lva_real, to: h_lawless_verbs_are_real}
   - {is: v_refer, from: h_domain_choice_is_refer, to: {is: v_refer, from: syntax.domain, to: syntax.concept_expression}}
   - {is: exp.v_check, from: b_domain_choice_is_refer, to: h_domain_choice_is_refer}
   - {is: exp.v_ground, from: d_cscl_display_derived, to: h_domain_choice_is_refer}
