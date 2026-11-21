@@ -1,0 +1,27 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-21T04:22:14.269Z（UTC）
+individuals:
+  01M7Y5EBFXCBRQF92803XA1ZN0:
+    is: model_utterance
+    display: 発言 3497
+    val:
+      order: 3497
+      text: |
+        h_claims_apart_by_domain came out **mixed**. Excluding claims by domain doesn't fully stand in for excluding them by kind.
+
+        - **How I tested it:** I compared two readings of the system. One drops only the claim items (hypotheses, observations, backlog items), as in #629. The other drops every item in the domains that hold claims.
+        - **Domains holding claims:** exp and lang. Together they make up most of the system: 11,914 items, of which 3,277 are claims.
+        - **Labels:** 12 of the 13 verbs keep the same formal/real label under both readings. Only v_design switches, from 0.486 to 0.667.
+        - **J values:** they move by 0.076 on average, over the 0.05 limit. Dropping whole domains also drops the non-claim items in exp and lang, such as concept definitions.
+
+        **Implication:** with claims sitting in today's domains, separating by domain can't replace excluding by kind. Excluding by kind (h_measure_excludes_claim_kinds, #631) is the finer cut. Separating by domain would only work if claims had a domain of their own holding nothing else. I didn't register a new hypothesis for that, because it just restates "exclude by kind" in another form.
+
+        **Correction:** the result commit's message wrongly names v_come_before as the verb that switched; it was v_design. The numbers and the verdict are unaffected. The fix is in the PR #636 body, which also has the full numbers.
+
+        I'll take #636 out of Draft once the runner's spec passes. Because the result is mixed, it won't auto-merge; please review it yourself.
+
+        本線 d_metric の下（読みの土台）。a 識別子化の列は登録済みの仮説がすべて確かめ済み。
+facts:
+- {is: v_say, from: session_model, to: 01M7Y5EBFXCBRQF92803XA1ZN0}
+- {is: exp.v_answer, from: 01M7Y5EBFXCBRQF92803XA1ZN0, to: 01M7Y4ECMF5CBZPWQ4KQEHAWKY}
+- {is: v_refer, from: 01M7Y5EBFXCBRQF92803XA1ZN0, to: ontology.v_design}
+- {is: v_refer, from: 01M7Y5EBFXCBRQF92803XA1ZN0, to: ontology.v_come_before}
