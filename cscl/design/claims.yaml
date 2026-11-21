@@ -307,8 +307,8 @@ individuals:
   h_checker_words_by_formula: {is: exp.hyp_mixed}
   b_checker_words_by_formula: {is: exp.item_done}
   h_refer_by_exact_holds: {is: exp.hyp_supported}
-  h_checker_words_swap: {is: exp.hyp_untested}
-  b_checker_words_swap: {is: exp.item_queued}
+  h_checker_words_swap: {is: exp.hyp_supported}
+  b_checker_words_swap: {is: exp.item_done}
   b_refer_by_exact_holds: {is: exp.item_queued}
   o_sys_limit_subj_unpaired: {is: exp.observation}
   o_sys_mod_no_stated_false: {is: exp.observation}
@@ -853,6 +853,12 @@ individuals:
   o_sys_reh_extra: {is: exp.observation}
   o_sys_reh_name: {is: exp.observation}
   o_sys_reh_form: {is: exp.observation}
+  o_sys_cws_err: {is: exp.observation}
+  o_sys_cws_roles: {is: exp.observation}
+  o_sys_cws_dm: {is: exp.observation}
+  o_sys_cws_out: {is: exp.observation}
+  o_sys_cws_dis: {is: exp.observation}
+  o_sys_cws_hit: {is: exp.observation}
   o_sys_fic_errors: {is: exp.observation}
   o_sys_fic_laws: {is: exp.observation}
   o_sys_fic_rel: {is: exp.observation}
@@ -1648,6 +1654,16 @@ facts:
   - {is: exp.v_support, from: o_sys_reh_extra, to: h_refer_by_exact_holds}
   - {is: v_refer, from: o_sys_reh_name, to: {is: v_level, from: sys_refer_by_exact_holds.n_name.mean_value, to: 19.0}}
   - {is: v_refer, from: o_sys_reh_form, to: {is: v_level, from: sys_refer_by_exact_holds.n_form_300.mean_value, to: 26.0}}
+  - {is: v_refer, from: o_sys_cws_err, to: {is: v_level, from: sys_checker_words_swap.same_errors.mean_value, to: 1.0}}
+  - {is: exp.v_support, from: o_sys_cws_err, to: h_checker_words_swap}
+  - {is: v_refer, from: o_sys_cws_roles, to: {is: v_level, from: sys_checker_words_swap.same_roles.mean_value, to: 1.0}}
+  - {is: exp.v_support, from: o_sys_cws_roles, to: h_checker_words_swap}
+  - {is: v_refer, from: o_sys_cws_dm, to: {is: v_level, from: sys_checker_words_swap.same_dm.mean_value, to: 1.0}}
+  - {is: exp.v_support, from: o_sys_cws_dm, to: h_checker_words_swap}
+  - {is: v_refer, from: o_sys_cws_out, to: {is: v_level, from: sys_checker_words_swap.same_out.mean_value, to: 1.0}}
+  - {is: exp.v_support, from: o_sys_cws_out, to: h_checker_words_swap}
+  - {is: v_refer, from: o_sys_cws_dis, to: {is: v_level, from: sys_checker_words_swap.n_disagree.mean_value, to: 0.0}}
+  - {is: v_refer, from: o_sys_cws_hit, to: {is: v_level, from: sys_checker_words_swap.n_site_hit.mean_value, to: 4.0}}
   - {is: v_refer, from: o_sys_fic_errors, to: {is: v_level, from: sys_fact_id_by_content.C_errors.mean_value, to: 0.0}}
   - {is: exp.v_support, from: o_sys_fic_errors, to: h_fact_id_by_content}
   - {is: v_refer, from: o_sys_fic_laws, to: {is: v_level, from: sys_fact_id_by_content.C_laws_same.mean_value, to: 1.0}}
