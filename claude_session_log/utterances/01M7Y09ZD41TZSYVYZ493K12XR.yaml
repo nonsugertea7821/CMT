@@ -1,0 +1,46 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-21T02:52:27.940Z（UTC）
+individuals:
+  01M7Y09ZD41TZSYVYZ493K12XR:
+    is: model_utterance
+    display: 発言 3414
+    val:
+      order: 3414
+      text: |
+        Here's the triage proposal. There are 78 untested hypotheses in total. Grouped by the decision each is grounded to:
+
+        | Decision grounded to | Count |
+        |---|---|
+        | d_cscl_display_derived (識別子化) | 30 |
+        | d_road_japanese | 13 |
+        | d_road_region | 9 |
+        | d_metric | 3 |
+        | d_road_checker | 2 |
+        | d_goal | 1 |
+        | わき道 (no decision) | 20 |
+
+        The main-line items listed in the scheduled routine's prompt (h_rule_roles_by_signature and so on) are already done and no longer among the untested.
+
+        **Proposed order**
+
+        0. **Settle scale first: h_observation_by_scale.**
+           - Almost every main-line test reads the system, and the system has only 765 nodes. If verdicts change with scale, every later result needs a scale axis.
+           - One way to test it: pick a few past measures, recompute them in new scripts on sub-systems of different sizes, and see whether the verdicts flip.
+           - Caveat: the vocabulary experiment showed the system can't be grown simply by adding words. The base relations are too thin to tell everyday words apart, so growing the system first needs more relations and verbs.
+        1. **Derivation of extends (8):** h_concept_extends_deduced, h_parent_alone_by_law, h_extends_min_by_collected, h_extends_by_kind, h_extends_follows_use, h_extends_multi_parent, h_extends_rewrite_from_derived, h_undecided_from_indistinct. This is the core of 識別子化 (identifier-ization), and the cluster with the most hypotheses.
+        2. **Names and identity (4):** h_names_up_to_relabel, h_same_shape_verbs_merge, h_verbs_state_own_kind_mod, h_state_unique_display (d_goal). These follow directly from #605's finding that one_name forbids putting the same concept in two places.
+        3. **Domains as refer and projection (8):** h_domain_choice_is_refer, h_signature_all_charts, h_translation_by_display, h_vocab_domain_invariant, h_domain_in_formula, h_placement_without_domain, h_refer_by_projection, plus h_domain_as_projection and the rest of d_road_region. This is where your geometric intuition sits. After std was refuted under both definitions, this is where what a domain is gets decided.
+        4. **Grammar, laws and the checker (10):** h_grammar_as_laws, h_law_given_by_facts, h_post_as_fact, h_checker_words_swap, and others, plus d_road_checker.
+        5. **Translation and optimization (4):** h_cscl_needs_translation, h_small_translation, h_optimization_in_system, h_meaning_preserving_rewrite.
+        6. **Later:** d_road_japanese (13; the prosody series, which builds on 識別子化) and d_metric's transfer hypotheses (2).
+        7. **Frozen:** the 20 わき道 hypotheses.
+
+        **One thing for you to decide:** step 0 can go two ways.
+        - (A) Measure only whether scale matters on the current system, then go on to 1.
+        - (B) First grow the system by adding relations and verbs, then do 1 onward on the larger system.
+
+        A is lighter but leaves the data-volume problem unsolved. B is heavier, and adding the relations itself becomes a design decision.
+
+        本線 a 識別子化、d_cscl_display_derived の下
+facts:
+- {is: v_say, from: session_model, to: 01M7Y09ZD41TZSYVYZ493K12XR}
+- {is: exp.v_answer, from: 01M7Y09ZD41TZSYVYZ493K12XR, to: 01M7XYTG8D025DFYKKAJ7038T6}
