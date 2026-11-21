@@ -1,0 +1,24 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-21T22:13:57.866Z（UTC）
+individuals:
+  01M802RQZA9ZRARCZMH7XJ4BFT:
+    is: model_utterance
+    display: 発言 4123
+    val:
+      order: 4123
+      text: |
+        2 文のうち 1 つは事実として残し、もう 1 つを仮説として登録しました。
+
+        - **「比べる問い方でだけ出た傾向で、E41 の二択では出ませんでした」**: 登録していません。測った事実（1）です。E41 の decoy は 0.542 で、E43 の 0.125 とは違う値でした。問い方への依存は、既にある h_verdict_by_question_format が扱います。
+        - **「字面の影響を除いても、2 段の依存はほぼ読めていません」**: h_model_misses_mod（モデルは mod を通した依存を読まない）として登録しました。
+          - 式は `v_read model→syntax.mod, neg: true` で、d_road_checker に v_ground で結んでいます。
+          - 測った値は E43 の control 0.417 と E42 の named 0.375 です。
+          - ただ、これを一つのモデル・一つの問い方を越えて言うのは確かめていない主張（2）なので、仮説にしました。
+          - 登録は PR #726 に足し、本文も更新しました。
+
+        ロードマップの位置: H3（検査器の道 d_road_checker）。次の候補は h_verdict_by_checker と h_model_misses_mod。
+facts:
+- {is: v_say, from: session_model, to: 01M802RQZA9ZRARCZMH7XJ4BFT}
+- {is: exp.v_answer, from: 01M802RQZA9ZRARCZMH7XJ4BFT, to: 01M7ZG4RFFK1A28D1ZVQK01AG8}
+- {is: v_refer, from: 01M802RQZA9ZRARCZMH7XJ4BFT, to: exp.v_read}
+- {is: v_refer, from: 01M802RQZA9ZRARCZMH7XJ4BFT, to: syntax.mod}
+- {is: v_refer, from: 01M802RQZA9ZRARCZMH7XJ4BFT, to: exp.v_ground}
