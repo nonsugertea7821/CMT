@@ -1,0 +1,32 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-21T11:44:51.205Z（UTC）
+individuals:
+  01M7YYRT051V8WNM3AQSM8738F:
+    is: model_utterance
+    display: 発言 3731
+    val:
+      order: 3731
+      text: |
+        この周回では、h_charts_meet_at_ontology_top を体系を読んで確かめ、反証になりました（PR #671、Draft のまま）。
+        - **測ったもの**: 語ごとに `extends` と `is` を辿り、上位の語（continuant か occurrent）に届くかを見ました。
+        - **結果**:
+          - 型を持つ 5061 語のうち、届いたのは 3.9% です。
+          - 全部の語が届く領域は、23 のうち一つもありません。一語でも届く領域は 7 つでした。
+        - **わかったこと**:
+          - 届かない語の大半（4860 語）は、`ontology.dependent` で止まっています。dependent は continuant を extends していません。
+          - `specifically_dependent_continuant` は名前に continuant を含みますが、式では continuant を extends していません。名前で読むと見落とすずれです。
+          - #668 で全部の領域が continuant に届いたのは、事実の引数を辿った結果でした。型の鎖では届いていません。
+        - **新しい仮説**: 二つの別々の解き方を、登録だけの PR #672 で出しました。どちらも `d_cscl_display_derived` に結んであります。
+          - h_dependent_continuant_extends: 式を名前に追いつかせ、dependent の側を continuant に結ぶ。
+          - h_charts_meet_at_ontology_roots: dependent を第三の根と認め、領域が出会う先を ontology の根の集まりとする。
+        - **#671 と #672**: 同じ箇所の近くを触るので、後からマージする方で衝突が出たら、main を取り込んで解きます。
+        - **E34**: partial から再開して動いています（30 項目まで）。
+        - **PR #640（E33）**: 引き続きあなたの確認待ちです。
+
+        ロードマップの位置: 軽い列 L2（領域、d_road_region の前提）を一つ進めました。重い列は H2（E34）を測定中です。
+facts:
+- {is: v_say, from: session_model, to: 01M7YYRT051V8WNM3AQSM8738F}
+- {is: exp.v_answer, from: 01M7YYRT051V8WNM3AQSM8738F, to: 01M7YQNY4SHZ5CPQ9Z096V99D4}
+- {is: v_refer, from: 01M7YYRT051V8WNM3AQSM8738F, to: syntax.extends}
+- {is: v_refer, from: 01M7YYRT051V8WNM3AQSM8738F, to: ontology.is}
+- {is: v_refer, from: 01M7YYRT051V8WNM3AQSM8738F, to: ontology.dependent}
+- {is: v_refer, from: 01M7YYRT051V8WNM3AQSM8738F, to: ontology.specifically_dependent_continuant}
