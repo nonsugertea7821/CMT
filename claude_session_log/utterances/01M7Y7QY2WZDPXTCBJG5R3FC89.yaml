@@ -1,0 +1,21 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-21T05:02:25.372Z（UTC）
+individuals:
+  01M7Y7QY2WZDPXTCBJG5R3FC89:
+    is: model_utterance
+    display: 発言 3517
+    val:
+      order: 3517
+      text: |
+        #638 の spec が型検査で落ちていたので、直して push しました。spec はまだ走り直していないので、通るかは分かりません。
+
+        - **落ちた原因:** `round_trip_material` を「適用（`usage_apply`）に依る」と書いていました。`v_depend` の依る先はもの（continuant）に限られますが、`usage_apply` は推論なので型が合いませんでした。
+        - **直し方:** 依る先を「適用で出た判定（`verdict`）」に替えました。式は「判定に依って直す定義文と適用例」になります。PR の本文も合わせて直しました。
+        - **まだ式にできていない点:** 「判定が誤りである」ことと「交互に並ぶ」ことは、まだ表示語に頼っています。PR を見るときはここを見てください。
+
+        本線 d_consolidation_in_vector の下（教え方の候補）
+facts:
+- {is: v_say, from: session_model, to: 01M7Y7QY2WZDPXTCBJG5R3FC89}
+- {is: exp.v_answer, from: 01M7Y7QY2WZDPXTCBJG5R3FC89, to: 01M7Y7HJ5BJB110253MWRK61SN}
+- {is: v_refer, from: 01M7Y7QY2WZDPXTCBJG5R3FC89, to: exp.usage_apply}
+- {is: v_refer, from: 01M7Y7QY2WZDPXTCBJG5R3FC89, to: ontology.v_depend}
+- {is: v_refer, from: 01M7Y7QY2WZDPXTCBJG5R3FC89, to: exp.verdict}
