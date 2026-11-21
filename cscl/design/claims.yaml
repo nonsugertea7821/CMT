@@ -419,6 +419,10 @@ individuals:
   o_sys_fgg_cover_r_parent: {is: exp.observation}
   o_sys_fgg_cover_r_kind_up: {is: exp.observation}
   o_sys_fgg_n_target: {is: exp.observation}
+  h_above_includes_form: {is: exp.hyp_untested}
+  b_above_includes_form: {is: exp.item_queued}
+  h_above_split_written_derived: {is: exp.hyp_untested}
+  b_above_split_written_derived: {is: exp.item_queued}
   b_concept_extends_deduced_vocab: {is: exp.item_queued}
   b_differentia_by_genus_vocab: {is: exp.item_queued}
   b_verb_extends_primitive_vocab: {is: exp.item_queued}
@@ -1978,6 +1982,12 @@ facts:
   - {is: v_refer, from: o_sys_fgg_cover_r_parent, to: {is: v_level, from: sys_form_gives_genus.cover_r_parent.mean_value, to: 0.0}}
   - {is: v_refer, from: o_sys_fgg_cover_r_kind_up, to: {is: v_level, from: sys_form_gives_genus.cover_r_kind_up.mean_value, to: 1.0}}
   - {is: v_refer, from: o_sys_fgg_n_target, to: {is: v_level, from: sys_form_gives_genus.n_target.mean_value, to: 29}}
+  - {is: v_refer, from: h_above_includes_form, to: {is: v_refer, from: syntax.form, to: ontology.v_above}}
+  - {is: exp.v_check, from: b_above_includes_form, to: h_above_includes_form}
+  - {is: exp.v_ground, from: d_cscl_display_derived, to: h_above_includes_form}
+  - {is: v_refer, from: h_above_split_written_derived, to: {is: v_refer, from: syntax.form, to: ontology.v_above, neg: true}}
+  - {is: exp.v_check, from: b_above_split_written_derived, to: h_above_split_written_derived}
+  - {is: exp.v_ground, from: d_cscl_display_derived, to: h_above_split_written_derived}
   - {is: exp.v_check, from: b_concept_extends_deduced_vocab, to: h_concept_extends_deduced}
   - {is: exp.v_check, from: b_differentia_by_genus_vocab, to: h_differentia_by_genus}
   - {is: exp.v_check, from: b_verb_extends_primitive_vocab, to: h_verb_extends_primitive}
