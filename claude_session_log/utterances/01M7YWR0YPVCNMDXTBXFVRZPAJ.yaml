@@ -1,0 +1,33 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-21T11:09:28.406Z（UTC）
+individuals:
+  01M7YWR0YPVCNMDXTBXFVRZPAJ:
+    is: model_utterance
+    display: 発言 3710
+    val:
+      order: 3710
+      text: |
+        E33 が走り終わり、判定は反証でした。往復で教えると、毎回混ぜて教えるより兄弟概念の弁別が低くなりました。記録を体系に書いて PR #640 に push し、本文も更新してあります。
+
+        | 条件 | acc_both | 余裕 |
+        |---|---|---|
+        | none（学習なし） | 0.125 | 0.07 |
+        | both（毎回混ぜる） | 0.208 | 1.01 |
+        | round（往復） | 0.083 | 0.01 |
+
+        - **判定**: 外れの条件（both が none を上回らない）には当たりません。round の acc_both が both 以下なので反証です。round は none よりも低い値でした。
+        - **観察**:
+          - round の、教える設問 4 問での誤りの数は、ほとんどの組で最後まで 4 のままでした。
+          - 余裕は 0 に寄りました。
+        - **解釈**（測ってはいません）: 抽象の 3 段と具体の 3 段が、同じ 2 本のベクトルを逆向きに引き、動きを打ち消し合っているように見えます。容量の不足より、最適化の衝突と読んでいます。
+        - **含意**: 往復を確かめ直すなら、往復の 1 回を長くするか、材料を変える形が要ります。材料を変えて問う続きは、既に h_round_trip_bounds_present と h_round_trip_forms_absent として登録済みなので、新しい仮説は足していません。
+        - **開示**:
+          - 選択肢の順で答えが変わる偏りが大きく出ています（none でも acc 0.52 に対して acc_both 0.125）。
+          - 評価は 48 問しかありません。
+          - 途中で手順を訂正したので、自動マージではなく手で見てもらう PR です。Draft は spec が通ってから外します。
+
+        次の重い実験として、E34（h_state_unique_display、PR #642）を走らせ始めました。9 分ごとの再開の確かめも置いてあります。
+
+        ロードマップ: 重い列 H1（d_consolidation_in_vector）は反証で済み、spec 待ちです。続けて、L1 の h_state_unique_display を E34 で走らせています。
+facts:
+- {is: v_say, from: session_model, to: 01M7YWR0YPVCNMDXTBXFVRZPAJ}
+- {is: exp.v_answer, from: 01M7YWR0YPVCNMDXTBXFVRZPAJ, to: 01M7YQNY4SHZ5CPQ9Z096V99D4}
