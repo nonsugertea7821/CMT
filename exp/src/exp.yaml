@@ -2591,6 +2591,14 @@ individuals:
   e32_specific_expression_rsa_cond_rho_full: {is: axis_value, val: {text: rho_full}}
   e32_specific_expression_rsa_cond_p_full: {is: axis_value, val: {text: p_full}}
   e32_specific_expression_rsa_cond_n_pairs: {is: axis_value, val: {text: n_pairs}}
+  e33_round_trip_sibling: {is: measurement_family}
+  e33_round_trip_sibling_c: {is: family_axis, val: {text: c}}
+  e33_round_trip_sibling_c_none: {is: axis_value, val: {text: none}}
+  e33_round_trip_sibling_c_both: {is: axis_value, val: {text: both}}
+  e33_round_trip_sibling_c_round: {is: axis_value, val: {text: round}}
+  e33_round_trip_sibling_m: {is: family_axis, val: {text: m}}
+  e33_round_trip_sibling_m_acc_both: {is: axis_value, val: {text: acc_both}}
+  e33_round_trip_sibling_m_mean_margin: {is: axis_value, val: {text: mean_margin}}
   sys_case_frame_formula: {is: measurement_family}
   sys_case_frame_formula_cond: {is: family_axis, val: {text: cond}}
   sys_case_frame_formula_cond_errors: {is: axis_value, val: {text: errors}}
@@ -3208,6 +3216,10 @@ individuals:
   o_e32_rho_full: {is: observation}
   o_e32_p_full: {is: observation}
   o_e32_pairs: {is: observation}
+  o_e33_both_over_none: {is: observation}
+  o_e33_round_below_both: {is: observation}
+  o_e33_round_margin_below_both: {is: observation}
+  o_e33_round_below_none: {is: observation}
   o_sys_family_refers_laws_passes: {is: observation}
   o_sys_family_refers_laws_passes_ec: {is: observation}
   o_sys_family_refers_laws_unchanged: {is: observation}
@@ -3256,8 +3268,8 @@ individuals:
   h_auto_merge_uncorrected: {is: hyp_untested}
   h_merge_verdict_by_spec: {is: hyp_untested}
   b_merge_verdict_by_spec: {is: item_queued}
-  h_round_trip_raises_sibling: {is: hyp_untested}
-  b_round_trip_raises_sibling: {is: item_queued}
+  h_round_trip_raises_sibling: {is: hyp_refuted}
+  b_round_trip_raises_sibling: {is: item_done}
   h_round_trip_bounds_present: {is: hyp_untested}
   b_round_trip_bounds_present: {is: item_queued}
   h_round_trip_forms_absent: {is: hyp_untested}
@@ -9060,6 +9072,23 @@ facts:
   - {is: v_spell, from: e32_specific_expression_rsa_cond_n_pairs, to: n_pairs}
   - {is: v_entry_of, from: '{cond}', to: e32_specific_expression_rsa}
   - {is: v_metric_of, from: e32_specific_expression_rsa, to: mean_value}
+  - {is: v_file_of, from: e33_round_trip_sibling.json, to: e33_round_trip_sibling}
+  - {is: v_rows_of, from: [s], to: e33_round_trip_sibling}
+  - {is: v_axis_of, from: e33_round_trip_sibling_c, to: e33_round_trip_sibling}
+  - {is: v_keys_of, from: '#', to: e33_round_trip_sibling_c}
+  - {is: v_value_of, from: e33_round_trip_sibling_c_none, to: e33_round_trip_sibling_c}
+  - {is: v_spell, from: e33_round_trip_sibling_c_none, to: ['none']}
+  - {is: v_value_of, from: e33_round_trip_sibling_c_both, to: e33_round_trip_sibling_c}
+  - {is: v_spell, from: e33_round_trip_sibling_c_both, to: ['both']}
+  - {is: v_value_of, from: e33_round_trip_sibling_c_round, to: e33_round_trip_sibling_c}
+  - {is: v_spell, from: e33_round_trip_sibling_c_round, to: ['round']}
+  - {is: v_axis_of, from: e33_round_trip_sibling_m, to: e33_round_trip_sibling}
+  - {is: v_value_of, from: e33_round_trip_sibling_m_acc_both, to: e33_round_trip_sibling_m}
+  - {is: v_spell, from: e33_round_trip_sibling_m_acc_both, to: acc_both}
+  - {is: v_value_of, from: e33_round_trip_sibling_m_mean_margin, to: e33_round_trip_sibling_m}
+  - {is: v_spell, from: e33_round_trip_sibling_m_mean_margin, to: mean_margin}
+  - {is: v_entry_of, from: '{m}', to: e33_round_trip_sibling}
+  - {is: v_metric_of, from: e33_round_trip_sibling, to: mean_value}
   - {is: v_file_of, from: sys_layers_exists_change.json, to: sys_layers_exists_change}
   - {is: v_rows_of, from: [rows], to: sys_layers_exists_change}
   - {is: v_axis_of, from: sys_layers_exists_change_cond, to: sys_layers_exists_change}
@@ -9577,6 +9606,12 @@ facts:
   - {is: v_refer, from: h_round_trip_raises_sibling, to: {is: v_raise, from: teacher_round_trip, to: sibling_discrimination}}
   - {is: v_check, from: b_round_trip_raises_sibling, to: h_round_trip_raises_sibling}
   - {is: v_ground, from: d_consolidation_in_vector, to: h_round_trip_raises_sibling}
+  - {is: v_refer, from: o_e33_both_over_none, to: {is: v_come_after, from: e33_round_trip_sibling.both.acc_both.mean_value, to: e33_round_trip_sibling.none.acc_both.mean_value}}
+  - {is: v_refer, from: o_e33_round_below_both, to: {is: v_come_before, from: e33_round_trip_sibling.round.acc_both.mean_value, to: e33_round_trip_sibling.both.acc_both.mean_value}}
+  - {is: v_contradict, from: o_e33_round_below_both, to: h_round_trip_raises_sibling}
+  - {is: v_refer, from: o_e33_round_margin_below_both, to: {is: v_come_before, from: e33_round_trip_sibling.round.mean_margin.mean_value, to: e33_round_trip_sibling.both.mean_margin.mean_value}}
+  - {is: v_contradict, from: o_e33_round_margin_below_both, to: h_round_trip_raises_sibling}
+  - {is: v_refer, from: o_e33_round_below_none, to: {is: v_come_before, from: e33_round_trip_sibling.round.acc_both.mean_value, to: e33_round_trip_sibling.none.acc_both.mean_value}}
   - {is: v_refer, from: h_round_trip_bounds_present, to: {is: v_raise, from: teacher_round_trip_bound, to: sibling_discrimination}}
   - {is: v_check, from: b_round_trip_bounds_present, to: h_round_trip_bounds_present}
   - {is: v_ground, from: d_consolidation_in_vector, to: h_round_trip_bounds_present}
