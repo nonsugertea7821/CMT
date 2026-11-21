@@ -1,0 +1,41 @@
+domain: ja_basic
+
+nodes:
+  j_come: {display: 到来, extends: occurrent, from: continuant, to: continuant, pre: [{is: part, from: from, to: to, neg: true}], post: [{is: part, from: from, to: to}]}
+  j_go: {display: 動く, extends: occurrent, from: continuant, to: continuant, new_kind: continuant,
+         pre: [{is: part, from: from, to: new}], post: [{is: part, from: from, to: new, neg: true}, {is: part, from: from, to: to}]}
+  j_put: {display: 置く, extends: occurrent, from: continuant, to: continuant, new_kind: continuant,
+          pre: [{is: part, from: to, to: new, neg: true}], post: [{is: part, from: to, to: new}, {is: depend, from: to, to: from}]}
+  j_keep: {display: 続ける, extends: occurrent, from: continuant, to: continuant, new_kind: quality,
+           pre: [{is: depend, from: new, to: to}], post: [{is: depend, from: new, to: to}, {is: depend, from: to, to: from}]}
+  j_be: {display: ではある, extends: occurrent, from: continuant, to: quality, holds: [{is: depend, from: to, to: from}]}
+  j_say: {display: 発語, extends: occurrent, from: continuant, to: any, new_kind: sentence,
+          pre: [{is: exists, from: new, neg: true}], post: [{is: exists, from: new}, {is: depend, from: new, to: from}, {is: refer, from: new, to: to}]}
+  j_see: {display: ご覧になる, extends: occurrent, from: continuant, to: continuant, new_kind: information_entity,
+          pre: [{is: exists, from: new, neg: true}], post: [{is: exists, from: new}, {is: depend, from: new, to: from}, {is: depend, from: new, to: to}, {is: refer, from: new, to: to}]}
+  j_send: {display: 向かわせる, extends: v_trigger, to: j_go}
+
+  j_animal: {display: 動物, extends: performer, mod: {of: [j_go, from]}}
+  j_invention: {display: 発明, extends: artifact, mod: {of: [v_design, to], with: performer}}
+  j_science: {display: 科学, extends: information_entity, mod: refer_from_experiment}
+  j_learning: {display: 修得, extends: process, mod: {of: [v_stage, to], with: v_learn}}
+  j_step: {display: 方策, extends: inference, mod: {of: [v_stage, from], with: process}}
+  j_chalk: {display: 白墨, extends: artifact, mod: {of: [v_express, to], with: sentence}}
+  j_position: {display: 場所, extends: continuant, mod: {of: [j_come, to]}}
+  j_meat: {display: 食肉, extends: component, mod: {of: [v_compose, from], with: j_animal}}
+  j_addition: {display: 添, extends: process, mod: {of: [v_stage, to], with: v_sum}}
+  j_grip: {display: 握っていること, extends: process, mod: {of: [v_stage, to], with: j_keep}}
+  j_mark: {display: 点数, extends: magnitude, mod: computed}
+  j_attraction: {display: 引力, extends: disposition, mod: {of: [v_trigger, from], with: j_come}}
+  j_experience: {display: 経験, extends: information_entity, mod: {of: [j_see, new]}}
+  j_cause: {display: 導因, extends: process, mod: {of: [v_trigger, from]}}
+  j_name: {display: 呼称, extends: word, mod: {of: [v_refer, from], with: continuant}}
+  j_map: {display: 軍用地図, extends: information_entity, mod: {of: [v_refer, from], with: j_position}}
+
+individuals:
+  ja_basic: {is: domain, display: 日本語の基礎語彙}
+
+facts:
+  - {is: v_use, from: ja_basic, to: syntax}
+  - {is: v_use, from: ja_basic, to: std}
+  - {is: v_presume, from: ja_basic, to: closed_world}
