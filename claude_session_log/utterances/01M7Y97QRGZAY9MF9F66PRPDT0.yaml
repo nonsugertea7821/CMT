@@ -1,0 +1,46 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-21T05:28:31.760Z（UTC）
+individuals:
+  01M7Y97QRGZAY9MF9F66PRPDT0:
+    is: model_utterance
+    display: 発言 3542
+    val:
+      order: 3542
+      text: |
+        式の識別子化（lang の決定 d_cscl_display_derived）は、ここしばらく止まっています。最後に進めたのは #619 で、そのあと #620〜#637 では測り方（主張を除いた読み）と同期の作業をしていました。
+
+        **この決定に結んだ仮説は 97 件です**
+
+        | 状態 | 件数 |
+        |---|---|
+        | 支持 | 34 |
+        | 反証 | 30 |
+        | mixed | 3 |
+        | 未検証 | 30 |
+
+        **ロードマップの本線 a に並べた 13 件は、すべて確かめ終わっています**
+        - 支持（3 件）: h_concept_kind_excludes_verb、h_negation_formula、h_placement_in_laws
+        - mixed（2 件）: h_frame_both_sides、h_checker_words_by_formula
+        - 反証（8 件）: h_rule_roles_by_signature、h_collect_by_formula、h_collect_agree_in_grammar、h_case_frame_by_signature、h_draw_on_with_shallow、h_concept_kind_frame_free、h_refer_stratified、h_cscl_self_hosting
+
+        反証からは、別の解き方の仮説を対で出して進めてきました。たとえば役割は named mod で取る（h_rule_roles_by_named_mod）、事実の欄は動詞で分ける（h_fact_slot_by_verb）などで、どちらも支持されています。
+
+        **最近の流れ（#589〜#619）**
+        - 基本の語彙と std の定め方を確かめました。h_basic_vocab_fits、h_std_by_law、h_std_by_shared_use は、どれも反証でした。
+        - そこから「形式の動詞と実在の動詞の区別」に移りました。h_formal_real_by_law と h_lawless_verbs_are_real は支持されました。
+
+        **残っている未検証の 30 件の主なもの**
+        - extends を導くか（h_extends_derived ほか）の系列: h_concept_extends_deduced、h_extends_min_by_collected、h_extends_rewrite_from_derived、h_extends_multi_parent、h_extends_follows_use、h_extends_by_kind
+        - 形をそろえる系列: h_names_up_to_relabel、h_same_shape_verbs_merge
+        - 領域の系列: h_domain_in_formula、h_domain_choice_is_refer
+        - そのほか: h_grammar_as_laws、h_post_as_fact、h_undecided_from_indistinct、h_signature_all_charts
+
+        **次にやること**
+
+        次は h_undecided_from_indistinct を取ります。式が区別していない概念では判定が決まらない、という仮説で、今日の「抽象と具体の往復」を体系の側で見た版に当たります。体系を読むだけの軽い実験なので、E33 が走っている間でも進められます。
+
+        周回のプロンプトの本線 a の並びは、もう全部終わっているので古くなっています。必要なら、残りの未検証の仮説で並べ直します。
+
+        本線 a 識別子化、d_cscl_display_derived の下
+facts:
+- {is: v_say, from: session_model, to: 01M7Y97QRGZAY9MF9F66PRPDT0}
+- {is: exp.v_answer, from: 01M7Y97QRGZAY9MF9F66PRPDT0, to: 01M7Y96XQ96M485ZBTP8G2HSCS}
