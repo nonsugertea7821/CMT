@@ -391,8 +391,8 @@ individuals:
   b_std_by_law: {is: exp.item_done}
   h_std_by_shared_use: {is: exp.hyp_refuted}
   b_std_by_shared_use: {is: exp.item_done}
-  h_signature_all_charts: {is: exp.hyp_untested}
-  b_signature_all_charts: {is: exp.item_queued}
+  h_signature_all_charts: {is: exp.hyp_refuted}
+  b_signature_all_charts: {is: exp.item_done}
   h_charts_meet_at_ontology_top: {is: exp.hyp_untested}
   b_charts_meet_at_ontology_top: {is: exp.item_queued}
   b_concept_extends_deduced_vocab: {is: exp.item_queued}
@@ -645,6 +645,11 @@ individuals:
   o_sys_lwd_d_verb: {is: exp.observation}
   o_sys_lwd_c_concept: {is: exp.observation}
   o_sys_lwd_c_verb: {is: exp.observation}
+  o_sys_sac_n_i: {is: exp.observation}
+  o_sys_sac_any: {is: exp.observation}
+  o_sys_sac_closure_any: {is: exp.observation}
+  o_sys_sac_closure_sig: {is: exp.observation}
+  o_sys_sac_closure_nonsig: {is: exp.observation}
   o_sys_tbd_t_rel: {is: exp.observation}
   o_sys_tbd_t_viol: {is: exp.observation}
   o_sys_tbd_b_rel: {is: exp.observation}
@@ -1907,6 +1912,13 @@ facts:
   - {is: v_refer, from: h_signature_all_charts, to: {is: v_depend, from: syntax.domain, to: any}}
   - {is: exp.v_check, from: b_signature_all_charts, to: h_signature_all_charts}
   - {is: exp.v_ground, from: d_cscl_display_derived, to: h_signature_all_charts}
+  - {is: v_refer, from: o_sys_sac_n_i, to: {is: v_level, from: sys_signature_all_charts.n_I.mean_value, to: 0}}
+  - {is: exp.v_contradict, from: o_sys_sac_n_i, to: h_signature_all_charts}
+  - {is: v_refer, from: o_sys_sac_any, to: {is: v_level, from: sys_signature_all_charts.any_all.mean_value, to: 0}}
+  - {is: exp.v_contradict, from: o_sys_sac_any, to: h_signature_all_charts}
+  - {is: v_refer, from: o_sys_sac_closure_any, to: {is: v_level, from: sys_signature_all_charts.closure_any_all.mean_value, to: 1}}
+  - {is: v_refer, from: o_sys_sac_closure_sig, to: {is: v_level, from: sys_signature_all_charts.closure_n_I_sig.mean_value, to: 1}}
+  - {is: v_refer, from: o_sys_sac_closure_nonsig, to: {is: v_level, from: sys_signature_all_charts.closure_n_I_nonsig.mean_value, to: 14}}
   - {is: v_refer, from: h_charts_meet_at_ontology_top, to: {is: v_depend, from: syntax.domain, to: ontology.continuant}}
   - {is: exp.v_check, from: b_charts_meet_at_ontology_top, to: h_charts_meet_at_ontology_top}
   - {is: exp.v_ground, from: d_cscl_display_derived, to: h_charts_meet_at_ontology_top}
