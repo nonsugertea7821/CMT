@@ -1,0 +1,26 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-21T22:17:20.275Z（UTC）
+individuals:
+  01M802YXMKV5936PWM5ZGESBYP:
+    is: model_utterance
+    display: 発言 4127
+    val:
+      order: 4127
+      text: |
+        #721 の衝突を解き、push しました（4f7b57e）。
+
+        - 衝突したのは exp/src/exp.yaml の仮説の並びだけです。
+        - main から入った 4 つの仮説（h_model_misses_extends・h_verdict_by_question_format・h_verdict_by_checker・h_model_misses_mod）はそのまま残しました。
+        - h_model_reads_by_word は、このブランチの判定どおり支持（hyp_supported と item_done）にしています。
+        - 途中で、コメントを足さない取り決めの検査フックが commit を止めました。
+          - 名指しされたのは、ファイルに `#` を含む既存の行です。HEAD にも main にもあり、新しく足したものではありません。
+          - 衝突の印が残ったファイルを、解く処理と同じコマンドで commit しようとしたため、その時点のファイルに当たったと見ています。
+          - 衝突を解いてから commit を分けて走らせると、通りました。
+
+        CI の結果を待ちます。通れば Draft を外します。
+
+        ロードマップの位置: H3（検査器の道 d_road_checker）。
+facts:
+- {is: v_say, from: session_model, to: 01M802YXMKV5936PWM5ZGESBYP}
+- {is: exp.v_answer, from: 01M802YXMKV5936PWM5ZGESBYP, to: 01M7ZG4RFFK1A28D1ZVQK01AG8}
+- {is: v_refer, from: 01M802YXMKV5936PWM5ZGESBYP, to: exp.hyp_supported}
+- {is: v_refer, from: 01M802YXMKV5936PWM5ZGESBYP, to: exp.item_done}
