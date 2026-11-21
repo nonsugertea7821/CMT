@@ -371,6 +371,8 @@ individuals:
   b_basic_vocab_fits: {is: exp.item_queued}
   h_vocab_domain_invariant: {is: exp.hyp_untested}
   b_vocab_domain_invariant: {is: exp.item_queued}
+  h_domain_choice_is_refer: {is: exp.hyp_untested}
+  b_domain_choice_is_refer: {is: exp.item_queued}
   h_std_by_law: {is: exp.hyp_untested}
   b_std_by_law: {is: exp.item_queued}
   h_std_by_shared_use: {is: exp.hyp_untested}
@@ -1771,6 +1773,9 @@ facts:
   - {is: v_refer, from: h_vocab_domain_invariant, to: {is: v_depend, from: syntax.extends, to: syntax.domain, neg: true}}
   - {is: exp.v_check, from: b_vocab_domain_invariant, to: h_vocab_domain_invariant}
   - {is: exp.v_ground, from: d_cscl_display_derived, to: h_vocab_domain_invariant}
+  - {is: v_refer, from: h_domain_choice_is_refer, to: {is: v_refer, from: syntax.domain, to: syntax.concept_expression}}
+  - {is: exp.v_check, from: b_domain_choice_is_refer, to: h_domain_choice_is_refer}
+  - {is: exp.v_ground, from: d_cscl_display_derived, to: h_domain_choice_is_refer}
   - {is: v_refer, from: h_std_by_law, to: {is: v_depend, from: std_layer, to: syntax.law_rule}}
   - {is: exp.v_check, from: b_std_by_law, to: h_std_by_law}
   - {is: exp.v_ground, from: d_cscl_display_derived, to: h_std_by_law}
