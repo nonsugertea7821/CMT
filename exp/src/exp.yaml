@@ -3388,6 +3388,8 @@ individuals:
   b_lineage_is_history: {is: item_queued}
   h_std_exp_biased: {is: hyp_refuted}
   b_std_exp_biased: {is: item_done}
+  h_observation_by_scale: {is: hyp_untested}
+  b_observation_by_scale: {is: item_queued}
   h_domain_as_projection: {is: hyp_untested}
   b_domain_as_projection: {is: item_queued}
   h_decision_link_by_role: {is: hyp_supported}
@@ -7718,6 +7720,9 @@ facts:
   - {is: v_refer, from: o_sys_seb_share, to: {is: v_level, from: sys_std_exp_bias.share_node_move.mean_value, to: 0.42857142857142855}}
   - {is: v_refer, from: o_sys_seb_move, to: {is: v_level, from: sys_std_exp_bias.n_node_move.mean_value, to: 12}}
   - {is: v_contradict, from: o_sys_seb_share, to: h_std_exp_biased}
+  - {is: v_refer, from: h_observation_by_scale, to: {is: v_depend, from: observation, to: [syntax.system, magnitude]}}
+  - {is: v_check, from: b_observation_by_scale, to: h_observation_by_scale}
+  - {is: v_ground, from: d_metric, to: h_observation_by_scale}
   - {is: v_file_of, from: vocab_basic_judge.json, to: vocab_basic_judge}
   - {is: v_axis_of, from: vocab_basic_judge_cond, to: vocab_basic_judge}
   - {is: v_value_of, from: vocab_basic_judge_cond_n_pair, to: vocab_basic_judge_cond}
