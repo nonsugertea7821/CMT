@@ -1,0 +1,39 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-21T03:22:10.671Z（UTC）
+individuals:
+  01M7Y20CBFZRRHA0W95FF5ZE4J:
+    is: model_utterance
+    display: 発言 3448
+    val:
+      order: 3448
+      text: |
+        ontology の 6 語が形式の語か実在の語かを確かめました（#619）。事前に決めた判定では「実在」が支持です。ただ、測り方に穴が見つかったので、この結果は弱いと見ています。
+
+        **結果**
+        - 6 語は v_express、v_trigger、v_stage、v_involve、v_perform、v_come_after です。
+        - 6 語すべてで、領域ごとに組む相手の種類が食い違いました。重なりの度合い（J、1 なら全領域で同じ相手）の平均は 0.31 で、6 語とも基準の 0.5 を下回っています。
+        - そのため、`h_lawless_verbs_are_real`（これらは実在の語）は支持、`h_formal_verbs_need_laws`（形式の語で法則が足りないだけ）は反証としました。
+
+        **結果が弱い理由**
+        - 測った範囲に、私がこの二つの仮説を登録したときの項（6 語を並べた行）が入っていました。測る対象についての仮説が、測る値そのものを動かしています。
+        - 手で見積もると、その項を除けば v_express の J はおよそ 0.53 になり、形式の側に移ります。v_stage（0.45）と v_come_after（0.40）も 0.5 に近い値です。
+        - 判定は事前に決めたとおりに置き、このことはスクリプトの説明文に追記して開示しました。結果を見たあとの書き足しなので、#619 は自動マージに乗せず、手で見てもらう扱いです。
+
+        **含意と新しい仮説（#620、登録だけ）**
+        体系についての仮説を同じ体系に書くと、体系を読む実験が自分の仮説を数えてしまいます。直し方を二つ、対で登録しました。どちらも、ロードマップの使い方をまたぐ一貫性（d_metric）に結んでいます。
+        - `h_reading_excludes_claims`: 測る側で、仮説と観察の項を測る範囲から外す。
+        - `h_claims_apart_by_domain`: 書く側で、仮説の置き場を測る対象と分ける。
+
+        **あなたの確認を待っている PR**
+        - #614: 法則で形式と実在を分ける実験。訂正があるので手で見る扱いです。
+        - #619: 今回の実験。
+
+        本線 a 識別子化、d_cscl_display_derived の下
+facts:
+- {is: v_say, from: session_model, to: 01M7Y20CBFZRRHA0W95FF5ZE4J}
+- {is: exp.v_answer, from: 01M7Y20CBFZRRHA0W95FF5ZE4J, to: 01M7Y0JCR0P8PYMHA8TP3NABF1}
+- {is: v_refer, from: 01M7Y20CBFZRRHA0W95FF5ZE4J, to: ontology.v_express}
+- {is: v_refer, from: 01M7Y20CBFZRRHA0W95FF5ZE4J, to: ontology.v_trigger}
+- {is: v_refer, from: 01M7Y20CBFZRRHA0W95FF5ZE4J, to: ontology.v_stage}
+- {is: v_refer, from: 01M7Y20CBFZRRHA0W95FF5ZE4J, to: ontology.v_involve}
+- {is: v_refer, from: 01M7Y20CBFZRRHA0W95FF5ZE4J, to: ontology.v_perform}
+- {is: v_refer, from: 01M7Y20CBFZRRHA0W95FF5ZE4J, to: ontology.v_come_after}
