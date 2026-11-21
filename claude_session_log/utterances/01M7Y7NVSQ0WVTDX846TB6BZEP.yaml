@@ -1,0 +1,51 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-21T05:01:17.495Z（UTC）
+individuals:
+  01M7Y7NVSQ0WVTDX846TB6BZEP:
+    is: model_utterance
+    display: 発言 3513
+    val:
+      order: 3513
+      text: |
+        使えると思います。この案をまず未検証の仮説として登録し、PR #638 に出しました。この登録は新しい概念を3つ足すので、自動マージには乗りません。PR で見てもらう必要があります。
+
+        **既にやったこととの違い**
+        - E3 の `teacher_both` は、定義文と適用例を**同時に混ぜて**教えるやり方でした。
+        - 往復は**順番**があるやり方です。
+          1. 抽象（定義）から具体（適用）に下りる。
+          2. 適用で出た**誤り**を使って定義を直す。
+          3. また具体に戻る。
+
+          具体で出た誤りが次の抽象を決める点が、`teacher_both` と違います。
+        - 人の場合、細かく分けられていくのは、たいてい「似ているが違うもの」との境目です。そこで、効き目は兄弟概念の弁別で測ることにしました。設問 `g_sibling` は既にあります。
+
+        **登録した仮説**
+        - `h_round_trip_raises_sibling` は「往復で教えると、兄弟概念の弁別が上がる」という仮説です。式は `v_raise(teacher_round_trip, sibling_discrimination)` です。
+        - 根拠として結んだ決定は `d_consolidation_in_vector`（教えて得たベクトルに定着させる）です。往復はその教え方の候補です。
+
+        **確かめ方の案**（事前登録はまだで、確かめる PR の最初の commit で固めます）
+        - 比べるもの:
+          - 往復
+          - `teacher_both`（同時に混ぜる）
+          - 定義だけ
+          - 適用例だけ
+        - 教える量（トークン数か更新回数）は、どの条件でもそろえます。
+        - 兄弟概念の組で測るのは、次の3つです。
+          - 弁別できているか。
+          - 誤りが片方に寄っていないか。
+          - 往復を重ねるごとに弁別が上がっていくか。
+
+        **まだ式にできていない点**
+        「誤りから直す」は、`round_trip_material` が適用の結果に依る、という形で式にしました。一方、「交互に並ぶ」ことはまだ式にしておらず、表示語に頼っています。PR を見るときはここを見てください。
+
+        体系の側の版（具体を置いてみると、式が区別していない概念が見つかる）も考えました。ただ、既にある `h_undecided_from_indistinct` に近いので、今回は登録していません。
+
+        ほかの PR:
+        - #637 は自動マージで入りました。
+        - #636（mixed）は、手で見てもらうのを待っています。
+
+        本線 d_consolidation_in_vector の下（教え方の候補）
+facts:
+- {is: v_say, from: session_model, to: 01M7Y7NVSQ0WVTDX846TB6BZEP}
+- {is: exp.v_answer, from: 01M7Y7NVSQ0WVTDX846TB6BZEP, to: 01M7Y7HJ5BJB110253MWRK61SN}
+- {is: v_refer, from: 01M7Y7NVSQ0WVTDX846TB6BZEP, to: exp.teacher_both}
+- {is: v_refer, from: 01M7Y7NVSQ0WVTDX846TB6BZEP, to: exp.v_raise}
