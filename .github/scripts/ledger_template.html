@@ -263,8 +263,8 @@ function head(d){
 function render(){
   const d=current,all=listFor(d),c=counts(all);
   const list=only.size?all.filter(h=>only.has(H[h].status)):all;
-  const tools=`<div class="chips">${HST.filter(([s])=>c[s]).map(([s,l])=>`<button class="chip" data-st="${s}" aria-pressed="${only.has(s)}"><span class="pill s-${s}">${l}</span><span class="n">${c[s]}</span></button>`).join("")}<span class="note">${list.length} / ${all.length} 件。登録の順（古いものが上）。押すと PR の説明が開く。</span></div>`;
-  const sorted=[...list].sort((a,b)=>H[a].seq-H[b].seq);
+  const tools=`<div class="chips">${HST.filter(([s])=>c[s]).map(([s,l])=>`<button class="chip" data-st="${s}" aria-pressed="${only.has(s)}"><span class="pill s-${s}">${l}</span><span class="n">${c[s]}</span></button>`).join("")}<span class="note">${list.length} / ${all.length} 件。登録の順（新しいものが上）。押すと PR の説明が開く。</span></div>`;
+  const sorted=[...list].sort((a,b)=>H[b].seq-H[a].seq);
   const body=sorted.length?`<section class="group">${sorted.map(card).join("")}</section>`:"";
   $("detail").innerHTML=head(d)+tools+(body||`<p class="empty">ここに結んだ仮説はない。</p>`);
   document.querySelectorAll("[data-st]").forEach(b=>b.addEventListener("click",()=>{const s=b.dataset.st;only.has(s)?only.delete(s):only.add(s);render()}));
