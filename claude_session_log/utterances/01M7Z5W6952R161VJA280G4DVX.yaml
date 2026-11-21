@@ -1,0 +1,30 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-21T13:49:02.117Z（UTC）
+individuals:
+  01M7Z5W6952R161VJA280G4DVX:
+    is: model_utterance
+    display: 発言 3807
+    val:
+      order: 3807
+      text: |
+        つながりそうです。E34 の外れのうち 改訂→改定・追及→追究・追究→追求・対称→対照 は、どれも読みが同じ語への取り違えでした。モデルの状態に、書き言葉の字だけでなく読みも乗っていると読めます。日本語の道の仮説 h_ja_text_needs_prosody（書き言葉も韻律に依存する）と同じ向きです。
+
+        ただし、いまのデータでは決められません。この四組は漢字も一字ずつ共有していて（改・追・対）、「音で取り違えた」のか「字形で取り違えた」のかが重なっています。
+
+        **登録した対（#689、登録だけ）**
+        - **h_state_confuses_by_sound**: 取り違えは音（韻律）に依存する。式は `v_depend(hidden_state, prosody)` です。
+        - **h_state_confuses_by_glyph**: 取り違えは音ではなく、共有する漢字で起きる。同じ式の否定です。
+        - どちらも `d_road_japanese` と `d_goal` に結びました。
+
+        **分ける測り方の案**
+        - 読みが同じで漢字を共有しない組（意志・医師、機会・器械など）と、漢字を共有して読みが違う組を作り、取り違えの率を比べます。
+        - 音が効いていれば、さらにアクセントの一致・不一致で差が出るかも見られます。これは韻律の句切りの数え方（L4）とも足場を共有できそうです。
+
+        **いま進めているもの（重い列）**
+        E35 の準備中で、仮説は h_expression_makes_state_unique です。E34 の S_new・S_old の各 72 文に、候補 24 語の概念式の一覧を添えて、一意の割合が上がるかを見ます。式の一覧は日本語にした形で 726 字ほどあり、計算は共有する部分を一度だけ回して使い回します。事前登録を commit してから走らせます。
+
+        ロードマップの位置: d_goal（E35 の準備）。わき道ではなく、日本語の道 L4 と d_goal をつなぐ登録を一つ足しました。
+facts:
+- {is: v_say, from: session_model, to: 01M7Z5W6952R161VJA280G4DVX}
+- {is: exp.v_answer, from: 01M7Z5W6952R161VJA280G4DVX, to: 01M7Z5QF3V26FDCAVEYKDJKR5M}
+- {is: v_refer, from: 01M7Z5W6952R161VJA280G4DVX, to: ontology.v_depend}
+- {is: v_refer, from: 01M7Z5W6952R161VJA280G4DVX, to: exp.hidden_state}
