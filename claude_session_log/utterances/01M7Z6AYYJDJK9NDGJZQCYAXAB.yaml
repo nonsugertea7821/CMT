@@ -1,0 +1,56 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-21T13:57:06.130Z（UTC）
+individuals:
+  01M7Z6AYYJDJK9NDGJZQCYAXAB:
+    is: model_utterance
+    display: 発言 3816
+    val:
+      order: 3816
+      text: |
+        mixed の 16 件を並べると、共通点は「どこで割れているか」に出ます。割れ方は大きく 3 つです。
+
+        **1. 衝突する事例と衝突しない事例で、効果の向きが逆（4 件）**
+        定義が元の意味とぶつかる事例を G2c、ぶつからない事例を G2k と呼びます。
+        | 仮説 | G2c | G2k |
+        |---|---|---|
+        | h_cscl_raises_following | 概念式で none より上 | none より下 |
+        | h_opaque_expression_raises_following | 上 | 下 |
+        | h_specific_component_not_raise_stability | 上 | 下 |
+        | h_multi_layer_raises_consistency | 単一層以上 | 単一層より下 |
+
+        どれも「追従を上げる」と一方向で書いた仮説ですが、効果の向きは事例の種類で変わっています。
+        私の解釈では、介入は答えを定義に寄せているのではなく、元の意味から離しているだけかもしれません。そうだとすると、衝突する事例では得をし、衝突しない事例では損をするので、この割れ方になります。
+
+        **2. 比べる相手によって判定が変わる（4 件）**
+        - h_symbolic_membership_raises_following：何も入れない条件よりは上、定義文をそのまま入れる条件よりは下。
+        - h_cscl_raises_following（e11）：書かせる条件が直接答えさせる条件より下。
+        - h_rule_type_lowers_vector_following：ベクトルの中では規則型が下、文章の規則型と比べると上。
+        - h_chain_length_lowers_following：e9 の段階的に考えさせる条件だけが合わない。
+
+        つまり「何もしないよりは良いが、素直な文章より悪い」という形です。
+
+        **3. 「全部」と書いたのに「大半」だった（7 件。体系側の検査は全部ここ）**
+        | 仮説 | 結果 |
+        |---|---|
+        | h_real_axis_by_domain | 一つの領域に収まる軸は 88 本、割合 0.74 |
+        | h_claims_apart_by_domain | 一致は 0.92 だが、ずれも残る |
+        | h_checker_words_by_formula | 2 語は一致、全部ではない |
+        | h_layers_from_primitives | 動かせる割合は 0.5 と 1 の間 |
+        | h_symmetry_soundness | 向きは合うが有意ではない |
+        | h_frame_both_sides | 判定では反証が出ないのに、法則としては通らない |
+        | h_lineage_is_history | 直す前 0.168、直した後 0.050 |
+
+        これらの仮説の式には、量や割合を書く場所がありません。「依存する」「述べる」は全部か無しかの形なので、測った結果が大半のときは mixed にしかなりません。
+
+        **横断して言えること**
+        - 16 件のうち 12 件は、どの決定にも結んでいないわき道で、issue 番号の若い初期のものが多いです。
+        - 実験側の mixed は、仮説の式が、どの事例で（衝突するか否か）、何と比べて（何もしない条件か、文章か）を書いていないところで割れています。体系側の mixed は、どれだけ（全部か、割合か）を書いていないところで割れています。
+        - まとめると、mixed は結果が曖昧だったのではありません。式に足りない区別が一つ見えた印になっています。
+
+        1 の解釈は、未検証の仮説 `h_channel_lowers_prior_verdict`（接続手段は、元の意味による判定を下げる）として登録しました（#692）。記録済みの結果から、G2c での上がり幅と G2k での下がり幅が釣り合うかを見れば、新しく実験を走らせずに判定できる見込みです。
+
+        3 はまだ仮説にしていません。仮説の式に割合を書けるようにする話は、言語側の決定に関わるので、進める前に方向だけ聞かせてください。割合を書ける形を足しますか、それとも今の「全部か無しか」の形を保って、mixed のままにしますか。
+
+        ロードマップの位置：#692 は d_goal に結んだ登録です。並べる作業そのものはわき道です。E35 は裏でまだ実行中です。
+facts:
+- {is: v_say, from: session_model, to: 01M7Z6AYYJDJK9NDGJZQCYAXAB}
+- {is: exp.v_answer, from: 01M7Z6AYYJDJK9NDGJZQCYAXAB, to: 01M7Z68JG52HMTYS2KQHDZB46T}
