@@ -25,6 +25,8 @@
   いまの体系には、空間・用途・感覚などの実在的な軸がほとんどない（#605）。ここでの「実在」は「法則の式に現れない動詞」
   という代理で、仮説の言う実在的な軸と同じとは限らない。体系の規模も小さい（h_observation_by_scale、未検証）。
   走らせる前に数は計算していない。
+訂正 1（走らせて落ちたあと、数を見る前）: from が並び（list）の事実で TypeError になった。
+  法則の事実は from が一つの個体なので、from が文字列の事実だけを見る。判定は変えない。
 使い方:
   python exp/experiments/sys_formal_real_axis.py
 """
@@ -91,7 +93,7 @@ def main():
                 if r in vs and r != self_id:
                     uses[r].add(dom)
         for v in y.get("facts") or []:
-            if isinstance(v, dict) and v.get("from") in laws:
+            if isinstance(v, dict) and isinstance(v.get("from"), str) and v["from"] in laws:
                 for w in strings(v.get("to")):
                     r = T.resolve(w, dom)
                     if r in vs:
