@@ -1,0 +1,47 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-21T02:52:58.774Z（UTC）
+individuals:
+  01M7Y0AXGP69YRBJ3VR9AFX58P:
+    is: model_utterance
+    display: 発言 3416
+    val:
+      order: 3416
+      text: |
+        すみません、日本語で書き直します。
+
+        未検証の仮説は 78 件です。根拠として結ばれた決定ごとの内訳は次のとおりです。
+
+        | 結ばれた決定 | 件数 |
+        |---|---|
+        | d_cscl_display_derived（識別子化） | 30 |
+        | d_road_japanese | 13 |
+        | d_road_region | 9 |
+        | d_metric | 3 |
+        | d_road_checker | 2 |
+        | d_goal | 1 |
+        | わき道（決定なし） | 20 |
+
+        周回の指示文にある本線の列（h_rule_roles_by_signature など）は、もう済んでいて、未検証には残っていません。
+
+        **順序の案**
+
+        0. **先に規模の問題を決める: h_observation_by_scale**
+           - 本線の確かめは、ほとんどが体系を読む測りです。その体系はノード 765 しかありません。
+           - 規模で判定が変わるなら、以降の結果はすべて規模の軸を持たないと読めません。
+           - 確かめ方の一案: 過去の測りをいくつか選び、大きさの違う部分体系で新しいスクリプトとして計算し直して、判定が反転するかを見る。
+           - 注意点: 語彙の実験で、語を足すだけでは体系を大きくできないと分かりました。基礎の関係が薄く、日常の語を区別できないためです。大きくするには、先に関係と動詞を増やす必要があります。
+        1. **extends の導出（8 件）**: h_concept_extends_deduced、h_parent_alone_by_law、h_extends_min_by_collected、h_extends_by_kind、h_extends_follows_use、h_extends_multi_parent、h_extends_rewrite_from_derived、h_undecided_from_indistinct。識別子化の中心で、件数も最も多い群です。
+        2. **名前と同一性（4 件）**: h_names_up_to_relabel、h_same_shape_verbs_merge、h_verbs_state_own_kind_mod、h_state_unique_display（d_goal）。#605 で分かった「one_name が同じ概念を二か所に置かせない」に直接つながります。
+        3. **述べる操作・射影としての領域（8 件）**: h_domain_choice_is_refer、h_signature_all_charts、h_translation_by_display、h_vocab_domain_invariant、h_domain_in_formula、h_placement_without_domain、h_refer_by_projection と、h_domain_as_projection ほか d_road_region の残り。幾何の直観がここに入ります。std の二つの定義がどちらも反証されたので、領域とは何かはここで決まります。
+        4. **文法・法則・検査器（10 件）**: h_grammar_as_laws、h_law_given_by_facts、h_post_as_fact、h_checker_words_swap ほかと、d_road_checker。
+        5. **翻訳と最適化（4 件）**: h_cscl_needs_translation、h_small_translation、h_optimization_in_system、h_meaning_preserving_rewrite。
+        6. **後回し**: d_road_japanese（13 件。韻律の系列で、識別子化を前提にする）と、d_metric の転移の仮説（2 件）。
+        7. **凍結**: わき道の 20 件。
+
+        **決めてほしいこと**: 0 の進め方が二通りあります。
+        - (A) 今の体系のまま、規模で判定が変わるかだけを測ってから 1 へ進む。軽いですが、データ量の問題そのものは残ります。
+        - (B) 先に関係と動詞を足して体系を大きくし、その上で 1 以降を測る。重く、関係を足すこと自体が設計の決定になります。
+
+        本線 a 識別子化、d_cscl_display_derived の下
+facts:
+- {is: v_say, from: session_model, to: 01M7Y0AXGP69YRBJ3VR9AFX58P}
+- {is: exp.v_answer, from: 01M7Y0AXGP69YRBJ3VR9AFX58P, to: 01M7Y0AK5DHV24DCG36XR4ZKT4}
