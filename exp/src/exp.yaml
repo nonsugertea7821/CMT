@@ -3363,6 +3363,8 @@ individuals:
   b_lineage_is_history: {is: item_queued}
   h_std_exp_biased: {is: hyp_refuted}
   b_std_exp_biased: {is: item_done}
+  h_domain_as_projection: {is: hyp_untested}
+  b_domain_as_projection: {is: item_queued}
   h_decision_link_by_role: {is: hyp_supported}
   b_decision_link_by_role: {is: item_done}
 facts:
@@ -9483,6 +9485,9 @@ facts:
   - {is: v_check, from: b_lineage_is_history, to: h_lineage_is_history}
   - {is: v_refer, from: h_std_exp_biased, to: {is: v_depend, from: std, to: exp}}
   - {is: v_check, from: b_std_exp_biased, to: h_std_exp_biased}
+  - {is: v_refer, from: h_domain_as_projection, to: {is: v_depend, from: hidden_state, to: syntax.domain}}
+  - {is: v_check, from: b_domain_as_projection, to: h_domain_as_projection}
+  - {is: v_ground, from: d_road_region, to: h_domain_as_projection}
   - {is: v_refer, from: h_decision_link_by_role, to: {is: v_depend, from: decision, to: syntax.role}}
   - {is: v_check, from: b_decision_link_by_role, to: h_decision_link_by_role}
   - {is: v_refer, from: h_multi_layer_transfers_to_explain, to: {is: v_transfer, from: multi_layer_vector, to: usage_explain}}
