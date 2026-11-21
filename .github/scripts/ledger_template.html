@@ -1,0 +1,247 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>CMT 仮説台帳</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<meta http-equiv="Content-Security-Policy" content="/*LEDGER_CSP*/">
+<meta name="referrer" content="no-referrer">
+<style>
+/* 上: ロードマップ（決定を段に並べ、依存を線で結ぶ）。下: 選んだ決定に結んだ仮説を、状態ごとに文で並べる。 */
+:root{
+  --bg:#f5f6f8; --panel:#ffffff; --sunk:#eef0f4; --fg:#1a2130; --muted:#5b6474; --line:#d9dde5; --accent:#2b5ea7;
+  --sup:#1d7a4c; --sup-bg:#e1f2e8; --con:#b03737; --con-bg:#f7e3e3; --mix:#896200; --mix-bg:#f6edd5;
+  --unt:#5b6474; --unt-bg:#e9ecf1; --wd:#77589a; --wd-bg:#eee6f6;
+  --sans:"Hiragino Sans","Hiragino Kaku Gothic ProN","Yu Gothic UI","Yu Gothic","Noto Sans JP","Noto Sans CJK JP",Meiryo,system-ui,sans-serif;
+  --mono:ui-monospace,"SFMono-Regular",Menlo,Consolas,monospace;
+  color-scheme:light;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#11151c; --panel:#191e27; --sunk:#141922; --fg:#e3e7ee; --muted:#98a1b0; --line:#2b323f; --accent:#80a9e8;
+  --sup:#6dcd9a; --sup-bg:#163226; --con:#ee8989; --con-bg:#391c1e; --mix:#e0bb5a; --mix-bg:#342a13;
+  --unt:#a1aab8; --unt-bg:#222934; --wd:#c1a2e5; --wd-bg:#2a2137; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#11151c; --panel:#191e27; --sunk:#141922; --fg:#e3e7ee; --muted:#98a1b0; --line:#2b323f; --accent:#80a9e8;
+  --sup:#6dcd9a; --sup-bg:#163226; --con:#ee8989; --con-bg:#391c1e; --mix:#e0bb5a; --mix-bg:#342a13;
+  --unt:#a1aab8; --unt-bg:#222934; --wd:#c1a2e5; --wd-bg:#2a2137; color-scheme:dark}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);font-family:var(--sans);font-size:15px;line-height:1.7}
+.wrap{max-width:1100px;margin:0 auto;padding-block:28px 72px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));display:grid;gap:28px}
+h1{font-size:1.55rem;margin:0;text-wrap:balance}
+h2{font-size:1.15rem;margin:0;text-wrap:balance}
+h3{font-size:.95rem;margin:0;display:flex;gap:8px;align-items:center}
+p{margin:0}
+.sub{color:var(--muted);font-size:.9rem;max-width:65ch}
+code,.mono{font-family:var(--mono);font-size:.82em}
+a{color:var(--accent)}
+button{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+
+.road{position:relative;background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:20px 16px;overflow-x:auto}
+.road svg{position:absolute;inset:0;pointer-events:none;overflow:visible}
+.tiers{position:relative;display:grid;gap:34px;min-width:min(100%,640px)}
+.tier{display:flex;flex-wrap:wrap;gap:12px;justify-content:center}
+.tier-label{font-size:.72rem;color:var(--muted);letter-spacing:.06em;text-align:center;margin-bottom:-24px;padding-top:8px;border-top:1px dashed var(--line)}
+.node{position:relative;z-index:1;background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:10px 12px;width:240px;max-width:100%;text-align:left;cursor:pointer;display:grid;gap:6px}
+.node:hover{border-color:var(--accent)}
+.node[aria-pressed="true"]{border-color:var(--accent);box-shadow:inset 0 0 0 1px var(--accent)}
+.node .t{font-size:.86rem;line-height:1.5}
+.node .m{display:flex;justify-content:space-between;align-items:center;font-size:.72rem;color:var(--muted)}
+.node.side{border-style:dashed}
+.bar{display:flex;height:6px;border-radius:3px;overflow:hidden;background:var(--sunk)}
+.bar span{display:block;width:0}
+.f-supported{background:var(--sup)} .f-refuted{background:var(--con)} .f-mixed{background:var(--mix)} .f-untested{background:var(--unt)} .f-withdrawn{background:var(--wd)}
+.wire{fill:none;stroke:var(--muted);stroke-width:1.4} .wire.dash{stroke-dasharray:4 4}
+.top{display:grid;gap:6px}
+.dhead .meta{display:flex;flex-wrap:wrap;gap:8px;align-items:center;font-size:.76rem;color:var(--muted)}
+.legend-row{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:.78rem;color:var(--muted);margin-top:14px;position:relative}
+.legend-row i{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:4px;vertical-align:-1px}
+
+.others{display:grid;gap:10px}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{border:1px solid var(--line);background:var(--panel);border-radius:999px;padding:3px 12px;font-size:.8rem;cursor:pointer}
+.chip[aria-pressed="true"]{border-color:var(--accent);color:var(--accent)}
+.chip .n{font-family:var(--mono);color:var(--muted);margin-left:4px}
+
+.pill{display:inline-block;padding:0 9px;border-radius:999px;font-size:.74rem;font-weight:500;white-space:nowrap;line-height:1.7}
+.s-supported{color:var(--sup);background:var(--sup-bg)} .s-refuted{color:var(--con);background:var(--con-bg)}
+.s-mixed{color:var(--mix);background:var(--mix-bg)} .s-untested{color:var(--unt);background:var(--unt-bg)}
+.s-withdrawn{color:var(--wd);background:var(--wd-bg)}
+.s-adopted{color:var(--sup);background:var(--sup-bg)} .s-tentative{color:var(--mix);background:var(--mix-bg)}
+
+.detail{display:grid;gap:18px}
+.dhead{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:16px;display:grid;gap:8px}
+.dhead .big{font-size:1.15rem;font-weight:500}
+.rel{font-size:.85rem;color:var(--muted);display:flex;flex-wrap:wrap;gap:4px 12px}
+.rel button{background:none;border:none;padding:0;color:var(--accent);cursor:pointer;text-decoration:underline;text-underline-offset:2px}
+.tools{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.tools input{font:inherit;flex:1 1 240px;min-width:0;padding:7px 12px;border:1px solid var(--line);border-radius:6px;background:var(--panel);color:var(--fg)}
+.count{font-family:var(--mono);font-size:.8rem;color:var(--muted)}
+.group{display:grid;gap:8px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:12px 14px;display:grid;gap:6px;min-width:0}
+.card .say{font-size:1rem}
+.card .meta{display:flex;flex-wrap:wrap;gap:4px 10px;font-size:.76rem;color:var(--muted);align-items:center}
+.card details{font-size:.84rem}
+.card summary{cursor:pointer;color:var(--muted)}
+.obs{display:grid;gap:4px;margin-top:6px;padding-left:2px}
+.obs div{overflow-wrap:anywhere}
+.obs .plus{color:var(--sup)} .obs .minus{color:var(--con)}
+.val{font-family:var(--mono);font-variant-numeric:tabular-nums}
+.note{font-size:.78rem;color:var(--muted)}
+.subhead{font-size:.82rem;color:var(--muted);margin-top:6px}
+.empty{color:var(--muted)}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <h1>CMT 仮説台帳</h1>
+    <p class="sub">ロードマップの決定を上に、決定の根拠になっている仮説を下に並べる。決定を押すと、その決定に結んだ仮説が出る。文は体系の式から訳したもの。</p>
+  </header>
+
+  <section class="road" id="road" aria-label="ロードマップ">
+    <svg id="wires" aria-hidden="true"></svg>
+    <div class="tiers" id="tiers"></div>
+    <div class="legend-row" id="legend"></div>
+  </section>
+
+  <section class="others">
+    <h2>ロードマップにつながっていない決定</h2>
+    <div class="chips" id="others"></div>
+  </section>
+
+  <section class="detail" id="detail"></section>
+</div>
+
+<script>
+const DATA=/*LEDGER_DATA*/null;
+const HST=[["supported","支持された"],["refuted","反証された"],["mixed","支持と反証の両方がある"],["untested","まだ確かめていない"],["withdrawn","取り下げた"]];
+const HS=Object.fromEntries(HST);
+const DS={adopted:"採用",tentative:"仮の決定",withdrawn:"取り下げ"};
+const SIDE="__side";
+const $=id=>document.getElementById(id);
+const esc=s=>String(s??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const D=DATA.decisions,H=DATA.hypotheses;
+let current=null,query="",only=new Set();
+
+const byDec={};
+for(const [h,x] of Object.entries(H)){
+  if(!x.decisions.length)(byDec[SIDE]??=[]).push(h);
+  for(const d of x.decisions)(byDec[d]??=[]).push(h);
+}
+
+/* 段を決める: 依存・引き上げの辺（決定 → 先の決定）で、先の決定を一段下に置く。置き換えた（取り下げた）決定は段に入れない。 */
+const out={},inn={};
+for(const [d,x] of Object.entries(D))for(const e of x.edges){if(e.kind==="supersede"||!D[e.to])continue;(out[d]??=[]).push(e);(inn[e.to]??=[]).push({...e,from:d})}
+const onMap=new Set(Object.keys(D).filter(d=>out[d]||inn[d]));
+/* 段: 「依存する」の辺だけで、行き先までの最長の道のりを高さにする。高いものほど上に置く。「引き上げる」の辺は段を決めない。 */
+const height={};
+function hOf(d,seen=new Set()){if(height[d]!=null)return height[d];if(seen.has(d))return 0;seen.add(d);
+  const ts=(out[d]||[]).filter(e=>e.kind==="depend").map(e=>hOf(e.to,seen)+1);return height[d]=ts.length?Math.max(...ts):0}
+for(const d of onMap)hOf(d);
+const topH=Math.max(0,...Object.values(height));
+const tier={};for(const d of onMap)tier[d]=topH-height[d];
+const roots=[...onMap].filter(d=>!inn[d]).sort((a,b)=>tier[a]-tier[b]);
+const tiers=[];for(const d of onMap)(tiers[tier[d]]??=[]).push(d);
+
+function counts(list){const c={};for(const h of list||[])c[H[h].status]=(c[H[h].status]||0)+1;return c}
+function bar(list){const c=counts(list),n=(list||[]).length||1;return `<div class="bar">${HST.map(([s])=>c[s]?`<span class="f-${s}" data-w="${(c[s]/n*100).toFixed(2)}"></span>`:"").join("")}</div>`}
+function nodeHTML(d){
+  const x=D[d],list=byDec[d]||[];
+  return `<button class="node" data-d="${esc(d)}" aria-pressed="false"><span class="t">${esc(x.text.join("。"))}</span>${bar(list)}<span class="m"><span class="pill s-${esc(x.status)}">${DS[x.status]||x.status}</span><span>仮説 ${list.length} 件</span></span></button>`;
+}
+function drawRoad(){
+  $("tiers").innerHTML=tiers.map(ds=>`<div class="tier">${ds.map(nodeHTML).join("")}</div>`).join("")+
+    `<div class="tier-label">決定に結んでいない</div><div class="tier"><button class="node side" data-d="${SIDE}" aria-pressed="false"><span class="t">わき道（どの決定の根拠にもしていない仮説）</span>${bar(byDec[SIDE])}<span class="m"><span></span><span>仮説 ${(byDec[SIDE]||[]).length} 件</span></span></button></div>`;
+  $("legend").innerHTML=HST.map(([s,l])=>`<span><i class="f-${s}"></i>${l}</span>`).join("")+`<span>線: 実線は「依存する」、点線は「引き上げる」</span>`;
+  const others=Object.keys(D).filter(d=>!onMap.has(d)&&(byDec[d]||[]).length).sort((a,b)=>(byDec[b]||[]).length-(byDec[a]||[]).length);
+  const rest=Object.keys(D).filter(d=>!onMap.has(d)&&!(byDec[d]||[]).length).length;
+  $("others").innerHTML=others.map(d=>`<button class="chip" data-d="${esc(d)}" aria-pressed="false">${esc(D[d].text.join("。"))}<span class="n">${byDec[d].length}</span></button>`).join("")+
+    (rest?`<span class="note">ほかに、仮説を結んでいない決定が ${rest} 件ある。</span>`:"");
+  document.querySelectorAll("[data-d]").forEach(b=>b.addEventListener("click",()=>select(b.dataset.d,true)));
+  widths();
+  requestAnimationFrame(wires);
+}
+function wires(){
+  const svg=$("wires"),box=$("road").getBoundingClientRect(),road=$("road");
+  svg.setAttribute("width",road.scrollWidth);svg.setAttribute("height",road.scrollHeight);
+  let s="";
+  for(const [d,es] of Object.entries(out))for(const e of es){
+    const a=document.querySelector(`#tiers [data-d="${CSS.escape(d)}"]`),b=document.querySelector(`#tiers [data-d="${CSS.escape(e.to)}"]`);if(!a||!b)continue;
+    const ra=a.getBoundingClientRect(),rb=b.getBoundingClientRect();
+    const up=rb.bottom<=ra.top;
+    const x1=ra.left+ra.width/2-box.left+road.scrollLeft,y1=(up?ra.top:ra.bottom)-box.top,x2=rb.left+rb.width/2-box.left+road.scrollLeft,y2=(up?rb.bottom:rb.top)-box.top;
+    const my=(y1+y2)/2;
+    s+=`<path d="M${x1} ${y1} C${x1} ${my} ${x2} ${my} ${x2} ${y2}" class="wire${e.kind==="raise"?" dash":""}"/>`;
+  }
+  svg.innerHTML=s;
+}
+addEventListener("resize",()=>requestAnimationFrame(wires));
+
+function obsLine(o,cls,mark){
+  if(!o.a)return `<div class="${cls}">${mark} <code>${esc(o.id)}</code></div>`;
+  const t=x=>x.key?`<code>${esc(x.key)}</code>（<span class="val">${esc(x.v)}</span>）`:`<span class="val">${esc(x.v)}</span>`;
+  return `<div class="${cls}">${mark} ${t(o.a)} は ${t(o.b)} ${esc(o.rel)}</div>`;
+}
+function card(h){
+  const x=H[h];
+  const iss=x.issue?`<a href="https://github.com/${DATA.repo}/issues/${x.issue}" target="_blank" rel="noopener">#${x.issue}</a>`:`<a href="https://github.com/${DATA.repo}/issues?q=${encodeURIComponent('"'+h+'"')}" target="_blank" rel="noopener">issue を探す</a>`;
+  const decs=x.decisions.filter(d=>d!==current).map(d=>`<button class="chip" data-go="${esc(d)}">${esc(D[d]?D[d].text.join("。"):d)}</button>`).join("");
+  const n=x.evidence.length+x.against.length;
+  return `<article class="card"><div class="say">${esc(x.text.join("。また、"))}。</div>
+  <div class="meta"><span class="pill s-${esc(x.status)}">${HS[x.status]||x.status}</span><code>${esc(h)}</code>${iss}<span>${x.side==="lang"?"言語について":"実験について"}</span>${x.scope.length?`<span>範囲: ${esc(x.scope.join("・"))}</span>`:""}</div>
+  ${decs?`<div class="meta">ほかに根拠にしている決定: ${decs}</div>`:""}
+  ${n?`<details><summary>観察 ${n} 件（支持 ${x.evidence.length}・反する ${x.against.length}）</summary><div class="obs">${x.evidence.map(o=>obsLine(o,"plus","＋")).join("")}${x.against.map(o=>obsLine(o,"minus","−")).join("")}</div></details>`:""}
+  </article>`;
+}
+function widths(){document.querySelectorAll("[data-w]").forEach(e=>{e.style.width=e.dataset.w+"%"})}
+function select(d,scroll){
+  current=d;
+  document.querySelectorAll("[data-d]").forEach(b=>b.setAttribute("aria-pressed",b.dataset.d===d));
+  try{history.replaceState(null,"","#"+d)}catch(e){}
+  render();
+  if(scroll)$("detail").scrollIntoView({behavior:matchMedia("(prefers-reduced-motion: reduce)").matches?"auto":"smooth",block:"start"});
+}
+function render(){
+  const d=current,isSide=d===SIDE;
+  let list=query?Object.keys(H):(byDec[d]||[]);
+  if(query){const ql=query.toLowerCase();list=list.filter(h=>(h+" "+H[h].text.join(" ")+" "+H[h].subject).toLowerCase().includes(ql))}
+  const all=list.length;
+  if(only.size)list=list.filter(h=>only.has(H[h].status));
+  let head;
+  if(query)head=`<div class="dhead"><div class="big">「${esc(query)}」を含む仮説</div><p class="note">すべての仮説から探している。消すと、選んだ決定に戻る。</p></div>`;
+  else if(isSide)head=`<div class="dhead"><div class="big">わき道</div><p class="note">どの決定の根拠にもしていない仮説。主語ごとにまとめた。</p></div>`;
+  else{
+    const x=D[d];
+    const rel=[...(out[d]||[]).map(e=>`${e.kind==="raise"?"引き上げる":"依存する"}: <button data-go="${esc(e.to)}">${esc(D[e.to].text.join("。"))}</button>`),
+      ...(inn[d]||[]).map(e=>`${e.kind==="raise"?"引き上げられる":"依存される"}: <button data-go="${esc(e.from)}">${esc(D[e.from].text.join("。"))}</button>`),
+      ...x.edges.filter(e=>e.kind==="supersede").map(e=>`置き換えた: ${esc(D[e.to]?D[e.to].text.join("。"):e.to)}`)];
+    head=`<div class="dhead"><div class="meta"><span class="pill s-${esc(x.status)}">${DS[x.status]||x.status}</span><code>${esc(d)}</code>${x.issue?`<a href="https://github.com/${DATA.repo}/issues/${x.issue}" target="_blank" rel="noopener">#${x.issue}</a>`:""}</div><div class="big">${esc(x.text.join("。また、"))}。</div>${rel.length?`<div class="rel">${rel.join("")}</div>`:""}</div>`;
+  }
+  const c=counts(query?Object.keys(H).filter(h=>(h+" "+H[h].text.join(" ")+" "+H[h].subject).toLowerCase().includes(query.toLowerCase())):(byDec[d]||[]));
+  const tools=`<div class="tools"><label for="q" class="note">仮説を探す</label><input id="q" type="search" value="${esc(query)}" placeholder="言葉で探す（例: 韻律、追従、隠れ状態）"><span class="count">${list.length} / ${all} 件</span></div>
+  <div class="chips">${HST.filter(([s])=>c[s]).map(([s,l])=>`<button class="chip" data-st="${s}" aria-pressed="${only.has(s)}"><span class="pill s-${s}">${l}</span><span class="n">${c[s]}</span></button>`).join("")}</div>`;
+  let body="";
+  for(const [s,l] of HST){
+    const hs=list.filter(h=>H[h].status===s);if(!hs.length)continue;
+    body+=`<section class="group"><h3><span class="pill s-${s}">${l}</span><span class="count">${hs.length}</span></h3>`;
+    if(isSide&&!query){
+      const g={};for(const h of hs)(g[H[h].subject]??=[]).push(h);
+      for(const [k,v] of Object.entries(g).sort((a,b)=>b[1].length-a[1].length))body+=`<div class="subhead">${esc(k)}について</div>`+v.map(card).join("");
+    }else body+=hs.map(card).join("");
+    body+="</section>";
+  }
+  $("detail").innerHTML=head+tools+(body||`<p class="empty">条件に合う仮説はない。状態の絞り込みか検索を外すと出る。</p>`)+`<p class="note">${esc(DATA.legend)} 観察の「＋」は支持する観察、「−」は反する観察。</p>`;
+  const qi=$("q");qi.addEventListener("input",()=>{const pos=qi.selectionStart;query=qi.value.trim();render();const n=$("q");n.focus();try{n.setSelectionRange(pos,pos)}catch(e){}});
+  document.querySelectorAll("[data-st]").forEach(b=>b.addEventListener("click",()=>{const s=b.dataset.st;only.has(s)?only.delete(s):only.add(s);render()}));
+  document.querySelectorAll("[data-go]").forEach(b=>b.addEventListener("click",()=>{query="";select(b.dataset.go,false);document.querySelector(`[data-d="${CSS.escape(b.dataset.go)}"]`)?.scrollIntoView({block:"nearest"})}));
+}
+drawRoad();
+const start=decodeURIComponent(location.hash.slice(1));
+select(D[start]||start===SIDE?start:(roots[0]||SIDE),false);
+addEventListener("hashchange",()=>{const h=decodeURIComponent(location.hash.slice(1));if((D[h]||h===SIDE)&&h!==current)select(h,false)});
+</script>
+</body>
+</html>
