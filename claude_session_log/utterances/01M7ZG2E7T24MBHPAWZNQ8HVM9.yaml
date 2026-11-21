@@ -1,0 +1,28 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-21T16:47:12.634Z（UTC）
+individuals:
+  01M7ZG2E7T24MBHPAWZNQ8HVM9:
+    is: model_utterance
+    display: 発言 3944
+    val:
+      order: 3944
+      text: |
+        英語と中国語の否定も拾うようにして、#707 に足しました（3bde04a）。日本語でない文で否定を拾ったときは、「応答は日本語で書く。日本語で書き直して終える」も添えて止めます。
+
+        - **英語**: not・no・never・none・nothing・cannot・without・〜n't を拾います。
+        - **中国語**: 没有・不是・不能・无法・尚未・并未 などを拾います。「未」「不」だけでは拾いません。未検証・不要などの日本語でも止まってしまうからです。
+
+        手元で入力を流して確かめました。
+
+        | 入力 | 結果 |
+        |---|---|
+        | "E36 is not running." | 止める＋日本語で書くよう促す |
+        | 「没有错误种类的概念。」 | 止める＋日本語で書くよう促す |
+        | 「概念がありません。」 | 止める |
+        | 「未検証の仮説を登録しました。」 | 通す |
+
+        穴が一つあります。否定のない英語の文、たとえば先ほど私が書いた "Now register it in settings.json." は通ってしまいます。言語の逸れそのものを捕まえるなら、否定と関係なく、仮名を含まない地の文を拾う別のフックが要ります。要るなら組みます。
+
+        ロードマップ上の位置: 運用の仕掛け（わき道）の #707 を広げました。H2（d_metric の直下の E36）は走っています。
+facts:
+- {is: v_say, from: session_model, to: 01M7ZG2E7T24MBHPAWZNQ8HVM9}
+- {is: exp.v_answer, from: 01M7ZG2E7T24MBHPAWZNQ8HVM9, to: 01M7ZG0Y9XSP71C6PATJQMSGCY}
