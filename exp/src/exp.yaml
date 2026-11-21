@@ -2018,6 +2018,17 @@ individuals:
   sys_formal_real_axis_cond_tnr: {is: axis_value, val: {text: tnr}}
   sys_formal_real_axis_cond_bal_acc: {is: axis_value, val: {text: bal_acc}}
   sys_formal_real_axis_cond_share_real_single: {is: axis_value, val: {text: share_real_single}}
+  sys_observation_by_scale: {is: measurement_family}
+  sys_observation_by_scale_cond: {is: family_axis, val: {text: cond}}
+  sys_observation_by_scale_cond_n_snap: {is: axis_value, val: {text: n_snap}}
+  sys_observation_by_scale_cond_n_fail: {is: axis_value, val: {text: n_fail}}
+  sys_observation_by_scale_cond_n_dep: {is: axis_value, val: {text: n_dep}}
+  sys_observation_by_scale_cond_rho_mod: {is: axis_value, val: {text: rho_mod}}
+  sys_observation_by_scale_cond_maxdev_mod: {is: axis_value, val: {text: maxdev_mod}}
+  sys_observation_by_scale_cond_rho_verb: {is: axis_value, val: {text: rho_verb}}
+  sys_observation_by_scale_cond_maxdev_verb: {is: axis_value, val: {text: maxdev_verb}}
+  sys_observation_by_scale_cond_rho_depth: {is: axis_value, val: {text: rho_depth}}
+  sys_observation_by_scale_cond_maxdev_depth: {is: axis_value, val: {text: maxdev_depth}}
   sys_any_by_entail_before_fix: {is: measurement_family}
   sys_any_by_entail_before_fix_cond: {is: family_axis, val: {text: cond}}
   sys_any_by_entail_before_fix_cond_errors: {is: axis_value, val: {text: errors}}
@@ -3301,6 +3312,7 @@ individuals:
   o_sys_lof_rate_verb: {is: observation}
   o_sys_seb_share: {is: observation}
   o_sys_seb_move: {is: observation}
+  o_sys_obs_n_dep: {is: observation}
 
   h_prosody_carries_mod: {is: hyp_untested}
   b_prosody_carries_mod: {is: item_queued}
@@ -3400,8 +3412,8 @@ individuals:
   b_lineage_is_history: {is: item_queued}
   h_std_exp_biased: {is: hyp_refuted}
   b_std_exp_biased: {is: item_done}
-  h_observation_by_scale: {is: hyp_untested}
-  b_observation_by_scale: {is: item_queued}
+  h_observation_by_scale: {is: hyp_refuted}
+  b_observation_by_scale: {is: item_done}
   h_domain_as_projection: {is: hyp_untested}
   b_domain_as_projection: {is: item_queued}
   h_decision_link_by_role: {is: hyp_supported}
@@ -7809,6 +7821,30 @@ facts:
   - {is: v_spell, from: sys_formal_real_axis_cond_share_real_single, to: share_real_single}
   - {is: v_entry_of, from: '{cond}', to: sys_formal_real_axis}
   - {is: v_metric_of, from: sys_formal_real_axis, to: mean_value}
+  - {is: v_file_of, from: sys_observation_by_scale.json, to: sys_observation_by_scale}
+  - {is: v_axis_of, from: sys_observation_by_scale_cond, to: sys_observation_by_scale}
+  - {is: v_value_of, from: sys_observation_by_scale_cond_n_snap, to: sys_observation_by_scale_cond}
+  - {is: v_spell, from: sys_observation_by_scale_cond_n_snap, to: n_snap}
+  - {is: v_value_of, from: sys_observation_by_scale_cond_n_fail, to: sys_observation_by_scale_cond}
+  - {is: v_spell, from: sys_observation_by_scale_cond_n_fail, to: n_fail}
+  - {is: v_value_of, from: sys_observation_by_scale_cond_n_dep, to: sys_observation_by_scale_cond}
+  - {is: v_spell, from: sys_observation_by_scale_cond_n_dep, to: n_dep}
+  - {is: v_value_of, from: sys_observation_by_scale_cond_rho_mod, to: sys_observation_by_scale_cond}
+  - {is: v_spell, from: sys_observation_by_scale_cond_rho_mod, to: rho_mod}
+  - {is: v_value_of, from: sys_observation_by_scale_cond_maxdev_mod, to: sys_observation_by_scale_cond}
+  - {is: v_spell, from: sys_observation_by_scale_cond_maxdev_mod, to: maxdev_mod}
+  - {is: v_value_of, from: sys_observation_by_scale_cond_rho_verb, to: sys_observation_by_scale_cond}
+  - {is: v_spell, from: sys_observation_by_scale_cond_rho_verb, to: rho_verb}
+  - {is: v_value_of, from: sys_observation_by_scale_cond_maxdev_verb, to: sys_observation_by_scale_cond}
+  - {is: v_spell, from: sys_observation_by_scale_cond_maxdev_verb, to: maxdev_verb}
+  - {is: v_value_of, from: sys_observation_by_scale_cond_rho_depth, to: sys_observation_by_scale_cond}
+  - {is: v_spell, from: sys_observation_by_scale_cond_rho_depth, to: rho_depth}
+  - {is: v_value_of, from: sys_observation_by_scale_cond_maxdev_depth, to: sys_observation_by_scale_cond}
+  - {is: v_spell, from: sys_observation_by_scale_cond_maxdev_depth, to: maxdev_depth}
+  - {is: v_entry_of, from: '{cond}', to: sys_observation_by_scale}
+  - {is: v_metric_of, from: sys_observation_by_scale, to: mean_value}
+  - {is: v_refer, from: o_sys_obs_n_dep, to: {is: v_level, from: sys_observation_by_scale.n_dep.mean_value, to: 1.0}}
+  - {is: v_contradict, from: o_sys_obs_n_dep, to: h_observation_by_scale}
   - {is: v_file_of, from: sys_any_by_entail_before_fix.json, to: sys_any_by_entail_before_fix}
   - {is: v_rows_of, from: [rows], to: sys_any_by_entail_before_fix}
   - {is: v_axis_of, from: sys_any_by_entail_before_fix_cond, to: sys_any_by_entail_before_fix}
