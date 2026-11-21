@@ -1,0 +1,24 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-21T05:27:27.887Z（UTC）
+individuals:
+  01M7Y95SCF439W335NEEYWG6DQ:
+    is: model_utterance
+    display: 発言 3540
+    val:
+      order: 3540
+      text: |
+        E33 を、コンテナが再起動しても途中から続けられるように直し、走らせ直しました。
+
+        - **途中保存と再開:** 組と条件が一つ終わるたびに、そこまでの結果を `e33_round_trip_sibling.partial.json` に書きます。走らせ直すと、終わった分を飛ばして続きから始めます。乱数を使わないので、飛ばしても値は変わりません。
+        - **9 分ごとの確かめ:** send_later で置きました。再起動を越えて届きます。
+          - プロセスが止まっていて最終の結果がまだなければ、再開します。
+          - 終わっていれば、記録へ進みます。
+          - 最初の確かめは 05:37 です。
+        - **ログ:** スクラッチパッドから `exp/experiments/results/e33_round_trip_sibling.log` に移しました。commit はしません。
+        - **取り下げたもの:** 前の commit で足した「止める条件」は、意図の読み違いでした。次の commit で外し、そのことを commit のメッセージに書きました。手順と判定は事前登録のままです。
+
+        最初の起動は組 2 の途中で止めたので、組 1 からやり直しになりました。終わるのは 3 時間ほど先の見込みです。
+
+        本線 d_consolidation_in_vector の下（h_round_trip_raises_sibling、issue #639）
+facts:
+- {is: v_say, from: session_model, to: 01M7Y95SCF439W335NEEYWG6DQ}
+- {is: exp.v_answer, from: 01M7Y95SCF439W335NEEYWG6DQ, to: 01M7Y94E0BCRKB8DAJX8APXW7E}
