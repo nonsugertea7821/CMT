@@ -1,0 +1,2361 @@
+{
+ "rev_now": "ee98ec3",
+ "revs": [
+  "5ce3383",
+  "fa8c3e5",
+  "fea22bc"
+ ],
+ "base_errors": {
+  "5ce3383": 0,
+  "fa8c3e5": 0,
+  "fea22bc": 0,
+  "now": 0
+ },
+ "summary": {
+  "written": {
+   "n": 74,
+   "n_reproduced_checked": 74,
+   "n_reproduced_match": 74,
+   "n_missing": 0,
+   "n_now": 74,
+   "n_then_ok": 9,
+   "n_now_ok": 9,
+   "n_flip": 0,
+   "n_flip_to_ok": 0,
+   "n_flip_to_ng": 0
+  },
+  "gold": {
+   "n": 23,
+   "n_reproduced_checked": 23,
+   "n_reproduced_match": 23,
+   "n_missing": 0,
+   "n_now": 23,
+   "n_then_ok": 23,
+   "n_now_ok": 23,
+   "n_flip": 0,
+   "n_flip_to_ok": 0,
+   "n_flip_to_ng": 0
+  },
+  "reproduce_rate": 1.0
+ },
+ "judgment": {
+  "pre_reproduce": true,
+  "pre_n": true,
+  "verdict": "not_depend"
+ },
+ "cases": [
+  {
+   "rev": "fa8c3e5",
+   "key": "agent",
+   "line": "  agent: {display: 主体, extends: entity, mod: {of: [v_entity, of], with: subject}}",
+   "recorded": 0,
+   "kind": "written",
+   "src": [
+    "e29"
+   ],
+   "then": {
+    "ok": 0,
+    "errors": 24,
+    "err_text": [
+     "subj.age.mod[0]: subj.person は ontology.v_depend の to（ontology.continuant）に来られない",
+     "subj.height.mod[0]: subj.person_age_neg は ontology.v_depend の to（ontology.continuant）に来られない",
+     "subj.agent: 上位がない、または未定義"
+    ]
+   },
+   "now": {
+    "ok": 0,
+    "errors": 24,
+    "err_text": [
+     "subj.age.mod[0]: subj.person は ontology.v_depend の to（ontology.continuant）に来られない",
+     "subj.height.mod[0]: subj.person_age_neg は ontology.v_depend の to（ontology.continuant）に来られない",
+     "subj.agent: 上位がない、または未定義"
+    ]
+   }
+  },
+  {
+   "rev": "fa8c3e5",
+   "key": "agent",
+   "line": "  agent: {display: 主体, extends: continuant, mod: {of: [v_perform, from]}}",
+   "recorded": 1,
+   "kind": "gold",
+   "src": [
+    "e29_gold"
+   ],
+   "then": {
+    "ok": 1,
+    "errors": 0,
+    "err_text": []
+   },
+   "now": {
+    "ok": 1,
+    "errors": 0,
+    "err_text": []
+   }
+  },
+  {
+   "rev": "fa8c3e5",
+   "key": "organization",
+   "line": "  organization: {display: 組織, extends: continuant, mod: {of: [v_perform, from]}}",
+   "recorded": 0,
+   "kind": "written",
+   "src": [
+    "e29"
+   ],
+   "then": {
+    "ok": 0,
+    "errors": 7,
+    "err_text": [
+     "subj.customer.mod[0]: subj.corporation は subj.v_contract の to（subj.agent）に来られない",
+     "法則 narrow_from（下位の動詞の端 from は、上位の動詞の端を狭める）に反する: var1=subj.v_employ, var2=subj.organization, var3=subj.v_contract, var4=subj.agent, var5=subj.agent",
+     "法則 one_name（互いに相手の式を（含意によっても）持つ組は、同じものの別の名前なので置かない）に反する: var1=subj.agent, var2=subj.organization"
+    ]
+   },
+   "now": {
+    "ok": 0,
+    "errors": 8,
+    "err_text": [
+     "subj.customer.mod[0]: subj.corporation は subj.v_contract の to（subj.agent）に来られない",
+     "法則 narrow_from（下位の動詞の端 from は、上位の動詞の端を狭める）に反する: var1=subj.v_employ, var2=subj.organization, var3=subj.v_contract, var4=subj.agent, var5=subj.agent",
+     "法則 one_name（互いに相手の式を（含意によっても）持つ組は、同じものの別の名前なので置かない）に反する: var1=subj.organization, var2=subj.agent"
+    ]
+   }
+  },
+  {
+   "rev": "fa8c3e5",
+   "key": "organization",
+   "line": "  organization: {display: 組織, extends: agent, mod: {of: [v_compose, to], with: person, at: {count: {gt: 1}}}}",
+   "recorded": 1,
+   "kind": "gold",
+   "src": [
+    "e29_gold"
+   ],
+   "then": {
+    "ok": 1,
+    "errors": 0,
+    "err_text": []
+   },
+   "now": {
+    "ok": 1,
+    "errors": 0,
+    "err_text": []
+   }
+  },
+  {
+   "rev": "fa8c3e5",
+   "key": "corporation",
+   "line": "  corporation: {display: 法人, extends: organization, mod: {of: [v_depend, to], with: legal_personality}}",
+   "recorded": 1,
+   "kind": "written",
+   "src": [
+    "e29",
+    "e29_gold"
+   ],
+   "then": {
+    "ok": 1,
+    "errors": 0,
+    "err_text": []
+   },
+   "now": {
+    "ok": 1,
+    "errors": 0,
+    "err_text": []
+   }
+  },
+  {
+   "rev": "fa8c3e5",
+   "key": "minor",
+   "line": "  minor: {display: 未成年, extends: person, mod: {of: [v_depend, to], with: age, at: {count: {lt: 18}}}}",
+   "recorded": 1,
+   "kind": "written",
+   "src": [
+    "e29"
+   ],
+   "then": {
+    "ok": 1,
+    "errors": 0,
+    "err_text": []
+   },
+   "now": {
+    "ok": 1,
+    "errors": 0,
+    "err_text": []
+   }
+  },
+  {
+   "rev": "fa8c3e5",
+   "key": "minor",
+   "line": "  minor: {display: 未成年, extends: person, mod: {of: [v_depend, to], with: age, at: {amount: {lt: 25}}}}",
+   "recorded": 1,
+   "kind": "gold",
+   "src": [
+    "e29_gold"
+   ],
+   "then": {
+    "ok": 1,
+    "errors": 0,
+    "err_text": []
+   },
+   "now": {
+    "ok": 1,
+    "errors": 0,
+    "err_text": []
+   }
+  },
+  {
+   "rev": "fa8c3e5",
+   "key": "shared_address",
+   "line": "  shared_address: {display: 二人以上が住む住所, extends: address, mod: {of: [v_refer, from], with: people, amount: {gt: 1}}}",
+   "recorded": 0,
+   "kind": "written",
+   "src": [
+    "e29"
+   ],
+   "then": {
+    "ok": 0,
+    "errors": 2,
+    "err_text": [
+     "subj.shared_address.mod[0]: people は syntax.v_refer の to（any）に来られない",
+     "subj.shared_address.mod[0]: 語 {'amount'} が、grammar.mod に書かれていない"
+    ]
+   },
+   "now": {
+    "ok": 0,
+    "errors": 2,
+    "err_text": [
+     "subj.shared_address.mod[0]: people は syntax.v_refer の to（any）に来られない",
+     "subj.shared_address.mod[0]: 語 {'amount'} が、grammar.mod に書かれていない"
+    ]
+   }
+  },
+  {
+   "rev": "fa8c3e5",
+   "key": "shared_address",
+   "line": "  shared_address: {display: 二人以上が住む住所, extends: address, mod: {of: [v_live, to], with: person, at: {count: {gt: 1}}}}",
+   "recorded": 1,
+   "kind": "gold",
+   "src": [
+    "e29_gold"
+   ],
+   "then": {
+    "ok": 1,
+    "errors": 0,
+    "err_text": []
+   },
+   "now": {
+    "ok": 1,
+    "errors": 0,
+    "err_text": []
+   }
+  },
+  {
+   "rev": "fa8c3e5",
+   "key": "user",
+   "line": "  user: {display: 利用者, extends: person, mod: {of: [v_use, to]}} ",
+   "recorded": 0,
+   "kind": "written",
+   "src": [
+    "e29"
+   ],
+   "then": {
+    "ok": 0,
+    "errors": 1,
+    "err_text": [
+     "subj.user.mod[0]: subj.person は syntax.v_use の to（syntax.domain）に来られない"
+    ]
+   },
+   "now": {
+    "ok": 0,
+    "errors": 1,
+    "err_text": [
+     "subj.user.mod[0]: subj.person は syntax.v_use の to（syntax.domain）に来られない"
+    ]
+   }
+  },
+  {
+   "rev": "fa8c3e5",
+   "key": "user",
+   "line": "  user: {display: 利用者, extends: person, mod: {of: [v_register, to], with: service}}",
+   "recorded": 1,
+   "kind": "gold",
+   "src": [
+    "e29_gold"
+   ],
+   "then": {
+    "ok": 1,
+    "errors": 0,
+    "err_text": []
+   },
+   "now": {
+    "ok": 1,
+    "errors": 0,
+    "err_text": []
+   }
+  },
+  {
+   "rev": "fa8c3e5",
+   "key": "setting_rule",
+   "line": "  setting_rule: {display: 設定の変更を許す規則, extends: access_rule, mod: {of: [v_allow, to]}}",
+   "recorded": 0,
+   "kind": "written",
+   "src": [
+    "e29"
+   ],
+   "then": {
+    "ok": 0,
+    "errors": 1,
+    "err_text": [
+     "subj.setting_rule.mod[0]: v_allow は動詞でない"
+    ]
+   },
+   "now": {
+    "ok": 0,
+    "errors": 1,
+    "err_text": [
+     "subj.setting_rule.mod[0]: v_allow は動詞でない"
+    ]
+   }
+  },
+  {
+   "rev": "fa8c3e5",
+   "key": "setting_rule",
+   "line": "  setting_rule: {display: 設定の変更を許す規則, extends: access_rule, mod: {of: [v_refer, from], with: system_setting}}",
+   "recorded": 1,
+   "kind": "gold",
+   "src": [
+    "e29_gold"
+   ],
+   "then": {
+    "ok": 1,
+    "errors": 0,
+    "err_text": []
+   },
+   "now": {
+    "ok": 1,
+    "errors": 0,
+    "err_text": []
+   }
+  },
+  {
+   "rev": "fa8c3e5",
+   "key": "admin",
+   "line": "  admin: {display: 管理者, extends: role, mod: {of: [v_depend, from], with: permission}}",
+   "recorded": 0,
+   "kind": "written",
+   "src": [
+    "e29"
+   ],
+   "then": {
+    "ok": 0,
+    "errors": 1,
+    "err_text": [
+     "subj.admin: 根拠となる定義が特定されていない"
+    ]
+   },
+   "now": {
+    "ok": 0,
+    "errors": 1,
+    "err_text": [
+     "subj.admin: 根拠となる定義が特定されていない"
+    ]
+   }
+  },
+  {
+   "rev": "fa8c3e5",
+   "key": "admin",
+   "line": "  admin: {display: 管理者, extends: user, mod: {of: [v_depend, to], with: setting_permission}}",
+   "recorded": 1,
+   "kind": "gold",
+   "src": [
+    "e29_gold"
+   ],
+   "then": {
+    "ok": 1,
+    "errors": 0,
+    "err_text": []
+   },
+   "now": {
+    "ok": 1,
+    "errors": 0,
+    "err_text": []
+   }
+  },
+  {
+   "rev": "fa8c3e5",
+   "key": "stored_goods",
+   "line": "  stored_goods: {display: 倉庫にある商品, extends: relation, mod: {of: [v_store, to], with: goods}}",
+   "recorded": 0,
+   "kind": "written",
+   "src": [
+    "e29"
+   ],
+   "then": {
+    "ok": 0,
+    "errors": 2,
+    "err_text": [
+     "subj.stored_goods: 上位がない、または未定義",
+     "subj.stock.mod[0]: subj.stored_goods は subj.v_allocate の to（subj.goods）に来られない"
+    ]
+   },
+   "now": {
+    "ok": 0,
+    "errors": 2,
+    "err_text": [
+     "subj.stored_goods: 上位がない、または未定義",
+     "subj.stock.mod[0]: subj.stored_goods は subj.v_allocate の to（subj.goods）に来られない"
+    ]
+   }
+  },
+  {
+   "rev": "fa8c3e5",
+   "key": "stored_goods",
+   "line": "  stored_goods: {display: 倉庫にある商品, extends: goods, mod: {of: [v_store, from], with: warehouse}}",
+   "recorded": 1,
+   "kind": "gold",
+   "src": [
+    "e29_gold"
+   ],
+   "then": {
+    "ok": 1,
+    "errors": 0,
+    "err_text": []
+   },
+   "now": {
+    "ok": 1,
+    "errors": 0,
+    "err_text": []
+   }
+  },
+  {
+   "rev": "fa8c3e5",
+   "key": "fruit",
+   "line": "  fruit: {display: 果物, extends: category, mod: {of: [v_sell, to]}} ",
+   "recorded": 0,
+   "kind": "written",
+   "src": [
+    "e29"
+   ],
+   "then": {
+    "ok": 0,
+    "errors": 2,
+    "err_text": [
+     "subj.fruit.mod[0]: subj.category は subj.v_sell の to（ontology.component）に来られない",
+     "法則 named_mod に反する: subj.goods, subj.fruit が同じ限定を足している。名前を付けた修飾語にする"
+    ]
+   },
+   "now": {
+    "ok": 0,
+    "errors": 3,
+    "err_text": [
+     "subj.fruit.mod[0]: subj.category は subj.v_sell の to（ontology.component）に来られない",
+     "法則 named_mod_share（二つのノードが同じ中身を足すなら、その中身には名前がある）に反する: var1=subj.goods, var2=of:\n- subj.v_sell\n- to, var3=subj.fruit",
+     "法則 named_mod_share（二つのノードが同じ中身を足すなら、その中身には名前がある）に反する: var1=subj.fruit, var2=of:\n- subj.v_sell\n- to, var3=subj.goods"
+    ]
+   }
+  },
+  {
+   "rev": "fa8c3e5",
+   "key": "fruit",
+   "line": "  fruit: {display: 果物, extends: goods, mod: {of: [v_classify, from], with: fruit_category}}",
+   "recorded": 1,
+   "kind": "gold",
+   "src": [
+    "e29_gold"
+   ],
+   "then": {
+    "ok": 1,
+    "errors": 0,
+    "err_text": []
+   },
+   "now": {
+    "ok": 1,
+    "errors": 0,
+    "err_text": []
+   }
+  },
+  {
+   "rev": "fa8c3e5",
+   "key": "seafood_category",
+   "line": "  seafood_category: {display: 分類「魚類」, extends: category, mod: {of: [v_classify, to], with: fish}} ",
+   "recorded": 1,
+   "kind": "written",
+   "src": [
+    "e29"
+   ],
+   "then": {
+    "ok": 1,
+    "errors": 0,
+    "err_text": []
+   },
+   "now": {
+    "ok": 1,
+    "errors": 0,
+    "err_text": []
+   }
+  },
+  {
+   "rev": "fa8c3e5",
+   "key": "seafood_category",
+   "line": "  seafood_category: {display: 分類「魚類」, extends: category, mod: {of: [v_classify, to], with: shrimp}}",
+   "recorded": 1,
+   "kind": "gold",
+   "src": [
+    "e29_gold"
+   ],
+   "then": {
+    "ok": 1,
+    "errors": 0,
+    "err_text": []
+   },
+   "now": {
+    "ok": 1,
+    "errors": 0,
+    "err_text": []
+   }
+  },
+  {
+   "rev": "fa8c3e5",
+   "key": "large_order",
+   "line": "  large_order: {display: 大口注文, extends: order, mod: {of: [v_place, from], with: large}} ",
+   "recorded": 0,
+   "kind": "written",
+   "src": [
+    "e29"
+   ],
+   "then": {
+    "ok": 0,
+    "errors": 1,
+    "err_text": [
+     "subj.large_order.mod[0]: large は subj.v_place の to（subj.agent）に来られない"
+    ]
+   },
+   "now": {
+    "ok": 0,
+    "errors": 1,
+    "err_text": [
+     "subj.large_order.mod[0]: large は subj.v_place の to（subj.agent）に来られない"
+    ]
+   }
+  },
+  {
+   "rev": "fa8c3e5",
+   "key": "large_order",
+   "line": "  large_order: {display: 大口注文, extends: order, mod: {of: [v_allocate, from], with: goods, at: {count: {ge: 10}}}}",
+   "recorded": 1,
+   "kind": "gold",
+   "src": [
+    "e29_gold"
+   ],
+   "then": {
+    "ok": 1,
+    "errors": 0,
+    "err_text": []
+   },
+   "now": {
+    "ok": 1,
+    "errors": 0,
+    "err_text": []
+   }
+  },
+  {
+   "rev": "fa8c3e5",
+   "key": "new_order",
+   "line": "  new_order: {display: 新規, extends: order, mod: {of: [v_create, from]}}",
+   "recorded": 0,
+   "kind": "written",
+   "src": [
+    "e29"
+   ],
+   "then": {
+    "ok": 0,
+    "errors": 1,
+    "err_text": [
+     "subj.new_order.mod[0]: v_create は動詞でない"
+    ]
+   },
+   "now": {
+    "ok": 0,
+    "errors": 1,
+    "err_text": [
+     "subj.new_order.mod[0]: v_create は動詞でない"
+    ]
+   }
+  },
+  {
+   "rev": "fa8c3e5",
+   "key": "new_order",
+   "line": "  new_order: {display: 新規, extends: order, mod: {of: [v_place, from], with: dormant_agent}}",
+   "recorded": 1,
+   "kind": "gold",
+   "src": [
+    "e29_gold"
+   ],
+   "then": {
+    "ok": 1,
+    "errors": 0,
+    "err_text": []
+   },
+   "now": {
+    "ok": 1,
+    "errors": 0,
+    "err_text": []
+   }
+  },
+  {
+   "rev": "fa8c3e5",
+   "key": "plan",
+   "line": "  plan: {display: プラン, extends: plan_entity, mod: {of: [v_plan, to]}}",
+   "recorded": 0,
+   "kind": "written",
+   "src": [
+    "e29"
+   ],
+   "then": {
+    "ok": 0,
+    "errors": 4,
+    "err_text": [
+     "subj.monthly_fee.mod[0]: subj.plan は ontology.v_depend の to（ontology.continuant）に来られない",
+     "subj.plan: 上位がない、または未定義",
+     "subj.free_plan.mod[0]: subj.plan は ontology.v_depend の to（ontology.continuant）に来られない"
+    ]
+   },
+   "now": {
+    "ok": 0,
+    "errors": 4,
+    "err_text": [
+     "subj.monthly_fee.mod[0]: subj.plan は ontology.v_depend の to（ontology.continuant）に来られない",
+     "subj.plan: 上位がない、または未定義",
+     "subj.free_plan.mod[0]: subj.plan は ontology.v_depend の to（ontology.continuant）に来られない"
+    ]
+   }
+  },
+  {
+   "rev": "fa8c3e5",
+   "key": "plan",
+   "line": "  plan: {display: プラン, extends: information_entity, mod: {of: [v_refer, from], with: service}}",
+   "recorded": 1,
+   "kind": "gold",
+   "src": [
+    "e29_gold"
+   ],
+   "then": {
+    "ok": 1,
+    "errors": 0,
+    "err_text": []
+   },
+   "now": {
+    "ok": 1,
+    "errors": 0,
+    "err_text": []
+   }
+  },
+  {
+   "rev": "fa8c3e5",
+   "key": "deficit",
+   "line": "  deficit: {display: 赤字, extends: account, mod: {of: [v_measure, from], with: amount, neg: true}}",
+   "recorded": 0,
+   "kind": "written",
+   "src": [
+    "e29"
+   ],
+   "then": {
+    "ok": 0,
+    "errors": 1,
+    "err_text": [
+     "subj.deficit.mod[0]: amount は syntax.v_measure の to（any）に来られない"
+    ]
+   },
+   "now": {
+    "ok": 0,
+    "errors": 1,
+    "err_text": [
+     "subj.deficit.mod[0]: amount は syntax.v_measure の to（any）に来られない"
+    ]
+   }
+  },
+  {
+   "rev": "fa8c3e5",
+   "key": "deficit",
+   "line": "  deficit: {display: 赤字, extends: account, mod: {of: [v_depend, to], with: profit_gap, at: {amount: {lt: 0}}}}",
+   "recorded": 1,
+   "kind": "gold",
+   "src": [
+    "e29_gold"
+   ],
+   "then": {
+    "ok": 1,
+    "errors": 0,
+    "err_text": []
+   },
+   "now": {
+    "ok": 1,
+    "errors": 0,
+    "err_text": []
+   }
+  },
+  {
+   "rev": "fa8c3e5",
+   "key": "approval",
+   "line": "  approval: {display: 承認, extends: process, mod: {of: [v_accept, from], with: inspection}}",
+   "recorded": 0,
+   "kind": "written",
+   "src": [
+    "e29"
+   ],
+   "then": {
+    "ok": 0,
+    "errors": 1,
+    "err_text": [
+     "subj.approval.mod[0]: v_accept は動詞でない"
+    ]
+   },
+   "now": {
+    "ok": 0,
+    "errors": 1,
+    "err_text": [
+     "subj.approval.mod[0]: v_accept は動詞でない"
+    ]
+   }
+  },
+  {
+   "rev": "fa8c3e5",
+   "key": "approval",
+   "line": "  approval: {display: 承認, extends: process, mod: {of: [v_approve, to]}}",
+   "recorded": 1,
+   "kind": "gold",
+   "src": [
+    "e29_gold"
+   ],
+   "then": {
+    "ok": 1,
+    "errors": 0,
+    "err_text": []
+   },
+   "now": {
+    "ok": 1,
+    "errors": 0,
+    "err_text": []
+   }
+  },
+  {
+   "rev": "fa8c3e5",
+   "key": "delay",
+   "line": "  delay: {display: 遅延, extends: quality, mod: {of: [v_measure, from], with: approved_inspection}}",
+   "recorded": 0,
+   "kind": "written",
+   "src": [
+    "e29"
+   ],
+   "then": {
+    "ok": 0,
+    "errors": 5,
+    "err_text": [
+     "法則 one_name（互いに相手の式を（含意によっても）持つ組は、同じものの別の名前なので置かない）に反する: var1=subj.delay, var2=subj.completed",
+     "法則 one_name（互いに相手の式を（含意によっても）持つ組は、同じものの別の名前なので置かない）に反する: var1=subj.completed, var2=subj.delay",
+     "法則 specific（より具体的な概念があればその下に置く）に反する: var1=subj.completed, var2=subj.delay"
+    ]
+   },
+   "now": {
+    "ok": 0,
+    "errors": 6,
+    "err_text": [
+     "法則 one_name（互いに相手の式を（含意によっても）持つ組は、同じものの別の名前なので置かない）に反する: var1=subj.completed, var2=subj.delay",
+     "法則 one_name（互いに相手の式を（含意によっても）持つ組は、同じものの別の名前なので置かない）に反する: var1=subj.delay, var2=subj.completed",
+     "法則 specific（より具体的な概念があればその下に置く）に反する: var1=subj.completed, var2=subj.delay"
+    ]
+   }
+  },
+  {
+   "rev": "fa8c3e5",
+   "key": "delay",
+   "line": "  delay: {display: 遅延, extends: delivery, mod: {of: [v_measure, to], with: days_overdue, at: {amount: {ge: 3}}}}",
+   "recorded": 1,
+   "kind": "gold",
+   "src": [
+    "e29_gold"
+   ],
+   "then": {
+    "ok": 1,
+    "errors": 0,
+    "err_text": []
+   },
+   "now": {
+    "ok": 1,
+    "errors": 0,
+    "err_text": []
+   }
+  },
+  {
+   "rev": "fa8c3e5",
+   "key": "absent_person",
+   "line": "  absent_person: {display: 開始時刻に席にいなかった人, extends: process, mod: {of: [v_arrive, to], with: meeting_start}}",
+   "recorded": 0,
+   "kind": "written",
+   "src": [
+    "e29"
+   ],
+   "then": {
+    "ok": 0,
+    "errors": 1,
+    "err_text": [
+     "subj.absent_person.mod[0]: v_arrive は動詞でない"
+    ]
+   },
+   "now": {
+    "ok": 0,
+    "errors": 1,
+    "err_text": [
+     "subj.absent_person.mod[0]: v_arrive は動詞でない"
+    ]
+   }
+  },
+  {
+   "rev": "fa8c3e5",
+   "key": "absent_person",
+   "line": "  absent_person: {display: 開始時刻に席にいなかった人, extends: person, mod: {of: [v_seated, from], with: meeting_start, neg: true}}",
+   "recorded": 1,
+   "kind": "gold",
+   "src": [
+    "e29_gold"
+   ],
+   "then": {
+    "ok": 1,
+    "errors": 0,
+    "err_text": []
+   },
+   "now": {
+    "ok": 1,
+    "errors": 0,
+    "err_text": []
+   }
+  },
+  {
+   "rev": "fa8c3e5",
+   "key": "land",
+   "line": "  land: {display: 土地, extends: property, mod: {of: [v_occupy, from], with: owner}}",
+   "recorded": 0,
+   "kind": "written",
+   "src": [
+    "e29"
+   ],
+   "then": {
+    "ok": 0,
+    "errors": 3,
+    "err_text": [
+     "subj.land: 上位がない、または未定義",
+     "法則 narrow_from（下位の動詞の端 from は、上位の動詞の端を狭める）に反する: var1=subj.v_located, var2=subj.land, var3=ontology.v_compose, var4=ontology.continuant, var5=ontology.continuant",
+     "法則 placed_deduced（動詞でない概念は、定義から根の下に置かれる（根への宣言だけでは置かれない））に反する: var1=subj.land"
+    ]
+   },
+   "now": {
+    "ok": 0,
+    "errors": 3,
+    "err_text": [
+     "subj.land: 上位がない、または未定義",
+     "法則 narrow_from（下位の動詞の端 from は、上位の動詞の端を狭める）に反する: var1=subj.v_located, var2=subj.land, var3=ontology.v_compose, var4=ontology.continuant, var5=ontology.continuant",
+     "法則 placed_deduced（動詞でない概念は、定義から根の下に置かれる（根への宣言だけでは置かれない））に反する: var1=subj.land"
+    ]
+   }
+  },
+  {
+   "rev": "fa8c3e5",
+   "key": "land",
+   "line": "  land: {display: 土地, extends: continuant, mod: {of: [v_located, from]}}",
+   "recorded": 1,
+   "kind": "gold",
+   "src": [
+    "e29_gold"
+   ],
+   "then": {
+    "ok": 1,
+    "errors": 0,
+    "err_text": []
+   },
+   "now": {
+    "ok": 1,
+    "errors": 0,
+    "err_text": []
+   }
+  },
+  {
+   "rev": "fa8c3e5",
+   "key": "urban",
+   "line": "  urban: {display: 都市部, extends: municipality, mod: {of: [v_compose, from], with: municipality}}",
+   "recorded": 1,
+   "kind": "written",
+   "src": [
+    "e29"
+   ],
+   "then": {
+    "ok": 1,
+    "errors": 0,
+    "err_text": []
+   },
+   "now": {
+    "ok": 1,
+    "errors": 0,
+    "err_text": []
+   }
+  },
+  {
+   "rev": "fa8c3e5",
+   "key": "urban",
+   "line": "  urban: {display: 都市部, extends: municipality, mod: {of: [v_depend, to], with: population, at: {amount: {ge: 10000}}}}",
+   "recorded": 1,
+   "kind": "gold",
+   "src": [
+    "e29_gold"
+   ],
+   "then": {
+    "ok": 1,
+    "errors": 0,
+    "err_text": []
+   },
+   "now": {
+    "ok": 1,
+    "errors": 0,
+    "err_text": []
+   }
+  },
+  {
+   "rev": "fa8c3e5",
+   "key": "business_day",
+   "line": "  business_day: {display: 営業日, extends: day, mod: {of: [v_business_day_of, to]}}",
+   "recorded": 0,
+   "kind": "written",
+   "src": [
+    "e29"
+   ],
+   "then": {
+    "ok": 0,
+    "errors": 1,
+    "err_text": [
+     "subj.business_day.mod[0]: v_business_day_of は動詞でない"
+    ]
+   },
+   "now": {
+    "ok": 0,
+    "errors": 1,
+    "err_text": [
+     "subj.business_day.mod[0]: v_business_day_of は動詞でない"
+    ]
+   }
+  },
+  {
+   "rev": "fa8c3e5",
+   "key": "business_day",
+   "line": "  business_day: {display: 営業日, extends: day, mod: {of: [v_weekday_of, to], with: sunday, neg: true}}",
+   "recorded": 1,
+   "kind": "gold",
+   "src": [
+    "e29_gold"
+   ],
+   "then": {
+    "ok": 1,
+    "errors": 0,
+    "err_text": []
+   },
+   "now": {
+    "ok": 1,
+    "errors": 0,
+    "err_text": []
+   }
+  },
+  {
+   "rev": "fa8c3e5",
+   "key": "weekday",
+   "line": "  weekday: {display: 曜日, extends: weekday_day, mod: {of: [v_weekday_of, to]}} ",
+   "recorded": 0,
+   "kind": "written",
+   "src": [
+    "e29"
+   ],
+   "then": {
+    "ok": 0,
+    "errors": 3,
+    "err_text": [
+     "法則 narrow_from（下位の動詞の端 from は、上位の動詞の端を狭める）に反する: var1=subj.v_weekday_of, var2=subj.weekday, var3=syntax.v_measure, var4=ontology.continuant, var5=any",
+     "法則 monotone（階層を降りるたびに限定が増える）に反する: var1=subj.weekday, var2=subj.weekday_day",
+     "法則 named_mod に反する: subj.day, subj.weekday が同じ限定を足している。名前を付けた修飾語にする"
+    ]
+   },
+   "now": {
+    "ok": 0,
+    "errors": 4,
+    "err_text": [
+     "法則 narrow_from（下位の動詞の端 from は、上位の動詞の端を狭める）に反する: var1=subj.v_weekday_of, var2=subj.weekday, var3=syntax.v_measure, var4=ontology.continuant, var5=any",
+     "法則 monotone（階層を降りるたびに限定が増える）に反する: var1=subj.weekday, var2=subj.weekday_day",
+     "法則 named_mod_share（二つのノードが同じ中身を足すなら、その中身には名前がある）に反する: var1=subj.weekday, var2=of:\n- subj.v_weekday_of\n- to, var3=subj.day"
+    ]
+   }
+  },
+  {
+   "rev": "fa8c3e5",
+   "key": "weekday",
+   "line": "  weekday: {display: 曜日, extends: quality, mod: {of: [v_weekday_of, from]}}",
+   "recorded": 1,
+   "kind": "gold",
+   "src": [
+    "e29_gold"
+   ],
+   "then": {
+    "ok": 1,
+    "errors": 0,
+    "err_text": []
+   },
+   "now": {
+    "ok": 1,
+    "errors": 0,
+    "err_text": []
+   }
+  },
+  {
+   "rev": "fa8c3e5",
+   "key": "thursday_day",
+   "line": "  thursday_day: {display: 木曜の日, extends: weekday, mod: {of: [v_weekday_of, to], with: thursday}}",
+   "recorded": 0,
+   "kind": "written",
+   "src": [
+    "e29"
+   ],
+   "then": {
+    "ok": 0,
+    "errors": 1,
+    "err_text": [
+     "subj.thursday_day.mod[0]: subj.weekday は subj.v_weekday_of の to（subj.day）に来られない"
+    ]
+   },
+   "now": {
+    "ok": 0,
+    "errors": 1,
+    "err_text": [
+     "subj.thursday_day.mod[0]: subj.weekday は subj.v_weekday_of の to（subj.day）に来られない"
+    ]
+   }
+  },
+  {
+   "rev": "fa8c3e5",
+   "key": "thursday_day",
+   "line": "  thursday_day: {display: 木曜の日, extends: day, mod: {of: [v_weekday_of, to], with: thursday}}",
+   "recorded": 1,
+   "kind": "gold",
+   "src": [
+    "e29_gold"
+   ],
+   "then": {
+    "ok": 1,
+    "errors": 0,
+    "err_text": []
+   },
+   "now": {
+    "ok": 1,
+    "errors": 0,
+    "err_text": []
+   }
+  },
+  {
+   "rev": "fa8c3e5",
+   "key": "morning",
+   "line": "  morning: {display: 午前, extends: morning_base, mod: {of: [v_end, to]}}",
+   "recorded": 1,
+   "kind": "written",
+   "src": [
+    "e29"
+   ],
+   "then": {
+    "ok": 1,
+    "errors": 0,
+    "err_text": []
+   },
+   "now": {
+    "ok": 1,
+    "errors": 0,
+    "err_text": []
+   }
+  },
+  {
+   "rev": "fa8c3e5",
+   "key": "morning",
+   "line": "  morning: {display: 午前, extends: morning_base, mod: {of: [v_end, from], with: hour, at: {amount: 13}}}",
+   "recorded": 1,
+   "kind": "gold",
+   "src": [
+    "e29_gold"
+   ],
+   "then": {
+    "ok": 1,
+    "errors": 0,
+    "err_text": []
+   },
+   "now": {
+    "ok": 1,
+    "errors": 0,
+    "err_text": []
+   }
+  },
+  {
+   "rev": "5ce3383",
+   "key": "agent",
+   "line": "  agent: {display: 主体, extends: entity, mod: {of: [v_entity, of], with: subject}}",
+   "recorded": 0,
+   "kind": "written",
+   "src": [
+    "e30_fb",
+    "e30_ctl"
+   ],
+   "then": {
+    "ok": 0,
+    "errors": 24,
+    "err_text": [
+     "subj.age.mod[0]: subj.person は ontology.v_depend の to（ontology.continuant）に来られない",
+     "subj.height.mod[0]: subj.person_age_neg は ontology.v_depend の to（ontology.continuant）に来られない",
+     "subj.agent: 上位がない、または未定義"
+    ]
+   },
+   "now": {
+    "ok": 0,
+    "errors": 24,
+    "err_text": [
+     "subj.age.mod[0]: subj.person は ontology.v_depend の to（ontology.continuant）に来られない",
+     "subj.height.mod[0]: subj.person_age_neg は ontology.v_depend の to（ontology.continuant）に来られない",
+     "subj.agent: 上位がない、または未定義"
+    ]
+   }
+  },
+  {
+   "rev": "5ce3383",
+   "key": "organization",
+   "line": "  organization: {display: 組織, extends: continuant, mod: {of: [v_perform, from]}}",
+   "recorded": 0,
+   "kind": "written",
+   "src": [
+    "e30_fb",
+    "e30_ctl"
+   ],
+   "then": {
+    "ok": 0,
+    "errors": 7,
+    "err_text": [
+     "subj.customer.mod[0]: subj.corporation は subj.v_contract の to（subj.agent）に来られない",
+     "法則 narrow_from（下位の動詞の端 from は、上位の動詞の端を狭める）に反する: var1=subj.v_employ, var2=subj.organization, var3=subj.v_contract, var4=subj.agent, var5=subj.agent",
+     "法則 one_name（互いに相手の式を（含意によっても）持つ組は、同じものの別の名前なので置かない）に反する: var1=subj.organization, var2=subj.agent"
+    ]
+   },
+   "now": {
+    "ok": 0,
+    "errors": 8,
+    "err_text": [
+     "subj.customer.mod[0]: subj.corporation は subj.v_contract の to（subj.agent）に来られない",
+     "法則 narrow_from（下位の動詞の端 from は、上位の動詞の端を狭める）に反する: var1=subj.v_employ, var2=subj.organization, var3=subj.v_contract, var4=subj.agent, var5=subj.agent",
+     "法則 one_name（互いに相手の式を（含意によっても）持つ組は、同じものの別の名前なので置かない）に反する: var1=subj.organization, var2=subj.agent"
+    ]
+   }
+  },
+  {
+   "rev": "5ce3383",
+   "key": "shared_address",
+   "line": "  shared_address: {display: 二人以上が住む住所, extends: address, mod: {of: [v_refer, from], with: people, amount: {gt: 1}}} 型検査の誤り: subj.shared_address.mod[0]: people は syntax.v_refer の to（any）に来られない / subj.shared_address.mod[0]: 語 {'amount'} が、grammar.mod に書かれていない",
+   "recorded": 0,
+   "kind": "written",
+   "src": [
+    "e30_fb"
+   ],
+   "then": {
+    "ok": 0,
+    "errors": -1,
+    "err_text": [
+     ", line 848, in yaml._yaml.CParser._compose_mapping_node\n  File \"yaml/_yaml.pyx\", line 861, in yaml._yaml.CParser._parse_next_event\nyaml.parser.ParserError: while parsing a block mapping\n  in \"<unicode string>\", line 10, column 3\ndid not find expected key\n  in \"<unicode string>\", line 48, column 117\n"
+    ]
+   },
+   "now": {
+    "ok": 0,
+    "errors": -1,
+    "err_text": [
+     ", line 848, in yaml._yaml.CParser._compose_mapping_node\n  File \"yaml/_yaml.pyx\", line 861, in yaml._yaml.CParser._parse_next_event\nyaml.parser.ParserError: while parsing a block mapping\n  in \"<unicode string>\", line 10, column 3\ndid not find expected key\n  in \"<unicode string>\", line 48, column 117\n"
+    ]
+   }
+  },
+  {
+   "rev": "5ce3383",
+   "key": "shared_address",
+   "line": "  shared_address: {display: 二人以上が住む住所, extends: address, mod: {of: [v_refer, from], with: people, amount: {gt: 1}}} 型検査の誤り: この行は受け付けられなかった。",
+   "recorded": 0,
+   "kind": "written",
+   "src": [
+    "e30_ctl"
+   ],
+   "then": {
+    "ok": 0,
+    "errors": -1,
+    "err_text": [
+     ", line 848, in yaml._yaml.CParser._compose_mapping_node\n  File \"yaml/_yaml.pyx\", line 861, in yaml._yaml.CParser._parse_next_event\nyaml.parser.ParserError: while parsing a block mapping\n  in \"<unicode string>\", line 10, column 3\ndid not find expected key\n  in \"<unicode string>\", line 48, column 117\n"
+    ]
+   },
+   "now": {
+    "ok": 0,
+    "errors": -1,
+    "err_text": [
+     ", line 848, in yaml._yaml.CParser._compose_mapping_node\n  File \"yaml/_yaml.pyx\", line 861, in yaml._yaml.CParser._parse_next_event\nyaml.parser.ParserError: while parsing a block mapping\n  in \"<unicode string>\", line 10, column 3\ndid not find expected key\n  in \"<unicode string>\", line 48, column 117\n"
+    ]
+   }
+  },
+  {
+   "rev": "5ce3383",
+   "key": "user",
+   "line": "  user: {display: 利用者, extends: person, mod: {of: [v_use, to]}}",
+   "recorded": 0,
+   "kind": "written",
+   "src": [
+    "e30_fb"
+   ],
+   "then": {
+    "ok": 0,
+    "errors": 1,
+    "err_text": [
+     "subj.user.mod[0]: subj.person は syntax.v_use の to（syntax.domain）に来られない"
+    ]
+   },
+   "now": {
+    "ok": 0,
+    "errors": 1,
+    "err_text": [
+     "subj.user.mod[0]: subj.person は syntax.v_use の to（syntax.domain）に来られない"
+    ]
+   }
+  },
+  {
+   "rev": "5ce3383",
+   "key": "user",
+   "line": "  user: {display: 利用者, extends: person, mod: {of: [v_use, to]}} ",
+   "recorded": 0,
+   "kind": "written",
+   "src": [
+    "e30_ctl"
+   ],
+   "then": {
+    "ok": 0,
+    "errors": 1,
+    "err_text": [
+     "subj.user.mod[0]: subj.person は syntax.v_use の to（syntax.domain）に来られない"
+    ]
+   },
+   "now": {
+    "ok": 0,
+    "errors": 1,
+    "err_text": [
+     "subj.user.mod[0]: subj.person は syntax.v_use の to（syntax.domain）に来られない"
+    ]
+   }
+  },
+  {
+   "rev": "5ce3383",
+   "key": "setting_rule",
+   "line": "  setting_rule: {display: 設定の変更を許す規則, extends: access_rule, mod: {of: [v_allow, to]}}",
+   "recorded": 0,
+   "kind": "written",
+   "src": [
+    "e30_fb"
+   ],
+   "then": {
+    "ok": 0,
+    "errors": 1,
+    "err_text": [
+     "subj.setting_rule.mod[0]: v_allow は動詞でない"
+    ]
+   },
+   "now": {
+    "ok": 0,
+    "errors": 1,
+    "err_text": [
+     "subj.setting_rule.mod[0]: v_allow は動詞でない"
+    ]
+   }
+  },
+  {
+   "rev": "5ce3383",
+   "key": "setting_rule",
+   "line": "  setting_rule: {display: 設定の変更を許す規則, extends: access_rule, mod: {of: [v_allow, to], with: user}}",
+   "recorded": 0,
+   "kind": "written",
+   "src": [
+    "e30_ctl"
+   ],
+   "then": {
+    "ok": 0,
+    "errors": 1,
+    "err_text": [
+     "subj.setting_rule.mod[0]: v_allow は動詞でない"
+    ]
+   },
+   "now": {
+    "ok": 0,
+    "errors": 1,
+    "err_text": [
+     "subj.setting_rule.mod[0]: v_allow は動詞でない"
+    ]
+   }
+  },
+  {
+   "rev": "5ce3383",
+   "key": "admin",
+   "line": "  admin: {display: 管理者, extends: role, mod: {of: [v_depend, from], with: permission}, mod: {of: [v_refer, from], with: setting_permission}}",
+   "recorded": 0,
+   "kind": "written",
+   "src": [
+    "e30_fb"
+   ],
+   "then": {
+    "ok": 0,
+    "errors": -1,
+    "err_text": [
+     "pping(node)\n  File \"/tmp/tmp249nnnc5/5ce3383/cscl/bootstrap/type_checker/type_checker.py\", line 226, in _mapping\n    raise yaml.constructor.ConstructorError(None, None, f\"識別子 {key} が重複している\", k.start_mark)\nyaml.constructor.ConstructorError: 識別子 mod が重複している\n  in \"<unicode string>\", line 57, column 87\n"
+    ]
+   },
+   "now": {
+    "ok": 0,
+    "errors": -1,
+    "err_text": [
+     "t_mapping(node)\n  File \"/tmp/tmp249nnnc5/now/cscl/bootstrap/type_checker/type_checker.py\", line 226, in _mapping\n    raise yaml.constructor.ConstructorError(None, None, f\"識別子 {key} が重複している\", k.start_mark)\nyaml.constructor.ConstructorError: 識別子 mod が重複している\n  in \"<unicode string>\", line 57, column 87\n"
+    ]
+   }
+  },
+  {
+   "rev": "5ce3383",
+   "key": "admin",
+   "line": "  admin: {display: 管理者, extends: role, mod: {of: [v_depend, from], with: permission}}型検査の誤り: この行は受け付けられなかった。",
+   "recorded": 0,
+   "kind": "written",
+   "src": [
+    "e30_ctl"
+   ],
+   "then": {
+    "ok": 0,
+    "errors": -1,
+    "err_text": [
+     "\", line 848, in yaml._yaml.CParser._compose_mapping_node\n  File \"yaml/_yaml.pyx\", line 861, in yaml._yaml.CParser._parse_next_event\nyaml.parser.ParserError: while parsing a block mapping\n  in \"<unicode string>\", line 10, column 3\ndid not find expected key\n  in \"<unicode string>\", line 57, column 86\n"
+    ]
+   },
+   "now": {
+    "ok": 0,
+    "errors": -1,
+    "err_text": [
+     "\", line 848, in yaml._yaml.CParser._compose_mapping_node\n  File \"yaml/_yaml.pyx\", line 861, in yaml._yaml.CParser._parse_next_event\nyaml.parser.ParserError: while parsing a block mapping\n  in \"<unicode string>\", line 10, column 3\ndid not find expected key\n  in \"<unicode string>\", line 57, column 86\n"
+    ]
+   }
+  },
+  {
+   "rev": "5ce3383",
+   "key": "stored_goods",
+   "line": "  stored_goods: {display: 倉庫にある商品, extends: relation, mod: {of: [v_store, to], with: goods}}型検査の誤り: subj.stored_goods: 上位がない、または未定義 / subj.stock.mod[0]: subj.stored_goods は subj.v_allocate の to（subj.goods）に来られない",
+   "recorded": 0,
+   "kind": "written",
+   "src": [
+    "e30_fb"
+   ],
+   "then": {
+    "ok": 0,
+    "errors": -1,
+    "err_text": [
+     "\", line 848, in yaml._yaml.CParser._compose_mapping_node\n  File \"yaml/_yaml.pyx\", line 861, in yaml._yaml.CParser._parse_next_event\nyaml.parser.ParserError: while parsing a block mapping\n  in \"<unicode string>\", line 10, column 3\ndid not find expected key\n  in \"<unicode string>\", line 61, column 93\n"
+    ]
+   },
+   "now": {
+    "ok": 0,
+    "errors": -1,
+    "err_text": [
+     "\", line 848, in yaml._yaml.CParser._compose_mapping_node\n  File \"yaml/_yaml.pyx\", line 861, in yaml._yaml.CParser._parse_next_event\nyaml.parser.ParserError: while parsing a block mapping\n  in \"<unicode string>\", line 10, column 3\ndid not find expected key\n  in \"<unicode string>\", line 61, column 93\n"
+    ]
+   }
+  },
+  {
+   "rev": "5ce3383",
+   "key": "stored_goods",
+   "line": "  stored_goods: {display: 倉庫にある商品, extends: relation, mod: {of: [v_store, to], with: goods}}",
+   "recorded": 0,
+   "kind": "written",
+   "src": [
+    "e30_ctl"
+   ],
+   "then": {
+    "ok": 0,
+    "errors": 2,
+    "err_text": [
+     "subj.stored_goods: 上位がない、または未定義",
+     "subj.stock.mod[0]: subj.stored_goods は subj.v_allocate の to（subj.goods）に来られない"
+    ]
+   },
+   "now": {
+    "ok": 0,
+    "errors": 2,
+    "err_text": [
+     "subj.stored_goods: 上位がない、または未定義",
+     "subj.stock.mod[0]: subj.stored_goods は subj.v_allocate の to（subj.goods）に来られない"
+    ]
+   }
+  },
+  {
+   "rev": "5ce3383",
+   "key": "fruit",
+   "line": "  fruit: {display: 果物, extends: category, mod: {of: [v_sell, to], with: setting_permission}}",
+   "recorded": 0,
+   "kind": "written",
+   "src": [
+    "e30_fb"
+   ],
+   "then": {
+    "ok": 0,
+    "errors": 2,
+    "err_text": [
+     "subj.fruit.mod[0]: subj.category は subj.v_sell の to（ontology.component）に来られない",
+     "subj.fruit.mod[0]: subj.setting_permission は subj.v_sell の from（subj.agent）に来られない"
+    ]
+   },
+   "now": {
+    "ok": 0,
+    "errors": 2,
+    "err_text": [
+     "subj.fruit.mod[0]: subj.category は subj.v_sell の to（ontology.component）に来られない",
+     "subj.fruit.mod[0]: subj.setting_permission は subj.v_sell の from（subj.agent）に来られない"
+    ]
+   }
+  },
+  {
+   "rev": "5ce3383",
+   "key": "fruit",
+   "line": "  fruit: {display: 果物, extends: category, mod: {of: [v_sell, to]}} ",
+   "recorded": 0,
+   "kind": "written",
+   "src": [
+    "e30_ctl"
+   ],
+   "then": {
+    "ok": 0,
+    "errors": 2,
+    "err_text": [
+     "subj.fruit.mod[0]: subj.category は subj.v_sell の to（ontology.component）に来られない",
+     "法則 named_mod に反する: subj.goods, subj.fruit が同じ限定を足している。名前を付けた修飾語にする"
+    ]
+   },
+   "now": {
+    "ok": 0,
+    "errors": 3,
+    "err_text": [
+     "subj.fruit.mod[0]: subj.category は subj.v_sell の to（ontology.component）に来られない",
+     "法則 named_mod_share（二つのノードが同じ中身を足すなら、その中身には名前がある）に反する: var1=subj.goods, var2=of:\n- subj.v_sell\n- to, var3=subj.fruit",
+     "法則 named_mod_share（二つのノードが同じ中身を足すなら、その中身には名前がある）に反する: var1=subj.fruit, var2=of:\n- subj.v_sell\n- to, var3=subj.goods"
+    ]
+   }
+  },
+  {
+   "rev": "5ce3383",
+   "key": "large_order",
+   "line": "  large_order: {display: 大口注文, extends: order, mod: {of: [v_place, from], with: large}, neg: true} ",
+   "recorded": 0,
+   "kind": "written",
+   "src": [
+    "e30_fb"
+   ],
+   "then": {
+    "ok": 0,
+    "errors": 1,
+    "err_text": [
+     "subj.large_order.mod[0]: large は subj.v_place の to（subj.agent）に来られない"
+    ]
+   },
+   "now": {
+    "ok": 0,
+    "errors": 1,
+    "err_text": [
+     "subj.large_order.mod[0]: large は subj.v_place の to（subj.agent）に来られない"
+    ]
+   }
+  },
+  {
+   "rev": "5ce3383",
+   "key": "large_order",
+   "line": "  large_order: {display: 大口注文, extends: order, mod: {of: [v_place, from], with: large}}",
+   "recorded": 0,
+   "kind": "written",
+   "src": [
+    "e30_ctl"
+   ],
+   "then": {
+    "ok": 0,
+    "errors": 1,
+    "err_text": [
+     "subj.large_order.mod[0]: large は subj.v_place の to（subj.agent）に来られない"
+    ]
+   },
+   "now": {
+    "ok": 0,
+    "errors": 1,
+    "err_text": [
+     "subj.large_order.mod[0]: large は subj.v_place の to（subj.agent）に来られない"
+    ]
+   }
+  },
+  {
+   "rev": "5ce3383",
+   "key": "new_order",
+   "line": "  new_order: {display: 新規, extends: order, mod: {of: [v_create, from]}}",
+   "recorded": 0,
+   "kind": "written",
+   "src": [
+    "e30_fb"
+   ],
+   "then": {
+    "ok": 0,
+    "errors": 1,
+    "err_text": [
+     "subj.new_order.mod[0]: v_create は動詞でない"
+    ]
+   },
+   "now": {
+    "ok": 0,
+    "errors": 1,
+    "err_text": [
+     "subj.new_order.mod[0]: v_create は動詞でない"
+    ]
+   }
+  },
+  {
+   "rev": "5ce3383",
+   "key": "new_order",
+   "line": "  new_order: {display: 新規, extends: order, mod: {of: [v_create, from]}}型検査の誤り: この行は受け付けられなかった。",
+   "recorded": 0,
+   "kind": "written",
+   "src": [
+    "e30_ctl"
+   ],
+   "then": {
+    "ok": 0,
+    "errors": -1,
+    "err_text": [
+     "\", line 848, in yaml._yaml.CParser._compose_mapping_node\n  File \"yaml/_yaml.pyx\", line 861, in yaml._yaml.CParser._parse_next_event\nyaml.parser.ParserError: while parsing a block mapping\n  in \"<unicode string>\", line 10, column 3\ndid not find expected key\n  in \"<unicode string>\", line 74, column 72\n"
+    ]
+   },
+   "now": {
+    "ok": 0,
+    "errors": -1,
+    "err_text": [
+     "\", line 848, in yaml._yaml.CParser._compose_mapping_node\n  File \"yaml/_yaml.pyx\", line 861, in yaml._yaml.CParser._parse_next_event\nyaml.parser.ParserError: while parsing a block mapping\n  in \"<unicode string>\", line 10, column 3\ndid not find expected key\n  in \"<unicode string>\", line 74, column 72\n"
+    ]
+   }
+  },
+  {
+   "rev": "5ce3383",
+   "key": "plan",
+   "line": "  plan: {display: プラン, extends: plan_entity, mod: {of: [v_plan, to]}}",
+   "recorded": 0,
+   "kind": "written",
+   "src": [
+    "e30_fb",
+    "e30_ctl"
+   ],
+   "then": {
+    "ok": 0,
+    "errors": 4,
+    "err_text": [
+     "subj.monthly_fee.mod[0]: subj.plan は ontology.v_depend の to（ontology.continuant）に来られない",
+     "subj.plan: 上位がない、または未定義",
+     "subj.free_plan.mod[0]: subj.plan は ontology.v_depend の to（ontology.continuant）に来られない"
+    ]
+   },
+   "now": {
+    "ok": 0,
+    "errors": 4,
+    "err_text": [
+     "subj.monthly_fee.mod[0]: subj.plan は ontology.v_depend の to（ontology.continuant）に来られない",
+     "subj.plan: 上位がない、または未定義",
+     "subj.free_plan.mod[0]: subj.plan は ontology.v_depend の to（ontology.continuant）に来られない"
+    ]
+   }
+  },
+  {
+   "rev": "5ce3383",
+   "key": "deficit",
+   "line": "  deficit: {display: 赤字, extends: account, mod: {of: [v_measure, from], with: amount, neg: true}, mod: {of: [v_depend, to], with: monthly_fee, at: {amount: {le: 500}}}}",
+   "recorded": 0,
+   "kind": "written",
+   "src": [
+    "e30_fb"
+   ],
+   "then": {
+    "ok": 0,
+    "errors": -1,
+    "err_text": [
+     "pping(node)\n  File \"/tmp/tmp249nnnc5/5ce3383/cscl/bootstrap/type_checker/type_checker.py\", line 226, in _mapping\n    raise yaml.constructor.ConstructorError(None, None, f\"識別子 {key} が重複している\", k.start_mark)\nyaml.constructor.ConstructorError: 識別子 mod が重複している\n  in \"<unicode string>\", line 81, column 99\n"
+    ]
+   },
+   "now": {
+    "ok": 0,
+    "errors": -1,
+    "err_text": [
+     "t_mapping(node)\n  File \"/tmp/tmp249nnnc5/now/cscl/bootstrap/type_checker/type_checker.py\", line 226, in _mapping\n    raise yaml.constructor.ConstructorError(None, None, f\"識別子 {key} が重複している\", k.start_mark)\nyaml.constructor.ConstructorError: 識別子 mod が重複している\n  in \"<unicode string>\", line 81, column 99\n"
+    ]
+   }
+  },
+  {
+   "rev": "5ce3383",
+   "key": "deficit",
+   "line": "  deficit: {display: 赤字, extends: account, mod: {of: [v_measure, from], with: amount, neg: true}}",
+   "recorded": 0,
+   "kind": "written",
+   "src": [
+    "e30_ctl"
+   ],
+   "then": {
+    "ok": 0,
+    "errors": 1,
+    "err_text": [
+     "subj.deficit.mod[0]: amount は syntax.v_measure の to（any）に来られない"
+    ]
+   },
+   "now": {
+    "ok": 0,
+    "errors": 1,
+    "err_text": [
+     "subj.deficit.mod[0]: amount は syntax.v_measure の to（any）に来られない"
+    ]
+   }
+  },
+  {
+   "rev": "5ce3383",
+   "key": "approval",
+   "line": "  approval: {display: 承認, extends: process, mod: {of: [v_accept, from], with: inspection}}",
+   "recorded": 0,
+   "kind": "written",
+   "src": [
+    "e30_fb",
+    "e30_ctl"
+   ],
+   "then": {
+    "ok": 0,
+    "errors": 1,
+    "err_text": [
+     "subj.approval.mod[0]: v_accept は動詞でない"
+    ]
+   },
+   "now": {
+    "ok": 0,
+    "errors": 1,
+    "err_text": [
+     "subj.approval.mod[0]: v_accept は動詞でない"
+    ]
+   }
+  },
+  {
+   "rev": "5ce3383",
+   "key": "delay",
+   "line": "  delay: {display: 遅延, extends: quality, mod: {of: [v_measure, from], with: approved_inspection}}",
+   "recorded": 0,
+   "kind": "written",
+   "src": [
+    "e30_fb",
+    "e30_ctl"
+   ],
+   "then": {
+    "ok": 0,
+    "errors": 5,
+    "err_text": [
+     "法則 one_name（互いに相手の式を（含意によっても）持つ組は、同じものの別の名前なので置かない）に反する: var1=subj.delay, var2=subj.completed",
+     "法則 one_name（互いに相手の式を（含意によっても）持つ組は、同じものの別の名前なので置かない）に反する: var1=subj.completed, var2=subj.delay",
+     "法則 specific（より具体的な概念があればその下に置く）に反する: var1=subj.delay, var2=subj.completed"
+    ]
+   },
+   "now": {
+    "ok": 0,
+    "errors": 6,
+    "err_text": [
+     "法則 one_name（互いに相手の式を（含意によっても）持つ組は、同じものの別の名前なので置かない）に反する: var1=subj.completed, var2=subj.delay",
+     "法則 one_name（互いに相手の式を（含意によっても）持つ組は、同じものの別の名前なので置かない）に反する: var1=subj.delay, var2=subj.completed",
+     "法則 specific（より具体的な概念があればその下に置く）に反する: var1=subj.delay, var2=subj.completed"
+    ]
+   }
+  },
+  {
+   "rev": "5ce3383",
+   "key": "absent_person",
+   "line": "  absent_person: {display: 開始時刻に席にいなかった人, extends: process, mod: {of: [v_arrive, to], with: meeting_start}}",
+   "recorded": 0,
+   "kind": "written",
+   "src": [
+    "e30_fb",
+    "e30_ctl"
+   ],
+   "then": {
+    "ok": 0,
+    "errors": 1,
+    "err_text": [
+     "subj.absent_person.mod[0]: v_arrive は動詞でない"
+    ]
+   },
+   "now": {
+    "ok": 0,
+    "errors": 1,
+    "err_text": [
+     "subj.absent_person.mod[0]: v_arrive は動詞でない"
+    ]
+   }
+  },
+  {
+   "rev": "5ce3383",
+   "key": "land",
+   "line": "  land: {display: 土地, extends: property, mod: {of: [v_occupy, from], with: owner}}",
+   "recorded": 0,
+   "kind": "written",
+   "src": [
+    "e30_fb",
+    "e30_ctl"
+   ],
+   "then": {
+    "ok": 0,
+    "errors": 3,
+    "err_text": [
+     "subj.land: 上位がない、または未定義",
+     "法則 narrow_from（下位の動詞の端 from は、上位の動詞の端を狭める）に反する: var1=subj.v_located, var2=subj.land, var3=ontology.v_compose, var4=ontology.continuant, var5=ontology.continuant",
+     "法則 placed_deduced（動詞でない概念は、定義から根の下に置かれる（根への宣言だけでは置かれない））に反する: var1=subj.land"
+    ]
+   },
+   "now": {
+    "ok": 0,
+    "errors": 3,
+    "err_text": [
+     "subj.land: 上位がない、または未定義",
+     "法則 narrow_from（下位の動詞の端 from は、上位の動詞の端を狭める）に反する: var1=subj.v_located, var2=subj.land, var3=ontology.v_compose, var4=ontology.continuant, var5=ontology.continuant",
+     "法則 placed_deduced（動詞でない概念は、定義から根の下に置かれる（根への宣言だけでは置かれない））に反する: var1=subj.land"
+    ]
+   }
+  },
+  {
+   "rev": "5ce3383",
+   "key": "business_day",
+   "line": "  business_day: {display: 営業日, extends: day, mod: {of: [v_business_day_of, to]}}型検査の誤り: subj.business_day.mod[0]: v_business_day_of は動詞でない",
+   "recorded": 0,
+   "kind": "written",
+   "src": [
+    "e30_fb"
+   ],
+   "then": {
+    "ok": 0,
+    "errors": -1,
+    "err_text": [
+     ", line 848, in yaml._yaml.CParser._compose_mapping_node\n  File \"yaml/_yaml.pyx\", line 861, in yaml._yaml.CParser._parse_next_event\nyaml.parser.ParserError: while parsing a block mapping\n  in \"<unicode string>\", line 10, column 3\ndid not find expected key\n  in \"<unicode string>\", line 101, column 81\n"
+    ]
+   },
+   "now": {
+    "ok": 0,
+    "errors": -1,
+    "err_text": [
+     ", line 848, in yaml._yaml.CParser._compose_mapping_node\n  File \"yaml/_yaml.pyx\", line 861, in yaml._yaml.CParser._parse_next_event\nyaml.parser.ParserError: while parsing a block mapping\n  in \"<unicode string>\", line 10, column 3\ndid not find expected key\n  in \"<unicode string>\", line 101, column 81\n"
+    ]
+   }
+  },
+  {
+   "rev": "5ce3383",
+   "key": "business_day",
+   "line": "  business_day: {display: 営業日, extends: day, mod: {of: [v_business_day_of, to]}}型検査の誤り: この行は受け付けられなかった。",
+   "recorded": 0,
+   "kind": "written",
+   "src": [
+    "e30_ctl"
+   ],
+   "then": {
+    "ok": 0,
+    "errors": -1,
+    "err_text": [
+     ", line 848, in yaml._yaml.CParser._compose_mapping_node\n  File \"yaml/_yaml.pyx\", line 861, in yaml._yaml.CParser._parse_next_event\nyaml.parser.ParserError: while parsing a block mapping\n  in \"<unicode string>\", line 10, column 3\ndid not find expected key\n  in \"<unicode string>\", line 101, column 81\n"
+    ]
+   },
+   "now": {
+    "ok": 0,
+    "errors": -1,
+    "err_text": [
+     ", line 848, in yaml._yaml.CParser._compose_mapping_node\n  File \"yaml/_yaml.pyx\", line 861, in yaml._yaml.CParser._parse_next_event\nyaml.parser.ParserError: while parsing a block mapping\n  in \"<unicode string>\", line 10, column 3\ndid not find expected key\n  in \"<unicode string>\", line 101, column 81\n"
+    ]
+   }
+  },
+  {
+   "rev": "5ce3383",
+   "key": "weekday",
+   "line": "  weekday: {display: 曜日, extends: weekday_day, mod: {of: [v_weekday_of, to], with: monday, neg: true}}",
+   "recorded": 0,
+   "kind": "written",
+   "src": [
+    "e30_fb"
+   ],
+   "then": {
+    "ok": 0,
+    "errors": 3,
+    "err_text": [
+     "法則 narrow_from（下位の動詞の端 from は、上位の動詞の端を狭める）に反する: var1=subj.v_weekday_of, var2=subj.weekday, var3=syntax.v_measure, var4=ontology.continuant, var5=any",
+     "法則 monotone（階層を降りるたびに限定が増える）に反する: var1=subj.weekday, var2=subj.weekday_day",
+     "法則 named_mod に反する: subj.weekday_day, subj.weekday が同じ限定を足している。名前を付けた修飾語にする"
+    ]
+   },
+   "now": {
+    "ok": 0,
+    "errors": 4,
+    "err_text": [
+     "法則 narrow_from（下位の動詞の端 from は、上位の動詞の端を狭める）に反する: var1=subj.v_weekday_of, var2=subj.weekday, var3=syntax.v_measure, var4=ontology.continuant, var5=any",
+     "法則 monotone（階層を降りるたびに限定が増える）に反する: var1=subj.weekday, var2=subj.weekday_day",
+     "法則 named_mod_share（二つのノードが同じ中身を足すなら、その中身には名前がある）に反する: var1=subj.weekday, var2=neg: true\nof:\n- subj.v_weekday_of\n- to\nwith: monday, var3=subj.weekday_day"
+    ]
+   }
+  },
+  {
+   "rev": "5ce3383",
+   "key": "weekday",
+   "line": "  weekday: {display: 曜日, extends: weekday_day, mod: {of: [v_weekday_of, to]}}",
+   "recorded": 0,
+   "kind": "written",
+   "src": [
+    "e30_ctl"
+   ],
+   "then": {
+    "ok": 0,
+    "errors": 3,
+    "err_text": [
+     "法則 narrow_from（下位の動詞の端 from は、上位の動詞の端を狭める）に反する: var1=subj.v_weekday_of, var2=subj.weekday, var3=syntax.v_measure, var4=ontology.continuant, var5=any",
+     "法則 monotone（階層を降りるたびに限定が増える）に反する: var1=subj.weekday, var2=subj.weekday_day",
+     "法則 named_mod に反する: subj.day, subj.weekday が同じ限定を足している。名前を付けた修飾語にする"
+    ]
+   },
+   "now": {
+    "ok": 0,
+    "errors": 4,
+    "err_text": [
+     "法則 narrow_from（下位の動詞の端 from は、上位の動詞の端を狭める）に反する: var1=subj.v_weekday_of, var2=subj.weekday, var3=syntax.v_measure, var4=ontology.continuant, var5=any",
+     "法則 monotone（階層を降りるたびに限定が増える）に反する: var1=subj.weekday, var2=subj.weekday_day",
+     "法則 named_mod_share（二つのノードが同じ中身を足すなら、その中身には名前がある）に反する: var1=subj.day, var2=of:\n- subj.v_weekday_of\n- to, var3=subj.weekday"
+    ]
+   }
+  },
+  {
+   "rev": "5ce3383",
+   "key": "thursday_day",
+   "line": "  thursday_day: {display: 木曜の日, extends: weekday, mod: {of: [v_weekday_of, to], with: thursday, neg: false}}",
+   "recorded": 0,
+   "kind": "written",
+   "src": [
+    "e30_fb"
+   ],
+   "then": {
+    "ok": 0,
+    "errors": 1,
+    "err_text": [
+     "subj.thursday_day.mod[0]: subj.weekday は subj.v_weekday_of の to（subj.day）に来られない"
+    ]
+   },
+   "now": {
+    "ok": 0,
+    "errors": 1,
+    "err_text": [
+     "subj.thursday_day.mod[0]: subj.weekday は subj.v_weekday_of の to（subj.day）に来られない"
+    ]
+   }
+  },
+  {
+   "rev": "5ce3383",
+   "key": "thursday_day",
+   "line": "  thursday_day: {display: 木曜の日, extends: weekday, mod: {of: [v_weekday_of, to], with: thursday}}",
+   "recorded": 0,
+   "kind": "written",
+   "src": [
+    "e30_ctl"
+   ],
+   "then": {
+    "ok": 0,
+    "errors": 1,
+    "err_text": [
+     "subj.thursday_day.mod[0]: subj.weekday は subj.v_weekday_of の to（subj.day）に来られない"
+    ]
+   },
+   "now": {
+    "ok": 0,
+    "errors": 1,
+    "err_text": [
+     "subj.thursday_day.mod[0]: subj.weekday は subj.v_weekday_of の to（subj.day）に来られない"
+    ]
+   }
+  },
+  {
+   "rev": "fea22bc",
+   "key": "agent",
+   "line": "  agent: {display: 主体, extends: person, mod: {of: [v_depend, on], with: person}}",
+   "recorded": 0,
+   "kind": "written",
+   "src": [
+    "e31"
+   ],
+   "then": {
+    "ok": 0,
+    "errors": 43,
+    "err_text": [
+     "subj.age.mod[0]: subj.person は ontology.v_depend の to（ontology.continuant）に来られない",
+     "subj.height.mod[0]: subj.person_age_neg は ontology.v_depend の to（ontology.continuant）に来られない",
+     "subj.agent.mod[0]: 位置 True が、grammar.position に書かれていない"
+    ]
+   },
+   "now": {
+    "ok": 0,
+    "errors": 43,
+    "err_text": [
+     "subj.age.mod[0]: subj.person は ontology.v_depend の to（ontology.continuant）に来られない",
+     "subj.height.mod[0]: subj.person_age_neg は ontology.v_depend の to（ontology.continuant）に来られない",
+     "subj.agent.mod[0]: 位置 True が、grammar.position に書かれていない"
+    ]
+   }
+  },
+  {
+   "rev": "fea22bc",
+   "key": "organization",
+   "line": "  organization: {display: 組織, extends: continuant, mod: {of: [v_place, from], with: order, neg: true}}",
+   "recorded": 0,
+   "kind": "written",
+   "src": [
+    "e31"
+   ],
+   "then": {
+    "ok": 0,
+    "errors": 4,
+    "err_text": [
+     "subj.organization.mod[0]: subj.order は subj.v_place の to（subj.agent）に来られない",
+     "subj.customer.mod[0]: subj.corporation は subj.v_contract の to（subj.agent）に来られない",
+     "法則 narrow_from（下位の動詞の端 from は、上位の動詞の端を狭める）に反する: var1=subj.v_employ, var2=subj.organization, var3=subj.v_contract, var4=subj.agent, var5=subj.agent"
+    ]
+   },
+   "now": {
+    "ok": 0,
+    "errors": 4,
+    "err_text": [
+     "subj.organization.mod[0]: subj.order は subj.v_place の to（subj.agent）に来られない",
+     "subj.customer.mod[0]: subj.corporation は subj.v_contract の to（subj.agent）に来られない",
+     "法則 narrow_from（下位の動詞の端 from は、上位の動詞の端を狭める）に反する: var1=subj.v_employ, var2=subj.organization, var3=subj.v_contract, var4=subj.agent, var5=subj.agent"
+    ]
+   }
+  },
+  {
+   "rev": "fea22bc",
+   "key": "shared_address",
+   "line": "  shared_address: {display: 二人以上が住む住所, extends: address, mod: {of: [v_refer, from], with: person}}",
+   "recorded": 1,
+   "kind": "written",
+   "src": [
+    "e31"
+   ],
+   "then": {
+    "ok": 1,
+    "errors": 0,
+    "err_text": []
+   },
+   "now": {
+    "ok": 1,
+    "errors": 0,
+    "err_text": []
+   }
+  },
+  {
+   "rev": "fea22bc",
+   "key": "user",
+   "line": "  user: {display: 利用者, extends: person, mod: {of: [v_pay, to]}}",
+   "recorded": 0,
+   "kind": "written",
+   "src": [
+    "e31"
+   ],
+   "then": {
+    "ok": 0,
+    "errors": 2,
+    "err_text": [
+     "subj.user.mod[0]: subj.person は subj.v_pay の to（subj.payment）に来られない",
+     "法則 named_mod に反する: subj.user, subj.payment が同じ限定を足している。名前を付けた修飾語にする"
+    ]
+   },
+   "now": {
+    "ok": 0,
+    "errors": 3,
+    "err_text": [
+     "subj.user.mod[0]: subj.person は subj.v_pay の to（subj.payment）に来られない",
+     "法則 named_mod_share（二つのノードが同じ中身を足すなら、その中身には名前がある）に反する: var1=subj.user, var2=of:\n- subj.v_pay\n- to, var3=subj.payment",
+     "法則 named_mod_share（二つのノードが同じ中身を足すなら、その中身には名前がある）に反する: var1=subj.payment, var2=of:\n- subj.v_pay\n- to, var3=subj.user"
+    ]
+   }
+  },
+  {
+   "rev": "fea22bc",
+   "key": "setting_rule",
+   "line": "  setting_rule: {display: 設定の変更を許す規則, extends: permission, mod: {of: [v_perform, to], with: setting_permission}}",
+   "recorded": 0,
+   "kind": "written",
+   "src": [
+    "e31"
+   ],
+   "then": {
+    "ok": 0,
+    "errors": 1,
+    "err_text": [
+     "subj.setting_rule.mod[0]: subj.permission は ontology.v_perform の to（ontology.occurrent）に来られない"
+    ]
+   },
+   "now": {
+    "ok": 0,
+    "errors": 1,
+    "err_text": [
+     "subj.setting_rule.mod[0]: subj.permission は ontology.v_perform の to（ontology.occurrent）に来られない"
+    ]
+   }
+  },
+  {
+   "rev": "fea22bc",
+   "key": "admin",
+   "line": "  admin: {display: 管理者, extends: person, mod: {of: [v_design, from], with: organization}}",
+   "recorded": 1,
+   "kind": "written",
+   "src": [
+    "e31"
+   ],
+   "then": {
+    "ok": 1,
+    "errors": 0,
+    "err_text": []
+   },
+   "now": {
+    "ok": 1,
+    "errors": 0,
+    "err_text": []
+   }
+  },
+  {
+   "rev": "fea22bc",
+   "key": "stored_goods",
+   "line": "  stored_goods: {display: 倉庫にある商品, extends: goods, mod: {of: [v_store, to]}} ",
+   "recorded": 0,
+   "kind": "written",
+   "src": [
+    "e31"
+   ],
+   "then": {
+    "ok": 0,
+    "errors": 2,
+    "err_text": [
+     "subj.stored_goods.mod[0]: subj.goods は subj.v_store の to（subj.warehouse）に来られない",
+     "法則 named_mod に反する: subj.warehouse, subj.stored_goods が同じ限定を足している。名前を付けた修飾語にする"
+    ]
+   },
+   "now": {
+    "ok": 0,
+    "errors": 3,
+    "err_text": [
+     "subj.stored_goods.mod[0]: subj.goods は subj.v_store の to（subj.warehouse）に来られない",
+     "法則 named_mod_share（二つのノードが同じ中身を足すなら、その中身には名前がある）に反する: var1=subj.stored_goods, var2=of:\n- subj.v_store\n- to, var3=subj.warehouse",
+     "法則 named_mod_share（二つのノードが同じ中身を足すなら、その中身には名前がある）に反する: var1=subj.warehouse, var2=of:\n- subj.v_store\n- to, var3=subj.stored_goods"
+    ]
+   }
+  },
+  {
+   "rev": "fea22bc",
+   "key": "fruit",
+   "line": "  fruit: {display: 果物, extends: category, mod: {of: [v_design, to]}} ",
+   "recorded": 0,
+   "kind": "written",
+   "src": [
+    "e31"
+   ],
+   "then": {
+    "ok": 0,
+    "errors": 1,
+    "err_text": [
+     "法則 named_mod に反する: subj.fruit の限定は、修飾語 exp.design_to と同じ。名前で書く"
+    ]
+   },
+   "now": {
+    "ok": 0,
+    "errors": 1,
+    "err_text": [
+     "法則 named_mod_use（名前のある中身は名前で書く）に反する: var1=subj.fruit, var2=of:\n- ontology.v_design\n- to, var3=exp.design_to"
+    ]
+   }
+  },
+  {
+   "rev": "fea22bc",
+   "key": "large_order",
+   "line": "  large_order: {display: 大口注文, extends: order, mod: {of: [v_place, from], with: amount_greater_than(10000)}}",
+   "recorded": 0,
+   "kind": "written",
+   "src": [
+    "e31"
+   ],
+   "then": {
+    "ok": 0,
+    "errors": 1,
+    "err_text": [
+     "subj.large_order.mod[0]: amount_greater_than(10000) は subj.v_place の to（subj.agent）に来られない"
+    ]
+   },
+   "now": {
+    "ok": 0,
+    "errors": 1,
+    "err_text": [
+     "subj.large_order.mod[0]: amount_greater_than(10000) は subj.v_place の to（subj.agent）に来られない"
+    ]
+   }
+  },
+  {
+   "rev": "fea22bc",
+   "key": "new_order",
+   "line": "  new_order: {display: 新規, extends: order, mod: {of: [v_place, from]}}",
+   "recorded": 0,
+   "kind": "written",
+   "src": [
+    "e31"
+   ],
+   "then": {
+    "ok": 0,
+    "errors": 4,
+    "err_text": [
+     "法則 monotone（階層を降りるたびに限定が増える）に反する: var1=subj.new_order, var2=subj.order",
+     "法則 specific（より具体的な概念があればその下に置く）に反する: var1=subj.recent_order, var2=subj.new_order",
+     "法則 specific（より具体的な概念があればその下に置く）に反する: var1=subj.large_order, var2=subj.new_order"
+    ]
+   },
+   "now": {
+    "ok": 0,
+    "errors": 5,
+    "err_text": [
+     "法則 monotone（階層を降りるたびに限定が増える）に反する: var1=subj.new_order, var2=subj.order",
+     "法則 specific（より具体的な概念があればその下に置く）に反する: var1=subj.recent_order, var2=subj.new_order",
+     "法則 specific（より具体的な概念があればその下に置く）に反する: var1=subj.large_order, var2=subj.new_order"
+    ]
+   }
+  },
+  {
+   "rev": "fea22bc",
+   "key": "plan",
+   "line": "  plan: {display: プラン, extends: plan, mod: {of: [v_design, from]}}",
+   "recorded": 0,
+   "kind": "written",
+   "src": [
+    "e31"
+   ],
+   "then": {
+    "ok": 0,
+    "errors": 8,
+    "err_text": [
+     "subj.monthly_fee.mod[0]: subj.plan は ontology.v_depend の to（ontology.continuant）に来られない",
+     "subj.plan.mod[0]: subj.plan は ontology.v_design の from（ontology.continuant）に来られない",
+     "subj.free_plan.mod[0]: subj.plan は ontology.v_depend の to（ontology.continuant）に来られない"
+    ]
+   },
+   "now": {
+    "ok": 0,
+    "errors": 8,
+    "err_text": [
+     "subj.monthly_fee.mod[0]: subj.plan は ontology.v_depend の to（ontology.continuant）に来られない",
+     "subj.plan.mod[0]: subj.plan は ontology.v_design の from（ontology.continuant）に来られない",
+     "subj.free_plan.mod[0]: subj.plan は ontology.v_depend の to（ontology.continuant）に来られない"
+    ]
+   }
+  },
+  {
+   "rev": "fea22bc",
+   "key": "deficit",
+   "line": "  deficit: {display: 赤字, extends: account, mod: {of: [v_measure, from], with: sales, neg: true}}",
+   "recorded": 1,
+   "kind": "written",
+   "src": [
+    "e31"
+   ],
+   "then": {
+    "ok": 1,
+    "errors": 0,
+    "err_text": []
+   },
+   "now": {
+    "ok": 1,
+    "errors": 0,
+    "err_text": []
+   }
+  },
+  {
+   "rev": "fea22bc",
+   "key": "approval",
+   "line": "  approval: {display: 承認, extends: approval, mod: {of: [v_depend, to], with: inspected_inspection, at: {status: \"approved\"}}}",
+   "recorded": 0,
+   "kind": "written",
+   "src": [
+    "e31"
+   ],
+   "then": {
+    "ok": 0,
+    "errors": 9,
+    "err_text": [
+     "subj.approval.mod[0]: subj.approval は ontology.v_depend の to（ontology.continuant）に来られない",
+     "subj.approval.mod[0]: inspected_inspection は ontology.v_depend の from（ontology.continuant）に来られない",
+     "subj.approval.mod[0]: 軸 status が未定義"
+    ]
+   },
+   "now": {
+    "ok": 0,
+    "errors": 9,
+    "err_text": [
+     "subj.approval.mod[0]: subj.approval は ontology.v_depend の to（ontology.continuant）に来られない",
+     "subj.approval.mod[0]: inspected_inspection は ontology.v_depend の from（ontology.continuant）に来られない",
+     "subj.approval.mod[0]: 軸 status が未定義"
+    ]
+   }
+  },
+  {
+   "rev": "fea22bc",
+   "key": "delay",
+   "line": "  delay: {display: 遅延, extends: quality, mod: {of: [v_measure, from], with: delivery}}",
+   "recorded": 0,
+   "kind": "written",
+   "src": [
+    "e31"
+   ],
+   "then": {
+    "ok": 0,
+    "errors": 1,
+    "err_text": [
+     "法則 named_mod に反する: subj.days_overdue, subj.delay が同じ限定を足している。名前を付けた修飾語にする"
+    ]
+   },
+   "now": {
+    "ok": 0,
+    "errors": 2,
+    "err_text": [
+     "法則 named_mod_share（二つのノードが同じ中身を足すなら、その中身には名前がある）に反する: var1=subj.days_overdue, var2=of:\n- syntax.v_measure\n- from\nwith: subj.delivery, var3=subj.delay",
+     "法則 named_mod_share（二つのノードが同じ中身を足すなら、その中身には名前がある）に反する: var1=subj.delay, var2=of:\n- syntax.v_measure\n- from\nwith: subj.delivery, var3=subj.days_overdue"
+    ]
+   }
+  },
+  {
+   "rev": "fea22bc",
+   "key": "absent_person",
+   "line": "  absent_person: {display: 開始時刻に席にいなかった人, extends: attendance, mod: {of: [v_seated, from], with: person}}",
+   "recorded": 0,
+   "kind": "written",
+   "src": [
+    "e31"
+   ],
+   "then": {
+    "ok": 0,
+    "errors": 2,
+    "err_text": [
+     "subj.absent_person.mod[0]: subj.attendance は subj.v_seated の from（subj.person）に来られない",
+     "subj.absent_person.mod[0]: subj.person は subj.v_seated の to（ontology.process）に来られない"
+    ]
+   },
+   "now": {
+    "ok": 0,
+    "errors": 2,
+    "err_text": [
+     "subj.absent_person.mod[0]: subj.attendance は subj.v_seated の from（subj.person）に来られない",
+     "subj.absent_person.mod[0]: subj.person は subj.v_seated の to（ontology.process）に来られない"
+    ]
+   }
+  },
+  {
+   "rev": "fea22bc",
+   "key": "land",
+   "line": "  land: {display: 土地, extends: continuant, mod: {of: [v_locate, from], with: person}}",
+   "recorded": 0,
+   "kind": "written",
+   "src": [
+    "e31"
+   ],
+   "then": {
+    "ok": 0,
+    "errors": 2,
+    "err_text": [
+     "subj.land.mod[0]: v_locate は動詞でない",
+     "法則 placed_deduced（動詞でない概念は、定義から根の下に置かれる（根への宣言だけでは置かれない））に反する: var1=subj.land"
+    ]
+   },
+   "now": {
+    "ok": 0,
+    "errors": 2,
+    "err_text": [
+     "subj.land.mod[0]: v_locate は動詞でない",
+     "法則 placed_deduced（動詞でない概念は、定義から根の下に置かれる（根への宣言だけでは置かれない））に反する: var1=subj.land"
+    ]
+   }
+  },
+  {
+   "rev": "fea22bc",
+   "key": "business_day",
+   "line": "  business_day: {display: 営業日, extends: day, mod: {of: [v_weekday_of, to]}}",
+   "recorded": 0,
+   "kind": "written",
+   "src": [
+    "e31"
+   ],
+   "then": {
+    "ok": 0,
+    "errors": 4,
+    "err_text": [
+     "法則 monotone（階層を降りるたびに限定が増える）に反する: var1=subj.business_day, var2=subj.day",
+     "法則 specific（より具体的な概念があればその下に置く）に反する: var1=subj.thursday_day, var2=subj.business_day",
+     "法則 specific（より具体的な概念があればその下に置く）に反する: var1=subj.weekday_base, var2=subj.business_day"
+    ]
+   },
+   "now": {
+    "ok": 0,
+    "errors": 5,
+    "err_text": [
+     "法則 monotone（階層を降りるたびに限定が増える）に反する: var1=subj.business_day, var2=subj.day",
+     "法則 specific（より具体的な概念があればその下に置く）に反する: var1=subj.weekday_base, var2=subj.business_day",
+     "法則 specific（より具体的な概念があればその下に置く）に反する: var1=subj.thursday_day, var2=subj.business_day"
+    ]
+   }
+  },
+  {
+   "rev": "fea22bc",
+   "key": "weekday",
+   "line": "  weekday: {display: 曜日, extends: weekday_day, mod: {of: [v_weekday_of, to]}}",
+   "recorded": 0,
+   "kind": "written",
+   "src": [
+    "e31"
+   ],
+   "then": {
+    "ok": 0,
+    "errors": 3,
+    "err_text": [
+     "法則 narrow_from（下位の動詞の端 from は、上位の動詞の端を狭める）に反する: var1=subj.v_weekday_of, var2=subj.weekday, var3=syntax.v_measure, var4=ontology.continuant, var5=any",
+     "法則 monotone（階層を降りるたびに限定が増える）に反する: var1=subj.weekday, var2=subj.weekday_day",
+     "法則 named_mod に反する: subj.day, subj.weekday が同じ限定を足している。名前を付けた修飾語にする"
+    ]
+   },
+   "now": {
+    "ok": 0,
+    "errors": 4,
+    "err_text": [
+     "法則 narrow_from（下位の動詞の端 from は、上位の動詞の端を狭める）に反する: var1=subj.v_weekday_of, var2=subj.weekday, var3=syntax.v_measure, var4=ontology.continuant, var5=any",
+     "法則 monotone（階層を降りるたびに限定が増える）に反する: var1=subj.weekday, var2=subj.weekday_day",
+     "法則 named_mod_share（二つのノードが同じ中身を足すなら、その中身には名前がある）に反する: var1=subj.day, var2=of:\n- subj.v_weekday_of\n- to, var3=subj.weekday"
+    ]
+   }
+  },
+  {
+   "rev": "fea22bc",
+   "key": "thursday_day",
+   "line": "  thursday_day: {display: 木曜の日, extends: day, mod: {of: [v_weekday_of, to], with: thursday, neg: false}}",
+   "recorded": 1,
+   "kind": "written",
+   "src": [
+    "e31"
+   ],
+   "then": {
+    "ok": 1,
+    "errors": 0,
+    "err_text": []
+   },
+   "now": {
+    "ok": 1,
+    "errors": 0,
+    "err_text": []
+   }
+  }
+ ]
+}
