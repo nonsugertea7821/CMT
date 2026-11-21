@@ -2632,6 +2632,19 @@ individuals:
   e34_state_unique_display_m_share_unique: {is: axis_value, val: {text: share_unique}}
   e34_state_unique_display_m_share_hit: {is: axis_value, val: {text: share_hit}}
   e34_state_unique_display_m_mean_n_eff: {is: axis_value, val: {text: mean_n_eff}}
+  e35_expression_makes_state_unique: {is: measurement_family}
+  e35_expression_makes_state_unique_c: {is: family_axis, val: {text: c}}
+  e35_expression_makes_state_unique_c_none_S: {is: axis_value, val: {text: none_S}}
+  e35_expression_makes_state_unique_c_none_S_new: {is: axis_value, val: {text: none_S_new}}
+  e35_expression_makes_state_unique_c_none_S_old: {is: axis_value, val: {text: none_S_old}}
+  e35_expression_makes_state_unique_c_expr_S: {is: axis_value, val: {text: expr_S}}
+  e35_expression_makes_state_unique_c_expr_S_new: {is: axis_value, val: {text: expr_S_new}}
+  e35_expression_makes_state_unique_c_expr_S_old: {is: axis_value, val: {text: expr_S_old}}
+  e35_expression_makes_state_unique_c_delta_S: {is: axis_value, val: {text: delta_S}}
+  e35_expression_makes_state_unique_m: {is: family_axis, val: {text: m}}
+  e35_expression_makes_state_unique_m_share_unique: {is: axis_value, val: {text: share_unique}}
+  e35_expression_makes_state_unique_m_share_hit: {is: axis_value, val: {text: share_hit}}
+  e35_expression_makes_state_unique_m_mean_n_eff: {is: axis_value, val: {text: mean_n_eff}}
   e33_round_trip_sibling: {is: measurement_family}
   e33_round_trip_sibling_c: {is: family_axis, val: {text: c}}
   e33_round_trip_sibling_c_none: {is: axis_value, val: {text: none}}
@@ -3618,8 +3631,14 @@ individuals:
   o_e34_unique_d: {is: observation}
   h_state_points_region: {is: hyp_untested}
   b_state_points_region: {is: item_queued}
-  h_expression_makes_state_unique: {is: hyp_untested}
-  b_expression_makes_state_unique: {is: item_queued}
+  h_expression_makes_state_unique: {is: hyp_refuted}
+  b_expression_makes_state_unique: {is: item_done}
+  o_e35_unique_delta: {is: observation}
+  o_e35_unique_expr: {is: observation}
+  o_e35_unique_none: {is: observation}
+  o_e35_n_eff_expr: {is: observation}
+  o_e35_n_eff_none: {is: observation}
+  o_e35_hit_expr: {is: observation}
   h_state_confuses_by_sound: {is: hyp_untested}
   b_state_confuses_by_sound: {is: item_queued}
   h_state_confuses_by_glyph: {is: hyp_untested}
@@ -9219,6 +9238,33 @@ facts:
   - {is: v_spell, from: e34_state_unique_display_m_mean_n_eff, to: mean_n_eff}
   - {is: v_entry_of, from: '{m}', to: e34_state_unique_display}
   - {is: v_metric_of, from: e34_state_unique_display, to: mean_value}
+  - {is: v_file_of, from: e35_expression_makes_state_unique.json, to: e35_expression_makes_state_unique}
+  - {is: v_rows_of, from: [s], to: e35_expression_makes_state_unique}
+  - {is: v_axis_of, from: e35_expression_makes_state_unique_c, to: e35_expression_makes_state_unique}
+  - {is: v_keys_of, from: '#', to: e35_expression_makes_state_unique_c}
+  - {is: v_value_of, from: e35_expression_makes_state_unique_c_none_S, to: e35_expression_makes_state_unique_c}
+  - {is: v_spell, from: e35_expression_makes_state_unique_c_none_S, to: ['none_S']}
+  - {is: v_value_of, from: e35_expression_makes_state_unique_c_none_S_new, to: e35_expression_makes_state_unique_c}
+  - {is: v_spell, from: e35_expression_makes_state_unique_c_none_S_new, to: ['none_S_new']}
+  - {is: v_value_of, from: e35_expression_makes_state_unique_c_none_S_old, to: e35_expression_makes_state_unique_c}
+  - {is: v_spell, from: e35_expression_makes_state_unique_c_none_S_old, to: ['none_S_old']}
+  - {is: v_value_of, from: e35_expression_makes_state_unique_c_expr_S, to: e35_expression_makes_state_unique_c}
+  - {is: v_spell, from: e35_expression_makes_state_unique_c_expr_S, to: ['expr_S']}
+  - {is: v_value_of, from: e35_expression_makes_state_unique_c_expr_S_new, to: e35_expression_makes_state_unique_c}
+  - {is: v_spell, from: e35_expression_makes_state_unique_c_expr_S_new, to: ['expr_S_new']}
+  - {is: v_value_of, from: e35_expression_makes_state_unique_c_expr_S_old, to: e35_expression_makes_state_unique_c}
+  - {is: v_spell, from: e35_expression_makes_state_unique_c_expr_S_old, to: ['expr_S_old']}
+  - {is: v_value_of, from: e35_expression_makes_state_unique_c_delta_S, to: e35_expression_makes_state_unique_c}
+  - {is: v_spell, from: e35_expression_makes_state_unique_c_delta_S, to: ['delta_S']}
+  - {is: v_axis_of, from: e35_expression_makes_state_unique_m, to: e35_expression_makes_state_unique}
+  - {is: v_value_of, from: e35_expression_makes_state_unique_m_share_unique, to: e35_expression_makes_state_unique_m}
+  - {is: v_spell, from: e35_expression_makes_state_unique_m_share_unique, to: share_unique}
+  - {is: v_value_of, from: e35_expression_makes_state_unique_m_share_hit, to: e35_expression_makes_state_unique_m}
+  - {is: v_spell, from: e35_expression_makes_state_unique_m_share_hit, to: share_hit}
+  - {is: v_value_of, from: e35_expression_makes_state_unique_m_mean_n_eff, to: e35_expression_makes_state_unique_m}
+  - {is: v_spell, from: e35_expression_makes_state_unique_m_mean_n_eff, to: mean_n_eff}
+  - {is: v_entry_of, from: '{m}', to: e35_expression_makes_state_unique}
+  - {is: v_metric_of, from: e35_expression_makes_state_unique, to: mean_value}
   - {is: v_file_of, from: e33_round_trip_sibling.json, to: e33_round_trip_sibling}
   - {is: v_rows_of, from: [s], to: e33_round_trip_sibling}
   - {is: v_axis_of, from: e33_round_trip_sibling_c, to: e33_round_trip_sibling}
@@ -10274,6 +10320,13 @@ facts:
   - {is: v_refer, from: h_expression_makes_state_unique, to: {is: v_depend, from: hidden_state, to: syntax.concept_expression}}
   - {is: v_check, from: b_expression_makes_state_unique, to: h_expression_makes_state_unique}
   - {is: v_ground, from: d_goal, to: h_expression_makes_state_unique}
+  - {is: v_refer, from: o_e35_unique_delta, to: {is: v_level, from: e35_expression_makes_state_unique.delta_S.share_unique.mean_value, to: -0.14583333333333331}}
+  - {is: v_contradict, from: o_e35_unique_delta, to: h_expression_makes_state_unique}
+  - {is: v_refer, from: o_e35_unique_expr, to: {is: v_level, from: e35_expression_makes_state_unique.expr_S.share_unique.mean_value, to: 0.2777777777777778}}
+  - {is: v_refer, from: o_e35_unique_none, to: {is: v_level, from: e35_expression_makes_state_unique.none_S.share_unique.mean_value, to: 0.4236111111111111}}
+  - {is: v_refer, from: o_e35_n_eff_expr, to: {is: v_level, from: e35_expression_makes_state_unique.expr_S.mean_n_eff.mean_value, to: 3.802024792432972}}
+  - {is: v_refer, from: o_e35_n_eff_none, to: {is: v_level, from: e35_expression_makes_state_unique.none_S.mean_n_eff.mean_value, to: 2.6042769985465184}}
+  - {is: v_refer, from: o_e35_hit_expr, to: {is: v_level, from: e35_expression_makes_state_unique.expr_S.share_hit.mean_value, to: 0.5555555555555556}}
   - {is: v_refer, from: h_state_confuses_by_sound, to: {is: v_depend, from: hidden_state, to: prosody}}
   - {is: v_check, from: b_state_confuses_by_sound, to: h_state_confuses_by_sound}
   - {is: v_ground, from: d_road_japanese, to: h_state_confuses_by_sound}
