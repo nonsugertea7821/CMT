@@ -1,0 +1,29 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-21T22:19:22.832Z（UTC）
+individuals:
+  01M8032NAGC7FJZ6MK7B165T3H:
+    is: model_utterance
+    display: 発言 4130
+    val:
+      order: 4130
+      text: |
+        今回の周回では、#721 の Draft を外し、次の実験 E44 を始めました。
+
+        **#721（E41・E43、h_model_reads_by_word）**
+        - main を取り込んだ後の spec が通りました（22:18）。
+        - 状態は支持なので、Draft を外しました。確認とマージはお任せします。
+
+        **E44 を事前登録して実行中（Draft PR #729、h_verdict_by_checker #727）**
+        - E43 と同じ項目と設問に、検査器が解いた依存を一行添えます。添え方は 2 通りです。
+          - closure: 依存をたどった先まで閉じたもの（例 `rumina → {mimoka, sekone}`）。
+          - edges: 定義に直接書かれた依存だけ。
+        - 判定は decoy_closure の正答率で決めます。
+          - 0.75 以上なら支持。
+          - 0.5 以下なら反証（答えに近い出力を渡しても、字面のほうを選んだことになるため）。
+        - closure の一行は、問いの答えをほぼそのまま含みます。支持が言えるのは「その易しい条件で検査器の出力に頼れる」ことだけで、PR にもそう開示しました。
+        - edges の 2 条件は参考です。直接の依存だけを渡されたとき、2 段をたどれるかを見ます。
+        - 22:29 に進みの確かめを置いてあります。
+
+        ロードマップの位置: H3（検査器の道 d_road_checker）。h_model_reads_by_word は支持で確認待ち、h_verdict_by_checker は実行中。
+facts:
+- {is: v_say, from: session_model, to: 01M8032NAGC7FJZ6MK7B165T3H}
+- {is: exp.v_answer, from: 01M8032NAGC7FJZ6MK7B165T3H, to: 01M7ZG4RFFK1A28D1ZVQK01AG8}
