@@ -1,0 +1,24 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-21T20:45:30.804Z（UTC）
+individuals:
+  01M7ZXPS9MEX3NZ72TZ3GWEKYZ:
+    is: model_utterance
+    display: 発言 4077
+    val:
+      order: 4077
+      text: |
+        H3 の `h_model_reads_by_name` を確かめる実験（E40）を始めました。手順と判定は事前登録として先に commit し、Draft の PR #718 を立てて、いま走らせています。
+
+        - **確かめたいこと:** 読む側のモデルが、依存を名前の位置でだけ読み、名前のない中身の中にある依存を見落とすか。
+        - **やり方:** 意味のない名前で書いた小さな定義の集まりを見せ、「A を変えたら X の意味は変わるか」を二択で聞きます。
+          - A に依存する X と依存しない Y で答えを比べ、X の方を正しく選べた割合を測ります。
+          - 依存の書き方を 3 通りにします: extends（`X: {extends: A}`）、名前のない中身（inline）、名前のある中身（named、参考）。
+          - モデルは Qwen2.5-1.5B で、手順を書いたモデルそのものではありません。読む側一般に同じ偏りが出るかを見ます。
+        - **判定:** 前提は、extends で 0.75 以上正しく選べること。そのうえで、extends と inline の差が 0.25 以上なら支持、それ以外は反証です。
+        - **その他の PR:** #702（E36）と #710（E38）は確認とマージ待ちです。#702 は main との衝突を解いて CI も通っています。
+
+        実行の進みは見張っていて、9 分後に止まっていないかを確かめます。次の 30 分ごとの周回は 21:14 です。
+
+        ロードマップ上の位置: d_road_checker の下の重い列 H3 を始めました。
+facts:
+- {is: v_say, from: session_model, to: 01M7ZXPS9MEX3NZ72TZ3GWEKYZ}
+- {is: exp.v_answer, from: 01M7ZXPS9MEX3NZ72TZ3GWEKYZ, to: 01M7ZG4RFFK1A28D1ZVQK01AG8}
