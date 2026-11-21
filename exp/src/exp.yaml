@@ -2043,6 +2043,15 @@ individuals:
   sys_claims_apart_by_domain_cond_n_lost: {is: axis_value, val: {text: n_lost}}
   sys_claims_apart_by_domain_cond_share_agree: {is: axis_value, val: {text: share_agree}}
   sys_claims_apart_by_domain_cond_mean_abs_dJ: {is: axis_value, val: {text: mean_abs_dJ}}
+  sys_measure_excludes_claim_kinds: {is: measurement_family}
+  sys_measure_excludes_claim_kinds_cond: {is: family_axis, val: {text: cond}}
+  sys_measure_excludes_claim_kinds_cond_n_snap: {is: axis_value, val: {text: n_snap}}
+  sys_measure_excludes_claim_kinds_cond_n_verb: {is: axis_value, val: {text: n_verb}}
+  sys_measure_excludes_claim_kinds_cond_mean_sd_all: {is: axis_value, val: {text: mean_sd_all}}
+  sys_measure_excludes_claim_kinds_cond_mean_sd_kind: {is: axis_value, val: {text: mean_sd_kind}}
+  sys_measure_excludes_claim_kinds_cond_ratio: {is: axis_value, val: {text: ratio}}
+  sys_measure_excludes_claim_kinds_cond_n_ch_all: {is: axis_value, val: {text: n_ch_all}}
+  sys_measure_excludes_claim_kinds_cond_n_ch_kind: {is: axis_value, val: {text: n_ch_kind}}
   ops_sync_duration: {is: measurement_family}
   ops_sync_duration_cond: {is: family_axis, val: {text: cond}}
   ops_sync_duration_cond_n_run: {is: axis_value, val: {text: n_run}}
@@ -3346,6 +3355,7 @@ individuals:
   o_sys_rec_shift: {is: observation}
   o_sys_cad_agree: {is: observation}
   o_sys_cad_dj: {is: observation}
+  o_sys_mek_ratio: {is: observation}
 
   h_prosody_carries_mod: {is: hyp_untested}
   b_prosody_carries_mod: {is: item_queued}
@@ -3451,8 +3461,8 @@ individuals:
   b_reading_excludes_claims: {is: item_done}
   h_claims_apart_by_domain: {is: hyp_mixed}
   b_claims_apart_by_domain: {is: item_done}
-  h_measure_excludes_claim_kinds: {is: hyp_untested}
-  b_measure_excludes_claim_kinds: {is: item_queued}
+  h_measure_excludes_claim_kinds: {is: hyp_supported}
+  b_measure_excludes_claim_kinds: {is: item_done}
   h_sync_scan_quadratic: {is: hyp_refuted}
   b_sync_scan_quadratic: {is: item_done}
   h_sync_by_diff: {is: hyp_untested}
@@ -7945,6 +7955,26 @@ facts:
   - {is: v_support, from: o_sys_cad_agree, to: h_claims_apart_by_domain}
   - {is: v_refer, from: o_sys_cad_dj, to: {is: v_level, from: sys_claims_apart_by_domain.mean_abs_dJ.mean_value, to: 0.07604918890633176}}
   - {is: v_contradict, from: o_sys_cad_dj, to: h_claims_apart_by_domain}
+  - {is: v_file_of, from: sys_measure_excludes_claim_kinds.json, to: sys_measure_excludes_claim_kinds}
+  - {is: v_axis_of, from: sys_measure_excludes_claim_kinds_cond, to: sys_measure_excludes_claim_kinds}
+  - {is: v_value_of, from: sys_measure_excludes_claim_kinds_cond_n_snap, to: sys_measure_excludes_claim_kinds_cond}
+  - {is: v_spell, from: sys_measure_excludes_claim_kinds_cond_n_snap, to: n_snap}
+  - {is: v_value_of, from: sys_measure_excludes_claim_kinds_cond_n_verb, to: sys_measure_excludes_claim_kinds_cond}
+  - {is: v_spell, from: sys_measure_excludes_claim_kinds_cond_n_verb, to: n_verb}
+  - {is: v_value_of, from: sys_measure_excludes_claim_kinds_cond_mean_sd_all, to: sys_measure_excludes_claim_kinds_cond}
+  - {is: v_spell, from: sys_measure_excludes_claim_kinds_cond_mean_sd_all, to: mean_sd_all}
+  - {is: v_value_of, from: sys_measure_excludes_claim_kinds_cond_mean_sd_kind, to: sys_measure_excludes_claim_kinds_cond}
+  - {is: v_spell, from: sys_measure_excludes_claim_kinds_cond_mean_sd_kind, to: mean_sd_kind}
+  - {is: v_value_of, from: sys_measure_excludes_claim_kinds_cond_ratio, to: sys_measure_excludes_claim_kinds_cond}
+  - {is: v_spell, from: sys_measure_excludes_claim_kinds_cond_ratio, to: ratio}
+  - {is: v_value_of, from: sys_measure_excludes_claim_kinds_cond_n_ch_all, to: sys_measure_excludes_claim_kinds_cond}
+  - {is: v_spell, from: sys_measure_excludes_claim_kinds_cond_n_ch_all, to: n_ch_all}
+  - {is: v_value_of, from: sys_measure_excludes_claim_kinds_cond_n_ch_kind, to: sys_measure_excludes_claim_kinds_cond}
+  - {is: v_spell, from: sys_measure_excludes_claim_kinds_cond_n_ch_kind, to: n_ch_kind}
+  - {is: v_entry_of, from: '{cond}', to: sys_measure_excludes_claim_kinds}
+  - {is: v_metric_of, from: sys_measure_excludes_claim_kinds, to: mean_value}
+  - {is: v_refer, from: o_sys_mek_ratio, to: {is: v_level, from: sys_measure_excludes_claim_kinds.ratio.mean_value, to: 0.34904810482553245}}
+  - {is: v_support, from: o_sys_mek_ratio, to: h_measure_excludes_claim_kinds}
   - {is: v_file_of, from: ops_sync_duration.json, to: ops_sync_duration}
   - {is: v_axis_of, from: ops_sync_duration_cond, to: ops_sync_duration}
   - {is: v_value_of, from: ops_sync_duration_cond_n_run, to: ops_sync_duration_cond}
