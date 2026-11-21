@@ -1,0 +1,30 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-21T18:54:47.961Z（UTC）
+individuals:
+  01M7ZQC24SNEHVVF8YHJW5D781:
+    is: model_utterance
+    display: 発言 4004
+    val:
+      order: 4004
+      text: |
+        E38 が終わり、結果を体系（exp.yaml）に書いて #710 に push しました。2 つの仮説のうち 1 つは反証、もう 1 つは決まらずに残りました。spec が通ったら、#710 の Draft を外します。
+
+        | 項目 | 値 |
+        |---|---|
+        | 退けた行で、検査器が落ちなかった 41 行の誤り | 170 |
+        | うち法則を名指す誤り | 101 |
+        | うち法則を名指さない誤り | 69 |
+        | 名指さない誤りのうち、law_given に帰せるもの | 0 |
+
+        - **h_unnamed_error_is_law_given（#709）は反証:** 名指さない誤り 69 のうち、law_given に帰せるものは 0 でした。law_given の 5 つは、どれも実行の検査（runtime.run）にしか掛からないためです。名指さない誤りの大半（53）は、動詞の端の型の検査でした。
+        - **h_error_kind_is_law（#705）は決まらず:** 法則に帰せる誤りの割合は 101/170 = 0.594 でした。事前登録の閾値（0.5 以上 0.9 未満なら決まらない）の通り、未検証のまま残しました。
+        - **覗き見の外れ:** 事前登録の前に覗いた最初の誤りでは、法則を名指すのは 65 行中 9 行でした。誤りの単位で数えると 170 中 101 です。法則を当てはめる検査は検査の後ろのほうで走るので、最初の誤りには出にくいためです。この外れは #710 に開示しました。
+        - **含意:** #711 で h_unnamed_error_as_law_rule を登録しました（登録だけの PR）。動詞の端の型の検査を規則で書いた法則（law_rule）に書き直せば、検査器は法則を名指して退けるはず、という仮説です。反証からの解き方の片方です。
+        - **E36（#702）:** 訂正した手順で学習を続けています。残りは 7 概念です。
+
+        ロードマップ上の位置: 検査器の道（d_road_checker）で E38 を記録して含意を登録し、H2（d_metric の直下）の E36 を走らせています。
+facts:
+- {is: v_say, from: session_model, to: 01M7ZQC24SNEHVVF8YHJW5D781}
+- {is: exp.v_answer, from: 01M7ZQC24SNEHVVF8YHJW5D781, to: 01M7ZG4RFFK1A28D1ZVQK01AG8}
+- {is: v_refer, from: 01M7ZQC24SNEHVVF8YHJW5D781, to: syntax.law_given}
+- {is: v_refer, from: 01M7ZQC24SNEHVVF8YHJW5D781, to: runtime.run}
+- {is: v_refer, from: 01M7ZQC24SNEHVVF8YHJW5D781, to: syntax.law_rule}
