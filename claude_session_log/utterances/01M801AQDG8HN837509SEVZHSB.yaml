@@ -1,0 +1,32 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-21T21:48:49.968Z（UTC）
+individuals:
+  01M801AQDG8HN837509SEVZHSB:
+    is: model_utterance
+    display: 発言 4107
+    val:
+      order: 4107
+      text: |
+        今回の 30 分周回では、ロードマップの H3（検査器の道 d_road_checker）を一歩進めました。新しく実験 E42 を事前登録し、いま裏で走らせています。
+
+        **E42 で確かめること**
+        - 対で登録した 2 つの仮説を見分けます。
+          - h_model_misses_extends: モデルは extends を読まない。
+          - h_verdict_by_question_format: 判定が設問の形に引っぱられている。
+        - E41 と同じモデル（Qwen3-4B）・同じ項目・同じ定義を使い、問い方だけを変えます。
+          - E41: 「T の意味は変わるか」を T ごとに二択で問うた。
+          - E42: 「意味が変わるのは P と Q のどちらか」と比べさせる。
+        - 判定は、比べる問い方での extends の正答率（24 項目）で決めます。E41 では 0.417 でした。
+          - 0.75 以上: 問い方の仮説を支持し、「extends を読まない」を反証。
+          - 0.583 以下: その逆。
+          - その間: 判定しない。
+        - 2 つの仮説の判定は同じ数字から出るので、互いに独立ではありません。PR にもそう書きました。
+
+        **PR とほかの進み**
+        - Draft PR #725 を立て、見張りと assignee の設定を済ませました。
+        - 9 分後に進みの確かめを置いてあります。終わっていれば結果を体系に記録します。
+        - ほかの開いた PR（#702・#710・#718・#721）は、どれもまだマージされていません。
+
+        ロードマップの位置: H3（検査器の道 d_road_checker）で E42 を事前登録し、実行中。
+facts:
+- {is: v_say, from: session_model, to: 01M801AQDG8HN837509SEVZHSB}
+- {is: exp.v_answer, from: 01M801AQDG8HN837509SEVZHSB, to: 01M7ZG4RFFK1A28D1ZVQK01AG8}
