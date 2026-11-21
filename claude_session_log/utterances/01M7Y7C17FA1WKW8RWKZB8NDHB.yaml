@@ -1,0 +1,25 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-21T04:55:55.375Z（UTC）
+individuals:
+  01M7Y7C17FA1WKW8RWKZB8NDHB:
+    is: model_utterance
+    display: 発言 3507
+    val:
+      order: 3507
+      text: |
+        h_measure_excludes_claim_kinds came out **supported**: if claims are excluded by kind, the reading barely moves as claims are added.
+
+        - **What I compared:** I took 10 snapshots from main's last 100 commits and measured how much the J values swing in two readings. One includes every item; the other excludes claims (hypotheses, observations, backlog items) by kind.
+        - **Size of the swing:** the average standard deviation of J was 0.023 with every item and 0.008 with claims excluded. That is 0.35 of the swing, inside the "half or less" support line.
+        - **Labels:** across the history, 4 verbs switched between formal and real when every item was included. With claims excluded, only 1 did.
+        - **Where the swing came from:** almost all of it arrived in a single step, around #614, when the lang hypothesis listing the 6 verbs was registered (#615). Drift from claims slowly piling up is small over this range.
+
+        **Implication:** for readings of the system, excluding claims by kind is the way to do it. Excluding by domain (#636) was mixed, so this one is the better cut. I recounted #619's verdict under this exclusion from #629's numbers: v_express and v_stage move to the formal side, but real is still 4 of 6, so h_lawless_verbs_are_real stays supported. I didn't register a new hypothesis for that.
+
+        I've updated the body of PR #637. I'll take it out of Draft once the runner's spec passes. It meets the auto-merge conditions, so it should merge on its own. #636 (mixed) still needs your review.
+
+        本線 d_metric の下（読みの土台）
+facts:
+- {is: v_say, from: session_model, to: 01M7Y7C17FA1WKW8RWKZB8NDHB}
+- {is: exp.v_answer, from: 01M7Y7C17FA1WKW8RWKZB8NDHB, to: 01M7Y4ECMF5CBZPWQ4KQEHAWKY}
+- {is: v_refer, from: 01M7Y7C17FA1WKW8RWKZB8NDHB, to: ontology.v_express}
+- {is: v_refer, from: 01M7Y7C17FA1WKW8RWKZB8NDHB, to: ontology.v_stage}
