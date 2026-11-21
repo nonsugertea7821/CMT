@@ -1,0 +1,261 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-21T02:32:41.121Z（UTC）
+individuals:
+  01M7XZ5RD1A340ZPN175D41Y06:
+    is: session_summary
+    display: 発言 3385
+    val:
+      order: 3385
+      text: |
+        This session is being continued from a previous conversation that ran out of context. The summary below covers the earlier portion of the conversation.
+
+        <system-reminder>
+        <tools-used-before-summary>Agent, AskUserQuestion, Bash, Edit, Grep, Read, ReadNotifications, Skill, SubagentHandback, TaskStop, ToolSearch, WebFetch, WebSearch, Write, mcp__claude-code-remote__add_repo, mcp__claude-code-remote__create_trigger, mcp__claude-code-remote__delete_trigger, mcp__claude-code-remote__get_trigger, mcp__claude-code-remote__list_repos, mcp__claude-code-remote__read_documentation, mcp__claude-code-remote__send_later, mcp__claude-code-remote__subscribe_pr_activity, mcp__claude-code-remote__unsubscribe_pr_activity, mcp__claude-code-remote__update_trigger, mcp__github__actions_get, mcp__github__actions_list, mcp__github__actions_run_trigger, mcp__github__add_issue_comment, mcp__github__create_pull_request, mcp__github__get_job_logs, mcp__github__issue_read, mcp__github__issue_write, mcp__github__list_issue_types, mcp__github__list_issues, mcp__github__list_pull_requests, mcp__github__pull_request_read, mcp__github__update_pull_request</tools-used-before-summary>
+        </system-reminder>
+        Summary:
+        1. Primary Request and Intent
+
+        **Standing rules (still in force)**
+        - Repo and tools
+          - Repo nonsugertea7821/CMT at /home/user/CMT. Python is /home/user/venv/bin/python.
+        - Replies
+          - Plain, natural Japanese.
+          - Don't overclaim; separate facts from interpretation.
+          - End each report with 「本線 a 識別子化、d_cscl_display_derived の下」.
+        - Git
+          - Restore files with `git show <rev>:<path> > <path>`. Never use checkout or stash to restore files (`git switch` is OK).
+          - Commit trailer: `Co-Authored-By: Claude [モデル名を伏せた] <[メールアドレスを伏せた]>` and `Claude-Session: https://claude.ai/code/session_015KRKt6TNJZ7ZsQmEknANXK`.
+          - PR body ends with `🤖 Generated with [Claude Code](https://claude.com/claude-code)`, a blank line, then the session URL.
+          - No personal info and no model IDs in pushed artifacts.
+          - Claude never merges.
+        - Every PR I open
+          - Call subscribe_pr_activity.
+          - Call issue_write update with assignees ["nonsugertea7821"].
+        - System yaml and experiments
+          - No comments in system yaml.
+          - Never rerun recorded experiment scripts.
+          - Use `git add -f` for exp/experiments files.
+          - CI belongs to GitHub.
+          - External source texts are NOT put in the repo. Only the source name, counted values and concepts written into the system go in.
+        - Hypotheses
+          - Anything I think "should be done" is first registered as an untested hypothesis.
+            - lang hypotheses go in cscl/design/claims.yaml, grounded via `{is: exp.v_ground, from: d_cscl_display_derived, to: h_x}`.
+            - exp hypotheses go in exp/src/exp.yaml. Ground them to an exp decision such as d_road_region, or mark them わき道.
+          - Registration-only PRs auto-merge. Each hypothesis must have exactly one b_ item with its v_check; two b_ items on one hypothesis breaks auto-merge.
+          - Test flow:
+            1. Branch claude/h_<name>.
+            2. Draft PR with "Closes #issue".
+            3. First commit is the script only (pre-registration).
+            4. Run the script, commit the results plus the recording in the system, run tc and ec, update the PR body, undraft.
+        - Don't ask permission in conversation.
+        - After a merge: `git fetch -q --prune origin && git switch -q main && git merge -q --ff-only origin/main && git branch -D <branch>`.
+        - Merge conflicts: merge main into the branch, keeping both sides' added lines.
+
+        **Trigger**
+        - trig_01L92Xn7LSTHrmqt7enEcCPG was re-armed to fire at 2026-11-21T02:32:00Z.
+        - On each fire: first update_trigger with run_once_at ≈ now+31min and enabled true, then follow its stored prompt. Priority #380 / a0-x is still pending; #380 is not yet merged.
+
+        **User requests this period**
+        - Check whether std is biased toward experiment vocabulary, and what remains in std if those words move to exp.
+        - "langってこの言語の語彙？" — answered: no. lang (cscl/design/claims.yaml) is the domain for claims and decisions about the language; the vocabulary is cscl/library/.
+        - "そもそもstdの定義が「曖昧」じゃないか？ここに含意がある気がする" — registered the paired hypotheses h_std_by_law and h_std_by_shared_use.
+        - "「どこの領域にいれるか」ってreferの操作だよね？" — registered h_domain_choice_is_refer.
+        - "幾何的にはどう解釈するか" — registered h_domain_as_projection.
+        - "私の直観(signature)は覚えてる？アレとの関係でみたい" — related to their past intuitions; registered h_signature_all_charts.
+        - "日本語・英語語彙の導入が先かな" — agreed and started the vocabulary experiment.
+
+        2. Key Technical Concepts
+
+        - tc
+          - Path: cscl/bootstrap/type_checker/type_checker.py.
+          - Success prints 検査に成功.
+        - ec: exp/src/exp_check.py.
+        - Measurement family recording pattern in exp.yaml
+          - Nodes: Q measurement_family, Q_cond family_axis, Q_cond_<k> axis_value.
+          - Relations: v_file_of, v_axis_of, v_value_of plus v_spell per k, v_entry_of '{cond}', v_metric_of mean_value.
+          - Observations: `{is: v_level, from: Q.<k>.mean_value, to: <exact repr>}`.
+          - Statuses used: hyp_refuted, item_done.
+        - tc.build() returns (T, O, Dm).
+          - Dm covers only include domains (exp, lang, subj), not library domains.
+          - T.N keys are "domain.id". T.resolve(word, dom) resolves bare words.
+          - tc.yload loads yaml.
+        - tc rules found when placing vocabulary
+          - Every non-verb node needs mod, val, cmp or ≥2 parents ("式がない").
+          - A verb under an occurrent root must have holds or pre/post ("静的か動的のどちらかで書く").
+          - A verb under a parent verb needs from, to or mod ("上位の動詞と区別する式がない").
+          - mod with `of: [verb, pos]` requires the `with` type to fit that verb position.
+          - Laws: unique_in_domain (display unique within a domain), specific, one_name, named_mod_share, monotone, placed_deduced.
+        - Base relations available
+          - signature: same.
+          - ontology: exists, refer, depend, part, after, involve.
+          - syntax: above.
+        - Available genera are thin: continuant, occurrent, process, quality, magnitude, disposition, realizable_entity, information_entity, word, etc. There is no material-entity layer.
+        - Conceptual framing
+          - Domain = refer cut of a high-dimensional space (the user's 11/19 intuition).
+          - Concept = a range in affine coordinates.
+          - Signature = what cannot be restricted, and the limit where both std definitions coincide (shared by all domains / invariant under all chart changes).
+          - std sits between signature and a single domain.
+
+        3. Files and Code Sections
+
+        **Merged this period**
+        - exp/src/exp.yaml
+          - h_std_exp_biased (#593, issue #595, わき道). Formula `{is: v_depend, from: std, to: exp}`. Now hyp_refuted, with b_std_exp_biased item_done.
+          - Family sys_std_exp_bias. Observations o_sys_seb_share (0.42857142857142855) and o_sys_seb_move (12). v_contradict from o_sys_seb_share.
+          - h_domain_as_projection (#600, issue #603). Formula `{is: v_depend, from: hidden_state, to: syntax.domain}`, grounded to d_road_region.
+        - exp/experiments/sys_std_exp_bias.py and results/sys_std_exp_bias.json (#594)
+          - Result: 12 of 28 nodes move; 38 individuals and 147 facts stay.
+          - Moved: experiment, experiment_protocol, hypothesis, scope, v_learn, learned, v_vary, process_stage_to_v_vary, refer_from_experiment, depend_from_experiment_protocol, role_depend_from_experiment_protocol, composable_set.
+          - ML words stay because lang uses compose_from_model and artifact, and the unused model_inference blocks model in the least fixpoint.
+        - cscl/design/claims.yaml
+          - h_std_by_law `{is: v_depend, from: std_layer, to: syntax.law_rule}` (#596, issue #597).
+          - h_std_by_shared_use `{is: v_depend, from: std_layer, to: syntax.domain}` (#596, issue #598).
+          - h_domain_choice_is_refer `{is: v_refer, from: syntax.domain, to: syntax.concept_expression}` (#599, issue #601).
+          - h_signature_all_charts `{is: v_depend, from: syntax.domain, to: any}` (#602, issue #604).
+          - All grounded to d_cscl_display_derived.
+          - std_layer and axiom_layer are lang nodes. d_cscl_std_on_axiom is the existing decision that std_layer depends on axiom_layer.
+
+        **Current branch claude/h_basic_vocab_fits (PR #605, Draft, "Closes #590", "Closes #592", subscribed and assigned)**
+        - exp/experiments/vocab_basic_place.py (committed and pushed)
+          - Two modes:
+            - `sample <be.html> <wnjpn.db>`: 18 operator verbs plus nouns via random.Random(593): 30 from "400 general words" and 10 from "Things - 200 picturable words".
+            - `judge`.
+          - Synset choice: the English sense with max freq, ties broken by the smallest synset id. Japanese lemma: the one with minimum wordid.
+          - judge
+            - Nodes: en_basic.<en> and ja_basic.j_<en>.
+            - anchor = written extends resolved, with in-vocab parents replaced recursively.
+            - Counts new roots (empty anchor) and new laws (individuals whose is is law_rule).
+            - fits = placed and not a root and no new laws.
+            - s values: n_pair, fit_en, fit_ja, share_fit_en, share_fit_ja, n_new_root, n_new_law, n_both_fit, n_mismatch.
+            - An amendment, written before placing and without changing the judgment, added n_inter_en/ja and n_dup_en/ja.
+          - Judgment:
+            - Both shares ≥ 0.9 → h_basic_vocab_fits supported.
+            - n_both_fit ≥ 1 and n_mismatch = 0 → h_vocab_domain_invariant supported.
+            - If tc.build fails, nothing is decided (status unchanged).
+            - Unplaced words count as non-fit and stay in the denominator.
+            - Place the ja domain first.
+        - exp/experiments/results/vocab_basic_sample.json (committed)
+          - n_verb 18, n_noun 40, n_drop 5 (give, may, will, harbour, trousers), so 53 pairs.
+          - make, do and take all map to 為す; make and do share synset 02560585-v.
+          - Odd ja lemmas: pig→猪の子, head→雁首, umbrella→端折傘.
+        - cscl.yaml (local, uncommitted): added `  - cscl/library/ja_basic/*.yaml` after the std library line.
+        - cscl/library/ja_basic/ja_basic.yaml (local draft, uncommitted)
+          - Header: domain ja_basic; nodes j_object, j_substance, j_animal, j_body, j_body_part, j_act, verbs j_go…j_send, and nouns j_invention…j_station.
+          - individuals: `ja_basic: {is: domain, display: 日本語の基礎語彙}`.
+          - facts: `v_use ja_basic→syntax`, `v_use ja_basic→std`, `v_presume ja_basic→closed_world`.
+          - tc fails with 316 errors.
+
+        **Scratch**
+        - /tmp/claude-0/-home-user-CMT/e05d2140-ce91-515f-a5fb-e6251e13d406/scratchpad/vocab/ holds be.html and wnjpn.db.
+        - scratchpad/user_msgs.txt is the user message log.
+
+        4. Errors and fixes
+
+        - #593 failed auto-merge because two b_ items pointed at one hypothesis. Fixed by removing b_std_residue and updating the PR body.
+        - #593's merge job got 405 because it raced the check job. Waited for check to succeed, then reran the failed job once (rerun_failed_jobs, run 44853678733); it merged.
+        - h_domain_choice_is_refer failed tc because a verb (syntax.v_refer) can't be a v_depend `to`. Changed the formula to v_refer(syntax.domain, syntax.concept_expression).
+        - #599 conflicted with main after #596 merged. Merged main, kept both blocks, and pushed.
+        - A Stop hook complained about unpushed commits on the #600 branch. Pushed.
+        - ja_basic draft fails tc: "式がない" for nodes with only extends, verb-form errors, unique_in_domain for three 為す, and many law violations (one_name 156, specific 45, monotone 35, placed_deduced 20, named_mod_share 2). This is still being worked on.
+
+        5. Problem Solving
+
+        - **std bias:** refuted under the use-based fixpoint. Interpretation: the std "definition" is only its display plus a necessary condition, which led to the paired definition hypotheses.
+        - **Vocabulary placement**
+          - The language strictly requires each concept to be differentiated by a formula.
+          - With only the base relations (same, exists, refer, depend, part, after, involve, above) and existing verbs, everyday nouns such as pig vs umbrella likely can't be distinguished.
+          - Japanese collapses make/do/take into one word 為す, which unique_in_domain forbids having three times.
+          - The honest procedure is to place only what can be formulated so that tc passes, and to leave the rest out (counted as non-fit, with reasons in the commit). h_basic_vocab_fits will likely be refuted.
+
+        6. All user messages (real, this period)
+
+        - 「加えて、今のstdが実験語彙に偏っている可能性、expドメインに語彙を移したときにstdドメインに何が残るかも確かめたい」
+        - 「langってこの言語の語彙？」
+        - 「そもそもstdの定義が「曖昧」じゃないか？ / ここに含意がある気がする」
+        - 「というかもっと一般化して考えると、「どこの領域にいれるか」ってreferの操作だよね？合ってる？」
+        - 「幾何的にはどう解釈するか」
+        - 「私の直観(signature)は覚えてる？アレとの関係でみたい」
+        - 「日本語・英語語彙の導入が先かな」
+        - (Trigger fires, GitHub notifications and Stop hook feedback are not user messages.)
+
+        7. Pending Tasks
+
+        - Finish the vocabulary experiment (#605).
+          1. Make ja_basic pass tc, placing only formulable words with honest formulas.
+          2. Commit ja_basic.
+          3. Write en_basic separately, at cscl/library/en_basic/en_basic.yaml plus a cscl.yaml line; English node ids are the words, displays are in Japanese.
+          4. Run `judge` once.
+          5. Record the families and observations, and statuses for h_basic_vocab_fits and h_vocab_domain_invariant (issues #590 and #592).
+          6. Run tc and ec, update the PR body, undraft. It needs manual review because it adds concepts and domains.
+        - Afterwards, pre-register and measure h_std_by_law, h_std_by_shared_use and h_signature_all_charts on the enlarged system.
+        - Not yet tested: h_domain_choice_is_refer, h_domain_as_projection, h_parent_alone_by_law, and the re-check items b_*_vocab.
+        - Trigger at 02:32Z: re-arm, then follow its stored prompt (#380 / a0 priority).
+
+        8. Current Work
+
+        On branch claude/h_basic_vocab_fits, I was making ja_basic.yaml pass tc. I had just read the tc code (type_checker.py lines ~1215–1250) showing:
+        - non-verb nodes need mod, val, cmp or ≥2 parents;
+        - verbs need holds or pre/post, or must be distinguished from their parent verb by from, to or mod.
+
+        The draft and the cscl.yaml edit are uncommitted.
+
+        9. Optional Next Step
+
+        Rewrite ja_basic.yaml so that tc passes:
+        - Give each placed concept a distinguishing formula: mods over existing verbs such as v_compose, v_depend, v_perform, v_trigger, v_express, and verbs defined in the domain with holds/pre/post over the base relations.
+        - Keep only one 為す node; j_do and j_take become non-fits.
+        - Remove words that can't be formulated and record the reasons.
+        - Then commit, write en_basic, and run judge.
+
+        This continues the work I told the user about: 「日本語の領域を先に置き、そのあと英語の領域を置きます。合わせて 100 ノードを超える手作業なので、少し時間がかかります。」
+
+        If you need specific details from before compaction (like exact code snippets, error messages, or content you generated), read the full transcript at: /root/.claude/projects/-home-user-CMT/e05d2140-ce91-515f-a5fb-e6251e13d406.jsonl
+        Continue the conversation from where it left off without asking the user any further questions. Resume directly — do not acknowledge the summary, do not recap what was happening, do not preface with "I'll continue" or similar. Pick up the last task as if the break never happened.
+
+        The messages after this summary are the most recent messages from before compaction, kept verbatim. The summary was written without seeing them, so something it says has not happened yet may already have happened in them.
+facts:
+- {is: v_say, from: session_model, to: 01M7XZ5RD1A340ZPN175D41Y06}
+- {is: v_refer, from: 01M7XZ5RD1A340ZPN175D41Y06, to: exp.v_ground}
+- {is: v_refer, from: 01M7XZ5RD1A340ZPN175D41Y06, to: exp.v_check}
+- {is: v_refer, from: 01M7XZ5RD1A340ZPN175D41Y06, to: lang.type_checker}
+- {is: v_refer, from: 01M7XZ5RD1A340ZPN175D41Y06, to: exp.measurement_family}
+- {is: v_refer, from: 01M7XZ5RD1A340ZPN175D41Y06, to: exp.family_axis}
+- {is: v_refer, from: 01M7XZ5RD1A340ZPN175D41Y06, to: exp.axis_value}
+- {is: v_refer, from: 01M7XZ5RD1A340ZPN175D41Y06, to: exp.v_file_of}
+- {is: v_refer, from: 01M7XZ5RD1A340ZPN175D41Y06, to: exp.v_axis_of}
+- {is: v_refer, from: 01M7XZ5RD1A340ZPN175D41Y06, to: exp.v_value_of}
+- {is: v_refer, from: 01M7XZ5RD1A340ZPN175D41Y06, to: exp.v_spell}
+- {is: v_refer, from: 01M7XZ5RD1A340ZPN175D41Y06, to: exp.v_entry_of}
+- {is: v_refer, from: 01M7XZ5RD1A340ZPN175D41Y06, to: exp.v_metric_of}
+- {is: v_refer, from: 01M7XZ5RD1A340ZPN175D41Y06, to: exp.mean_value}
+- {is: v_refer, from: 01M7XZ5RD1A340ZPN175D41Y06, to: ontology.v_level}
+- {is: v_refer, from: 01M7XZ5RD1A340ZPN175D41Y06, to: exp.hyp_refuted}
+- {is: v_refer, from: 01M7XZ5RD1A340ZPN175D41Y06, to: exp.item_done}
+- {is: v_refer, from: 01M7XZ5RD1A340ZPN175D41Y06, to: syntax.with}
+- {is: v_refer, from: 01M7XZ5RD1A340ZPN175D41Y06, to: ontology.realizable_entity}
+- {is: v_refer, from: 01M7XZ5RD1A340ZPN175D41Y06, to: ontology.information_entity}
+- {is: v_refer, from: 01M7XZ5RD1A340ZPN175D41Y06, to: ontology.v_depend}
+- {is: v_refer, from: 01M7XZ5RD1A340ZPN175D41Y06, to: exp.v_contradict}
+- {is: v_refer, from: 01M7XZ5RD1A340ZPN175D41Y06, to: exp.hidden_state}
+- {is: v_refer, from: 01M7XZ5RD1A340ZPN175D41Y06, to: syntax.domain}
+- {is: v_refer, from: 01M7XZ5RD1A340ZPN175D41Y06, to: std.experiment_protocol}
+- {is: v_refer, from: 01M7XZ5RD1A340ZPN175D41Y06, to: std.v_learn}
+- {is: v_refer, from: 01M7XZ5RD1A340ZPN175D41Y06, to: std.v_vary}
+- {is: v_refer, from: 01M7XZ5RD1A340ZPN175D41Y06, to: std.process_stage_to_v_vary}
+- {is: v_refer, from: 01M7XZ5RD1A340ZPN175D41Y06, to: std.refer_from_experiment}
+- {is: v_refer, from: 01M7XZ5RD1A340ZPN175D41Y06, to: std.depend_from_experiment_protocol}
+- {is: v_refer, from: 01M7XZ5RD1A340ZPN175D41Y06, to: std.role_depend_from_experiment_protocol}
+- {is: v_refer, from: 01M7XZ5RD1A340ZPN175D41Y06, to: std.composable_set}
+- {is: v_refer, from: 01M7XZ5RD1A340ZPN175D41Y06, to: std.compose_from_model}
+- {is: v_refer, from: 01M7XZ5RD1A340ZPN175D41Y06, to: std.model_inference}
+- {is: v_refer, from: 01M7XZ5RD1A340ZPN175D41Y06, to: lang.std_layer}
+- {is: v_refer, from: 01M7XZ5RD1A340ZPN175D41Y06, to: syntax.law_rule}
+- {is: v_refer, from: 01M7XZ5RD1A340ZPN175D41Y06, to: ontology.v_refer}
+- {is: v_refer, from: 01M7XZ5RD1A340ZPN175D41Y06, to: syntax.concept_expression}
+- {is: v_refer, from: 01M7XZ5RD1A340ZPN175D41Y06, to: lang.axiom_layer}
+- {is: v_refer, from: 01M7XZ5RD1A340ZPN175D41Y06, to: syntax.v_presume}
+- {is: v_refer, from: 01M7XZ5RD1A340ZPN175D41Y06, to: syntax.closed_world}
+- {is: v_refer, from: 01M7XZ5RD1A340ZPN175D41Y06, to: syntax.to}
+- {is: v_refer, from: 01M7XZ5RD1A340ZPN175D41Y06, to: ontology.v_compose}
+- {is: v_refer, from: 01M7XZ5RD1A340ZPN175D41Y06, to: ontology.v_perform}
+- {is: v_refer, from: 01M7XZ5RD1A340ZPN175D41Y06, to: ontology.v_trigger}
+- {is: v_refer, from: 01M7XZ5RD1A340ZPN175D41Y06, to: ontology.v_express}
