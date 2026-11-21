@@ -1,0 +1,24 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-21T22:32:54.515Z（UTC）
+individuals:
+  01M803VDZK184YAG74XMXY632B:
+    is: model_utterance
+    display: 発言 4140
+    val:
+      order: 4140
+      text: |
+        PR #730 が tc で落ちたので直し、push しました。CI をもう一度待っています。
+
+        - **落ちた理由**: 最初に登録した h_model_misses_checker_output の式（`v_read model→lang.type_checker, neg`）が型に合いませんでした。tc は「v_read の to には情報の概念しか来られず、lang.type_checker は来られない」と言いました。
+          - 読み違いの元は、検査器の出力と検査器そのものを式で区別していなかったことです。
+        - **直したもの**: 同じ観察を、判定の側から h_verdict_ignores_checker（判定は検査器の出力に頼らない）として書き直しました。
+          - 式は `v_rely verdict→lang.type_checker, neg: true` です。
+          - h_verdict_by_checker の否定の対になります。
+        - **記録**: 訂正の経緯は、commit のメッセージと PR の本文に残しました。
+
+        ロードマップの位置: H3（検査器の道 d_road_checker）。
+facts:
+- {is: v_say, from: session_model, to: 01M803VDZK184YAG74XMXY632B}
+- {is: exp.v_answer, from: 01M803VDZK184YAG74XMXY632B, to: 01M7ZG4RFFK1A28D1ZVQK01AG8}
+- {is: v_refer, from: 01M803VDZK184YAG74XMXY632B, to: exp.v_read}
+- {is: v_refer, from: 01M803VDZK184YAG74XMXY632B, to: lang.type_checker}
+- {is: v_refer, from: 01M803VDZK184YAG74XMXY632B, to: exp.v_rely}
