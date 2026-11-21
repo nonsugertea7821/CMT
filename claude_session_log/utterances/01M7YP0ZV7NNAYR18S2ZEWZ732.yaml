@@ -1,0 +1,25 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-21T09:12:02.151Z（UTC）
+individuals:
+  01M7YP0ZV7NNAYR18S2ZEWZ732:
+    is: model_utterance
+    display: 発言 3640
+    val:
+      order: 3640
+      text: |
+        PR #652 の型検査は、ランナーで次の二つの法則に反して落ちていました。直す commit を push したので、検査が回り直しています。
+
+        - **named_mod_share**（二つのノードが同じ限定を足すなら、その限定に名前が要る）
+          - 新しい概念のうち3つが、既存のノードと同じ限定を書いていました（`formalization_accuracy`・`sibling_discrimination`・`shifted_hidden_state`）。
+          - 名前の付いた限定を3つ足し、新旧の両方がそれを使うようにしました。既存のノードは、書き方が変わるだけで式の意味は同じです。
+        - **op_defined**（閉集合に属する種類には、閉じている動詞が定義されている）
+          - 「向き」の3つを `residual_vector` の直下に置いていましたが、そこには和が定義されていません。
+          - 和を持つ `state_shift`（隠れ状態のずれ）の下に移しました。
+
+        本線 a 往復の教示の含意（d_consolidation_in_vector の下、PR #652）
+facts:
+- {is: v_say, from: session_model, to: 01M7YP0ZV7NNAYR18S2ZEWZ732}
+- {is: exp.v_answer, from: 01M7YP0ZV7NNAYR18S2ZEWZ732, to: 01M7YNTQJDC9VJZPVZMMJ4DCHW}
+- {is: v_refer, from: 01M7YP0ZV7NNAYR18S2ZEWZ732, to: exp.formalization_accuracy}
+- {is: v_refer, from: 01M7YP0ZV7NNAYR18S2ZEWZ732, to: exp.shifted_hidden_state}
+- {is: v_refer, from: 01M7YP0ZV7NNAYR18S2ZEWZ732, to: exp.residual_vector}
+- {is: v_refer, from: 01M7YP0ZV7NNAYR18S2ZEWZ732, to: exp.state_shift}
