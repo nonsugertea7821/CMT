@@ -1981,6 +1981,21 @@ individuals:
   sys_std_exp_bias_cond_n_fact_move: {is: axis_value, val: {text: n_fact_move}}
   sys_std_exp_bias_cond_n_node_stay_other: {is: axis_value, val: {text: n_node_stay_other}}
   sys_std_exp_bias_cond_n_node_unused: {is: axis_value, val: {text: n_node_unused}}
+  vocab_basic_judge: {is: measurement_family}
+  vocab_basic_judge_cond: {is: family_axis, val: {text: cond}}
+  vocab_basic_judge_cond_n_pair: {is: axis_value, val: {text: n_pair}}
+  vocab_basic_judge_cond_fit_en: {is: axis_value, val: {text: fit_en}}
+  vocab_basic_judge_cond_fit_ja: {is: axis_value, val: {text: fit_ja}}
+  vocab_basic_judge_cond_share_fit_en: {is: axis_value, val: {text: share_fit_en}}
+  vocab_basic_judge_cond_share_fit_ja: {is: axis_value, val: {text: share_fit_ja}}
+  vocab_basic_judge_cond_n_new_root: {is: axis_value, val: {text: n_new_root}}
+  vocab_basic_judge_cond_n_new_law: {is: axis_value, val: {text: n_new_law}}
+  vocab_basic_judge_cond_n_both_fit: {is: axis_value, val: {text: n_both_fit}}
+  vocab_basic_judge_cond_n_mismatch: {is: axis_value, val: {text: n_mismatch}}
+  vocab_basic_judge_cond_n_inter_en: {is: axis_value, val: {text: n_inter_en}}
+  vocab_basic_judge_cond_n_dup_en: {is: axis_value, val: {text: n_dup_en}}
+  vocab_basic_judge_cond_n_inter_ja: {is: axis_value, val: {text: n_inter_ja}}
+  vocab_basic_judge_cond_n_dup_ja: {is: axis_value, val: {text: n_dup_ja}}
   sys_any_by_entail_before_fix: {is: measurement_family}
   sys_any_by_entail_before_fix_cond: {is: family_axis, val: {text: cond}}
   sys_any_by_entail_before_fix_cond_errors: {is: axis_value, val: {text: errors}}
@@ -7693,6 +7708,36 @@ facts:
   - {is: v_refer, from: o_sys_seb_share, to: {is: v_level, from: sys_std_exp_bias.share_node_move.mean_value, to: 0.42857142857142855}}
   - {is: v_refer, from: o_sys_seb_move, to: {is: v_level, from: sys_std_exp_bias.n_node_move.mean_value, to: 12}}
   - {is: v_contradict, from: o_sys_seb_share, to: h_std_exp_biased}
+  - {is: v_file_of, from: vocab_basic_judge.json, to: vocab_basic_judge}
+  - {is: v_axis_of, from: vocab_basic_judge_cond, to: vocab_basic_judge}
+  - {is: v_value_of, from: vocab_basic_judge_cond_n_pair, to: vocab_basic_judge_cond}
+  - {is: v_spell, from: vocab_basic_judge_cond_n_pair, to: n_pair}
+  - {is: v_value_of, from: vocab_basic_judge_cond_fit_en, to: vocab_basic_judge_cond}
+  - {is: v_spell, from: vocab_basic_judge_cond_fit_en, to: fit_en}
+  - {is: v_value_of, from: vocab_basic_judge_cond_fit_ja, to: vocab_basic_judge_cond}
+  - {is: v_spell, from: vocab_basic_judge_cond_fit_ja, to: fit_ja}
+  - {is: v_value_of, from: vocab_basic_judge_cond_share_fit_en, to: vocab_basic_judge_cond}
+  - {is: v_spell, from: vocab_basic_judge_cond_share_fit_en, to: share_fit_en}
+  - {is: v_value_of, from: vocab_basic_judge_cond_share_fit_ja, to: vocab_basic_judge_cond}
+  - {is: v_spell, from: vocab_basic_judge_cond_share_fit_ja, to: share_fit_ja}
+  - {is: v_value_of, from: vocab_basic_judge_cond_n_new_root, to: vocab_basic_judge_cond}
+  - {is: v_spell, from: vocab_basic_judge_cond_n_new_root, to: n_new_root}
+  - {is: v_value_of, from: vocab_basic_judge_cond_n_new_law, to: vocab_basic_judge_cond}
+  - {is: v_spell, from: vocab_basic_judge_cond_n_new_law, to: n_new_law}
+  - {is: v_value_of, from: vocab_basic_judge_cond_n_both_fit, to: vocab_basic_judge_cond}
+  - {is: v_spell, from: vocab_basic_judge_cond_n_both_fit, to: n_both_fit}
+  - {is: v_value_of, from: vocab_basic_judge_cond_n_mismatch, to: vocab_basic_judge_cond}
+  - {is: v_spell, from: vocab_basic_judge_cond_n_mismatch, to: n_mismatch}
+  - {is: v_value_of, from: vocab_basic_judge_cond_n_inter_en, to: vocab_basic_judge_cond}
+  - {is: v_spell, from: vocab_basic_judge_cond_n_inter_en, to: n_inter_en}
+  - {is: v_value_of, from: vocab_basic_judge_cond_n_dup_en, to: vocab_basic_judge_cond}
+  - {is: v_spell, from: vocab_basic_judge_cond_n_dup_en, to: n_dup_en}
+  - {is: v_value_of, from: vocab_basic_judge_cond_n_inter_ja, to: vocab_basic_judge_cond}
+  - {is: v_spell, from: vocab_basic_judge_cond_n_inter_ja, to: n_inter_ja}
+  - {is: v_value_of, from: vocab_basic_judge_cond_n_dup_ja, to: vocab_basic_judge_cond}
+  - {is: v_spell, from: vocab_basic_judge_cond_n_dup_ja, to: n_dup_ja}
+  - {is: v_entry_of, from: '{cond}', to: vocab_basic_judge}
+  - {is: v_metric_of, from: vocab_basic_judge, to: mean_value}
   - {is: v_file_of, from: sys_any_by_entail_before_fix.json, to: sys_any_by_entail_before_fix}
   - {is: v_rows_of, from: [rows], to: sys_any_by_entail_before_fix}
   - {is: v_axis_of, from: sys_any_by_entail_before_fix_cond, to: sys_any_by_entail_before_fix}
