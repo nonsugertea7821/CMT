@@ -1,0 +1,26 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-21T22:00:03.597Z（UTC）
+individuals:
+  01M801Z98DZJXX75ZM5BA1G3NQ:
+    is: model_utterance
+    display: 発言 4115
+    val:
+      order: 4115
+      text: |
+        今回は何も登録しませんでした。5 文はどれも、確かめた事実（1）か、確かめた上で登録しない理由を述べたものです。
+
+        - **「2 つの仮説はどちらも判定できませんでした」**: 事実です。結果ファイルの judgment が、どちらも not_judged でした。
+        - **「支持の線 0.75 まで 1 項目足りません」**: 事実です。24 項目のうち正しかったのは 17（0.708）で、線の 0.75 は 18 にあたります。
+        - **「観察 o_e42_* はどの仮説にも結んでいません」**: 事実です。57b3ca9 の差分で確かめました。判定しない範囲に入ったので、事前登録に従って結んでいません。
+        - **「E41 の二択では decoy は 0.542 で、この傾向は出ませんでした」**: 事実です。#721 の結果の値です。
+        - **「新しい仮説は登録しませんでした」**: 理由は、既にある 2 つの仮説の式で言えることを確かめたためです。
+          - decoy で「A の名前を文字として含む行を選ぶ」ことは、h_model_reads_by_word の式（v_read model→syntax.word）がそのまま言っています。
+          - その傾向が比べる問い方でだけ出るという、設問の形による違いもあります。これは h_verdict_by_question_format の式（v_rely verdict→question_format）の一つの例です。判定（verdict）が設問の形（question_format）に頼ることを、一般に言っているためです。
+          - そのため、別の仮説として足すと重複になります。
+
+        ロードマップの位置: H3（検査器の道 d_road_checker）。E42 を記録し、次は E43。
+facts:
+- {is: v_say, from: session_model, to: 01M801Z98DZJXX75ZM5BA1G3NQ}
+- {is: exp.v_answer, from: 01M801Z98DZJXX75ZM5BA1G3NQ, to: 01M7ZG4RFFK1A28D1ZVQK01AG8}
+- {is: v_refer, from: 01M801Z98DZJXX75ZM5BA1G3NQ, to: exp.v_read}
+- {is: v_refer, from: 01M801Z98DZJXX75ZM5BA1G3NQ, to: exp.v_rely}
+- {is: v_refer, from: 01M801Z98DZJXX75ZM5BA1G3NQ, to: exp.question_format}
