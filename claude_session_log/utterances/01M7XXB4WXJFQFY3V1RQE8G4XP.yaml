@@ -1,0 +1,42 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-21T02:00:40.605Z（UTC）
+individuals:
+  01M7XXB4WXJFQFY3V1RQE8G4XP:
+    is: model_utterance
+    display: 発言 3353
+    val:
+      order: 3353
+      text: |
+        std の偏りを確かめる仮説を登録しました。PR #593 で、自動マージを待っています。#591 はすでにマージされ、ブランチも消しました。
+
+        **いまの std を見て分かること（まだ測っていません）**
+        - 中身は 28 ノードです。大きく三つに分かれます。
+          - 実験・機械学習の語: model、weights、experiment、v_learn、v_freeze、v_compute など。
+          - 合成と閉集合の語: v_sum、closed_set、summand など。
+          - 種類としての部分と依存の法則: kpart_*、kdep_*、closed_under_*。
+        - 一般概念として残りそうなのは、後ろの二つです。ただし、これは読んだ印象にすぎません。
+
+        **登録した中身**
+        - 仮説 `h_std_exp_biased`: std の語の多くは、exp が使うために置かれている（`{is: v_depend, from: std, to: exp}`）。
+        - 確かめる項目は二つです。
+          - 偏りがどれだけあるか。
+          - 語を exp に移したとき、std に何が残るか。
+        - exp 側の仮説で lang の決定には結べないため、わき道としました。
+
+        **測り方の案（事前登録は次の PR で行います）**
+        - std の各ノードについて、std の外のどの領域から参照されているかを、参照の連鎖をたどって数えます。
+        - exp からしか使われない語は、移す側に入れます。
+        - そうした語に依存している std の語も、移す側に入れます。std は exp を使えないからです。
+        - 移したあとに残る語を並べます。
+
+        この結果は、基礎語彙を足す実験の前提にもなります。そのため、先にこちらを測ってから語彙の実験に入るつもりです。
+
+        本線 a 識別子化、d_cscl_display_derived の下
+facts:
+- {is: v_say, from: session_model, to: 01M7XXB4WXJFQFY3V1RQE8G4XP}
+- {is: exp.v_answer, from: 01M7XXB4WXJFQFY3V1RQE8G4XP, to: 01M7XWSYGZ74CWBW16JPZ0G31F}
+- {is: v_refer, from: 01M7XXB4WXJFQFY3V1RQE8G4XP, to: std.v_learn}
+- {is: v_refer, from: 01M7XXB4WXJFQFY3V1RQE8G4XP, to: std.v_freeze}
+- {is: v_refer, from: 01M7XXB4WXJFQFY3V1RQE8G4XP, to: std.v_compute}
+- {is: v_refer, from: 01M7XXB4WXJFQFY3V1RQE8G4XP, to: std.v_sum}
+- {is: v_refer, from: 01M7XXB4WXJFQFY3V1RQE8G4XP, to: std.closed_set}
+- {is: v_refer, from: 01M7XXB4WXJFQFY3V1RQE8G4XP, to: ontology.v_depend}

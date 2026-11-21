@@ -1,0 +1,299 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-21T01:59:02.911Z（UTC）
+individuals:
+  01M7XX85FZ3DBX2TPNWK3NWZ0N:
+    is: session_summary
+    display: 発言 3351
+    val:
+      order: 3351
+      text: |
+        This session is being continued from a previous conversation that ran out of context. The summary below covers the earlier portion of the conversation.
+
+        <system-reminder>
+        <tools-used-before-summary>Agent, AskUserQuestion, Bash, Edit, Grep, Read, ReadNotifications, Skill, SubagentHandback, TaskStop, ToolSearch, WebFetch, WebSearch, Write, mcp__claude-code-remote__add_repo, mcp__claude-code-remote__create_trigger, mcp__claude-code-remote__delete_trigger, mcp__claude-code-remote__get_trigger, mcp__claude-code-remote__list_repos, mcp__claude-code-remote__read_documentation, mcp__claude-code-remote__send_later, mcp__claude-code-remote__subscribe_pr_activity, mcp__claude-code-remote__unsubscribe_pr_activity, mcp__claude-code-remote__update_trigger, mcp__github__actions_get, mcp__github__actions_list, mcp__github__add_issue_comment, mcp__github__create_pull_request, mcp__github__get_job_logs, mcp__github__issue_read, mcp__github__issue_write, mcp__github__list_issue_types, mcp__github__list_issues, mcp__github__list_pull_requests, mcp__github__pull_request_read, mcp__github__update_pull_request</tools-used-before-summary>
+        </system-reminder>
+        Summary:
+        1. Primary Request and Intent
+
+        **Standing rules (still in force)**
+        - Repo and tools
+          - Repo nonsugertea7821/CMT at /home/user/CMT.
+          - Python: /home/user/venv/bin/python.
+        - Replies
+          - Plain, natural Japanese.
+          - Don't overclaim; separate facts from interpretation.
+          - End each report with 「本線 a 識別子化、d_cscl_display_derived の下」.
+        - Git
+          - Restore files with `git show <rev>:<path> > <path>`. Never use checkout or stash to restore; `git switch` is OK.
+          - Commit trailer:
+            - `Co-Authored-By: Claude [モデル名を伏せた] <[メールアドレスを伏せた]>`
+            - `Claude-Session: https://claude.ai/code/session_015KRKt6TNJZ7ZsQmEknANXK`
+          - PR body ends with `🤖 Generated with [Claude Code](https://claude.com/claude-code)`, a blank line, then the session URL.
+          - No personal info and no model IDs in pushed artifacts.
+          - Claude never merges.
+          - For every PR I open: subscribe_pr_activity, plus issue_write update with assignees ["nonsugertea7821"].
+        - System files and experiments
+          - No comments in system yaml.
+          - Never rerun recorded experiment scripts.
+          - Use `git add -f` for exp/experiments files.
+          - CI belongs to GitHub.
+          - Source texts of external vocabularies are NOT put in the repo. Only the source name, counted values and concepts written into the system go in.
+        - Hypotheses
+          - Anything I think "should be done" is first registered as an untested hypothesis.
+            - lang hypotheses go in cscl/design/claims.yaml, grounded via `{is: exp.v_ground, from: d_cscl_display_derived, to: h_x}`.
+            - exp hypotheses go in exp/src/exp.yaml. They can't ground to lang, so mark them わき道.
+          - Registration-only PRs auto-merge, unless they add v_check to existing hypotheses (then they need manual review).
+          - Test flow:
+            1. Branch `claude/h_<name>`.
+            2. Draft PR "Closes #<issue>".
+            3. First commit is the script only (pre-registration).
+            4. Run, then commit results plus recording, run tc/ec, update the PR body and undraft.
+            5. Derive implications as new hypotheses in a registration-only PR.
+          - Don't ask permission in conversation. Only ask when the direction itself is the user's to decide.
+        - After a merge
+          - Run `git fetch -q --prune origin && git switch -q main && git merge -q --ff-only origin/main && git branch -D <branch>`.
+          - Resolve conflicts by merging main: keep main's status lines plus HEAD's new h_/b_ lines.
+
+        **Trigger**
+        - trig_01L92Xn7LSTHrmqt7enEcCPG, run_once_at 2026-11-21T02:00:00Z.
+        - On each fire, first update_trigger with run_once_at ≈ now+31min and enabled true.
+        - Then follow the stored prompt: check PRs, mainline work, record, implications, short report with a roadmap line.
+
+        **User requests this period (real)**
+        - On lineage: 「片方に決めるためには分化の系譜とは何か、という根本的な問いを解く必要がある」. Answered with synchronic vs diachronic readings.
+        - 「それ両方あるんじゃないかな / 過去に述べているけど私は全てのものに対称性を見いだしている / 相反する2つの性質は反する象限で互いに成り立つ事実であり、その双方を同じ理論で説明できなければならない」.
+          - Answered: one equation D(x) = D(親) + 差異, solved in the deduction direction (nouns, closed world, current genus) and the construction direction (verbs, open world, differentiation events).
+        - 「一つ気づいたが、先に一般概念セット(std)の量を増やした方がいいかもしれない」. Agreed; offered sources (1) BFO/DOLCE, (2) WordNet/Basic English, (3) Japanese basic vocab.
+        - 「2と3で」.
+        - 「それはそれぞれdomainに置いたほうがいい可能性がある」 (mid-turn). Interpreted as putting each source vocabulary in its own domain; registered h_vocab_domain_invariant.
+
+        2. Key Technical Concepts
+
+        - tc
+          - Path: cscl/bootstrap/type_checker/type_checker.py.
+          - Success prints "検査に成功: ノード 741…".
+          - lang claims can't reference exp-only terms.
+          - Cross-layer v_ground fails.
+          - Individuals like syntax.placed_deduced are not node IDs; syntax.law_rule, syntax.domain and syntax.extends are usable.
+        - ec (exp/src/exp_check.py)
+          - Silent, exit 0.
+          - Rejects an exp hypothesis whose formula references only signature/syntax words: 「exp の主張が、signature の語だけを参照している。言語についての主張なら cscl の側に置く」.
+          - Observation v_level `to` must equal the computed value exactly; use the full float repr.
+          - hyp_mixed needs both v_support and v_contradict.
+        - Measurement family recording pattern in exp.yaml (no v_rows_of)
+          - Result JSON is `{"rows": {...}, "s": {...}}`. The stat comes from the top-level "s".
+          - Family node lines:
+            - `  Q: {is: measurement_family}`
+            - `  Q_cond: {is: family_axis, val: {text: cond}}`
+            - `  Q_cond_<k>: {is: axis_value, val: {text: <k>}}`
+          - Relations:
+            - `- {is: v_file_of, from: Q.json, to: Q}`
+            - `- {is: v_axis_of, from: Q_cond, to: Q}`
+            - per k: `- {is: v_value_of, from: Q_cond_<k>, to: Q_cond}` and `- {is: v_spell, from: Q_cond_<k>, to: <k>}`
+            - `- {is: v_entry_of, from: '{cond}', to: Q}`
+            - `- {is: v_metric_of, from: Q, to: mean_value}`
+          - Value IDs: `Q.<k>.mean_value`.
+        - Verb set: `x != top_o and T.is_a(x, top_o)` and any of holds/pre/post in x or ancestors. That gives 119 verbs; nouns = the other N (622).
+        - The system has domains (syntax.domain, v_use domain→domain, v_presume domain→world, unique_in_domain law, world_declared per domain).
+          - cscl.yaml lists the library globs (ontology, syntax, runtime, std) and `include: [exp/src/*.yaml, cscl/design/*.yaml]`.
+          - std currently has 28 nodes, ML/experiment-biased (model, weights, experiment, v_compute, v_learn…).
+        - Conceptual framing: D(x) = D(親) + 差異.
+          - Construction direction (genus + differentia → x) is always unique (#585).
+          - Differentia-only → genus fails at one convergence (#582).
+          - Full content → genus works (#557).
+          - Nouns deduce placement; verbs are primitive (KL-ONE primitive vs defined).
+
+        3. Files and Code Sections
+
+        **Merged experiment scripts and results (new this period)**
+        - exp/experiments/sys_verb_extends_primitive.py (#582)
+          - Reads the system via tc.build. Groups verbs by own fields F = {holds, pre, post, from, to, new_kind, mod} (as written).
+          - Counts groups with ≥2 distinct written extends.
+          - Result s: n_verbs 119, n_groups 118, n_conv 1, n_conv_nonempty 1, n_conv_verbs 2.
+        - exp/experiments/sys_differentia_by_genus.py (#585)
+          - Groups by written extends; counts sibling pairs with identical F.
+          - Result s: n_verbs 119, n_sib_groups 12, n_sib_pairs 1529, n_clash 0, n_clash_nonempty 0.
+          - Sibling group sizes: occurrent 52, v_refer 16, v_compose 10, v_depend 6, others 2–4.
+        - exp/experiments/sys_lineage_order.py (#586)
+          - Walks first-parent main commits touching *.yaml (331, 323 read).
+          - Parses yaml with domain+nodes, excluding cscl/trial/, cscl/notes, exp/experiments/.
+          - Node key `domain.id`. ext_norm takes the last dotted component, sorted. own = fields minus display/extends.
+          - Re-parent events are counted with "own_led" = own changed in (prev extends-set commit, c].
+          - Result s:
+            - n_noun 622, n_verb 119
+            - n_ev_noun 44, n_ev_verb 20, n_led_noun 37, n_led_verb 20
+            - rate_noun 0.0707, rate_verb 0.1681, led_share_noun 0.8409
+          - It has an appended 訂正 section (de07f15 is/extends key rename, 25 events: 11 nouns, 14 verbs).
+        - exp/experiments/sys_lineage_order_fix.py
+          - Reads sys_lineage_order.json and drops commit de07f15.
+          - Result s: n_ev_noun 33, n_ev_verb 6, n_led_noun 26, n_led_verb 6, rate_noun 0.05305466237942122, rate_verb 0.05042016806722689, led_share_noun 0.7878787878787878.
+          - The 7 parent-alone noun events:
+            - dc0b0fc: subj.warehouse, subj.order
+            - d3bcbc0: exp.specific_vector_component
+            - 64a18f9: exp.layer_output
+            - ff7561f and 22cc2a0: exp.residual_vector (moved twice)
+            - 559de4a: syntax.verbatim
+
+        **Recording in the system**
+        - claims.yaml
+          - Observations o_sys_vep_{verbs, groups, conv, conv_nonempty}; v_support from o_sys_vep_conv_nonempty.
+          - o_sys_dbg_{groups, pairs, clash}; v_support from o_sys_dbg_clash.
+          - Statuses: h_verb_extends_primitive hyp_supported, h_differentia_by_genus hyp_supported.
+        - exp.yaml
+          - Families: sys_verb_extends_primitive, sys_differentia_by_genus, sys_lineage_order, sys_lineage_order_fix.
+          - Observations o_sys_lo_{led_noun, rate_noun, rate_verb} and o_sys_lof_{…}.
+          - h_lineage_is_genus hyp_supported (two supports).
+          - h_lineage_is_history hyp_mixed: contradict from o_sys_lo_rate_verb, support from o_sys_lof_rate_verb.
+
+        **Registrations (claims.yaml unless noted)**
+        - exp.yaml (わき道):
+          - h_lineage_is_genus: `{is: v_depend, from: syntax.extends, to: supersedes, neg: true}` (#578, issue #579).
+          - h_lineage_is_history: `{is: v_depend, from: syntax.extends, to: supersedes}` (#580, issue #581).
+        - h_differentia_by_genus: `{is: v_depend, from: [syntax.holds, syntax.from, syntax.to, syntax.mod], to: syntax.extends}` (#583, issue #584).
+        - h_parent_alone_by_law: `{is: v_depend, from: syntax.extends, to: syntax.law_rule}` (#587).
+          - Test: for the 7 parent-alone noun events, check whether a law (a node with law_rule) changed in the interval. Supported if all did.
+        - h_basic_vocab_fits: `{is: v_depend, from: syntax.extends, to: [syntax.mod, syntax.holds, syntax.from, syntax.to]}` (#589, merged).
+          - Plus b_concept_extends_deduced_vocab, b_differentia_by_genus_vocab and b_verb_extends_primitive_vocab, with v_check to the existing hypotheses.
+          - Planned test: place ≥90% of the sampled words without a new root or law.
+        - h_vocab_domain_invariant: `{is: v_depend, from: syntax.extends, to: syntax.domain, neg: true}` (#591, open, waiting for auto-merge).
+          - Lines are inserted after `  b_basic_vocab_fits: {is: exp.item_queued}` and after `  - {is: exp.v_ground, from: d_cscl_display_derived, to: h_basic_vocab_fits}`.
+          - Branch claude/register-vocab-domains, commit aaa9373.
+
+        **Scratch data (not in repo)**
+        - Directory: /tmp/claude-0/-home-user-CMT/e05d2140-ce91-515f-a5fb-e6251e13d406/scratchpad/vocab/
+        - be.html: Wiktionary Basic English list. Parsing with regex on h2/h3 sections and `<a href="/wiki/...">word</a>` gives:
+          - Operations 99 (come, get, give, go, keep, let, make, put, seem, take, be, do…)
+          - 400 general words
+          - 200 picturable words
+          - 100 descriptive qualities
+        - wnjpn.db(.gz): Japanese WordNet sqlite.
+          - Tables: synset, synlink(synset1, synset2, link e.g. 'hype', src), sense(synset, wordid, lang, …), word(wordid, lang, lemma, pron, pos), ancestor, xlink, etc.
+        - User message log: scratchpad/user_msgs.txt.
+
+        4. Errors and fixes
+
+        - h_lineage_is_genus in claims.yaml failed tc (lang can't reference exp; exp.v_supersede wasn't a valid v_depend `to`).
+          - Fix: moved to exp.yaml using `supersedes` (an exp continuant).
+        - A cross-layer v_ground (lang.d_cscl_display_derived from exp) failed tc.
+          - Fix: dropped it and marked わき道.
+        - h_parent_alone_by_law in exp.yaml failed ec (exp claim referencing only signature words).
+          - Fix: moved to claims.yaml with ground. The exp.yaml change was restored via `git show HEAD:exp/src/exp.yaml > exp/src/exp.yaml`.
+        - ec failed on v_level observations with rounded floats (「同じ位置にある」).
+          - Fix: substituted exact repr values from the JSON.
+        - Result JSON format differed from older experiments (rows/rev).
+          - Fix: recorded families without v_rows_of, so the stats come from top-level "s".
+        - Experiment artifact: de07f15 (rename is→extends) inflated re-parent counts.
+          - Fix: appended a correction to the procedure plus the fix script; marked history as mixed. The PR needed manual review, and the user merged it.
+        - #583 conflict with main (status line).
+          - Fix: kept main's `h_verb_extends_primitive: {is: exp.hyp_supported}` plus the new h_/b_ lines.
+        - add_repo masayu-a/WLSP was denied by the auto-mode classifier.
+          - Not retried. Switched source (3) to Japanese WordNet and told the user.
+        - pj.ninjal.ac.jp timed out.
+
+        5. Problem Solving
+
+        - Lineage question resolved as a symmetric theory.
+          - Evidence: nouns re-parent mostly after own-field change (0.79–0.84). The 7 parent-alone moves are all nouns; verbs have 0.
+          - Verbs' re-parent rate is about equal to nouns' after correction.
+        - The small-n concern motivated growing std from external vocabularies placed in per-source domains, with std = their agreement.
+        - Remaining untested in the line:
+          - h_parent_alone_by_law
+          - h_basic_vocab_fits
+          - h_vocab_domain_invariant
+          - h_concept_extends_deduced
+          - #569 h_extends_min_by_collected
+          - h_verbs_state_own_kind_mod
+          - #560, #556, #552, #536
+        - Leave old Draft PRs #282, #286, #287, #289 alone.
+
+        6. All user messages (real, this period)
+
+        - 「片方に決めるためには分化の系譜とは何か、という根本的な問いを解く必要がある」 (carried over; answered)
+        - 「それ両方あるんじゃないかな / 過去に述べているけど私は全てのものに対称性を見いだしている / 相反する2つの性質は反する象限で互いに成り立つ事実であり、その双方を同じ理論で説明できなければならない」
+        - 「一つ気づいたが、先に一般概念セット(std)の量を増やした方がいいかもしれない」
+        - 「2と3で」
+        - 「それはそれぞれdomainに置いたほうがいい可能性がある」 (sent mid-turn)
+        - (Trigger fires and GitHub notifications are not user messages.)
+
+        7. Pending Tasks
+
+        - Watch #591 (h_vocab_domain_invariant registration).
+          - On merge: fetch/ff main and `git branch -D claude/register-vocab-domains`.
+          - On conflict: merge main.
+        - Pre-register the vocabulary-growth experiment (h_basic_vocab_fits + h_vocab_domain_invariant + re-checks).
+          - Sources: Basic English 850 (Wiktionary appendix) and Japanese WordNet (wnjpn.db, aligned to PWN synsets).
+          - Two new domains (an English basic-vocab domain and a Japanese basic-vocab domain), added via cscl.yaml library/include.
+          - Fixed sampling, e.g. the 18 operator verbs plus a seeded sample of nouns from the general/picturable lists. Map them to PWN synsets/hypernyms and Japanese lemmas.
+          - Judgments:
+            - ≥90% placeable without a new root or law → h_basic_vocab_fits supported.
+            - 0 cross-domain placement mismatches → h_vocab_domain_invariant supported.
+            - Re-run counts for the three re-check items.
+          - Adding concepts and domains needs manual review.
+        - Test h_parent_alone_by_law (the 7 events, law changes in their intervals).
+        - Trigger at 02:00Z: re-arm, then continue per the stored prompt.
+
+        8. Current Work
+
+        - Just registered h_vocab_domain_invariant in PR #591 (subscribed, assigned) after the user's message 「それはそれぞれdomainに置いたほうがいい可能性がある」.
+        - Replied explaining:
+          - per-source domains allow cross-language comparison;
+          - std becomes the agreed intersection;
+          - world_declared works per domain;
+          - source (3) changed from 分類語彙表 (unreachable) to Japanese WordNet.
+        - The last notification was #591 subscription.created. Waiting for auto-merge.
+        - Local branch: claude/register-vocab-domains (pushed).
+
+        9. Optional Next Step
+
+        - After #591 merges (and the 02:00Z trigger is handled), write the pre-registration script for the vocabulary experiment. As told to the user: 「#591 がマージされたら、事前登録（どの語を何語、どの順で取るかと、判定）をしてから、二つの領域を足します（概念を足す変更なので手で見ていただきます）。」
+          - Script only in the first commit, on a branch claude/h_basic_vocab_fits.
+          - Draft PR closing the corresponding issues.
+          - Downloads go to scratch only, never into the repo.
+
+        If you need specific details from before compaction (like exact code snippets, error messages, or content you generated), read the full transcript at: /root/.claude/projects/-home-user-CMT/e05d2140-ce91-515f-a5fb-e6251e13d406.jsonl
+        Continue the conversation from where it left off without asking the user any further questions. Resume directly — do not acknowledge the summary, do not recap what was happening, do not preface with "I'll continue" or similar. Pick up the last task as if the break never happened.
+
+        The messages after this summary are the most recent messages from before compaction, kept verbatim. The summary was written without seeing them, so something it says has not happened yet may already have happened in them.
+facts:
+- {is: v_say, from: session_model, to: 01M7XX85FZ3DBX2TPNWK3NWZ0N}
+- {is: v_refer, from: 01M7XX85FZ3DBX2TPNWK3NWZ0N, to: exp.v_ground}
+- {is: v_refer, from: 01M7XX85FZ3DBX2TPNWK3NWZ0N, to: exp.v_check}
+- {is: v_refer, from: 01M7XX85FZ3DBX2TPNWK3NWZ0N, to: lang.type_checker}
+- {is: v_refer, from: 01M7XX85FZ3DBX2TPNWK3NWZ0N, to: syntax.law_rule}
+- {is: v_refer, from: 01M7XX85FZ3DBX2TPNWK3NWZ0N, to: syntax.domain}
+- {is: v_refer, from: 01M7XX85FZ3DBX2TPNWK3NWZ0N, to: syntax.extends}
+- {is: v_refer, from: 01M7XX85FZ3DBX2TPNWK3NWZ0N, to: ontology.v_level}
+- {is: v_refer, from: 01M7XX85FZ3DBX2TPNWK3NWZ0N, to: syntax.to}
+- {is: v_refer, from: 01M7XX85FZ3DBX2TPNWK3NWZ0N, to: exp.hyp_mixed}
+- {is: v_refer, from: 01M7XX85FZ3DBX2TPNWK3NWZ0N, to: exp.v_support}
+- {is: v_refer, from: 01M7XX85FZ3DBX2TPNWK3NWZ0N, to: exp.v_contradict}
+- {is: v_refer, from: 01M7XX85FZ3DBX2TPNWK3NWZ0N, to: exp.v_rows_of}
+- {is: v_refer, from: 01M7XX85FZ3DBX2TPNWK3NWZ0N, to: exp.measurement_family}
+- {is: v_refer, from: 01M7XX85FZ3DBX2TPNWK3NWZ0N, to: exp.family_axis}
+- {is: v_refer, from: 01M7XX85FZ3DBX2TPNWK3NWZ0N, to: exp.axis_value}
+- {is: v_refer, from: 01M7XX85FZ3DBX2TPNWK3NWZ0N, to: exp.v_file_of}
+- {is: v_refer, from: 01M7XX85FZ3DBX2TPNWK3NWZ0N, to: exp.v_axis_of}
+- {is: v_refer, from: 01M7XX85FZ3DBX2TPNWK3NWZ0N, to: exp.v_value_of}
+- {is: v_refer, from: 01M7XX85FZ3DBX2TPNWK3NWZ0N, to: exp.v_spell}
+- {is: v_refer, from: 01M7XX85FZ3DBX2TPNWK3NWZ0N, to: exp.v_entry_of}
+- {is: v_refer, from: 01M7XX85FZ3DBX2TPNWK3NWZ0N, to: exp.v_metric_of}
+- {is: v_refer, from: 01M7XX85FZ3DBX2TPNWK3NWZ0N, to: exp.mean_value}
+- {is: v_refer, from: 01M7XX85FZ3DBX2TPNWK3NWZ0N, to: syntax.v_presume}
+- {is: v_refer, from: 01M7XX85FZ3DBX2TPNWK3NWZ0N, to: std.v_compute}
+- {is: v_refer, from: 01M7XX85FZ3DBX2TPNWK3NWZ0N, to: std.v_learn}
+- {is: v_refer, from: 01M7XX85FZ3DBX2TPNWK3NWZ0N, to: syntax.new_kind}
+- {is: v_refer, from: 01M7XX85FZ3DBX2TPNWK3NWZ0N, to: ontology.v_refer}
+- {is: v_refer, from: 01M7XX85FZ3DBX2TPNWK3NWZ0N, to: ontology.v_compose}
+- {is: v_refer, from: 01M7XX85FZ3DBX2TPNWK3NWZ0N, to: ontology.v_depend}
+- {is: v_refer, from: 01M7XX85FZ3DBX2TPNWK3NWZ0N, to: subj.warehouse}
+- {is: v_refer, from: 01M7XX85FZ3DBX2TPNWK3NWZ0N, to: subj.order}
+- {is: v_refer, from: 01M7XX85FZ3DBX2TPNWK3NWZ0N, to: exp.specific_vector_component}
+- {is: v_refer, from: 01M7XX85FZ3DBX2TPNWK3NWZ0N, to: exp.layer_output}
+- {is: v_refer, from: 01M7XX85FZ3DBX2TPNWK3NWZ0N, to: exp.residual_vector}
+- {is: v_refer, from: 01M7XX85FZ3DBX2TPNWK3NWZ0N, to: syntax.verbatim}
+- {is: v_refer, from: 01M7XX85FZ3DBX2TPNWK3NWZ0N, to: exp.hyp_supported}
+- {is: v_refer, from: 01M7XX85FZ3DBX2TPNWK3NWZ0N, to: syntax.holds}
+- {is: v_refer, from: 01M7XX85FZ3DBX2TPNWK3NWZ0N, to: syntax.from}
+- {is: v_refer, from: 01M7XX85FZ3DBX2TPNWK3NWZ0N, to: syntax.mod}
+- {is: v_refer, from: 01M7XX85FZ3DBX2TPNWK3NWZ0N, to: exp.item_queued}
+- {is: v_refer, from: 01M7XX85FZ3DBX2TPNWK3NWZ0N, to: exp.v_supersede}
+- {is: v_refer, from: 01M7XX85FZ3DBX2TPNWK3NWZ0N, to: exp.supersedes}
