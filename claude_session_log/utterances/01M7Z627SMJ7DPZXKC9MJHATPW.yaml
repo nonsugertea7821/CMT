@@ -1,0 +1,250 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-21T13:52:20.276Z（UTC）
+individuals:
+  01M7Z627SMJ7DPZXKC9MJHATPW:
+    is: session_summary
+    display: 発言 3811
+    val:
+      order: 3811
+      text: |
+        This session is being continued from a previous conversation that ran out of context. The summary below covers the earlier portion of the conversation.
+
+        <system-reminder>
+        <tools-used-before-summary>Agent, Artifact, AskUserQuestion, Bash, Edit, Grep, Monitor, Read, ReadNotifications, Skill, SubagentHandback, TaskStop, ToolSearch, WebFetch, WebSearch, Write, mcp__claude-code-remote__add_repo, mcp__claude-code-remote__create_trigger, mcp__claude-code-remote__delete_trigger, mcp__claude-code-remote__get_trigger, mcp__claude-code-remote__list_repos, mcp__claude-code-remote__read_documentation, mcp__claude-code-remote__send_later, mcp__claude-code-remote__subscribe_pr_activity, mcp__claude-code-remote__unsubscribe_pr_activity, mcp__claude-code-remote__update_trigger, mcp__github__actions_get, mcp__github__actions_list, mcp__github__actions_run_trigger, mcp__github__add_issue_comment, mcp__github__create_pull_request, mcp__github__get_job_logs, mcp__github__issue_read, mcp__github__issue_write, mcp__github__list_issue_types, mcp__github__list_issues, mcp__github__list_pull_requests, mcp__github__pull_request_read, mcp__github__update_pull_request</tools-used-before-summary>
+        </system-reminder>
+        Summary:
+        1. Primary Request and Intent
+
+        **Standing rules (unchanged)**
+        - Repo and tools
+          - Repo nonsugertea7821/CMT at /home/user/CMT.
+          - Python is /home/user/venv/bin/python. CPU only.
+        - Language and tone
+          - Write replies and PR bodies in plain, natural Japanese.
+          - Don't overclaim, and separate facts from interpretation.
+          - End each report with a roadmap-position line, and label side paths 「わき道」.
+        - Git
+          - Restore files with `git show <rev>:<path> > <path>`. No checkout, no stash.
+          - Commit trailer:
+            ```
+            Co-Authored-By: Claude [モデル名を伏せた] <[メールアドレスを伏せた]>
+            Claude-Session: https://claude.ai/code/session_015KRKt6TNJZ7ZsQmEknANXK
+            ```
+          - PR body ends with: `🤖 Generated with [Claude Code](https://claude.com/claude-code)`, a blank line, then the session URL.
+        - Prohibitions
+          - No personal info and no model IDs in pushed artifacts.
+          - Claude never merges.
+          - Branch deletion is done by the user or the workflow; I remove only local worktrees and branches after a merge.
+        - For every PR I open:
+          - Call subscribe_pr_activity.
+          - Call issue_write update with assignees ["nonsugertea7821"].
+        - System YAML
+          - No comments.
+          - The hook falsely flags quoted `'#'` in v_keys_of when the command is combined with the conflict resolve; commit separately.
+        - Experiments
+          - Pre-register: the first commit contains the script only.
+          - Never rerun a recorded script.
+          - Add experiment files with `git add -f`.
+          - No local tc or ec; the runner's spec runs them.
+        - Hypotheses
+          - Register any proposal first.
+          - Link it with v_ground to a decision, or label it わき道.
+        - Don't ask permission in conversation.
+        - Principle: all information has value; keep it.
+        - The container restarts often:
+          - Heavy experiments need checkpoint and resume.
+          - Set a 9-minute send_later resume check.
+          - Run one heavy experiment at a time.
+          - Do light work in worktrees /home/user/CMT/.wt_*.
+
+        **30-minute cycle (trig_01L92Xn7LSTHrmqt7enEcCPG)**
+        - On fire, first update_trigger with run_once_at about 31 minutes ahead and enabled true. It is currently set to 14:18Z.
+        - Then run the cycle:
+          - Check PRs and merges.
+          - Follow the lane order H1–H4 and L1–L4.
+          - Pre-register, run, record, then undraft.
+          - Look for implications and register new hypotheses (in the user's thinking patterns, pairing alternatives from a refutation).
+          - Report in Japanese with a roadmap line.
+
+        **Latest user requests**
+        - 「状況どう？」 — answered.
+        - 「音の近い語彙ね……それ日本語の韻律の話とつながらない？」 — answered and registered (#689).
+        - **「ここまでの結果を全部並べてみて」** — in progress.
+
+        2. Key Technical Concepts
+
+        - **Type checker (tc)**
+          - `tc.build()`, `T.syntax_facts()`, `tc.Facts`, `tc.evaluate(tc.law_rules(O), F, tc.variables(O))`.
+          - Derived relations are read from F.by.
+          - In syntax.yaml, `above` comes only from r_ancestor and from v_above facts.
+          - The laws above_is_ancestor (above ⊆ r_ancestor) and above_transitive exist.
+          - r_kind_up includes the form-derived parents.
+        - **Referencing limits**
+          - Individuals in syntax (r_ancestor, r_kind_up) cannot be referenced from other domains as nodes: "ノード…が未定義".
+          - In exp.yaml, `v_ground from: lang.d_…` fails ("exp.v_ground のどちらの位置にも…個体がない"). exp hypotheses can be grounded only to exp decisions such as d_goal and d_road_japanese.
+        - **Recording pattern**
+          - Measurement family in exp.yaml:
+            - Individuals: measurement_family, family_axis, axis_value.
+            - Facts: v_file_of, v_rows_of [rows] or [s], v_axis_of, v_keys_of '#', v_value_of, v_spell, v_entry_of '{m}', v_metric_of mean_value.
+          - Observations: v_level with the exact float, then v_support or v_contradict.
+          - Status: hyp_*, and b_ goes to item_done.
+          - claims.yaml uses the exp. prefix.
+        - **Auto-merge**
+          - Returns 405 when the PR conflicts with main; fix by merging main into the branch.
+          - Registration-only PRs merge automatically.
+        - **Rendering and model readout**
+          - render_expr.Renderer().line(nid) renders a subj formula in Japanese, e.g. 「営業日 ＝ 日 ∧ ¬曜日である(日曜, これ)」.
+          - The Runner in e1_context_injection provides tok, model, and render(system, user).
+
+        3. Files and Code Sections
+
+        **exp/experiments/sys_above_includes_form.py (PR #682, merged)**
+        - Patches syntax.yaml: adds the law `above_by_kind_up` (r_kind_up → above).
+        - Results:
+
+          | Measure | Value |
+          |---|---|
+          | viol_L → viol_I | 0 → 570 |
+          | above_transitive | 537 |
+          | above_is_ancestor | 33 |
+          | cover_above_I | 1.0 |
+          | n_pairs_above | 2837 → 2870 |
+
+        - Judgment: h_above_includes_form refuted, h_above_split_written_derived supported. Observations are o_sys_aif_*.
+
+        **#683 (merged)**
+        - h_ancestor_includes_kind_up: `v_depend(syntax.law_relation, syntax.form)`.
+        - h_display_reads_kind_up: `v_depend(syntax.display, syntax.form)`.
+        - Both grounded to d_cscl_display_derived.
+
+        **E34 results/e34_state_unique_display.json (#642, merged)**
+        - Summary under the `s` key:
+
+          | Set | n | share_unique | share_hit | mean_n_eff |
+          |---|---|---|---|---|
+          | D | 55 | 0.364 | 0.582 | 3.55 |
+          | S_new | 72 | 0.306 | 0.514 | 3.04 |
+          | S_old | 72 | 0.542 | 0.708 | 2.17 |
+          | all | 199 | 0.407 | 0.603 | 2.87 |
+
+        - Judgment: refuted.
+        - Observations: o_e34_unique_all (v_contradict), o_e34_hit_all, o_e34_unique_s_old, o_e34_unique_s_new, o_e34_unique_d.
+        - Misses include 改訂→改定, 追及→追究, 追究→追求, 対称→対照, 甲種注文→欠席.
+
+        **#686 (merged)**
+        - h_state_points_region: `v_refer(hidden_state, syntax.display, at count>1)`.
+        - h_expression_makes_state_unique: `v_depend(hidden_state, syntax.concept_expression)`.
+        - Both grounded to d_goal.
+
+        **#689 (merged; issues 690 and 691)**
+        - h_state_confuses_by_sound: `v_depend(hidden_state, prosody)`.
+        - h_state_confuses_by_glyph: the same formula with neg: true.
+        - Both grounded to d_road_japanese and d_goal.
+
+        **exp/experiments/e35_expression_makes_state_unique.py**
+        - Branch claude/h_expression_makes_state_unique; worktree /home/user/CMT/.wt_ems; pre-registration commit 376ed28 (pushed; no PR yet).
+        - Inputs: E34's S_new and S_old (144 states).
+          - Condition none: read from the E34 result file.
+          - Condition expr: the prompt gets `HEAD = "次の語の概念式を使うこと。\n{gloss}\n\n"`, where gloss is the 24 Renderer lines.
+        - Readout: `readout_cached` caches the context, uses `deepcopy(cache).batch_repeat_interleave(n)`, and scores the first token from the last context logits.
+        - A cache check against a fixed neutral prompt must give a difference under 1e-3; actual was 3.36e-06.
+        - Judgment on share_unique over S:
+          - Support: expr ≥ 0.8.
+          - Refute: expr − none ≤ 0.05.
+          - Otherwise mixed.
+        - Output: results/e35_expression_makes_state_unique.json with keys cache_check_diff, gloss, rows, and s. The s keys are none_S_new, none_S_old, none_S, expr_S_new, expr_S_old, expr_S, and delta_S.
+        - Progress is saved to the partial file; the log is results/e35_expression_makes_state_unique.log.
+
+        **Data collected for 「全部並べて」**
+        - /tmp/claude-0/issues.tsv: 362 issues as (number, title, state). Titles look like "[exp] h_x: 依存する(隠れ状態, 韻律)".
+        - /tmp/claude-0/x_exp.yaml and x_claims.yaml: copies from origin/main.
+        - /tmp/claude-0/-home-user-CMT/e05d2140-ce91-515f-a5fb-e6251e13d406/scratchpad/res/data.json, with structure `{H: {h_name: {status, dom, g: [decisions], sup: [obs], con: [obs], obs: {o: formula}, issue, formula(Japanese)}}, dec: {...}}`.
+          - 307 hypotheses: supported 107, refuted 88, mixed 16, withdrawn 3, untested 93. Every one has a Japanese formula from its issue.
+          - Grounding of judged hypotheses: none 118, d_cscl_display_derived 77, d_metric 6, and a few others.
+          - The d_ entries have no display names.
+
+        4. Errors and fixes
+
+        - **#683 tc failure**: undefined node syntax.r_ancestor and syntax.r_kind_up. Rewrote the formulas with nodes only (1f03840) and disclosed this in the PR body.
+        - **#686 tc failure**: the cross-domain v_ground from lang.d_cscl_display_derived was rejected. Removed it (75c1ca7) and explained in a PR comment.
+        - **#682 and #642 405 auto-merge failures**: caused by conflicts with main. Merged main and resolved the conflicts with a Python regex that keeps both sides (1232419 and dc0c55f).
+        - **The hook falsely flagged the `'#'` strings**: running the resolve and the commit as separate commands worked.
+
+        5. Problem Solving
+
+        - Merged PRs: #679, #682, #683, #642, #686, #689.
+        - The local worktrees for these were removed.
+        - Remaining worktrees: .wt_rss (branch claude/reg_state_sound, already merged; should be removed) and .wt_ems (E35, running).
+
+        6. All user messages
+
+        - 「状況どう？」
+        - 「音の近い語彙ね……それ日本語の韻律の話とつながらない？」
+        - 「ここまでの結果を全部並べてみて」
+        - Earlier rules remain in force: Japanese replies, the 9-minute resume checks, lane triage, the goal principle, and 「巨人の肩にはどんどん乗るべきだ。」.
+
+        7. Pending Tasks
+
+        - **「ここまでの結果を全部並べてみて」**: present all results.
+          - Plan: a page grouped by status and decision, built from data.json.
+          - Per CLAUDE.md, artifact rules apply: call the Artifact quickstart with intent "other" first, then write the HTML in the scratchpad and publish. Then give a short summary in chat: the counts and highlights from today.
+        - **E35**:
+          - Monitor it; the send_later resume check fires at 14:00 (trig_01ETCgyQK2H3fcqmse7zzfia).
+          - If it has stopped and there is no result json, restart:
+            `cd /home/user/CMT/.wt_ems/exp/experiments && nohup /home/user/venv/bin/python e35_expression_makes_state_unique.py >> results/e35_expression_makes_state_unique.log 2>&1 &`
+          - When it finishes, record the result:
+            - Add a family e35_expression_makes_state_unique to exp.yaml with rows key [s], c axis (none_S, expr_S, …), and m axis (share_unique, share_hit, mean_n_eff).
+            - Add observations and v_support or v_contradict.
+            - Open the Draft PR (subscribe and assign), then undraft after spec passes.
+          - A Draft PR for E35 has not been created yet; create it.
+        - Remove the .wt_rss worktree and the branch claude/reg_state_sound.
+        - **Next cycle at 14:18**: update the trigger first.
+        - **Candidates**:
+          - H2: h_explain_transfers_to_apply.
+          - A measurement for the sound/glyph pair: homophone pairs that share no kanji versus pairs that share kanji with different readings.
+          - h_state_points_region.
+
+        8. Current Work
+
+        I was answering 「ここまでの結果を全部並べてみて」. I had told the user: "There are 214 judged hypotheses (107 supported, 88 refuted, 16 mixed, 3 withdrawn), plus 93 still untested. That's too many to read in chat, so I'll make a page that lists them all." I fetched all issues and extracted per-hypothesis status, Japanese formula, groundings, and observations into scratchpad/res/data.json. E35 is running in the background (about 12 s per state, 144 states, about 30 minutes).
+
+        9. Optional Next Step
+
+        Build the results listing:
+        - Call the Artifact quickstart (intent "other").
+        - Generate an HTML page from data.json listing every hypothesis with its name, Japanese formula, status, grounding decision, issue number, and observation formulas.
+          - Group by status; add filters by decision; give the counts at the top.
+          - Show today's results first: E34, #682, and the related registrations.
+        - Publish it, and reply in Japanese with the link, the count summary, and a roadmap line.
+        - Meanwhile, handle the E35 resume check at 14:00 and the 14:18 cycle trigger when they arrive.
+
+        If you need specific details from before compaction (like exact code snippets, error messages, or content you generated), read the full transcript at: /root/.claude/projects/-home-user-CMT/e05d2140-ce91-515f-a5fb-e6251e13d406.jsonl
+        Continue the conversation from where it left off without asking the user any further questions. Resume directly — do not acknowledge the summary, do not recap what was happening, do not preface with "I'll continue" or similar. Pick up the last task as if the break never happened.
+
+        The messages after this summary are the most recent messages from before compaction, kept verbatim. The summary was written without seeing them, so something it says has not happened yet may already have happened in them.
+facts:
+- {is: v_say, from: session_model, to: 01M7Z627SMJ7DPZXKC9MJHATPW}
+- {is: v_refer, from: 01M7Z627SMJ7DPZXKC9MJHATPW, to: exp.v_keys_of}
+- {is: v_refer, from: 01M7Z627SMJ7DPZXKC9MJHATPW, to: exp.v_ground}
+- {is: v_refer, from: 01M7Z627SMJ7DPZXKC9MJHATPW, to: exp.measurement_family}
+- {is: v_refer, from: 01M7Z627SMJ7DPZXKC9MJHATPW, to: exp.family_axis}
+- {is: v_refer, from: 01M7Z627SMJ7DPZXKC9MJHATPW, to: exp.axis_value}
+- {is: v_refer, from: 01M7Z627SMJ7DPZXKC9MJHATPW, to: exp.v_file_of}
+- {is: v_refer, from: 01M7Z627SMJ7DPZXKC9MJHATPW, to: exp.v_rows_of}
+- {is: v_refer, from: 01M7Z627SMJ7DPZXKC9MJHATPW, to: exp.v_axis_of}
+- {is: v_refer, from: 01M7Z627SMJ7DPZXKC9MJHATPW, to: exp.v_value_of}
+- {is: v_refer, from: 01M7Z627SMJ7DPZXKC9MJHATPW, to: exp.v_spell}
+- {is: v_refer, from: 01M7Z627SMJ7DPZXKC9MJHATPW, to: exp.v_entry_of}
+- {is: v_refer, from: 01M7Z627SMJ7DPZXKC9MJHATPW, to: exp.v_metric_of}
+- {is: v_refer, from: 01M7Z627SMJ7DPZXKC9MJHATPW, to: exp.mean_value}
+- {is: v_refer, from: 01M7Z627SMJ7DPZXKC9MJHATPW, to: ontology.v_level}
+- {is: v_refer, from: 01M7Z627SMJ7DPZXKC9MJHATPW, to: exp.v_support}
+- {is: v_refer, from: 01M7Z627SMJ7DPZXKC9MJHATPW, to: exp.v_contradict}
+- {is: v_refer, from: 01M7Z627SMJ7DPZXKC9MJHATPW, to: exp.item_done}
+- {is: v_refer, from: 01M7Z627SMJ7DPZXKC9MJHATPW, to: ontology.v_depend}
+- {is: v_refer, from: 01M7Z627SMJ7DPZXKC9MJHATPW, to: syntax.law_relation}
+- {is: v_refer, from: 01M7Z627SMJ7DPZXKC9MJHATPW, to: syntax.form}
+- {is: v_refer, from: 01M7Z627SMJ7DPZXKC9MJHATPW, to: syntax.display}
+- {is: v_refer, from: 01M7Z627SMJ7DPZXKC9MJHATPW, to: ontology.s}
+- {is: v_refer, from: 01M7Z627SMJ7DPZXKC9MJHATPW, to: ontology.v_refer}
+- {is: v_refer, from: 01M7Z627SMJ7DPZXKC9MJHATPW, to: exp.hidden_state}
+- {is: v_refer, from: 01M7Z627SMJ7DPZXKC9MJHATPW, to: syntax.concept_expression}
