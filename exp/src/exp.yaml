@@ -3234,6 +3234,8 @@ individuals:
   b_round_trip_bounds_present: {is: item_queued}
   h_round_trip_forms_absent: {is: hyp_untested}
   b_round_trip_forms_absent: {is: item_queued}
+  h_prior_claims_supply_siblings: {is: hyp_untested}
+  b_prior_claims_supply_siblings: {is: item_queued}
   h_attribution_logged: {is: hyp_refuted}
   b_attribution_logged: {is: item_done}
   o_sys_attribution_absent: {is: observation}
@@ -9496,6 +9498,10 @@ facts:
   - {is: v_refer, from: h_round_trip_forms_absent, to: {is: v_raise, from: teacher_round_trip_form, to: sibling_discrimination}}
   - {is: v_check, from: b_round_trip_forms_absent, to: h_round_trip_forms_absent}
   - {is: v_ground, from: d_consolidation_in_vector, to: h_round_trip_forms_absent}
+  - {is: v_refer, from: h_prior_claims_supply_siblings, to: {is: v_rely, from: sibling_discrimination, to: prior_claim}}
+  - {is: v_check, from: b_prior_claims_supply_siblings, to: h_prior_claims_supply_siblings}
+  - {is: v_ground, from: d_consolidation_in_vector, to: h_prior_claims_supply_siblings}
+  - {is: v_ground, from: d_road_region, to: h_prior_claims_supply_siblings}
   - {is: v_refer, from: h_attribution_logged, to: {is: v_agree, from: attribution, to: operator_speech}}
   - {is: v_check, from: b_attribution_logged, to: h_attribution_logged}
   - {is: v_refer, from: o_sys_attribution_absent, to: {is: v_come_after, from: sys_attribution.n_absent.mean_value, to: 0}}
