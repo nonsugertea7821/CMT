@@ -3078,6 +3078,30 @@ individuals:
   e20_explain_noans_cond_none: {is: axis_value, val: {text: 'none'}}
   e20_explain_noans_cond_qa: {is: axis_value, val: {text: 'qa'}}
   e20_explain_noans_cond_defqa: {is: axis_value, val: {text: 'defqa'}}
+  e39_apply: {is: measurement_family}
+  e39_apply_cond: {is: family_axis, val: {text: cond}}
+  e39_apply_cond_none: {is: axis_value, val: {text: 'none'}}
+  e39_apply_cond_ml: {is: axis_value, val: {text: 'ml'}}
+  e39_apply_cond_sl: {is: axis_value, val: {text: 'sl'}}
+  e39_explain: {is: measurement_family}
+  e39_explain_cond: {is: family_axis, val: {text: cond}}
+  e39_explain_cond_none: {is: axis_value, val: {text: 'none'}}
+  e39_explain_cond_ml: {is: axis_value, val: {text: 'ml'}}
+  e39_explain_cond_sl: {is: axis_value, val: {text: 'sl'}}
+  e39_explain_noans: {is: measurement_family}
+  e39_explain_noans_cond: {is: family_axis, val: {text: cond}}
+  e39_explain_noans_cond_none: {is: axis_value, val: {text: 'none'}}
+  e39_explain_noans_cond_ml: {is: axis_value, val: {text: 'ml'}}
+  e39_explain_noans_cond_sl: {is: axis_value, val: {text: 'sl'}}
+  o_e39_apply_none: {is: observation}
+  o_e39_apply_ml: {is: observation}
+  o_e39_apply_sl: {is: observation}
+  o_e39_explain_none: {is: observation}
+  o_e39_explain_ml: {is: observation}
+  o_e39_explain_sl: {is: observation}
+  o_e39_apply_ml_above_none: {is: observation}
+  o_e39_explain_ml_below_threshold: {is: observation}
+  o_e39_explain_ml_below_none: {is: observation}
   e21: {is: measurement_family}
   e21_group: {is: family_axis, val: {text: group}}
   e21_group_G1: {is: axis_value, val: {text: G1}}
@@ -3594,8 +3618,8 @@ individuals:
   b_explain_relies_on_teaching: {is: item_queued}
   h_qualification_depends_above: {is: hyp_untested}
   b_qualification_depends_above: {is: item_queued}
-  h_multi_layer_transfers_to_explain: {is: hyp_untested}
-  b_multi_layer_transfers_to_explain: {is: item_queued}
+  h_multi_layer_transfers_to_explain: {is: hyp_refuted}
+  b_multi_layer_transfers_to_explain: {is: item_done}
   h_explain_transfers_to_apply: {is: hyp_untested}
   b_explain_transfers_to_apply: {is: item_queued}
   h_contrast_vector_lowers_stability: {is: hyp_untested}
@@ -4448,6 +4472,48 @@ facts:
   - {is: v_metric_of, from: e20_explain_noans, to: accuracy}
   - {is: v_metric_of, from: e20_explain_noans, to: order_robust_accuracy}
   - {is: v_metric_of, from: e20_explain_noans, to: logit_margin}
+  - {is: v_file_of, from: 'e39_Qwen2.5-1.5B-Instruct_L2-13.json', to: e39_apply}
+  - {is: v_rows_of, from: [items, '{cond}'], to: e39_apply}
+  - {is: v_axis_of, from: e39_apply_cond, to: e39_apply}
+  - {is: v_value_of, from: e39_apply_cond_none, to: e39_apply_cond}
+  - {is: v_denote, from: e39_apply_cond_none, to: no_channel}
+  - {is: v_value_of, from: e39_apply_cond_ml, to: e39_apply_cond}
+  - {is: v_denote, from: e39_apply_cond_ml, to: multi_layer_vector}
+  - {is: v_denote, from: e39_apply_cond_ml, to: teacher_both}
+  - {is: v_value_of, from: e39_apply_cond_sl, to: e39_apply_cond}
+  - {is: v_denote, from: e39_apply_cond_sl, to: teacher_both}
+  - {is: v_entry_of, from: apply, to: e39_apply}
+  - {is: v_metric_of, from: e39_apply, to: accuracy}
+  - {is: v_metric_of, from: e39_apply, to: order_robust_accuracy}
+  - {is: v_metric_of, from: e39_apply, to: logit_margin}
+  - {is: v_file_of, from: 'e39_Qwen2.5-1.5B-Instruct_L2-13.json', to: e39_explain}
+  - {is: v_rows_of, from: [items, '{cond}'], to: e39_explain}
+  - {is: v_axis_of, from: e39_explain_cond, to: e39_explain}
+  - {is: v_value_of, from: e39_explain_cond_none, to: e39_explain_cond}
+  - {is: v_denote, from: e39_explain_cond_none, to: no_channel}
+  - {is: v_value_of, from: e39_explain_cond_ml, to: e39_explain_cond}
+  - {is: v_denote, from: e39_explain_cond_ml, to: multi_layer_vector}
+  - {is: v_denote, from: e39_explain_cond_ml, to: teacher_both}
+  - {is: v_value_of, from: e39_explain_cond_sl, to: e39_explain_cond}
+  - {is: v_denote, from: e39_explain_cond_sl, to: teacher_both}
+  - {is: v_entry_of, from: explain, to: e39_explain}
+  - {is: v_metric_of, from: e39_explain, to: accuracy}
+  - {is: v_metric_of, from: e39_explain, to: order_robust_accuracy}
+  - {is: v_metric_of, from: e39_explain, to: logit_margin}
+  - {is: v_file_of, from: 'e39_Qwen2.5-1.5B-Instruct_L2-13.json', to: e39_explain_noans}
+  - {is: v_rows_of, from: [items, '{cond}'], to: e39_explain_noans}
+  - {is: v_axis_of, from: e39_explain_noans_cond, to: e39_explain_noans}
+  - {is: v_value_of, from: e39_explain_noans_cond_none, to: e39_explain_noans_cond}
+  - {is: v_denote, from: e39_explain_noans_cond_none, to: no_channel}
+  - {is: v_value_of, from: e39_explain_noans_cond_ml, to: e39_explain_noans_cond}
+  - {is: v_denote, from: e39_explain_noans_cond_ml, to: multi_layer_vector}
+  - {is: v_denote, from: e39_explain_noans_cond_ml, to: teacher_both}
+  - {is: v_value_of, from: e39_explain_noans_cond_sl, to: e39_explain_noans_cond}
+  - {is: v_denote, from: e39_explain_noans_cond_sl, to: teacher_both}
+  - {is: v_entry_of, from: explain_noans, to: e39_explain_noans}
+  - {is: v_metric_of, from: e39_explain_noans, to: accuracy}
+  - {is: v_metric_of, from: e39_explain_noans, to: order_robust_accuracy}
+  - {is: v_metric_of, from: e39_explain_noans, to: logit_margin}
   - {is: v_file_of, from: 'e15_Qwen2.5-1.5B-Instruct_L8.json', to: e15}
   - {is: v_rows_of, from: [items], to: e15}
   - {is: v_axis_of, from: e15_group, to: e15}
@@ -10440,6 +10506,17 @@ facts:
   - {is: v_check, from: b_decision_link_by_role, to: h_decision_link_by_role}
   - {is: v_refer, from: h_multi_layer_transfers_to_explain, to: {is: v_transfer, from: multi_layer_vector, to: usage_explain}}
   - {is: v_check, from: b_multi_layer_transfers_to_explain, to: h_multi_layer_transfers_to_explain}
+  - {is: v_refer, from: o_e39_apply_none, to: {is: v_level, from: e39_apply.none.accuracy, to: 0.375}}
+  - {is: v_refer, from: o_e39_apply_ml, to: {is: v_level, from: e39_apply.ml.accuracy, to: 0.8333333}}
+  - {is: v_refer, from: o_e39_apply_sl, to: {is: v_level, from: e39_apply.sl.accuracy, to: 0.7916667}}
+  - {is: v_refer, from: o_e39_explain_none, to: {is: v_level, from: e39_explain.none.accuracy, to: 0.4166667}}
+  - {is: v_refer, from: o_e39_explain_ml, to: {is: v_level, from: e39_explain.ml.accuracy, to: 0.3333333}}
+  - {is: v_refer, from: o_e39_explain_sl, to: {is: v_level, from: e39_explain.sl.accuracy, to: 0.4166667}}
+  - {is: v_refer, from: o_e39_apply_ml_above_none, to: {is: v_come_after, from: e39_apply.ml.accuracy, to: e39_apply.none.accuracy}}
+  - {is: v_refer, from: o_e39_explain_ml_below_threshold, to: {is: v_come_before, from: e39_explain.ml.accuracy, to: 0.75}}
+  - {is: v_refer, from: o_e39_explain_ml_below_none, to: {is: v_come_before, from: e39_explain.ml.accuracy, to: e39_explain.none.accuracy}}
+  - {is: v_contradict, from: o_e39_explain_ml_below_threshold, to: h_multi_layer_transfers_to_explain}
+  - {is: v_contradict, from: o_e39_explain_ml_below_none, to: h_multi_layer_transfers_to_explain}
   - {is: v_refer, from: h_explain_transfers_to_apply, to: {is: v_transfer, from: usage_explain, to: usage_apply}}
   - {is: v_check, from: b_explain_transfers_to_apply, to: h_explain_transfers_to_apply}
   - {is: v_refer, from: o_e21_common_robust_below_none, to: {is: v_come_before, from: e21_all.common.order_robust_accuracy, to: e21_all.none.order_robust_accuracy}}
