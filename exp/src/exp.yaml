@@ -2023,6 +2023,12 @@ individuals:
   sys_observation_by_scale_cond_n_snap: {is: axis_value, val: {text: n_snap}}
   sys_observation_by_scale_cond_n_fail: {is: axis_value, val: {text: n_fail}}
   sys_observation_by_scale_cond_n_dep: {is: axis_value, val: {text: n_dep}}
+  sys_lawless_verb_anchor: {is: measurement_family}
+  sys_lawless_verb_anchor_cond: {is: family_axis, val: {text: cond}}
+  sys_lawless_verb_anchor_cond_n_verb: {is: axis_value, val: {text: n_verb}}
+  sys_lawless_verb_anchor_cond_n_formal: {is: axis_value, val: {text: n_formal}}
+  sys_lawless_verb_anchor_cond_n_real: {is: axis_value, val: {text: n_real}}
+  sys_lawless_verb_anchor_cond_mean_J: {is: axis_value, val: {text: mean_J}}
   sys_observation_by_scale_cond_rho_mod: {is: axis_value, val: {text: rho_mod}}
   sys_observation_by_scale_cond_maxdev_mod: {is: axis_value, val: {text: maxdev_mod}}
   sys_observation_by_scale_cond_rho_verb: {is: axis_value, val: {text: rho_verb}}
@@ -7853,6 +7859,18 @@ facts:
   - {is: v_spell, from: sys_observation_by_scale_cond_maxdev_depth, to: maxdev_depth}
   - {is: v_entry_of, from: '{cond}', to: sys_observation_by_scale}
   - {is: v_metric_of, from: sys_observation_by_scale, to: mean_value}
+  - {is: v_file_of, from: sys_lawless_verb_anchor.json, to: sys_lawless_verb_anchor}
+  - {is: v_axis_of, from: sys_lawless_verb_anchor_cond, to: sys_lawless_verb_anchor}
+  - {is: v_value_of, from: sys_lawless_verb_anchor_cond_n_verb, to: sys_lawless_verb_anchor_cond}
+  - {is: v_spell, from: sys_lawless_verb_anchor_cond_n_verb, to: n_verb}
+  - {is: v_value_of, from: sys_lawless_verb_anchor_cond_n_formal, to: sys_lawless_verb_anchor_cond}
+  - {is: v_spell, from: sys_lawless_verb_anchor_cond_n_formal, to: n_formal}
+  - {is: v_value_of, from: sys_lawless_verb_anchor_cond_n_real, to: sys_lawless_verb_anchor_cond}
+  - {is: v_spell, from: sys_lawless_verb_anchor_cond_n_real, to: n_real}
+  - {is: v_value_of, from: sys_lawless_verb_anchor_cond_mean_J, to: sys_lawless_verb_anchor_cond}
+  - {is: v_spell, from: sys_lawless_verb_anchor_cond_mean_J, to: mean_J}
+  - {is: v_entry_of, from: '{cond}', to: sys_lawless_verb_anchor}
+  - {is: v_metric_of, from: sys_lawless_verb_anchor, to: mean_value}
   - {is: v_refer, from: o_sys_obs_n_dep, to: {is: v_level, from: sys_observation_by_scale.n_dep.mean_value, to: 1.0}}
   - {is: v_contradict, from: o_sys_obs_n_dep, to: h_observation_by_scale}
   - {is: v_file_of, from: sys_any_by_entail_before_fix.json, to: sys_any_by_entail_before_fix}
