@@ -186,6 +186,8 @@ individuals:
   b_placement_in_laws: {is: exp.item_done}
   h_placement_without_domain: {is: exp.hyp_untested}
   b_placement_without_domain: {is: exp.item_queued}
+  h_law_without_domain: {is: exp.hyp_untested}
+  b_law_without_domain: {is: exp.item_queued}
   h_above_sound: {is: exp.hyp_refuted}
   b_above_sound: {is: exp.item_done}
   h_renaming_invariant: {is: exp.hyp_refuted}
@@ -979,6 +981,7 @@ facts:
   - {is: exp.v_ground, from: d_cscl_display_derived, to: h_named_mod_is_spelling}
   - {is: exp.v_ground, from: d_cscl_display_derived, to: h_placement_in_laws}
   - {is: exp.v_ground, from: d_cscl_display_derived, to: h_placement_without_domain}
+  - {is: exp.v_ground, from: d_cscl_display_derived, to: h_law_without_domain}
   - {is: exp.v_ground, from: d_cscl_display_derived, to: h_cscl_self_hosting}
   - {is: exp.v_ground, from: d_cscl_display_derived, to: h_checker_by_executor}
   - {is: exp.v_ground, from: d_cscl_display_derived, to: h_cscl_needs_translation}
@@ -1126,6 +1129,8 @@ facts:
   - {is: exp.v_support, from: o_sys_pil_fix_base_clean, to: h_placement_in_laws}
   - {is: v_refer, from: h_placement_without_domain, to: {is: v_not_depend, from: placement_by_above, to: syntax.domain}}
   - {is: exp.v_check, from: b_placement_without_domain, to: h_placement_without_domain}
+  - {is: v_refer, from: h_law_without_domain, to: {is: v_not_depend, from: concept_by_law, to: syntax.domain}}
+  - {is: exp.v_check, from: b_law_without_domain, to: h_law_without_domain}
   - {is: v_refer, from: h_concept_kind_excludes_verb, to: {is: v_depend, from: concept_by_law, to: [syntax.pre, syntax.holds, syntax.extends]}}
   - {is: exp.v_check, from: b_concept_kind_excludes_verb, to: h_concept_kind_excludes_verb}
   - {is: v_refer, from: h_concept_kind_frame_free, to: {is: v_not_depend, from: concept_by_law, to: [syntax.pre, syntax.holds]}}
