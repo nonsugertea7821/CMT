@@ -414,6 +414,10 @@ individuals:
   b_charts_meet_at_ontology_roots: {is: exp.item_queued}
   h_form_gives_genus: {is: exp.hyp_untested}
   b_form_gives_genus: {is: exp.item_queued}
+  h_above_includes_form: {is: exp.hyp_untested}
+  b_above_includes_form: {is: exp.item_queued}
+  h_above_split_written_derived: {is: exp.hyp_untested}
+  b_above_split_written_derived: {is: exp.item_queued}
   b_concept_extends_deduced_vocab: {is: exp.item_queued}
   b_differentia_by_genus_vocab: {is: exp.item_queued}
   b_verb_extends_primitive_vocab: {is: exp.item_queued}
@@ -1967,6 +1971,12 @@ facts:
   - {is: v_refer, from: h_form_gives_genus, to: {is: v_depend, from: syntax.extends, to: syntax.form}}
   - {is: exp.v_check, from: b_form_gives_genus, to: h_form_gives_genus}
   - {is: exp.v_ground, from: d_cscl_display_derived, to: h_form_gives_genus}
+  - {is: v_refer, from: h_above_includes_form, to: {is: v_refer, from: ontology.v_above, to: syntax.form}}
+  - {is: exp.v_check, from: b_above_includes_form, to: h_above_includes_form}
+  - {is: exp.v_ground, from: d_cscl_display_derived, to: h_above_includes_form}
+  - {is: v_refer, from: h_above_split_written_derived, to: {is: v_refer, from: ontology.v_above, to: syntax.extends}}
+  - {is: exp.v_check, from: b_above_split_written_derived, to: h_above_split_written_derived}
+  - {is: exp.v_ground, from: d_cscl_display_derived, to: h_above_split_written_derived}
   - {is: exp.v_check, from: b_concept_extends_deduced_vocab, to: h_concept_extends_deduced}
   - {is: exp.v_check, from: b_differentia_by_genus_vocab, to: h_differentia_by_genus}
   - {is: exp.v_check, from: b_verb_extends_primitive_vocab, to: h_verb_extends_primitive}
