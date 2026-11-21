@@ -3594,6 +3594,12 @@ individuals:
   h_ambiguity_is_region_choice: {is: hyp_untested}
   b_ambiguity_is_region_choice: {is: item_queued}
   h_convex_prior_resists_redefinition: {is: hyp_untested}
+  h_channel_lowers_prior_verdict: {is: hyp_untested}
+  h_mixed_from_missing_ratio: {is: hyp_untested}
+  b_mixed_from_missing_ratio: {is: item_queued}
+  h_cscl_depends_while_raise_splits: {is: hyp_untested}
+  b_cscl_depends_while_raise_splits: {is: item_queued}
+  b_channel_lowers_prior_verdict: {is: item_queued}
   b_convex_prior_resists_redefinition: {is: item_queued}
   h_width_raises_sibling_discrimination: {is: hyp_untested}
   b_width_raises_sibling_discrimination: {is: item_queued}
@@ -3614,6 +3620,10 @@ individuals:
   b_state_points_region: {is: item_queued}
   h_expression_makes_state_unique: {is: hyp_untested}
   b_expression_makes_state_unique: {is: item_queued}
+  h_state_confuses_by_sound: {is: hyp_untested}
+  b_state_confuses_by_sound: {is: item_queued}
+  h_state_confuses_by_glyph: {is: hyp_untested}
+  b_state_confuses_by_glyph: {is: item_queued}
   h_axis_value_from_result: {is: hyp_untested}
   b_axis_value_from_result: {is: item_queued}
   h_model_reads_by_name: {is: hyp_untested}
@@ -10228,6 +10238,15 @@ facts:
   - {is: v_refer, from: h_convex_prior_resists_redefinition, to: {is: v_lower, from: midpoint_membership, to: redefinition_following}}
   - {is: v_check, from: b_convex_prior_resists_redefinition, to: h_convex_prior_resists_redefinition}
   - {is: v_ground, from: d_road_region, to: h_convex_prior_resists_redefinition}
+  - {is: v_refer, from: h_channel_lowers_prior_verdict, to: {is: v_lower, from: channel, to: verdict_by_prior}}
+  - {is: v_check, from: b_channel_lowers_prior_verdict, to: h_channel_lowers_prior_verdict}
+  - {is: v_ground, from: d_goal, to: h_channel_lowers_prior_verdict}
+  - {is: v_refer, from: h_mixed_from_missing_ratio, to: {is: v_depend, from: hyp_mixed, to: syntax.at}}
+  - {is: v_check, from: b_mixed_from_missing_ratio, to: h_mixed_from_missing_ratio}
+  - {is: v_ground, from: d_metric, to: h_mixed_from_missing_ratio}
+  - {is: v_refer, from: h_cscl_depends_while_raise_splits, to: {is: v_depend, from: redefinition_following, to: cscl}}
+  - {is: v_check, from: b_cscl_depends_while_raise_splits, to: h_cscl_depends_while_raise_splits}
+  - {is: v_ground, from: d_goal, to: h_cscl_depends_while_raise_splits}
   - {is: v_refer, from: h_width_raises_sibling_discrimination, to: {is: v_raise, from: wide_hidden_state, to: sibling_discrimination}}
   - {is: v_check, from: b_width_raises_sibling_discrimination, to: h_width_raises_sibling_discrimination}
   - {is: v_ground, from: d_road_region, to: h_width_raises_sibling_discrimination}
@@ -10255,6 +10274,14 @@ facts:
   - {is: v_refer, from: h_expression_makes_state_unique, to: {is: v_depend, from: hidden_state, to: syntax.concept_expression}}
   - {is: v_check, from: b_expression_makes_state_unique, to: h_expression_makes_state_unique}
   - {is: v_ground, from: d_goal, to: h_expression_makes_state_unique}
+  - {is: v_refer, from: h_state_confuses_by_sound, to: {is: v_depend, from: hidden_state, to: prosody}}
+  - {is: v_check, from: b_state_confuses_by_sound, to: h_state_confuses_by_sound}
+  - {is: v_ground, from: d_road_japanese, to: h_state_confuses_by_sound}
+  - {is: v_ground, from: d_goal, to: h_state_confuses_by_sound}
+  - {is: v_refer, from: h_state_confuses_by_glyph, to: {is: v_depend, from: hidden_state, to: prosody, neg: true}}
+  - {is: v_check, from: b_state_confuses_by_glyph, to: h_state_confuses_by_glyph}
+  - {is: v_ground, from: d_road_japanese, to: h_state_confuses_by_glyph}
+  - {is: v_ground, from: d_goal, to: h_state_confuses_by_glyph}
   - {is: v_refer, from: h_axis_value_from_result, to: {is: v_depend, from: axis_value, to: result_file}}
   - {is: v_check, from: b_axis_value_from_result, to: h_axis_value_from_result}
   - {is: v_refer, from: h_model_reads_by_name, to: {is: v_read, from: model, to: syntax.identifier}}
