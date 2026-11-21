@@ -3101,6 +3101,17 @@ individuals:
   o_e39_explain_sl: {is: observation}
   o_e39_apply_ml_above_none: {is: observation}
   o_e39_explain_ml_below_threshold: {is: observation}
+  e41: {is: measurement_family}
+  e41_cond: {is: family_axis, val: {text: cond}}
+  e41_cond_extends: {is: axis_value, val: {text: 'extends'}}
+  e41_cond_inline: {is: axis_value, val: {text: 'inline'}}
+  e41_cond_named: {is: axis_value, val: {text: 'named'}}
+  e41_cond_decoy: {is: axis_value, val: {text: 'decoy'}}
+  o_e41_extends: {is: observation}
+  o_e41_inline: {is: observation}
+  o_e41_named: {is: observation}
+  o_e41_decoy: {is: observation}
+  o_e41_extends_below_premise: {is: observation}
   o_e39_explain_ml_below_none: {is: observation}
   e21: {is: measurement_family}
   e21_group: {is: family_axis, val: {text: group}}
@@ -4516,6 +4527,23 @@ facts:
   - {is: v_metric_of, from: e39_explain_noans, to: accuracy}
   - {is: v_metric_of, from: e39_explain_noans, to: order_robust_accuracy}
   - {is: v_metric_of, from: e39_explain_noans, to: logit_margin}
+  - {is: v_file_of, from: 'e41_Qwen3-4B.json', to: e41}
+  - {is: v_rows_of, from: [items, '{cond}'], to: e41}
+  - {is: v_axis_of, from: e41_cond, to: e41}
+  - {is: v_value_of, from: e41_cond_extends, to: e41_cond}
+  - {is: v_denote, from: e41_cond_extends, to: syntax.extends}
+  - {is: v_value_of, from: e41_cond_inline, to: e41_cond}
+  - {is: v_denote, from: e41_cond_inline, to: syntax.mod}
+  - {is: v_value_of, from: e41_cond_named, to: e41_cond}
+  - {is: v_denote, from: e41_cond_named, to: syntax.mod}
+  - {is: v_denote, from: e41_cond_named, to: syntax.identifier}
+  - {is: v_value_of, from: e41_cond_decoy, to: e41_cond}
+  - {is: v_denote, from: e41_cond_decoy, to: syntax.mod}
+  - {is: v_denote, from: e41_cond_decoy, to: syntax.identifier}
+  - {is: v_entry_of, from: pair, to: e41}
+  - {is: v_metric_of, from: e41, to: accuracy}
+  - {is: v_metric_of, from: e41, to: order_robust_accuracy}
+  - {is: v_metric_of, from: e41, to: logit_margin}
   - {is: v_file_of, from: 'e15_Qwen2.5-1.5B-Instruct_L8.json', to: e15}
   - {is: v_rows_of, from: [items], to: e15}
   - {is: v_axis_of, from: e15_group, to: e15}
@@ -10522,6 +10550,11 @@ facts:
   - {is: v_refer, from: o_e39_explain_ml_below_none, to: {is: v_come_before, from: e39_explain.ml.accuracy, to: e39_explain.none.accuracy}}
   - {is: v_contradict, from: o_e39_explain_ml_below_threshold, to: h_multi_layer_transfers_to_explain}
   - {is: v_contradict, from: o_e39_explain_ml_below_none, to: h_multi_layer_transfers_to_explain}
+  - {is: v_refer, from: o_e41_extends, to: {is: v_level, from: e41.extends.accuracy, to: 0.4166667}}
+  - {is: v_refer, from: o_e41_inline, to: {is: v_level, from: e41.inline.accuracy, to: 0.625}}
+  - {is: v_refer, from: o_e41_named, to: {is: v_level, from: e41.named.accuracy, to: 0.4166667}}
+  - {is: v_refer, from: o_e41_decoy, to: {is: v_level, from: e41.decoy.accuracy, to: 0.5416667}}
+  - {is: v_refer, from: o_e41_extends_below_premise, to: {is: v_come_before, from: e41.extends.accuracy, to: 0.75}}
   - {is: v_refer, from: h_explain_transfers_to_apply, to: {is: v_transfer, from: usage_explain, to: usage_apply}}
   - {is: v_check, from: b_explain_transfers_to_apply, to: h_explain_transfers_to_apply}
   - {is: v_refer, from: o_e21_common_robust_below_none, to: {is: v_come_before, from: e21_all.common.order_robust_accuracy, to: e21_all.none.order_robust_accuracy}}
