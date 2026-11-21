@@ -1,0 +1,40 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-21T02:20:22.477Z（UTC）
+individuals:
+  01M7XYF72DPAC1EFXBZGWAQWJM:
+    is: model_utterance
+    display: 発言 3372
+    val:
+      order: 3372
+      text: |
+        合っていると思います。ただ、いまの体系は領域を「述べる」ではなく「部分にする」で書いています。そこを直すことになりそうです。
+
+        **いまの書き方**
+        - 領域（`syntax.domain`）は「概念式を部分に持つ文章」です。帰属は v_compose（部分になる）で表しています。
+        - ただし、すでに「述べる」で書いている所もあります。
+          - `v_presume`（領域が世界を前提に置く）は v_refer の下位です。
+          - 名前の解決（`resolve`）は、同じ名前でも、どの領域から引くかで指す概念が変わります。これは参照の働きそのものです。
+
+        **なぜ述べる操作と言えるか**
+        - 文章の部分になるのは概念式（書かれた式）で、概念そのものではありません。
+        - 概念と領域をつなぐのは、「その文章がその概念について述べる」という関係です。
+        - なので、語をどの領域に入れるかを選ぶことは、「どの文章がその概念について述べるか」を選ぶことになります。概念自身は変わりません。
+
+        **含意**
+        - 前の std の定義の対（#596）は、どちらも「誰が述べるか」の違いとして書き直せます。
+          - h_std_by_law: 法則が述べる語。
+          - h_std_by_shared_use: 二つ以上の領域が述べる語。
+        - 語を exp と std のあいだで移すのは、述べる元を付け替えることです。#594 で lang の主張が model の系列を std に引き留めていたのも、「lang が述べている」と読めば同じ形です。
+        - h_ambiguity_is_region_choice（曖昧さは領域の選択）や h_refer_stratified（検査器は述べられた文と領域に依存する）とも一本につながります。
+
+        **登録した仮説**
+        - `h_domain_choice_is_refer`: 領域は概念式について述べる（#599、自動マージ待ち）。
+        - 確かめ方の案: 領域の帰属を「述べる」事実だけから組み直し、名前の解決がすべて一致するかを数えます。
+
+        本線 a 識別子化、d_cscl_display_derived の下
+facts:
+- {is: v_say, from: session_model, to: 01M7XYF72DPAC1EFXBZGWAQWJM}
+- {is: exp.v_answer, from: 01M7XYF72DPAC1EFXBZGWAQWJM, to: 01M7XYBHMZXFRNG0G4CXG2VJRS}
+- {is: v_refer, from: 01M7XYF72DPAC1EFXBZGWAQWJM, to: syntax.domain}
+- {is: v_refer, from: 01M7XYF72DPAC1EFXBZGWAQWJM, to: ontology.v_compose}
+- {is: v_refer, from: 01M7XYF72DPAC1EFXBZGWAQWJM, to: syntax.v_presume}
+- {is: v_refer, from: 01M7XYF72DPAC1EFXBZGWAQWJM, to: ontology.v_refer}
