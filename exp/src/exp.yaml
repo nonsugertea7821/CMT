@@ -1970,6 +1970,17 @@ individuals:
   sys_lineage_order_fix_cond_rate_noun: {is: axis_value, val: {text: rate_noun}}
   sys_lineage_order_fix_cond_rate_verb: {is: axis_value, val: {text: rate_verb}}
   sys_lineage_order_fix_cond_led_share_noun: {is: axis_value, val: {text: led_share_noun}}
+  sys_std_exp_bias: {is: measurement_family}
+  sys_std_exp_bias_cond: {is: family_axis, val: {text: cond}}
+  sys_std_exp_bias_cond_n_node: {is: axis_value, val: {text: n_node}}
+  sys_std_exp_bias_cond_n_node_move: {is: axis_value, val: {text: n_node_move}}
+  sys_std_exp_bias_cond_share_node_move: {is: axis_value, val: {text: share_node_move}}
+  sys_std_exp_bias_cond_n_ind: {is: axis_value, val: {text: n_ind}}
+  sys_std_exp_bias_cond_n_ind_move: {is: axis_value, val: {text: n_ind_move}}
+  sys_std_exp_bias_cond_n_fact: {is: axis_value, val: {text: n_fact}}
+  sys_std_exp_bias_cond_n_fact_move: {is: axis_value, val: {text: n_fact_move}}
+  sys_std_exp_bias_cond_n_node_stay_other: {is: axis_value, val: {text: n_node_stay_other}}
+  sys_std_exp_bias_cond_n_node_unused: {is: axis_value, val: {text: n_node_unused}}
   sys_any_by_entail_before_fix: {is: measurement_family}
   sys_any_by_entail_before_fix_cond: {is: family_axis, val: {text: cond}}
   sys_any_by_entail_before_fix_cond_errors: {is: axis_value, val: {text: errors}}
@@ -3251,6 +3262,8 @@ individuals:
   o_sys_lof_led_noun: {is: observation}
   o_sys_lof_rate_noun: {is: observation}
   o_sys_lof_rate_verb: {is: observation}
+  o_sys_seb_share: {is: observation}
+  o_sys_seb_move: {is: observation}
 
   h_prosody_carries_mod: {is: hyp_untested}
   b_prosody_carries_mod: {is: item_queued}
@@ -3348,8 +3361,8 @@ individuals:
   b_lineage_is_genus: {is: item_queued}
   h_lineage_is_history: {is: hyp_mixed}
   b_lineage_is_history: {is: item_queued}
-  h_std_exp_biased: {is: hyp_untested}
-  b_std_exp_biased: {is: item_queued}
+  h_std_exp_biased: {is: hyp_refuted}
+  b_std_exp_biased: {is: item_done}
   h_decision_link_by_role: {is: hyp_supported}
   b_decision_link_by_role: {is: item_done}
 facts:
@@ -7653,6 +7666,31 @@ facts:
   - {is: v_support, from: o_sys_lof_led_noun, to: h_lineage_is_genus}
   - {is: v_contradict, from: o_sys_lo_rate_verb, to: h_lineage_is_history}
   - {is: v_support, from: o_sys_lof_rate_verb, to: h_lineage_is_history}
+  - {is: v_file_of, from: sys_std_exp_bias.json, to: sys_std_exp_bias}
+  - {is: v_axis_of, from: sys_std_exp_bias_cond, to: sys_std_exp_bias}
+  - {is: v_value_of, from: sys_std_exp_bias_cond_n_node, to: sys_std_exp_bias_cond}
+  - {is: v_spell, from: sys_std_exp_bias_cond_n_node, to: n_node}
+  - {is: v_value_of, from: sys_std_exp_bias_cond_n_node_move, to: sys_std_exp_bias_cond}
+  - {is: v_spell, from: sys_std_exp_bias_cond_n_node_move, to: n_node_move}
+  - {is: v_value_of, from: sys_std_exp_bias_cond_share_node_move, to: sys_std_exp_bias_cond}
+  - {is: v_spell, from: sys_std_exp_bias_cond_share_node_move, to: share_node_move}
+  - {is: v_value_of, from: sys_std_exp_bias_cond_n_ind, to: sys_std_exp_bias_cond}
+  - {is: v_spell, from: sys_std_exp_bias_cond_n_ind, to: n_ind}
+  - {is: v_value_of, from: sys_std_exp_bias_cond_n_ind_move, to: sys_std_exp_bias_cond}
+  - {is: v_spell, from: sys_std_exp_bias_cond_n_ind_move, to: n_ind_move}
+  - {is: v_value_of, from: sys_std_exp_bias_cond_n_fact, to: sys_std_exp_bias_cond}
+  - {is: v_spell, from: sys_std_exp_bias_cond_n_fact, to: n_fact}
+  - {is: v_value_of, from: sys_std_exp_bias_cond_n_fact_move, to: sys_std_exp_bias_cond}
+  - {is: v_spell, from: sys_std_exp_bias_cond_n_fact_move, to: n_fact_move}
+  - {is: v_value_of, from: sys_std_exp_bias_cond_n_node_stay_other, to: sys_std_exp_bias_cond}
+  - {is: v_spell, from: sys_std_exp_bias_cond_n_node_stay_other, to: n_node_stay_other}
+  - {is: v_value_of, from: sys_std_exp_bias_cond_n_node_unused, to: sys_std_exp_bias_cond}
+  - {is: v_spell, from: sys_std_exp_bias_cond_n_node_unused, to: n_node_unused}
+  - {is: v_entry_of, from: '{cond}', to: sys_std_exp_bias}
+  - {is: v_metric_of, from: sys_std_exp_bias, to: mean_value}
+  - {is: v_refer, from: o_sys_seb_share, to: {is: v_level, from: sys_std_exp_bias.share_node_move.mean_value, to: 0.42857142857142855}}
+  - {is: v_refer, from: o_sys_seb_move, to: {is: v_level, from: sys_std_exp_bias.n_node_move.mean_value, to: 12}}
+  - {is: v_contradict, from: o_sys_seb_share, to: h_std_exp_biased}
   - {is: v_file_of, from: sys_any_by_entail_before_fix.json, to: sys_any_by_entail_before_fix}
   - {is: v_rows_of, from: [rows], to: sys_any_by_entail_before_fix}
   - {is: v_axis_of, from: sys_any_by_entail_before_fix_cond, to: sys_any_by_entail_before_fix}
