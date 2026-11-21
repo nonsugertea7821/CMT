@@ -375,6 +375,8 @@ individuals:
   b_vocab_domain_invariant: {is: exp.item_queued}
   h_translation_by_display: {is: exp.hyp_untested}
   b_translation_by_display: {is: exp.item_queued}
+  h_display_unique_per_language: {is: exp.hyp_untested}
+  b_display_unique_per_language: {is: exp.item_queued}
   h_formal_real_by_law: {is: exp.hyp_supported}
   b_formal_real_by_law: {is: exp.item_done}
   h_real_axis_by_domain: {is: exp.hyp_mixed}
@@ -1860,6 +1862,9 @@ facts:
   - {is: v_refer, from: h_translation_by_display, to: {is: v_depend, from: syntax.display, to: syntax.language}}
   - {is: exp.v_check, from: b_translation_by_display, to: h_translation_by_display}
   - {is: exp.v_ground, from: d_cscl_display_derived, to: h_translation_by_display}
+  - {is: v_refer, from: h_display_unique_per_language, to: {is: v_depend, from: syntax.display, to: [syntax.domain, syntax.language]}}
+  - {is: exp.v_check, from: b_display_unique_per_language, to: h_display_unique_per_language}
+  - {is: exp.v_ground, from: d_cscl_display_derived, to: h_display_unique_per_language}
   - {is: v_refer, from: h_formal_real_by_law, to: {is: v_depend, from: syntax.axis, to: syntax.law_rule}}
   - {is: exp.v_check, from: b_formal_real_by_law, to: h_formal_real_by_law}
   - {is: exp.v_ground, from: d_cscl_display_derived, to: h_formal_real_by_law}
