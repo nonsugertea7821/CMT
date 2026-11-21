@@ -1,0 +1,32 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-21T05:56:22.787Z（UTC）
+individuals:
+  01M7YATQM3RFGDSHTMZ96E93MW:
+    is: model_utterance
+    display: 発言 3565
+    val:
+      order: 3565
+      text: |
+        I tested h_placement_without_domain: **supported**, but only on the corrected run (PR #644). It went through two corrections, so you'll need to review it by hand.
+
+        The question was whether the placement laws can match the type checker without using `domain`, if the grammar sentence `axis` is split into two: "the node's numeric axis" and "the axis's parent".
+
+        | | agree | law_Q0 | other_Q0 | Verdict |
+        |---|---|---|---|---|
+        | Original run | 7 | 0 | 2 | Outlier |
+        | Corrected run | 7 | 0 | 0 | Supported |
+
+        - **Correction 1 (before running):** the line where the script inserts the law individuals no longer existed in syntax.yaml (a law was renamed). I moved the insert point and changed nothing else.
+        - **Correction 2 (after seeing the result):** the new sentence `axis_up` was not declared as a relation, so two of the axis laws errored. I declared it as a derived relation in the copy and ran again; that run is the supported one.
+        - **What it means:** the earlier false hits (place_axis firing on axis entries such as sai and cm) came from one word, `axis`, being used for two things. Once that is split, the laws can match the type checker using `exists`, without narrowing by `domain`.
+        - **Your call:** declaring `axis_up` as a derived relation is the smallest form the checker accepts. If it goes into the real grammar, I think it belongs as a grammar word instead. That change is not in this PR.
+
+        Both runs are recorded in the system. The outlier run's observations are kept but not linked to the hypothesis.
+
+        E33 is on pair 2; the next resume check is at 05:59.
+
+        本線 a 識別子化、d_cscl_display_derived の下。
+facts:
+- {is: v_say, from: session_model, to: 01M7YATQM3RFGDSHTMZ96E93MW}
+- {is: exp.v_answer, from: 01M7YATQM3RFGDSHTMZ96E93MW, to: 01M7Y9FZPNT8NJWJYMMN5D5Z6Y}
+- {is: v_refer, from: 01M7YATQM3RFGDSHTMZ96E93MW, to: syntax.domain}
+- {is: v_refer, from: 01M7YATQM3RFGDSHTMZ96E93MW, to: syntax.axis}
