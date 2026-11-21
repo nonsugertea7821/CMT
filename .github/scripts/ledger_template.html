@@ -8,9 +8,8 @@
 <meta http-equiv="Content-Security-Policy" content="/*LEDGER_CSP*/">
 <meta name="referrer" content="no-referrer">
 <style>
-/* 上: ロードマップ（決定を段に並べ、依存を線で結ぶ）。下: 選んだ決定に結んだ仮説を、状態ごとに文で並べる。 */
 :root{
-  --bg:#f5f6f8; --panel:#ffffff; --sunk:#eef0f4; --fg:#1a2130; --muted:#5b6474; --line:#d9dde5; --accent:#2b5ea7;
+  --bg:#f5f6f8; --panel:#ffffff; --sunk:#eef0f4; --fg:#1a2130; --muted:#5b6474; --line:#d9dde5; --accent:#2b5ea7; --sel:#e3ecf9;
   --sup:#1d7a4c; --sup-bg:#e1f2e8; --con:#b03737; --con-bg:#f7e3e3; --mix:#896200; --mix-bg:#f6edd5;
   --unt:#5b6474; --unt-bg:#e9ecf1; --wd:#77589a; --wd-bg:#eee6f6;
   --sans:"Hiragino Sans","Hiragino Kaku Gothic ProN","Yu Gothic UI","Yu Gothic","Noto Sans JP","Noto Sans CJK JP",Meiryo,system-ui,sans-serif;
@@ -18,230 +17,238 @@
   color-scheme:light;
 }
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
-  --bg:#11151c; --panel:#191e27; --sunk:#141922; --fg:#e3e7ee; --muted:#98a1b0; --line:#2b323f; --accent:#80a9e8;
+  --bg:#11151c; --panel:#191e27; --sunk:#141922; --fg:#e3e7ee; --muted:#98a1b0; --line:#2b323f; --accent:#80a9e8; --sel:#1f2b3d;
   --sup:#6dcd9a; --sup-bg:#163226; --con:#ee8989; --con-bg:#391c1e; --mix:#e0bb5a; --mix-bg:#342a13;
   --unt:#a1aab8; --unt-bg:#222934; --wd:#c1a2e5; --wd-bg:#2a2137; color-scheme:dark}}
 :root[data-theme="dark"]{
-  --bg:#11151c; --panel:#191e27; --sunk:#141922; --fg:#e3e7ee; --muted:#98a1b0; --line:#2b323f; --accent:#80a9e8;
+  --bg:#11151c; --panel:#191e27; --sunk:#141922; --fg:#e3e7ee; --muted:#98a1b0; --line:#2b323f; --accent:#80a9e8; --sel:#1f2b3d;
   --sup:#6dcd9a; --sup-bg:#163226; --con:#ee8989; --con-bg:#391c1e; --mix:#e0bb5a; --mix-bg:#342a13;
   --unt:#a1aab8; --unt-bg:#222934; --wd:#c1a2e5; --wd-bg:#2a2137; color-scheme:dark}
 *{box-sizing:border-box}
+html,body{height:100%}
 body{margin:0;background:var(--bg);color:var(--fg);font-family:var(--sans);font-size:15px;line-height:1.7}
-.wrap{max-width:1100px;margin:0 auto;padding-block:28px 72px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));display:grid;gap:28px}
-h1{font-size:1.55rem;margin:0;text-wrap:balance}
-h2{font-size:1.15rem;margin:0;text-wrap:balance}
-h3{font-size:.95rem;margin:0;display:flex;gap:8px;align-items:center}
-p{margin:0}
-.sub{color:var(--muted);font-size:.9rem;max-width:65ch}
-code,.mono{font-family:var(--mono);font-size:.82em}
+code{font-family:var(--mono);font-size:.84em;background:var(--sunk);padding:0 4px;border-radius:3px;overflow-wrap:anywhere}
 a{color:var(--accent)}
 button{font:inherit;color:inherit}
 :focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 
-.road{position:relative;background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:20px 16px;overflow-x:auto}
-.road svg{position:absolute;inset:0;pointer-events:none;overflow:visible}
-.tiers{position:relative;display:grid;gap:34px;min-width:min(100%,640px)}
-.tier{display:flex;flex-wrap:wrap;gap:12px;justify-content:center}
-.tier-label{font-size:.72rem;color:var(--muted);letter-spacing:.06em;text-align:center;margin-bottom:-24px;padding-top:8px;border-top:1px dashed var(--line)}
-.node{position:relative;z-index:1;background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:10px 12px;width:240px;max-width:100%;text-align:left;cursor:pointer;display:grid;gap:6px}
-.node:hover{border-color:var(--accent)}
-.node[aria-pressed="true"]{border-color:var(--accent);box-shadow:inset 0 0 0 1px var(--accent)}
-.node .t{font-size:.86rem;line-height:1.5}
-.node .m{display:flex;justify-content:space-between;align-items:center;font-size:.72rem;color:var(--muted)}
-.node.side{border-style:dashed}
-.bar{display:flex;height:6px;border-radius:3px;overflow:hidden;background:var(--sunk)}
+.app{display:grid;grid-template-columns:minmax(280px,360px) minmax(0,1fr);min-height:100%}
+.nav{border-right:1px solid var(--line);background:var(--panel);position:sticky;top:0;height:100vh;overflow:auto;padding:20px 12px 40px}
+.nav h1{font-size:1.15rem;margin:0 6px 2px}
+.nav .lead{font-size:.78rem;color:var(--muted);margin:0 6px 14px}
+.nav input{font:inherit;font-size:.88rem;width:100%;padding:6px 10px;border:1px solid var(--line);border-radius:6px;background:var(--bg);color:var(--fg);margin-bottom:12px}
+.sec{font-size:.72rem;letter-spacing:.06em;color:var(--muted);margin:16px 6px 4px}
+.tree,.tree ul{list-style:none;margin:0;padding:0}
+.tree ul{padding-left:16px;border-left:1px solid var(--line);margin-left:11px}
+.tree ul[hidden]{display:none}
+.row{display:flex;align-items:flex-start;gap:2px;border-radius:6px}
+.row:hover{background:var(--sunk)}
+.row.on{background:var(--sel)}
+.tw{flex:none;width:22px;height:26px;border:none;background:none;cursor:pointer;color:var(--muted);padding:0;font-size:.7rem}
+.tw.leaf{visibility:hidden}
+.lab{flex:1;min-width:0;text-align:left;border:none;background:none;padding:3px 4px;cursor:pointer;font-size:.84rem;line-height:1.5;display:grid;gap:3px}
+.lab .kind{font-size:.68rem;color:var(--muted)}
+.lab .mini{display:flex;align-items:center;gap:6px;font-size:.7rem;color:var(--muted);font-family:var(--mono)}
+.bar{display:flex;height:4px;border-radius:2px;overflow:hidden;background:var(--sunk);flex:1;max-width:120px}
 .bar span{display:block;width:0}
 .f-supported{background:var(--sup)} .f-refuted{background:var(--con)} .f-mixed{background:var(--mix)} .f-untested{background:var(--unt)} .f-withdrawn{background:var(--wd)}
-.wire{fill:none;stroke:var(--muted);stroke-width:1.4} .wire.dash{stroke-dasharray:4 4}
-.top{display:grid;gap:6px}
-.dhead .meta{display:flex;flex-wrap:wrap;gap:8px;align-items:center;font-size:.76rem;color:var(--muted)}
-.legend-row{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:.78rem;color:var(--muted);margin-top:14px;position:relative}
-.legend-row i{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:4px;vertical-align:-1px}
+.legend{display:flex;flex-wrap:wrap;gap:4px 10px;font-size:.72rem;color:var(--muted);margin:18px 6px 0}
+.legend i{display:inline-block;width:9px;height:9px;border-radius:2px;margin-right:3px;vertical-align:-1px}
 
-.others{display:grid;gap:10px}
-.chips{display:flex;flex-wrap:wrap;gap:8px}
-.chip{border:1px solid var(--line);background:var(--panel);border-radius:999px;padding:3px 12px;font-size:.8rem;cursor:pointer}
-.chip[aria-pressed="true"]{border-color:var(--accent);color:var(--accent)}
-.chip .n{font-family:var(--mono);color:var(--muted);margin-left:4px}
-
+.main{padding:28px max(16px,env(safe-area-inset-right,0px)) 80px 28px;display:grid;gap:18px;align-content:start;max-width:900px}
+.dhead{display:grid;gap:8px}
+.dhead .big{font-size:1.3rem;font-weight:600;line-height:1.5;text-wrap:balance}
+.meta{display:flex;flex-wrap:wrap;gap:4px 10px;font-size:.78rem;color:var(--muted);align-items:center}
+.rel{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:.84rem;color:var(--muted)}
+.rel button{background:none;border:none;padding:0;color:var(--accent);cursor:pointer;text-decoration:underline;text-underline-offset:2px;text-align:left}
 .pill{display:inline-block;padding:0 9px;border-radius:999px;font-size:.74rem;font-weight:500;white-space:nowrap;line-height:1.7}
 .s-supported{color:var(--sup);background:var(--sup-bg)} .s-refuted{color:var(--con);background:var(--con-bg)}
 .s-mixed{color:var(--mix);background:var(--mix-bg)} .s-untested{color:var(--unt);background:var(--unt-bg)}
 .s-withdrawn{color:var(--wd);background:var(--wd-bg)}
 .s-adopted{color:var(--sup);background:var(--sup-bg)} .s-tentative{color:var(--mix);background:var(--mix-bg)}
-
-.detail{display:grid;gap:18px}
-.dhead{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:16px;display:grid;gap:8px}
-.dhead .big{font-size:1.15rem;font-weight:500}
-.rel{font-size:.85rem;color:var(--muted);display:flex;flex-wrap:wrap;gap:4px 12px}
-.rel button{background:none;border:none;padding:0;color:var(--accent);cursor:pointer;text-decoration:underline;text-underline-offset:2px}
-.tools{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
-.tools input{font:inherit;flex:1 1 240px;min-width:0;padding:7px 12px;border:1px solid var(--line);border-radius:6px;background:var(--panel);color:var(--fg)}
-.count{font-family:var(--mono);font-size:.8rem;color:var(--muted)}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{border:1px solid var(--line);background:var(--panel);border-radius:999px;padding:2px 10px;font-size:.78rem;cursor:pointer}
+.chip[aria-pressed="true"]{border-color:var(--accent);box-shadow:inset 0 0 0 1px var(--accent)}
+.chip .n{font-family:var(--mono);color:var(--muted);margin-left:4px}
 .group{display:grid;gap:8px}
-.card{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:12px 14px;display:grid;gap:6px;min-width:0}
-.card .say{font-size:1rem}
-.card .meta{display:flex;flex-wrap:wrap;gap:4px 10px;font-size:.76rem;color:var(--muted);align-items:center}
-.card details{font-size:.84rem}
-.card summary{cursor:pointer;color:var(--muted)}
-.obs{display:grid;gap:4px;margin-top:6px;padding-left:2px}
-.obs div{overflow-wrap:anywhere}
-.obs .plus{color:var(--sup)} .obs .minus{color:var(--con)}
-.val{font-family:var(--mono);font-variant-numeric:tabular-nums}
-.note{font-size:.78rem;color:var(--muted)}
-.subhead{font-size:.82rem;color:var(--muted);margin-top:6px}
+.group h3{font-size:.9rem;margin:8px 0 0;display:flex;gap:8px;align-items:center}
+.subhead{font-size:.8rem;color:var(--muted);margin-top:4px}
+.hyp{background:var(--panel);border:1px solid var(--line);border-radius:8px;min-width:0}
+.hyp>summary{list-style:none;cursor:pointer;padding:10px 14px;display:grid;gap:4px}
+.hyp>summary::-webkit-details-marker{display:none}
+.hyp>summary .say{font-size:.98rem}
+.hyp>summary .say::before{content:"▸";color:var(--muted);font-size:.75em;margin-right:8px;display:inline-block;transition:transform .15s}
+.hyp[open]>summary .say::before{transform:rotate(90deg)}
+.hyp .in{padding:0 14px 14px;display:grid;gap:12px;border-top:1px solid var(--line);padding-top:12px}
+.pr{display:grid;gap:6px}
+.pr .ptitle{font-weight:600;font-size:.9rem}
+.md{font-size:.88rem;overflow-wrap:anywhere}
+.md p,.md ul,.md ol{margin:0 0 .6em}
+.md ul,.md ol{padding-left:1.4em}
+.md h5{font-size:.9rem;margin:1em 0 .3em;color:var(--fg)}
+.md pre{background:var(--sunk);padding:8px 10px;border-radius:6px;overflow:auto;font-size:.8rem}
+.md pre code{background:none;padding:0}
+.md .tbl{overflow-x:auto;margin:0 0 .8em}
+.md table{border-collapse:collapse;font-size:.82rem}
+.md th,.md td{border:1px solid var(--line);padding:3px 8px;text-align:left;vertical-align:top}
+.md th{background:var(--sunk)}
+.others{font-size:.8rem;color:var(--muted);display:flex;flex-wrap:wrap;gap:4px 10px}
+.note{font-size:.8rem;color:var(--muted)}
 .empty{color:var(--muted)}
+@media (max-width:820px){
+  .app{grid-template-columns:1fr}
+  .nav{position:static;height:auto;max-height:55vh;border-right:none;border-bottom:1px solid var(--line);padding-left:max(12px,env(safe-area-inset-left,0px));padding-right:max(12px,env(safe-area-inset-right,0px))}
+  .main{padding:20px 16px 60px}
+}
 @media (prefers-reduced-motion:reduce){*{transition:none!important}}
 </style>
 </head>
 <body>
-<div class="wrap">
-  <header class="top">
+<div class="app">
+  <nav class="nav" aria-label="ロードマップ">
     <h1>CMT 仮説台帳</h1>
-    <p class="sub">ロードマップの決定を上に、決定の根拠になっている仮説を下に並べる。決定を押すと、その決定に結んだ仮説が出る。文は体系の式から訳したもの。</p>
-  </header>
-
-  <section class="road" id="road" aria-label="ロードマップ">
-    <svg id="wires" aria-hidden="true"></svg>
-    <div class="tiers" id="tiers"></div>
-    <div class="legend-row" id="legend"></div>
-  </section>
-
-  <section class="others">
-    <h2>ロードマップにつながっていない決定</h2>
-    <div class="chips" id="others"></div>
-  </section>
-
-  <section class="detail" id="detail"></section>
+    <p class="lead">左はロードマップ。決定の下に、それが依存する決定と、それを引き上げる決定が入る。押すと、その決定の根拠の仮説が右（狭い画面では下）に出る。仮説を押すと、確かめた PR の説明が開く。</p>
+    <input id="q" type="search" placeholder="仮説を言葉で探す" aria-label="仮説を言葉で探す">
+    <div class="sec">ロードマップ</div>
+    <ul class="tree" id="road"></ul>
+    <div class="sec">ロードマップの外の決定</div>
+    <ul class="tree" id="others"></ul>
+    <div class="sec">決定に結んでいない仮説</div>
+    <ul class="tree" id="side"></ul>
+    <div class="legend" id="legend"></div>
+  </nav>
+  <main class="main" id="detail"></main>
 </div>
 
 <script>
 const DATA=/*LEDGER_DATA*/null;
-const HST=[["supported","支持された"],["refuted","反証された"],["mixed","支持と反証の両方がある"],["untested","まだ確かめていない"],["withdrawn","取り下げた"]];
+const HST=[["supported","支持された"],["refuted","反証された"],["mixed","支持と反証の両方"],["untested","まだ確かめていない"],["withdrawn","取り下げた"]];
 const HS=Object.fromEntries(HST);
 const DS={adopted:"採用",tentative:"仮の決定",withdrawn:"取り下げ"};
 const SIDE="__side";
 const $=id=>document.getElementById(id);
-const esc=s=>String(s??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
-const D=DATA.decisions,H=DATA.hypotheses;
+const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const D=DATA.decisions,H=DATA.hypotheses,P=DATA.prs||{};
+const say=x=>x.text.join("。また、");
 let current=null,query="",only=new Set();
 
-const byDec={};
+const byDec={},bySubj={};
 for(const [h,x] of Object.entries(H)){
-  if(!x.decisions.length)(byDec[SIDE]??=[]).push(h);
+  if(!x.decisions.length){(byDec[SIDE]??=[]).push(h);(bySubj[x.subject]??=[]).push(h)}
   for(const d of x.decisions)(byDec[d]??=[]).push(h);
 }
 
-/* 段を決める: 依存・引き上げの辺（決定 → 先の決定）で、先の決定を一段下に置く。置き換えた（取り下げた）決定は段に入れない。 */
-const out={},inn={};
-for(const [d,x] of Object.entries(D))for(const e of x.edges){if(e.kind==="supersede"||!D[e.to])continue;(out[d]??=[]).push(e);(inn[e.to]??=[]).push({...e,from:d})}
+/* 木: 決定の子は、それが依存する決定と、それを引き上げる決定。置き換えの辺は木に入れない。 */
+const out={},inn={},kids={},parents={};
+for(const [d,x] of Object.entries(D))for(const e of x.edges){
+  if(e.kind==="supersede"||!D[e.to])continue;
+  (out[d]??=[]).push(e);(inn[e.to]??=[]).push({...e,from:d});
+  const [p,c]=e.kind==="raise"?[e.to,d]:[d,e.to];
+  (kids[p]??=[]).push({id:c,kind:e.kind});(parents[c]??=[]).push(p);
+}
 const onMap=new Set(Object.keys(D).filter(d=>out[d]||inn[d]));
-/* 段: 「依存する」の辺だけで、行き先までの最長の道のりを高さにする。高いものほど上に置く。「引き上げる」の辺は段を決めない。 */
-const height={};
-function hOf(d,seen=new Set()){if(height[d]!=null)return height[d];if(seen.has(d))return 0;seen.add(d);
-  const ts=(out[d]||[]).filter(e=>e.kind==="depend").map(e=>hOf(e.to,seen)+1);return height[d]=ts.length?Math.max(...ts):0}
-for(const d of onMap)hOf(d);
-const topH=Math.max(0,...Object.values(height));
-const tier={};for(const d of onMap)tier[d]=topH-height[d];
-const roots=[...onMap].filter(d=>!inn[d]).sort((a,b)=>tier[a]-tier[b]);
-const tiers=[];for(const d of onMap)(tiers[tier[d]]??=[]).push(d);
+const roots=[...onMap].filter(d=>!parents[d]);
 
 function counts(list){const c={};for(const h of list||[])c[H[h].status]=(c[H[h].status]||0)+1;return c}
-function bar(list){const c=counts(list),n=(list||[]).length||1;return `<div class="bar">${HST.map(([s])=>c[s]?`<span class="f-${s}" data-w="${(c[s]/n*100).toFixed(2)}"></span>`:"").join("")}</div>`}
-function nodeHTML(d){
-  const x=D[d],list=byDec[d]||[];
-  return `<button class="node" data-d="${esc(d)}" aria-pressed="false"><span class="t">${esc(x.text.join("。"))}</span>${bar(list)}<span class="m"><span class="pill s-${esc(x.status)}">${DS[x.status]||x.status}</span><span>仮説 ${list.length} 件</span></span></button>`;
+function bar(list){const c=counts(list),n=(list||[]).length||1;return `<span class="bar">${HST.map(([s])=>c[s]?`<span class="f-${s}" data-w="${(c[s]/n*100).toFixed(2)}"></span>`:"").join("")}</span>`}
+function row(key,label,list,childHTML,kind,open){
+  const has=!!childHTML;
+  return `<li><div class="row" data-row="${esc(key)}"><button class="tw${has?"":" leaf"}" aria-expanded="${open}" aria-label="開く・閉じる">${open?"▾":"▸"}</button>`+
+    `<button class="lab" data-d="${esc(key)}">${kind?`<span class="kind">${esc(kind)}</span>`:""}<span>${esc(label)}</span><span class="mini">${bar(list)}${(list||[]).length}</span></button></div>`+
+    (has?`<ul${open?"":" hidden"}>${childHTML}</ul>`:"")+`</li>`;
 }
-function drawRoad(){
-  $("tiers").innerHTML=tiers.map(ds=>`<div class="tier">${ds.map(nodeHTML).join("")}</div>`).join("")+
-    `<div class="tier-label">決定に結んでいない</div><div class="tier"><button class="node side" data-d="${SIDE}" aria-pressed="false"><span class="t">わき道（どの決定の根拠にもしていない仮説）</span>${bar(byDec[SIDE])}<span class="m"><span></span><span>仮説 ${(byDec[SIDE]||[]).length} 件</span></span></button></div>`;
-  $("legend").innerHTML=HST.map(([s,l])=>`<span><i class="f-${s}"></i>${l}</span>`).join("")+`<span>線: 実線は「依存する」、点線は「引き上げる」</span>`;
-  const others=Object.keys(D).filter(d=>!onMap.has(d)&&(byDec[d]||[]).length).sort((a,b)=>(byDec[b]||[]).length-(byDec[a]||[]).length);
-  const rest=Object.keys(D).filter(d=>!onMap.has(d)&&!(byDec[d]||[]).length).length;
-  $("others").innerHTML=others.map(d=>`<button class="chip" data-d="${esc(d)}" aria-pressed="false">${esc(D[d].text.join("。"))}<span class="n">${byDec[d].length}</span></button>`).join("")+
-    (rest?`<span class="note">ほかに、仮説を結んでいない決定が ${rest} 件ある。</span>`:"");
-  document.querySelectorAll("[data-d]").forEach(b=>b.addEventListener("click",()=>select(b.dataset.d,true)));
+function decRow(d,kind,depth,seen){
+  if(seen.has(d))return "";
+  const s=new Set(seen);s.add(d);
+  const ch=(kids[d]||[]).map(k=>decRow(k.id,k.kind==="raise"?"引き上げる":"",depth+1,s)).join("");
+  return row(d,say(D[d]),byDec[d],ch,kind,depth<2);
+}
+function drawNav(){
+  $("road").innerHTML=roots.map(d=>decRow(d,"",0,new Set())).join("");
+  const others=Object.keys(D).filter(d=>!onMap.has(d)&&(byDec[d]||[]).length).sort((a,b)=>byDec[b].length-byDec[a].length);
+  $("others").innerHTML=others.map(d=>row(d,say(D[d]),byDec[d],"","",false)).join("");
+  const subs=Object.entries(bySubj).sort((a,b)=>b[1].length-a[1].length);
+  $("side").innerHTML=row(SIDE,"わき道（すべて）",byDec[SIDE],subs.map(([k,v])=>row(SIDE+"/"+k,k+"について",v,"","",false)).join(""),"",false);
+  $("legend").innerHTML=HST.map(([s,l])=>`<span><i class="f-${s}"></i>${l}</span>`).join("");
+  document.querySelectorAll(".lab").forEach(b=>b.addEventListener("click",()=>{query="";$("q").value="";select(b.dataset.d)}));
+  document.querySelectorAll(".tw").forEach(b=>b.addEventListener("click",()=>{
+    const ul=b.closest("li").querySelector(":scope>ul");if(!ul)return;
+    const open=ul.hidden;ul.hidden=!open;b.setAttribute("aria-expanded",open);b.textContent=open?"▾":"▸"}));
   widths();
-  requestAnimationFrame(wires);
 }
-function wires(){
-  const svg=$("wires"),box=$("road").getBoundingClientRect(),road=$("road");
-  svg.setAttribute("width",road.scrollWidth);svg.setAttribute("height",road.scrollHeight);
-  let s="";
-  for(const [d,es] of Object.entries(out))for(const e of es){
-    const a=document.querySelector(`#tiers [data-d="${CSS.escape(d)}"]`),b=document.querySelector(`#tiers [data-d="${CSS.escape(e.to)}"]`);if(!a||!b)continue;
-    const ra=a.getBoundingClientRect(),rb=b.getBoundingClientRect();
-    const up=rb.bottom<=ra.top;
-    const x1=ra.left+ra.width/2-box.left+road.scrollLeft,y1=(up?ra.top:ra.bottom)-box.top,x2=rb.left+rb.width/2-box.left+road.scrollLeft,y2=(up?rb.bottom:rb.top)-box.top;
-    const my=(y1+y2)/2;
-    s+=`<path d="M${x1} ${y1} C${x1} ${my} ${x2} ${my} ${x2} ${y2}" class="wire${e.kind==="raise"?" dash":""}"/>`;
-  }
-  svg.innerHTML=s;
-}
-addEventListener("resize",()=>requestAnimationFrame(wires));
+function widths(){document.querySelectorAll("[data-w]").forEach(e=>{e.style.width=e.dataset.w+"%"})}
 
-function obsLine(o,cls,mark){
-  if(!o.a)return `<div class="${cls}">${mark} <code>${esc(o.id)}</code></div>`;
-  const t=x=>x.key?`<code>${esc(x.key)}</code>（<span class="val">${esc(x.v)}</span>）`:`<span class="val">${esc(x.v)}</span>`;
-  return `<div class="${cls}">${mark} ${t(o.a)} は ${t(o.b)} ${esc(o.rel)}</div>`;
+function prBlock(ns){
+  if(!ns.length)return `<p class="note">この仮説を名指しした PR は見つからなかった。</p>`;
+  const link=n=>`<a href="https://github.com/${DATA.repo}/pull/${n}" target="_blank" rel="noopener noreferrer">#${n}</a>`;
+  const own=ns.filter(p=>p.own),rest=ns.filter(p=>!p.own);
+  const full=p=>`<div class="pr"><div class="meta">${link(p.n)}<span>${esc(P[p.n].date)} にマージ</span></div><div class="ptitle">${esc(P[p.n].title)}</div><div class="md">${P[p.n].html}</div></div>`;
+  const shown=own.length?own:[rest[0]];
+  const more=own.length?rest:rest.slice(1);
+  return (own.length?"":`<p class="note">この仮説を題に出した PR はない。名指ししている PR の中で、いちばん新しいものを出す。</p>`)+
+    shown.map(full).join("")+
+    (more.length?`<div class="others">ほかにこの仮説に触れた PR: ${more.map(p=>`<span>${link(p.n)} ${esc(P[p.n].title)}</span>`).join("")}</div>`:"");
 }
 function card(h){
   const x=H[h];
-  const iss=x.issue?`<a href="https://github.com/${DATA.repo}/issues/${x.issue}" target="_blank" rel="noopener">#${x.issue}</a>`:`<a href="https://github.com/${DATA.repo}/issues?q=${encodeURIComponent('"'+h+'"')}" target="_blank" rel="noopener">issue を探す</a>`;
-  const decs=x.decisions.filter(d=>d!==current).map(d=>`<button class="chip" data-go="${esc(d)}">${esc(D[d]?D[d].text.join("。"):d)}</button>`).join("");
-  const n=x.evidence.length+x.against.length;
-  return `<article class="card"><div class="say">${esc(x.text.join("。また、"))}。</div>
-  <div class="meta"><span class="pill s-${esc(x.status)}">${HS[x.status]||x.status}</span><code>${esc(h)}</code>${iss}<span>${x.side==="lang"?"言語について":"実験について"}</span>${x.scope.length?`<span>範囲: ${esc(x.scope.join("・"))}</span>`:""}</div>
-  ${decs?`<div class="meta">ほかに根拠にしている決定: ${decs}</div>`:""}
-  ${n?`<details><summary>観察 ${n} 件（支持 ${x.evidence.length}・反する ${x.against.length}）</summary><div class="obs">${x.evidence.map(o=>obsLine(o,"plus","＋")).join("")}${x.against.map(o=>obsLine(o,"minus","−")).join("")}</div></details>`:""}
-  </article>`;
+  const decs=x.decisions.filter(d=>d!==current).map(d=>`<button class="chip" data-go="${esc(d)}">${esc(say(D[d]))}</button>`).join("");
+  const iss=x.issue?`<a href="https://github.com/${DATA.repo}/issues/${x.issue}" target="_blank" rel="noopener noreferrer">issue #${x.issue}</a>`:"";
+  return `<details class="hyp" data-h="${esc(h)}"><summary><span class="say">${esc(say(x))}</span>
+    <span class="meta"><span class="pill s-${esc(x.status)}">${HS[x.status]||esc(x.status)}</span><code>${esc(h)}</code>${x.prs.length?`<span>PR ${x.prs.length} 件</span>`:""}${x.scope.length?`<span>範囲: ${esc(x.scope.join("・"))}</span>`:""}</span></summary>
+    <div class="in">${prBlock(x.prs)}${decs||iss?`<div class="meta">${iss}${decs?`<span>ほかに根拠にしている決定:</span>${decs}`:""}</div>`:""}</div></details>`;
 }
-function widths(){document.querySelectorAll("[data-w]").forEach(e=>{e.style.width=e.dataset.w+"%"})}
-function select(d,scroll){
-  current=d;
-  document.querySelectorAll("[data-d]").forEach(b=>b.setAttribute("aria-pressed",b.dataset.d===d));
-  try{history.replaceState(null,"","#"+d)}catch(e){}
+function listFor(d){
+  if(query){const ql=query.toLowerCase();return Object.keys(H).filter(h=>(h+" "+H[h].text.join(" ")+" "+H[h].subject).toLowerCase().includes(ql))}
+  if(d&&d.startsWith(SIDE+"/"))return bySubj[d.slice(SIDE.length+1)]||[];
+  return byDec[d]||[];
+}
+function select(d){
+  current=d;only.clear();
+  document.querySelectorAll(".row").forEach(r=>r.classList.toggle("on",r.dataset.row===d));
+  try{history.replaceState(null,"","#"+encodeURIComponent(d))}catch(e){}
   render();
-  if(scroll)$("detail").scrollIntoView({behavior:matchMedia("(prefers-reduced-motion: reduce)").matches?"auto":"smooth",block:"start"});
+}
+function head(d){
+  if(query)return `<div class="dhead"><div class="big">「${esc(query)}」を含む仮説</div><p class="note">すべての仮説から探している。左で決定を押すと戻る。</p></div>`;
+  if(d===SIDE)return `<div class="dhead"><div class="big">わき道</div><p class="note">どの決定の根拠にもしていない仮説。</p></div>`;
+  if(d.startsWith(SIDE+"/"))return `<div class="dhead"><div class="meta">わき道</div><div class="big">${esc(d.slice(SIDE.length+1))}について</div></div>`;
+  const x=D[d];
+  const rel=[...(out[d]||[]).map(e=>`<span>${e.kind==="raise"?"引き上げる":"依存する"}: <button data-go="${esc(e.to)}">${esc(say(D[e.to]))}</button></span>`),
+    ...(inn[d]||[]).map(e=>`<span>${e.kind==="raise"?"引き上げられる":"依存される"}: <button data-go="${esc(e.from)}">${esc(say(D[e.from]))}</button></span>`),
+    ...x.edges.filter(e=>e.kind==="supersede").map(e=>`<span>置き換えた: ${esc(D[e.to]?say(D[e.to]):e.to)}</span>`)];
+  const pr=x.prs.length?`<a href="https://github.com/${DATA.repo}/pull/${x.prs[0].n}" target="_blank" rel="noopener noreferrer">${x.prs[0].own?"決めた":"触れた"} PR #${x.prs[0].n}</a>`:"";
+  return `<div class="dhead"><div class="meta"><span class="pill s-${esc(x.status)}">${DS[x.status]||esc(x.status)}</span><code>${esc(d)}</code>${pr}</div><div class="big">${esc(say(x))}。</div>${rel.length?`<div class="rel">${rel.join("")}</div>`:""}</div>`;
 }
 function render(){
-  const d=current,isSide=d===SIDE;
-  let list=query?Object.keys(H):(byDec[d]||[]);
-  if(query){const ql=query.toLowerCase();list=list.filter(h=>(h+" "+H[h].text.join(" ")+" "+H[h].subject).toLowerCase().includes(ql))}
-  const all=list.length;
-  if(only.size)list=list.filter(h=>only.has(H[h].status));
-  let head;
-  if(query)head=`<div class="dhead"><div class="big">「${esc(query)}」を含む仮説</div><p class="note">すべての仮説から探している。消すと、選んだ決定に戻る。</p></div>`;
-  else if(isSide)head=`<div class="dhead"><div class="big">わき道</div><p class="note">どの決定の根拠にもしていない仮説。主語ごとにまとめた。</p></div>`;
-  else{
-    const x=D[d];
-    const rel=[...(out[d]||[]).map(e=>`${e.kind==="raise"?"引き上げる":"依存する"}: <button data-go="${esc(e.to)}">${esc(D[e.to].text.join("。"))}</button>`),
-      ...(inn[d]||[]).map(e=>`${e.kind==="raise"?"引き上げられる":"依存される"}: <button data-go="${esc(e.from)}">${esc(D[e.from].text.join("。"))}</button>`),
-      ...x.edges.filter(e=>e.kind==="supersede").map(e=>`置き換えた: ${esc(D[e.to]?D[e.to].text.join("。"):e.to)}`)];
-    head=`<div class="dhead"><div class="meta"><span class="pill s-${esc(x.status)}">${DS[x.status]||x.status}</span><code>${esc(d)}</code>${x.issue?`<a href="https://github.com/${DATA.repo}/issues/${x.issue}" target="_blank" rel="noopener">#${x.issue}</a>`:""}</div><div class="big">${esc(x.text.join("。また、"))}。</div>${rel.length?`<div class="rel">${rel.join("")}</div>`:""}</div>`;
-  }
-  const c=counts(query?Object.keys(H).filter(h=>(h+" "+H[h].text.join(" ")+" "+H[h].subject).toLowerCase().includes(query.toLowerCase())):(byDec[d]||[]));
-  const tools=`<div class="tools"><label for="q" class="note">仮説を探す</label><input id="q" type="search" value="${esc(query)}" placeholder="言葉で探す（例: 韻律、追従、隠れ状態）"><span class="count">${list.length} / ${all} 件</span></div>
-  <div class="chips">${HST.filter(([s])=>c[s]).map(([s,l])=>`<button class="chip" data-st="${s}" aria-pressed="${only.has(s)}"><span class="pill s-${s}">${l}</span><span class="n">${c[s]}</span></button>`).join("")}</div>`;
+  const d=current,all=listFor(d),c=counts(all);
+  const list=only.size?all.filter(h=>only.has(H[h].status)):all;
+  const tools=`<div class="chips">${HST.filter(([s])=>c[s]).map(([s,l])=>`<button class="chip" data-st="${s}" aria-pressed="${only.has(s)}"><span class="pill s-${s}">${l}</span><span class="n">${c[s]}</span></button>`).join("")}<span class="note">${list.length} / ${all.length} 件。押すと PR の説明が開く。</span></div>`;
   let body="";
   for(const [s,l] of HST){
     const hs=list.filter(h=>H[h].status===s);if(!hs.length)continue;
-    body+=`<section class="group"><h3><span class="pill s-${s}">${l}</span><span class="count">${hs.length}</span></h3>`;
-    if(isSide&&!query){
+    body+=`<section class="group"><h3><span class="pill s-${s}">${l}</span><span class="note">${hs.length}</span></h3>`;
+    if(d===SIDE&&!query){
       const g={};for(const h of hs)(g[H[h].subject]??=[]).push(h);
       for(const [k,v] of Object.entries(g).sort((a,b)=>b[1].length-a[1].length))body+=`<div class="subhead">${esc(k)}について</div>`+v.map(card).join("");
     }else body+=hs.map(card).join("");
     body+="</section>";
   }
-  $("detail").innerHTML=head+tools+(body||`<p class="empty">条件に合う仮説はない。状態の絞り込みか検索を外すと出る。</p>`)+`<p class="note">${esc(DATA.legend)} 観察の「＋」は支持する観察、「−」は反する観察。</p>`;
-  const qi=$("q");qi.addEventListener("input",()=>{const pos=qi.selectionStart;query=qi.value.trim();render();const n=$("q");n.focus();try{n.setSelectionRange(pos,pos)}catch(e){}});
+  $("detail").innerHTML=head(d)+tools+(body||`<p class="empty">ここに結んだ仮説はない。</p>`);
   document.querySelectorAll("[data-st]").forEach(b=>b.addEventListener("click",()=>{const s=b.dataset.st;only.has(s)?only.delete(s):only.add(s);render()}));
-  document.querySelectorAll("[data-go]").forEach(b=>b.addEventListener("click",()=>{query="";select(b.dataset.go,false);document.querySelector(`[data-d="${CSS.escape(b.dataset.go)}"]`)?.scrollIntoView({block:"nearest"})}));
+  document.querySelectorAll("[data-go]").forEach(b=>b.addEventListener("click",e=>{e.preventDefault();query="";$("q").value="";select(b.dataset.go);reveal(b.dataset.go)}));
+  $("detail").scrollTop=0;
 }
-drawRoad();
+function reveal(d){
+  const r=document.querySelector(`.row[data-row="${CSS.escape(d)}"]`);if(!r)return;
+  for(let ul=r.closest("ul");ul&&ul.classList.contains("tree")===false;ul=ul.parentElement.closest("ul")){ul.hidden=false;const tw=ul.parentElement.querySelector(":scope>.row .tw");if(tw){tw.setAttribute("aria-expanded","true");tw.textContent="▾"}}
+  r.scrollIntoView({block:"nearest"});
+}
+$("q").addEventListener("input",e=>{query=e.target.value.trim();only.clear();render()});
+drawNav();
 const start=decodeURIComponent(location.hash.slice(1));
-select(D[start]||start===SIDE?start:(roots[0]||SIDE),false);
-addEventListener("hashchange",()=>{const h=decodeURIComponent(location.hash.slice(1));if((D[h]||h===SIDE)&&h!==current)select(h,false)});
+const ok=k=>D[k]||k===SIDE||(k.startsWith(SIDE+"/")&&bySubj[k.slice(SIDE.length+1)]);
+select(ok(start)?start:(roots[0]||SIDE));reveal(current);
+addEventListener("hashchange",()=>{const h=decodeURIComponent(location.hash.slice(1));if(ok(h)&&h!==current){select(h);reveal(h)}});
 </script>
 </body>
 </html>

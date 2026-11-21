@@ -1,9 +1,15 @@
-"""仮説台帳のページを、体系から作る。ロードマップ（決定とそのつながり）を軸に、仮説を決定ごとに並べる。
+"""仮説台帳のページを、体系から作る。ロードマップ（決定とそのつながり）を左に木で置き、仮説を決定ごとに並べる。
 
-文は表示の変換器（display.sentence）で式から訳す。測定値は exp_check の展開から読む。名前を固定で持たない。
+文は体系の式から訳す。名前を固定で持たない。
 ロードマップの形は、決定どうしの事実（v_depend・v_raise・v_supersede）と、決定から仮説への v_ground から作る。
-issue の番号は、GITHUB_TOKEN と GITHUB_REPOSITORY があれば issue の印（cscl-claim）から引く。
-印を信じるのは、sync が立てた issue（github-actions が作ったもの）だけ。誰でも issue を立てられるので。なければ検索へのリンクにする。
+
+仮説ごとの説明は、その仮説を名指ししたマージ済みの PR の本文から取る（確かめたときの手順・結果・読みが書いてある）。
+取るのは、持ち主・メンバー・協力者が立てて、マージされた PR だけ。本文の Markdown は、ここで HTML に変える。
+すべての文字をまず逃がし、そのあとで決まった形（見出し・箇条・表・コード・強調・https のリンク・#番号）だけを組む。
+生の HTML は文字として出す。
+
+issue の番号は、issue の印（cscl-claim）から引く。GITHUB_TOKEN があれば使う（公開のリポジトリなので、なくても読める）。
+印を信じるのは、sync が立てた issue（github-actions が作ったもの）だけ。誰でも issue を立てられるので。
 
 出力はリポジトリに入れない（入れると、仮説を登録するたびに作り直しが要り、登録の PR が自動マージの範囲から外れる）。
 ワークフロー ledger が main への push で作り、GitHub Pages に出す。
@@ -20,6 +26,7 @@ import json
 import os
 import re
 import sys
+import urllib.request
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -32,9 +39,10 @@ with contextlib.redirect_stdout(io.StringIO()):
 TEMPLATE = Path(__file__).with_name("ledger_template.html")
 CASE_TABLE = ROOT / "exp/experiments/sys_case_frame_formula.py"
 PARTICLES = ("について", "から", "より", "に", "で", "と", "を", "へ", "の")
-WORD = {"<": "より小さい", ">": "より大きい", "≈": "とほぼ同じ", "=": "と同じ", "≥": "以上", "≤": "以下"}
+TRUSTED = {"OWNER", "MEMBER", "COLLABORATOR"}
 BOT = {"github-actions[bot]", "github-actions"}
 EDGE = {"v_depend": "depend", "v_raise": "raise", "v_supersede": "supersede"}
+REPO = os.environ.get("GITHUB_REPOSITORY", "nonsugertea7821/CMT")
 
 
 def as_list(v):
@@ -51,17 +59,141 @@ def case_table():
     return {}
 
 
+def api(path):
+    headers = {"Accept": "application/vnd.github+json"}
+    if os.environ.get("GITHUB_TOKEN"):
+        headers["Authorization"] = f"Bearer {os.environ['GITHUB_TOKEN']}"
+    req = urllib.request.Request(f"https://api.github.com/repos/{REPO}{path}", headers=headers)
+    with urllib.request.urlopen(req, timeout=60) as r:
+        return json.loads(r.read() or "null")
+
+
+def pages(path, keep):
+    out, page = [], 1
+    while True:
+        xs = api(f"{path}&per_page=100&page={page}")
+        out += [x for x in xs if keep(x)]
+        if len(xs) < 100:
+            return out
+        page += 1
+
+
 def issue_numbers():
-    if not (os.environ.get("GITHUB_TOKEN") and os.environ.get("GITHUB_REPOSITORY")):
-        return {}
     out = {}
-    for x in sync_issues.GitHub().issues():
-        if (x.get("user") or {}).get("login") not in BOT:
-            continue
-        m = re.search(r"<!-- cscl-claim: (\S+) -->", x["body"] or "")
+    for x in pages("/issues?state=all", lambda x: "pull_request" not in x and (x.get("user") or {}).get("login") in BOT):
+        m = re.search(r"<!-- cscl-claim: (\S+) -->", x.get("body") or "")
         if m and isinstance(x["number"], int):
             out[m.group(1)] = x["number"]
     return out
+
+
+def esc(t):
+    return t.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;").replace('"', "&quot;").replace("'", "&#39;")
+
+
+def inline(t):
+    codes = []
+
+    def keep(m):
+        codes.append(m.group(1))
+        return f"\x00{len(codes) - 1}\x00"
+    t = re.sub(r"`([^`]+)`", keep, esc(t))
+    t = re.sub(r"\*\*(.+?)\*\*", r"<strong>\1</strong>", t)
+    t = re.sub(r"\[([^\]]+)\]\((https://[^\s()]+)\)", r'<a href="\2" target="_blank" rel="noopener noreferrer">\1</a>', t)
+    t = re.sub(r"(?<![\w;/])#(\d+)\b", rf'<a href="https://github.com/{REPO}/issues/\1" target="_blank" rel="noopener noreferrer">#\1</a>', t)
+    return re.sub("\x00(\\d+)\x00", lambda m: f"<code>{codes[int(m.group(1))]}</code>", t)
+
+
+def markdown(text):
+    """決まった形だけを組む Markdown の変換。入力の文字はすべて逃がしてから組む。"""
+    text = re.sub(r"<!--.*?-->", "", text or "", flags=re.S)
+    text = re.sub(r"</?details>|</?summary>", "", text)
+    lines = [l for l in text.replace("\r", "").split("\n")
+             if not re.search(r"claude\.ai/code/session_|Generated (with|by) \[Claude Code\]", l)]
+    out, para, stack = [], [], []
+
+    def flush():
+        if para:
+            out.append("<p>" + "<br>".join(inline(x) for x in para) + "</p>")
+            para.clear()
+
+    def close(level=0):
+        while len(stack) > level:
+            out.append(f"</li></{stack.pop()}>")
+    i = 0
+    while i < len(lines):
+        l = lines[i]
+        if l.strip().startswith("```"):
+            flush(), close()
+            j = i + 1
+            while j < len(lines) and not lines[j].strip().startswith("```"):
+                j += 1
+            out.append("<pre><code>" + esc("\n".join(lines[i + 1:j])) + "</code></pre>")
+            i = j + 1
+            continue
+        if l.strip().startswith("|") and i + 1 < len(lines) and re.match(r"^\s*\|[\s:|-]+\|\s*$", lines[i + 1]):
+            flush(), close()
+            cells = lambda r: [c.strip() for c in r.strip().strip("|").split("|")]
+            rows = ["<tr>" + "".join(f"<th>{inline(c)}</th>" for c in cells(l)) + "</tr>"]
+            i += 2
+            while i < len(lines) and lines[i].strip().startswith("|"):
+                rows.append("<tr>" + "".join(f"<td>{inline(c)}</td>" for c in cells(lines[i])) + "</tr>")
+                i += 1
+            out.append('<div class="tbl"><table>' + "".join(rows) + "</table></div>")
+            continue
+        m = re.match(r"^(\s*)([-*]|\d+\.)\s+(.*)$", l)
+        h = re.match(r"^#{1,6}\s+(.*)$", l)
+        if m and not re.match(r"^\s*([-*])(\s*\1){2,}\s*$", l):
+            flush()
+            level = len(m.group(1).expandtabs(2)) // 2 + 1
+            tag = "ol" if m.group(2)[0].isdigit() else "ul"
+            if len(stack) >= level:
+                close(level)
+                out.append("</li><li>")
+            while len(stack) < level:
+                stack.append(tag)
+                out.append(f"<{tag}><li>")
+            out.append(inline(m.group(3)))
+        elif h:
+            flush(), close()
+            out.append(f"<h5>{inline(h.group(1))}</h5>")
+        elif not l.strip() or re.match(r"^\s*(-{3,}|\*{3,})\s*$", l):
+            flush(), close()
+        elif stack:
+            out.append(" " + inline(l.strip()))
+        else:
+            para.append(l.strip())
+        i += 1
+    flush(), close()
+    return "".join(out)
+
+
+def pulls_by_claim(ids, nums):
+    """仮説・決定の識別子（と、その issue の番号）を名指ししたマージ済みの PR。
+    確かめのブランチ claude/<名前> のものか、題に名前があるものを先に、あとは新しい順に置く。"""
+    by_num = {n: cid for cid, n in nums.items()}
+    word = re.compile(r"(?<![\w.])([hd]_\w+)")
+    try:
+        pulls = pages("/pulls?state=closed", lambda x: x.get("merged_at") and x.get("author_association") in TRUSTED)
+    except Exception as e:
+        print("PR を読めなかった:", e, file=sys.stderr)
+        return {}, {}
+    found, prs = {}, {}
+    for x in sorted(pulls, key=lambda x: x["merged_at"], reverse=True):
+        title = x.get("title") or ""
+        text = title + "\n" + (x.get("body") or "")
+        hit = {m for m in word.findall(text) if m in ids}
+        hit |= {by_num[int(n)] for n in re.findall(r"#(\d+)", text) if int(n) in by_num}
+        if not hit:
+            continue
+        branch = (x.get("head") or {}).get("ref") or ""
+        prs[x["number"]] = {"title": title, "date": x["merged_at"][:10], "html": markdown(x.get("body"))}
+        for cid in hit:
+            n = nums.get(cid)
+            own = (branch == f"claude/{cid}" or re.search(rf"(?<![\w.]){re.escape(cid)}(?!\w)", title)
+                   or (n and re.search(rf"#{n}(?!\d)", title)))
+            found.setdefault(cid, []).append((0 if own else 1, x["number"]))
+    return {cid: [{"n": n, "own": r == 0} for r, n in sorted(v, key=lambda t: t[0])] for cid, v in found.items()}, prs
 
 
 def build():
@@ -72,7 +204,6 @@ def build():
     I = sync_issues.individuals()
     short = type_checker.short
     ja = lambda x: display.ja(T, x, I)
-    values, _ = exp_check.expand(M, T)
 
     gold = case_table()
     by_display = {}
@@ -91,25 +222,14 @@ def build():
             return [f"{ja(a)}は{ja(b)}の一種である" for a in as_list(x["s"]) for b in as_list(x["o"])]
         return [f"{ja(a)}が{ja(b)}{mark_of(x['p'])}{ja(x['p'])}" for a in as_list(x["s"]) for b in as_list(x["o"])]
 
-    def side_of(v):
-        return f"{v:.3f}" if isinstance(v, float) else str(v)
-
-    def obs(oid):
-        o = C["observations"].get(oid)
-        if not o:
-            return {"id": oid, "text": oid}
-        sym = sync_issues.SYM.get(T.N[o["p"]]["display"], T.N[o["p"]]["display"])
-
-        def term(x):
-            if isinstance(x, str) and x in values:
-                return {"key": x, "v": side_of(values[x][0])}
-            return {"v": side_of(x)}
-        return {"id": oid, "a": term(o["s"]), "rel": WORD.get(sym, sym), "b": term(o["o"])}
-
     status = lambda x: sync_issues.status_label(T, x["status"])
-    nums = issue_numbers()
-    grounded = {}
-    decisions = {}
+    try:
+        nums = issue_numbers()
+    except Exception as e:
+        print("issue を読めなかった:", e, file=sys.stderr)
+        nums = {}
+    linked, prs = pulls_by_claim(set(C["hypotheses"]) | set(C["decisions"]), nums)
+    grounded, decisions, hyps = {}, {}, {}
     for cid, x in C["decisions"].items():
         edges = []
         for k, v in x.items():
@@ -119,17 +239,15 @@ def build():
         for h in as_list(x.get("basis")):
             grounded.setdefault(short(h), []).append(cid)
         decisions[cid] = {"side": C["side"][cid], "status": status(x), "text": sentences(x), "edges": edges,
-                          "issue": nums.get(cid)}
-    hyps = {}
+                          "issue": nums.get(cid), "prs": linked.get(cid, [])}
     for cid, x in C["hypotheses"].items():
         hyps[cid] = {"side": C["side"][cid], "status": status(x), "text": sentences(x),
                      "subject": ja(as_list(x["s"])[0]),
                      "scope": [ja(v) for v in as_list(x.get("scope"))],
-                     "evidence": [obs(short(o)) for o in as_list(x.get("evidence"))],
-                     "against": [obs(short(o)) for o in as_list(x.get("against"))],
-                     "decisions": grounded.get(cid, []), "issue": nums.get(cid)}
-    return {"repo": os.environ.get("GITHUB_REPOSITORY", "nonsugertea7821/CMT"), "legend": sync_issues.LEGEND,
-            "decisions": decisions, "hypotheses": hyps}
+                     "decisions": grounded.get(cid, []), "issue": nums.get(cid), "prs": linked.get(cid, [])}
+    used = {p["n"] for x in [*decisions.values(), *hyps.values()] for p in x["prs"]}
+    return {"repo": REPO, "decisions": decisions, "hypotheses": hyps,
+            "prs": {n: v for n, v in prs.items() if n in used}}
 
 
 def csp(html):
@@ -145,7 +263,7 @@ def main():
     out = Path(sys.argv[1] if len(sys.argv) > 1 else "_site")
     out.mkdir(parents=True, exist_ok=True)
     data = json.dumps(build(), ensure_ascii=False)
-    for c in "<>&\u2028\u2029":
+    for c in "<>&  ":
         data = data.replace(c, f"\\u{ord(c):04x}")
     html = TEMPLATE.read_text(encoding="utf-8").replace("/*LEDGER_DATA*/null", data)
     html = html.replace("/*LEDGER_CSP*/", csp(html))
