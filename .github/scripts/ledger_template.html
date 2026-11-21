@@ -72,6 +72,9 @@ button{font:inherit;color:inherit}
 .chip .n{font-family:var(--mono);color:var(--muted);margin-left:4px}
 .group{display:grid;gap:8px}
 .group h3{font-size:.9rem;margin:8px 0 0;display:flex;gap:8px;align-items:center}
+.hits{display:grid;gap:4px;font-size:.8rem;color:var(--muted)}
+.hit{overflow-wrap:anywhere}
+mark{background:var(--mix-bg);color:var(--fg);padding:0 2px;border-radius:2px}
 .tl{display:flex;flex-wrap:wrap;align-items:center;gap:2px 6px;font-size:.78rem;color:var(--muted)}
 .ev{display:inline-flex;align-items:center;gap:4px;white-space:nowrap}
 .dot{width:8px;height:8px;border-radius:50%;display:inline-block}
@@ -112,7 +115,7 @@ button{font:inherit;color:inherit}
   <nav class="nav" aria-label="ロードマップ">
     <h1>CMT 仮説台帳</h1>
     <p class="lead">左はロードマップ。決定の下に、それが依存する決定と、それを引き上げる決定が入る。押すと、その決定の根拠の仮説が右（狭い画面では下）に出る。仮説を押すと、確かめた PR の説明が開く。</p>
-    <input id="q" type="search" placeholder="仮説を言葉で探す" aria-label="仮説を言葉で探す">
+    <input id="q" type="search" placeholder="仮説と PR の本文を言葉で探す" aria-label="仮説と PR の本文を言葉で探す">
     <div class="sec">ロードマップ</div>
     <ul class="tree" id="road"></ul>
     <div class="sec">ロードマップの外の決定</div>
@@ -208,12 +211,35 @@ function card(h){
   const x=H[h];
   const decs=x.decisions.filter(d=>d!==current).map(d=>`<button class="chip" data-go="${esc(d)}">${esc(say(D[d]))}</button>`).join("");
   const iss=x.issue?`<a href="https://github.com/${DATA.repo}/issues/${x.issue}" target="_blank" rel="noopener noreferrer">issue #${x.issue}</a>`:"";
-  return `<details class="hyp" data-h="${esc(h)}"><summary><span class="say">${esc(say(x))}</span>${timeline(x)}
+  return `<details class="hyp" data-h="${esc(h)}"><summary><span class="say">${esc(say(x))}</span>${timeline(x)}${hits(h)}
     <span class="meta"><span class="pill s-${esc(x.status)}">${HS[x.status]||esc(x.status)}</span><code>${esc(h)}</code>${x.prs.length?`<span>PR ${x.prs.length} 件</span>`:""}${x.scope.length?`<span>範囲: ${esc(x.scope.join("・"))}</span>`:""}</span></summary>
     <div class="in">${prBlock(x.prs)}${decs||iss?`<div class="meta">${iss}${decs?`<span>ほかに根拠にしている決定:</span>${decs}`:""}</div>`:""}</div></details>`;
 }
+/* 検索: 仮説の文・名前・主語と、結んだ PR の題と本文。PR の本文は、埋め込んだ HTML から文字だけを取り出して使う。 */
+let PRTEXT=null;
+function prText(n){
+  if(!PRTEXT){PRTEXT={};const parser=new DOMParser();
+    for(const [k,p] of Object.entries(P)){const t=p.title+"\n"+(parser.parseFromString(p.html,"text/html").body.textContent||"");PRTEXT[k]={raw:t,low:t.toLowerCase()}}}
+  return PRTEXT[n]||{raw:"",low:""};
+}
+function match(h){
+  const ql=query.toLowerCase(),x=H[h];
+  const self=(h+" "+x.text.join(" ")+" "+x.subject).toLowerCase().includes(ql);
+  return {self,prs:x.prs.map(p=>p.n).filter(n=>prText(n).low.includes(ql))};
+}
+function snippet(n){
+  const t=prText(n),i=t.low.indexOf(query.toLowerCase());if(i<0)return "";
+  const a=Math.max(0,i-40),b=Math.min(t.raw.length,i+query.length+60);
+  const pre=t.raw.slice(a,i),hit=t.raw.slice(i,i+query.length),post=t.raw.slice(i+query.length,b);
+  return `${a?"…":""}${esc(pre)}<mark>${esc(hit)}</mark>${esc(post)}${b<t.raw.length?"…":""}`.replace(/\s+/g," ");
+}
+function hits(h){
+  if(!query)return "";
+  const m=match(h);if(!m.prs.length)return "";
+  return `<span class="hits">${m.prs.slice(0,3).map(n=>`<span class="hit"><a href="https://github.com/${DATA.repo}/pull/${n}" target="_blank" rel="noopener noreferrer">#${n}</a> ${snippet(n)}</span>`).join("")}${m.prs.length>3?`<span class="note">ほか ${m.prs.length-3} 件の PR</span>`:""}</span>`;
+}
 function listFor(d){
-  if(query){const ql=query.toLowerCase();return Object.keys(H).filter(h=>(h+" "+H[h].text.join(" ")+" "+H[h].subject).toLowerCase().includes(ql))}
+  if(query)return Object.keys(H).filter(h=>{const m=match(h);return m.self||m.prs.length});
   if(d&&d.startsWith(SIDE+"/"))return bySubj[d.slice(SIDE.length+1)]||[];
   return byDec[d]||[];
 }
@@ -224,7 +250,7 @@ function select(d){
   render();
 }
 function head(d){
-  if(query)return `<div class="dhead"><div class="big">「${esc(query)}」を含む仮説</div><p class="note">すべての仮説から探している。左で決定を押すと戻る。</p></div>`;
+  if(query)return `<div class="dhead"><div class="big">「${esc(query)}」を含む仮説</div><p class="note">仮説の文と名前、結んだ PR の題と本文から探している。左で決定を押すと戻る。</p></div>`;
   if(d===SIDE)return `<div class="dhead"><div class="big">わき道</div><p class="note">どの決定の根拠にもしていない仮説。</p></div>`;
   if(d.startsWith(SIDE+"/"))return `<div class="dhead"><div class="meta">わき道</div><div class="big">${esc(d.slice(SIDE.length+1))}について</div></div>`;
   const x=D[d];
@@ -250,7 +276,8 @@ function reveal(d){
   for(let ul=r.closest("ul");ul&&ul.classList.contains("tree")===false;ul=ul.parentElement.closest("ul")){ul.hidden=false;const tw=ul.parentElement.querySelector(":scope>.row .tw");if(tw){tw.setAttribute("aria-expanded","true");tw.textContent="▾"}}
   r.scrollIntoView({block:"nearest"});
 }
-$("q").addEventListener("input",e=>{query=e.target.value.trim();only.clear();render()});
+let qt=null;
+$("q").addEventListener("input",e=>{clearTimeout(qt);qt=setTimeout(()=>{query=e.target.value.trim();only.clear();render()},200)});
 drawNav();
 const start=decodeURIComponent(location.hash.slice(1));
 const ok=k=>D[k]||k===SIDE||(k.startsWith(SIDE+"/")&&bySubj[k.slice(SIDE.length+1)]);
