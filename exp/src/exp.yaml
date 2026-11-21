@@ -18,6 +18,9 @@ nodes:
   refer_from_question: {display: 設問へ述べる（始点）, extends: quality, of: [v_refer, from], with: question}
   compose_from_question: {display: 設問へ部分になる（始点）, extends: quality, of: [v_compose, from], with: question}
   depend_from_label_token_positions: {display: 語のトークン位置へ依存する（始点）, extends: quality, of: [v_depend, from], with: label_token_positions}
+  depend_from_concept_expression: {display: 概念式へ依存する（始点）, extends: quality, of: [v_depend, from], with: concept_expression}
+  depend_from_sibling_pair: {display: 兄弟概念の組へ依存する（始点）, extends: quality, of: [v_depend, from], with: sibling_pair}
+  compose_to_hidden_state: {display: 隠れ状態へ部分になる（終点）, extends: quality, of: [v_compose, to], with: hidden_state}
   depend_from_preceding_definitions_set: {display: 前に並ぶ定義へ依存する（始点）, extends: quality, of: [v_depend, from], with: preceding_definitions_set}
   measure_from_verdict: {display: 判定へ測る（始点）, extends: quality, of: [v_measure, from], with: verdict}
   not_agree_to_against: {display: 反する観察へ一致する（否定）（終点）, extends: quality, of: [v_agree, to], with: against, neg: true}
@@ -244,6 +247,8 @@ nodes:
   teacher_examples: {display: 適用例を教師にする, extends: teaching, from: examples_only}
   teacher_both: {display: 定義文の暗唱と適用例の両方を教師にする, extends: teaching, from: def_and_examples}
   teacher_round_trip: {display: 抽象と具体の往復を教師にする, extends: teaching, from: round_trip_material}
+  teacher_round_trip_bound: {display: 兄弟概念の組を既に組み立てる層への、抽象と具体の往復の教示, extends: teacher_round_trip, to: layer_with_sibling}
+  teacher_round_trip_form: {display: 兄弟概念の組を組み立てない層への、抽象と具体の往復の教示, extends: teacher_round_trip, to: layer_without_sibling}
   taught_vector: {display: 教示で得られたベクトル, extends: realizable_entity, mod: {of: [teaching, new]}}
   teaching_material: {display: 教示の材料, form: [teaching, from]}
 
@@ -256,15 +261,23 @@ nodes:
   untaught_usage: {display: 教えていない使い方, extends: usage, mod: {of: [v_refer, to], with: teaching_material, neg: true}}
 
   layer: {display: 層, extends: artifact_compute_from, mod: compose_from_model}
+  layer_with_sibling: {display: 兄弟概念の組を既に組み立てる層, extends: layer, mod: {of: [v_compose, to], with: sibling_pair}}
+  layer_without_sibling: {display: 兄弟概念の組を組み立てない層, extends: layer, mod: {of: [v_compose, to], with: sibling_pair, neg: true}}
   open_weight_model: {display: 重みが公開されたモデル, extends: model, mod: {of: [v_expose, from], with: weights}}
   api_only_model: {display: APIでしか使えないモデル, extends: model, mod: {of: [v_expose, from], with: weights, neg: true}}
   attention: {display: 注意機構, extends: artifact_compute_from, mod: {of: [v_compose, from], with: layer}}
   residual_vector: {display: 残差の流れのベクトル, extends: summand, mod: {of: [v_depend, from], with: model}}
   layer_output: {display: 層の出力, extends: residual_vector, mod: {of: [v_compute, to], with: layer}}
   hidden_state: {display: 隠れ状態, extends: layer_output, mod: depend_from_label_token_positions}
+  wide_hidden_state: {display: 次元の多い隠れ状態, extends: hidden_state, mod: {of: [v_compose, to], with: component, at: {count: {gt: 1536}}}}
+  discrimination_dimension: {display: 弁別に要る次元の数, extends: quality_measure_to, mod: {of: [v_depend, to], with: sibling_discrimination}}
   state_shift: {display: 隠れ状態のずれ, extends: residual_vector, mod: {of: [v_sum, from], with: shifted_hidden_state}}
-  shifted_hidden_state: {display: ずれを足した隠れ状態, extends: residual_vector, mod: {of: [v_compose, to], with: hidden_state}}
+  shifted_hidden_state: {display: ずれを足した隠れ状態, extends: residual_vector, mod: compose_to_hidden_state}
   shift_unseen_by_layer: {display: 層から分けて見えない隠れ状態のずれ, extends: state_shift, mod: {of: [v_see, to], with: layer, neg: true}}
+  sibling_difference_vector: {display: 兄弟の概念ベクトルの差, extends: concept_vector, mod: depend_from_sibling_pair}
+  formula_part_direction: {display: 概念式の部品の向き, extends: state_shift, mod: depend_from_concept_expression}
+  output_word_direction: {display: 語を出す向き, extends: state_shift, mod: {of: [v_compute, to], with: word}}
+  state_feature_direction: {display: 隠れ状態を組み立てる特徴の向き, extends: state_shift, mod: compose_to_hidden_state}
   term_server: {display: 用語サーバー, extends: artifact, mod: {of: [v_judge_definition, from]}}
   model_design: {display: モデルについての設計, extends: information_entity_design_to, mod: {of: [v_refer, from], with: model}}
   information_entity_design_to: {display: 設計する先の情報, extends: information_entity, mod: design_to}
@@ -286,7 +299,7 @@ nodes:
   quality_measure_to: {display: 測る先の質, extends: quality, mod: {of: [v_measure, to]}}
   behavior_expression: {display: 狙った振る舞いの現れ, extends: quality_measure_to, mod: {of: [v_depend, from], with: state_shift}}
   task_performance: {display: 問いに答える課題の成績, extends: quality_measure_to, mod: {of: [v_depend, from], with: question}}
-  formalization_accuracy: {display: 形式言語で書いた文の正しさ, extends: quality_measure_to, mod: {of: [v_depend, from], with: concept_expression}}
+  formalization_accuracy: {display: 形式言語で書いた文の正しさ, extends: quality_measure_to, mod: depend_from_concept_expression}
   traceability: {display: 推論の根拠をたどれること, extends: quality_measure_to, mod: {of: [v_depend, from], with: depended_information}}
   structure_embedding: {display: 形式の構造から作った埋め込み, extends: information_entity, mod: {of: [v_compute, to], with: typed_graph}}
   type_check_result: {display: 型検査の結果, extends: information_entity, mod: {of: [v_compute, to], with: concept_expression}}
@@ -297,7 +310,7 @@ nodes:
   redefinition_success: {display: 再定義の成功, extends: quality_measure_to, mod: depend_from_redefinition}
   cross_usage_consistency: {display: 使い方をまたぐ一貫性, extends: quality_measure_to, mod: {of: [v_measure, from], with: usage, quant: all}}
   preceding_definition_effect: {display: 前に並ぶ定義による追従の低下, extends: quality_measure_to, mod: depend_from_preceding_definitions_set}
-  sibling_discrimination: {display: 兄弟概念の弁別, extends: quality_measure_to, mod: {of: [v_depend, from], with: sibling_pair}}
+  sibling_discrimination: {display: 兄弟概念の弁別, extends: quality_measure_to, mod: depend_from_sibling_pair}
 
   accuracy: {display: 正答率, extends: metric, mod: measure_from_verdict, axis: ratio}
   order_robust_accuracy: {display: 選択肢の順序に頑健な正答率, extends: metric, mod: {of: [v_measure, from], with: verdict_pair}, axis: ratio}
@@ -1171,6 +1184,18 @@ individuals:
   sys_concept_kind_pair_cond_n_both_N: {is: axis_value, val: {text: n_both_N}}
   sys_concept_kind_pair_cond_n_concept_N: {is: axis_value, val: {text: n_concept_N}}
   sys_concept_kind_pair_cond_rel_eq_f_N: {is: axis_value, val: {text: rel_eq_f_N}}
+  sys_law_without_domain: {is: measurement_family}
+  sys_law_without_domain_cond: {is: family_axis, val: {text: cond}}
+  sys_law_without_domain_cond_same_concept_D: {is: axis_value, val: {text: same_concept_D}}
+  sys_law_without_domain_cond_same_verb_D: {is: axis_value, val: {text: same_verb_D}}
+  sys_law_without_domain_cond_same_concept_C: {is: axis_value, val: {text: same_concept_C}}
+  sys_law_without_domain_cond_same_verb_C: {is: axis_value, val: {text: same_verb_C}}
+  sys_translation_by_display: {is: measurement_family}
+  sys_translation_by_display_cond: {is: family_axis, val: {text: cond}}
+  sys_translation_by_display_cond_same_rel_T: {is: axis_value, val: {text: same_rel_T}}
+  sys_translation_by_display_cond_same_viol_T: {is: axis_value, val: {text: same_viol_T}}
+  sys_translation_by_display_cond_same_rel_B: {is: axis_value, val: {text: same_rel_B}}
+  sys_translation_by_display_cond_same_viol_B: {is: axis_value, val: {text: same_viol_B}}
   sys_concept_kind_pair_fix: {is: measurement_family}
   sys_concept_kind_pair_fix_cond: {is: family_axis, val: {text: cond}}
   sys_concept_kind_pair_fix_cond_ec_fail_L: {is: axis_value, val: {text: ec_fail_L}}
@@ -1252,6 +1277,54 @@ individuals:
   sys_placement_in_laws_fix_cond_law_Q6: {is: axis_value, val: {text: law_Q6}}
   sys_placement_in_laws_fix_cond_other_Q6: {is: axis_value, val: {text: other_Q6}}
   sys_placement_in_laws_fix_cond_agree: {is: axis_value, val: {text: agree}}
+  sys_placement_without_domain: {is: measurement_family}
+  sys_placement_without_domain_cond: {is: family_axis, val: {text: cond}}
+  sys_placement_without_domain_cond_py_Q0: {is: axis_value, val: {text: py_Q0}}
+  sys_placement_without_domain_cond_law_Q0: {is: axis_value, val: {text: law_Q0}}
+  sys_placement_without_domain_cond_other_Q0: {is: axis_value, val: {text: other_Q0}}
+  sys_placement_without_domain_cond_py_Q1: {is: axis_value, val: {text: py_Q1}}
+  sys_placement_without_domain_cond_law_Q1: {is: axis_value, val: {text: law_Q1}}
+  sys_placement_without_domain_cond_other_Q1: {is: axis_value, val: {text: other_Q1}}
+  sys_placement_without_domain_cond_py_Q2: {is: axis_value, val: {text: py_Q2}}
+  sys_placement_without_domain_cond_law_Q2: {is: axis_value, val: {text: law_Q2}}
+  sys_placement_without_domain_cond_other_Q2: {is: axis_value, val: {text: other_Q2}}
+  sys_placement_without_domain_cond_py_Q3: {is: axis_value, val: {text: py_Q3}}
+  sys_placement_without_domain_cond_law_Q3: {is: axis_value, val: {text: law_Q3}}
+  sys_placement_without_domain_cond_other_Q3: {is: axis_value, val: {text: other_Q3}}
+  sys_placement_without_domain_cond_py_Q4: {is: axis_value, val: {text: py_Q4}}
+  sys_placement_without_domain_cond_law_Q4: {is: axis_value, val: {text: law_Q4}}
+  sys_placement_without_domain_cond_other_Q4: {is: axis_value, val: {text: other_Q4}}
+  sys_placement_without_domain_cond_py_Q5: {is: axis_value, val: {text: py_Q5}}
+  sys_placement_without_domain_cond_law_Q5: {is: axis_value, val: {text: law_Q5}}
+  sys_placement_without_domain_cond_other_Q5: {is: axis_value, val: {text: other_Q5}}
+  sys_placement_without_domain_cond_py_Q6: {is: axis_value, val: {text: py_Q6}}
+  sys_placement_without_domain_cond_law_Q6: {is: axis_value, val: {text: law_Q6}}
+  sys_placement_without_domain_cond_other_Q6: {is: axis_value, val: {text: other_Q6}}
+  sys_placement_without_domain_cond_agree: {is: axis_value, val: {text: agree}}
+  sys_placement_without_domain_fix: {is: measurement_family}
+  sys_placement_without_domain_fix_cond: {is: family_axis, val: {text: cond}}
+  sys_placement_without_domain_fix_cond_py_Q0: {is: axis_value, val: {text: py_Q0}}
+  sys_placement_without_domain_fix_cond_law_Q0: {is: axis_value, val: {text: law_Q0}}
+  sys_placement_without_domain_fix_cond_other_Q0: {is: axis_value, val: {text: other_Q0}}
+  sys_placement_without_domain_fix_cond_py_Q1: {is: axis_value, val: {text: py_Q1}}
+  sys_placement_without_domain_fix_cond_law_Q1: {is: axis_value, val: {text: law_Q1}}
+  sys_placement_without_domain_fix_cond_other_Q1: {is: axis_value, val: {text: other_Q1}}
+  sys_placement_without_domain_fix_cond_py_Q2: {is: axis_value, val: {text: py_Q2}}
+  sys_placement_without_domain_fix_cond_law_Q2: {is: axis_value, val: {text: law_Q2}}
+  sys_placement_without_domain_fix_cond_other_Q2: {is: axis_value, val: {text: other_Q2}}
+  sys_placement_without_domain_fix_cond_py_Q3: {is: axis_value, val: {text: py_Q3}}
+  sys_placement_without_domain_fix_cond_law_Q3: {is: axis_value, val: {text: law_Q3}}
+  sys_placement_without_domain_fix_cond_other_Q3: {is: axis_value, val: {text: other_Q3}}
+  sys_placement_without_domain_fix_cond_py_Q4: {is: axis_value, val: {text: py_Q4}}
+  sys_placement_without_domain_fix_cond_law_Q4: {is: axis_value, val: {text: law_Q4}}
+  sys_placement_without_domain_fix_cond_other_Q4: {is: axis_value, val: {text: other_Q4}}
+  sys_placement_without_domain_fix_cond_py_Q5: {is: axis_value, val: {text: py_Q5}}
+  sys_placement_without_domain_fix_cond_law_Q5: {is: axis_value, val: {text: law_Q5}}
+  sys_placement_without_domain_fix_cond_other_Q5: {is: axis_value, val: {text: other_Q5}}
+  sys_placement_without_domain_fix_cond_py_Q6: {is: axis_value, val: {text: py_Q6}}
+  sys_placement_without_domain_fix_cond_law_Q6: {is: axis_value, val: {text: law_Q6}}
+  sys_placement_without_domain_fix_cond_other_Q6: {is: axis_value, val: {text: other_Q6}}
+  sys_placement_without_domain_fix_cond_agree: {is: axis_value, val: {text: agree}}
   sys_cscl_self_hosting: {is: measurement_family}
   sys_cscl_self_hosting_cond: {is: family_axis, val: {text: cond}}
   sys_cscl_self_hosting_cond_n_sites: {is: axis_value, val: {text: n_sites}}
@@ -1753,6 +1826,14 @@ individuals:
   sys_refer_by_exact_holds_cond_missing: {is: axis_value, val: {text: missing}}
   sys_refer_by_exact_holds_cond_extra: {is: axis_value, val: {text: extra}}
   sys_refer_by_exact_holds_cond_n_form_300: {is: axis_value, val: {text: n_form_300}}
+  sys_checker_words_swap: {is: measurement_family}
+  sys_checker_words_swap_cond: {is: family_axis, val: {text: cond}}
+  sys_checker_words_swap_cond_same_errors: {is: axis_value, val: {text: same_errors}}
+  sys_checker_words_swap_cond_same_roles: {is: axis_value, val: {text: same_roles}}
+  sys_checker_words_swap_cond_same_dm: {is: axis_value, val: {text: same_dm}}
+  sys_checker_words_swap_cond_same_out: {is: axis_value, val: {text: same_out}}
+  sys_checker_words_swap_cond_n_disagree: {is: axis_value, val: {text: n_disagree}}
+  sys_checker_words_swap_cond_n_site_hit: {is: axis_value, val: {text: n_site_hit}}
   sys_verb_shape_two_phase: {is: measurement_family}
   sys_verb_shape_two_phase_cond: {is: family_axis, val: {text: cond}}
   sys_verb_shape_two_phase_cond_build_ok: {is: axis_value, val: {text: build_ok}}
@@ -3182,6 +3263,20 @@ individuals:
   b_merge_verdict_by_spec: {is: item_queued}
   h_round_trip_raises_sibling: {is: hyp_refuted}
   b_round_trip_raises_sibling: {is: item_done}
+  h_round_trip_bounds_present: {is: hyp_untested}
+  b_round_trip_bounds_present: {is: item_queued}
+  h_round_trip_forms_absent: {is: hyp_untested}
+  b_round_trip_forms_absent: {is: item_queued}
+  h_prior_claims_supply_siblings: {is: hyp_untested}
+  h_sibling_difference_on_part: {is: hyp_untested}
+  b_sibling_difference_on_part: {is: item_queued}
+  h_part_named_by_output_word: {is: hyp_untested}
+  b_part_named_by_output_word: {is: item_queued}
+  h_part_named_by_state_feature: {is: hyp_untested}
+  b_part_named_by_state_feature: {is: item_queued}
+  h_sibling_discrimination_on_part: {is: hyp_untested}
+  b_sibling_discrimination_on_part: {is: item_queued}
+  b_prior_claims_supply_siblings: {is: item_queued}
   h_attribution_logged: {is: hyp_refuted}
   b_attribution_logged: {is: item_done}
   o_sys_attribution_absent: {is: observation}
@@ -3452,6 +3547,14 @@ individuals:
   b_ambiguity_is_region_choice: {is: item_queued}
   h_convex_prior_resists_redefinition: {is: hyp_untested}
   b_convex_prior_resists_redefinition: {is: item_queued}
+  h_width_raises_sibling_discrimination: {is: hyp_untested}
+  b_width_raises_sibling_discrimination: {is: item_queued}
+  h_sibling_discrimination_relies_on_width: {is: hyp_untested}
+  b_sibling_discrimination_relies_on_width: {is: item_queued}
+  h_dimension_from_expression_parts: {is: hyp_untested}
+  b_dimension_from_expression_parts: {is: item_queued}
+  h_sibling_discrimination_on_region: {is: hyp_untested}
+  b_sibling_discrimination_on_region: {is: item_queued}
   h_state_unique_display: {is: hyp_untested}
   b_state_unique_display: {is: item_queued}
   h_axis_value_from_result: {is: hyp_untested}
@@ -6135,6 +6238,32 @@ facts:
   - {is: v_spell, from: sys_concept_kind_pair_fix_cond_ec_lines_N, to: ec_lines_N}
   - {is: v_entry_of, from: '{cond}', to: sys_concept_kind_pair_fix}
   - {is: v_metric_of, from: sys_concept_kind_pair_fix, to: mean_value}
+  - {is: v_file_of, from: sys_law_without_domain.json, to: sys_law_without_domain}
+  - {is: v_rows_of, from: [rows], to: sys_law_without_domain}
+  - {is: v_axis_of, from: sys_law_without_domain_cond, to: sys_law_without_domain}
+  - {is: v_value_of, from: sys_law_without_domain_cond_same_concept_D, to: sys_law_without_domain_cond}
+  - {is: v_spell, from: sys_law_without_domain_cond_same_concept_D, to: same_concept_D}
+  - {is: v_value_of, from: sys_law_without_domain_cond_same_verb_D, to: sys_law_without_domain_cond}
+  - {is: v_spell, from: sys_law_without_domain_cond_same_verb_D, to: same_verb_D}
+  - {is: v_value_of, from: sys_law_without_domain_cond_same_concept_C, to: sys_law_without_domain_cond}
+  - {is: v_spell, from: sys_law_without_domain_cond_same_concept_C, to: same_concept_C}
+  - {is: v_value_of, from: sys_law_without_domain_cond_same_verb_C, to: sys_law_without_domain_cond}
+  - {is: v_spell, from: sys_law_without_domain_cond_same_verb_C, to: same_verb_C}
+  - {is: v_entry_of, from: '{cond}', to: sys_law_without_domain}
+  - {is: v_metric_of, from: sys_law_without_domain, to: mean_value}
+  - {is: v_file_of, from: sys_translation_by_display.json, to: sys_translation_by_display}
+  - {is: v_rows_of, from: [rows], to: sys_translation_by_display}
+  - {is: v_axis_of, from: sys_translation_by_display_cond, to: sys_translation_by_display}
+  - {is: v_value_of, from: sys_translation_by_display_cond_same_rel_T, to: sys_translation_by_display_cond}
+  - {is: v_spell, from: sys_translation_by_display_cond_same_rel_T, to: same_rel_T}
+  - {is: v_value_of, from: sys_translation_by_display_cond_same_viol_T, to: sys_translation_by_display_cond}
+  - {is: v_spell, from: sys_translation_by_display_cond_same_viol_T, to: same_viol_T}
+  - {is: v_value_of, from: sys_translation_by_display_cond_same_rel_B, to: sys_translation_by_display_cond}
+  - {is: v_spell, from: sys_translation_by_display_cond_same_rel_B, to: same_rel_B}
+  - {is: v_value_of, from: sys_translation_by_display_cond_same_viol_B, to: sys_translation_by_display_cond}
+  - {is: v_spell, from: sys_translation_by_display_cond_same_viol_B, to: same_viol_B}
+  - {is: v_entry_of, from: '{cond}', to: sys_translation_by_display}
+  - {is: v_metric_of, from: sys_translation_by_display, to: mean_value}
   - {is: v_file_of, from: sys_negation_formula.json, to: sys_negation_formula}
   - {is: v_rows_of, from: [rows], to: sys_negation_formula}
   - {is: v_axis_of, from: sys_negation_formula_cond, to: sys_negation_formula}
@@ -6284,6 +6413,104 @@ facts:
   - {is: v_spell, from: sys_placement_in_laws_fix_cond_agree, to: agree}
   - {is: v_entry_of, from: '{cond}', to: sys_placement_in_laws_fix}
   - {is: v_metric_of, from: sys_placement_in_laws_fix, to: mean_value}
+  - {is: v_file_of, from: sys_placement_without_domain.json, to: sys_placement_without_domain}
+  - {is: v_rows_of, from: [rows], to: sys_placement_without_domain}
+  - {is: v_axis_of, from: sys_placement_without_domain_cond, to: sys_placement_without_domain}
+  - {is: v_value_of, from: sys_placement_without_domain_cond_py_Q0, to: sys_placement_without_domain_cond}
+  - {is: v_spell, from: sys_placement_without_domain_cond_py_Q0, to: py_Q0}
+  - {is: v_value_of, from: sys_placement_without_domain_cond_law_Q0, to: sys_placement_without_domain_cond}
+  - {is: v_spell, from: sys_placement_without_domain_cond_law_Q0, to: law_Q0}
+  - {is: v_value_of, from: sys_placement_without_domain_cond_other_Q0, to: sys_placement_without_domain_cond}
+  - {is: v_spell, from: sys_placement_without_domain_cond_other_Q0, to: other_Q0}
+  - {is: v_value_of, from: sys_placement_without_domain_cond_py_Q1, to: sys_placement_without_domain_cond}
+  - {is: v_spell, from: sys_placement_without_domain_cond_py_Q1, to: py_Q1}
+  - {is: v_value_of, from: sys_placement_without_domain_cond_law_Q1, to: sys_placement_without_domain_cond}
+  - {is: v_spell, from: sys_placement_without_domain_cond_law_Q1, to: law_Q1}
+  - {is: v_value_of, from: sys_placement_without_domain_cond_other_Q1, to: sys_placement_without_domain_cond}
+  - {is: v_spell, from: sys_placement_without_domain_cond_other_Q1, to: other_Q1}
+  - {is: v_value_of, from: sys_placement_without_domain_cond_py_Q2, to: sys_placement_without_domain_cond}
+  - {is: v_spell, from: sys_placement_without_domain_cond_py_Q2, to: py_Q2}
+  - {is: v_value_of, from: sys_placement_without_domain_cond_law_Q2, to: sys_placement_without_domain_cond}
+  - {is: v_spell, from: sys_placement_without_domain_cond_law_Q2, to: law_Q2}
+  - {is: v_value_of, from: sys_placement_without_domain_cond_other_Q2, to: sys_placement_without_domain_cond}
+  - {is: v_spell, from: sys_placement_without_domain_cond_other_Q2, to: other_Q2}
+  - {is: v_value_of, from: sys_placement_without_domain_cond_py_Q3, to: sys_placement_without_domain_cond}
+  - {is: v_spell, from: sys_placement_without_domain_cond_py_Q3, to: py_Q3}
+  - {is: v_value_of, from: sys_placement_without_domain_cond_law_Q3, to: sys_placement_without_domain_cond}
+  - {is: v_spell, from: sys_placement_without_domain_cond_law_Q3, to: law_Q3}
+  - {is: v_value_of, from: sys_placement_without_domain_cond_other_Q3, to: sys_placement_without_domain_cond}
+  - {is: v_spell, from: sys_placement_without_domain_cond_other_Q3, to: other_Q3}
+  - {is: v_value_of, from: sys_placement_without_domain_cond_py_Q4, to: sys_placement_without_domain_cond}
+  - {is: v_spell, from: sys_placement_without_domain_cond_py_Q4, to: py_Q4}
+  - {is: v_value_of, from: sys_placement_without_domain_cond_law_Q4, to: sys_placement_without_domain_cond}
+  - {is: v_spell, from: sys_placement_without_domain_cond_law_Q4, to: law_Q4}
+  - {is: v_value_of, from: sys_placement_without_domain_cond_other_Q4, to: sys_placement_without_domain_cond}
+  - {is: v_spell, from: sys_placement_without_domain_cond_other_Q4, to: other_Q4}
+  - {is: v_value_of, from: sys_placement_without_domain_cond_py_Q5, to: sys_placement_without_domain_cond}
+  - {is: v_spell, from: sys_placement_without_domain_cond_py_Q5, to: py_Q5}
+  - {is: v_value_of, from: sys_placement_without_domain_cond_law_Q5, to: sys_placement_without_domain_cond}
+  - {is: v_spell, from: sys_placement_without_domain_cond_law_Q5, to: law_Q5}
+  - {is: v_value_of, from: sys_placement_without_domain_cond_other_Q5, to: sys_placement_without_domain_cond}
+  - {is: v_spell, from: sys_placement_without_domain_cond_other_Q5, to: other_Q5}
+  - {is: v_value_of, from: sys_placement_without_domain_cond_py_Q6, to: sys_placement_without_domain_cond}
+  - {is: v_spell, from: sys_placement_without_domain_cond_py_Q6, to: py_Q6}
+  - {is: v_value_of, from: sys_placement_without_domain_cond_law_Q6, to: sys_placement_without_domain_cond}
+  - {is: v_spell, from: sys_placement_without_domain_cond_law_Q6, to: law_Q6}
+  - {is: v_value_of, from: sys_placement_without_domain_cond_other_Q6, to: sys_placement_without_domain_cond}
+  - {is: v_spell, from: sys_placement_without_domain_cond_other_Q6, to: other_Q6}
+  - {is: v_value_of, from: sys_placement_without_domain_cond_agree, to: sys_placement_without_domain_cond}
+  - {is: v_spell, from: sys_placement_without_domain_cond_agree, to: agree}
+  - {is: v_entry_of, from: '{cond}', to: sys_placement_without_domain}
+  - {is: v_metric_of, from: sys_placement_without_domain, to: mean_value}
+  - {is: v_file_of, from: sys_placement_without_domain_fix.json, to: sys_placement_without_domain_fix}
+  - {is: v_rows_of, from: [rows], to: sys_placement_without_domain_fix}
+  - {is: v_axis_of, from: sys_placement_without_domain_fix_cond, to: sys_placement_without_domain_fix}
+  - {is: v_value_of, from: sys_placement_without_domain_fix_cond_py_Q0, to: sys_placement_without_domain_fix_cond}
+  - {is: v_spell, from: sys_placement_without_domain_fix_cond_py_Q0, to: py_Q0}
+  - {is: v_value_of, from: sys_placement_without_domain_fix_cond_law_Q0, to: sys_placement_without_domain_fix_cond}
+  - {is: v_spell, from: sys_placement_without_domain_fix_cond_law_Q0, to: law_Q0}
+  - {is: v_value_of, from: sys_placement_without_domain_fix_cond_other_Q0, to: sys_placement_without_domain_fix_cond}
+  - {is: v_spell, from: sys_placement_without_domain_fix_cond_other_Q0, to: other_Q0}
+  - {is: v_value_of, from: sys_placement_without_domain_fix_cond_py_Q1, to: sys_placement_without_domain_fix_cond}
+  - {is: v_spell, from: sys_placement_without_domain_fix_cond_py_Q1, to: py_Q1}
+  - {is: v_value_of, from: sys_placement_without_domain_fix_cond_law_Q1, to: sys_placement_without_domain_fix_cond}
+  - {is: v_spell, from: sys_placement_without_domain_fix_cond_law_Q1, to: law_Q1}
+  - {is: v_value_of, from: sys_placement_without_domain_fix_cond_other_Q1, to: sys_placement_without_domain_fix_cond}
+  - {is: v_spell, from: sys_placement_without_domain_fix_cond_other_Q1, to: other_Q1}
+  - {is: v_value_of, from: sys_placement_without_domain_fix_cond_py_Q2, to: sys_placement_without_domain_fix_cond}
+  - {is: v_spell, from: sys_placement_without_domain_fix_cond_py_Q2, to: py_Q2}
+  - {is: v_value_of, from: sys_placement_without_domain_fix_cond_law_Q2, to: sys_placement_without_domain_fix_cond}
+  - {is: v_spell, from: sys_placement_without_domain_fix_cond_law_Q2, to: law_Q2}
+  - {is: v_value_of, from: sys_placement_without_domain_fix_cond_other_Q2, to: sys_placement_without_domain_fix_cond}
+  - {is: v_spell, from: sys_placement_without_domain_fix_cond_other_Q2, to: other_Q2}
+  - {is: v_value_of, from: sys_placement_without_domain_fix_cond_py_Q3, to: sys_placement_without_domain_fix_cond}
+  - {is: v_spell, from: sys_placement_without_domain_fix_cond_py_Q3, to: py_Q3}
+  - {is: v_value_of, from: sys_placement_without_domain_fix_cond_law_Q3, to: sys_placement_without_domain_fix_cond}
+  - {is: v_spell, from: sys_placement_without_domain_fix_cond_law_Q3, to: law_Q3}
+  - {is: v_value_of, from: sys_placement_without_domain_fix_cond_other_Q3, to: sys_placement_without_domain_fix_cond}
+  - {is: v_spell, from: sys_placement_without_domain_fix_cond_other_Q3, to: other_Q3}
+  - {is: v_value_of, from: sys_placement_without_domain_fix_cond_py_Q4, to: sys_placement_without_domain_fix_cond}
+  - {is: v_spell, from: sys_placement_without_domain_fix_cond_py_Q4, to: py_Q4}
+  - {is: v_value_of, from: sys_placement_without_domain_fix_cond_law_Q4, to: sys_placement_without_domain_fix_cond}
+  - {is: v_spell, from: sys_placement_without_domain_fix_cond_law_Q4, to: law_Q4}
+  - {is: v_value_of, from: sys_placement_without_domain_fix_cond_other_Q4, to: sys_placement_without_domain_fix_cond}
+  - {is: v_spell, from: sys_placement_without_domain_fix_cond_other_Q4, to: other_Q4}
+  - {is: v_value_of, from: sys_placement_without_domain_fix_cond_py_Q5, to: sys_placement_without_domain_fix_cond}
+  - {is: v_spell, from: sys_placement_without_domain_fix_cond_py_Q5, to: py_Q5}
+  - {is: v_value_of, from: sys_placement_without_domain_fix_cond_law_Q5, to: sys_placement_without_domain_fix_cond}
+  - {is: v_spell, from: sys_placement_without_domain_fix_cond_law_Q5, to: law_Q5}
+  - {is: v_value_of, from: sys_placement_without_domain_fix_cond_other_Q5, to: sys_placement_without_domain_fix_cond}
+  - {is: v_spell, from: sys_placement_without_domain_fix_cond_other_Q5, to: other_Q5}
+  - {is: v_value_of, from: sys_placement_without_domain_fix_cond_py_Q6, to: sys_placement_without_domain_fix_cond}
+  - {is: v_spell, from: sys_placement_without_domain_fix_cond_py_Q6, to: py_Q6}
+  - {is: v_value_of, from: sys_placement_without_domain_fix_cond_law_Q6, to: sys_placement_without_domain_fix_cond}
+  - {is: v_spell, from: sys_placement_without_domain_fix_cond_law_Q6, to: law_Q6}
+  - {is: v_value_of, from: sys_placement_without_domain_fix_cond_other_Q6, to: sys_placement_without_domain_fix_cond}
+  - {is: v_spell, from: sys_placement_without_domain_fix_cond_other_Q6, to: other_Q6}
+  - {is: v_value_of, from: sys_placement_without_domain_fix_cond_agree, to: sys_placement_without_domain_fix_cond}
+  - {is: v_spell, from: sys_placement_without_domain_fix_cond_agree, to: agree}
+  - {is: v_entry_of, from: '{cond}', to: sys_placement_without_domain_fix}
+  - {is: v_metric_of, from: sys_placement_without_domain_fix, to: mean_value}
   - {is: v_file_of, from: sys_cscl_self_hosting.json, to: sys_cscl_self_hosting}
   - {is: v_rows_of, from: [rows], to: sys_cscl_self_hosting}
   - {is: v_axis_of, from: sys_cscl_self_hosting_cond, to: sys_cscl_self_hosting}
@@ -7321,6 +7548,22 @@ facts:
   - {is: v_spell, from: sys_refer_by_exact_holds_cond_n_form_300, to: n_form_300}
   - {is: v_entry_of, from: '{cond}', to: sys_refer_by_exact_holds}
   - {is: v_metric_of, from: sys_refer_by_exact_holds, to: mean_value}
+  - {is: v_file_of, from: sys_checker_words_swap.json, to: sys_checker_words_swap}
+  - {is: v_axis_of, from: sys_checker_words_swap_cond, to: sys_checker_words_swap}
+  - {is: v_value_of, from: sys_checker_words_swap_cond_same_errors, to: sys_checker_words_swap_cond}
+  - {is: v_spell, from: sys_checker_words_swap_cond_same_errors, to: same_errors}
+  - {is: v_value_of, from: sys_checker_words_swap_cond_same_roles, to: sys_checker_words_swap_cond}
+  - {is: v_spell, from: sys_checker_words_swap_cond_same_roles, to: same_roles}
+  - {is: v_value_of, from: sys_checker_words_swap_cond_same_dm, to: sys_checker_words_swap_cond}
+  - {is: v_spell, from: sys_checker_words_swap_cond_same_dm, to: same_dm}
+  - {is: v_value_of, from: sys_checker_words_swap_cond_same_out, to: sys_checker_words_swap_cond}
+  - {is: v_spell, from: sys_checker_words_swap_cond_same_out, to: same_out}
+  - {is: v_value_of, from: sys_checker_words_swap_cond_n_disagree, to: sys_checker_words_swap_cond}
+  - {is: v_spell, from: sys_checker_words_swap_cond_n_disagree, to: n_disagree}
+  - {is: v_value_of, from: sys_checker_words_swap_cond_n_site_hit, to: sys_checker_words_swap_cond}
+  - {is: v_spell, from: sys_checker_words_swap_cond_n_site_hit, to: n_site_hit}
+  - {is: v_entry_of, from: '{cond}', to: sys_checker_words_swap}
+  - {is: v_metric_of, from: sys_checker_words_swap, to: mean_value}
   - {is: v_file_of, from: sys_verb_shape_two_phase.json, to: sys_verb_shape_two_phase}
   - {is: v_rows_of, from: [rows], to: sys_verb_shape_two_phase}
   - {is: v_axis_of, from: sys_verb_shape_two_phase_cond, to: sys_verb_shape_two_phase}
@@ -9347,6 +9590,28 @@ facts:
   - {is: v_refer, from: o_e33_round_margin_below_both, to: {is: v_come_before, from: e33_round_trip_sibling.round.mean_margin.mean_value, to: e33_round_trip_sibling.both.mean_margin.mean_value}}
   - {is: v_contradict, from: o_e33_round_margin_below_both, to: h_round_trip_raises_sibling}
   - {is: v_refer, from: o_e33_round_below_none, to: {is: v_come_before, from: e33_round_trip_sibling.round.acc_both.mean_value, to: e33_round_trip_sibling.none.acc_both.mean_value}}
+  - {is: v_refer, from: h_round_trip_bounds_present, to: {is: v_raise, from: teacher_round_trip_bound, to: sibling_discrimination}}
+  - {is: v_check, from: b_round_trip_bounds_present, to: h_round_trip_bounds_present}
+  - {is: v_ground, from: d_consolidation_in_vector, to: h_round_trip_bounds_present}
+  - {is: v_refer, from: h_round_trip_forms_absent, to: {is: v_raise, from: teacher_round_trip_form, to: sibling_discrimination}}
+  - {is: v_check, from: b_round_trip_forms_absent, to: h_round_trip_forms_absent}
+  - {is: v_ground, from: d_consolidation_in_vector, to: h_round_trip_forms_absent}
+  - {is: v_refer, from: h_prior_claims_supply_siblings, to: {is: v_rely, from: sibling_discrimination, to: prior_claim}}
+  - {is: v_check, from: b_prior_claims_supply_siblings, to: h_prior_claims_supply_siblings}
+  - {is: v_ground, from: d_consolidation_in_vector, to: h_prior_claims_supply_siblings}
+  - {is: v_ground, from: d_road_region, to: h_prior_claims_supply_siblings}
+  - {is: v_refer, from: h_sibling_difference_on_part, to: {is: v_rely, from: sibling_difference_vector, to: formula_part_direction}}
+  - {is: v_check, from: b_sibling_difference_on_part, to: h_sibling_difference_on_part}
+  - {is: v_ground, from: d_consolidation_in_vector, to: h_sibling_difference_on_part}
+  - {is: v_refer, from: h_part_named_by_output_word, to: {is: v_rely, from: formula_part_direction, to: output_word_direction}}
+  - {is: v_check, from: b_part_named_by_output_word, to: h_part_named_by_output_word}
+  - {is: v_ground, from: d_consolidation_in_vector, to: h_part_named_by_output_word}
+  - {is: v_refer, from: h_part_named_by_state_feature, to: {is: v_rely, from: formula_part_direction, to: state_feature_direction}}
+  - {is: v_check, from: b_part_named_by_state_feature, to: h_part_named_by_state_feature}
+  - {is: v_ground, from: d_consolidation_in_vector, to: h_part_named_by_state_feature}
+  - {is: v_refer, from: h_sibling_discrimination_on_part, to: {is: v_rely, from: sibling_discrimination, to: formula_part_direction}}
+  - {is: v_check, from: b_sibling_discrimination_on_part, to: h_sibling_discrimination_on_part}
+  - {is: v_ground, from: d_consolidation_in_vector, to: h_sibling_discrimination_on_part}
   - {is: v_refer, from: h_attribution_logged, to: {is: v_agree, from: attribution, to: operator_speech}}
   - {is: v_check, from: b_attribution_logged, to: h_attribution_logged}
   - {is: v_refer, from: o_sys_attribution_absent, to: {is: v_come_after, from: sys_attribution.n_absent.mean_value, to: 0}}
@@ -9804,6 +10069,18 @@ facts:
   - {is: v_refer, from: h_convex_prior_resists_redefinition, to: {is: v_lower, from: midpoint_membership, to: redefinition_following}}
   - {is: v_check, from: b_convex_prior_resists_redefinition, to: h_convex_prior_resists_redefinition}
   - {is: v_ground, from: d_road_region, to: h_convex_prior_resists_redefinition}
+  - {is: v_refer, from: h_width_raises_sibling_discrimination, to: {is: v_raise, from: wide_hidden_state, to: sibling_discrimination}}
+  - {is: v_check, from: b_width_raises_sibling_discrimination, to: h_width_raises_sibling_discrimination}
+  - {is: v_ground, from: d_road_region, to: h_width_raises_sibling_discrimination}
+  - {is: v_refer, from: h_sibling_discrimination_relies_on_width, to: {is: v_rely, from: sibling_discrimination, to: wide_hidden_state}}
+  - {is: v_check, from: b_sibling_discrimination_relies_on_width, to: h_sibling_discrimination_relies_on_width}
+  - {is: v_ground, from: d_road_region, to: h_sibling_discrimination_relies_on_width}
+  - {is: v_refer, from: h_dimension_from_expression_parts, to: {is: v_depend, from: discrimination_dimension, to: expression_part}}
+  - {is: v_check, from: b_dimension_from_expression_parts, to: h_dimension_from_expression_parts}
+  - {is: v_ground, from: d_road_region, to: h_dimension_from_expression_parts}
+  - {is: v_refer, from: h_sibling_discrimination_on_region, to: {is: v_rely, from: sibling_discrimination, to: midpoint_membership}}
+  - {is: v_check, from: b_sibling_discrimination_on_region, to: h_sibling_discrimination_on_region}
+  - {is: v_ground, from: d_road_region, to: h_sibling_discrimination_on_region}
   - {is: v_refer, from: h_state_unique_display, to: {is: v_refer, from: hidden_state, to: syntax.display, at: {count: 1}}}
   - {is: v_check, from: b_state_unique_display, to: h_state_unique_display}
   - {is: v_ground, from: d_goal, to: h_state_unique_display}
