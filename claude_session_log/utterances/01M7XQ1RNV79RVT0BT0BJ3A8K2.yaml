@@ -1,0 +1,53 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-21T00:10:41.723Z（UTC）
+individuals:
+  01M7XQ1RNV79RVT0BT0BJ3A8K2:
+    is: model_utterance
+    display: 発言 3305
+    val:
+      order: 3305
+      text: |
+        extends の成り立ちを、会話の記録と git から読み返しました。オブジェクト指向と記述論理の歴史に照らすと、詰まりの理由に説明がつきました。動詞は記述論理でいう「原始概念」として振る舞っているので、自分の欄から親を導けないのは当然と読めます。
+
+        **あなたが extends を作ったときの前後関係**
+        - **11-13**: 出発点の課題は「概念の分化と精緻化、発達系譜の記憶機構がない」ことでした。設計は類種差で、抽象は上位として整理し、具体は修飾の合成で定義します。
+        - **11-14 昼**: 「概念にはツリーがあり、ツリーから識別子を取り出す」。木が先にあり、識別子はそこから取り出す、という順序でした。
+        - **11-14 22:46**: 「is ではなく extends の方が概念に近い。オブジェクト指向の継承とほぼイコール（直観）」。これを受けて Claude は、「上書きのない継承」として改名しました。
+        - **11-15**: 「型階層を降りるにつれて限定が単調に増えることを法則で強制する。そうしないと具体概念を抽象に置けてしまう」。これで extends が、検査のための骨組みにもなりました。
+        - **11-17**: 法則 placed_deduced で、動詞でない概念は定義から位置を導くことになりました。動詞だけは、この時点で導く対象から外れています。
+
+        **歴史から取れる含意**
+        - **記述論理の KL-ONE（1983）**: 概念を、必要条件しか持たない「原始」と、必要十分条件を持つ「定義済み」に分けます。分類器が位置を導けるのは定義済みの概念だけで、原始の位置は宣言するしかありません。
+          - この体系の名詞は定義済みにあたり、だから placed_deduced で導けます。
+          - 動詞は原始にあたります。#561〜#574 の反証は、まさにこの壁でした。
+        - **Rector の正規化（2003）**: 宣言は「原始の骨格」、つまり親が一つずつの木に限ります。多重の親は推論に任せます。
+          - 宣言を最小にしたいという考え方は、識別子化の方向と合います。
+        - **Cook ら（1990）「継承は部分型ではない」**: 欄を受け継ぐこと（再利用）と、置き換えられること（包含）は別の関係です。
+          - 動詞の extends は、包含より「欄を受け継ぐ」役割を多く担っていました。親を決める情報が、子の書いていない受け継いだ欄にあったのはそのためです。
+          - 登録済みの h_verbs_state_own_kind_mod は、この見方では「原始の動詞を、欄を全部書いた定義済みに変える」操作にあたります。
+
+        **新しく登録した仮説（#575、登録だけ。識別子化に結んである）**
+        - **h_verb_extends_primitive**: 動詞の extends は、自分の欄の関数ではない。
+          - 自分で書いた欄がすべて同じなのに、書いた extends が違う動詞の組を数えます。1 組でもあれば、自分の欄から導く筋は原理的に閉じます。
+          - 一度数えるだけで済み、決着がつきます。そこで、次の周回では予定していた #569 より先にこちらを確かめます。
+        - **h_concept_extends_deduced**: 名詞（動詞でない概念）の extends は、定義から決まるので書かなくてよい。
+          - 書いた extends が導いた位置と違う名詞が 0 個なら、名詞の extends は削れます。
+
+        **決めてほしいこと（方向そのものなので、ここで聞きます）**
+        動詞の extends を、どう扱うかです。最初の課題にあった「分化の系譜」を記録するもの、つまり宣言する原始の骨格として残しますか。それとも、動詞にも欄を全部書かせて、定義済みに寄せますか。
+        - 前者なら、動詞の extends は「書くべき情報」として認め、親が一つの木に絞れるかを確かめに行きます。
+        - 後者なら、h_verbs_state_own_kind_mod を確かめに行きます。
+
+        Sources:
+        - [Classification in the KL-ONE Knowledge Representation System (IJCAI 1983)](https://ijcai.org/proceedings/1983/76)
+        - [KL-ONE (Wikipedia)](https://en.wikipedia.org/wiki/KL-ONE)
+        - [LOOM course notes](https://www.isi.edu/websites/LOOM/documentation/loom-course/loom-course.pdf)
+        - [Rector, Modularisation / Untangling taxonomies](https://www.cs.nmsu.edu/~tson/classes/fall06-479/rector-k-cap-untangling-taxonomies-web.pdf)
+        - [Seidenberg & Rector, Web Ontology Segmentation (WWW 2006)](https://archives.iw3c2.org/www2006/programme/files/xhtml/4026/4026-seidenberg.html)
+        - [Normalization pattern (ODP repository)](https://odpa.github.io/patterns-repository/Normalization/Normalization)
+        - [Cook, Hill, Canning, Inheritance is not subtyping (POPL 1990)](https://www.cs.utexas.edu/~wcook/papers/InheritanceSubtyping90/CookPOPL90.pdf)
+        - [arXiv 1606.03809（nominal typing と継承の議論）](https://arxiv.org/pdf/1606.03809)
+
+        本線 a 識別子化、d_cscl_display_derived の下
+facts:
+- {is: v_say, from: session_model, to: 01M7XQ1RNV79RVT0BT0BJ3A8K2}
+- {is: exp.v_answer, from: 01M7XQ1RNV79RVT0BT0BJ3A8K2, to: 01M7XPTHGWKRFMF3FA733JQD7Q}
