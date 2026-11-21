@@ -1,0 +1,26 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-21T22:31:37.493Z（UTC）
+individuals:
+  01M803S2RN732Q0JM335F2Z2FB:
+    is: model_utterance
+    display: 発言 4137
+    val:
+      order: 4137
+      text: |
+        3 文のうち 1 文を仮説として登録し、残りの 2 文は登録しませんでした。
+
+        - **「事前登録どおり判定せず、観察も仮説に結んでいません」**: 登録していません。事実（1）です。結果は not_judged で、19755d0 には v_support も v_contradict もありません。
+        - **「検査器が渡す辺からも、2 段の依存をたどれていません」**: h_model_misses_checker_output（モデルは検査器の出力を読まない）として登録し、PR #730 に足しました。
+          - 式は `v_read model→lang.type_checker, neg: true` で、d_road_checker に v_ground で結んでいます。
+          - 一つのモデル・一つの書き方を越えて言うのは確かめていない主張（2）なので、h_verdict_by_checker（検査器の出力に頼れる）の対として置きました。
+          - 指したいのは検査器の出力ですが、それを指す概念が体系に見当たらず、lang.type_checker で近づけています。
+        - **「E43 の支持は、この偏りの上での差として読むべきかもしれません」**: 登録していません。直前に登録した h_verdict_by_option（判定は選択肢に頼る）が、まさにこの点を確かめる仮説だからです。
+
+        ロードマップの位置: H3（検査器の道 d_road_checker）。登録の PR #730 は CI 待ち。
+facts:
+- {is: v_say, from: session_model, to: 01M803S2RN732Q0JM335F2Z2FB}
+- {is: exp.v_answer, from: 01M803S2RN732Q0JM335F2Z2FB, to: 01M7ZG4RFFK1A28D1ZVQK01AG8}
+- {is: v_refer, from: 01M803S2RN732Q0JM335F2Z2FB, to: exp.v_support}
+- {is: v_refer, from: 01M803S2RN732Q0JM335F2Z2FB, to: exp.v_contradict}
+- {is: v_refer, from: 01M803S2RN732Q0JM335F2Z2FB, to: exp.v_read}
+- {is: v_refer, from: 01M803S2RN732Q0JM335F2Z2FB, to: lang.type_checker}
+- {is: v_refer, from: 01M803S2RN732Q0JM335F2Z2FB, to: exp.v_ground}
