@@ -269,6 +269,10 @@ nodes:
   state_shift: {display: 隠れ状態のずれ, extends: residual_vector, mod: {of: [v_sum, from], with: shifted_hidden_state}}
   shifted_hidden_state: {display: ずれを足した隠れ状態, extends: residual_vector, mod: {of: [v_compose, to], with: hidden_state}}
   shift_unseen_by_layer: {display: 層から分けて見えない隠れ状態のずれ, extends: state_shift, mod: {of: [v_see, to], with: layer, neg: true}}
+  sibling_difference_vector: {display: 兄弟の概念ベクトルの差, extends: concept_vector, mod: {of: [v_depend, from], with: sibling_pair}}
+  formula_part_direction: {display: 概念式の部品の向き, extends: residual_vector, mod: {of: [v_depend, from], with: concept_expression}}
+  output_word_direction: {display: 語を出す向き, extends: residual_vector, mod: {of: [v_compute, to], with: word}}
+  state_feature_direction: {display: 隠れ状態を組み立てる特徴の向き, extends: residual_vector, mod: {of: [v_compose, to], with: hidden_state}}
   term_server: {display: 用語サーバー, extends: artifact, mod: {of: [v_judge_definition, from]}}
   model_design: {display: モデルについての設計, extends: information_entity_design_to, mod: {of: [v_refer, from], with: model}}
   information_entity_design_to: {display: 設計する先の情報, extends: information_entity, mod: design_to}
@@ -3235,6 +3239,14 @@ individuals:
   h_round_trip_forms_absent: {is: hyp_untested}
   b_round_trip_forms_absent: {is: item_queued}
   h_prior_claims_supply_siblings: {is: hyp_untested}
+  h_sibling_difference_on_part: {is: hyp_untested}
+  b_sibling_difference_on_part: {is: item_queued}
+  h_part_named_by_output_word: {is: hyp_untested}
+  b_part_named_by_output_word: {is: item_queued}
+  h_part_named_by_state_feature: {is: hyp_untested}
+  b_part_named_by_state_feature: {is: item_queued}
+  h_sibling_discrimination_on_part: {is: hyp_untested}
+  b_sibling_discrimination_on_part: {is: item_queued}
   b_prior_claims_supply_siblings: {is: item_queued}
   h_attribution_logged: {is: hyp_refuted}
   b_attribution_logged: {is: item_done}
@@ -9502,6 +9514,18 @@ facts:
   - {is: v_check, from: b_prior_claims_supply_siblings, to: h_prior_claims_supply_siblings}
   - {is: v_ground, from: d_consolidation_in_vector, to: h_prior_claims_supply_siblings}
   - {is: v_ground, from: d_road_region, to: h_prior_claims_supply_siblings}
+  - {is: v_refer, from: h_sibling_difference_on_part, to: {is: v_rely, from: sibling_difference_vector, to: formula_part_direction}}
+  - {is: v_check, from: b_sibling_difference_on_part, to: h_sibling_difference_on_part}
+  - {is: v_ground, from: d_consolidation_in_vector, to: h_sibling_difference_on_part}
+  - {is: v_refer, from: h_part_named_by_output_word, to: {is: v_rely, from: formula_part_direction, to: output_word_direction}}
+  - {is: v_check, from: b_part_named_by_output_word, to: h_part_named_by_output_word}
+  - {is: v_ground, from: d_consolidation_in_vector, to: h_part_named_by_output_word}
+  - {is: v_refer, from: h_part_named_by_state_feature, to: {is: v_rely, from: formula_part_direction, to: state_feature_direction}}
+  - {is: v_check, from: b_part_named_by_state_feature, to: h_part_named_by_state_feature}
+  - {is: v_ground, from: d_consolidation_in_vector, to: h_part_named_by_state_feature}
+  - {is: v_refer, from: h_sibling_discrimination_on_part, to: {is: v_rely, from: sibling_discrimination, to: formula_part_direction}}
+  - {is: v_check, from: b_sibling_discrimination_on_part, to: h_sibling_discrimination_on_part}
+  - {is: v_ground, from: d_consolidation_in_vector, to: h_sibling_discrimination_on_part}
   - {is: v_refer, from: h_attribution_logged, to: {is: v_agree, from: attribution, to: operator_speech}}
   - {is: v_check, from: b_attribution_logged, to: h_attribution_logged}
   - {is: v_refer, from: o_sys_attribution_absent, to: {is: v_come_after, from: sys_attribution.n_absent.mean_value, to: 0}}
