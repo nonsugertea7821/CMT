@@ -1948,6 +1948,28 @@ individuals:
   sys_differentia_by_genus_cond_n_sib_pairs: {is: axis_value, val: {text: n_sib_pairs}}
   sys_differentia_by_genus_cond_n_clash: {is: axis_value, val: {text: n_clash}}
   sys_differentia_by_genus_cond_n_clash_nonempty: {is: axis_value, val: {text: n_clash_nonempty}}
+  sys_lineage_order: {is: measurement_family}
+  sys_lineage_order_cond: {is: family_axis, val: {text: cond}}
+  sys_lineage_order_cond_n_commits: {is: axis_value, val: {text: n_commits}}
+  sys_lineage_order_cond_n_read: {is: axis_value, val: {text: n_read}}
+  sys_lineage_order_cond_n_noun: {is: axis_value, val: {text: n_noun}}
+  sys_lineage_order_cond_n_verb: {is: axis_value, val: {text: n_verb}}
+  sys_lineage_order_cond_n_ev_noun: {is: axis_value, val: {text: n_ev_noun}}
+  sys_lineage_order_cond_n_ev_verb: {is: axis_value, val: {text: n_ev_verb}}
+  sys_lineage_order_cond_n_led_noun: {is: axis_value, val: {text: n_led_noun}}
+  sys_lineage_order_cond_n_led_verb: {is: axis_value, val: {text: n_led_verb}}
+  sys_lineage_order_cond_rate_noun: {is: axis_value, val: {text: rate_noun}}
+  sys_lineage_order_cond_rate_verb: {is: axis_value, val: {text: rate_verb}}
+  sys_lineage_order_cond_led_share_noun: {is: axis_value, val: {text: led_share_noun}}
+  sys_lineage_order_fix: {is: measurement_family}
+  sys_lineage_order_fix_cond: {is: family_axis, val: {text: cond}}
+  sys_lineage_order_fix_cond_n_ev_noun: {is: axis_value, val: {text: n_ev_noun}}
+  sys_lineage_order_fix_cond_n_ev_verb: {is: axis_value, val: {text: n_ev_verb}}
+  sys_lineage_order_fix_cond_n_led_noun: {is: axis_value, val: {text: n_led_noun}}
+  sys_lineage_order_fix_cond_n_led_verb: {is: axis_value, val: {text: n_led_verb}}
+  sys_lineage_order_fix_cond_rate_noun: {is: axis_value, val: {text: rate_noun}}
+  sys_lineage_order_fix_cond_rate_verb: {is: axis_value, val: {text: rate_verb}}
+  sys_lineage_order_fix_cond_led_share_noun: {is: axis_value, val: {text: led_share_noun}}
   sys_any_by_entail_before_fix: {is: measurement_family}
   sys_any_by_entail_before_fix_cond: {is: family_axis, val: {text: cond}}
   sys_any_by_entail_before_fix_cond_errors: {is: axis_value, val: {text: errors}}
@@ -3223,6 +3245,12 @@ individuals:
   o_sys_contentless_patch_base_ok: {is: observation}
   o_geo_pretext_drop_smollm2: {is: observation}
   o_geo_pretext_drop_olmo2: {is: observation}
+  o_sys_lo_led_noun: {is: observation}
+  o_sys_lo_rate_noun: {is: observation}
+  o_sys_lo_rate_verb: {is: observation}
+  o_sys_lof_led_noun: {is: observation}
+  o_sys_lof_rate_noun: {is: observation}
+  o_sys_lof_rate_verb: {is: observation}
 
   h_prosody_carries_mod: {is: hyp_untested}
   b_prosody_carries_mod: {is: item_queued}
@@ -3316,9 +3344,9 @@ individuals:
   b_refer_cuts_orthogonal: {is: item_queued}
   h_refer_cut_spans_mods: {is: hyp_untested}
   b_refer_cut_spans_mods: {is: item_queued}
-  h_lineage_is_genus: {is: hyp_untested}
+  h_lineage_is_genus: {is: hyp_supported}
   b_lineage_is_genus: {is: item_queued}
-  h_lineage_is_history: {is: hyp_untested}
+  h_lineage_is_history: {is: hyp_mixed}
   b_lineage_is_history: {is: item_queued}
   h_decision_link_by_role: {is: hyp_supported}
   b_decision_link_by_role: {is: item_done}
@@ -7569,6 +7597,60 @@ facts:
   - {is: v_spell, from: sys_differentia_by_genus_cond_n_clash_nonempty, to: n_clash_nonempty}
   - {is: v_entry_of, from: '{cond}', to: sys_differentia_by_genus}
   - {is: v_metric_of, from: sys_differentia_by_genus, to: mean_value}
+  - {is: v_file_of, from: sys_lineage_order.json, to: sys_lineage_order}
+  - {is: v_axis_of, from: sys_lineage_order_cond, to: sys_lineage_order}
+  - {is: v_value_of, from: sys_lineage_order_cond_n_commits, to: sys_lineage_order_cond}
+  - {is: v_spell, from: sys_lineage_order_cond_n_commits, to: n_commits}
+  - {is: v_value_of, from: sys_lineage_order_cond_n_read, to: sys_lineage_order_cond}
+  - {is: v_spell, from: sys_lineage_order_cond_n_read, to: n_read}
+  - {is: v_value_of, from: sys_lineage_order_cond_n_noun, to: sys_lineage_order_cond}
+  - {is: v_spell, from: sys_lineage_order_cond_n_noun, to: n_noun}
+  - {is: v_value_of, from: sys_lineage_order_cond_n_verb, to: sys_lineage_order_cond}
+  - {is: v_spell, from: sys_lineage_order_cond_n_verb, to: n_verb}
+  - {is: v_value_of, from: sys_lineage_order_cond_n_ev_noun, to: sys_lineage_order_cond}
+  - {is: v_spell, from: sys_lineage_order_cond_n_ev_noun, to: n_ev_noun}
+  - {is: v_value_of, from: sys_lineage_order_cond_n_ev_verb, to: sys_lineage_order_cond}
+  - {is: v_spell, from: sys_lineage_order_cond_n_ev_verb, to: n_ev_verb}
+  - {is: v_value_of, from: sys_lineage_order_cond_n_led_noun, to: sys_lineage_order_cond}
+  - {is: v_spell, from: sys_lineage_order_cond_n_led_noun, to: n_led_noun}
+  - {is: v_value_of, from: sys_lineage_order_cond_n_led_verb, to: sys_lineage_order_cond}
+  - {is: v_spell, from: sys_lineage_order_cond_n_led_verb, to: n_led_verb}
+  - {is: v_value_of, from: sys_lineage_order_cond_rate_noun, to: sys_lineage_order_cond}
+  - {is: v_spell, from: sys_lineage_order_cond_rate_noun, to: rate_noun}
+  - {is: v_value_of, from: sys_lineage_order_cond_rate_verb, to: sys_lineage_order_cond}
+  - {is: v_spell, from: sys_lineage_order_cond_rate_verb, to: rate_verb}
+  - {is: v_value_of, from: sys_lineage_order_cond_led_share_noun, to: sys_lineage_order_cond}
+  - {is: v_spell, from: sys_lineage_order_cond_led_share_noun, to: led_share_noun}
+  - {is: v_entry_of, from: '{cond}', to: sys_lineage_order}
+  - {is: v_metric_of, from: sys_lineage_order, to: mean_value}
+  - {is: v_file_of, from: sys_lineage_order_fix.json, to: sys_lineage_order_fix}
+  - {is: v_axis_of, from: sys_lineage_order_fix_cond, to: sys_lineage_order_fix}
+  - {is: v_value_of, from: sys_lineage_order_fix_cond_n_ev_noun, to: sys_lineage_order_fix_cond}
+  - {is: v_spell, from: sys_lineage_order_fix_cond_n_ev_noun, to: n_ev_noun}
+  - {is: v_value_of, from: sys_lineage_order_fix_cond_n_ev_verb, to: sys_lineage_order_fix_cond}
+  - {is: v_spell, from: sys_lineage_order_fix_cond_n_ev_verb, to: n_ev_verb}
+  - {is: v_value_of, from: sys_lineage_order_fix_cond_n_led_noun, to: sys_lineage_order_fix_cond}
+  - {is: v_spell, from: sys_lineage_order_fix_cond_n_led_noun, to: n_led_noun}
+  - {is: v_value_of, from: sys_lineage_order_fix_cond_n_led_verb, to: sys_lineage_order_fix_cond}
+  - {is: v_spell, from: sys_lineage_order_fix_cond_n_led_verb, to: n_led_verb}
+  - {is: v_value_of, from: sys_lineage_order_fix_cond_rate_noun, to: sys_lineage_order_fix_cond}
+  - {is: v_spell, from: sys_lineage_order_fix_cond_rate_noun, to: rate_noun}
+  - {is: v_value_of, from: sys_lineage_order_fix_cond_rate_verb, to: sys_lineage_order_fix_cond}
+  - {is: v_spell, from: sys_lineage_order_fix_cond_rate_verb, to: rate_verb}
+  - {is: v_value_of, from: sys_lineage_order_fix_cond_led_share_noun, to: sys_lineage_order_fix_cond}
+  - {is: v_spell, from: sys_lineage_order_fix_cond_led_share_noun, to: led_share_noun}
+  - {is: v_entry_of, from: '{cond}', to: sys_lineage_order_fix}
+  - {is: v_metric_of, from: sys_lineage_order_fix, to: mean_value}
+  - {is: v_refer, from: o_sys_lo_led_noun, to: {is: v_level, from: sys_lineage_order.led_share_noun.mean_value, to: 0.8409090909090909}}
+  - {is: v_refer, from: o_sys_lo_rate_noun, to: {is: v_level, from: sys_lineage_order.rate_noun.mean_value, to: 0.0707395498392283}}
+  - {is: v_refer, from: o_sys_lo_rate_verb, to: {is: v_level, from: sys_lineage_order.rate_verb.mean_value, to: 0.16806722689075632}}
+  - {is: v_refer, from: o_sys_lof_led_noun, to: {is: v_level, from: sys_lineage_order_fix.led_share_noun.mean_value, to: 0.7878787878787878}}
+  - {is: v_refer, from: o_sys_lof_rate_noun, to: {is: v_level, from: sys_lineage_order_fix.rate_noun.mean_value, to: 0.05305466237942122}}
+  - {is: v_refer, from: o_sys_lof_rate_verb, to: {is: v_level, from: sys_lineage_order_fix.rate_verb.mean_value, to: 0.05042016806722689}}
+  - {is: v_support, from: o_sys_lo_led_noun, to: h_lineage_is_genus}
+  - {is: v_support, from: o_sys_lof_led_noun, to: h_lineage_is_genus}
+  - {is: v_contradict, from: o_sys_lo_rate_verb, to: h_lineage_is_history}
+  - {is: v_support, from: o_sys_lof_rate_verb, to: h_lineage_is_history}
   - {is: v_file_of, from: sys_any_by_entail_before_fix.json, to: sys_any_by_entail_before_fix}
   - {is: v_rows_of, from: [rows], to: sys_any_by_entail_before_fix}
   - {is: v_axis_of, from: sys_any_by_entail_before_fix_cond, to: sys_any_by_entail_before_fix}
