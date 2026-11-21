@@ -1,0 +1,29 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-21T03:54:33.948Z（UTC）
+individuals:
+  01M7Y3VP2W2Z5HR6HYGVFZND25:
+    is: model_utterance
+    display: 発言 3474
+    val:
+      order: 3474
+      text: |
+        h_reading_excludes_claims came out **refuted**: values measured from the system do depend on the claims written into it.
+
+        - **How I tested it:** I reused the reading from #619, which compares, across domains, the words that appear alongside each verb. I ran it twice, once with and once without the claim items (hypotheses, observations, backlog items), over all 15 ontology verbs used in two or more domains. Claim items were 3,265 of the 13,322 items.
+        - **Result:** with claim items removed, 6 of the 15 verbs changed. 2 were left used in fewer than two domains, and 4 switched between formal and real. That is 0.4 of the verbs, well past the 0.1 refutation line. The average change in J was 0.091.
+        - **Effect on #619:** v_express moved from 0.399 to 0.533, which matches the hand estimate in #619's note. With claims removed, 2 of #619's 6 verbs move to the formal side (v_express and v_stage), so #619's conclusion would partly change. I haven't changed #619's recorded status; re-reading it would need its own pre-registered test.
+        - **PR #629:** CI hasn't run yet. The pre-registration commit holds only the script and there were no corrections, so it should go through auto-merge once tc and ec pass on GitHub.
+
+        The implication is that measurements of the system must leave out claims. There are two ways to do that:
+        - **Put claims in a separate domain:** this is h_claims_apart_by_domain, already registered (#622).
+        - **Exclude claims by kind:** I registered this as a new hypothesis, h_measure_excludes_claim_kinds, in PR #630. It is registration-only, so it should auto-merge.
+
+        Both are tied to d_metric.
+
+        PR #628 (the sync speed-up) is still waiting for your review. I've re-armed the trigger for 04:20.
+
+        本線 a 識別子化、d_cscl_display_derived の下（今回は d_metric の下の、読みの土台）
+facts:
+- {is: v_say, from: session_model, to: 01M7Y3VP2W2Z5HR6HYGVFZND25}
+- {is: exp.v_answer, from: 01M7Y3VP2W2Z5HR6HYGVFZND25, to: 01M7Y2KFFF93S8270ZZYD64CF5}
+- {is: v_refer, from: 01M7Y3VP2W2Z5HR6HYGVFZND25, to: ontology.v_express}
+- {is: v_refer, from: 01M7Y3VP2W2Z5HR6HYGVFZND25, to: ontology.v_stage}
