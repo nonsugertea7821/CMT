@@ -28,6 +28,10 @@
     その場合は反証になり、原因は「文の二重の使い方」ではなく「軸がノードでもある」ことだと読む。
   - entail_by_axis の二つの前提のどちらが軸の上下かは、変数の並び（var3 が var1 を持ち、var1 が var2 の下）から読んだ。
   - 走らせる前に、写しの build は試していない。
+訂正（走らせる前。事前登録の commit の後に見つけた）:
+  sys_placement_in_laws の法則の個体を足す位置（definition_stratified の行）が、いまの syntax.yaml にない（法則の名が変わった）。
+  そのまま走らせると、写しを作るところで止まる。位置だけを、法則の個体の並びの最後（defined_inherit の行）に替える。
+  足す法則・版・数える量・判定は変えない。結果はまだ見ていない（一度も走らせていない）。
 使い方:
   python exp/experiments/sys_placement_without_domain.py
 """
@@ -42,6 +46,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 import sys_placement_in_laws as base
 
 base.OUT = base.ROOT / "exp/experiments/results/sys_placement_without_domain.json"
+base.LAW_IND_ANCHOR = "  defined_inherit: {is: law_rule, display: 上位に定義された動詞は、下位にも定義されている}\n"
 base.CASES["Q1"] = "  zz_v: {display: 試しV, extends: quality, from: continuant, to: any, holds: [{is: refer, from: from, to: to}]}\n"
 base.CASES["Q2"] = "  zz_v: {display: 試しV, extends: occurrent, from: continuant, to: any, holds: [{is: refer, from: from, to: to}]}\n"
 TC = "cscl/bootstrap/type_checker/type_checker.py"
