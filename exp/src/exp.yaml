@@ -3138,6 +3138,28 @@ individuals:
   o_e39_explain_sl: {is: observation}
   o_e39_apply_ml_above_none: {is: observation}
   o_e39_explain_ml_below_threshold: {is: observation}
+  e41: {is: measurement_family}
+  e41_cond: {is: family_axis, val: {text: cond}}
+  e41_cond_extends: {is: axis_value, val: {text: 'extends'}}
+  e41_cond_inline: {is: axis_value, val: {text: 'inline'}}
+  e41_cond_named: {is: axis_value, val: {text: 'named'}}
+  e41_cond_decoy: {is: axis_value, val: {text: 'decoy'}}
+  o_e41_extends: {is: observation}
+  o_e41_inline: {is: observation}
+  o_e41_named: {is: observation}
+  o_e41_decoy: {is: observation}
+  o_e41_extends_below_premise: {is: observation}
+  e43: {is: measurement_family}
+  e43_cond: {is: family_axis, val: {text: cond}}
+  e43_cond_extends: {is: axis_value, val: {text: 'extends'}}
+  e43_cond_decoy: {is: axis_value, val: {text: 'decoy'}}
+  e43_cond_control: {is: axis_value, val: {text: 'control'}}
+  o_e43_extends: {is: observation}
+  o_e43_decoy: {is: observation}
+  o_e43_control: {is: observation}
+  o_e43_extends_above_premise: {is: observation}
+  o_e43_decoy_below_quarter: {is: observation}
+  o_e43_decoy_below_control: {is: observation}
   o_e39_explain_ml_below_none: {is: observation}
   e21: {is: measurement_family}
   e21_group: {is: family_axis, val: {text: group}}
@@ -3742,7 +3764,7 @@ individuals:
   h_axis_value_from_result: {is: hyp_untested}
   b_axis_value_from_result: {is: item_queued}
   h_model_reads_by_name: {is: hyp_untested}
-  h_model_reads_by_word: {is: hyp_untested}
+  h_model_reads_by_word: {is: hyp_supported}
   h_model_misses_extends: {is: hyp_untested}
   b_model_misses_extends: {is: item_queued}
   h_verdict_by_question_format: {is: hyp_untested}
@@ -3755,7 +3777,7 @@ individuals:
   b_verdict_by_option: {is: item_queued}
   h_model_misses_checker_output: {is: hyp_untested}
   b_model_misses_checker_output: {is: item_queued}
-  b_model_reads_by_word: {is: item_queued}
+  b_model_reads_by_word: {is: item_done}
   b_model_reads_by_name: {is: item_queued}
   h_functor_preserves_shape: {is: hyp_untested}
   b_functor_preserves_shape: {is: item_queued}
@@ -4611,6 +4633,37 @@ facts:
   - {is: v_metric_of, from: e39_explain_noans, to: accuracy}
   - {is: v_metric_of, from: e39_explain_noans, to: order_robust_accuracy}
   - {is: v_metric_of, from: e39_explain_noans, to: logit_margin}
+  - {is: v_file_of, from: 'e41_Qwen3-4B.json', to: e41}
+  - {is: v_rows_of, from: [items, '{cond}'], to: e41}
+  - {is: v_axis_of, from: e41_cond, to: e41}
+  - {is: v_value_of, from: e41_cond_extends, to: e41_cond}
+  - {is: v_denote, from: e41_cond_extends, to: syntax.extends}
+  - {is: v_value_of, from: e41_cond_inline, to: e41_cond}
+  - {is: v_denote, from: e41_cond_inline, to: syntax.mod}
+  - {is: v_value_of, from: e41_cond_named, to: e41_cond}
+  - {is: v_denote, from: e41_cond_named, to: syntax.mod}
+  - {is: v_denote, from: e41_cond_named, to: syntax.identifier}
+  - {is: v_value_of, from: e41_cond_decoy, to: e41_cond}
+  - {is: v_denote, from: e41_cond_decoy, to: syntax.mod}
+  - {is: v_denote, from: e41_cond_decoy, to: syntax.identifier}
+  - {is: v_entry_of, from: pair, to: e41}
+  - {is: v_metric_of, from: e41, to: accuracy}
+  - {is: v_metric_of, from: e41, to: order_robust_accuracy}
+  - {is: v_metric_of, from: e41, to: logit_margin}
+  - {is: v_file_of, from: 'e43_Qwen3-4B.json', to: e43}
+  - {is: v_rows_of, from: [items, '{cond}'], to: e43}
+  - {is: v_axis_of, from: e43_cond, to: e43}
+  - {is: v_value_of, from: e43_cond_extends, to: e43_cond}
+  - {is: v_denote, from: e43_cond_extends, to: syntax.extends}
+  - {is: v_value_of, from: e43_cond_decoy, to: e43_cond}
+  - {is: v_denote, from: e43_cond_decoy, to: syntax.mod}
+  - {is: v_denote, from: e43_cond_decoy, to: syntax.word}
+  - {is: v_value_of, from: e43_cond_control, to: e43_cond}
+  - {is: v_denote, from: e43_cond_control, to: syntax.mod}
+  - {is: v_entry_of, from: pair, to: e43}
+  - {is: v_metric_of, from: e43, to: accuracy}
+  - {is: v_metric_of, from: e43, to: order_robust_accuracy}
+  - {is: v_metric_of, from: e43, to: logit_margin}
   - {is: v_file_of, from: 'e15_Qwen2.5-1.5B-Instruct_L8.json', to: e15}
   - {is: v_rows_of, from: [items], to: e15}
   - {is: v_axis_of, from: e15_group, to: e15}
@@ -10665,6 +10718,19 @@ facts:
   - {is: v_refer, from: o_e39_explain_ml_below_none, to: {is: v_come_before, from: e39_explain.ml.accuracy, to: e39_explain.none.accuracy}}
   - {is: v_contradict, from: o_e39_explain_ml_below_threshold, to: h_multi_layer_transfers_to_explain}
   - {is: v_contradict, from: o_e39_explain_ml_below_none, to: h_multi_layer_transfers_to_explain}
+  - {is: v_refer, from: o_e41_extends, to: {is: v_level, from: e41.extends.accuracy, to: 0.4166667}}
+  - {is: v_refer, from: o_e41_inline, to: {is: v_level, from: e41.inline.accuracy, to: 0.625}}
+  - {is: v_refer, from: o_e41_named, to: {is: v_level, from: e41.named.accuracy, to: 0.4166667}}
+  - {is: v_refer, from: o_e41_decoy, to: {is: v_level, from: e41.decoy.accuracy, to: 0.5416667}}
+  - {is: v_refer, from: o_e41_extends_below_premise, to: {is: v_come_before, from: e41.extends.accuracy, to: 0.75}}
+  - {is: v_refer, from: o_e43_extends, to: {is: v_level, from: e43.extends.accuracy, to: 0.75}}
+  - {is: v_refer, from: o_e43_decoy, to: {is: v_level, from: e43.decoy.accuracy, to: 0.125}}
+  - {is: v_refer, from: o_e43_control, to: {is: v_level, from: e43.control.accuracy, to: 0.4166667}}
+  - {is: v_refer, from: o_e43_extends_above_premise, to: {is: v_come_after, from: e43.extends.accuracy, to: 0.625}}
+  - {is: v_refer, from: o_e43_decoy_below_quarter, to: {is: v_come_before, from: e43.decoy.accuracy, to: 0.25}}
+  - {is: v_refer, from: o_e43_decoy_below_control, to: {is: v_come_before, from: e43.decoy.accuracy, to: e43.control.accuracy}}
+  - {is: v_support, from: o_e43_decoy_below_quarter, to: h_model_reads_by_word}
+  - {is: v_support, from: o_e43_decoy_below_control, to: h_model_reads_by_word}
   - {is: v_refer, from: h_explain_transfers_to_apply, to: {is: v_transfer, from: usage_explain, to: usage_apply}}
   - {is: v_check, from: b_explain_transfers_to_apply, to: h_explain_transfers_to_apply}
   - {is: v_refer, from: o_e36_apply_none, to: {is: v_level, from: e36_apply.none.accuracy, to: 0.375}}
