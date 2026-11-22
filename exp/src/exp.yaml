@@ -128,6 +128,7 @@ nodes:
   reason: {display: 理由, extends: sentence, mod: refer_from_verdict}
   definition_text: {display: 定義文, extends: passage, mod: {of: [v_compose, to], with: definition}}
   examples_only: {display: 適用例だけ, extends: passage, mod: {of: [v_compose, to], with: application_example}}
+  reasons_only: {display: 理由だけ, extends: passage, mod: {of: [v_compose, to], with: reason}}
   def_and_examples: {display: 定義文と適用例, extends: definition_text, mod: {of: [is, from], with: examples_only}}
   round_trip_material: {display: 判定に依って直す定義文と適用例, extends: def_and_examples, mod: {of: [v_depend, from], with: verdict}}
   filler_text: {display: 無関係な文章, extends: passage, mod: not_agree_from_question}
@@ -245,6 +246,7 @@ nodes:
   delta_weights: {display: 差分重み, extends: channel, mod: {of: [v_involve, from], with: weights}}
   teacher_recite: {display: 定義文の暗唱を教師にする, extends: teaching, from: definition_text}
   teacher_examples: {display: 適用例を教師にする, extends: teaching, from: examples_only}
+  teacher_reasons: {display: 理由を教師にする, extends: teaching, from: reasons_only}
   teacher_both: {display: 定義文の暗唱と適用例の両方を教師にする, extends: teaching, from: def_and_examples}
   teacher_round_trip: {display: 抽象と具体の往復を教師にする, extends: teaching, from: round_trip_material}
   teacher_round_trip_bound: {display: 兄弟概念の組を既に組み立てる層への、抽象と具体の往復の教示, extends: teacher_round_trip, to: layer_with_sibling}
@@ -3078,6 +3080,30 @@ individuals:
   e20_explain_noans_cond_none: {is: axis_value, val: {text: 'none'}}
   e20_explain_noans_cond_qa: {is: axis_value, val: {text: 'qa'}}
   e20_explain_noans_cond_defqa: {is: axis_value, val: {text: 'defqa'}}
+  e36_apply: {is: measurement_family}
+  e36_apply_cond: {is: family_axis, val: {text: cond}}
+  e36_apply_cond_none: {is: axis_value, val: {text: 'none'}}
+  e36_apply_cond_ex: {is: axis_value, val: {text: 'ex'}}
+  e36_apply_cond_qa: {is: axis_value, val: {text: 'qa'}}
+  e36_explain: {is: measurement_family}
+  e36_explain_cond: {is: family_axis, val: {text: cond}}
+  e36_explain_cond_none: {is: axis_value, val: {text: 'none'}}
+  e36_explain_cond_ex: {is: axis_value, val: {text: 'ex'}}
+  e36_explain_cond_qa: {is: axis_value, val: {text: 'qa'}}
+  e36_explain_noans: {is: measurement_family}
+  e36_explain_noans_cond: {is: family_axis, val: {text: cond}}
+  e36_explain_noans_cond_none: {is: axis_value, val: {text: 'none'}}
+  e36_explain_noans_cond_ex: {is: axis_value, val: {text: 'ex'}}
+  e36_explain_noans_cond_qa: {is: axis_value, val: {text: 'qa'}}
+  o_e36_apply_none: {is: observation}
+  o_e36_apply_ex: {is: observation}
+  o_e36_apply_qa: {is: observation}
+  o_e36_explain_none: {is: observation}
+  o_e36_explain_ex: {is: observation}
+  o_e36_explain_qa: {is: observation}
+  o_e36_apply_ex_below_threshold: {is: observation}
+  o_e36_apply_ex_above_none: {is: observation}
+  o_e36_explain_ex_above_none: {is: observation}
   e39_apply: {is: measurement_family}
   e39_apply_cond: {is: family_axis, val: {text: cond}}
   e39_apply_cond_none: {is: axis_value, val: {text: 'none'}}
@@ -3620,8 +3646,8 @@ individuals:
   b_qualification_depends_above: {is: item_queued}
   h_multi_layer_transfers_to_explain: {is: hyp_refuted}
   b_multi_layer_transfers_to_explain: {is: item_done}
-  h_explain_transfers_to_apply: {is: hyp_untested}
-  b_explain_transfers_to_apply: {is: item_queued}
+  h_explain_transfers_to_apply: {is: hyp_refuted}
+  b_explain_transfers_to_apply: {is: item_done}
   h_contrast_vector_lowers_stability: {is: hyp_untested}
   b_contrast_vector_lowers_stability: {is: item_queued}
   h_common_component_lowers_prior_meaning: {is: hyp_untested}
@@ -4486,6 +4512,45 @@ facts:
   - {is: v_metric_of, from: e20_explain_noans, to: accuracy}
   - {is: v_metric_of, from: e20_explain_noans, to: order_robust_accuracy}
   - {is: v_metric_of, from: e20_explain_noans, to: logit_margin}
+  - {is: v_file_of, from: 'e36_Qwen2.5-1.5B-Instruct_L8.json', to: e36_apply}
+  - {is: v_rows_of, from: [items, '{cond}'], to: e36_apply}
+  - {is: v_axis_of, from: e36_apply_cond, to: e36_apply}
+  - {is: v_value_of, from: e36_apply_cond_none, to: e36_apply_cond}
+  - {is: v_denote, from: e36_apply_cond_none, to: no_channel}
+  - {is: v_value_of, from: e36_apply_cond_ex, to: e36_apply_cond}
+  - {is: v_denote, from: e36_apply_cond_ex, to: teacher_reasons}
+  - {is: v_value_of, from: e36_apply_cond_qa, to: e36_apply_cond}
+  - {is: v_denote, from: e36_apply_cond_qa, to: teacher_examples}
+  - {is: v_entry_of, from: apply, to: e36_apply}
+  - {is: v_metric_of, from: e36_apply, to: accuracy}
+  - {is: v_metric_of, from: e36_apply, to: order_robust_accuracy}
+  - {is: v_metric_of, from: e36_apply, to: logit_margin}
+  - {is: v_file_of, from: 'e36_Qwen2.5-1.5B-Instruct_L8.json', to: e36_explain}
+  - {is: v_rows_of, from: [items, '{cond}'], to: e36_explain}
+  - {is: v_axis_of, from: e36_explain_cond, to: e36_explain}
+  - {is: v_value_of, from: e36_explain_cond_none, to: e36_explain_cond}
+  - {is: v_denote, from: e36_explain_cond_none, to: no_channel}
+  - {is: v_value_of, from: e36_explain_cond_ex, to: e36_explain_cond}
+  - {is: v_denote, from: e36_explain_cond_ex, to: teacher_reasons}
+  - {is: v_value_of, from: e36_explain_cond_qa, to: e36_explain_cond}
+  - {is: v_denote, from: e36_explain_cond_qa, to: teacher_examples}
+  - {is: v_entry_of, from: explain, to: e36_explain}
+  - {is: v_metric_of, from: e36_explain, to: accuracy}
+  - {is: v_metric_of, from: e36_explain, to: order_robust_accuracy}
+  - {is: v_metric_of, from: e36_explain, to: logit_margin}
+  - {is: v_file_of, from: 'e36_Qwen2.5-1.5B-Instruct_L8.json', to: e36_explain_noans}
+  - {is: v_rows_of, from: [items, '{cond}'], to: e36_explain_noans}
+  - {is: v_axis_of, from: e36_explain_noans_cond, to: e36_explain_noans}
+  - {is: v_value_of, from: e36_explain_noans_cond_none, to: e36_explain_noans_cond}
+  - {is: v_denote, from: e36_explain_noans_cond_none, to: no_channel}
+  - {is: v_value_of, from: e36_explain_noans_cond_ex, to: e36_explain_noans_cond}
+  - {is: v_denote, from: e36_explain_noans_cond_ex, to: teacher_reasons}
+  - {is: v_value_of, from: e36_explain_noans_cond_qa, to: e36_explain_noans_cond}
+  - {is: v_denote, from: e36_explain_noans_cond_qa, to: teacher_examples}
+  - {is: v_entry_of, from: explain_noans, to: e36_explain_noans}
+  - {is: v_metric_of, from: e36_explain_noans, to: accuracy}
+  - {is: v_metric_of, from: e36_explain_noans, to: order_robust_accuracy}
+  - {is: v_metric_of, from: e36_explain_noans, to: logit_margin}
   - {is: v_file_of, from: 'e39_Qwen2.5-1.5B-Instruct_L2-13.json', to: e39_apply}
   - {is: v_rows_of, from: [items, '{cond}'], to: e39_apply}
   - {is: v_axis_of, from: e39_apply_cond, to: e39_apply}
@@ -10554,6 +10619,16 @@ facts:
   - {is: v_contradict, from: o_e39_explain_ml_below_none, to: h_multi_layer_transfers_to_explain}
   - {is: v_refer, from: h_explain_transfers_to_apply, to: {is: v_transfer, from: usage_explain, to: usage_apply}}
   - {is: v_check, from: b_explain_transfers_to_apply, to: h_explain_transfers_to_apply}
+  - {is: v_refer, from: o_e36_apply_none, to: {is: v_level, from: e36_apply.none.accuracy, to: 0.375}}
+  - {is: v_refer, from: o_e36_apply_ex, to: {is: v_level, from: e36_apply.ex.accuracy, to: 0.6666667}}
+  - {is: v_refer, from: o_e36_apply_qa, to: {is: v_level, from: e36_apply.qa.accuracy, to: 0.7916667}}
+  - {is: v_refer, from: o_e36_explain_none, to: {is: v_level, from: e36_explain.none.accuracy, to: 0.4166667}}
+  - {is: v_refer, from: o_e36_explain_ex, to: {is: v_level, from: e36_explain.ex.accuracy, to: 1.0}}
+  - {is: v_refer, from: o_e36_explain_qa, to: {is: v_level, from: e36_explain.qa.accuracy, to: 0.4583333}}
+  - {is: v_refer, from: o_e36_apply_ex_below_threshold, to: {is: v_come_before, from: e36_apply.ex.accuracy, to: 0.75}}
+  - {is: v_refer, from: o_e36_apply_ex_above_none, to: {is: v_come_after, from: e36_apply.ex.accuracy, to: e36_apply.none.accuracy}}
+  - {is: v_refer, from: o_e36_explain_ex_above_none, to: {is: v_come_after, from: e36_explain.ex.accuracy, to: e36_explain.none.accuracy}}
+  - {is: v_contradict, from: o_e36_apply_ex_below_threshold, to: h_explain_transfers_to_apply}
   - {is: v_refer, from: o_e21_common_robust_below_none, to: {is: v_come_before, from: e21_all.common.order_robust_accuracy, to: e21_all.none.order_robust_accuracy}}
   - {is: v_refer, from: o_e21_common_robust_below_rand, to: {is: v_come_before, from: e21_all.common.order_robust_accuracy, to: e21_all.rand.order_robust_accuracy}}
   - {is: v_refer, from: o_e26_block_all_below_text, to: {is: v_come_before, from: e26.block_all.accuracy, to: e26.text.accuracy}}
