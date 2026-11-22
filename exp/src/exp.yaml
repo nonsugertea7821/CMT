@@ -2645,6 +2645,17 @@ individuals:
   e37_writing_checker_version_m_n_reproduced_match: {is: axis_value, val: {text: n_reproduced_match}}
   e37_writing_checker_version_m_n_then_ok: {is: axis_value, val: {text: n_then_ok}}
   e37_writing_checker_version_m_n_now_ok: {is: axis_value, val: {text: n_now_ok}}
+  e38_error_kind_is_law: {is: measurement_family}
+  e38_error_kind_is_law_c: {is: family_axis, val: {text: c}}
+  e38_error_kind_is_law_c_summary: {is: axis_value, val: {text: summary}}
+  e38_error_kind_is_law_m: {is: family_axis, val: {text: m}}
+  e38_error_kind_is_law_m_n_errors: {is: axis_value, val: {text: n_errors}}
+  e38_error_kind_is_law_m_n_named: {is: axis_value, val: {text: n_named}}
+  e38_error_kind_is_law_m_n_unnamed: {is: axis_value, val: {text: n_unnamed}}
+  e38_error_kind_is_law_m_n_governed_unnamed: {is: axis_value, val: {text: n_governed_unnamed}}
+  e38_error_kind_is_law_m_n_attributable: {is: axis_value, val: {text: n_attributable}}
+  e38_error_kind_is_law_m_n_rejected: {is: axis_value, val: {text: n_rejected}}
+  e38_error_kind_is_law_m_n_crashed: {is: axis_value, val: {text: n_crashed}}
   e35_expression_makes_state_unique: {is: measurement_family}
   e35_expression_makes_state_unique_c: {is: family_axis, val: {text: c}}
   e35_expression_makes_state_unique_c_none_S: {is: axis_value, val: {text: none_S}}
@@ -3634,8 +3645,15 @@ individuals:
   b_error_kind_is_law: {is: item_queued}
   h_rejection_by_few_laws: {is: hyp_untested}
   b_rejection_by_few_laws: {is: item_queued}
-  h_unnamed_error_is_law_given: {is: hyp_untested}
-  b_unnamed_error_is_law_given: {is: item_queued}
+  h_unnamed_error_is_law_given: {is: hyp_refuted}
+  b_unnamed_error_is_law_given: {is: item_done}
+  o_e38_errors: {is: observation}
+  o_e38_attributable: {is: observation}
+  o_e38_named: {is: observation}
+  o_e38_unnamed: {is: observation}
+  o_e38_governed_unnamed: {is: observation}
+  o_e38_crashed: {is: observation}
+  o_e38_rejected: {is: observation}
   h_unnamed_error_as_law_rule: {is: hyp_untested}
   b_unnamed_error_as_law_rule: {is: item_queued}
   h_apply_depends_explain: {is: hyp_untested}
@@ -9434,6 +9452,28 @@ facts:
   - {is: v_spell, from: e37_writing_checker_version_m_n_now_ok, to: n_now_ok}
   - {is: v_entry_of, from: '{m}', to: e37_writing_checker_version}
   - {is: v_metric_of, from: e37_writing_checker_version, to: mean_value}
+  - {is: v_file_of, from: e38_error_kind_is_law.json, to: e38_error_kind_is_law}
+  - {is: v_axis_of, from: e38_error_kind_is_law_c, to: e38_error_kind_is_law}
+  - {is: v_keys_of, from: '#', to: e38_error_kind_is_law_c}
+  - {is: v_value_of, from: e38_error_kind_is_law_c_summary, to: e38_error_kind_is_law_c}
+  - {is: v_spell, from: e38_error_kind_is_law_c_summary, to: ['summary']}
+  - {is: v_axis_of, from: e38_error_kind_is_law_m, to: e38_error_kind_is_law}
+  - {is: v_value_of, from: e38_error_kind_is_law_m_n_errors, to: e38_error_kind_is_law_m}
+  - {is: v_spell, from: e38_error_kind_is_law_m_n_errors, to: n_errors}
+  - {is: v_value_of, from: e38_error_kind_is_law_m_n_named, to: e38_error_kind_is_law_m}
+  - {is: v_spell, from: e38_error_kind_is_law_m_n_named, to: n_named}
+  - {is: v_value_of, from: e38_error_kind_is_law_m_n_unnamed, to: e38_error_kind_is_law_m}
+  - {is: v_spell, from: e38_error_kind_is_law_m_n_unnamed, to: n_unnamed}
+  - {is: v_value_of, from: e38_error_kind_is_law_m_n_governed_unnamed, to: e38_error_kind_is_law_m}
+  - {is: v_spell, from: e38_error_kind_is_law_m_n_governed_unnamed, to: n_governed_unnamed}
+  - {is: v_value_of, from: e38_error_kind_is_law_m_n_attributable, to: e38_error_kind_is_law_m}
+  - {is: v_spell, from: e38_error_kind_is_law_m_n_attributable, to: n_attributable}
+  - {is: v_value_of, from: e38_error_kind_is_law_m_n_rejected, to: e38_error_kind_is_law_m}
+  - {is: v_spell, from: e38_error_kind_is_law_m_n_rejected, to: n_rejected}
+  - {is: v_value_of, from: e38_error_kind_is_law_m_n_crashed, to: e38_error_kind_is_law_m}
+  - {is: v_spell, from: e38_error_kind_is_law_m_n_crashed, to: n_crashed}
+  - {is: v_entry_of, from: '{m}', to: e38_error_kind_is_law}
+  - {is: v_metric_of, from: e38_error_kind_is_law, to: mean_value}
   - {is: v_file_of, from: e35_expression_makes_state_unique.json, to: e35_expression_makes_state_unique}
   - {is: v_rows_of, from: [s], to: e35_expression_makes_state_unique}
   - {is: v_axis_of, from: e35_expression_makes_state_unique_c, to: e35_expression_makes_state_unique}
@@ -10466,6 +10506,14 @@ facts:
   - {is: v_refer, from: h_unnamed_error_is_law_given, to: {is: v_depend, from: type_check_result, to: syntax.law_given}}
   - {is: v_check, from: b_unnamed_error_is_law_given, to: h_unnamed_error_is_law_given}
   - {is: v_ground, from: d_road_checker, to: h_unnamed_error_is_law_given}
+  - {is: v_refer, from: o_e38_errors, to: {is: v_level, from: e38_error_kind_is_law.summary.n_errors.mean_value, to: 170}}
+  - {is: v_refer, from: o_e38_attributable, to: {is: v_level, from: e38_error_kind_is_law.summary.n_attributable.mean_value, to: 101}}
+  - {is: v_refer, from: o_e38_named, to: {is: v_level, from: e38_error_kind_is_law.summary.n_named.mean_value, to: 101}}
+  - {is: v_refer, from: o_e38_unnamed, to: {is: v_level, from: e38_error_kind_is_law.summary.n_unnamed.mean_value, to: 69}}
+  - {is: v_refer, from: o_e38_governed_unnamed, to: {is: v_level, from: e38_error_kind_is_law.summary.n_governed_unnamed.mean_value, to: 0}}
+  - {is: v_contradict, from: o_e38_governed_unnamed, to: h_unnamed_error_is_law_given}
+  - {is: v_refer, from: o_e38_crashed, to: {is: v_level, from: e38_error_kind_is_law.summary.n_crashed.mean_value, to: 9}}
+  - {is: v_refer, from: o_e38_rejected, to: {is: v_level, from: e38_error_kind_is_law.summary.n_rejected.mean_value, to: 50}}
   - {is: v_refer, from: h_unnamed_error_as_law_rule, to: {is: v_depend, from: type_check_result, to: syntax.law_rule}}
   - {is: v_check, from: b_unnamed_error_as_law_rule, to: h_unnamed_error_as_law_rule}
   - {is: v_ground, from: d_road_checker, to: h_unnamed_error_as_law_rule}
