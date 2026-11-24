@@ -1,0 +1,32 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-24T18:56:31.201Z（UTC）
+individuals:
+  01M87ENBZ12RHPMH1EBMRPF230:
+    is: model_utterance
+    display: 発言 4363
+    val:
+      order: 4363
+      text: |
+        E54 を始めました。前回 E44 で判定が出なかった h_verdict_by_checker（#729）を、名前で 1 つ答える形に揃えて測り直します。
+
+        - **何を測るか**
+          - 定義の集まりは、E52 の named（mod を名前で介した 2 段）と同じです。そこに検査器の出力を一行添えます。
+          - 条件は 3 つです。
+            - 出力なし
+            - 直接の依存だけ（edges）
+            - たどった先まで閉じたもの（closure）
+          - 項目は新しく 32 項目を作り（seed 9）、Qwen2.5-1.5B-Instruct と Qwen3-4B の 2 つで測ります。
+        - **判定の線**（どちらもモデルごとに出します）
+          - h_verdict_by_checker（判定は検査器の出力に頼れる）: closure の正答率が 0.75 以上なら支持、0.5 以下なら反証です。線は E44 と同じにしました。
+          - h_model_misses_checker_output（モデルは検査器の出力を読まない）: closure と出力なしの差が 0.0625 以下なら支持、0.1875 以上なら反証です。
+        - **開示**
+          - closure の行には、答えがほぼそのまま入っています。たとえば X → {A, M} のように書かれます。
+          - 線は E44〜E53 の結果を見てから決めました。
+        - **作業の場所**
+          - #729 の Draft ブランチで進めています。先に main（E47〜E53）を取り込み、スクリプトだけを事前登録として push しました。
+          - E44 の結果はそのまま残し、E54 の判定で上書きはしません。
+        - **これから**: 1.5B を走らせています。19:05Z に進みを確かめ、終わったら 4B を始めます。
+
+        ロードマップの位置: H3 検査器の道（d_road_checker）
+facts:
+- {is: v_say, from: session_model, to: 01M87ENBZ12RHPMH1EBMRPF230}
+- {is: exp.v_answer, from: 01M87ENBZ12RHPMH1EBMRPF230, to: 01M86EX52DNVRMYZCFJ4X9EC2Q}
