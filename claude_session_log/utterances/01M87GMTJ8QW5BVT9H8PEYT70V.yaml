@@ -1,0 +1,24 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-24T19:31:10.536Z（UTC）
+individuals:
+  01M87GMTJ8QW5BVT9H8PEYT70V:
+    is: model_utterance
+    display: 発言 4378
+    val:
+      order: 4378
+      text: |
+        前の報告の否定の文は 4 つありました。それぞれ確かめた結果、3 つは測った値か判定の結果なので、そのままにしました。4 つ目は観察の範囲では事実でしたが、そのあとに書いた「どうすればよいか」は確かめていない提案だったので、仮説として 1 つ登録しました。
+
+        - **「closure を添えても正答率は上がらなかった」「1.5B は 0.750 → 0.719、4B は 0.531 のまま」**: E54 で測った値なので、登録していません。
+        - **「h_verdict_by_checker は今回も判定が出なかった」**: 事前登録した線のあいだに入った、という判定の結果なので、登録していません。
+        - **「出力を一行添えるだけでは、モデルは判定に使わない」**: 文そのものは E54 の範囲で確かめた事実で、h_model_misses_checker_output の支持として体系に書いてあります。
+          - ただ、そのあとに書いた「渡し方を変える」は確かめていない提案だったので、h_checker_output_read_when_taught として登録しました。
+          - 中身は、読み方を教える指示か例があれば出力が読まれるか、です。式は `{v_read, from: model, to: [type_check_result, teaching]}` です。
+          - d_road_checker に結び、登録だけの PR #752 で出しました。見張りを付け、assignee もあなたにしてあります。
+          - もう一方の「判定をモデルの外の検査器に任せる」は、すでにある h_writing_depends_checker（L3）が受けるので、新しく登録していません。
+
+        ロードマップの位置: H3 検査器の道（d_road_checker）
+facts:
+- {is: v_say, from: session_model, to: 01M87GMTJ8QW5BVT9H8PEYT70V}
+- {is: exp.v_answer, from: 01M87GMTJ8QW5BVT9H8PEYT70V, to: 01M86EX52DNVRMYZCFJ4X9EC2Q}
+- {is: v_refer, from: 01M87GMTJ8QW5BVT9H8PEYT70V, to: exp.v_read}
+- {is: v_refer, from: 01M87GMTJ8QW5BVT9H8PEYT70V, to: exp.type_check_result}
