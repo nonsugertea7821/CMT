@@ -3186,6 +3186,17 @@ individuals:
   o_e47_extends_robust_above_half: {is: observation}
   o_e47_extends_above_premise: {is: observation}
   o_e47_decoy_above_half: {is: observation}
+  e48: {is: measurement_family}
+  e48_cond: {is: family_axis, val: {text: cond}}
+  e48_cond_extends: {is: axis_value, val: {text: 'extends'}}
+  e48_cond_decoy: {is: axis_value, val: {text: 'decoy'}}
+  e48_cond_control: {is: axis_value, val: {text: 'control'}}
+  o_e48_extends: {is: observation}
+  o_e48_decoy: {is: observation}
+  o_e48_control: {is: observation}
+  o_e48_decoy_below_line: {is: observation}
+  o_e48_decoy_below_name_form: {is: observation}
+  o_e48_extends_below_name_form: {is: observation}
   e45: {is: measurement_family}
   e45_cond: {is: family_axis, val: {text: cond}}
   e45_cond_number_extends: {is: axis_value, val: {text: 'number_extends'}}
@@ -3828,8 +3839,8 @@ individuals:
   h_model_reads_by_word: {is: hyp_mixed}
   h_model_misses_extends: {is: hyp_refuted}
   b_model_misses_extends: {is: item_done}
-  h_verdict_by_question_format: {is: hyp_untested}
-  b_verdict_by_question_format: {is: item_queued}
+  h_verdict_by_question_format: {is: hyp_supported}
+  b_verdict_by_question_format: {is: item_done}
   h_verdict_by_checker: {is: hyp_untested}
   b_verdict_by_checker: {is: item_queued}
   h_model_misses_mod: {is: hyp_untested}
@@ -4758,6 +4769,20 @@ facts:
   - {is: v_metric_of, from: e47, to: accuracy}
   - {is: v_metric_of, from: e47, to: order_robust_accuracy}
   - {is: v_metric_of, from: e47, to: logit_margin}
+  - {is: v_file_of, from: 'e48_Qwen3-4B.json', to: e48}
+  - {is: v_rows_of, from: [items, '{cond}'], to: e48}
+  - {is: v_axis_of, from: e48_cond, to: e48}
+  - {is: v_value_of, from: e48_cond_extends, to: e48_cond}
+  - {is: v_denote, from: e48_cond_extends, to: syntax.extends}
+  - {is: v_value_of, from: e48_cond_decoy, to: e48_cond}
+  - {is: v_denote, from: e48_cond_decoy, to: syntax.mod}
+  - {is: v_denote, from: e48_cond_decoy, to: syntax.word}
+  - {is: v_value_of, from: e48_cond_control, to: e48_cond}
+  - {is: v_denote, from: e48_cond_control, to: syntax.mod}
+  - {is: v_entry_of, from: pair, to: e48}
+  - {is: v_metric_of, from: e48, to: accuracy}
+  - {is: v_metric_of, from: e48, to: order_robust_accuracy}
+  - {is: v_metric_of, from: e48, to: logit_margin}
   - {is: v_file_of, from: 'e45_Qwen3-4B.json', to: e45}
   - {is: v_rows_of, from: [items, '{cond}'], to: e45}
   - {is: v_axis_of, from: e45_cond, to: e45}
@@ -10920,6 +10945,14 @@ facts:
   - {is: v_contradict, from: o_e47_extends_above_three_quarters, to: h_model_misses_extends}
   - {is: v_contradict, from: o_e47_extends_robust_above_half, to: h_model_misses_extends}
   - {is: v_contradict, from: o_e47_decoy_above_half, to: h_model_reads_by_word}
+  - {is: v_refer, from: o_e48_extends, to: {is: v_level, from: e48.extends.accuracy, to: 0.875}}
+  - {is: v_refer, from: o_e48_decoy, to: {is: v_level, from: e48.decoy.accuracy, to: 0.0833333}}
+  - {is: v_refer, from: o_e48_control, to: {is: v_level, from: e48.control.accuracy, to: 0.7083333}}
+  - {is: v_refer, from: o_e48_decoy_below_line, to: {is: v_come_before, from: e48.decoy.accuracy, to: 0.625}}
+  - {is: v_refer, from: o_e48_decoy_below_name_form, to: {is: v_come_before, from: e48.decoy.accuracy, to: e47.decoy.accuracy}}
+  - {is: v_refer, from: o_e48_extends_below_name_form, to: {is: v_come_before, from: e48.extends.accuracy, to: e47.extends.accuracy}}
+  - {is: v_support, from: o_e48_decoy_below_line, to: h_verdict_by_question_format}
+  - {is: v_support, from: o_e48_decoy_below_name_form, to: h_verdict_by_question_format}
   - {is: v_refer, from: o_e45_number_extends, to: {is: v_level, from: e45.number_extends.mean_value, to: 0.7083333}}
   - {is: v_refer, from: o_e45_number_decoy, to: {is: v_level, from: e45.number_decoy.mean_value, to: 0.0416667}}
   - {is: v_refer, from: o_e45_number_control, to: {is: v_level, from: e45.number_control.mean_value, to: 0.0}}
