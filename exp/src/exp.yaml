@@ -3160,6 +3160,20 @@ individuals:
   o_e43_extends_above_premise: {is: observation}
   o_e43_decoy_below_quarter: {is: observation}
   o_e43_decoy_below_control: {is: observation}
+  e47: {is: measurement_family}
+  e47_cond: {is: family_axis, val: {text: cond}}
+  e47_cond_extends: {is: axis_value, val: {text: 'extends'}}
+  e47_cond_decoy: {is: axis_value, val: {text: 'decoy'}}
+  e47_cond_control: {is: axis_value, val: {text: 'control'}}
+  o_e47_extends: {is: observation}
+  o_e47_extends_robust: {is: observation}
+  o_e47_decoy: {is: observation}
+  o_e47_decoy_robust: {is: observation}
+  o_e47_control: {is: observation}
+  o_e47_extends_above_three_quarters: {is: observation}
+  o_e47_extends_robust_above_half: {is: observation}
+  o_e47_extends_above_premise: {is: observation}
+  o_e47_decoy_above_half: {is: observation}
   e45: {is: measurement_family}
   e45_cond: {is: family_axis, val: {text: cond}}
   e45_cond_number_extends: {is: axis_value, val: {text: 'number_extends'}}
@@ -3797,9 +3811,9 @@ individuals:
   h_axis_value_from_result: {is: hyp_untested}
   b_axis_value_from_result: {is: item_queued}
   h_model_reads_by_name: {is: hyp_untested}
-  h_model_reads_by_word: {is: hyp_supported}
-  h_model_misses_extends: {is: hyp_untested}
-  b_model_misses_extends: {is: item_queued}
+  h_model_reads_by_word: {is: hyp_mixed}
+  h_model_misses_extends: {is: hyp_refuted}
+  b_model_misses_extends: {is: item_done}
   h_verdict_by_question_format: {is: hyp_untested}
   b_verdict_by_question_format: {is: item_queued}
   h_verdict_by_checker: {is: hyp_untested}
@@ -4699,6 +4713,20 @@ facts:
   - {is: v_metric_of, from: e43, to: accuracy}
   - {is: v_metric_of, from: e43, to: order_robust_accuracy}
   - {is: v_metric_of, from: e43, to: logit_margin}
+  - {is: v_file_of, from: 'e47_Qwen3-4B.json', to: e47}
+  - {is: v_rows_of, from: [items, '{cond}'], to: e47}
+  - {is: v_axis_of, from: e47_cond, to: e47}
+  - {is: v_value_of, from: e47_cond_extends, to: e47_cond}
+  - {is: v_denote, from: e47_cond_extends, to: syntax.extends}
+  - {is: v_value_of, from: e47_cond_decoy, to: e47_cond}
+  - {is: v_denote, from: e47_cond_decoy, to: syntax.mod}
+  - {is: v_denote, from: e47_cond_decoy, to: syntax.word}
+  - {is: v_value_of, from: e47_cond_control, to: e47_cond}
+  - {is: v_denote, from: e47_cond_control, to: syntax.mod}
+  - {is: v_entry_of, from: pair, to: e47}
+  - {is: v_metric_of, from: e47, to: accuracy}
+  - {is: v_metric_of, from: e47, to: order_robust_accuracy}
+  - {is: v_metric_of, from: e47, to: logit_margin}
   - {is: v_file_of, from: 'e45_Qwen3-4B.json', to: e45}
   - {is: v_rows_of, from: [items, '{cond}'], to: e45}
   - {is: v_axis_of, from: e45_cond, to: e45}
@@ -10841,6 +10869,18 @@ facts:
   - {is: v_refer, from: o_e43_decoy_below_control, to: {is: v_come_before, from: e43.decoy.accuracy, to: e43.control.accuracy}}
   - {is: v_support, from: o_e43_decoy_below_quarter, to: h_model_reads_by_word}
   - {is: v_support, from: o_e43_decoy_below_control, to: h_model_reads_by_word}
+  - {is: v_refer, from: o_e47_extends, to: {is: v_level, from: e47.extends.accuracy, to: 0.9583333}}
+  - {is: v_refer, from: o_e47_extends_robust, to: {is: v_level, from: e47.extends.order_robust_accuracy, to: 0.7083333}}
+  - {is: v_refer, from: o_e47_decoy, to: {is: v_level, from: e47.decoy.accuracy, to: 0.875}}
+  - {is: v_refer, from: o_e47_decoy_robust, to: {is: v_level, from: e47.decoy.order_robust_accuracy, to: 0.4166667}}
+  - {is: v_refer, from: o_e47_control, to: {is: v_level, from: e47.control.accuracy, to: 0.9166667}}
+  - {is: v_refer, from: o_e47_extends_above_three_quarters, to: {is: v_come_after, from: e47.extends.accuracy, to: 0.75}}
+  - {is: v_refer, from: o_e47_extends_robust_above_half, to: {is: v_come_after, from: e47.extends.order_robust_accuracy, to: 0.5}}
+  - {is: v_refer, from: o_e47_extends_above_premise, to: {is: v_come_after, from: e47.extends.accuracy, to: 0.625}}
+  - {is: v_refer, from: o_e47_decoy_above_half, to: {is: v_come_after, from: e47.decoy.accuracy, to: 0.5}}
+  - {is: v_contradict, from: o_e47_extends_above_three_quarters, to: h_model_misses_extends}
+  - {is: v_contradict, from: o_e47_extends_robust_above_half, to: h_model_misses_extends}
+  - {is: v_contradict, from: o_e47_decoy_above_half, to: h_model_reads_by_word}
   - {is: v_refer, from: o_e45_number_extends, to: {is: v_level, from: e45.number_extends.mean_value, to: 0.7083333}}
   - {is: v_refer, from: o_e45_number_decoy, to: {is: v_level, from: e45.number_decoy.mean_value, to: 0.0416667}}
   - {is: v_refer, from: o_e45_number_control, to: {is: v_level, from: e45.number_control.mean_value, to: 0.0}}
