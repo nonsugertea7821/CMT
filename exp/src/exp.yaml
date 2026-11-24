@@ -3200,6 +3200,34 @@ individuals:
   o_e51b_named_robust: {is: observation}
   o_e51b_extends_above_premise: {is: observation}
   o_e51b_named_not_above_support_line: {is: observation}
+  e52a: {is: measurement_family}
+  e52a_cond: {is: family_axis, val: {text: cond}}
+  e52a_cond_extends: {is: axis_value, val: {text: 'extends'}}
+  e52a_cond_chain: {is: axis_value, val: {text: 'chain'}}
+  e52a_cond_named: {is: axis_value, val: {text: 'named'}}
+  o_e52a_extends: {is: observation}
+  o_e52a_extends_robust: {is: observation}
+  o_e52a_chain: {is: observation}
+  o_e52a_chain_robust: {is: observation}
+  o_e52a_named: {is: observation}
+  o_e52a_named_robust: {is: observation}
+  o_e52a_extends_above_premise: {is: observation}
+  o_e52a_chain_not_above_support_line: {is: observation}
+  e52b: {is: measurement_family}
+  e52b_cond: {is: family_axis, val: {text: cond}}
+  e52b_cond_extends: {is: axis_value, val: {text: 'extends'}}
+  e52b_cond_chain: {is: axis_value, val: {text: 'chain'}}
+  e52b_cond_named: {is: axis_value, val: {text: 'named'}}
+  o_e52b_extends: {is: observation}
+  o_e52b_extends_robust: {is: observation}
+  o_e52b_chain: {is: observation}
+  o_e52b_chain_robust: {is: observation}
+  o_e52b_named: {is: observation}
+  o_e52b_named_robust: {is: observation}
+  o_e52b_extends_above_premise: {is: observation}
+  o_e52b_chain_above_support_line: {is: observation}
+  o_e52b_chain_below_refute_line: {is: observation}
+  o_e52b_chain_above_named: {is: observation}
   e45: {is: measurement_family}
   e45_cond: {is: family_axis, val: {text: cond}}
   e45_cond_number_extends: {is: axis_value, val: {text: 'number_extends'}}
@@ -3862,8 +3890,8 @@ individuals:
   h_model_misses_named_mod: {is: hyp_untested}
   b_model_misses_named_mod: {is: item_queued}
   b_model_writes_by_name: {is: item_queued}
-  h_model_misses_named_hop: {is: hyp_untested}
-  b_model_misses_named_hop: {is: item_queued}
+  h_model_misses_named_hop: {is: hyp_supported}
+  b_model_misses_named_hop: {is: item_done}
   h_refer_ops_share_direction: {is: hyp_untested}
   b_refer_ops_share_direction: {is: item_queued}
   h_refer_cuts_orthogonal: {is: hyp_untested}
@@ -4789,6 +4817,36 @@ facts:
   - {is: v_metric_of, from: e51b, to: accuracy}
   - {is: v_metric_of, from: e51b, to: order_robust_accuracy}
   - {is: v_metric_of, from: e51b, to: logit_margin}
+  - {is: v_file_of, from: 'e52_Qwen2.5-1.5B-Instruct.json', to: e52a}
+  - {is: v_rows_of, from: [items, '{cond}'], to: e52a}
+  - {is: v_axis_of, from: e52a_cond, to: e52a}
+  - {is: v_value_of, from: e52a_cond_extends, to: e52a_cond}
+  - {is: v_denote, from: e52a_cond_extends, to: syntax.extends}
+  - {is: v_value_of, from: e52a_cond_chain, to: e52a_cond}
+  - {is: v_denote, from: e52a_cond_chain, to: syntax.extends}
+  - {is: v_denote, from: e52a_cond_chain, to: syntax.identifier}
+  - {is: v_value_of, from: e52a_cond_named, to: e52a_cond}
+  - {is: v_denote, from: e52a_cond_named, to: syntax.mod}
+  - {is: v_denote, from: e52a_cond_named, to: syntax.identifier}
+  - {is: v_entry_of, from: pair, to: e52a}
+  - {is: v_metric_of, from: e52a, to: accuracy}
+  - {is: v_metric_of, from: e52a, to: order_robust_accuracy}
+  - {is: v_metric_of, from: e52a, to: logit_margin}
+  - {is: v_file_of, from: 'e52_Qwen3-4B.json', to: e52b}
+  - {is: v_rows_of, from: [items, '{cond}'], to: e52b}
+  - {is: v_axis_of, from: e52b_cond, to: e52b}
+  - {is: v_value_of, from: e52b_cond_extends, to: e52b_cond}
+  - {is: v_denote, from: e52b_cond_extends, to: syntax.extends}
+  - {is: v_value_of, from: e52b_cond_chain, to: e52b_cond}
+  - {is: v_denote, from: e52b_cond_chain, to: syntax.extends}
+  - {is: v_denote, from: e52b_cond_chain, to: syntax.identifier}
+  - {is: v_value_of, from: e52b_cond_named, to: e52b_cond}
+  - {is: v_denote, from: e52b_cond_named, to: syntax.mod}
+  - {is: v_denote, from: e52b_cond_named, to: syntax.identifier}
+  - {is: v_entry_of, from: pair, to: e52b}
+  - {is: v_metric_of, from: e52b, to: accuracy}
+  - {is: v_metric_of, from: e52b, to: order_robust_accuracy}
+  - {is: v_metric_of, from: e52b, to: logit_margin}
   - {is: v_file_of, from: 'e45_Qwen3-4B.json', to: e45}
   - {is: v_rows_of, from: [items, '{cond}'], to: e45}
   - {is: v_axis_of, from: e45_cond, to: e45}
@@ -10972,6 +11030,25 @@ facts:
   - {is: v_refer, from: o_e51b_extends_above_premise, to: {is: v_come_after, from: e51b.extends.accuracy, to: 0.75}}
   - {is: v_refer, from: o_e51b_named_not_above_support_line, to: {is: v_not_after, from: e51b.named.accuracy, to: 0.625}}
   - {is: v_support, from: o_e51b_named_not_above_support_line, to: h_model_misses_mod}
+  - {is: v_refer, from: o_e52a_extends, to: {is: v_level, from: e52a.extends.accuracy, to: 0.9583333}}
+  - {is: v_refer, from: o_e52a_extends_robust, to: {is: v_level, from: e52a.extends.order_robust_accuracy, to: 0.4583333}}
+  - {is: v_refer, from: o_e52a_chain, to: {is: v_level, from: e52a.chain.accuracy, to: 0.625}}
+  - {is: v_refer, from: o_e52a_chain_robust, to: {is: v_level, from: e52a.chain.order_robust_accuracy, to: 0.0416667}}
+  - {is: v_refer, from: o_e52a_named, to: {is: v_level, from: e52a.named.accuracy, to: 0.5416667}}
+  - {is: v_refer, from: o_e52a_named_robust, to: {is: v_level, from: e52a.named.order_robust_accuracy, to: 0.125}}
+  - {is: v_refer, from: o_e52a_extends_above_premise, to: {is: v_come_after, from: e52a.extends.accuracy, to: 0.75}}
+  - {is: v_refer, from: o_e52a_chain_not_above_support_line, to: {is: v_not_after, from: e52a.chain.accuracy, to: 0.625}}
+  - {is: v_support, from: o_e52a_chain_not_above_support_line, to: h_model_misses_named_hop}
+  - {is: v_refer, from: o_e52b_extends, to: {is: v_level, from: e52b.extends.accuracy, to: 0.9166667}}
+  - {is: v_refer, from: o_e52b_extends_robust, to: {is: v_level, from: e52b.extends.order_robust_accuracy, to: 0.7083333}}
+  - {is: v_refer, from: o_e52b_chain, to: {is: v_level, from: e52b.chain.accuracy, to: 0.6666667}}
+  - {is: v_refer, from: o_e52b_chain_robust, to: {is: v_level, from: e52b.chain.order_robust_accuracy, to: 0.2916667}}
+  - {is: v_refer, from: o_e52b_named, to: {is: v_level, from: e52b.named.accuracy, to: 0.4166667}}
+  - {is: v_refer, from: o_e52b_named_robust, to: {is: v_level, from: e52b.named.order_robust_accuracy, to: 0.125}}
+  - {is: v_refer, from: o_e52b_extends_above_premise, to: {is: v_come_after, from: e52b.extends.accuracy, to: 0.75}}
+  - {is: v_refer, from: o_e52b_chain_above_support_line, to: {is: v_come_after, from: e52b.chain.accuracy, to: 0.625}}
+  - {is: v_refer, from: o_e52b_chain_below_refute_line, to: {is: v_come_before, from: e52b.chain.accuracy, to: 0.75}}
+  - {is: v_refer, from: o_e52b_chain_above_named, to: {is: v_come_after, from: e52b.chain.accuracy, to: e52b.named.accuracy}}
   - {is: v_refer, from: o_e45_number_extends, to: {is: v_level, from: e45.number_extends.mean_value, to: 0.7083333}}
   - {is: v_refer, from: o_e45_number_decoy, to: {is: v_level, from: e45.number_decoy.mean_value, to: 0.0416667}}
   - {is: v_refer, from: o_e45_number_control, to: {is: v_level, from: e45.number_control.mean_value, to: 0.0}}
