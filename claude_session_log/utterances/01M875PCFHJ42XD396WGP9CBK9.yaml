@@ -1,0 +1,24 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-24T16:19:47.313Z（UTC）
+individuals:
+  01M875PCFHJ42XD396WGP9CBK9:
+    is: model_utterance
+    display: 発言 4301
+    val:
+      order: 4301
+      text: |
+        前の応答の否定の文を、一つずつ分けました。
+
+        - **「named はどちらも支持の線を越えなかった」**: 確かめた事実です。結果のファイルの値は 0.625 と 0.542 でした。登録していません。
+        - **「落ちているのは名前を辿る段かもしれない」**: 確かめていない主張なので、仮説 `h_model_misses_named_hop` として登録しました（#744、検査器の道 d_road_checker に結んだ）。
+          - 式は `{v_read, from: model, to: [syntax.extends, syntax.identifier], neg: true}` です。
+          - 依存を mod でなく extends の 2 段（`X: {extends: M}`、`M: {extends: A}`）で作っても読まないなら、落ちているのは名前を辿る段のほうです。
+          - #744 は登録だけの PR なので、spec が通れば自動マージの段がマージする見込みです。
+        - **「この段と mod を読むことは、まだ分けられていない」**: 事実です。E51 の inline では、X の行に A の字面があります。分ける実験は、上の仮説で立てたので、別には登録していません。
+
+        ロードマップの位置: H3 検査器の道（d_road_checker）
+facts:
+- {is: v_say, from: session_model, to: 01M875PCFHJ42XD396WGP9CBK9}
+- {is: exp.v_answer, from: 01M875PCFHJ42XD396WGP9CBK9, to: 01M86EX52DNVRMYZCFJ4X9EC2Q}
+- {is: v_refer, from: 01M875PCFHJ42XD396WGP9CBK9, to: exp.v_read}
+- {is: v_refer, from: 01M875PCFHJ42XD396WGP9CBK9, to: syntax.extends}
+- {is: v_refer, from: 01M875PCFHJ42XD396WGP9CBK9, to: syntax.identifier}
