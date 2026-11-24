@@ -3463,6 +3463,8 @@ individuals:
   h_auto_merge_uncorrected: {is: hyp_untested}
   h_merge_verdict_by_spec: {is: hyp_untested}
   b_merge_verdict_by_spec: {is: item_queued}
+  h_merge_verdict_by_mixed: {is: hyp_untested}
+  b_merge_verdict_by_mixed: {is: item_queued}
   h_round_trip_raises_sibling: {is: hyp_refuted}
   b_round_trip_raises_sibling: {is: item_done}
   h_round_trip_bounds_present: {is: hyp_untested}
@@ -10220,6 +10222,8 @@ facts:
   - {is: v_check, from: b_auto_merge_uncorrected, to: h_auto_merge_uncorrected}
   - {is: v_refer, from: h_merge_verdict_by_spec, to: {is: v_depend, from: merge_verdict, to: type_check_result}}
   - {is: v_check, from: b_merge_verdict_by_spec, to: h_merge_verdict_by_spec}
+  - {is: v_refer, from: h_merge_verdict_by_mixed, to: {is: v_depend, from: merge_verdict, to: hyp_mixed}}
+  - {is: v_check, from: b_merge_verdict_by_mixed, to: h_merge_verdict_by_mixed}
   - {is: v_refer, from: h_round_trip_raises_sibling, to: {is: v_raise, from: teacher_round_trip, to: sibling_discrimination}}
   - {is: v_check, from: b_round_trip_raises_sibling, to: h_round_trip_raises_sibling}
   - {is: v_ground, from: d_consolidation_in_vector, to: h_round_trip_raises_sibling}
