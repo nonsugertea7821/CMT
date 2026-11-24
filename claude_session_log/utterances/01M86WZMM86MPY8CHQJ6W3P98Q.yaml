@@ -1,0 +1,22 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-24T13:47:33.384Z（UTC）
+individuals:
+  01M86WZMM86MPY8CHQJ6W3P98Q:
+    is: model_utterance
+    display: 発言 4240
+    val:
+      order: 4240
+      text: |
+        今回は何も登録していません。引っかかった 3 つの文は、どれも確かめた事実です。
+
+        - **「E40 は前提が立たず、判定できませんでした」**: exp.yaml で確かめました。
+          - 観察 o_e40_extends_below_premise は、extends の acc が 0.667 で、前提の線 0.75 より下だったことを書いています。
+          - h_model_reads_by_name は hyp_untested のままです。
+        - **「自動マージの条件に合いません」**: `auto_merge.py` の条件と、#725 で届いた判定のコメントで確かめました。
+          - #725 は、E48 の事前登録が E42 の結果より後にあって「手で見る」になりました。#718 も、E49 の事前登録が E40 の結果より後にあり、同じ形です。
+        - **「新しく登録した仮説はありません」**: この回でしたことの報告です。何かを見送る理由にはしていません。
+
+        ロードマップの位置: H3 検査器の道（d_road_checker）
+facts:
+- {is: v_say, from: session_model, to: 01M86WZMM86MPY8CHQJ6W3P98Q}
+- {is: exp.v_answer, from: 01M86WZMM86MPY8CHQJ6W3P98Q, to: 01M86EX52DNVRMYZCFJ4X9EC2Q}
+- {is: v_refer, from: 01M86WZMM86MPY8CHQJ6W3P98Q, to: exp.hyp_untested}
