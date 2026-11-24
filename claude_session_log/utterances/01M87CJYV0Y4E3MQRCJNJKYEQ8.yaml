@@ -1,0 +1,27 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-24T18:20:15.072Z（UTC）
+individuals:
+  01M87CJYV0Y4E3MQRCJNJKYEQ8:
+    is: model_utterance
+    display: 発言 4353
+    val:
+      order: 4353
+      text: |
+        E53 の結果、h_model_misses_named_mod は 2 つのモデルとも反証になりました。名前を介した 2 段で、mod を使った書き方（named）が extends を使った書き方（chain）より読めない、ということは起きていません。
+
+        | モデル | extends | chain | named | 差（chain − named） |
+        |---|---|---|---|---|
+        | Qwen2.5-1.5B | 0.844 | 0.563 | 0.719 | −0.156 |
+        | Qwen3-4B | 0.969 | 0.531 | 0.531 | 0 |
+
+        - **前提**: extends が 0.75 以上で、どちらのモデルでも成り立っています。
+        - **判定**: 差はどちらも 0 以下で、事前に決めた反証の線に入りました。
+        - **開示**: 4B は途中でコンテナが再起動しました。named の 16 項目までの途中保存から再開しています。
+        - **記録**: 結果と体系の変更（観察、仮説への反証の結びつき、状態を「反証」に）は、#749 に push しました。
+        - **自動マージの判定**: 手元で走らせたところ、条件はすべて満たしていました。CI が通ったら Draft を外します。CI は 18:29Z に確かめます。
+
+        **含意**: E52 の 4B で見えた差 0.25 は、新しい項目では出ませんでした。2 段で落ちるのは mod に固有のことではなく、名前を辿る段（h_model_misses_named_hop の側）にある、と読むのが観察に近いです。ただ、32 項目で 0.55 前後の正答率なら、ふれ幅の目安（標準誤差）は約 0.09 です。E52 と E53 の chain の違い（0.667 と 0.531）は、その幅の中に収まります。
+
+        ロードマップの位置: H3 検査器の道（d_road_checker）
+facts:
+- {is: v_say, from: session_model, to: 01M87CJYV0Y4E3MQRCJNJKYEQ8}
+- {is: exp.v_answer, from: 01M87CJYV0Y4E3MQRCJNJKYEQ8, to: 01M86EX52DNVRMYZCFJ4X9EC2Q}
