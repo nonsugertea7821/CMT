@@ -1,0 +1,28 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-24T19:07:11.715Z（UTC）
+individuals:
+  01M87F8XF383V40VK1JY9NN1EZ:
+    is: model_utterance
+    display: 発言 4369
+    val:
+      order: 4369
+      text: |
+        前の報告の否定の文 4 つのうち、1 つを仮説として登録しました。残りの 3 つは測った事実か、事前登録の判定です。
+
+        - **登録した: 「出力の行が、並びに強い方へ寄せただけか、読まれているのかは分けていない」**
+          - これは確かめていない点なので、仮説 h_pair_by_checker_output として登録しました。
+          - 中身は「順を入れ替えた 2 回の判定の揃いは、検査器の出力に頼るか」です。式は `{v_rely, from: verdict_pair, to: type_check_result}` です。
+          - 根拠は E54 の 1.5B です。出力の行を添えると、並びを変えても正しかった割合は 0.094 から 0.281（closure）・0.313（edges）に上がりましたが、acc は上がりませんでした。
+          - 確かめ方の案は、正しい closure と、名前を入れ替えた偽の closure を比べることです。
+          - d_road_checker に結び、登録だけの PR #750 で出しました。見張りを付け、assignee もあなたにしてあります。
+        - **登録しなかった: 「出力を添えても正答率は上がらなかった」「正答率そのものは上がっていない」**: E54 で測った値です（named 0.750、closure 0.719）。
+        - **登録しなかった: 「1.5B では判定しない」**: 事前登録した線（0.5 と 0.75）のあいだに入ったという判定の結果です。
+
+        E54 の 4B は走っています。19:15Z に進みを確かめます。
+
+        ロードマップの位置: H3 検査器の道（d_road_checker）
+facts:
+- {is: v_say, from: session_model, to: 01M87F8XF383V40VK1JY9NN1EZ}
+- {is: exp.v_answer, from: 01M87F8XF383V40VK1JY9NN1EZ, to: 01M86EX52DNVRMYZCFJ4X9EC2Q}
+- {is: v_refer, from: 01M87F8XF383V40VK1JY9NN1EZ, to: exp.v_rely}
+- {is: v_refer, from: 01M87F8XF383V40VK1JY9NN1EZ, to: exp.verdict_pair}
+- {is: v_refer, from: 01M87F8XF383V40VK1JY9NN1EZ, to: exp.type_check_result}
