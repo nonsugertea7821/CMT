@@ -1,0 +1,29 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-24T17:25:27.542Z（UTC）
+individuals:
+  01M879EMBPPCJVN72EW0VT5X7A:
+    is: model_utterance
+    display: 発言 4340
+    val:
+      order: 4340
+      text: |
+        #746 と #747 はマージされています。#746 で E52 の結果が入り、#747 で h_model_misses_named_mod の登録が入りました。
+
+        - **#746（E52）**
+          - 1.5B は支持です。前提の extends が 0.958、chain が 0.625（向きを入れ替えても正しかった割合は 0.042）、named が 0.542 でした。
+          - 4B は判定なしです。前提の extends が 0.917、chain が 0.667（同 0.292）、named が 0.417 でした。
+          - chain の 0.667 は事前登録の 2 本の線のあいだに入ったので、判定が出ていません。
+        - **#747（登録）**
+          - 4B は extends を 2 段たどる形（chain）より、mod を挟む形（named）のほうが低くなりました。
+          - 「mod を挟むことだけに弱いところがある」という仮説を h_model_misses_named_mod として登録しました。まだ確かめていません。
+          - 確かめ方は、新しい項目を作り、2 つ以上のモデルで named と chain の差を測ることです。差の線は実行の前に決めて commit します。E52 の 4B で出た差 0.25 は使いません。
+        - **後片付け**
+          - E52 の作業用ディレクトリと手元のブランチは消しました。
+          - 開いている PR（#718・#725・#729・#736・#742）は、どれも main と衝突なくマージできることを確かめました。
+        - **周回の予定**
+          - 1 時間ごとの周回の指示文で H3 の行を書き換え、次の一手を h_model_misses_named_mod の実験（E53）にしました。
+          - 次の周回は 17:52Z です。
+
+        ロードマップの位置: H3 検査器の道（d_road_checker）
+facts:
+- {is: v_say, from: session_model, to: 01M879EMBPPCJVN72EW0VT5X7A}
+- {is: exp.v_answer, from: 01M879EMBPPCJVN72EW0VT5X7A, to: 01M86EX52DNVRMYZCFJ4X9EC2Q}
