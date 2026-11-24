@@ -1,0 +1,25 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-24T13:16:57.891Z（UTC）
+individuals:
+  01M86V7M538MN6G15R6RTAYSRG:
+    is: model_utterance
+    display: 発言 4235
+    val:
+      order: 4235
+      text: |
+        今回は何も登録していません。引っかかった 5 つの文のうち、事実でないのは 1 つの解釈だけで、それはすでにある仮説が受け持っています。
+
+        - **「名前で答える形では選びません」**: E47 で測った事実です。decoy の正答は 0.875 で、字面がある側を選んだのは 24 項目のうち 3 項目でした。ただし、Qwen3-4B と seed 2 の項目に限った話です。「選びません」は言い過ぎで、「ほとんど選びません」が正確でした。
+        - **「字面で読むかどうかは形しだい」**: 確かめていない解釈です。
+          - 測ったのは 1 つのモデルと 1 組の項目だけです。
+          - 登録しなかったのは、ちょうどいま支持になった h_verdict_by_question_format（式は `{v_rely, from: verdict, to: question_format}`）が同じ主張を受け持つからです。
+          - 別のモデルや項目で確かめる必要が出たら、この仮説の下で行います。
+        - **「事前登録の外なので、体系では結んでいません」**: 事実です。10e26e7 で E48 から結んだ先は、h_verdict_by_question_format だけです。
+        - **「自動マージの条件に合いません」**: `auto_merge.py` を読んで確かめた事実です。結果ファイルを触った最初の commit より後にスクリプトの commit があると、条件から外れます。
+        - **「新しい仮説は登録していません」**: この回でしたことの報告です。理由は 2 つ目の項目と同じです。
+
+        ロードマップの位置: H3 検査器の道（d_road_checker）
+facts:
+- {is: v_say, from: session_model, to: 01M86V7M538MN6G15R6RTAYSRG}
+- {is: exp.v_answer, from: 01M86V7M538MN6G15R6RTAYSRG, to: 01M86EX52DNVRMYZCFJ4X9EC2Q}
+- {is: v_refer, from: 01M86V7M538MN6G15R6RTAYSRG, to: exp.v_rely}
+- {is: v_refer, from: 01M86V7M538MN6G15R6RTAYSRG, to: exp.question_format}
