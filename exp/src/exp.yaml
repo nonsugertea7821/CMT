@@ -3859,6 +3859,8 @@ individuals:
   h_functor_preserves_shape: {is: hyp_untested}
   b_functor_preserves_shape: {is: item_queued}
   h_model_writes_by_name: {is: hyp_untested}
+  h_model_misses_named_mod: {is: hyp_untested}
+  b_model_misses_named_mod: {is: item_queued}
   b_model_writes_by_name: {is: item_queued}
   h_model_misses_named_hop: {is: hyp_untested}
   b_model_misses_named_hop: {is: item_queued}
@@ -10864,6 +10866,9 @@ facts:
   - {is: v_refer, from: h_model_misses_named_hop, to: {is: v_read, from: model, to: [syntax.extends, syntax.identifier], neg: true}}
   - {is: v_check, from: b_model_misses_named_hop, to: h_model_misses_named_hop}
   - {is: v_ground, from: d_road_checker, to: h_model_misses_named_hop}
+  - {is: v_refer, from: h_model_misses_named_mod, to: {is: v_read, from: model, to: [syntax.mod, syntax.identifier], neg: true}}
+  - {is: v_check, from: b_model_misses_named_mod, to: h_model_misses_named_mod}
+  - {is: v_ground, from: d_road_checker, to: h_model_misses_named_mod}
   - {is: v_refer, from: h_model_reads_by_word, to: {is: v_read, from: model, to: syntax.word}}
   - {is: v_check, from: b_model_reads_by_word, to: h_model_reads_by_word}
   - {is: v_ground, from: d_road_checker, to: h_model_reads_by_word}
