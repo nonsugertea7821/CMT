@@ -1,0 +1,20 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-24T23:10:52.490Z（UTC）
+individuals:
+  01M87X73JAKXJQ4GF5024BV0J8:
+    is: model_utterance
+    display: 発言 4428
+    val:
+      order: 4428
+      text: |
+        #757 も tc で落ちたので、直して push しました。
+
+        - **原因**: exp.yaml から `lang.d_cscl_display_derived` を v_ground の始点にしたところ、tc に「その位置の種類に当たる個体がない」と言われました。
+        - **直し**: 始点を `d_road_region` に替えました。d_road_region は d_cscl_display_derived に依存しているので、そこを経て表示語の導出の決定に届きます。この経緯は PR の本文に書きました。
+
+        #756 と #757 の CI の再実行を待っています。
+
+        ロードマップの位置: 領域の道 d_road_region の前提（L2）です。
+facts:
+- {is: v_say, from: session_model, to: 01M87X73JAKXJQ4GF5024BV0J8}
+- {is: exp.v_answer, from: 01M87X73JAKXJQ4GF5024BV0J8, to: 01M86EX52DNVRMYZCFJ4X9EC2Q}
+- {is: v_refer, from: 01M87X73JAKXJQ4GF5024BV0J8, to: exp.v_ground}
