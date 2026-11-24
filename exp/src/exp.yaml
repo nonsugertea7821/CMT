@@ -128,6 +128,7 @@ nodes:
   reason: {display: 理由, extends: sentence, mod: refer_from_verdict}
   definition_text: {display: 定義文, extends: passage, mod: {of: [v_compose, to], with: definition}}
   examples_only: {display: 適用例だけ, extends: passage, mod: {of: [v_compose, to], with: application_example}}
+  reasons_only: {display: 理由だけ, extends: passage, mod: {of: [v_compose, to], with: reason}}
   def_and_examples: {display: 定義文と適用例, extends: definition_text, mod: {of: [is, from], with: examples_only}}
   round_trip_material: {display: 判定に依って直す定義文と適用例, extends: def_and_examples, mod: {of: [v_depend, from], with: verdict}}
   filler_text: {display: 無関係な文章, extends: passage, mod: not_agree_from_question}
@@ -245,6 +246,7 @@ nodes:
   delta_weights: {display: 差分重み, extends: channel, mod: {of: [v_involve, from], with: weights}}
   teacher_recite: {display: 定義文の暗唱を教師にする, extends: teaching, from: definition_text}
   teacher_examples: {display: 適用例を教師にする, extends: teaching, from: examples_only}
+  teacher_reasons: {display: 理由を教師にする, extends: teaching, from: reasons_only}
   teacher_both: {display: 定義文の暗唱と適用例の両方を教師にする, extends: teaching, from: def_and_examples}
   teacher_round_trip: {display: 抽象と具体の往復を教師にする, extends: teaching, from: round_trip_material}
   teacher_round_trip_bound: {display: 兄弟概念の組を既に組み立てる層への、抽象と具体の往復の教示, extends: teacher_round_trip, to: layer_with_sibling}
@@ -2643,6 +2645,17 @@ individuals:
   e37_writing_checker_version_m_n_reproduced_match: {is: axis_value, val: {text: n_reproduced_match}}
   e37_writing_checker_version_m_n_then_ok: {is: axis_value, val: {text: n_then_ok}}
   e37_writing_checker_version_m_n_now_ok: {is: axis_value, val: {text: n_now_ok}}
+  e38_error_kind_is_law: {is: measurement_family}
+  e38_error_kind_is_law_c: {is: family_axis, val: {text: c}}
+  e38_error_kind_is_law_c_summary: {is: axis_value, val: {text: summary}}
+  e38_error_kind_is_law_m: {is: family_axis, val: {text: m}}
+  e38_error_kind_is_law_m_n_errors: {is: axis_value, val: {text: n_errors}}
+  e38_error_kind_is_law_m_n_named: {is: axis_value, val: {text: n_named}}
+  e38_error_kind_is_law_m_n_unnamed: {is: axis_value, val: {text: n_unnamed}}
+  e38_error_kind_is_law_m_n_governed_unnamed: {is: axis_value, val: {text: n_governed_unnamed}}
+  e38_error_kind_is_law_m_n_attributable: {is: axis_value, val: {text: n_attributable}}
+  e38_error_kind_is_law_m_n_rejected: {is: axis_value, val: {text: n_rejected}}
+  e38_error_kind_is_law_m_n_crashed: {is: axis_value, val: {text: n_crashed}}
   e35_expression_makes_state_unique: {is: measurement_family}
   e35_expression_makes_state_unique_c: {is: family_axis, val: {text: c}}
   e35_expression_makes_state_unique_c_none_S: {is: axis_value, val: {text: none_S}}
@@ -3078,6 +3091,30 @@ individuals:
   e20_explain_noans_cond_none: {is: axis_value, val: {text: 'none'}}
   e20_explain_noans_cond_qa: {is: axis_value, val: {text: 'qa'}}
   e20_explain_noans_cond_defqa: {is: axis_value, val: {text: 'defqa'}}
+  e36_apply: {is: measurement_family}
+  e36_apply_cond: {is: family_axis, val: {text: cond}}
+  e36_apply_cond_none: {is: axis_value, val: {text: 'none'}}
+  e36_apply_cond_ex: {is: axis_value, val: {text: 'ex'}}
+  e36_apply_cond_qa: {is: axis_value, val: {text: 'qa'}}
+  e36_explain: {is: measurement_family}
+  e36_explain_cond: {is: family_axis, val: {text: cond}}
+  e36_explain_cond_none: {is: axis_value, val: {text: 'none'}}
+  e36_explain_cond_ex: {is: axis_value, val: {text: 'ex'}}
+  e36_explain_cond_qa: {is: axis_value, val: {text: 'qa'}}
+  e36_explain_noans: {is: measurement_family}
+  e36_explain_noans_cond: {is: family_axis, val: {text: cond}}
+  e36_explain_noans_cond_none: {is: axis_value, val: {text: 'none'}}
+  e36_explain_noans_cond_ex: {is: axis_value, val: {text: 'ex'}}
+  e36_explain_noans_cond_qa: {is: axis_value, val: {text: 'qa'}}
+  o_e36_apply_none: {is: observation}
+  o_e36_apply_ex: {is: observation}
+  o_e36_apply_qa: {is: observation}
+  o_e36_explain_none: {is: observation}
+  o_e36_explain_ex: {is: observation}
+  o_e36_explain_qa: {is: observation}
+  o_e36_apply_ex_below_threshold: {is: observation}
+  o_e36_apply_ex_above_none: {is: observation}
+  o_e36_explain_ex_above_none: {is: observation}
   e39_apply: {is: measurement_family}
   e39_apply_cond: {is: family_axis, val: {text: cond}}
   e39_apply_cond_none: {is: axis_value, val: {text: 'none'}}
@@ -3110,6 +3147,61 @@ individuals:
   o_e40_inline: {is: observation}
   o_e40_named: {is: observation}
   o_e40_extends_below_premise: {is: observation}
+  e41: {is: measurement_family}
+  e41_cond: {is: family_axis, val: {text: cond}}
+  e41_cond_extends: {is: axis_value, val: {text: 'extends'}}
+  e41_cond_inline: {is: axis_value, val: {text: 'inline'}}
+  e41_cond_named: {is: axis_value, val: {text: 'named'}}
+  e41_cond_decoy: {is: axis_value, val: {text: 'decoy'}}
+  o_e41_extends: {is: observation}
+  o_e41_inline: {is: observation}
+  o_e41_named: {is: observation}
+  o_e41_decoy: {is: observation}
+  o_e41_extends_below_premise: {is: observation}
+  e43: {is: measurement_family}
+  e43_cond: {is: family_axis, val: {text: cond}}
+  e43_cond_extends: {is: axis_value, val: {text: 'extends'}}
+  e43_cond_decoy: {is: axis_value, val: {text: 'decoy'}}
+  e43_cond_control: {is: axis_value, val: {text: 'control'}}
+  o_e43_extends: {is: observation}
+  o_e43_decoy: {is: observation}
+  o_e43_control: {is: observation}
+  o_e43_extends_above_premise: {is: observation}
+  o_e43_decoy_below_quarter: {is: observation}
+  o_e43_decoy_below_control: {is: observation}
+  e45: {is: measurement_family}
+  e45_cond: {is: family_axis, val: {text: cond}}
+  e45_cond_number_extends: {is: axis_value, val: {text: 'number_extends'}}
+  e45_cond_number_decoy: {is: axis_value, val: {text: 'number_decoy'}}
+  e45_cond_number_control: {is: axis_value, val: {text: 'number_control'}}
+  e45_cond_name_adj_extends: {is: axis_value, val: {text: 'name_adj_extends'}}
+  e45_cond_name_adj_decoy: {is: axis_value, val: {text: 'name_adj_decoy'}}
+  e45_cond_name_adj_control: {is: axis_value, val: {text: 'name_adj_control'}}
+  e45_cond_number_adj_extends: {is: axis_value, val: {text: 'number_adj_extends'}}
+  e45_cond_number_adj_decoy: {is: axis_value, val: {text: 'number_adj_decoy'}}
+  e45_cond_number_adj_control: {is: axis_value, val: {text: 'number_adj_control'}}
+  e45_cond_name_extends: {is: axis_value, val: {text: 'name_extends'}}
+  e45_cond_name_decoy: {is: axis_value, val: {text: 'name_decoy'}}
+  e45_cond_name_control: {is: axis_value, val: {text: 'name_control'}}
+  e45p: {is: measurement_family}
+  e45p_cond: {is: family_axis, val: {text: cond}}
+  e45p_cond_number_extends: {is: axis_value, val: {text: 'number_extends'}}
+  e45p_cond_number_decoy: {is: axis_value, val: {text: 'number_decoy'}}
+  e45p_cond_number_control: {is: axis_value, val: {text: 'number_control'}}
+  e45p_cond_name_adj_extends: {is: axis_value, val: {text: 'name_adj_extends'}}
+  e45p_cond_name_adj_decoy: {is: axis_value, val: {text: 'name_adj_decoy'}}
+  e45p_cond_name_adj_control: {is: axis_value, val: {text: 'name_adj_control'}}
+  o_e45_number_extends: {is: observation}
+  o_e45_number_decoy: {is: observation}
+  o_e45_number_control: {is: observation}
+  o_e45_name_adj_extends: {is: observation}
+  o_e45_name_adj_decoy: {is: observation}
+  o_e45_name_adj_control: {is: observation}
+  o_e45_extends_name_below_number: {is: observation}
+  o_e45_decoy_name_above_number: {is: observation}
+  o_e45_control_name_above_number: {is: observation}
+  o_e45p_name_adj_decoy: {is: observation}
+  o_e45p_name_adj_decoy_above_quarter: {is: observation}
   o_e39_explain_ml_below_none: {is: observation}
   e21: {is: measurement_family}
   e21_group: {is: family_axis, val: {text: group}}
@@ -3617,8 +3709,15 @@ individuals:
   b_error_kind_is_law: {is: item_queued}
   h_rejection_by_few_laws: {is: hyp_untested}
   b_rejection_by_few_laws: {is: item_queued}
-  h_unnamed_error_is_law_given: {is: hyp_untested}
-  b_unnamed_error_is_law_given: {is: item_queued}
+  h_unnamed_error_is_law_given: {is: hyp_refuted}
+  b_unnamed_error_is_law_given: {is: item_done}
+  o_e38_errors: {is: observation}
+  o_e38_attributable: {is: observation}
+  o_e38_named: {is: observation}
+  o_e38_unnamed: {is: observation}
+  o_e38_governed_unnamed: {is: observation}
+  o_e38_crashed: {is: observation}
+  o_e38_rejected: {is: observation}
   h_unnamed_error_as_law_rule: {is: hyp_untested}
   b_unnamed_error_as_law_rule: {is: item_queued}
   h_apply_depends_explain: {is: hyp_untested}
@@ -3629,8 +3728,8 @@ individuals:
   b_qualification_depends_above: {is: item_queued}
   h_multi_layer_transfers_to_explain: {is: hyp_refuted}
   b_multi_layer_transfers_to_explain: {is: item_done}
-  h_explain_transfers_to_apply: {is: hyp_untested}
-  b_explain_transfers_to_apply: {is: item_queued}
+  h_explain_transfers_to_apply: {is: hyp_refuted}
+  b_explain_transfers_to_apply: {is: item_done}
   h_contrast_vector_lowers_stability: {is: hyp_untested}
   b_contrast_vector_lowers_stability: {is: item_queued}
   h_common_component_lowers_prior_meaning: {is: hyp_untested}
@@ -3707,6 +3806,22 @@ individuals:
   h_axis_value_from_result: {is: hyp_untested}
   b_axis_value_from_result: {is: item_queued}
   h_model_reads_by_name: {is: hyp_untested}
+  h_model_reads_by_word: {is: hyp_supported}
+  h_model_misses_extends: {is: hyp_untested}
+  b_model_misses_extends: {is: item_queued}
+  h_verdict_by_question_format: {is: hyp_untested}
+  b_verdict_by_question_format: {is: item_queued}
+  h_verdict_by_checker: {is: hyp_untested}
+  b_verdict_by_checker: {is: item_queued}
+  h_model_misses_mod: {is: hyp_untested}
+  b_model_misses_mod: {is: item_queued}
+  h_verdict_by_option: {is: hyp_refuted}
+  b_verdict_by_option: {is: item_done}
+  h_model_misses_checker_output: {is: hyp_untested}
+  b_model_misses_checker_output: {is: item_queued}
+  h_verdict_by_mention_order: {is: hyp_untested}
+  b_verdict_by_mention_order: {is: item_queued}
+  b_model_reads_by_word: {is: item_done}
   b_model_reads_by_name: {is: item_queued}
   h_functor_preserves_shape: {is: hyp_untested}
   b_functor_preserves_shape: {is: item_queued}
@@ -4481,6 +4596,45 @@ facts:
   - {is: v_metric_of, from: e20_explain_noans, to: accuracy}
   - {is: v_metric_of, from: e20_explain_noans, to: order_robust_accuracy}
   - {is: v_metric_of, from: e20_explain_noans, to: logit_margin}
+  - {is: v_file_of, from: 'e36_Qwen2.5-1.5B-Instruct_L8.json', to: e36_apply}
+  - {is: v_rows_of, from: [items, '{cond}'], to: e36_apply}
+  - {is: v_axis_of, from: e36_apply_cond, to: e36_apply}
+  - {is: v_value_of, from: e36_apply_cond_none, to: e36_apply_cond}
+  - {is: v_denote, from: e36_apply_cond_none, to: no_channel}
+  - {is: v_value_of, from: e36_apply_cond_ex, to: e36_apply_cond}
+  - {is: v_denote, from: e36_apply_cond_ex, to: teacher_reasons}
+  - {is: v_value_of, from: e36_apply_cond_qa, to: e36_apply_cond}
+  - {is: v_denote, from: e36_apply_cond_qa, to: teacher_examples}
+  - {is: v_entry_of, from: apply, to: e36_apply}
+  - {is: v_metric_of, from: e36_apply, to: accuracy}
+  - {is: v_metric_of, from: e36_apply, to: order_robust_accuracy}
+  - {is: v_metric_of, from: e36_apply, to: logit_margin}
+  - {is: v_file_of, from: 'e36_Qwen2.5-1.5B-Instruct_L8.json', to: e36_explain}
+  - {is: v_rows_of, from: [items, '{cond}'], to: e36_explain}
+  - {is: v_axis_of, from: e36_explain_cond, to: e36_explain}
+  - {is: v_value_of, from: e36_explain_cond_none, to: e36_explain_cond}
+  - {is: v_denote, from: e36_explain_cond_none, to: no_channel}
+  - {is: v_value_of, from: e36_explain_cond_ex, to: e36_explain_cond}
+  - {is: v_denote, from: e36_explain_cond_ex, to: teacher_reasons}
+  - {is: v_value_of, from: e36_explain_cond_qa, to: e36_explain_cond}
+  - {is: v_denote, from: e36_explain_cond_qa, to: teacher_examples}
+  - {is: v_entry_of, from: explain, to: e36_explain}
+  - {is: v_metric_of, from: e36_explain, to: accuracy}
+  - {is: v_metric_of, from: e36_explain, to: order_robust_accuracy}
+  - {is: v_metric_of, from: e36_explain, to: logit_margin}
+  - {is: v_file_of, from: 'e36_Qwen2.5-1.5B-Instruct_L8.json', to: e36_explain_noans}
+  - {is: v_rows_of, from: [items, '{cond}'], to: e36_explain_noans}
+  - {is: v_axis_of, from: e36_explain_noans_cond, to: e36_explain_noans}
+  - {is: v_value_of, from: e36_explain_noans_cond_none, to: e36_explain_noans_cond}
+  - {is: v_denote, from: e36_explain_noans_cond_none, to: no_channel}
+  - {is: v_value_of, from: e36_explain_noans_cond_ex, to: e36_explain_noans_cond}
+  - {is: v_denote, from: e36_explain_noans_cond_ex, to: teacher_reasons}
+  - {is: v_value_of, from: e36_explain_noans_cond_qa, to: e36_explain_noans_cond}
+  - {is: v_denote, from: e36_explain_noans_cond_qa, to: teacher_examples}
+  - {is: v_entry_of, from: explain_noans, to: e36_explain_noans}
+  - {is: v_metric_of, from: e36_explain_noans, to: accuracy}
+  - {is: v_metric_of, from: e36_explain_noans, to: order_robust_accuracy}
+  - {is: v_metric_of, from: e36_explain_noans, to: logit_margin}
   - {is: v_file_of, from: 'e39_Qwen2.5-1.5B-Instruct_L2-13.json', to: e39_apply}
   - {is: v_rows_of, from: [items, '{cond}'], to: e39_apply}
   - {is: v_axis_of, from: e39_apply_cond, to: e39_apply}
@@ -4536,6 +4690,109 @@ facts:
   - {is: v_entry_of, from: margin, to: e40}
   - {is: v_metric_of, from: e40, to: accuracy}
   - {is: v_metric_of, from: e40, to: logit_margin}
+  - {is: v_file_of, from: 'e41_Qwen3-4B.json', to: e41}
+  - {is: v_rows_of, from: [items, '{cond}'], to: e41}
+  - {is: v_axis_of, from: e41_cond, to: e41}
+  - {is: v_value_of, from: e41_cond_extends, to: e41_cond}
+  - {is: v_denote, from: e41_cond_extends, to: syntax.extends}
+  - {is: v_value_of, from: e41_cond_inline, to: e41_cond}
+  - {is: v_denote, from: e41_cond_inline, to: syntax.mod}
+  - {is: v_value_of, from: e41_cond_named, to: e41_cond}
+  - {is: v_denote, from: e41_cond_named, to: syntax.mod}
+  - {is: v_denote, from: e41_cond_named, to: syntax.identifier}
+  - {is: v_value_of, from: e41_cond_decoy, to: e41_cond}
+  - {is: v_denote, from: e41_cond_decoy, to: syntax.mod}
+  - {is: v_denote, from: e41_cond_decoy, to: syntax.identifier}
+  - {is: v_entry_of, from: pair, to: e41}
+  - {is: v_metric_of, from: e41, to: accuracy}
+  - {is: v_metric_of, from: e41, to: order_robust_accuracy}
+  - {is: v_metric_of, from: e41, to: logit_margin}
+  - {is: v_file_of, from: 'e43_Qwen3-4B.json', to: e43}
+  - {is: v_rows_of, from: [items, '{cond}'], to: e43}
+  - {is: v_axis_of, from: e43_cond, to: e43}
+  - {is: v_value_of, from: e43_cond_extends, to: e43_cond}
+  - {is: v_denote, from: e43_cond_extends, to: syntax.extends}
+  - {is: v_value_of, from: e43_cond_decoy, to: e43_cond}
+  - {is: v_denote, from: e43_cond_decoy, to: syntax.mod}
+  - {is: v_denote, from: e43_cond_decoy, to: syntax.word}
+  - {is: v_value_of, from: e43_cond_control, to: e43_cond}
+  - {is: v_denote, from: e43_cond_control, to: syntax.mod}
+  - {is: v_entry_of, from: pair, to: e43}
+  - {is: v_metric_of, from: e43, to: accuracy}
+  - {is: v_metric_of, from: e43, to: order_robust_accuracy}
+  - {is: v_metric_of, from: e43, to: logit_margin}
+  - {is: v_file_of, from: 'e45_Qwen3-4B.json', to: e45}
+  - {is: v_rows_of, from: [items, '{cond}'], to: e45}
+  - {is: v_axis_of, from: e45_cond, to: e45}
+  - {is: v_value_of, from: e45_cond_number_extends, to: e45_cond}
+  - {is: v_denote, from: e45_cond_number_extends, to: syntax.extends}
+  - {is: v_denote, from: e45_cond_number_extends, to: option}
+  - {is: v_value_of, from: e45_cond_number_decoy, to: e45_cond}
+  - {is: v_denote, from: e45_cond_number_decoy, to: syntax.mod}
+  - {is: v_denote, from: e45_cond_number_decoy, to: syntax.word}
+  - {is: v_denote, from: e45_cond_number_decoy, to: option}
+  - {is: v_value_of, from: e45_cond_number_control, to: e45_cond}
+  - {is: v_denote, from: e45_cond_number_control, to: syntax.mod}
+  - {is: v_denote, from: e45_cond_number_control, to: option}
+  - {is: v_value_of, from: e45_cond_name_adj_extends, to: e45_cond}
+  - {is: v_denote, from: e45_cond_name_adj_extends, to: syntax.extends}
+  - {is: v_denote, from: e45_cond_name_adj_extends, to: syntax.identifier}
+  - {is: v_value_of, from: e45_cond_name_adj_decoy, to: e45_cond}
+  - {is: v_denote, from: e45_cond_name_adj_decoy, to: syntax.mod}
+  - {is: v_denote, from: e45_cond_name_adj_decoy, to: syntax.word}
+  - {is: v_denote, from: e45_cond_name_adj_decoy, to: syntax.identifier}
+  - {is: v_value_of, from: e45_cond_name_adj_control, to: e45_cond}
+  - {is: v_denote, from: e45_cond_name_adj_control, to: syntax.mod}
+  - {is: v_denote, from: e45_cond_name_adj_control, to: syntax.identifier}
+  - {is: v_value_of, from: e45_cond_number_adj_extends, to: e45_cond}
+  - {is: v_denote, from: e45_cond_number_adj_extends, to: syntax.extends}
+  - {is: v_denote, from: e45_cond_number_adj_extends, to: option}
+  - {is: v_value_of, from: e45_cond_number_adj_decoy, to: e45_cond}
+  - {is: v_denote, from: e45_cond_number_adj_decoy, to: syntax.mod}
+  - {is: v_denote, from: e45_cond_number_adj_decoy, to: syntax.word}
+  - {is: v_denote, from: e45_cond_number_adj_decoy, to: option}
+  - {is: v_value_of, from: e45_cond_number_adj_control, to: e45_cond}
+  - {is: v_denote, from: e45_cond_number_adj_control, to: syntax.mod}
+  - {is: v_denote, from: e45_cond_number_adj_control, to: option}
+  - {is: v_value_of, from: e45_cond_name_extends, to: e45_cond}
+  - {is: v_denote, from: e45_cond_name_extends, to: syntax.extends}
+  - {is: v_denote, from: e45_cond_name_extends, to: syntax.identifier}
+  - {is: v_value_of, from: e45_cond_name_decoy, to: e45_cond}
+  - {is: v_denote, from: e45_cond_name_decoy, to: syntax.mod}
+  - {is: v_denote, from: e45_cond_name_decoy, to: syntax.word}
+  - {is: v_denote, from: e45_cond_name_decoy, to: syntax.identifier}
+  - {is: v_value_of, from: e45_cond_name_control, to: e45_cond}
+  - {is: v_denote, from: e45_cond_name_control, to: syntax.mod}
+  - {is: v_denote, from: e45_cond_name_control, to: syntax.identifier}
+  - {is: v_entry_of, from: consistent, to: e45}
+  - {is: v_metric_of, from: e45, to: mean_value}
+  - {is: v_file_of, from: 'e45_Qwen3-4B.json', to: e45p}
+  - {is: v_rows_of, from: [items, '{cond}'], to: e45p}
+  - {is: v_axis_of, from: e45p_cond, to: e45p}
+  - {is: v_value_of, from: e45p_cond_number_extends, to: e45p_cond}
+  - {is: v_denote, from: e45p_cond_number_extends, to: syntax.extends}
+  - {is: v_denote, from: e45p_cond_number_extends, to: option}
+  - {is: v_value_of, from: e45p_cond_number_decoy, to: e45p_cond}
+  - {is: v_denote, from: e45p_cond_number_decoy, to: syntax.mod}
+  - {is: v_denote, from: e45p_cond_number_decoy, to: syntax.word}
+  - {is: v_denote, from: e45p_cond_number_decoy, to: option}
+  - {is: v_value_of, from: e45p_cond_number_control, to: e45p_cond}
+  - {is: v_denote, from: e45p_cond_number_control, to: syntax.mod}
+  - {is: v_denote, from: e45p_cond_number_control, to: option}
+  - {is: v_value_of, from: e45p_cond_name_adj_extends, to: e45p_cond}
+  - {is: v_denote, from: e45p_cond_name_adj_extends, to: syntax.extends}
+  - {is: v_denote, from: e45p_cond_name_adj_extends, to: syntax.identifier}
+  - {is: v_value_of, from: e45p_cond_name_adj_decoy, to: e45p_cond}
+  - {is: v_denote, from: e45p_cond_name_adj_decoy, to: syntax.mod}
+  - {is: v_denote, from: e45p_cond_name_adj_decoy, to: syntax.word}
+  - {is: v_denote, from: e45p_cond_name_adj_decoy, to: syntax.identifier}
+  - {is: v_value_of, from: e45p_cond_name_adj_control, to: e45p_cond}
+  - {is: v_denote, from: e45p_cond_name_adj_control, to: syntax.mod}
+  - {is: v_denote, from: e45p_cond_name_adj_control, to: syntax.identifier}
+  - {is: v_entry_of, from: pair, to: e45p}
+  - {is: v_metric_of, from: e45p, to: accuracy}
+  - {is: v_metric_of, from: e45p, to: order_robust_accuracy}
+  - {is: v_metric_of, from: e45p, to: logit_margin}
   - {is: v_file_of, from: 'e15_Qwen2.5-1.5B-Instruct_L8.json', to: e15}
   - {is: v_rows_of, from: [items], to: e15}
   - {is: v_axis_of, from: e15_group, to: e15}
@@ -9377,6 +9634,28 @@ facts:
   - {is: v_spell, from: e37_writing_checker_version_m_n_now_ok, to: n_now_ok}
   - {is: v_entry_of, from: '{m}', to: e37_writing_checker_version}
   - {is: v_metric_of, from: e37_writing_checker_version, to: mean_value}
+  - {is: v_file_of, from: e38_error_kind_is_law.json, to: e38_error_kind_is_law}
+  - {is: v_axis_of, from: e38_error_kind_is_law_c, to: e38_error_kind_is_law}
+  - {is: v_keys_of, from: '#', to: e38_error_kind_is_law_c}
+  - {is: v_value_of, from: e38_error_kind_is_law_c_summary, to: e38_error_kind_is_law_c}
+  - {is: v_spell, from: e38_error_kind_is_law_c_summary, to: ['summary']}
+  - {is: v_axis_of, from: e38_error_kind_is_law_m, to: e38_error_kind_is_law}
+  - {is: v_value_of, from: e38_error_kind_is_law_m_n_errors, to: e38_error_kind_is_law_m}
+  - {is: v_spell, from: e38_error_kind_is_law_m_n_errors, to: n_errors}
+  - {is: v_value_of, from: e38_error_kind_is_law_m_n_named, to: e38_error_kind_is_law_m}
+  - {is: v_spell, from: e38_error_kind_is_law_m_n_named, to: n_named}
+  - {is: v_value_of, from: e38_error_kind_is_law_m_n_unnamed, to: e38_error_kind_is_law_m}
+  - {is: v_spell, from: e38_error_kind_is_law_m_n_unnamed, to: n_unnamed}
+  - {is: v_value_of, from: e38_error_kind_is_law_m_n_governed_unnamed, to: e38_error_kind_is_law_m}
+  - {is: v_spell, from: e38_error_kind_is_law_m_n_governed_unnamed, to: n_governed_unnamed}
+  - {is: v_value_of, from: e38_error_kind_is_law_m_n_attributable, to: e38_error_kind_is_law_m}
+  - {is: v_spell, from: e38_error_kind_is_law_m_n_attributable, to: n_attributable}
+  - {is: v_value_of, from: e38_error_kind_is_law_m_n_rejected, to: e38_error_kind_is_law_m}
+  - {is: v_spell, from: e38_error_kind_is_law_m_n_rejected, to: n_rejected}
+  - {is: v_value_of, from: e38_error_kind_is_law_m_n_crashed, to: e38_error_kind_is_law_m}
+  - {is: v_spell, from: e38_error_kind_is_law_m_n_crashed, to: n_crashed}
+  - {is: v_entry_of, from: '{m}', to: e38_error_kind_is_law}
+  - {is: v_metric_of, from: e38_error_kind_is_law, to: mean_value}
   - {is: v_file_of, from: e35_expression_makes_state_unique.json, to: e35_expression_makes_state_unique}
   - {is: v_rows_of, from: [s], to: e35_expression_makes_state_unique}
   - {is: v_axis_of, from: e35_expression_makes_state_unique_c, to: e35_expression_makes_state_unique}
@@ -10409,6 +10688,14 @@ facts:
   - {is: v_refer, from: h_unnamed_error_is_law_given, to: {is: v_depend, from: type_check_result, to: syntax.law_given}}
   - {is: v_check, from: b_unnamed_error_is_law_given, to: h_unnamed_error_is_law_given}
   - {is: v_ground, from: d_road_checker, to: h_unnamed_error_is_law_given}
+  - {is: v_refer, from: o_e38_errors, to: {is: v_level, from: e38_error_kind_is_law.summary.n_errors.mean_value, to: 170}}
+  - {is: v_refer, from: o_e38_attributable, to: {is: v_level, from: e38_error_kind_is_law.summary.n_attributable.mean_value, to: 101}}
+  - {is: v_refer, from: o_e38_named, to: {is: v_level, from: e38_error_kind_is_law.summary.n_named.mean_value, to: 101}}
+  - {is: v_refer, from: o_e38_unnamed, to: {is: v_level, from: e38_error_kind_is_law.summary.n_unnamed.mean_value, to: 69}}
+  - {is: v_refer, from: o_e38_governed_unnamed, to: {is: v_level, from: e38_error_kind_is_law.summary.n_governed_unnamed.mean_value, to: 0}}
+  - {is: v_contradict, from: o_e38_governed_unnamed, to: h_unnamed_error_is_law_given}
+  - {is: v_refer, from: o_e38_crashed, to: {is: v_level, from: e38_error_kind_is_law.summary.n_crashed.mean_value, to: 9}}
+  - {is: v_refer, from: o_e38_rejected, to: {is: v_level, from: e38_error_kind_is_law.summary.n_rejected.mean_value, to: 50}}
   - {is: v_refer, from: h_unnamed_error_as_law_rule, to: {is: v_depend, from: type_check_result, to: syntax.law_rule}}
   - {is: v_check, from: b_unnamed_error_as_law_rule, to: h_unnamed_error_as_law_rule}
   - {is: v_ground, from: d_road_checker, to: h_unnamed_error_as_law_rule}
@@ -10503,6 +10790,30 @@ facts:
   - {is: v_refer, from: h_model_reads_by_name, to: {is: v_read, from: model, to: syntax.identifier}}
   - {is: v_check, from: b_model_reads_by_name, to: h_model_reads_by_name}
   - {is: v_ground, from: d_road_checker, to: h_model_reads_by_name}
+  - {is: v_refer, from: h_model_reads_by_word, to: {is: v_read, from: model, to: syntax.word}}
+  - {is: v_check, from: b_model_reads_by_word, to: h_model_reads_by_word}
+  - {is: v_ground, from: d_road_checker, to: h_model_reads_by_word}
+  - {is: v_refer, from: h_model_misses_extends, to: {is: v_read, from: model, to: syntax.extends, neg: true}}
+  - {is: v_check, from: b_model_misses_extends, to: h_model_misses_extends}
+  - {is: v_ground, from: d_road_checker, to: h_model_misses_extends}
+  - {is: v_refer, from: h_verdict_by_question_format, to: {is: v_rely, from: verdict, to: question_format}}
+  - {is: v_check, from: b_verdict_by_question_format, to: h_verdict_by_question_format}
+  - {is: v_ground, from: d_road_checker, to: h_verdict_by_question_format}
+  - {is: v_refer, from: h_verdict_by_checker, to: {is: v_rely, from: verdict, to: lang.type_checker}}
+  - {is: v_check, from: b_verdict_by_checker, to: h_verdict_by_checker}
+  - {is: v_ground, from: d_road_checker, to: h_verdict_by_checker}
+  - {is: v_refer, from: h_model_misses_mod, to: {is: v_read, from: model, to: syntax.mod, neg: true}}
+  - {is: v_check, from: b_model_misses_mod, to: h_model_misses_mod}
+  - {is: v_ground, from: d_road_checker, to: h_model_misses_mod}
+  - {is: v_refer, from: h_verdict_by_option, to: {is: v_rely, from: verdict, to: option}}
+  - {is: v_check, from: b_verdict_by_option, to: h_verdict_by_option}
+  - {is: v_ground, from: d_road_checker, to: h_verdict_by_option}
+  - {is: v_refer, from: h_model_misses_checker_output, to: {is: v_read, from: model, to: type_check_result, neg: true}}
+  - {is: v_check, from: b_model_misses_checker_output, to: h_model_misses_checker_output}
+  - {is: v_ground, from: d_road_checker, to: h_model_misses_checker_output}
+  - {is: v_refer, from: h_verdict_by_mention_order, to: {is: v_rely, from: verdict, to: question}}
+  - {is: v_check, from: b_verdict_by_mention_order, to: h_verdict_by_mention_order}
+  - {is: v_ground, from: d_road_checker, to: h_verdict_by_mention_order}
   - {is: v_refer, from: h_functor_preserves_shape, to: {is: v_depend, from: hidden_state, to: syntax.holds}}
   - {is: v_check, from: b_functor_preserves_shape, to: h_functor_preserves_shape}
   - {is: v_ground, from: d_road_region, to: h_functor_preserves_shape}
@@ -10543,8 +10854,48 @@ facts:
   - {is: v_refer, from: o_e40_inline, to: {is: v_level, from: e40.inline.accuracy, to: 0.75}}
   - {is: v_refer, from: o_e40_named, to: {is: v_level, from: e40.named.accuracy, to: 0.6666667}}
   - {is: v_refer, from: o_e40_extends_below_premise, to: {is: v_come_before, from: e40.extends.accuracy, to: 0.75}}
+  - {is: v_refer, from: o_e41_extends, to: {is: v_level, from: e41.extends.accuracy, to: 0.4166667}}
+  - {is: v_refer, from: o_e41_inline, to: {is: v_level, from: e41.inline.accuracy, to: 0.625}}
+  - {is: v_refer, from: o_e41_named, to: {is: v_level, from: e41.named.accuracy, to: 0.4166667}}
+  - {is: v_refer, from: o_e41_decoy, to: {is: v_level, from: e41.decoy.accuracy, to: 0.5416667}}
+  - {is: v_refer, from: o_e41_extends_below_premise, to: {is: v_come_before, from: e41.extends.accuracy, to: 0.75}}
+  - {is: v_refer, from: o_e43_extends, to: {is: v_level, from: e43.extends.accuracy, to: 0.75}}
+  - {is: v_refer, from: o_e43_decoy, to: {is: v_level, from: e43.decoy.accuracy, to: 0.125}}
+  - {is: v_refer, from: o_e43_control, to: {is: v_level, from: e43.control.accuracy, to: 0.4166667}}
+  - {is: v_refer, from: o_e43_extends_above_premise, to: {is: v_come_after, from: e43.extends.accuracy, to: 0.625}}
+  - {is: v_refer, from: o_e43_decoy_below_quarter, to: {is: v_come_before, from: e43.decoy.accuracy, to: 0.25}}
+  - {is: v_refer, from: o_e43_decoy_below_control, to: {is: v_come_before, from: e43.decoy.accuracy, to: e43.control.accuracy}}
+  - {is: v_support, from: o_e43_decoy_below_quarter, to: h_model_reads_by_word}
+  - {is: v_support, from: o_e43_decoy_below_control, to: h_model_reads_by_word}
+  - {is: v_refer, from: o_e45_number_extends, to: {is: v_level, from: e45.number_extends.mean_value, to: 0.7083333}}
+  - {is: v_refer, from: o_e45_number_decoy, to: {is: v_level, from: e45.number_decoy.mean_value, to: 0.0416667}}
+  - {is: v_refer, from: o_e45_number_control, to: {is: v_level, from: e45.number_control.mean_value, to: 0.0}}
+  - {is: v_refer, from: o_e45_name_adj_extends, to: {is: v_level, from: e45.name_adj_extends.mean_value, to: 0.25}}
+  - {is: v_refer, from: o_e45_name_adj_decoy, to: {is: v_level, from: e45.name_adj_decoy.mean_value, to: 0.2083333}}
+  - {is: v_refer, from: o_e45_name_adj_control, to: {is: v_level, from: e45.name_adj_control.mean_value, to: 0.1666667}}
+  - {is: v_refer, from: o_e45_extends_name_below_number, to: {is: v_come_before, from: e45.name_adj_extends.mean_value, to: e45.number_extends.mean_value}}
+  - {is: v_refer, from: o_e45_decoy_name_above_number, to: {is: v_come_after, from: e45.name_adj_decoy.mean_value, to: e45.number_decoy.mean_value}}
+  - {is: v_refer, from: o_e45_control_name_above_number, to: {is: v_come_after, from: e45.name_adj_control.mean_value, to: e45.number_control.mean_value}}
+  - {is: v_refer, from: o_e45p_name_adj_decoy, to: {is: v_level, from: e45p.name_adj_decoy.accuracy, to: 0.4583333}}
+  - {is: v_refer, from: o_e45p_name_adj_decoy_above_quarter, to: {is: v_come_after, from: e45p.name_adj_decoy.accuracy, to: 0.25}}
+  - {is: v_contradict, from: o_e45_number_extends, to: h_verdict_by_option}
+  - {is: v_contradict, from: o_e45_number_decoy, to: h_verdict_by_option}
+  - {is: v_contradict, from: o_e45_number_control, to: h_verdict_by_option}
+  - {is: v_contradict, from: o_e45_name_adj_extends, to: h_verdict_by_option}
+  - {is: v_contradict, from: o_e45_name_adj_decoy, to: h_verdict_by_option}
+  - {is: v_contradict, from: o_e45_name_adj_control, to: h_verdict_by_option}
   - {is: v_refer, from: h_explain_transfers_to_apply, to: {is: v_transfer, from: usage_explain, to: usage_apply}}
   - {is: v_check, from: b_explain_transfers_to_apply, to: h_explain_transfers_to_apply}
+  - {is: v_refer, from: o_e36_apply_none, to: {is: v_level, from: e36_apply.none.accuracy, to: 0.375}}
+  - {is: v_refer, from: o_e36_apply_ex, to: {is: v_level, from: e36_apply.ex.accuracy, to: 0.6666667}}
+  - {is: v_refer, from: o_e36_apply_qa, to: {is: v_level, from: e36_apply.qa.accuracy, to: 0.7916667}}
+  - {is: v_refer, from: o_e36_explain_none, to: {is: v_level, from: e36_explain.none.accuracy, to: 0.4166667}}
+  - {is: v_refer, from: o_e36_explain_ex, to: {is: v_level, from: e36_explain.ex.accuracy, to: 1.0}}
+  - {is: v_refer, from: o_e36_explain_qa, to: {is: v_level, from: e36_explain.qa.accuracy, to: 0.4583333}}
+  - {is: v_refer, from: o_e36_apply_ex_below_threshold, to: {is: v_come_before, from: e36_apply.ex.accuracy, to: 0.75}}
+  - {is: v_refer, from: o_e36_apply_ex_above_none, to: {is: v_come_after, from: e36_apply.ex.accuracy, to: e36_apply.none.accuracy}}
+  - {is: v_refer, from: o_e36_explain_ex_above_none, to: {is: v_come_after, from: e36_explain.ex.accuracy, to: e36_explain.none.accuracy}}
+  - {is: v_contradict, from: o_e36_apply_ex_below_threshold, to: h_explain_transfers_to_apply}
   - {is: v_refer, from: o_e21_common_robust_below_none, to: {is: v_come_before, from: e21_all.common.order_robust_accuracy, to: e21_all.none.order_robust_accuracy}}
   - {is: v_refer, from: o_e21_common_robust_below_rand, to: {is: v_come_before, from: e21_all.common.order_robust_accuracy, to: e21_all.rand.order_robust_accuracy}}
   - {is: v_refer, from: o_e26_block_all_below_text, to: {is: v_come_before, from: e26.block_all.accuracy, to: e26.text.accuracy}}
