@@ -1,0 +1,39 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-24T19:33:30.615Z（UTC）
+individuals:
+  01M87GS3BQG28Y15SWGTKPQ4W6:
+    is: model_utterance
+    display: 発言 4383
+    val:
+      order: 4383
+      text: |
+        E54 の結果が出たので、#729 を Draft から外しました。2 つのモデル（Qwen2.5-1.5B と Qwen3-4B）とも、検査器が出した依存の行を添えても、答えはよくなりませんでした。
+
+        **#729（E44・E54）**
+        - 最新の commit で spec（tc と ec を含む検査）が通りました。Draft を外したのは確認の合図で、マージはしていません。
+        - 下の数字は、名前を正しく答えた項目の割合（32 項目）です。
+
+        | モデル | 依存の行なし | 直接の依存を添える | たどった先までの依存を添える |
+        |---|---|---|---|
+        | 1.5B | 0.750 | 0.594 | 0.719 |
+        | 4B | 0.531 | 0.469 | 0.531 |
+
+        - 「たどった先まで」の行は、答えをほぼそのまま含みます。それでも、添えない場合より上がりませんでした。
+        - このため、h_model_misses_checker_output（モデルは検査器の出力を読まない）は、2 つのモデルとも支持になりました。
+        - h_verdict_by_checker（判定は検査器の出力に頼れる）は、事前に決めた線の間に入り、E44 に続いてまた判定が出ませんでした。
+
+        **#752（登録だけの PR）**
+        - 最初の push は tc で落ちました。「出力の読み方を教えれば読まれる」という仮説の式に `teaching` を使っており、これは「読む」の対象に来られない概念でした。
+        - 適用例（`application_example`）に直しました。仮説は「出力の読み方を示す例を 2 つ添えれば、出力が読まれる」に絞られ、指示文だけで教える案は含まなくなりました。
+        - 本文もこの式に合わせて書き直しました。今は spec が走っていて、通れば自動でマージされます。
+
+        **周回の指示**
+        次の重い実験を、h_checker_output_read_when_taught にしました。E54 と同じ条件（たどった先までの依存の行）に適用例を 2 つ添えて、答えが上がるかを測ります。
+
+        **確認待ちの PR:** #718、#725、#736、#742、#729
+
+        ロードマップの位置: H3 検査器の道（d_road_checker）。E54 で、検査器の出力を文脈に添えるだけでは、モデルは使わないと分かりました。
+facts:
+- {is: v_say, from: session_model, to: 01M87GS3BQG28Y15SWGTKPQ4W6}
+- {is: exp.v_answer, from: 01M87GS3BQG28Y15SWGTKPQ4W6, to: 01M86EX52DNVRMYZCFJ4X9EC2Q}
+- {is: v_refer, from: 01M87GS3BQG28Y15SWGTKPQ4W6, to: exp.teaching}
+- {is: v_refer, from: 01M87GS3BQG28Y15SWGTKPQ4W6, to: exp.application_example}
