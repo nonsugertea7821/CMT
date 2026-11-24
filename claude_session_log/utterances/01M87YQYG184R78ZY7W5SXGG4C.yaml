@@ -1,0 +1,57 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-24T23:37:32.929Z（UTC）
+individuals:
+  01M87YQYG184R78ZY7W5SXGG4C:
+    is: model_utterance
+    display: 発言 4449
+    val:
+      order: 4449
+      text: |
+        反証 97 を中身の式で並べると、似たものは 3 つのまとまりに分かれました。
+
+        ## 1. 「自分の欄だけから、上のもの（類・名前）を導く」は落ちる
+        体系の側の反証で一番多い形です。概念の自分の欄（holds・from・to・mod・シグネチャ）だけから、次のものを導こうとして落ちています。
+        - **識別子**: h_identifier_by_expansion、h_identifier_by_bisimulation
+        - **extends**: h_extends_from_own_fields、h_basic_vocab_fits、h_verbs_state_own_ends、h_verbs_state_own_shape ほか、合わせて 8 つほど
+        - **表示語**: h_part_display_from_formula、h_mod_phrase_from_formula
+        - **格の枠・層・上端**: h_case_frame_by_signature、h_layers_signature、h_tops_derivable
+        - **動詞の図で区別**: h_verb_shape_two_phase、h_shape_needs_ends、h_domain_by_refer
+
+        落ちた理由も似ています。違う概念が同じ形になる組が残りました。
+
+        **逆向きは支持されています。** 類を先に置き、自分の欄はそれに対する違いとして読む形です。
+        - h_differentia_by_genus
+        - h_part_display_own_phrase（holds に extends を足すと表示語が決まる）
+        - h_checker_find_by_ancestry、h_wider_verb_lower_by_ancestry
+
+        つまり「下から上は決まらない、上から下は決まる」。古典的な定義の形（類と種差）に沿うと通る、という似方です。
+
+        ## 2. 「補助を一つ足せばモデルが上がる」は落ちる
+        モデルの側の反証の多くは v_raise か v_transfer の形です。足した補助は次のとおりです。
+        - scratchpad、往復、専用のキーのベクトル、対比のベクトル
+        - 型検査の結果を返す（h_typecheck_feedback_raises_writing）
+        - 軸の読み出し、区間の切り出し
+        - 説明から適用への転移
+
+        E54（検査器の出力を一行添えても読まれない）も同じ形です。補助を置くだけでは、モデルはそれを使いません。例外は E55 で、読み方の例を添えると 4B は読みました。
+
+        ## 3. 「隠れ状態が式に沿う」は落ちる
+        - h_state_unique_display
+        - h_expression_makes_state_unique
+        - 今回の h_refer_ops_share_direction
+
+        隠れ状態は、式よりも字面に沿っているようです。
+
+        ## 3 つに共通するもの
+        どれも「**局所の手がかりだけで決まる**」と置いて落ちています。体系では自分の欄、モデルでは添えた一行、隠れ状態では式です。通ったものは、類との関係（祖先）や読み方の例のように、**より大きな文脈との関係**を与えていました。これは私の読みで、まだ確かめていません。
+
+        ## 登録したもの
+        - **#759** に h_identifier_by_genus_differentia を登録しました。識別子は、類（extends）と自分の欄の組で決まる、という仮説です。1 つめのまとまりを仮説にしたもので、d_cscl_display_derived に結びました。
+          - 確かめ方の案: h_identifier_by_expansion で同じ形になった組が、extends の連鎖を足すと分かれるかを数えます。体系だけで測れる軽い実験です。
+        - 2 つめは既存の h_checker_output_read_when_taught（いまの E56）が、3 つめは #757 の h_verb_state_by_display_surface が扱っているので、新しくは登録していません。
+
+        ロードマップの位置: 識別子化（d_cscl_display_derived）の根拠を整理し、仮説を 1 つ足しました。並行して、検査器の道 d_road_checker（H3）の E56 が走っています。
+facts:
+- {is: v_say, from: session_model, to: 01M87YQYG184R78ZY7W5SXGG4C}
+- {is: exp.v_answer, from: 01M87YQYG184R78ZY7W5SXGG4C, to: 01M87YNW6MTJBS7D01E8ATQS5R}
+- {is: v_refer, from: 01M87YQYG184R78ZY7W5SXGG4C, to: exp.v_raise}
+- {is: v_refer, from: 01M87YQYG184R78ZY7W5SXGG4C, to: exp.v_transfer}
