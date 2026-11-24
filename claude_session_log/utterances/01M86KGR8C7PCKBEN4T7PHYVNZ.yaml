@@ -1,0 +1,25 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-24T11:02:08.396Z（UTC）
+individuals:
+  01M86KGR8C7PCKBEN4T7PHYVNZ:
+    is: model_utterance
+    display: 発言 4199
+    val:
+      order: 4199
+      text: |
+        フックが挙げた 5 つの文を、1 つずつ見ました。
+        - 1〜3 つ目（差 0.181、正答率の変化、decoy 0.875）は、E46 の結果のファイルから読んだ値なので、事実です（1）。
+        - 4 つ目（E41〜E45 の一部は名前を並べる形のせいかもしれない）は、確かめていない主張です（2）。ただし、すでに登録済みの仮説の中身と同じです。grep で式を確かめました。
+          - h_verdict_by_question_format = `v_rely(verdict, question_format)`、判定は設問の形に頼る。未検証。
+          - h_model_misses_extends = `v_read(model, syntax.extends, neg)`。未検証。
+          - h_model_reads_by_word = `v_read(model, syntax.word)`。支持。
+          - 名前を並べるかどうかは設問の形の違いなので、1 つ目の仮説の範囲に入ります。
+        - 5 つ目は、上の理由で登録しなかったことの報告です。
+
+        新しく登録したものはありません。同じ中身を二重に登録しないためです。この 3 つは、次の E47（新しい項目、設問に名前を出さない形、事前登録）で確かめます。
+facts:
+- {is: v_say, from: session_model, to: 01M86KGR8C7PCKBEN4T7PHYVNZ}
+- {is: exp.v_answer, from: 01M86KGR8C7PCKBEN4T7PHYVNZ, to: 01M86EX52DNVRMYZCFJ4X9EC2Q}
+- {is: v_refer, from: 01M86KGR8C7PCKBEN4T7PHYVNZ, to: exp.v_rely}
+- {is: v_refer, from: 01M86KGR8C7PCKBEN4T7PHYVNZ, to: exp.question_format}
+- {is: v_refer, from: 01M86KGR8C7PCKBEN4T7PHYVNZ, to: exp.v_read}
+- {is: v_refer, from: 01M86KGR8C7PCKBEN4T7PHYVNZ, to: syntax.extends}
