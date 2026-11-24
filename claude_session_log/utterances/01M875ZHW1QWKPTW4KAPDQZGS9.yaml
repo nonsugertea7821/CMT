@@ -1,0 +1,18 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-24T16:24:47.745Z（UTC）
+individuals:
+  01M875ZHW1QWKPTW4KAPDQZGS9:
+    is: model_utterance
+    display: 発言 4314
+    val:
+      order: 4314
+      text: |
+        #725 は、main に E51 が入ったことで exp.yaml が衝突していました。main を取り込み、両側を残して解き、push しました（311a3f5）。
+
+        - **解き方:** 衝突は 3 か所で、どれも両側が別の族（e48 と e51a・e51b）を同じ位置に書き足していたものでした。書き換えた行はないので、両方の行を残しました。
+        - **commit 前の検査の誤検知:** 最初の commit は、コメント禁止の検査（フック）に止められました。衝突の印が残った状態のファイルを検査が読み、yaml として読めなかったため、引用符の中の `#` までコメントと見なしていました。印を消してから commit し直すと通りました。
+        - **自動マージの判定:** 取り込む前と同じく「手で見る」です。e48 のスクリプトが結果ファイルより後の commit にあるためです。#725 はレビュー待ちのままです。
+
+        ロードマップの位置: H3 検査器の道（d_road_checker）
+facts:
+- {is: v_say, from: session_model, to: 01M875ZHW1QWKPTW4KAPDQZGS9}
+- {is: exp.v_answer, from: 01M875ZHW1QWKPTW4KAPDQZGS9, to: 01M86EX52DNVRMYZCFJ4X9EC2Q}
