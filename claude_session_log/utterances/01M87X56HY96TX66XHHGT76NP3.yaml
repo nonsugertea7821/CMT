@@ -1,0 +1,33 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-24T23:09:50.014Z（UTC）
+individuals:
+  01M87X56HY96TX66XHHGT76NP3:
+    is: model_utterance
+    display: 発言 4424
+    val:
+      order: 4424
+      text: |
+        今回の周回で L2 の仮説を 1 つ測りました。結果は反証です。もう一つ、そこから出た含意を仮説として登録しました。
+
+        **#756: h_refer_ops_share_direction を反証**（Draft。CI の結果待ち）
+        - 1.5B の層 8 で、体系の動詞 90 個の表示語の隠れ状態を測りました。
+        - v_refer の下の 15 個のまとまりは、でたらめに選んだ集まりより 0.030 高いだけでした（p 0.0275）。事前登録の基準は 0.10 なので、反証です。
+        - 「述べる」を含む 3 語を除くと、まとまりは消えました（p 0.32）。v_compose の下の 10 個は強くまとまりました（coh 0.209）。
+        - 解釈: 表示語の隠れ状態は、親の動詞（式）よりも字面に沿ってまとまっているように見えます。ただし v_compose 側には語の重なりの対照を置いていません。また、文の中の動詞は測っていません。
+        - 体系への書き方（行の選び方）を ec が読めるかは、まだ確かめられていません。落ちたら直します。
+
+        **#757: 含意を登録**（登録だけの PR）
+        - h_verb_state_by_display_surface を登録しました。動詞の表示語の隠れ状態は、字面でまとまるという仮説です。
+        - d_cscl_display_derived に v_ground で結びました。
+
+        **周回の中で分かったこと**
+        - 軽い列の L1（3 つ）と L3 は、すでに判定済みでした。
+        - 残る未検証は L2 の refer 系列です（h_refer_cuts_orthogonal ほか）。
+        - H3 の重い列は、#754 と #755 のマージ待ちで止めたままです。次の周回は 00:03Z です。
+
+        ロードマップの位置: 領域の道 d_road_region の前提（L2、refer の系列）を 1 つ反証し、含意を表示語の導出の決定（d_cscl_display_derived）に結びました。
+facts:
+- {is: v_say, from: session_model, to: 01M87X56HY96TX66XHHGT76NP3}
+- {is: exp.v_answer, from: 01M87X56HY96TX66XHHGT76NP3, to: 01M86EX52DNVRMYZCFJ4X9EC2Q}
+- {is: v_refer, from: 01M87X56HY96TX66XHHGT76NP3, to: ontology.v_refer}
+- {is: v_refer, from: 01M87X56HY96TX66XHHGT76NP3, to: ontology.v_compose}
+- {is: v_refer, from: 01M87X56HY96TX66XHHGT76NP3, to: exp.v_ground}
