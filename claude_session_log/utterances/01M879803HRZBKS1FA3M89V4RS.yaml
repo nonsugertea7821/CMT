@@ -1,0 +1,26 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-24T17:21:50.193Z（UTC）
+individuals:
+  01M879803HRZBKS1FA3M89V4RS:
+    is: model_utterance
+    display: 発言 4333
+    val:
+      order: 4333
+      text: |
+        E52 は 2 つのモデルとも測り終わりました。h_model_misses_named_hop は 1.5B で支持、4B では判定なしです。結果と体系を push し、#746 の本文を書き直しました。#746 は CI 待ちで、通れば Draft を外します。
+
+        | モデル | extends（前提） | chain（extends の 2 段、判定） | named（mod の 2 段、参考） |
+        |---|---|---|---|
+        | Qwen2.5-1.5B-Instruct | 0.958 | **0.625**（支持） | 0.542 |
+        | Qwen3-4B | 0.917 | **0.667**（線の間、判定なし） | 0.417 |
+
+        - **状態:** 事前登録どおりモデルごとに判定し、判定が出た 1.5B だけを結びました。状態は `hyp_supported` です。4B は支持でも反証でもなく判定なしなので、mixed にはしていません。
+        - **弱さ:** 支持は 1 つのモデルだけで、しかも線ちょうど（24 項目中 15）です。
+        - **開示:** 4B の走行中にコンテナの再起動が 2 回あり、どちらも途中保存から再開しました。commit と PR 本文に書いています。
+        - **含意:** 4B では、extends の 2 段（0.667）が mod の 2 段（0.417）より上でした。E51 で落ちた理由を「名前を辿る段」だけでは説明しきれないかもしれません。
+        - **新しい仮説:** これを `h_model_misses_named_mod` として登録しました（#747、検査器の道 d_road_checker に結んだ）。同じ項目で named − chain の差を、新しい項目と 2 つ以上のモデルで測る案です。#746 と衝突しないことは確かめてあります。
+
+        ロードマップの位置: H3 検査器の道（d_road_checker）
+facts:
+- {is: v_say, from: session_model, to: 01M879803HRZBKS1FA3M89V4RS}
+- {is: exp.v_answer, from: 01M879803HRZBKS1FA3M89V4RS, to: 01M86EX52DNVRMYZCFJ4X9EC2Q}
+- {is: v_refer, from: 01M879803HRZBKS1FA3M89V4RS, to: exp.hyp_supported}
