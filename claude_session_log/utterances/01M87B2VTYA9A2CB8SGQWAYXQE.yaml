@@ -1,0 +1,29 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-24T17:53:59.134Z（UTC）
+individuals:
+  01M87B2VTYA9A2CB8SGQWAYXQE:
+    is: model_utterance
+    display: 発言 4344
+    val:
+      order: 4344
+      text: |
+        E53 の 1.5B は、モデルを読み込み終えて、32 項目の計算を始めたところです。まだ結果は出ていません。
+
+        - **今回の実験（E53）**
+          - 何を見るか: 「名前を介した mod の 2 段は、extends の 2 段より読まれないか」（h_model_misses_named_mod、issue #748）。
+          - 項目: 新しく 32 項目を作りました（seed 8）。
+          - 比べる形: E52 と同じ書き方で、chain（extends の 2 段）と named（mod の 2 段）を並べます。
+          - モデル: Qwen2.5-1.5B-Instruct と Qwen3-4B。
+        - **判定の線**（事前登録として、スクリプトだけを先に commit しました）
+          - 差は「chain の正答率 − named の正答率」です。
+          - 前提: extends ≥ 0.75（崩れたら、そのモデルでは判定しない）
+          - 支持: named ≤ 0.625 かつ 差 ≥ 0.125
+          - 反証: 差 ≤ 0、または named ≥ 0.75
+          - その間に入ったら判定しません。
+          - この線は、E52 の差（1.5B が 0.083、4B が 0.25）を見てから置きました。そのことは PR に書いてあります。
+        - **PR**: Draft の #749 を立てました。見張りを付け、あなたを assignee にしてあります。
+        - **これから**: 18:02Z に途中の進みを確かめます。1.5B が終わったら 4B を始めます。コンテナが落ちても、8 項目ごとの途中保存から続けます。
+
+        ロードマップの位置: H3 検査器の道（d_road_checker）
+facts:
+- {is: v_say, from: session_model, to: 01M87B2VTYA9A2CB8SGQWAYXQE}
+- {is: exp.v_answer, from: 01M87B2VTYA9A2CB8SGQWAYXQE, to: 01M86EX52DNVRMYZCFJ4X9EC2Q}
