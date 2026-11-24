@@ -3555,6 +3555,12 @@ individuals:
   h_chain_length_lowers_following: {is: hyp_mixed}
   h_scratchpad_raises_rule_following: {is: hyp_refuted}
   h_aid_used_with_example: {is: hyp_untested}
+  h_state_by_genus_display: {is: hyp_untested}
+  b_state_by_genus_display: {is: item_queued}
+  h_consistency_by_examples: {is: hyp_untested}
+  b_consistency_by_examples: {is: item_queued}
+  h_consistency_pairs_control: {is: hyp_untested}
+  b_consistency_pairs_control: {is: item_queued}
   b_aid_used_with_example: {is: item_queued}
   h_number_comparison_lowers_rule_following: {is: hyp_untested}
   h_scratchpad_lowers_remap_following: {is: hyp_supported}
@@ -11114,6 +11120,15 @@ facts:
   - {is: v_refer, from: h_aid_used_with_example, to: {is: v_raise, from: [scratchpad, application_example], to: redefinition_following}}
   - {is: v_check, from: b_aid_used_with_example, to: h_aid_used_with_example}
   - {is: v_ground, from: d_road_checker, to: h_aid_used_with_example}
+  - {is: v_refer, from: h_state_by_genus_display, to: {is: v_depend, from: hidden_state, to: [syntax.extends, syntax.display]}}
+  - {is: v_check, from: b_state_by_genus_display, to: h_state_by_genus_display}
+  - {is: v_ground, from: d_road_region, to: h_state_by_genus_display}
+  - {is: v_refer, from: h_consistency_by_examples, to: {is: v_depend, from: cross_usage_consistency, to: application_example}}
+  - {is: v_check, from: b_consistency_by_examples, to: h_consistency_by_examples}
+  - {is: v_ground, from: d_road_checker, to: h_consistency_by_examples}
+  - {is: v_refer, from: h_consistency_pairs_control, to: {is: v_depend, from: cross_usage_consistency, to: [redefinition_following, control_preservation]}}
+  - {is: v_check, from: b_consistency_pairs_control, to: h_consistency_pairs_control}
+  - {is: v_ground, from: d_metric, to: h_consistency_pairs_control}
   - {is: v_refer, from: h_model_reads_by_word, to: {is: v_read, from: model, to: syntax.word}}
   - {is: v_check, from: b_model_reads_by_word, to: h_model_reads_by_word}
   - {is: v_ground, from: d_road_checker, to: h_model_reads_by_word}
