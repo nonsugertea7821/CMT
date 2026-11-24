@@ -3193,6 +3193,37 @@ individuals:
   o_e45_control_name_above_number: {is: observation}
   o_e45p_name_adj_decoy: {is: observation}
   o_e45p_name_adj_decoy_above_quarter: {is: observation}
+  e46: {is: measurement_family}
+  e46_cond: {is: family_axis, val: {text: cond}}
+  e46_cond_mention_extends: {is: axis_value, val: {text: 'mention_extends'}}
+  e46_cond_mention_decoy: {is: axis_value, val: {text: 'mention_decoy'}}
+  e46_cond_mention_control: {is: axis_value, val: {text: 'mention_control'}}
+  e46_cond_mention_all: {is: axis_value, val: {text: 'mention_all'}}
+  e46_cond_nomention_extends: {is: axis_value, val: {text: 'nomention_extends'}}
+  e46_cond_nomention_decoy: {is: axis_value, val: {text: 'nomention_decoy'}}
+  e46_cond_nomention_control: {is: axis_value, val: {text: 'nomention_control'}}
+  e46_cond_nomention_all: {is: axis_value, val: {text: 'nomention_all'}}
+  e46p: {is: measurement_family}
+  e46p_cond: {is: family_axis, val: {text: cond}}
+  e46p_cond_mention_extends: {is: axis_value, val: {text: 'mention_extends'}}
+  e46p_cond_mention_decoy: {is: axis_value, val: {text: 'mention_decoy'}}
+  e46p_cond_mention_control: {is: axis_value, val: {text: 'mention_control'}}
+  e46p_cond_mention_all: {is: axis_value, val: {text: 'mention_all'}}
+  e46p_cond_nomention_extends: {is: axis_value, val: {text: 'nomention_extends'}}
+  e46p_cond_nomention_decoy: {is: axis_value, val: {text: 'nomention_decoy'}}
+  e46p_cond_nomention_control: {is: axis_value, val: {text: 'nomention_control'}}
+  e46p_cond_nomention_all: {is: axis_value, val: {text: 'nomention_all'}}
+  o_e46_mention_all: {is: observation}
+  o_e46_nomention_all: {is: observation}
+  o_e46_nomention_above_mention: {is: observation}
+  o_e46_gap_below_support: {is: observation}
+  o_e46p_mention_all: {is: observation}
+  o_e46p_nomention_all: {is: observation}
+  o_e46p_nomention_extends: {is: observation}
+  o_e46p_nomention_extends_robust: {is: observation}
+  o_e46p_nomention_decoy: {is: observation}
+  o_e46p_nomention_decoy_above_half: {is: observation}
+  o_e46p_nomention_extends_above_mention: {is: observation}
   o_e39_explain_ml_below_none: {is: observation}
   e21: {is: measurement_family}
   e21_group: {is: family_axis, val: {text: group}}
@@ -4771,6 +4802,86 @@ facts:
   - {is: v_metric_of, from: e45p, to: accuracy}
   - {is: v_metric_of, from: e45p, to: order_robust_accuracy}
   - {is: v_metric_of, from: e45p, to: logit_margin}
+  - {is: v_file_of, from: 'e46_Qwen3-4B.json', to: e46}
+  - {is: v_rows_of, from: [items, '{cond}'], to: e46}
+  - {is: v_axis_of, from: e46_cond, to: e46}
+  - {is: v_value_of, from: e46_cond_mention_extends, to: e46_cond}
+  - {is: v_denote, from: e46_cond_mention_extends, to: syntax.extends}
+  - {is: v_denote, from: e46_cond_mention_extends, to: question}
+  - {is: v_denote, from: e46_cond_mention_extends, to: syntax.identifier}
+  - {is: v_value_of, from: e46_cond_mention_decoy, to: e46_cond}
+  - {is: v_denote, from: e46_cond_mention_decoy, to: syntax.mod}
+  - {is: v_denote, from: e46_cond_mention_decoy, to: syntax.word}
+  - {is: v_denote, from: e46_cond_mention_decoy, to: question}
+  - {is: v_denote, from: e46_cond_mention_decoy, to: syntax.identifier}
+  - {is: v_value_of, from: e46_cond_mention_control, to: e46_cond}
+  - {is: v_denote, from: e46_cond_mention_control, to: syntax.mod}
+  - {is: v_denote, from: e46_cond_mention_control, to: question}
+  - {is: v_denote, from: e46_cond_mention_control, to: syntax.identifier}
+  - {is: v_value_of, from: e46_cond_mention_all, to: e46_cond}
+  - {is: v_denote, from: e46_cond_mention_all, to: syntax.extends}
+  - {is: v_denote, from: e46_cond_mention_all, to: syntax.mod}
+  - {is: v_denote, from: e46_cond_mention_all, to: syntax.word}
+  - {is: v_denote, from: e46_cond_mention_all, to: question}
+  - {is: v_denote, from: e46_cond_mention_all, to: syntax.identifier}
+  - {is: v_value_of, from: e46_cond_nomention_extends, to: e46_cond}
+  - {is: v_denote, from: e46_cond_nomention_extends, to: syntax.extends}
+  - {is: v_denote, from: e46_cond_nomention_extends, to: syntax.identifier}
+  - {is: v_value_of, from: e46_cond_nomention_decoy, to: e46_cond}
+  - {is: v_denote, from: e46_cond_nomention_decoy, to: syntax.mod}
+  - {is: v_denote, from: e46_cond_nomention_decoy, to: syntax.word}
+  - {is: v_denote, from: e46_cond_nomention_decoy, to: syntax.identifier}
+  - {is: v_value_of, from: e46_cond_nomention_control, to: e46_cond}
+  - {is: v_denote, from: e46_cond_nomention_control, to: syntax.mod}
+  - {is: v_denote, from: e46_cond_nomention_control, to: syntax.identifier}
+  - {is: v_value_of, from: e46_cond_nomention_all, to: e46_cond}
+  - {is: v_denote, from: e46_cond_nomention_all, to: syntax.extends}
+  - {is: v_denote, from: e46_cond_nomention_all, to: syntax.mod}
+  - {is: v_denote, from: e46_cond_nomention_all, to: syntax.word}
+  - {is: v_denote, from: e46_cond_nomention_all, to: syntax.identifier}
+  - {is: v_entry_of, from: consistent, to: e46}
+  - {is: v_metric_of, from: e46, to: mean_value}
+  - {is: v_file_of, from: 'e46_Qwen3-4B.json', to: e46p}
+  - {is: v_rows_of, from: [items, '{cond}'], to: e46p}
+  - {is: v_axis_of, from: e46p_cond, to: e46p}
+  - {is: v_value_of, from: e46p_cond_mention_extends, to: e46p_cond}
+  - {is: v_denote, from: e46p_cond_mention_extends, to: syntax.extends}
+  - {is: v_denote, from: e46p_cond_mention_extends, to: question}
+  - {is: v_denote, from: e46p_cond_mention_extends, to: syntax.identifier}
+  - {is: v_value_of, from: e46p_cond_mention_decoy, to: e46p_cond}
+  - {is: v_denote, from: e46p_cond_mention_decoy, to: syntax.mod}
+  - {is: v_denote, from: e46p_cond_mention_decoy, to: syntax.word}
+  - {is: v_denote, from: e46p_cond_mention_decoy, to: question}
+  - {is: v_denote, from: e46p_cond_mention_decoy, to: syntax.identifier}
+  - {is: v_value_of, from: e46p_cond_mention_control, to: e46p_cond}
+  - {is: v_denote, from: e46p_cond_mention_control, to: syntax.mod}
+  - {is: v_denote, from: e46p_cond_mention_control, to: question}
+  - {is: v_denote, from: e46p_cond_mention_control, to: syntax.identifier}
+  - {is: v_value_of, from: e46p_cond_mention_all, to: e46p_cond}
+  - {is: v_denote, from: e46p_cond_mention_all, to: syntax.extends}
+  - {is: v_denote, from: e46p_cond_mention_all, to: syntax.mod}
+  - {is: v_denote, from: e46p_cond_mention_all, to: syntax.word}
+  - {is: v_denote, from: e46p_cond_mention_all, to: question}
+  - {is: v_denote, from: e46p_cond_mention_all, to: syntax.identifier}
+  - {is: v_value_of, from: e46p_cond_nomention_extends, to: e46p_cond}
+  - {is: v_denote, from: e46p_cond_nomention_extends, to: syntax.extends}
+  - {is: v_denote, from: e46p_cond_nomention_extends, to: syntax.identifier}
+  - {is: v_value_of, from: e46p_cond_nomention_decoy, to: e46p_cond}
+  - {is: v_denote, from: e46p_cond_nomention_decoy, to: syntax.mod}
+  - {is: v_denote, from: e46p_cond_nomention_decoy, to: syntax.word}
+  - {is: v_denote, from: e46p_cond_nomention_decoy, to: syntax.identifier}
+  - {is: v_value_of, from: e46p_cond_nomention_control, to: e46p_cond}
+  - {is: v_denote, from: e46p_cond_nomention_control, to: syntax.mod}
+  - {is: v_denote, from: e46p_cond_nomention_control, to: syntax.identifier}
+  - {is: v_value_of, from: e46p_cond_nomention_all, to: e46p_cond}
+  - {is: v_denote, from: e46p_cond_nomention_all, to: syntax.extends}
+  - {is: v_denote, from: e46p_cond_nomention_all, to: syntax.mod}
+  - {is: v_denote, from: e46p_cond_nomention_all, to: syntax.word}
+  - {is: v_denote, from: e46p_cond_nomention_all, to: syntax.identifier}
+  - {is: v_entry_of, from: pair, to: e46p}
+  - {is: v_metric_of, from: e46p, to: accuracy}
+  - {is: v_metric_of, from: e46p, to: order_robust_accuracy}
+  - {is: v_metric_of, from: e46p, to: logit_margin}
   - {is: v_file_of, from: 'e15_Qwen2.5-1.5B-Instruct_L8.json', to: e15}
   - {is: v_rows_of, from: [items], to: e15}
   - {is: v_axis_of, from: e15_group, to: e15}
@@ -10858,6 +10969,17 @@ facts:
   - {is: v_contradict, from: o_e45_name_adj_extends, to: h_verdict_by_option}
   - {is: v_contradict, from: o_e45_name_adj_decoy, to: h_verdict_by_option}
   - {is: v_contradict, from: o_e45_name_adj_control, to: h_verdict_by_option}
+  - {is: v_refer, from: o_e46_mention_all, to: {is: v_level, from: e46.mention_all.mean_value, to: 0.375}}
+  - {is: v_refer, from: o_e46_nomention_all, to: {is: v_level, from: e46.nomention_all.mean_value, to: 0.5555556}}
+  - {is: v_refer, from: o_e46_nomention_above_mention, to: {is: v_come_after, from: e46.nomention_all.mean_value, to: e46.mention_all.mean_value}}
+  - {is: v_refer, from: o_e46_gap_below_support, to: {is: v_come_before, from: e46.nomention_all.mean_value, to: 0.625}}
+  - {is: v_refer, from: o_e46p_mention_all, to: {is: v_level, from: e46p.mention_all.accuracy, to: 0.75}}
+  - {is: v_refer, from: o_e46p_nomention_all, to: {is: v_level, from: e46p.nomention_all.accuracy, to: 0.9444444}}
+  - {is: v_refer, from: o_e46p_nomention_extends, to: {is: v_level, from: e46p.nomention_extends.accuracy, to: 0.9583333}}
+  - {is: v_refer, from: o_e46p_nomention_extends_robust, to: {is: v_level, from: e46p.nomention_extends.order_robust_accuracy, to: 0.7916667}}
+  - {is: v_refer, from: o_e46p_nomention_decoy, to: {is: v_level, from: e46p.nomention_decoy.accuracy, to: 0.875}}
+  - {is: v_refer, from: o_e46p_nomention_decoy_above_half, to: {is: v_come_after, from: e46p.nomention_decoy.accuracy, to: 0.5}}
+  - {is: v_refer, from: o_e46p_nomention_extends_above_mention, to: {is: v_come_after, from: e46p.nomention_extends.accuracy, to: e46p.mention_extends.accuracy}}
   - {is: v_refer, from: h_explain_transfers_to_apply, to: {is: v_transfer, from: usage_explain, to: usage_apply}}
   - {is: v_check, from: b_explain_transfers_to_apply, to: h_explain_transfers_to_apply}
   - {is: v_refer, from: o_e36_apply_none, to: {is: v_level, from: e36_apply.none.accuracy, to: 0.375}}
