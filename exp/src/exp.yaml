@@ -3704,6 +3704,24 @@ individuals:
   o_geo_midpoint_random: {is: observation}
   o_geo_midpoint_genus_above_cross: {is: observation}
   o_geo_midpoint_perm: {is: observation}
+  geo_ros: {is: measurement_family}
+  geo_ros_set: {is: family_axis, val: {text: set}}
+  geo_ros_set_R: {is: axis_value, val: {text: R}}
+  geo_ros_set_C: {is: axis_value, val: {text: C}}
+  geo_ros_set_Rlex: {is: axis_value, val: {text: Rlex}}
+  geo_ros_stat: {is: family_axis, val: {text: stat}}
+  geo_ros_stat_coh: {is: axis_value, val: {text: coh}}
+  geo_ros_stat_null: {is: axis_value, val: {text: null_mean}}
+  geo_ros_stat_p: {is: axis_value, val: {text: p}}
+  o_geo_ros_R_coh: {is: observation}
+  o_geo_ros_R_null: {is: observation}
+  o_geo_ros_R_p: {is: observation}
+  o_geo_ros_C_coh: {is: observation}
+  o_geo_ros_C_p: {is: observation}
+  o_geo_ros_Rlex_coh: {is: observation}
+  o_geo_ros_Rlex_p: {is: observation}
+  o_geo_ros_R_near_null: {is: observation}
+  o_geo_ros_C_above_R: {is: observation}
   o_geo_midpoint_precondition: {is: observation}
   o_geo_axis_readable: {is: observation}
   o_geo_axis_precondition: {is: observation}
@@ -3922,8 +3940,8 @@ individuals:
   b_model_writes_by_name: {is: item_queued}
   h_model_misses_named_hop: {is: hyp_supported}
   b_model_misses_named_hop: {is: item_done}
-  h_refer_ops_share_direction: {is: hyp_untested}
-  b_refer_ops_share_direction: {is: item_queued}
+  h_refer_ops_share_direction: {is: hyp_refuted}
+  b_refer_ops_share_direction: {is: item_done}
   h_refer_cuts_orthogonal: {is: hyp_untested}
   b_refer_cuts_orthogonal: {is: item_queued}
   h_refer_cut_spans_mods: {is: hyp_untested}
@@ -9334,6 +9352,35 @@ facts:
   - {is: v_refer, from: o_geo_midpoint_genus_above_cross, to: {is: v_come_after, from: geo_cross_genus_midpoint.G_rate.mean_value, to: geo_cross_genus_midpoint.C_rate.mean_value}}
   - {is: v_support, from: o_geo_midpoint_genus_above_cross, to: h_cross_genus_lowers_midpoint}
   - {is: v_support, from: o_geo_midpoint_perm, to: h_cross_genus_lowers_midpoint}
+  - {is: v_file_of, from: geo_refer_ops_share_direction.json, to: geo_ros}
+  - {is: v_rows_of, from: [layers, '8'], to: geo_ros}
+  - {is: v_axis_of, from: geo_ros_set, to: geo_ros}
+  - {is: v_keys_of, from: '#', to: geo_ros_set}
+  - {is: v_value_of, from: geo_ros_set_R, to: geo_ros_set}
+  - {is: v_spell, from: geo_ros_set_R, to: [R]}
+  - {is: v_value_of, from: geo_ros_set_C, to: geo_ros_set}
+  - {is: v_spell, from: geo_ros_set_C, to: [C]}
+  - {is: v_value_of, from: geo_ros_set_Rlex, to: geo_ros_set}
+  - {is: v_spell, from: geo_ros_set_Rlex, to: [R_without_noberu]}
+  - {is: v_axis_of, from: geo_ros_stat, to: geo_ros}
+  - {is: v_value_of, from: geo_ros_stat_coh, to: geo_ros_stat}
+  - {is: v_spell, from: geo_ros_stat_coh, to: coh}
+  - {is: v_value_of, from: geo_ros_stat_null, to: geo_ros_stat}
+  - {is: v_spell, from: geo_ros_stat_null, to: null_mean}
+  - {is: v_value_of, from: geo_ros_stat_p, to: geo_ros_stat}
+  - {is: v_spell, from: geo_ros_stat_p, to: p}
+  - {is: v_entry_of, from: '{stat}', to: geo_ros}
+  - {is: v_metric_of, from: geo_ros, to: mean_value}
+  - {is: v_refer, from: o_geo_ros_R_coh, to: {is: v_near, from: geo_ros.R.coh.mean_value, to: 0.021, new: 0.001}}
+  - {is: v_refer, from: o_geo_ros_R_null, to: {is: v_near, from: geo_ros.R.null_mean.mean_value, to: -0.009, new: 0.001}}
+  - {is: v_refer, from: o_geo_ros_R_p, to: {is: v_near, from: geo_ros.R.p.mean_value, to: 0.0275, new: 0.001}}
+  - {is: v_refer, from: o_geo_ros_C_coh, to: {is: v_near, from: geo_ros.C.coh.mean_value, to: 0.209, new: 0.001}}
+  - {is: v_refer, from: o_geo_ros_C_p, to: {is: v_level, from: geo_ros.C.p.mean_value, to: 0}}
+  - {is: v_refer, from: o_geo_ros_Rlex_coh, to: {is: v_near, from: geo_ros.Rlex.coh.mean_value, to: -0.004, new: 0.001}}
+  - {is: v_refer, from: o_geo_ros_Rlex_p, to: {is: v_near, from: geo_ros.Rlex.p.mean_value, to: 0.32, new: 0.001}}
+  - {is: v_refer, from: o_geo_ros_R_near_null, to: {is: v_near, from: geo_ros.R.coh.mean_value, to: geo_ros.R.null_mean.mean_value, new: 0.1}}
+  - {is: v_refer, from: o_geo_ros_C_above_R, to: {is: v_come_after, from: geo_ros.C.coh.mean_value, to: geo_ros.R.coh.mean_value}}
+  - {is: v_contradict, from: o_geo_ros_R_near_null, to: h_refer_ops_share_direction}
   - {is: v_file_of, from: geo_axis_readout_midpoint.json, to: geo_axis_readout_midpoint}
   - {is: v_rows_of, from: [rows], to: geo_axis_readout_midpoint}
   - {is: v_axis_of, from: geo_axis_readout_midpoint_cond, to: geo_axis_readout_midpoint}
