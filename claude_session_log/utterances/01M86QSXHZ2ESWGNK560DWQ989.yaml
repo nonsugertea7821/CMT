@@ -1,0 +1,25 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-24T12:17:03.039Z（UTC）
+individuals:
+  01M86QSXHZ2ESWGNK560DWQ989:
+    is: model_utterance
+    display: 発言 4216
+    val:
+      order: 4216
+      text: |
+        今回は新しい仮説を登録していません。引っかかった 3 つの文のうち、確かめていない主張は 1 つで、それはすでにある仮説が受け持っています。
+
+        - **「解釈で、体系には書いていません」**: 事実です。cf77c96 で体系に足したのは、観察と状態だけです。
+        - **「名前を答える形では、字面に引かれていません」**: 確かめていない解釈です。
+          - 測った値は decoy の acc 0.875 だけです。
+          - E43（0.125）とは、設問の形だけでなく項目も違います（seed 1 と seed 2）。形の違いだけが効いたとは、まだ言えません。
+          - それでも登録しなかったのは、すでにある h_verdict_by_question_format が同じ主張を受け持つからです。これは「判定は設問の形に頼る」とする仮説で、式は `{v_rely, from: verdict, to: question_format}` です。exp.yaml の 10805 行で読みました。
+          - この仮説はまだ未検証で、検証の PR #725 は判定が出ず Draft のままです。
+          - 確かめるなら、同じ項目で 2 つの形を比べる実験として、この仮説の下で行います。
+        - **「この結果で #725 を判定してはいません」**: 事実です。cf77c96 で h_verdict_by_question_format には何も結んでいません。
+
+        ロードマップの位置: H3 検査器の道（d_road_checker）
+facts:
+- {is: v_say, from: session_model, to: 01M86QSXHZ2ESWGNK560DWQ989}
+- {is: exp.v_answer, from: 01M86QSXHZ2ESWGNK560DWQ989, to: 01M86EX52DNVRMYZCFJ4X9EC2Q}
+- {is: v_refer, from: 01M86QSXHZ2ESWGNK560DWQ989, to: exp.v_rely}
+- {is: v_refer, from: 01M86QSXHZ2ESWGNK560DWQ989, to: exp.question_format}
