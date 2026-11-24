@@ -1,0 +1,236 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-24T09:37:47.183Z（UTC）
+individuals:
+  01M86EP9NFPV634BJM0DTK879R:
+    is: session_summary
+    display: 発言 4159
+    val:
+      order: 4159
+      text: |
+        This session is being continued from a previous conversation that ran out of context. The summary below covers the earlier portion of the conversation.
+
+        <system-reminder>
+        <tools-used-before-summary>Agent, Artifact, AskUserQuestion, Bash, Edit, Grep, Monitor, Read, ReadNotifications, Skill, SubagentHandback, TaskStop, ToolSearch, WebFetch, WebSearch, Write, mcp__claude-code-remote__add_repo, mcp__claude-code-remote__create_trigger, mcp__claude-code-remote__delete_trigger, mcp__claude-code-remote__get_trigger, mcp__claude-code-remote__list_repos, mcp__claude-code-remote__read_documentation, mcp__claude-code-remote__send_later, mcp__claude-code-remote__subscribe_pr_activity, mcp__claude-code-remote__unsubscribe_pr_activity, mcp__claude-code-remote__update_trigger, mcp__github__actions_get, mcp__github__actions_list, mcp__github__actions_run_trigger, mcp__github__add_issue_comment, mcp__github__create_pull_request, mcp__github__get_job_logs, mcp__github__issue_read, mcp__github__issue_write, mcp__github__list_issue_types, mcp__github__list_issues, mcp__github__list_pull_requests, mcp__github__pull_request_read, mcp__github__update_pull_request</tools-used-before-summary>
+        </system-reminder>
+        Summary:
+        1. Primary Request and Intent
+
+        **Standing rules (unchanged)**
+        - Repo and tools
+          - Repo nonsugertea7821/CMT, at /home/user/CMT.
+          - Python is /home/user/venv/bin/python. CPU only.
+        - Language and tone
+          - Write replies and PR bodies in plain Japanese.
+          - Don't overclaim. Separate facts from interpretation.
+          - End each report with a roadmap-position line. Label side paths わき道.
+        - Git
+          - Restore files with `git show <rev>:<path> > <path>`. No checkout, no stash.
+          - Commit trailer:
+            ```
+            Co-Authored-By: Claude [モデル名を伏せた] <[メールアドレスを伏せた]>
+            Claude-Session: https://claude.ai/code/session_015KRKt6TNJZ7ZsQmEknANXK
+            ```
+          - PR body ends with `🤖 Generated with [Claude Code](https://claude.com/claude-code)`, a blank line, then the session URL.
+        - Prohibitions
+          - No personal info and no model IDs in pushed artifacts.
+          - Claude never merges.
+        - Every PR I open: subscribe_pr_activity, then issue_write update with assignees ["nonsugertea7821"].
+        - System YAML gets no comments. A hook checks this.
+          - Resolve merge conflicts with Python first, then commit in a separate command. If the file still has conflict markers, the hook errors.
+        - Experiments
+          - Pre-register: the first commit contains the script only; results go in a later commit.
+          - Add experiment files with `git add -f`.
+          - Never rerun a recorded script.
+          - No local tc or ec; let CI run them.
+          - Undraft once spec passes and the status is supported, refuted or mixed.
+          - Stay Draft if the hypothesis remains untested.
+        - Hypotheses: register proposals first, with v_ground in the same PR or labelled わき道.
+        - Don't ask permission in conversation.
+        - Light work goes in /home/user/CMT/.wt_* worktrees. After a merge, remove the worktree and branch.
+
+        **Security constraints (verbatim)**
+        - 「Pagesに出すなら脆弱性気を付けてね」
+        - 「あとsession_logは読まないように」
+        - Later clarified:
+          - 「いやまあログの中身は読んだってかまわないんだけど 何のために残してるかって「過去の参照」のためだから」
+          - 「読もうと思えばsession_logも読めるよ 無差別に読んでほしくないからPagesに出してないだけ」
+          - 「あとブランチ切れば消えるってのもある」
+        - Net effect: I may read session logs for past reference. Pages and the ledger must never include claude/session-log-*.
+
+        **Stop hook "Wait—turn that observation into a hypothesis?"**
+        - Classify each negative sentence as 1 (verified fact), 2 (unverified claim, so register h_/b_/v_refer/v_check/v_ground) or 3 (progress report).
+        - End by naming what was registered and why the rest was not.
+        - Especially, never defer with an unchecked "体系に〜がない". Grep first.
+
+        **30-minute cycle trigger**
+        - Trigger trig_01L92Xn7LSTHrmqt7enEcCPG; the stored prompt is quoted in the conversation, steps 1–6.
+        - On fire, first update_trigger run_once_at about 31 minutes ahead with enabled true.
+        - Heavy lane: H3 d_road_checker, then H4 d_road_region model hypotheses.
+
+        2. Key Technical Concepts
+
+        - **Comparative question format**
+          - 「{A} の定義を変えたとします。意味が変わるのはどちらですか。番号で答えてください。」
+          - Options 1/2 are P and Q, run in both orders.
+          - d = logit(P's number) − logit(Q's number). Row = {"pair": {"margin", "both"}}.
+          - acc = share of rows with margin > 0.
+        - **ec family pattern in exp.yaml**
+          - measurement_family, family_axis, axis_value
+          - v_file_of, v_rows_of [items,'{cond}'], v_axis_of, v_value_of, v_denote
+          - v_entry_of pair; v_metric_of accuracy / order_robust_accuracy / logit_margin
+          - Observations: v_level, v_come_before / v_come_after (metric to number, or metric to metric)
+          - v_support / v_contradict
+        - **Concepts**
+          - syntax.extends, syntax.mod, syntax.identifier, syntax.word
+          - lang.type_checker
+          - type_check_result (information_entity; this is valid as the `to` of v_read)
+          - option, verdict, question_format
+
+        3. Files and Code Sections
+
+        - **exp/experiments/e42_verdict_by_format.py**
+          - Branch claude/h_verdict_by_question_format, PR #725 (Draft), issue #724.
+          - Pre-registration f37f4f7; results 57b3ca9.
+          - Qwen3-4B, E41's items (seed 0), comparative format; conditions extends, inline, named, decoy.
+          - Judgment on extends acc:
+            - ≥ 0.75: support verdict_by_question_format and refute model_misses_extends.
+            - ≤ 0.583: the reverse.
+            - Between: not judged.
+          - Results:
+            - extends 0.708 (both 0.417)
+            - inline 0.583
+            - named 0.375
+            - decoy 0.167
+            - Not judged.
+          - exp.yaml: family e42 plus observations o_e42_{extends, inline, named, decoy}, o_e42_extends_below_support, o_e42_decoy_below_quarter. None are linked. CI passed.
+        - **exp/experiments/e43_reads_by_word_compare.py** (on the #721 branch, now merged)
+          - Seed 1 items (7 names, C is a fresh name). Conditions extends, decoy, control.
+            - control = decoy with Q's text replaced by C.
+          - Judgment:
+            - Premise extends ≥ 0.625.
+            - Support: decoy ≤ 0.25 and control − decoy ≥ 0.25.
+            - Refute: decoy ≥ 0.5.
+          - Results: extends 0.75, decoy 0.125, control 0.417. Supported; both_acc is 0 for decoy and control.
+          - h_model_reads_by_word is hyp_supported, b_ is item_done.
+          - #721 merged 2026-11-22.
+        - **exp/experiments/e44_verdict_by_checker.py**
+          - Branch claude/h_verdict_by_checker, PR #729 (Draft), issue #727.
+          - Pre-registration b9e614f; results 19755d0.
+          - E43's items plus a checker line placed before the options:
+            - edges: 「検査器が解いた依存: X → Y; ...」
+            - closure: 「検査器が解いた依存（たどった先まで）: X → {Y, Z}; ...」
+            - Lines are sorted by name.
+          - Conditions decoy_closure, decoy_edges, control_edges.
+          - Judgment: decoy_closure ≥ 0.75 supports; ≤ 0.5 refutes.
+          - Results: decoy_closure 0.542, decoy_edges 0.208, control_edges 0.292; all both_acc are 0. Not judged.
+          - exp.yaml: family e44 plus observations o_e44_*, not linked. CI passed.
+        - **Registrations merged to main**
+          - #726:
+            - h_verdict_by_checker: {v_rely verdict→lang.type_checker}
+            - h_model_misses_mod: {v_read model→syntax.mod, neg:true}
+          - #730:
+            - h_verdict_by_option: {v_rely verdict→option}
+            - h_model_misses_checker_output: {v_read model→type_check_result, neg:true}
+          - All four are grounded on d_road_checker.
+
+        4. Errors and fixes
+
+        - **#730 first formula failed tc**
+          - `{v_read model→lang.type_checker, neg}` failed with 「lang.type_checker は動詞 exp.v_read の to（syntax.information_entity）に来られない」.
+          - I rewrote it as h_verdict_ignores_checker with v_rely. Then the stop hook flagged my unverified claim that "no output concept exists".
+          - A grep found type_check_result, so I restored h_model_misses_checker_output with type_check_result.
+          - The full history is disclosed in the #730 body.
+        - **#721 merge conflicts, twice (after #726 and #730)**
+          - Both were in the hypothesis list of exp.yaml.
+          - Resolved by keeping main's lines and setting reads_by_word to supported / done.
+        - **Combined command blocked by the comment hook**
+          - Running the conflict resolution and the commit in one command was blocked, because the hook saw the conflicted file.
+          - Fixed by splitting into separate commands.
+
+        5. Problem Solving
+
+        - H3 status:
+          - reads_by_word: supported (merged).
+          - reads_by_name (#718): not judged.
+          - verdict_by_question_format and misses_extends (#725): not judged.
+          - verdict_by_checker (#729): not judged.
+        - Key caveat: in the comparative format, order-robust accuracy is about 0. That is why h_verdict_by_option was registered.
+        - Candidate next tests:
+          - Debias option position: use a content-free pair, or answer by name instead of number.
+          - Vary the checker-output format.
+          - Otherwise move to H4.
+
+        6. All user messages
+
+        - "続けよう" (2026-11-24, after the restart).
+        - Earlier user messages, still in force: the security constraints quoted above, plus:
+          - "体系には「誤りの種類」を表す概念がありません。this is hypothesis"
+          - "Wait—turn that observation into a hypothesis? という名前でStopフックを組もう トリガーは「していません」系の動詞で"
+          - "英語と中国語もだね、結構な頻度で応答言語が守れてないから"
+          - "いやー、まあ英語で考えること自体は禁止したくないから ただ私がスムーズに読めなくて困るだけで、読みたいときは言う"
+
+        7. Pending Tasks
+
+        - Continue the cycle; the trigger is re-armed to 2026-11-24T10:08:00Z.
+        - Waiting for user review: #718 (E40, includes an ec change), #725 (E42), #729 (E44). All are Draft and untested.
+        - Remaining worktrees: .wt_e40, .wt_e42, .wt_e44. Remove each after its PR merges.
+        - Next heavy candidate: test h_verdict_by_option (E45, debiased position, e.g. answer by name / order_robust_accuracy, on E43 items). Otherwise go to H4 d_road_region.
+
+        8. Current Work
+
+        On "続けよう":
+        - Read 5 stale notifications: #702, #710 and #721 merged; the 22:49 cycle prompt.
+        - Updated the trigger to 10:08Z.
+        - Fetched origin; main is 87ea63d.
+        - Removed worktrees and branches for .wt_e36, .wt_e38 and .wt_e41.
+        - Confirmed the Qwen3-4B cache still exists.
+        - No experiment is running.
+
+        9. Optional Next Step
+
+        Continue the cycle per the user's 「続けよう」 and the trigger prompt's step 2 and step 4:
+        - Pick the next heavy item. The likely choice is E45 on a new branch claude/h_verdict_by_option, testing whether the comparative verdict relies on option position.
+        - Follow the same flow as before:
+          - Pre-register the script only.
+          - Open a Draft PR, subscribe to it and set the assignee.
+          - Run in the background with a 9-minute send_later check.
+          - Record results in exp.yaml.
+        - Then report results and implications with a roadmap line (H3 d_road_checker).
+
+        If you need specific details from before compaction (like exact code snippets, error messages, or content you generated), read the full transcript at: /root/.claude/projects/-home-user-CMT/e05d2140-ce91-515f-a5fb-e6251e13d406.jsonl
+        Continue the conversation from where it left off without asking the user any further questions. Resume directly — do not acknowledge the summary, do not recap what was happening, do not preface with "I'll continue" or similar. Pick up the last task as if the break never happened.
+
+        The messages after this summary are the most recent messages from before compaction, kept verbatim. The summary was written without seeing them, so something it says has not happened yet may already have happened in them.
+facts:
+- {is: v_say, from: session_model, to: 01M86EP9NFPV634BJM0DTK879R}
+- {is: v_refer, from: 01M86EP9NFPV634BJM0DTK879R, to: exp.v_ground}
+- {is: v_refer, from: 01M86EP9NFPV634BJM0DTK879R, to: ontology.v_refer}
+- {is: v_refer, from: 01M86EP9NFPV634BJM0DTK879R, to: exp.v_check}
+- {is: v_refer, from: 01M86EP9NFPV634BJM0DTK879R, to: exp.measurement_family}
+- {is: v_refer, from: 01M86EP9NFPV634BJM0DTK879R, to: exp.family_axis}
+- {is: v_refer, from: 01M86EP9NFPV634BJM0DTK879R, to: exp.axis_value}
+- {is: v_refer, from: 01M86EP9NFPV634BJM0DTK879R, to: exp.v_file_of}
+- {is: v_refer, from: 01M86EP9NFPV634BJM0DTK879R, to: exp.v_rows_of}
+- {is: v_refer, from: 01M86EP9NFPV634BJM0DTK879R, to: exp.v_axis_of}
+- {is: v_refer, from: 01M86EP9NFPV634BJM0DTK879R, to: exp.v_value_of}
+- {is: v_refer, from: 01M86EP9NFPV634BJM0DTK879R, to: exp.v_denote}
+- {is: v_refer, from: 01M86EP9NFPV634BJM0DTK879R, to: exp.v_entry_of}
+- {is: v_refer, from: 01M86EP9NFPV634BJM0DTK879R, to: exp.v_metric_of}
+- {is: v_refer, from: 01M86EP9NFPV634BJM0DTK879R, to: exp.order_robust_accuracy}
+- {is: v_refer, from: 01M86EP9NFPV634BJM0DTK879R, to: exp.logit_margin}
+- {is: v_refer, from: 01M86EP9NFPV634BJM0DTK879R, to: ontology.v_level}
+- {is: v_refer, from: 01M86EP9NFPV634BJM0DTK879R, to: ontology.v_come_before}
+- {is: v_refer, from: 01M86EP9NFPV634BJM0DTK879R, to: ontology.v_come_after}
+- {is: v_refer, from: 01M86EP9NFPV634BJM0DTK879R, to: exp.v_support}
+- {is: v_refer, from: 01M86EP9NFPV634BJM0DTK879R, to: exp.v_contradict}
+- {is: v_refer, from: 01M86EP9NFPV634BJM0DTK879R, to: syntax.extends}
+- {is: v_refer, from: 01M86EP9NFPV634BJM0DTK879R, to: syntax.mod}
+- {is: v_refer, from: 01M86EP9NFPV634BJM0DTK879R, to: syntax.identifier}
+- {is: v_refer, from: 01M86EP9NFPV634BJM0DTK879R, to: lang.type_checker}
+- {is: v_refer, from: 01M86EP9NFPV634BJM0DTK879R, to: exp.type_check_result}
+- {is: v_refer, from: 01M86EP9NFPV634BJM0DTK879R, to: ontology.information_entity}
+- {is: v_refer, from: 01M86EP9NFPV634BJM0DTK879R, to: syntax.to}
+- {is: v_refer, from: 01M86EP9NFPV634BJM0DTK879R, to: exp.v_read}
+- {is: v_refer, from: 01M86EP9NFPV634BJM0DTK879R, to: exp.question_format}
+- {is: v_refer, from: 01M86EP9NFPV634BJM0DTK879R, to: exp.hyp_supported}
+- {is: v_refer, from: 01M86EP9NFPV634BJM0DTK879R, to: exp.item_done}
+- {is: v_refer, from: 01M86EP9NFPV634BJM0DTK879R, to: exp.v_rely}
