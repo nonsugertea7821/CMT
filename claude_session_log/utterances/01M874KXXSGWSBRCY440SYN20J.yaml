@@ -1,0 +1,28 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-24T16:00:58.297Z（UTC）
+individuals:
+  01M874KXXSGWSBRCY440SYN20J:
+    is: model_utterance
+    display: 発言 4291
+    val:
+      order: 4291
+      text: |
+        E51 の 1.5B（Qwen2.5-1.5B-Instruct）は 15:57Z に終わり、事前登録の判定では h_model_misses_mod を支持する側に出ました。4B（Qwen3-4B）は 16:00Z ごろのコンテナ再起動で止まり、途中保存がなかったので、16:00:47Z に始めから走らせ直しています。この再起動は、結果の commit で開示します。
+
+        1.5B の結果（24 項目）:
+
+        | 条件 | acc | order_robust |
+        |---|---|---|
+        | extends | 0.875 | 0.542 |
+        | inline（参考） | 0.917 | 0.333 |
+        | named | 0.625 | 0.125 |
+
+        - **前提:** extends の acc が 0.875 で、線の 0.75 を越えたので、このモデルでは判定します。
+        - **判定:** named の acc が 0.625 で、支持の線（≤ 0.625）にちょうど乗りました。
+        - **読み方の注意:** 線の上ぎりぎりの値です。order_robust は 0.125 しかなく、named の多くの項目で、並び順を変えると答えが入れ替わっています。
+
+        4B が終わったら、モデルごとに h_model_misses_mod を結び、2 つが支持と反証に分かれれば mixed にします。次の様子見は 16:09Z です。
+
+        ロードマップの位置: H3 検査器の道（d_road_checker）
+facts:
+- {is: v_say, from: session_model, to: 01M874KXXSGWSBRCY440SYN20J}
+- {is: exp.v_answer, from: 01M874KXXSGWSBRCY440SYN20J, to: 01M86EX52DNVRMYZCFJ4X9EC2Q}
