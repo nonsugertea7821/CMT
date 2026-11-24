@@ -1,0 +1,36 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-24T13:16:47.416Z（UTC）
+individuals:
+  01M86V79XR6V3HZRSJGHAX1MQJ:
+    is: model_utterance
+    display: 発言 4234
+    val:
+      order: 4234
+      text: |
+        E48 が走り終え、h_verdict_by_question_format は事前登録どおり支持になりました。
+
+        結果を体系に書いて PR #725 に push し、本文も E48 の結果に合わせて書き直しました。いまは CI を待っていて、通ったら Draft を外します。
+
+        同じ項目（24 個）で、2 つの形を比べた値です。
+
+        | 条件 | 番号で選ぶ形（E48） | 名前で答える形（E47） |
+        |---|---|---|
+        | extends | 0.875 | 0.958 |
+        | decoy | 0.083 | 0.875 |
+        | control | 0.708 | 0.917 |
+
+        - **わかったこと**:
+          - 同じ項目でも、番号で選ぶ形にすると、decoy で 24 項目のうち 22 項目、A の字面がある側を選びました。名前で答える形では選びません。
+          - E43 と E47 で decoy の値が違ったのは、項目のせいではなく、設問の形のせいでした。
+        - **h_model_reads_by_word の mixed との関係**:
+          - 「字面で読むかどうかは形しだい」と見れば、mixed であることと矛盾しません。
+          - E48 の値は、この仮説を支持する線も満たしています。ただし事前登録の外なので、体系では結んでいません。
+        - **#725 のマージ**:
+          - E48 の事前登録が E42 の結果より後にあるので、自動マージの条件に合いません。あなたに見てもらうことになります。
+          - main（#738 まで）とは衝突しないことを確かめました。
+
+        **新しい仮説**: 今回は登録していません。わかった含意（字面で読むかどうかは形しだい）は、いま支持になった h_verdict_by_question_format がそのまま受け持つと判断しました。
+
+        ロードマップの位置: H3 検査器の道（d_road_checker）
+facts:
+- {is: v_say, from: session_model, to: 01M86V79XR6V3HZRSJGHAX1MQJ}
+- {is: exp.v_answer, from: 01M86V79XR6V3HZRSJGHAX1MQJ, to: 01M86EX52DNVRMYZCFJ4X9EC2Q}
