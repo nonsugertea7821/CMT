@@ -3613,6 +3613,8 @@ individuals:
   h_single_layer_does_not_reach_shared: {is: hyp_supported}
   h_multi_layer_raises_consistency: {is: hyp_mixed}
   h_cscl_raises_following: {is: hyp_mixed}
+  h_following_trades_control: {is: hyp_untested}
+  b_following_trades_control: {is: item_queued}
   h_dedicated_key_raises_following: {is: hyp_refuted}
   h_symbolic_membership_raises_following: {is: hyp_mixed}
   h_contrast_vector_raises_following: {is: hyp_refuted}
@@ -10714,6 +10716,9 @@ facts:
   - {is: v_contradict, from: o_e8_less_order_robust_than_single_layer, to: h_multi_layer_raises_consistency}
   - {is: v_support, from: o_e8_conflict_ge_single_layer, to: h_multi_layer_raises_consistency}
   - {is: v_refer, from: h_cscl_raises_following, to: {is: v_raise, from: cscl, to: redefinition_following}}
+  - {is: v_refer, from: h_following_trades_control, to: {is: v_lower, from: redefinition_following, to: control_preservation}}
+  - {is: v_check, from: b_following_trades_control, to: h_following_trades_control}
+  - {is: v_ground, from: d_metric, to: h_following_trades_control}
   - {is: v_scope, from: text_injection, to: h_cscl_raises_following}
   - {is: v_refer, from: h_model_can_write_cscl, to: {is: v_speak, from: model, to: concept_expression}}
   - {is: v_refer, from: h_typecheck_feedback_raises_writing, to: {is: v_raise, from: type_check_result, to: formalization_accuracy}}
