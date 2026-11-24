@@ -3948,6 +3948,8 @@ individuals:
   b_sync_by_diff: {is: item_queued}
   h_domain_as_projection: {is: hyp_untested}
   b_domain_as_projection: {is: item_queued}
+  h_verb_state_by_display_surface: {is: hyp_untested}
+  b_verb_state_by_display_surface: {is: item_queued}
   h_decision_link_by_role: {is: hyp_supported}
   b_decision_link_by_role: {is: item_done}
 facts:
@@ -11038,6 +11040,9 @@ facts:
   - {is: v_refer, from: h_domain_as_projection, to: {is: v_depend, from: hidden_state, to: syntax.domain}}
   - {is: v_check, from: b_domain_as_projection, to: h_domain_as_projection}
   - {is: v_ground, from: d_road_region, to: h_domain_as_projection}
+  - {is: v_refer, from: h_verb_state_by_display_surface, to: {is: v_depend, from: hidden_state, to: syntax.display}}
+  - {is: v_check, from: b_verb_state_by_display_surface, to: h_verb_state_by_display_surface}
+  - {is: v_ground, from: lang.d_cscl_display_derived, to: h_verb_state_by_display_surface}
   - {is: v_refer, from: h_decision_link_by_role, to: {is: v_depend, from: decision, to: syntax.role}}
   - {is: v_check, from: b_decision_link_by_role, to: h_decision_link_by_role}
   - {is: v_refer, from: h_multi_layer_transfers_to_explain, to: {is: v_transfer, from: multi_layer_vector, to: usage_explain}}
