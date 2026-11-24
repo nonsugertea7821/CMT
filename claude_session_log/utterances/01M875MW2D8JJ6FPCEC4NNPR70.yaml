@@ -1,0 +1,33 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-24T16:18:57.741Z（UTC）
+individuals:
+  01M875MW2D8JJ6FPCEC4NNPR70:
+    is: model_utterance
+    display: 発言 4299
+    val:
+      order: 4299
+      text: |
+        E51 は 2 つのモデルとも測り終わり、どちらも事前登録の判定で h_model_misses_mod の支持になりました。結果・体系・#743 の本文を push 済みで、#743 は CI 待ちです。
+
+        | モデル | extends（前提 ≥ 0.75） | inline（参考） | named（判定に使う） |
+        |---|---|---|---|
+        | Qwen2.5-1.5B-Instruct | 0.875 | 0.917 | **0.625** |
+        | Qwen3-4B | 1.0 | 1.0 | **0.542** |
+
+        値はどれも 24 項目での正答の割合（acc）です。
+
+        - **前提:** 両方のモデルで立ちました。
+        - **判定:** named（名前を通した mod の 2 段）は、どちらも支持の線（≤ 0.625）を越えませんでした。
+        - **注意:** 1.5B は線ちょうどです（24 項目中 15）。並びを入れ替えても正しく答える割合（order_robust）は 0.125 と 0.042 しかなく、named の答えはほぼ並び順で決まっています。
+        - **ec の確認点:** 「線を越えない」は事前登録の線が ≤ なので、`v_not_after` で書きました。exp.yaml でこの動詞を使うのは初めてなので、ec が通るかを見ます。
+        - **開示:** 4B の走行中に、コンテナの再起動が 2 回ありました。commit と PR 本文に書いています。
+          - 16:00Z ごろは途中保存がなく、始めから走らせ直しました。
+          - 16:10Z ごろは、extends・inline の途中保存から named だけを再開しました。
+        - **解釈（判定ではない）:** 落ちているのは「名前を辿って 2 段目へ行くこと」かもしれません。ただし inline には字面の手がかりがあるので、この段と mod を読むことは、まだ分けられていません。
+
+        spec が通れば Draft を外します。
+
+        ロードマップの位置: H3 検査器の道（d_road_checker）
+facts:
+- {is: v_say, from: session_model, to: 01M875MW2D8JJ6FPCEC4NNPR70}
+- {is: exp.v_answer, from: 01M875MW2D8JJ6FPCEC4NNPR70, to: 01M86EX52DNVRMYZCFJ4X9EC2Q}
+- {is: v_refer, from: 01M875MW2D8JJ6FPCEC4NNPR70, to: ontology.v_not_after}
