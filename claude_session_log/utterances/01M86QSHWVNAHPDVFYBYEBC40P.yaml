@@ -1,0 +1,32 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-24T12:16:51.099Z（UTC）
+individuals:
+  01M86QSHWVNAHPDVFYBYEBC40P:
+    is: model_utterance
+    display: 発言 4215
+    val:
+      order: 4215
+      text: |
+        E47 が走り終えました。新しい項目（24 個）で、h_model_misses_extends は反証になりました。h_model_reads_by_word は mixed です。
+
+        結果を PR #737 に push し、本文も結果に合わせて書き直しました。いまは CI の結果待ちです。
+
+        | 条件 | acc | 順の両方 |
+        |---|---|---|
+        | extends | 0.958 | 0.708 |
+        | decoy | 0.875 | 0.417 |
+        | control | 0.917 | 0.5 |
+
+        - **h_model_misses_extends（#723）**: 事前に引いた反証の線を、extends の acc（0.75 以上）と順の両方（0.5 以上）がどちらも越えました。
+        - **h_model_reads_by_word**: decoy の acc が反証の線の 0.5 を越え、反する根拠になりました。E43 の支持と合わせて mixed です。mixed は自動マージに乗らないので、あなたに手で見てもらいます。
+        - **形の違い（解釈で、体系には書いていません）**:
+          - 番号で選ぶ形（E43）では、decoy の正答が 0.125 で、語の字面に引かれていました。
+          - 名前を答える今回の形では、字面に引かれていません。
+          - 字面で読むかどうかは、設問の形しだいに見えます。これは h_verdict_by_question_format（#725）に関わりますが、この結果で #725 を判定してはいません。
+        - **途中で止まった走行**: コンテナの再起動で 2 回止まりましたが、どちらも途中保存から残りの条件だけを続けました。commit と PR の本文に書いてあります。
+
+        CI が通れば、状態が反証と mixed になったので、Draft を外します。
+
+        ロードマップの位置: H3 検査器の道（d_road_checker）
+facts:
+- {is: v_say, from: session_model, to: 01M86QSHWVNAHPDVFYBYEBC40P}
+- {is: exp.v_answer, from: 01M86QSHWVNAHPDVFYBYEBC40P, to: 01M86EX52DNVRMYZCFJ4X9EC2Q}
