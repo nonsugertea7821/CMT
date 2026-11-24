@@ -1,0 +1,46 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-24T23:35:16.182Z（UTC）
+individuals:
+  01M87YKRYP958D0YNVV4VRBWQX:
+    is: model_utterance
+    display: 発言 4446
+    val:
+      order: 4446
+      text: |
+        「識別子化」は、決定 `d_cscl_display_derived`（表示語・識別子は式から訳した名前）として、言語の側では**採用済み（adopted）**です。検査器の道と領域の道は、どちらもこの決定に v_depend しています。日本語の道は、この依存を式から外し（式にすると型検査で落ちるため）、前提としてだけ commit のメッセージに残してあります（8b06072）。
+
+        ## この決定に v_ground で結ばれた仮説（main で数えた値）
+        支持 40、反証 34、mixed 3、未検証 30。
+
+        **固まったこと（支持の主なもの）**
+        - 検査器は名前を読まなくても同じ結果を出せます。h_checker_words_swap では、名前の読み 5 か所を式の読みに替えても結果が変わりませんでした。
+        - 事実の欄は、名前ではなく中身・端・動詞で区別できます（h_fact_id_by_content、h_fact_slot_by_end、h_fact_slot_by_verb）。
+        - mod に付けた名前は綴りにすぎず、式の側に意味があります（h_named_mod_is_spelling、h_named_mod_by_writer）。
+        - 部分の表示語は、語の事実から組み立てられます（h_part_display_by_word_facts、h_display_as_part_tree）。
+        - 翻訳は表示語を経て行えます（h_translation_by_display）。
+
+        **崩れたこと（反証の主なもの）**
+        - 識別子を、シグネチャまで展開したり双模倣で同一視したりして式から一意に決める案は、通りませんでした（h_identifier_by_expansion、h_identifier_by_bisimulation）。違う識別子が同じ形になる組が残るためです。
+        - 外の識別子を一対一に付け替えても検査と法則の事実が変わらない、という仮説（h_renaming_invariant）も反証でした。
+        - 動詞の図（holds）から別名を分ける・統合する系列は、多くが反証です（h_verb_shape_two_phase、h_shape_needs_ends、h_domain_by_refer など）。
+        - extends を式から導く系列も、多くが反証です（h_extends_derived ほか）。
+
+        **まだ開いているもの（未検証 30 の主なもの）**
+        - 名前は付け替えを除いて決まる（h_names_up_to_relabel）。
+        - 同じ図の動詞は統合してよい（h_same_shape_verbs_merge）。
+        - extends の導出の系列の残り（h_undecided_from_indistinct ほか）。
+        - 法則・文法の置き場の系列。
+
+        **モデルの側から見えてきたこと（検査器の道の実験）**
+        - モデルは識別子で読み、名前のない中身を落とします（E51、E52）。
+        - 表示語の隠れ状態は、式よりも字面でまとまるようです（今回の #756。#757 で仮説として登録）。
+
+        ここから見えるのは、識別子化は「体系と検査器の側では成り立つ」が、「モデルがその式どおりに読む」ところはまだ届いていない、ということです。後半は、いまの検査器の道（E55・E56）が埋めようとしているところです。
+
+        E56 の 1.5B は、例なしの条件（named_edges）の 32 項目を測り終え、例ありの条件に進んでいます。
+
+        ロードマップの位置: 識別子化（d_cscl_display_derived）は検査器の道と領域の道の土台です。いまはその上の検査器の道（H3）の E56 を実行中です。
+facts:
+- {is: v_say, from: session_model, to: 01M87YKRYP958D0YNVV4VRBWQX}
+- {is: exp.v_answer, from: 01M87YKRYP958D0YNVV4VRBWQX, to: 01M87YJRR1S1QHEEK0B41AJWAX}
+- {is: v_refer, from: 01M87YKRYP958D0YNVV4VRBWQX, to: ontology.v_depend}
+- {is: v_refer, from: 01M87YKRYP958D0YNVV4VRBWQX, to: exp.v_ground}
