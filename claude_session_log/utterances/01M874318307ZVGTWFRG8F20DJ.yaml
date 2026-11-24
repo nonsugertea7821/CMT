@@ -1,0 +1,30 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-24T15:51:44.643Z（UTC）
+individuals:
+  01M874318307ZVGTWFRG8F20DJ:
+    is: model_utterance
+    display: 発言 4285
+    val:
+      order: 4285
+      text: |
+        この周回では、main に新しいマージはありませんでした。#742 の E50 は前提が崩れて判定せず、Draft のまま置いてあります。
+
+        H3 の次の仮説 `h_model_misses_mod`（モデルは mod を通した依存を読まない、#728）を始めました。
+
+        - **測ること:** 名前を 1 つ答える形で、mod を 2 段たどる依存（named）を読めるかを見ます。
+          - named の書き方では、X の行に A の名前が出ないので、字面の手がかりが入りません。
+          - 項目は新しく作りました（seed 6）。
+          - 登録のときの案に沿って、モデルは 2 つ（Qwen2.5-1.5B と Qwen3-4B）にしました。
+        - **判定（モデルごと）:**
+          - 前提は extends ≥ 0.75 です。
+          - named が 0.625 以下なら支持、0.75 以上なら反証です。
+          - 2 つのモデルで支持と反証に分かれたら、mixed になります。
+        - **進み:**
+          - スクリプトだけの事前登録を push し、Draft PR #743 を立てました。
+          - 15:51Z から、1.5B、4B の順で走らせています。
+          - 16:00Z に様子を見ます。
+        - **開示:** Qwen3-4B では、近い条件の値（E49 の named 0.625）を見てから手順を書きました。PR の本文にも書いてあります。
+
+        ロードマップの位置: H3 検査器の道（d_road_checker）。
+facts:
+- {is: v_say, from: session_model, to: 01M874318307ZVGTWFRG8F20DJ}
+- {is: exp.v_answer, from: 01M874318307ZVGTWFRG8F20DJ, to: 01M86EX52DNVRMYZCFJ4X9EC2Q}
