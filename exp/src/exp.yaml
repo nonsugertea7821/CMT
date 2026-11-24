@@ -3254,6 +3254,31 @@ individuals:
   o_e53b_named_robust: {is: observation}
   o_e53b_extends_above_premise: {is: observation}
   o_e53b_chain_not_above_named: {is: observation}
+  e55a: {is: measurement_family}
+  e55a_cond: {is: family_axis, val: {text: cond}}
+  e55a_cond_named_closure: {is: axis_value, val: {text: 'named_closure'}}
+  e55a_cond_taught_closure: {is: axis_value, val: {text: 'taught_closure'}}
+  e55a_cond_taught_named: {is: axis_value, val: {text: 'taught_named'}}
+  o_e55a_named_closure: {is: observation}
+  o_e55a_named_closure_robust: {is: observation}
+  o_e55a_taught_closure: {is: observation}
+  o_e55a_taught_closure_robust: {is: observation}
+  o_e55a_taught_named: {is: observation}
+  o_e55a_taught_named_robust: {is: observation}
+  e55b: {is: measurement_family}
+  e55b_cond: {is: family_axis, val: {text: cond}}
+  e55b_cond_named_closure: {is: axis_value, val: {text: 'named_closure'}}
+  e55b_cond_taught_closure: {is: axis_value, val: {text: 'taught_closure'}}
+  e55b_cond_taught_named: {is: axis_value, val: {text: 'taught_named'}}
+  o_e55b_named_closure: {is: observation}
+  o_e55b_named_closure_robust: {is: observation}
+  o_e55b_taught_closure: {is: observation}
+  o_e55b_taught_closure_robust: {is: observation}
+  o_e55b_taught_named: {is: observation}
+  o_e55b_taught_named_robust: {is: observation}
+  o_e55a_taught_not_above_closure: {is: observation}
+  o_e55b_taught_above_closure: {is: observation}
+  o_e55b_taught_above_examples_only: {is: observation}
   e45: {is: measurement_family}
   e45_cond: {is: family_axis, val: {text: cond}}
   e45_cond_number_extends: {is: axis_value, val: {text: 'number_extends'}}
@@ -3935,8 +3960,8 @@ individuals:
   b_model_misses_named_mod: {is: item_done}
   h_pair_by_checker_output: {is: hyp_untested}
   b_pair_by_checker_output: {is: item_queued}
-  h_checker_output_read_when_taught: {is: hyp_untested}
-  b_checker_output_read_when_taught: {is: item_queued}
+  h_checker_output_read_when_taught: {is: hyp_mixed}
+  b_checker_output_read_when_taught: {is: item_done}
   b_model_writes_by_name: {is: item_queued}
   h_model_misses_named_hop: {is: hyp_supported}
   b_model_misses_named_hop: {is: item_done}
@@ -4927,6 +4952,46 @@ facts:
   - {is: v_metric_of, from: e53b, to: accuracy}
   - {is: v_metric_of, from: e53b, to: order_robust_accuracy}
   - {is: v_metric_of, from: e53b, to: logit_margin}
+  - {is: v_file_of, from: 'e55_Qwen2.5-1.5B-Instruct.json', to: e55a}
+  - {is: v_rows_of, from: [items, '{cond}'], to: e55a}
+  - {is: v_axis_of, from: e55a_cond, to: e55a}
+  - {is: v_value_of, from: e55a_cond_named_closure, to: e55a_cond}
+  - {is: v_denote, from: e55a_cond_named_closure, to: syntax.mod}
+  - {is: v_denote, from: e55a_cond_named_closure, to: syntax.identifier}
+  - {is: v_denote, from: e55a_cond_named_closure, to: lang.type_checker}
+  - {is: v_value_of, from: e55a_cond_taught_closure, to: e55a_cond}
+  - {is: v_denote, from: e55a_cond_taught_closure, to: syntax.mod}
+  - {is: v_denote, from: e55a_cond_taught_closure, to: syntax.identifier}
+  - {is: v_denote, from: e55a_cond_taught_closure, to: lang.type_checker}
+  - {is: v_denote, from: e55a_cond_taught_closure, to: application_example}
+  - {is: v_value_of, from: e55a_cond_taught_named, to: e55a_cond}
+  - {is: v_denote, from: e55a_cond_taught_named, to: syntax.mod}
+  - {is: v_denote, from: e55a_cond_taught_named, to: syntax.identifier}
+  - {is: v_denote, from: e55a_cond_taught_named, to: application_example}
+  - {is: v_entry_of, from: pair, to: e55a}
+  - {is: v_metric_of, from: e55a, to: accuracy}
+  - {is: v_metric_of, from: e55a, to: order_robust_accuracy}
+  - {is: v_metric_of, from: e55a, to: logit_margin}
+  - {is: v_file_of, from: 'e55_Qwen3-4B.json', to: e55b}
+  - {is: v_rows_of, from: [items, '{cond}'], to: e55b}
+  - {is: v_axis_of, from: e55b_cond, to: e55b}
+  - {is: v_value_of, from: e55b_cond_named_closure, to: e55b_cond}
+  - {is: v_denote, from: e55b_cond_named_closure, to: syntax.mod}
+  - {is: v_denote, from: e55b_cond_named_closure, to: syntax.identifier}
+  - {is: v_denote, from: e55b_cond_named_closure, to: lang.type_checker}
+  - {is: v_value_of, from: e55b_cond_taught_closure, to: e55b_cond}
+  - {is: v_denote, from: e55b_cond_taught_closure, to: syntax.mod}
+  - {is: v_denote, from: e55b_cond_taught_closure, to: syntax.identifier}
+  - {is: v_denote, from: e55b_cond_taught_closure, to: lang.type_checker}
+  - {is: v_denote, from: e55b_cond_taught_closure, to: application_example}
+  - {is: v_value_of, from: e55b_cond_taught_named, to: e55b_cond}
+  - {is: v_denote, from: e55b_cond_taught_named, to: syntax.mod}
+  - {is: v_denote, from: e55b_cond_taught_named, to: syntax.identifier}
+  - {is: v_denote, from: e55b_cond_taught_named, to: application_example}
+  - {is: v_entry_of, from: pair, to: e55b}
+  - {is: v_metric_of, from: e55b, to: accuracy}
+  - {is: v_metric_of, from: e55b, to: order_robust_accuracy}
+  - {is: v_metric_of, from: e55b, to: logit_margin}
   - {is: v_file_of, from: 'e45_Qwen3-4B.json', to: e45}
   - {is: v_rows_of, from: [items, '{cond}'], to: e45}
   - {is: v_axis_of, from: e45_cond, to: e45}
@@ -11185,6 +11250,24 @@ facts:
   - {is: v_refer, from: o_e53b_extends_above_premise, to: {is: v_come_after, from: e53b.extends.accuracy, to: 0.75}}
   - {is: v_refer, from: o_e53b_chain_not_above_named, to: {is: v_not_after, from: e53b.chain.accuracy, to: e53b.named.accuracy}}
   - {is: v_contradict, from: o_e53b_chain_not_above_named, to: h_model_misses_named_mod}
+  - {is: v_refer, from: o_e55a_named_closure, to: {is: v_level, from: e55a.named_closure.accuracy, to: 0.53125}}
+  - {is: v_refer, from: o_e55a_named_closure_robust, to: {is: v_level, from: e55a.named_closure.order_robust_accuracy, to: 0.1875}}
+  - {is: v_refer, from: o_e55a_taught_closure, to: {is: v_level, from: e55a.taught_closure.accuracy, to: 0.46875}}
+  - {is: v_refer, from: o_e55a_taught_closure_robust, to: {is: v_level, from: e55a.taught_closure.order_robust_accuracy, to: 0.09375}}
+  - {is: v_refer, from: o_e55a_taught_named, to: {is: v_level, from: e55a.taught_named.accuracy, to: 0.46875}}
+  - {is: v_refer, from: o_e55a_taught_named_robust, to: {is: v_level, from: e55a.taught_named.order_robust_accuracy, to: 0.15625}}
+  - {is: v_refer, from: o_e55b_named_closure, to: {is: v_level, from: e55b.named_closure.accuracy, to: 0.5}}
+  - {is: v_refer, from: o_e55b_named_closure_robust, to: {is: v_level, from: e55b.named_closure.order_robust_accuracy, to: 0.0625}}
+  - {is: v_refer, from: o_e55b_taught_closure, to: {is: v_level, from: e55b.taught_closure.accuracy, to: 0.90625}}
+  - {is: v_refer, from: o_e55b_taught_closure_robust, to: {is: v_level, from: e55b.taught_closure.order_robust_accuracy, to: 0.65625}}
+  - {is: v_refer, from: o_e55b_taught_named, to: {is: v_level, from: e55b.taught_named.accuracy, to: 0.71875}}
+  - {is: v_refer, from: o_e55b_taught_named_robust, to: {is: v_level, from: e55b.taught_named.order_robust_accuracy, to: 0.5}}
+  - {is: v_refer, from: o_e55a_taught_not_above_closure, to: {is: v_not_after, from: e55a.taught_closure.accuracy, to: e55a.named_closure.accuracy}}
+  - {is: v_contradict, from: o_e55a_taught_not_above_closure, to: h_checker_output_read_when_taught}
+  - {is: v_refer, from: o_e55b_taught_above_closure, to: {is: v_come_after, from: e55b.taught_closure.accuracy, to: e55b.named_closure.accuracy}}
+  - {is: v_refer, from: o_e55b_taught_above_examples_only, to: {is: v_come_after, from: e55b.taught_closure.accuracy, to: e55b.taught_named.accuracy}}
+  - {is: v_support, from: o_e55b_taught_above_closure, to: h_checker_output_read_when_taught}
+  - {is: v_support, from: o_e55b_taught_above_examples_only, to: h_checker_output_read_when_taught}
   - {is: v_refer, from: o_e45_number_extends, to: {is: v_level, from: e45.number_extends.mean_value, to: 0.7083333}}
   - {is: v_refer, from: o_e45_number_decoy, to: {is: v_level, from: e45.number_decoy.mean_value, to: 0.0416667}}
   - {is: v_refer, from: o_e45_number_control, to: {is: v_level, from: e45.number_control.mean_value, to: 0.0}}
