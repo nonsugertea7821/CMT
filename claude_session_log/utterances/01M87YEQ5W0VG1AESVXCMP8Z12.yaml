@@ -1,0 +1,32 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-24T23:32:30.524Z（UTC）
+individuals:
+  01M87YEQ5W0VG1AESVXCMP8Z12:
+    is: model_utterance
+    display: 発言 4440
+    val:
+      order: 4440
+      text: |
+        今回は、1 つ測って閉じ、1 つ登録し、確認待ちだった PR がすべてマージされたところで、E56 を始めました。
+
+        **この周回で閉じたもの（どれもマージ済み）**
+        - **#756**: h_refer_ops_share_direction を反証しました（領域の道の前提 L2）。
+          - 1.5B で、v_refer の下の動詞の表示語は、隠れ状態で一つの向きにまとまりませんでした。差は 0.030 で、基準の 0.10 に届きません。
+          - 「述べる」を含む 3 語を除くと、まとまりは消えました。
+          - 一方、v_compose の下は強くまとまりました（0.209）。表示語の字面に沿ってまとまっているように見えます。
+        - **#757**: その含意を h_verb_state_by_display_surface（表示語の隠れ状態は字面でまとまる）として登録しました。
+        - **#754**（E55、mixed）と **#755**（edges の残り項目の登録）は、確認していただいてマージされました。
+
+        **いま走っているもの**
+        - **E56**（#755 で登録した残り項目）を事前登録しました。答えを含まない直接の辺（X → M; M → A …）に例を 2 つ添えたとき、モデルが 2 段をたどって読めるかを測ります。
+          - 1.5B をいま走らせています。終わったら 4B を走らせます。
+          - 4B は 1 回の再開で約 8 項目しか進まないので、数回の再開がかかる見込みです。
+          - 8 分ごとに再開を確かめる予約を置きました。Draft の PR は、このあと立てます。
+
+        **確認を待っているもの**: #718、#725、#736、#742、#729。
+
+        ロードマップの位置: 検査器の道 d_road_checker（H3）の E56 を実行中です。並行して、領域の道の前提（L2）を 1 つ閉じました。
+facts:
+- {is: v_say, from: session_model, to: 01M87YEQ5W0VG1AESVXCMP8Z12}
+- {is: exp.v_answer, from: 01M87YEQ5W0VG1AESVXCMP8Z12, to: 01M86EX52DNVRMYZCFJ4X9EC2Q}
+- {is: v_refer, from: 01M87YEQ5W0VG1AESVXCMP8Z12, to: ontology.v_refer}
+- {is: v_refer, from: 01M87YEQ5W0VG1AESVXCMP8Z12, to: ontology.v_compose}
