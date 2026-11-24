@@ -1,0 +1,45 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-24T14:18:03.332Z（UTC）
+individuals:
+  01M86YQFP4M0X52PPVH66QDRRT:
+    is: model_utterance
+    display: 発言 4248
+    val:
+      order: 4248
+      text: |
+        E49 が走り終わり、`h_model_reads_by_name`（モデルは依存を名前の位置で読み、名前のない中身の中の依存を落とす、という仮説）は事前登録どおり**反証**になりました。結果と体系への書き込みを #718 に push し、本文も E49 を足して書き直しました。
+
+        **結果**（Qwen3-4B、名前で答える形、seed 3 の新しい 24 項目）
+        | | acc | order_robust |
+        |---|---|---|
+        | extends（名前の位置で依存） | 0.833 | 0.583 |
+        | inline（名前のない中身の中で依存） | **1.0** | 0.417 |
+        | named（参考） | 0.625 | 0.042 |
+
+        - **判定:** 前提の extends ≥ 0.75 は立ちました。extends − inline は −0.167 で、支持の線 0.25 に届かないので反証です。
+        - **わかったこと（事実）:** この形とこのモデルでは、名前のない中身の中の依存を落としませんでした。平均では inline がいちばんよく拾えています。
+        - **解釈（式にしていない）:** #478 で手順を書いたモデルが行を漏らしたことの説明にはなりません。
+          - 漏らしたのは列挙して書く側で、今回測ったのは読んで答える側だからです。
+          - named は order_robust が 0.042 で、名前を 1 段経由する参照は並びに弱く見えます。判定には使わない参考です。
+        - **体系に書いたもの:**
+          - exp.yaml に族 `e49` と観察を足しました。
+          - 「extends の acc が inline より下」という観察を `v_contradict` で仮説に結びました。
+          - `h_model_reads_by_name` は hyp_refuted、確かめの残り項目は item_done にしました。
+        - **開示:**
+          - 走行中にコンテナが 2 回（13:57Z、14:06Z）止まり、条件ごとの途中保存から再開しました。結果の commit に書いてあります。
+          - ec を変えているのと、結果ファイルが E40 のものより後に来るので、自動マージには乗りません。手で見てください。
+        - **次:** 14:26Z に spec を確かめる予定を置きました。通っていれば Draft を外します。
+
+        **観察を仮説にするか（否定の文ごと）**
+        1. 「inline で落とさなかった」は、E49 で確かめた事実です。登録しません。
+        2. 「#478 の説明にはならない」は、言える範囲の限りを述べただけで、主張ではありません。
+           - その裏にある「漏れは書く側の偏り」という見方は未検証です。
+           - まだ測る手立てを提案していないので、今回は登録していません。
+        3. 「自動マージには乗らない」は、auto_merge の条件（事前登録が結果より前）から決まる進み具合の報告です。
+
+        ロードマップの位置: H3 検査器の道（d_road_checker）。
+facts:
+- {is: v_say, from: session_model, to: 01M86YQFP4M0X52PPVH66QDRRT}
+- {is: exp.v_answer, from: 01M86YQFP4M0X52PPVH66QDRRT, to: 01M86EX52DNVRMYZCFJ4X9EC2Q}
+- {is: v_refer, from: 01M86YQFP4M0X52PPVH66QDRRT, to: exp.v_contradict}
+- {is: v_refer, from: 01M86YQFP4M0X52PPVH66QDRRT, to: exp.hyp_refuted}
+- {is: v_refer, from: 01M86YQFP4M0X52PPVH66QDRRT, to: exp.item_done}
