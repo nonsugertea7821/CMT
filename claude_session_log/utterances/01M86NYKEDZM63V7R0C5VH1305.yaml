@@ -1,0 +1,251 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-24T11:44:39.373Z（UTC）
+individuals:
+  01M86NYKEDZM63V7R0C5VH1305:
+    is: session_summary
+    display: 発言 4204
+    val:
+      order: 4204
+      text: |
+        This session is being continued from a previous conversation that ran out of context. The summary below covers the earlier portion of the conversation.
+
+        <system-reminder>
+        <tools-used-before-summary>Agent, Artifact, AskUserQuestion, Bash, Edit, Grep, Monitor, Read, ReadNotifications, Skill, SubagentHandback, TaskStop, ToolSearch, WebFetch, WebSearch, Write, mcp__claude-code-remote__add_repo, mcp__claude-code-remote__create_trigger, mcp__claude-code-remote__delete_trigger, mcp__claude-code-remote__get_trigger, mcp__claude-code-remote__list_repos, mcp__claude-code-remote__read_documentation, mcp__claude-code-remote__send_later, mcp__claude-code-remote__subscribe_pr_activity, mcp__claude-code-remote__unsubscribe_pr_activity, mcp__claude-code-remote__update_trigger, mcp__github__actions_get, mcp__github__actions_list, mcp__github__actions_run_trigger, mcp__github__add_issue_comment, mcp__github__create_pull_request, mcp__github__get_job_logs, mcp__github__issue_read, mcp__github__issue_write, mcp__github__list_issue_types, mcp__github__list_issues, mcp__github__list_pull_requests, mcp__github__pull_request_read, mcp__github__update_pull_request</tools-used-before-summary>
+        </system-reminder>
+        Summary:
+        1. Primary Request and Intent
+
+        **Standing rules (unchanged)**
+        - Repo and tools
+          - Repo nonsugertea7821/CMT, at /home/user/CMT.
+          - Python is /home/user/venv/bin/python. CPU only.
+        - Language and tone
+          - Write replies and PR bodies in plain Japanese.
+          - Don't overclaim. Separate facts from interpretation.
+          - End each report with a roadmap-position line. Label side paths わき道.
+        - Git
+          - Restore files with `git show <rev>:<path> > <path>`. No checkout, no stash.
+          - Commit trailer:
+            ```
+            Co-Authored-By: Claude [モデル名を伏せた] <[メールアドレスを伏せた]>
+            Claude-Session: https://claude.ai/code/session_015KRKt6TNJZ7ZsQmEknANXK
+            ```
+          - PR body ends with `🤖 Generated with [Claude Code](https://claude.com/claude-code)`, a blank line, then the session URL.
+        - Prohibitions
+          - No personal info and no model IDs in pushed artifacts.
+          - Claude never merges.
+        - Every PR I open: subscribe_pr_activity, then issue_write update with assignees ["nonsugertea7821"].
+        - System YAML gets no comments. A hook checks this.
+          - Resolve merge conflicts with Python first, then commit in a separate command.
+        - Experiments
+          - Pre-register: the first commit contains the script only; results go in a later commit.
+          - Add experiment files with `git add -f`.
+          - Never rerun a recorded script.
+          - No local tc or ec; let CI run them.
+          - Undraft once spec passes and the status is supported, refuted or mixed.
+          - Stay Draft if the hypothesis remains untested.
+        - Hypotheses: register proposals with v_ground in the same PR, or label them わき道.
+        - Don't ask permission in conversation.
+        - Light work goes in /home/user/CMT/.wt_* worktrees. After a merge, remove the worktree and branch.
+        - **NEW lesson:** before pushing a branch, check that its PR is not already merged.
+          - I accidentally recreated the deleted branch claude/h_verdict_by_option by pushing after #733 auto-merged.
+          - It points to e75f501 and adds no new commits.
+          - I asked the user to delete it; I cannot delete branches.
+
+        **Security constraints (verbatim)**
+        - 「Pagesに出すなら脆弱性気を付けてね」
+        - 「あとsession_logは読まないように」
+        - Later clarified:
+          - 「いやまあログの中身は読んだってかまわないんだけど 何のために残してるかって「過去の参照」のためだから」
+          - 「読もうと思えばsession_logも読めるよ 無差別に読んでほしくないからPagesに出してないだけ」
+          - 「あとブランチ切れば消えるってのもある」
+        - Net effect: reading session logs for past reference is OK. Never expose claude/session-log-* in Pages or the ledger.
+
+        **Stop hook "Wait—turn that observation into a hypothesis?"**
+        - For each negative sentence, classify it:
+          - 1 = verified fact
+          - 2 = unverified claim, so register it, or verify it on the spot
+          - 3 = progress report
+        - End with what was registered and why the rest was not.
+        - Grep before claiming "体系に〜がない".
+
+        **Heartbeat / cycle**
+        - The user said 「思ったより消耗が早いからハートビートは1h毎にしようか」.
+          - Trigger trig_01L92Xn7LSTHrmqt7enEcCPG is renamed 「仮説の周回（1時間毎）」.
+          - Its prompt now says: re-arm run_once_at about 61 minutes ahead.
+        - The user then said 「9分毎に様子をみないとコンテナが落ちるよ」.
+          - Step 4 of the prompt now says: while a heavy experiment runs, place a send_later check every 9 minutes (「9 分より空けるとコンテナが落ちる」).
+        - Next cycle fires at 2026-11-24T12:44:00Z.
+        - delete_trigger is denied by the permission classifier. A stale reminder is harmless; when it fires, confirm the work is done and close it.
+
+        2. Key Technical Concepts
+
+        - **Comparative question format.** Since E46, the name-answer scoring is: s(name) = sum of log-probs of the name's tokens appended after the rendered prompt.
+        - **Consistency ("一貫")** = share of rows where both orders give the same sign. It relates to the system concept `verdict_stability`.
+        - **ec details (exp/src/exp_check.py)**
+          - `stat` metrics: accuracy, order_robust_accuracy, logit_margin, judged_accuracy, mean_value.
+          - A list-valued entry [o1, o2] becomes margin = mean and both = all>0.
+          - A boolean entry "consistent" works with mean_value.
+          - condition_entry is verbatim. Metric path is `<family>.<axis value>.<metric short>`.
+          - ec only checks that observations hold and that evidence/against links exist.
+          - Pooling across conditions is impossible, unless the results file has a pooled key. E46 added `{form}_all`.
+        - **Existing concepts used:** option (exp.yaml:186), question (exp.yaml:182), verdict_pair, verdict_stability, syntax.identifier, syntax.extends/mod/word, v_rely (from any, to any).
+        - **Auto-merge**
+          - The spec workflow also triggers on ready_for_review.
+          - auto_merge.py merges non-draft PRs that go untested → supported/refuted, and registration-only PRs.
+
+        3. Files and Code Sections
+
+        - **exp/experiments/e45_verdict_by_option.py** (MERGED, #733)
+          - Pre-registration 74e18d6; results 5e35d3a.
+          - Imports CONDS, HEAD, make_items, snippet from e43; seed 1; conditions extends, decoy, control.
+          - Forms:
+            - number: same as E43.
+            - name: the question lists 「{X} と {Y} のうち…名前だけで答えてください」. d = s(P) − s(Q), minus a null with no definitions, per order.
+          - Rows: {"pair": {...}, "consistent", "d"}.
+          - Judgment:
+            - Support: cons_num ≤ 0.5 and cons_name − cons_num ≥ 0.25.
+            - Refute: cons_num ≥ 0.75 or diff ≤ 0.083.
+          - Results:
+            - cons_num 0.25, cons_name(adj) 0.208 → **refuted**. cons_name_raw 0.569, cons_num_adj 0.319.
+            - Per condition, number vs name_adj: extends 0.708 vs 0.25; decoy 0.042 vs 0.208; control 0 vs 0.167.
+            - Number-form acc reproduced E43 (0.75, 0.125, 0.417).
+            - Null name bias: +5.2 toward the first-mentioned name, −5.8 toward the second.
+            - name_adj decoy acc 0.458.
+          - exp.yaml:
+            - Family e45 (consistent, mean_value, 12 conds) and e45p (pair; accuracy, order_robust, logit_margin; 6 conds).
+            - 6 level observations o_e45_{number,name_adj}_{c} carry v_contradict to h_verdict_by_option.
+            - Comparisons: o_e45_extends_name_below_number, o_e45_decoy/control_name_above_number.
+            - Reference: o_e45p_name_adj_decoy, o_e45p_name_adj_decoy_above_quarter.
+            - Status: h_verdict_by_option hyp_refuted, b_ item_done.
+        - **#734 (merged):** registered h_verdict_by_mention_order: {v_rely, from: verdict, to: question}, with b_, v_check and v_ground d_road_checker. Issue #735.
+        - **exp/experiments/e46_verdict_by_mention_order.py**
+          - Branch claude/h_verdict_by_mention_order, PR #736 (Draft), worktree .wt_e46.
+          - Pre-registration da6a026; results a5345ab. CI passed.
+          - Key code:
+            ```python
+            HEAD_MENTION = "次の定義の集まりで、{A} の定義を変えたとします。{X} と {Y} のうち、意味が変わるのはどちらですか。名前だけで答えてください。"
+            HEAD_NOMENTION = "次の定義の集まりで、{A} の定義を変えたとします。意味が変わる定義の名前を、1 つだけ答えてください。"
+            def d_one(r, it, cond, form, swap_names, d_first):
+                it = dict(it, P=it["Q"], Q=it["P"]) if swap_names else dict(it)
+                if form == "mention":
+                    x, y = (it["P"], it["Q"]) if d_first else (it["Q"], it["P"])
+                    head = HEAD_MENTION.format(A=it["A"], X=x, Y=y)
+                else:
+                    it["p_first"] = d_first
+                    head = HEAD_NOMENTION.format(A=it["A"])
+                prompt = r.render(None, f"{head}\n{snippet(it, cond)}")
+                return score(r, prompt, it["P"]) - score(r, prompt, it["Q"])
+            # raw per item: [d_one(...) for f in (True, False) for s in (False, True)]
+            def row(d4):
+                e = [(d4[0] + d4[1]) / 2, (d4[2] + d4[3]) / 2]
+                return {"pair": e, "consistent": (e[0] > 0) == (e[1] > 0), "d4": d4}
+            # items: {form}_{cond} and {form}_all (keys "cond:id")
+            ```
+          - Judgment on the pooled cons (72 rows): support if nomention − mention ≥ 0.25; refute if ≤ 0.083.
+          - Results: mention_all cons 0.375, nomention_all cons 0.556 → **not judged** (diff 0.181).
+            - Per condition, mention cons: extends 0.417, decoy 0.292, control 0.417.
+            - Per condition, nomention cons: extends 0.792, decoy 0.375, control 0.5.
+            - Accuracy: mention 0.75 vs nomention 0.944.
+            - nomention extends acc 0.958 (order_robust 0.792); decoy 0.875; control 1.0.
+          - exp.yaml:
+            - Families e46 (consistent, mean_value) and e46p (pair; accuracy, order_robust, logit_margin), each with 8 conds (mention/nomention × extends/decoy/control/all).
+            - 11 observations, all unlinked: o_e46_mention_all, o_e46_nomention_all, o_e46_nomention_above_mention, o_e46_gap_below_support, o_e46p_mention_all, o_e46p_nomention_all, o_e46p_nomention_extends, o_e46p_nomention_extends_robust, o_e46p_nomention_decoy, o_e46p_nomention_decoy_above_half, o_e46p_nomention_extends_above_mention.
+        - **Conflict merges** (exp.yaml, purely additive on both sides, kept both): #729 fe4b8ed, #725 c010be2, #718 70019c4. All CI green and still Draft/untested.
+        - **Existing hypothesis formulas (grepped)**
+          - h_model_reads_by_word: {v_read model→syntax.word}, hyp_supported.
+          - h_model_misses_extends: {v_read model→syntax.extends, neg:true}, hyp_untested (issue #723).
+          - h_verdict_by_question_format: {v_rely verdict→question_format}, untested.
+
+        4. Errors and fixes
+
+        - **Trigger wording.** I first wrote 「周回より細かくしすぎない」 into the cycle prompt. The user corrected this (9-minute checks keep the container alive). Fixed, and the E45 send_later was re-armed.
+        - **delete_trigger denied** by the auto-mode classifier. I left the stale reminders and closed them when they fired.
+        - **Pushed to an already-merged branch** (claude/h_verdict_by_option), recreating it. Reported this to the user and asked them to delete it. New lesson: check PR state before pushing.
+        - **Unverified claim about auto-merge.** I said it "might not run after undraft". The stop hook flagged it; I read the workflow (it triggers on ready_for_review) and corrected myself.
+        - **Replied in English once.** Rewrote the reply in Japanese.
+
+        5. Problem Solving
+
+        - **H3 status**
+          - h_verdict_by_option: refuted (merged).
+          - h_verdict_by_mention_order: not judged (#736).
+          - h_model_reads_by_word: supported (E43). But E46's nomention form shows decoy acc 0.875, which would contradict it.
+          - h_model_misses_extends: untested. E46 nomention extends acc 0.958 suggests a refutation.
+          - #718 (reads_by_name), #725 (question_format / misses_extends), #729 (verdict_by_checker): all not judged, Draft.
+        - No new hypothesis was registered after E46: its implication is covered by the existing h_verdict_by_question_format, h_model_misses_extends and h_model_reads_by_word.
+
+        6. All user messages
+
+        - "続けよう"
+        - "思ったより消耗が早いからハートビートは1h毎にしようか"
+        - "9分毎に様子をみないとコンテナが落ちるよ"
+        - Earlier messages still in force: the security constraints quoted above, plus:
+          - "体系には「誤りの種類」を表す概念がありません。this is hypothesis"
+          - The stop-hook creation request
+          - The language-reply notes: 「英語と中国語もだね…」 and 「英語で考えること自体は禁止したくないから…読みたいときは言う」
+
+        7. Pending Tasks
+
+        - Waiting for user review:
+          - #718 (E40), #725 (E42), #729 (E44), #736 (E46). All are Draft and untested.
+          - The user should delete the recreated branch claude/h_verdict_by_option.
+        - Worktrees remaining: .wt_e40, .wt_e42, .wt_e44, .wt_e46, .wt_e47 (new).
+        - Next cycle fires at 12:44Z.
+
+        8. Current Work
+
+        - The 11:42Z cycle fired. I re-armed the trigger to 12:44Z and checked:
+          - No merges; origin/main is e75f501.
+          - No experiment is running.
+        - Started E47 to test existing hypotheses on new items in the nomention form.
+          - Created worktree /home/user/CMT/.wt_e47 on new branch claude/h_model_misses_extends from origin/main. Issue #723.
+          - No script has been written yet.
+        - Planned design (not yet committed):
+          - File exp/experiments/e47_*.py. Reuse d_one, score, row and summ from e46, but with make_items(seed=2) from e43. Conditions extends, decoy, control; form nomention only. Name-swap averaging plus both snippet orders.
+          - Judgment:
+            - h_model_misses_extends:
+              - Refute: extends acc ≥ 0.75 and order_robust ≥ 0.5.
+              - Support: extends acc ≤ 0.583.
+              - Otherwise not judged.
+            - h_model_reads_by_word (premise extends acc ≥ 0.625):
+              - Contradict: decoy acc ≥ 0.5. Combined with the E43 support, the status becomes mixed, which needs manual review.
+              - Support: decoy ≤ 0.25 and control − decoy ≥ 0.25.
+          - Disclose that the E46 results were seen first.
+
+        9. Optional Next Step
+
+        Continue the cycle's step 4 for E47 on branch claude/h_model_misses_extends in .wt_e47:
+        1. Write the pre-registered script only and commit it (`git add -f`).
+        2. Push, open a Draft PR referencing #723, subscribe to it, and set the assignee.
+        3. Run it in the background, with a send_later check every 9 minutes.
+        4. Record the results in exp.yaml (families e47/e47p, observations, v_support/v_contradict per the pre-registration).
+        5. Report in Japanese with the roadmap line: H3 検査器の道 (d_road_checker).
+
+        My last stated intent: "Next is E47: on new items (seed 2), with names left out of the question, I'll pre-register tests of existing hypotheses (h_model_misses_extends and h_model_reads_by_word)."
+
+        If you need specific details from before compaction (like exact code snippets, error messages, or content you generated), read the full transcript at: /root/.claude/projects/-home-user-CMT/e05d2140-ce91-515f-a5fb-e6251e13d406.jsonl
+        Continue the conversation from where it left off without asking the user any further questions. Resume directly — do not acknowledge the summary, do not recap what was happening, do not preface with "I'll continue" or similar. Pick up the last task as if the break never happened.
+
+        The messages after this summary are the most recent messages from before compaction, kept verbatim. The summary was written without seeing them, so something it says has not happened yet may already have happened in them.
+facts:
+- {is: v_say, from: session_model, to: 01M86NYKEDZM63V7R0C5VH1305}
+- {is: v_refer, from: 01M86NYKEDZM63V7R0C5VH1305, to: exp.v_ground}
+- {is: v_refer, from: 01M86NYKEDZM63V7R0C5VH1305, to: exp.verdict_stability}
+- {is: v_refer, from: 01M86NYKEDZM63V7R0C5VH1305, to: exp.order_robust_accuracy}
+- {is: v_refer, from: 01M86NYKEDZM63V7R0C5VH1305, to: exp.logit_margin}
+- {is: v_refer, from: 01M86NYKEDZM63V7R0C5VH1305, to: exp.judged_accuracy}
+- {is: v_refer, from: 01M86NYKEDZM63V7R0C5VH1305, to: exp.mean_value}
+- {is: v_refer, from: 01M86NYKEDZM63V7R0C5VH1305, to: exp.condition_entry}
+- {is: v_refer, from: 01M86NYKEDZM63V7R0C5VH1305, to: exp.verdict_pair}
+- {is: v_refer, from: 01M86NYKEDZM63V7R0C5VH1305, to: syntax.identifier}
+- {is: v_refer, from: 01M86NYKEDZM63V7R0C5VH1305, to: syntax.extends}
+- {is: v_refer, from: 01M86NYKEDZM63V7R0C5VH1305, to: exp.v_rely}
+- {is: v_refer, from: 01M86NYKEDZM63V7R0C5VH1305, to: exp.v_contradict}
+- {is: v_refer, from: 01M86NYKEDZM63V7R0C5VH1305, to: exp.hyp_refuted}
+- {is: v_refer, from: 01M86NYKEDZM63V7R0C5VH1305, to: exp.item_done}
+- {is: v_refer, from: 01M86NYKEDZM63V7R0C5VH1305, to: exp.v_check}
+- {is: v_refer, from: 01M86NYKEDZM63V7R0C5VH1305, to: exp.v_read}
+- {is: v_refer, from: 01M86NYKEDZM63V7R0C5VH1305, to: exp.hyp_supported}
+- {is: v_refer, from: 01M86NYKEDZM63V7R0C5VH1305, to: exp.hyp_untested}
+- {is: v_refer, from: 01M86NYKEDZM63V7R0C5VH1305, to: exp.question_format}
+- {is: v_refer, from: 01M86NYKEDZM63V7R0C5VH1305, to: exp.v_support}
