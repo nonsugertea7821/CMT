@@ -1,0 +1,28 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-24T17:02:19.946Z（UTC）
+individuals:
+  01M878499ATC2W7P1DT40NCZXF:
+    is: model_utterance
+    display: 発言 4328
+    val:
+      order: 4328
+      text: |
+        E52 の 1.5B（Qwen2.5-1.5B-Instruct）は 16:56Z に終わり、事前登録の判定では h_model_misses_named_hop を支持する側に出ました。
+
+        | 条件 | acc | order_robust |
+        |---|---|---|
+        | extends（1 段、前提） | 0.958 | 0.458 |
+        | chain（extends の 2 段、判定） | **0.625** | 0.042 |
+        | named（mod の 2 段、参考） | 0.542 | 0.125 |
+
+        - **前提:** extends は 0.958 で、0.75 を越えたので判定します。
+        - **判定:** chain は 0.625 で、支持の線（≤ 0.625）にちょうど乗りました。E51 の 1.5B と同じく、線の上ぎりぎりです。
+        - **named（参考）:** 新しい項目でも 0.542 で、E51 の named と同じく低く出ました。
+
+        4B（Qwen3-4B）は、17:01Z ごろのコンテナ再起動で止まりました。extends は途中保存に残っていたので、17:02Z から chain の続きを走らせています。再起動は結果の commit で開示します。
+
+        次の様子見は 17:11Z です。
+
+        ロードマップの位置: H3 検査器の道（d_road_checker）
+facts:
+- {is: v_say, from: session_model, to: 01M878499ATC2W7P1DT40NCZXF}
+- {is: exp.v_answer, from: 01M878499ATC2W7P1DT40NCZXF, to: 01M86EX52DNVRMYZCFJ4X9EC2Q}
