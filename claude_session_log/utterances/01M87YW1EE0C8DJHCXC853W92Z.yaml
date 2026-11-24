@@ -1,0 +1,48 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-24T23:39:47.022Z（UTC）
+individuals:
+  01M87YW1EE0C8DJHCXC853W92Z:
+    is: model_utterance
+    display: 発言 4454
+    val:
+      order: 4454
+      text: |
+        mixed の 18 は、どこで分かれたかで見ると 3 つの軸にまとまりました。
+
+        ## 1. 衝突する事例か、衝突しない事例か（モデル、追従の系列）
+        一番はっきりした分かれ目です。補助を足すと、衝突する事例（定義が事前の知識と食い違う）では追従が上がり、衝突しない事例（対照）では元の答えが崩れます。
+        - h_cscl_raises_following（E10）
+        - h_opaque_expression_raises_following（E10o）
+        - h_multi_layer_raises_consistency（E8）
+        - h_symbolic_membership_raises_following（E13）
+        - h_specific_component_not_raise_stability（E16。向きは逆）
+
+        一つのつまみが「文脈への重み」を上げるので、衝突では効き、対照では崩す、と読めます。これは私の読みです。**#760** で h_following_trades_control（追従を上げると、対照での維持が下がる）として登録し、d_metric に結びました。確かめるには、記録済みの結果から上がり幅と下がり幅を並べるだけで足ります。
+
+        ## 2. モデルの大きさか、問いの形か
+        - h_checker_output_read_when_taught（E55）: 4B は読み、1.5B は動きませんでした。
+        - h_chain_length_lowers_following: 1.5B と 4B で向きが違いました。
+        - h_model_reads_by_word: E43（選択肢の形）では支持、E47（名前で答える形）では反証でした。
+        - h_vector_transfers_beyond_choice_format: 選択肢の形から文の形へは移りませんでした。
+
+        モデルについて言えることは、測る形に左右されます。これは既存の h_verdict_by_question_format などが問うている軸なので、新しくは登録していません。
+
+        ## 3. 向きか、大きさか（体系の側）
+        体系の側の mixed は、ほとんどがこの形です。向きや多数では成り立つものの、全数・大きさ・有意性の基準で落ちています。
+        - h_layers_from_primitives: 半分を超えて動かせるが、全部ではありません。
+        - h_checker_words_by_formula: 2 か所は一致するが、全部ではありません。
+        - h_real_axis_by_domain: 単一は 88 個だが、割合は 0.74 です。
+        - h_symmetry_soundness: 向きは合うが、有意ではありません（p > 0.05）。
+        - h_claims_apart_by_domain: 一致は 0.92 だが、差は小さいです。
+        - h_frame_both_sides: 判定は通るが、法則が落ちます。
+        - h_unrelated_items_immune（モデル）: 正答率は保たれるが、余裕が下がります。
+
+        これは、規則は大筋で当たっていて残りの例外が別の理由を持つ、という形です。反証のまとまり 1（自分の欄だけでは決まらない）とつながっている可能性があります。例外が類との関係で説明できるかは、#759 の h_identifier_by_genus_differentia を確かめると一部が分かります。
+
+        ## 反証と並べると
+        - 反証は「局所の手がかりだけで決まる」と置いて落ちています。
+        - mixed は「効くところと崩すところが同じつまみで動く」か、「大筋は当たるが例外が残る」かで分かれています。
+
+        ロードマップの位置: d_metric（測り方）に、mixed から出た仮説を 1 つ結びました（#760）。E56 は実行中です。
+facts:
+- {is: v_say, from: session_model, to: 01M87YW1EE0C8DJHCXC853W92Z}
+- {is: exp.v_answer, from: 01M87YW1EE0C8DJHCXC853W92Z, to: 01M87YSSYYNX60A3RK3A3S4PSQ}
