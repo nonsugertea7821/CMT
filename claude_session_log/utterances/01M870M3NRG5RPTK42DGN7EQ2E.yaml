@@ -1,0 +1,25 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-24T14:51:09.880Z（UTC）
+individuals:
+  01M870M3NRG5RPTK42DGN7EQ2E:
+    is: model_utterance
+    display: 発言 4265
+    val:
+      order: 4265
+      text: |
+        E50 を始めました。まだ結果は出ていません。
+
+        - **測ること:** Qwen3-4B に、依存する定義を「すべて挙げる」形で答えさせます。名前の位置での依存（extends）と、名前のない中身の中の依存（inline）で、挙げた割合を比べます。
+        - **確かめる仮説:** `h_model_writes_by_name`（定義を書く側は名前に頼る、#741）です。
+        - **事前登録:** スクリプトだけの commit を Draft PR #742 に push しました。
+          - 前提: extends ≥ 0.75、かつ依存しない側（名前の位置の行）を挙げた割合 ≤ 0.5。
+          - 支持: extends − inline ≥ 0.25。それ以外は反証です。
+        - **走行:** モデルを読み込んでいるところです。14:59Z に様子を見ます。止まっていれば途中保存から再開します。
+        - **周回の順:** H1・H2 はどちらも反証で済んでいました。そこで重い列の並びを書き換え、H3 に新しい項目を入れました。
+          - E50（`h_model_writes_by_name`）。
+          - 判定の出ていない #729・#736 を、名前で答える形に揃えて測り直すかどうか。
+          - `h_model_misses_mod`・`h_model_misses_checker_output`。
+
+        ロードマップの位置: H3 検査器の道（d_road_checker）。
+facts:
+- {is: v_say, from: session_model, to: 01M870M3NRG5RPTK42DGN7EQ2E}
+- {is: exp.v_answer, from: 01M870M3NRG5RPTK42DGN7EQ2E, to: 01M86EX52DNVRMYZCFJ4X9EC2Q}
