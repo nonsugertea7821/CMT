@@ -1,0 +1,57 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-24T23:33:13.410Z（UTC）
+individuals:
+  01M87YG122J2KQ1R62N1BARYJB:
+    is: model_utterance
+    display: 発言 4443
+    val:
+      order: 4443
+      text: |
+        全体は、目的から下へ決定の鎖になっています。その鎖の上で、いまの位置は次のとおりです（数は main の体系から数えました）。
+
+        ## 決定の鎖
+        ```
+        d_goal（一貫したモデルの概念認識）
+         └ d_metric（どう測るか）
+            ├ d_road_region   領域の道: 概念をモデルの中の「領域」として読む
+            └ d_road_checker  検査器の道: 判定をモデルの外の型検査器に置く
+               （どちらの道も、d_road_japanese も）
+                └ d_cscl_display_derived（表示語は式から訳した名前、という言語の決定）
+        ```
+
+        ## 仮説の数（main）
+        支持 109、反証 97、mixed 18、未検証 104、取り下げ 3。
+
+        ## 道ごとの位置
+
+        **検査器の道（H3）。いまの重い列です。**
+        - 分かってきたこと:
+          - 定義を名前で読む形では、モデルは mod の 2 段の依存を取りこぼします（E51、E52）。
+          - 検査器の出力を一行添えるだけでは、読まれません（E54）。
+          - 読み方の例を 2 つ添えると、4B は答えを含む行を読みました（0.50 → 0.91）。1.5B は動きませんでした（E55、mixed）。
+        - いま: E56 で、答えを含まない直接の辺でも、例があれば 2 段をたどれるかを測っています。1.5B を実行中です。
+        - 4B が辺を読めれば、「判定をモデルの外に置き、モデルにはその読み方を教える」という形が、この道の具体的な姿になります。
+
+        **領域の道（H4 と、その前提の L2）**
+        - モデルの仮説（H4）: h_ambiguity_is_region_choice ほか。まだ手をつけていません。
+        - 前提（L2）:
+          - 支持: h_placement_without_domain。
+          - 反証: h_signature_all_charts、今回の h_refer_ops_share_direction。
+          - 未検証: refer の系列（h_refer_cuts_orthogonal ほか）と、h_domain_in_formula などが残っています。
+        - 今回の含意: 表示語の隠れ状態は、式よりも字面でまとまるようです。これを登録しました（h_verb_state_by_display_surface）。
+
+        **表示語の導出（L1。どの道も依存している土台）**
+        - 判定済みです:
+          - h_checker_words_swap と h_translation_by_display は支持。
+          - h_state_unique_display は反証。
+        - 今回の含意（字面でまとまる）が支持されれば、「表示語は式から訳しただけの名前」という前提に、モデルの側から留保がつくことになります。
+
+        **日本語の道（L4）**
+        - 書き言葉の韻律の数え方を、事前登録で決めるところから始めます。まだ手をつけていません。
+
+        ## 確認を待っている PR
+        #718（E49）、#725、#736、#742（E50）、#729（E54）。
+
+        ロードマップの位置: 検査器の道 d_road_checker（H3）の E56 を実行中です。領域の道は、前提（L2）を削っている段階です。
+facts:
+- {is: v_say, from: session_model, to: 01M87YG122J2KQ1R62N1BARYJB}
+- {is: exp.v_answer, from: 01M87YG122J2KQ1R62N1BARYJB, to: 01M87YFFKDK242121P0VD5CTT4}
