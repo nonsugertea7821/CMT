@@ -1,0 +1,243 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-24T15:54:05.506Z（UTC）
+individuals:
+  01M8747AT2CC67WQ2G53654XX5:
+    is: session_summary
+    display: 発言 4288
+    val:
+      order: 4288
+      text: |
+        This session is being continued from a previous conversation that ran out of context. The summary below covers the earlier portion of the conversation.
+
+        <system-reminder>
+        <tools-used-before-summary>Agent, Artifact, AskUserQuestion, Bash, Edit, Grep, Monitor, Read, ReadNotifications, Skill, SubagentHandback, TaskStop, ToolSearch, WebFetch, WebSearch, Write, mcp__claude-code-remote__add_repo, mcp__claude-code-remote__create_trigger, mcp__claude-code-remote__delete_trigger, mcp__claude-code-remote__get_trigger, mcp__claude-code-remote__list_repos, mcp__claude-code-remote__read_documentation, mcp__claude-code-remote__send_later, mcp__claude-code-remote__subscribe_pr_activity, mcp__claude-code-remote__unsubscribe_pr_activity, mcp__claude-code-remote__update_trigger, mcp__github__actions_get, mcp__github__actions_list, mcp__github__actions_run_trigger, mcp__github__add_issue_comment, mcp__github__create_pull_request, mcp__github__get_job_logs, mcp__github__issue_read, mcp__github__issue_write, mcp__github__list_issue_types, mcp__github__list_issues, mcp__github__list_pull_requests, mcp__github__pull_request_read, mcp__github__update_pull_request</tools-used-before-summary>
+        </system-reminder>
+        Summary:
+        1. Primary Request and Intent
+
+        **Standing rules (unchanged)**
+        - Repo and tools
+          - Repo nonsugertea7821/CMT at /home/user/CMT.
+          - Python: /home/user/venv/bin/python. CPU only.
+        - Language and tone
+          - Write replies and PR bodies in plain Japanese.
+          - Don't overclaim. Separate facts from interpretation.
+          - End each report with a roadmap-position line, e.g. 「ロードマップの位置: H3 検査器の道（d_road_checker）」. Label side paths わき道.
+        - Git
+          - Restore files with `git show <rev>:<path> > <path>`. No checkout, no stash.
+          - Commit trailer:
+            ```
+            Co-Authored-By: Claude [モデル名を伏せた] <[メールアドレスを伏せた]>
+            Claude-Session: https://claude.ai/code/session_015KRKt6TNJZ7ZsQmEknANXK
+            ```
+          - PR body ends with `🤖 Generated with [Claude Code](https://claude.com/claude-code)`, a blank line, then the session URL.
+        - Prohibitions
+          - No personal info and no model IDs in pushed artifacts.
+          - Claude never merges.
+        - Every PR I open: subscribe_pr_activity, then issue_write update with assignees ["nonsugertea7821"].
+        - System YAML gets no comments (a hook checks this).
+        - Experiments
+          - Pre-register: the first commit contains the script only; results go in a later commit.
+          - Add experiment files with `git add -f`.
+          - Never rerun a recorded script.
+          - No local tc or ec; CI runs them.
+          - Undraft once spec passes and the status is supported, refuted or mixed. A not-judged result stays Draft.
+        - Hypotheses: register proposals with v_ground in the same PR, or label them わき道.
+        - Don't ask permission in conversation.
+        - Light work goes in /home/user/CMT/.wt_* worktrees. After a merge, remove the worktree and local branch.
+        - Check a PR's state before pushing to its branch.
+
+        **Security constraints (verbatim)**
+        - 「Pagesに出すなら脆弱性気を付けてね」
+        - 「あとsession_logは読まないように」
+        - Later clarified:
+          - 「いやまあログの中身は読んだってかまわないんだけど 何のために残してるかって「過去の参照」のためだから」
+          - 「読もうと思えばsession_logも読めるよ 無差別に読んでほしくないからPagesに出してないだけ」
+          - 「あとブランチ切れば消えるってのもある」
+        - Net effect: reading session logs for past reference is OK. Never expose claude/session-log-* in Pages or the ledger.
+
+        **Stop hook "Wait—turn that observation into a hypothesis?"**
+        - For each negative sentence in my last reply, classify it:
+          - 1 = verified fact
+          - 2 = unverified claim, so register it
+          - 3 = progress report
+        - End with what was registered and why the rest was not.
+        - Verify claims by reading code or data first.
+
+        **Heartbeat / cycle**
+        - Trigger trig_01L92Xn7LSTHrmqt7enEcCPG 「仮説の周回（1時間毎）」. On each fire, re-arm run_once_at about 61 minutes ahead.
+        - The next fire is 2026-11-24T16:50:00Z.
+        - The prompt was updated at 14:51Z with the heavy-lane order:
+          - H1 and H2 done (refuted).
+          - H3: h_model_writes_by_name → decide whether to remeasure #729/#736 in the name-answer form → h_model_misses_mod, h_model_misses_checker_output.
+          - H4: region hypotheses.
+          - The light lanes are unchanged.
+        - While a heavy experiment runs, place a send_later check every 8 minutes.
+          - The user said 「9分毎に様子をみないとコンテナが落ちるよ」.
+          - The container restarts roughly every 10 minutes. Resume from the partial save and disclose it in the commits.
+
+        2. Key Technical Concepts
+
+        - **Question forms**
+          - Number form: logits_12.
+          - Name-answer form (E47 HEAD 「…意味が変わる定義の名前を、1 つだけ答えてください。」): s(name) = sum of log-probs of the name tokens. d = s(X) − s(Y).
+          - Averaging over name swap × order. pair = [X-first average, Y-first average]. acc = mean of pair > 0. order_robust = both > 0.
+          - Listing form (E50): greedy generation; a name is listed if it appears as a regex word.
+        - **ec families**
+          - measurement_family, family_axis, axis_value, v_file_of, v_rows_of, v_axis_of, v_value_of, v_denote, v_entry_of, v_metric_of.
+          - Metric path: `eNN.<cond>.<metric>`.
+          - Two layouts:
+            - Pair layout: v_rows_of [items,'{cond}'], entry pair, metrics accuracy, order_robust_accuracy, logit_margin.
+            - Flat-row layout (e1, e50): v_rows_of [items], entry '{cond}', metric mean_value.
+          - Observations: v_level, v_come_after, v_come_before. Metric-to-metric comparisons are allowed.
+          - Link with v_support / v_contradict. Hypothesis statuses: hyp_untested, hyp_supported, hyp_refuted, hyp_mixed. Item statuses: item_queued, item_done.
+        - **auto_merge.py**
+          - Uses the hypothesis path if HEAD_REF matches claude/h_*, otherwise the registration path.
+          - Can be run locally for the judgment only:
+            ```
+            DRAFT=false GITHUB_OUTPUT=/dev/null HEAD_REF=<branch> python .github/scripts/auto_merge.py <merge-base> HEAD
+            ```
+        - **Relevant formulas**
+          - h_verdict_by_question_format: {v_rely, verdict, question_format}.
+          - h_verdict_by_checker: {v_rely, verdict, lang.type_checker}.
+
+        3. Files and Code Sections
+
+        - **#718 (branch claude/h_model_reads_by_name, worktree .wt_e40)**
+          - Undrafted, awaiting the user.
+          - Head 51a1a76: f3354ed results, then 51a1a76 yaml.
+          - exp.yaml: family e49 inserted after o_e40_extends_below_premise and after the e40 metric_of lines.
+          - Observations o_e49_extends/_robust/inline/_robust/named/_robust/extends_above_premise/extends_below_inline.
+          - `{is: v_contradict, from: o_e49_extends_below_inline, to: h_model_reads_by_name}`; h_model_reads_by_name hyp_refuted; b_ item_done.
+          - Bot judgment: manual (exp_check.py out of scope; e49 script after result file).
+        - **#740 (merged, main e0c794c)**
+          - h_model_writes_by_name and b_ placed after b_functor_preserves_shape.
+          - Facts after the v_ground of h_model_reads_by_name.
+          - Issue #741.
+        - **exp/experiments/e50_writes_by_name.py (#742, branch claude/h_model_writes_by_name, worktree .wt_e50)**
+          - Draft, CI passed on 90caa44.
+          - Design:
+            - seed 5, 24 items; roots A and B; EA `{extends: A}`, IA inline mod with A, EB, IB.
+            - Prompt: HEAD 「…すべて挙げてください。名前だけを、読点で区切って答えてください。」
+            - 2 roots × fwd/rev = 96 questions; max_new_tokens 48, greedy.
+            - Rows: items[key] = {text, extends, inline, wrong_extends, wrong_inline}.
+            - Premise: extends ≥ 0.75 and wrong_extends ≤ 0.5. Supported if extends − inline ≥ 0.25.
+          - Results: extends 0.740, inline 0.906, wrong_extends 0.646, wrong_inline 0.885. Not judged.
+          - exp.yaml:
+            - Family e50 after o_e45p_name_adj_decoy_above_quarter.
+            - Family facts after the last e45p metric_of: v_rows_of [items], entry '{cond}', mean_value; denotes extends/wrong_extends → syntax.extends, inline/wrong_inline → syntax.mod.
+            - 7 observations after the v_contradict o_e45_number_extends line: levels, extends_below_premise (< 0.75), wrong_extends_above_premise (> 0.5), inline_above_extends. None are linked.
+        - **exp/experiments/e51_misses_mod.py (#743, branch claude/h_model_misses_mod, worktree .wt_e51)**
+          - Pre-registration commit a01e2c1 pushed; CI check_suite completed on it.
+          - Key code:
+            ```python
+            from e1_context_injection import ROOT, Runner
+            from e47_extends_unnamed import HEAD, score, summ
+            CONDS = ("extends", "inline", "named")
+            # make_items(seed=6): A,B,X,Y,M,N names (no substring collisions), a_first
+            # snippet(it, cond, x_first): base roots (reversed if not a_first), mids for named (M with A, N with B; reversed with base), tail [tx,ty] or [ty,tx]
+            def d_one(r, it, cond, swap_names, x_first):
+                it = dict(it, X=it["Y"], Y=it["X"], M=it["N"], N=it["M"]) if swap_names else dict(it)
+                prompt = r.render(None, f"{HEAD.format(A=it['A'])}\n{snippet(it, cond, x_first)}")
+                return score(r, prompt, it["X"]) - score(r, prompt, it["Y"])
+            # raw[cond][id] = [d_one(...) for f in (True,False) for s in (False,True)]; pair=[(d0+d1)/2,(d2+d3)/2]
+            # pre = extends acc >= 0.75; supported if named acc <= 0.625; refuted if named acc >= 0.75; else not_judged
+            # output results/e51_<short>.json, partial e51_<short>.partial.json (per cond)
+            ```
+          - Runs Qwen2.5-1.5B-Instruct, then Qwen3-4B (bf16), via one `sh -c` chain started 15:51:16Z. Log: /tmp/claude-0/-home-user-CMT/e05d2140-ce91-515f-a5fb-e6251e13d406/scratchpad/e51.log.
+          - Pre-registration plan for linking:
+            - Per model.
+            - Split results (one supports, one refutes) → link both (mixed).
+            - inline is reference only.
+          - Disclosure: E49 named 0.625 and E47 control 0.917 were known beforehand.
+
+        4. Errors and fixes
+
+        - **E51 d_one first draft flipped x_first on a name swap.** That would have confounded line order. Removed before the commit.
+        - **Container restarts**, all resumed from the partial save and disclosed:
+          - E49: 13:57Z, 14:06Z.
+          - E50: about 14:49Z (before the run started), 14:59Z (at 71/96).
+        - **auto_merge.py printed the registration path when GITHUB_HEAD_REF was set.** The correct env var is HEAD_REF; reran with it.
+
+        5. Problem Solving
+
+        - **H3 results so far**
+          - Name-answer single-pick form: Qwen3-4B reads inline (unnamed) dependencies well (E49).
+          - Listing form: it lists nearly everything without discrimination (E50).
+          - Consistent with h_verdict_by_question_format; no new hypothesis registered, since existing formulas cover it.
+          - Caveat: E49 and E50 used different items and structure, so they are not a controlled form comparison.
+
+        6. All user messages
+
+        - None new in this period. All turns were system notifications, triggers and stop-hook feedback.
+        - Earlier user messages still in force:
+          - 「続けよう」
+          - 「思ったより消耗が早いからハートビートは1h毎にしようか」
+          - 「9分毎に様子をみないとコンテナが落ちるよ」
+          - The security quotes listed above.
+
+        7. Pending Tasks
+
+        - **E51 completion**
+          - On the 16:00Z check (trig_01HV73WkiCmyGgDLRhNdyaSm), resume if stopped.
+          - When both models finish:
+            1. Commit the results with `git add -f`, disclosing restarts.
+            2. Add 2 families (per model) to exp.yaml: pair layout; conds extends/inline/named; denotes extends → syntax.extends, inline → syntax.mod, named → syntax.mod + syntax.identifier.
+            3. Add observations and link h_model_misses_mod per the pre-registration.
+            4. Set the status and b_model_misses_mod.
+            5. Push, update the #743 body, and undraft after CI if judged.
+        - **Waiting for user review:** #718 (refuted), #725 (supported), #729, #736, #742 (Draft, not judged).
+        - **Worktrees remaining:** .wt_e40, .wt_e42, .wt_e44, .wt_e46, .wt_e50, .wt_e51.
+        - **Next cycle:** 16:50Z.
+
+        8. Current Work
+
+        - Just read the check_suite.completed notification for #743 head a01e2c1 (the pre-registration). CI on the pre-registration finished.
+        - E51 is running in the background (1.5B first).
+        - The next check is the 16:00Z send_later, with this prompt: 「E51 の走行を確かめる（scratchpad/e51.log、.wt_e51/exp/experiments/results/e51_*.json）。1.5B → 4B の順で、15:51Z に開始。止まっていれば（uptime 0 分など）、終わっていないモデルを途中保存から再開する（1.5B が済んでいれば 4B だけ）。再起動の時刻を控える。両方終わったら結果を git add -f で commit し、exp.yaml に e51 の族を 2 つ（モデルごと…）と観察を書き、h_model_misses_mod を事前登録どおりモデルごとに結んで push、#743 の本文を更新。走っていれば 8 分後にもう一度。」
+
+        9. Optional Next Step
+
+        1. Report briefly in Japanese that #743's spec on the pre-registration commit passed, E51 is running, and the next check is at 16:00Z.
+        2. End with: ロードマップの位置: H3 検査器の道（d_road_checker）.
+        3. At 16:00Z:
+           - Run `uptime; pgrep -af e51_misses; grep -v Loading scratchpad/e51.log | tail; ls results | grep e51`.
+           - If the run stopped, resume from the partial save. Rerun only the unfinished model(s) with `nohup python e51_misses_mod.py --model <m>`.
+           - Set send_later 8 minutes ahead.
+
+        If you need specific details from before compaction (like exact code snippets, error messages, or content you generated), read the full transcript at: /root/.claude/projects/-home-user-CMT/e05d2140-ce91-515f-a5fb-e6251e13d406.jsonl
+        Continue the conversation from where it left off without asking the user any further questions. Resume directly — do not acknowledge the summary, do not recap what was happening, do not preface with "I'll continue" or similar. Pick up the last task as if the break never happened.
+
+        The messages after this summary are the most recent messages from before compaction, kept verbatim. The summary was written without seeing them, so something it says has not happened yet may already have happened in them.
+facts:
+- {is: v_say, from: session_model, to: 01M8747AT2CC67WQ2G53654XX5}
+- {is: v_refer, from: 01M8747AT2CC67WQ2G53654XX5, to: exp.v_ground}
+- {is: v_refer, from: 01M8747AT2CC67WQ2G53654XX5, to: exp.measurement_family}
+- {is: v_refer, from: 01M8747AT2CC67WQ2G53654XX5, to: exp.family_axis}
+- {is: v_refer, from: 01M8747AT2CC67WQ2G53654XX5, to: exp.axis_value}
+- {is: v_refer, from: 01M8747AT2CC67WQ2G53654XX5, to: exp.v_file_of}
+- {is: v_refer, from: 01M8747AT2CC67WQ2G53654XX5, to: exp.v_rows_of}
+- {is: v_refer, from: 01M8747AT2CC67WQ2G53654XX5, to: exp.v_axis_of}
+- {is: v_refer, from: 01M8747AT2CC67WQ2G53654XX5, to: exp.v_value_of}
+- {is: v_refer, from: 01M8747AT2CC67WQ2G53654XX5, to: exp.v_denote}
+- {is: v_refer, from: 01M8747AT2CC67WQ2G53654XX5, to: exp.v_entry_of}
+- {is: v_refer, from: 01M8747AT2CC67WQ2G53654XX5, to: exp.v_metric_of}
+- {is: v_refer, from: 01M8747AT2CC67WQ2G53654XX5, to: exp.order_robust_accuracy}
+- {is: v_refer, from: 01M8747AT2CC67WQ2G53654XX5, to: exp.logit_margin}
+- {is: v_refer, from: 01M8747AT2CC67WQ2G53654XX5, to: exp.mean_value}
+- {is: v_refer, from: 01M8747AT2CC67WQ2G53654XX5, to: ontology.v_level}
+- {is: v_refer, from: 01M8747AT2CC67WQ2G53654XX5, to: ontology.v_come_after}
+- {is: v_refer, from: 01M8747AT2CC67WQ2G53654XX5, to: ontology.v_come_before}
+- {is: v_refer, from: 01M8747AT2CC67WQ2G53654XX5, to: exp.v_support}
+- {is: v_refer, from: 01M8747AT2CC67WQ2G53654XX5, to: exp.v_contradict}
+- {is: v_refer, from: 01M8747AT2CC67WQ2G53654XX5, to: exp.hyp_untested}
+- {is: v_refer, from: 01M8747AT2CC67WQ2G53654XX5, to: exp.hyp_supported}
+- {is: v_refer, from: 01M8747AT2CC67WQ2G53654XX5, to: exp.hyp_refuted}
+- {is: v_refer, from: 01M8747AT2CC67WQ2G53654XX5, to: exp.hyp_mixed}
+- {is: v_refer, from: 01M8747AT2CC67WQ2G53654XX5, to: exp.item_queued}
+- {is: v_refer, from: 01M8747AT2CC67WQ2G53654XX5, to: exp.item_done}
+- {is: v_refer, from: 01M8747AT2CC67WQ2G53654XX5, to: exp.v_rely}
+- {is: v_refer, from: 01M8747AT2CC67WQ2G53654XX5, to: exp.question_format}
+- {is: v_refer, from: 01M8747AT2CC67WQ2G53654XX5, to: lang.type_checker}
+- {is: v_refer, from: 01M8747AT2CC67WQ2G53654XX5, to: syntax.extends}
+- {is: v_refer, from: 01M8747AT2CC67WQ2G53654XX5, to: syntax.mod}
+- {is: v_refer, from: 01M8747AT2CC67WQ2G53654XX5, to: syntax.identifier}
