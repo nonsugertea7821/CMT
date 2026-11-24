@@ -1,0 +1,28 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-24T12:20:55.954Z（UTC）
+individuals:
+  01M86R110JGCAQCZNA2HK9EHAJ:
+    is: model_utterance
+    display: 発言 4220
+    val:
+      order: 4220
+      text: |
+        PR #737（E47）は、あなたが見る前に自動でマージされました。h_model_reads_by_word の状態が mixed になっているので、マージの後になりますが、見てもらう必要があります。
+
+        前の応答で「mixed なので自動マージには乗りません」と書いたのは誤りでした。自動マージの条件を書いた `auto_merge.py` を読まずに書いていました。
+
+        - **なぜマージされたか**: `auto_merge.py` が状態を見るのは、ブランチ名の仮説だけです。
+          - #737 のブランチの仮説 h_model_misses_extends は、未検証から反証になりました。これは自動マージの条件に合います。
+          - 同じ差分で、h_model_reads_by_word は支持から mixed になりました。この変化は条件に入っていないので、止まりませんでした。
+        - **取り決めとの食い違い**: 取り決めには「mixed は手で見る」とありますが、実際の動きはそうなっていません。
+        - **登録したもの**: `h_merge_verdict_by_mixed` を、登録だけの PR #738 で出しました。中身は「差分で mixed になる仮説があれば、マージを手で見る」です。
+          - 概念は足していないので、自動マージに乗る見込みです。
+          - 結ぶ決定がないので、わき道です。
+        - **h_model_reads_by_word の判断材料**: #737 の本文にあります。
+          - 番号で選ぶ形（E43）では、decoy の正答が 0.125 で、語の字面に引かれていました。
+          - 名前を答える形（E47）では、decoy の正答が 0.875 で、字面に引かれていません。
+        - **片付け**: E47 の作業場所（worktree）と手元のブランチは消しました。#737 の見張りもやめ、#738 を見張っています。
+
+        ロードマップの位置: H3 検査器の道（d_road_checker）。#738 はわき道です。
+facts:
+- {is: v_say, from: session_model, to: 01M86R110JGCAQCZNA2HK9EHAJ}
+- {is: exp.v_answer, from: 01M86R110JGCAQCZNA2HK9EHAJ, to: 01M86EX52DNVRMYZCFJ4X9EC2Q}
