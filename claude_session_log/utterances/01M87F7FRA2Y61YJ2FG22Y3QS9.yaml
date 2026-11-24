@@ -1,0 +1,30 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-24T19:06:24.906Z（UTC）
+individuals:
+  01M87F7FRA2Y61YJ2FG22Y3QS9:
+    is: model_utterance
+    display: 発言 4368
+    val:
+      order: 4368
+      text: |
+        E54 の 1.5B が終わりました。検査器の出力を添えても、正答率は上がりませんでした。
+
+        | 条件 | acc | 並びを変えても正しかった割合 |
+        |---|---|---|
+        | named（出力なし） | 0.750 | 0.094 |
+        | named_edges（直接の依存だけ） | 0.594 | 0.313 |
+        | named_closure（たどった先まで） | 0.719 | 0.281 |
+
+        - **h_verdict_by_checker**: closure の 0.719 は、反証の線 0.5 と支持の線 0.75 のあいだに入りました。1.5B では判定しません。
+        - **h_model_misses_checker_output**: closure − named は −0.031 です。支持の線（0.0625 以下）に入りました。
+        - **気になる点**
+          - 出力なしの named が 0.750 で、E51〜E53 で同じ書き方を測ったときの 0.54〜0.72 より高く出ました。
+          - closure を添えると、並びを変えても正しかった割合は 0.094 から 0.281 に上がりました。一方で、正答率そのものは上がっていません。
+          - 検査器の出力の行が、答えの偏りを並びに強い方へ寄せただけなのか、読まれているのかは、まだ分けられていません。
+        - **記録と次**
+          - 結果は commit して push しました。
+          - 4B を走らせています。19:15Z に進みを確かめます。
+
+        ロードマップの位置: H3 検査器の道（d_road_checker）
+facts:
+- {is: v_say, from: session_model, to: 01M87F7FRA2Y61YJ2FG22Y3QS9}
+- {is: exp.v_answer, from: 01M87F7FRA2Y61YJ2FG22Y3QS9, to: 01M86EX52DNVRMYZCFJ4X9EC2Q}
