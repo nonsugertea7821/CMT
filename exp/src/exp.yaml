@@ -3915,6 +3915,8 @@ individuals:
   h_model_writes_by_name: {is: hyp_untested}
   h_model_misses_named_mod: {is: hyp_refuted}
   b_model_misses_named_mod: {is: item_done}
+  h_pair_by_checker_output: {is: hyp_untested}
+  b_pair_by_checker_output: {is: item_queued}
   b_model_writes_by_name: {is: item_queued}
   h_model_misses_named_hop: {is: hyp_supported}
   b_model_misses_named_hop: {is: item_done}
@@ -10983,6 +10985,9 @@ facts:
   - {is: v_refer, from: h_model_misses_named_mod, to: {is: v_read, from: model, to: [syntax.mod, syntax.identifier], neg: true}}
   - {is: v_check, from: b_model_misses_named_mod, to: h_model_misses_named_mod}
   - {is: v_ground, from: d_road_checker, to: h_model_misses_named_mod}
+  - {is: v_refer, from: h_pair_by_checker_output, to: {is: v_rely, from: verdict_pair, to: type_check_result}}
+  - {is: v_check, from: b_pair_by_checker_output, to: h_pair_by_checker_output}
+  - {is: v_ground, from: d_road_checker, to: h_pair_by_checker_output}
   - {is: v_refer, from: h_model_reads_by_word, to: {is: v_read, from: model, to: syntax.word}}
   - {is: v_check, from: b_model_reads_by_word, to: h_model_reads_by_word}
   - {is: v_ground, from: d_road_checker, to: h_model_reads_by_word}
