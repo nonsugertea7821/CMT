@@ -1,0 +1,35 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-25T03:21:44.931Z（UTC）
+individuals:
+  01M88BJF730XF1S8W7TQ7HM505:
+    is: model_utterance
+    display: 発言 4645
+    val:
+      order: 4645
+      text: |
+        I opened Draft PR #795 for issue #794 and started the run in the background. No results yet.
+
+        **What it tests.** In #792, reading a verb's last token raised genus separation at layer 8 from 0.082 to 0.219. Same-genus pairs share a last token much more often (0.198) than cross-genus pairs (0.074), so the rise might come only from shared endings like 「する」 or 「になる」. This run drops every pair whose last token is the same, then recomputes the rise.
+
+        **How it will be judged.** The rule was committed before the run, script only (commit f4d2553). Judged at layer 8, original wording:
+
+        | Rise after dropping shared-ending pairs | Verdict |
+        |---|---|
+        | Below 0.02 | Supported: the endings explain the rise |
+        | 0.05 or more, and permutation p ≤ 0.05 | Refuted: genus shows beyond the endings |
+        | Anything else | Not judged |
+
+        Only identical endings are dropped. Similar endings (「する」 vs 「される」) stay in. The PR says so.
+
+        **Next.** When the run finishes:
+        1. Commit the results file.
+        2. Add the observations and the support or refute link to `exp.yaml`.
+        3. Push.
+
+        I've scheduled a progress check for 03:31Z.
+
+        Nothing new was registered this turn. This run tests an existing hypothesis.
+
+        ロードマップの位置: d_road_region（#376）。最後のトークンで類の区画が読めるかの続き。
+facts:
+- {is: v_say, from: session_model, to: 01M88BJF730XF1S8W7TQ7HM505}
+- {is: exp.v_answer, from: 01M88BJF730XF1S8W7TQ7HM505, to: 01M8824ABH7FVJ0AFYWM2EPXZH}

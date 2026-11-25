@@ -1,0 +1,244 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-25T03:21:05.028Z（UTC）
+individuals:
+  01M88BH884ZMG7R656J6CFY7C4:
+    is: session_summary
+    display: 発言 4643
+    val:
+      order: 4643
+      text: |
+        This session is being continued from a previous conversation that ran out of context. The summary below covers the earlier portion of the conversation.
+
+        <system-reminder>
+        <tools-used-before-summary>Agent, Artifact, AskUserQuestion, Bash, Edit, Grep, Monitor, Read, ReadNotifications, Skill, SubagentHandback, TaskStop, ToolSearch, WebFetch, WebSearch, Write, mcp__claude-code-remote__add_repo, mcp__claude-code-remote__create_trigger, mcp__claude-code-remote__delete_trigger, mcp__claude-code-remote__get_trigger, mcp__claude-code-remote__list_repos, mcp__claude-code-remote__read_documentation, mcp__claude-code-remote__send_later, mcp__claude-code-remote__subscribe_pr_activity, mcp__claude-code-remote__unsubscribe_pr_activity, mcp__claude-code-remote__update_trigger, mcp__github__actions_get, mcp__github__actions_list, mcp__github__actions_run_trigger, mcp__github__add_issue_comment, mcp__github__create_pull_request, mcp__github__get_job_logs, mcp__github__issue_read, mcp__github__issue_write, mcp__github__list_issue_types, mcp__github__list_issues, mcp__github__list_pull_requests, mcp__github__pull_request_read, mcp__github__update_pull_request</tools-used-before-summary>
+        </system-reminder>
+        Summary:
+        1. Primary Request and Intent
+
+        **Standing rules (carried forward)**
+        - Repo nonsugertea7821/CMT at /home/user/CMT. Python is /home/user/venv/bin/python. CPU only.
+        - Writing
+          - Plain Japanese in conversation and PR bodies.
+          - Don't overclaim. Separate facts from interpretation.
+          - End each report with 「ロードマップの位置: …」. Label side paths わき道.
+        - Git
+          - Restore files with `git show <rev>:<path> > <path>`. No checkout, no stash.
+          - Commit trailer:
+            ```
+            Co-Authored-By: Claude [モデル名を伏せた] <[メールアドレスを伏せた]>
+            Claude-Session: https://claude.ai/code/session_015KRKt6TNJZ7ZsQmEknANXK
+            ```
+          - PR body ends with `🤖 Generated with [Claude Code](https://claude.com/claude-code)`, a blank line, then the session URL.
+          - No personal info or model IDs in pushed artifacts. Claude never merges.
+          - Don't push to merged branches.
+        - Every PR I open: subscribe_pr_activity, then issue_write update with assignees ["nonsugertea7821"].
+        - System YAML gets no comments.
+          - Run conflict-marker removal and `git commit` as separate Bash commands (the hook checks the whole command).
+        - Experiments
+          - Pre-register with a script-only commit; results go in a later commit.
+          - Use `git add -f`. Never rerun a recorded script.
+          - No local tc/ec; CI runs them.
+          - Undraft only when spec passes and a status (supported / refuted / mixed) is judged. A "not judged" result stays Draft.
+        - Register unverified claims as hypotheses, or as check items under an existing hypothesis, before telling the user. Don't ask permission in conversation.
+        - Use /home/user/CMT/.wt_* worktrees. Remove the worktree and local branch after merge.
+        - Stop hook "Wait—turn that observation into a hypothesis?"
+          - Classify each negative sentence as fact, unverified (register it), or progress.
+          - End with what was registered and why.
+        - Foreground sleep is blocked. Use Bash run_in_background with an until-loop.
+        - During heavy runs, place a send_later check about every 9 minutes.
+        - delete_trigger was denied by the auto-mode classifier. Leave stale send_later checks to fire harmlessly.
+
+        **Security constraints (verbatim)**
+        - 「Pagesに出すなら脆弱性気を付けてね」
+        - 「あとsession_logは読まないように」
+        - Later clarified:
+          - 「いやまあログの中身は読んだってかまわないんだけど 何のために残してるかって「過去の参照」のためだから」
+          - 「読もうと思えばsession_logも読めるよ 無差別に読んでほしくないからPagesに出してないだけ」
+          - 「あとブランチ切れば消えるってのもある」
+        - Net effect: reading session logs for past reference is OK. Never expose claude/session-log-* in Pages or the ledger.
+
+        **Other user constraints**
+        - Claude models must not be the experiment target (distillation). Use open models (Qwen, sarashina, llm-jp, etc.).
+        - The user decided: 「d_road_regionは掘り続けるべきだ。幾何的にはこれは成り立つと読んでいる。」
+        - The user suggested attacking from transformer mechanics.
+
+        **Heartbeat**
+        - Trigger trig_01L92Xn7LSTHrmqt7enEcCPG, next fire 2026-11-25T04:12:00Z.
+        - On fire, re-arm about 61 minutes ahead (enabled true), then run the 周回 per its stored prompt.
+          - The H3 part of that prompt is partly stale: E56 is done, and #729 and #718 are merged.
+
+        2. Key Technical Concepts
+
+        - **Midpoint membership (#364/#779)**
+          - G_rate / C_rate / R_rate over GENUS / CROSS / FILLER (120 words), each fed as 「w.
+          - Read = mean of the word's token positions, then center the vectors.
+          - SWAP = script rewrite. holds = G − R ≥ 0.15.
+          - keep = (G_swap − R_swap) / (G_orig − R_orig).
+        - **Genus separation G (#771/#792)**
+          - G = mean cosine of same-parent pairs − mean cosine of different-parent pairs.
+          - Vectors are centered and normalized; verbs come from collect() of v_ verbs with display and extends.
+          - Null: shuffle parent labels 2000 times (seed 0).
+        - **ec families**
+          - Defined by v_file_of, v_rows_of, v_axis_of, v_value_of, v_keys_of '#' plus v_spell (filters row keys), v_entry_of, v_metric_of mean_value.
+          - Omitting v_rows_of means the rows are the top-level dict of the JSON (this worked for geo_srp_b, as e38 does).
+          - Measured id = fam.<axis values>.<stat>.mean_value.
+        - **Observations:** v_near (`new` = tolerance), v_come_before, v_come_after. Linked with v_support / v_contradict.
+          - Hypothesis status values: hyp_supported / hyp_refuted / hyp_untested. Items: item_done / item_queued.
+        - **Auto-merge conditions**
+          - Merges: registration-only PRs (no new concepts), and clean supported/refuted results without correction.
+          - Goes to manual review: PRs that add only check items, PRs that add concepts, and PRs with corrections.
+        - **Models in the HF cache:** Qwen2.5-0.5B/1.5B-Instruct, Qwen3-4B, SmolLM2-1.7B, OLMo-2-1B, llm-jp-3-1.8b-instruct (24 layers, 2048 dim), sarashina2.2-1b-instruct (24 layers, 1792 dim).
+
+        3. Files and Code Sections
+
+        **exp/experiments/geo_script_region_by_pretext.py (#790, branch claude/h_script_region_by_pretext, worktree .wt_srp)**
+        - Models: qwen / sarashina / llmjp. Layers map by round(L × n / 28): 24-layer models use 7 / 12 / 17.
+        - Part A: keep per model; gap_A = mean(sarashina, llmjp) − qwen.
+        - Part B (Qwen only): per-word genus_acc (nearest leave-one-out genus centroid).
+          - tpc = tokens per character of the swapped form.
+          - Corrected split: hi = tpc < max (18 words), lo = tpc == max (22 words).
+          - d_B = (acc_swap_hi − acc_swap_lo) − (acc_orig_hi − acc_orig_lo); p_B from 2000 random splits.
+        - Judgment:
+          - Supported: gap_A ≥ 0.25 and d_B ≥ 0.20 and p_B ≤ 0.05.
+          - Refuted: gap_A ≤ 0.05 and d_B ≤ 0.05.
+        - Results (L8-equivalent layer):
+
+          | Model | orig G | orig R | swap G | swap R | keep |
+          |---|---|---|---|---|---|
+          | Qwen | 0.779 | 0.054 | 0.229 | 0.044 | 0.255 |
+          | sarashina | 0.914 | 0.051 | 0.421 | 0.041 | 0.441 |
+          | llm-jp | 0.900 | 0.045 | 0.371 | 0.041 | 0.386 |
+
+          - gap_A = 0.158.
+          - B: acc_swap hi 0.444 / lo 0.500; acc_orig hi 0.889 / lo 0.864; d_B = −0.081; p_B = 0.7435.
+          - Verdict: not_judged.
+        - exp.yaml got families geo_srp (G_rate), geo_srp_r (R_rate at layer '8'), geo_srp_k (rows [models], entry keep), geo_srp_b (top-level rows, key 'B').
+          - Observations o_geo_srp_*: v_near values; the k values for sarashina and llmjp come after qwen; d_B below 0.2 and below 0.
+          - No v_support / v_contradict. The hypothesis stays untested.
+        - Commits: 354f4b0 (pre-registration), 04ed4d4 (correction), 6782cc6 (results). CI green; PR stays Draft.
+
+        **#791 (branch claude/reg-script-region-corpus, worktree .wt_reg_src)**
+        - Adds b_script_region_by_public_corpus, b_script_region_by_script_volume and b_script_region_by_matched_models.
+        - Each is item_queued with a v_check to h_script_region_by_pretext.
+        - Head 309bc40, CI green, awaiting manual review.
+
+        **exp/experiments/geo_genus_state_by_token_position.py (#792, MERGED)**
+        - Imports collect / norm / sep from geo_state_by_genus_display.
+        - vectors() returns mean and last-token readings at layers 8 / 14 / 20, for orig and derived conditions.
+        - dep = G_last − G_mean (L8, orig).
+          - Supported: dep ≥ 0.05 and p_last_orig ≤ 0.05. Refuted: dep < 0.02.
+        - Results (39 verbs, 6 genera; all p = 0):
+
+          | Layer | mean orig | last orig | mean derived | last derived |
+          |---|---|---|---|---|
+          | L8 | 0.082 | 0.219 | 0.108 | 0.232 |
+          | L14 | 0.085 | 0.191 | 0.133 | 0.217 |
+          | L20 | 0.084 | 0.191 | 0.119 | 0.229 |
+
+          - dep_orig: 0.136 at L8, 0.106 at L14, 0.107 at L20. Verdict: supported.
+        - Tokenizer-only count after the run: the last token is shared by 0.198 of same-parent pairs (172 pairs) versus 0.074 of different-parent pairs (569 pairs). Top endings: する ×9, になる ×8.
+        - exp.yaml got families geo_gstp (rows [layers, '{layer}', '{read}'], cond keys orig / derived, stat G and p) and geo_gstp_d (rows [layers], layer keys, entries dep_orig and dep_derived).
+          - v_support from o_geo_gstp_8_dep_above_line and o_geo_gstp_8_last_orig_p_below_line.
+          - h_genus_state_by_token_position is hyp_supported; its b_ is item_done.
+
+        **#793 (MERGED)**
+        - h_genus_last_token_by_suffix: hyp_untested; b_genus_last_token_by_suffix: item_queued.
+        - `{is: v_refer, from: h_genus_last_token_by_suffix, to: {is: v_depend, from: hidden_state, to: [syntax.display, label_token_positions]}}`, plus v_check and v_ground to d_road_region.
+
+        **#789 (worktree .wt_reg_sd)**
+        - Merged main in commit 6cd2a40, keeping both sides of the appended blocks. CI green. Needs manual review because it adds the concept spread_dimension.
+
+        4. Errors and fixes
+
+        - **#790 first run: ZeroDivisionError.** The median tpc was 1.0 (22 of 40 words), so the lo group was empty.
+          - Fixed with a disclosed correction in the docstring and commit: split at tpc < max versus tpc == max.
+          - The rerun was allowed because no result file had been written yet.
+        - **#792 and #789 conflicts** after #793 merged.
+          - Merged origin/main and removed the markers with sed in a separate command, then committed. Both sides were kept.
+          - For #792 the HEAD status lines (supported / done) were kept together with the new suffix entries.
+        - **delete_trigger denied by the auto-mode classifier.** Left the stale check in place.
+
+        5. Problem Solving
+
+        Region road so far:
+        - Script rewrite breaks genus regions.
+        - Japanese-trained models keep more of the region (0.39–0.44 versus 0.26), but the result is not judged.
+        - Word-level BPE frequency does not help (the effect runs the other way).
+        - Reading the last token strongly raises genus separation for verb displays (supported). This is possibly confounded by shared endings, which is now hypothesis h_genus_last_token_by_suffix.
+
+        6. All user messages
+
+        There were no new user messages in this segment, only triggers, notifications and stop-hook feedback. Earlier messages still in force:
+        - 「d_road_regionは掘り続けるべきだ。幾何的にはこれは成り立つと読んでいる。」
+        - 「トークンが細かく分かれる ちょっとトランスフォーマーの仕組みから攻めてみるか」
+        - 「因みに他の反証されているregion系統にトランスフォーマーの仕組みからの示唆は無いか？」
+        - 「蒸留になってしまうからclaudeのモデルを対象にやるべき実験ではないけど…」
+        - 「続けよう」
+        - 「思ったより消耗が早いからハートビートは1h毎にしようか」
+        - 「9分毎に様子をみないとコンテナが落ちるよ」
+        - The security quotes above.
+
+        7. Pending Tasks
+
+        - Test h_genus_last_token_by_suffix (branch and worktree just created: .wt_suf).
+        - PRs awaiting the user:
+          - #789: review.
+          - #791: review.
+          - #790: Draft, not judged.
+          - #782: Draft, not judged.
+          - #736, #742: review.
+        - After #789 merges: remove .wt_reg_sd and its branch, then test h_spread_dimension_lowers_midpoint.
+        - After #791 merges: remove .wt_reg_src and its branch.
+        - Open region hypotheses: #785 h_roles_in_attention; #786 is partly tested via #790.
+        - Heartbeat at 04:12Z: re-arm, then run the 周回.
+
+        8. Current Work
+
+        - Just ran: `git worktree add -q -b claude/h_genus_last_token_by_suffix .wt_suf origin/main`. It succeeded; main includes #792's geo_genus_state_by_token_position.py.
+        - Planned design (not yet written):
+          - New script exp/experiments/geo_genus_last_token_by_suffix.py.
+          - Reuse collect / norm / sep from geo_state_by_genus_display and vectors() from geo_genus_state_by_token_position. Do not rerun their main.
+          - Compute G only over pairs whose display's last token differs (Qwen tokenizer), for both mean and last readings.
+          - rise_excl = G_last_excl − G_mean_excl at L8, orig.
+          - Judgment: supported (endings explain the rise) if rise_excl < 0.02; refuted if rise_excl ≥ 0.05 and the permutation p ≤ 0.05; otherwise not judged.
+          - Record the full-pair dep (0.136) for comparison.
+
+        9. Optional Next Step
+
+        - Write the pre-registration script in .wt_suf.
+        - Commit it script-only (`git add -f`), push, open a Draft PR with subscribe and assignee, then run it in the background with a send_later check.
+        - Then record observations and v_support / v_contradict for h_genus_last_token_by_suffix in exp.yaml, and push.
+        - At 04:12Z, handle the heartbeat: re-arm, then check PRs.
+
+        If you need specific details from before compaction (like exact code snippets, error messages, or content you generated), read the full transcript at: /root/.claude/projects/-home-user-CMT/e05d2140-ce91-515f-a5fb-e6251e13d406.jsonl
+        Continue the conversation from where it left off without asking the user any further questions. Resume directly — do not acknowledge the summary, do not recap what was happening, do not preface with "I'll continue" or similar. Pick up the last task as if the break never happened.
+
+        The messages after this summary are the most recent messages from before compaction, kept verbatim. The summary was written without seeing them, so something it says has not happened yet may already have happened in them.
+facts:
+- {is: v_say, from: session_model, to: 01M88BH884ZMG7R656J6CFY7C4}
+- {is: v_refer, from: 01M88BH884ZMG7R656J6CFY7C4, to: exp.v_file_of}
+- {is: v_refer, from: 01M88BH884ZMG7R656J6CFY7C4, to: exp.v_rows_of}
+- {is: v_refer, from: 01M88BH884ZMG7R656J6CFY7C4, to: exp.v_axis_of}
+- {is: v_refer, from: 01M88BH884ZMG7R656J6CFY7C4, to: exp.v_value_of}
+- {is: v_refer, from: 01M88BH884ZMG7R656J6CFY7C4, to: exp.v_keys_of}
+- {is: v_refer, from: 01M88BH884ZMG7R656J6CFY7C4, to: exp.v_spell}
+- {is: v_refer, from: 01M88BH884ZMG7R656J6CFY7C4, to: exp.v_entry_of}
+- {is: v_refer, from: 01M88BH884ZMG7R656J6CFY7C4, to: exp.v_metric_of}
+- {is: v_refer, from: 01M88BH884ZMG7R656J6CFY7C4, to: exp.mean_value}
+- {is: v_refer, from: 01M88BH884ZMG7R656J6CFY7C4, to: exp.v_near}
+- {is: v_refer, from: 01M88BH884ZMG7R656J6CFY7C4, to: syntax.new}
+- {is: v_refer, from: 01M88BH884ZMG7R656J6CFY7C4, to: ontology.v_come_before}
+- {is: v_refer, from: 01M88BH884ZMG7R656J6CFY7C4, to: ontology.v_come_after}
+- {is: v_refer, from: 01M88BH884ZMG7R656J6CFY7C4, to: exp.v_support}
+- {is: v_refer, from: 01M88BH884ZMG7R656J6CFY7C4, to: exp.v_contradict}
+- {is: v_refer, from: 01M88BH884ZMG7R656J6CFY7C4, to: exp.hyp_supported}
+- {is: v_refer, from: 01M88BH884ZMG7R656J6CFY7C4, to: exp.hyp_refuted}
+- {is: v_refer, from: 01M88BH884ZMG7R656J6CFY7C4, to: exp.hyp_untested}
+- {is: v_refer, from: 01M88BH884ZMG7R656J6CFY7C4, to: exp.item_done}
+- {is: v_refer, from: 01M88BH884ZMG7R656J6CFY7C4, to: exp.item_queued}
+- {is: v_refer, from: 01M88BH884ZMG7R656J6CFY7C4, to: exp.v_check}
+- {is: v_refer, from: 01M88BH884ZMG7R656J6CFY7C4, to: ontology.v_refer}
+- {is: v_refer, from: 01M88BH884ZMG7R656J6CFY7C4, to: ontology.v_depend}
+- {is: v_refer, from: 01M88BH884ZMG7R656J6CFY7C4, to: exp.hidden_state}
+- {is: v_refer, from: 01M88BH884ZMG7R656J6CFY7C4, to: syntax.display}
+- {is: v_refer, from: 01M88BH884ZMG7R656J6CFY7C4, to: exp.label_token_positions}
+- {is: v_refer, from: 01M88BH884ZMG7R656J6CFY7C4, to: exp.v_ground}
