@@ -4871,6 +4871,8 @@ individuals:
   b_top_energy_gap_saturates: {is: item_queued}
   h_step_judgment_in_observations: {is: hyp_untested}
   b_step_judgment_in_observations: {is: item_queued}
+  h_knee_moves_with_layer: {is: hyp_untested}
+  b_knee_moves_with_layer: {is: item_queued}
 facts:
   - {is: v_collect, from: residual_space, to: residual_vector}
   - {is: v_sum, from: layer_output, to: state_shift, new: shifted_hidden_state}
@@ -13419,3 +13421,6 @@ facts:
   - {is: v_refer, from: h_step_judgment_in_observations, to: {is: v_depend, from: hyp_supported, to: [observation, magnitude]}}
   - {is: v_check, from: b_step_judgment_in_observations, to: h_step_judgment_in_observations}
   - {is: v_ground, from: d_road_region, to: h_step_judgment_in_observations}
+  - {is: v_refer, from: h_knee_moves_with_layer, to: {is: v_depend, from: magnitude, to: layer}}
+  - {is: v_check, from: b_knee_moves_with_layer, to: h_knee_moves_with_layer}
+  - {is: v_ground, from: d_road_region, to: h_knee_moves_with_layer}
