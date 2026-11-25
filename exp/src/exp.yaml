@@ -2780,6 +2780,14 @@ individuals:
   e38_error_kind_is_law_m_n_attributable: {is: axis_value, val: {text: n_attributable}}
   e38_error_kind_is_law_m_n_rejected: {is: axis_value, val: {text: n_rejected}}
   e38_error_kind_is_law_m_n_crashed: {is: axis_value, val: {text: n_crashed}}
+  sys_endpoint_error_as_law_rule: {is: measurement_family}
+  sys_endpoint_error_as_law_rule_c: {is: family_axis, val: {text: c}}
+  sys_endpoint_error_as_law_rule_c_summary: {is: axis_value, val: {text: summary}}
+  sys_endpoint_error_as_law_rule_m: {is: family_axis, val: {text: m}}
+  sys_endpoint_error_as_law_rule_m_n_units: {is: axis_value, val: {text: n_units}}
+  sys_endpoint_error_as_law_rule_m_n_covered: {is: axis_value, val: {text: n_covered}}
+  sys_endpoint_error_as_law_rule_m_control_errors: {is: axis_value, val: {text: control_errors}}
+  sys_endpoint_error_as_law_rule_m_n_crashed_or_missing: {is: axis_value, val: {text: n_crashed_or_missing}}
   e35_expression_makes_state_unique: {is: measurement_family}
   e35_expression_makes_state_unique_c: {is: family_axis, val: {text: c}}
   e35_expression_makes_state_unique_c_none_S: {is: axis_value, val: {text: none_S}}
@@ -4930,6 +4938,10 @@ individuals:
   o_e38_governed_unnamed: {is: observation}
   o_e38_crashed: {is: observation}
   o_e38_rejected: {is: observation}
+  o_sys_eelr_units: {is: observation}
+  o_sys_eelr_covered: {is: observation}
+  o_sys_eelr_control: {is: observation}
+  o_sys_eelr_crashed: {is: observation}
   h_unnamed_error_as_law_rule: {is: hyp_untested}
   b_unnamed_error_as_law_rule: {is: item_queued}
   h_apply_depends_explain: {is: hyp_untested}
@@ -12606,6 +12618,22 @@ facts:
   - {is: v_spell, from: e38_error_kind_is_law_m_n_crashed, to: n_crashed}
   - {is: v_entry_of, from: '{m}', to: e38_error_kind_is_law}
   - {is: v_metric_of, from: e38_error_kind_is_law, to: mean_value}
+  - {is: v_file_of, from: sys_endpoint_error_as_law_rule.json, to: sys_endpoint_error_as_law_rule}
+  - {is: v_axis_of, from: sys_endpoint_error_as_law_rule_c, to: sys_endpoint_error_as_law_rule}
+  - {is: v_keys_of, from: '#', to: sys_endpoint_error_as_law_rule_c}
+  - {is: v_value_of, from: sys_endpoint_error_as_law_rule_c_summary, to: sys_endpoint_error_as_law_rule_c}
+  - {is: v_spell, from: sys_endpoint_error_as_law_rule_c_summary, to: ['summary']}
+  - {is: v_axis_of, from: sys_endpoint_error_as_law_rule_m, to: sys_endpoint_error_as_law_rule}
+  - {is: v_value_of, from: sys_endpoint_error_as_law_rule_m_n_units, to: sys_endpoint_error_as_law_rule_m}
+  - {is: v_spell, from: sys_endpoint_error_as_law_rule_m_n_units, to: n_units}
+  - {is: v_value_of, from: sys_endpoint_error_as_law_rule_m_n_covered, to: sys_endpoint_error_as_law_rule_m}
+  - {is: v_spell, from: sys_endpoint_error_as_law_rule_m_n_covered, to: n_covered}
+  - {is: v_value_of, from: sys_endpoint_error_as_law_rule_m_control_errors, to: sys_endpoint_error_as_law_rule_m}
+  - {is: v_spell, from: sys_endpoint_error_as_law_rule_m_control_errors, to: control_errors}
+  - {is: v_value_of, from: sys_endpoint_error_as_law_rule_m_n_crashed_or_missing, to: sys_endpoint_error_as_law_rule_m}
+  - {is: v_spell, from: sys_endpoint_error_as_law_rule_m_n_crashed_or_missing, to: n_crashed_or_missing}
+  - {is: v_entry_of, from: '{m}', to: sys_endpoint_error_as_law_rule}
+  - {is: v_metric_of, from: sys_endpoint_error_as_law_rule, to: mean_value}
   - {is: v_file_of, from: e35_expression_makes_state_unique.json, to: e35_expression_makes_state_unique}
   - {is: v_rows_of, from: [s], to: e35_expression_makes_state_unique}
   - {is: v_axis_of, from: e35_expression_makes_state_unique_c, to: e35_expression_makes_state_unique}
@@ -13654,6 +13682,10 @@ facts:
   - {is: v_contradict, from: o_e38_governed_unnamed, to: h_unnamed_error_is_law_given}
   - {is: v_refer, from: o_e38_crashed, to: {is: v_level, from: e38_error_kind_is_law.summary.n_crashed.mean_value, to: 9}}
   - {is: v_refer, from: o_e38_rejected, to: {is: v_level, from: e38_error_kind_is_law.summary.n_rejected.mean_value, to: 50}}
+  - {is: v_refer, from: o_sys_eelr_units, to: {is: v_level, from: sys_endpoint_error_as_law_rule.summary.n_units.mean_value, to: 54}}
+  - {is: v_refer, from: o_sys_eelr_covered, to: {is: v_level, from: sys_endpoint_error_as_law_rule.summary.n_covered.mean_value, to: 52}}
+  - {is: v_refer, from: o_sys_eelr_control, to: {is: v_level, from: sys_endpoint_error_as_law_rule.summary.control_errors.mean_value, to: 25}}
+  - {is: v_refer, from: o_sys_eelr_crashed, to: {is: v_level, from: sys_endpoint_error_as_law_rule.summary.n_crashed_or_missing.mean_value, to: 9}}
   - {is: v_refer, from: h_unnamed_error_as_law_rule, to: {is: v_depend, from: type_check_result, to: syntax.law_rule}}
   - {is: v_check, from: b_unnamed_error_as_law_rule, to: h_unnamed_error_as_law_rule}
   - {is: v_ground, from: d_road_checker, to: h_unnamed_error_as_law_rule}
