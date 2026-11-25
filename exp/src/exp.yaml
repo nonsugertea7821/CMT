@@ -4003,6 +4003,8 @@ individuals:
   h_consistency_pairs_control: {is: hyp_untested}
   h_consistency_bound_by_apply: {is: hyp_supported}
   b_consistency_bound_by_apply: {is: item_done}
+  h_consistency_bound_by_explain: {is: hyp_untested}
+  b_consistency_bound_by_explain: {is: item_queued}
   h_consistency_beyond_accuracy: {is: hyp_refuted}
   b_consistency_beyond_accuracy: {is: item_done}
   b_consistency_pairs_control: {is: item_queued}
@@ -14411,6 +14413,10 @@ facts:
   - {is: v_refer, from: h_consistency_bound_by_apply, to: {is: v_rely, from: cross_usage_consistency, to: usage_apply}}
   - {is: v_check, from: b_consistency_bound_by_apply, to: h_consistency_bound_by_apply}
   - {is: v_ground, from: d_metric, to: h_consistency_bound_by_apply}
+  - {is: v_refer, from: h_consistency_bound_by_explain, to: {is: v_rely, from: cross_usage_consistency, to: usage_explain}}
+  - {is: v_scope, from: model_15b, to: h_consistency_bound_by_explain}
+  - {is: v_check, from: b_consistency_bound_by_explain, to: h_consistency_bound_by_explain}
+  - {is: v_ground, from: d_metric, to: h_consistency_bound_by_explain}
   - {is: v_file_of, from: 'e57_Qwen3-4B.json', to: e57b}
   - {is: v_rows_of, from: [items, '{cond}'], to: e57b}
   - {is: v_axis_of, from: e57b_cond, to: e57b}
