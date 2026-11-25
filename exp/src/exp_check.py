@@ -107,6 +107,9 @@ def stat(rows, cond, name):
         raise KeyError(f"条件 {cond} の行がない")
     # 選択肢の順序ごとの値を並べた形（[順序1, 順序2]）は、平均と「両方とも正」に直す
     vals = [{"margin": sum(v) / len(v), "both": all(x > 0 for x in v)} if isinstance(v, list) else v for v in vals]
+    # margin の値そのものの形（数）は、accuracy と logit_margin の行に直す（順の両方の値は持たない）
+    if name in ("accuracy", "logit_margin"):
+        vals = [{"margin": v} if isinstance(v, (int, float)) else v for v in vals]
     n = len(vals)
     if name == "accuracy":
         return sum(v["margin"] > 0 for v in vals) / n, n

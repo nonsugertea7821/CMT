@@ -3138,6 +3138,28 @@ individuals:
   o_e39_explain_sl: {is: observation}
   o_e39_apply_ml_above_none: {is: observation}
   o_e39_explain_ml_below_threshold: {is: observation}
+  e40: {is: measurement_family}
+  e40_cond: {is: family_axis, val: {text: cond}}
+  e40_cond_extends: {is: axis_value, val: {text: 'extends'}}
+  e40_cond_inline: {is: axis_value, val: {text: 'inline'}}
+  e40_cond_named: {is: axis_value, val: {text: 'named'}}
+  o_e40_extends: {is: observation}
+  o_e40_inline: {is: observation}
+  o_e40_named: {is: observation}
+  o_e40_extends_below_premise: {is: observation}
+  e49: {is: measurement_family}
+  e49_cond: {is: family_axis, val: {text: cond}}
+  e49_cond_extends: {is: axis_value, val: {text: 'extends'}}
+  e49_cond_inline: {is: axis_value, val: {text: 'inline'}}
+  e49_cond_named: {is: axis_value, val: {text: 'named'}}
+  o_e49_extends: {is: observation}
+  o_e49_extends_robust: {is: observation}
+  o_e49_inline: {is: observation}
+  o_e49_inline_robust: {is: observation}
+  o_e49_named: {is: observation}
+  o_e49_named_robust: {is: observation}
+  o_e49_extends_above_premise: {is: observation}
+  o_e49_extends_below_inline: {is: observation}
   e41: {is: measurement_family}
   e41_cond: {is: family_axis, val: {text: cond}}
   e41_cond_extends: {is: axis_value, val: {text: 'extends'}}
@@ -4039,7 +4061,7 @@ individuals:
   b_state_confuses_by_glyph: {is: item_queued}
   h_axis_value_from_result: {is: hyp_untested}
   b_axis_value_from_result: {is: item_queued}
-  h_model_reads_by_name: {is: hyp_untested}
+  h_model_reads_by_name: {is: hyp_refuted}
   h_model_reads_by_word: {is: hyp_mixed}
   h_model_misses_extends: {is: hyp_refuted}
   b_model_misses_extends: {is: item_done}
@@ -4056,7 +4078,7 @@ individuals:
   h_verdict_by_mention_order: {is: hyp_untested}
   b_verdict_by_mention_order: {is: item_queued}
   b_model_reads_by_word: {is: item_done}
-  b_model_reads_by_name: {is: item_queued}
+  b_model_reads_by_name: {is: item_done}
   h_functor_preserves_shape: {is: hyp_untested}
   b_functor_preserves_shape: {is: item_queued}
   h_model_writes_by_name: {is: hyp_untested}
@@ -4926,6 +4948,33 @@ facts:
   - {is: v_metric_of, from: e39_explain_noans, to: accuracy}
   - {is: v_metric_of, from: e39_explain_noans, to: order_robust_accuracy}
   - {is: v_metric_of, from: e39_explain_noans, to: logit_margin}
+  - {is: v_file_of, from: 'e40_Qwen2.5-1.5B-Instruct.json', to: e40}
+  - {is: v_rows_of, from: [items, '{cond}'], to: e40}
+  - {is: v_axis_of, from: e40_cond, to: e40}
+  - {is: v_value_of, from: e40_cond_extends, to: e40_cond}
+  - {is: v_denote, from: e40_cond_extends, to: syntax.extends}
+  - {is: v_value_of, from: e40_cond_inline, to: e40_cond}
+  - {is: v_denote, from: e40_cond_inline, to: syntax.mod}
+  - {is: v_value_of, from: e40_cond_named, to: e40_cond}
+  - {is: v_denote, from: e40_cond_named, to: syntax.mod}
+  - {is: v_denote, from: e40_cond_named, to: syntax.identifier}
+  - {is: v_entry_of, from: margin, to: e40}
+  - {is: v_metric_of, from: e40, to: accuracy}
+  - {is: v_metric_of, from: e40, to: logit_margin}
+  - {is: v_file_of, from: 'e49_Qwen3-4B.json', to: e49}
+  - {is: v_rows_of, from: [items, '{cond}'], to: e49}
+  - {is: v_axis_of, from: e49_cond, to: e49}
+  - {is: v_value_of, from: e49_cond_extends, to: e49_cond}
+  - {is: v_denote, from: e49_cond_extends, to: syntax.extends}
+  - {is: v_value_of, from: e49_cond_inline, to: e49_cond}
+  - {is: v_denote, from: e49_cond_inline, to: syntax.mod}
+  - {is: v_value_of, from: e49_cond_named, to: e49_cond}
+  - {is: v_denote, from: e49_cond_named, to: syntax.mod}
+  - {is: v_denote, from: e49_cond_named, to: syntax.identifier}
+  - {is: v_entry_of, from: pair, to: e49}
+  - {is: v_metric_of, from: e49, to: accuracy}
+  - {is: v_metric_of, from: e49, to: order_robust_accuracy}
+  - {is: v_metric_of, from: e49, to: logit_margin}
   - {is: v_file_of, from: 'e41_Qwen3-4B.json', to: e41}
   - {is: v_rows_of, from: [items, '{cond}'], to: e41}
   - {is: v_axis_of, from: e41_cond, to: e41}
@@ -11435,6 +11484,19 @@ facts:
   - {is: v_refer, from: o_e39_explain_ml_below_none, to: {is: v_come_before, from: e39_explain.ml.accuracy, to: e39_explain.none.accuracy}}
   - {is: v_contradict, from: o_e39_explain_ml_below_threshold, to: h_multi_layer_transfers_to_explain}
   - {is: v_contradict, from: o_e39_explain_ml_below_none, to: h_multi_layer_transfers_to_explain}
+  - {is: v_refer, from: o_e40_extends, to: {is: v_level, from: e40.extends.accuracy, to: 0.6666667}}
+  - {is: v_refer, from: o_e40_inline, to: {is: v_level, from: e40.inline.accuracy, to: 0.75}}
+  - {is: v_refer, from: o_e40_named, to: {is: v_level, from: e40.named.accuracy, to: 0.6666667}}
+  - {is: v_refer, from: o_e40_extends_below_premise, to: {is: v_come_before, from: e40.extends.accuracy, to: 0.75}}
+  - {is: v_refer, from: o_e49_extends, to: {is: v_level, from: e49.extends.accuracy, to: 0.8333333}}
+  - {is: v_refer, from: o_e49_extends_robust, to: {is: v_level, from: e49.extends.order_robust_accuracy, to: 0.5833333}}
+  - {is: v_refer, from: o_e49_inline, to: {is: v_level, from: e49.inline.accuracy, to: 1.0}}
+  - {is: v_refer, from: o_e49_inline_robust, to: {is: v_level, from: e49.inline.order_robust_accuracy, to: 0.4166667}}
+  - {is: v_refer, from: o_e49_named, to: {is: v_level, from: e49.named.accuracy, to: 0.625}}
+  - {is: v_refer, from: o_e49_named_robust, to: {is: v_level, from: e49.named.order_robust_accuracy, to: 0.0416667}}
+  - {is: v_refer, from: o_e49_extends_above_premise, to: {is: v_come_after, from: e49.extends.accuracy, to: 0.75}}
+  - {is: v_refer, from: o_e49_extends_below_inline, to: {is: v_come_before, from: e49.extends.accuracy, to: e49.inline.accuracy}}
+  - {is: v_contradict, from: o_e49_extends_below_inline, to: h_model_reads_by_name}
   - {is: v_refer, from: o_e41_extends, to: {is: v_level, from: e41.extends.accuracy, to: 0.4166667}}
   - {is: v_refer, from: o_e41_inline, to: {is: v_level, from: e41.inline.accuracy, to: 0.625}}
   - {is: v_refer, from: o_e41_named, to: {is: v_level, from: e41.named.accuracy, to: 0.4166667}}
