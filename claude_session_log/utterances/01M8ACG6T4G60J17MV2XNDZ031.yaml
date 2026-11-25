@@ -1,0 +1,30 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-25T22:16:28.228Z（UTC）
+individuals:
+  01M8ACG6T4G60J17MV2XNDZ031:
+    is: model_utterance
+    display: 発言 5460
+    val:
+      order: 5460
+      text: |
+        E66 is done and the hypothesis is supported: most of the boost to the apply score came from the answers that were written into the training text, not from learning to explain. CI passed on PR #890 and I've taken it out of Draft, so it should merge automatically.
+
+        | | apply | explain | all four uses right |
+        |---|---|---|---|
+        | No vector (E64) | 0.583 | 0.833 | 0.458 |
+        | Trained with answers in the text (E64) | 0.833 | 1.000 | 0.750 |
+        | Trained with answers removed (E66) | 0.667 | 0.958 | 0.583 |
+
+        - **Pre-registered condition:** with the answers removed, explain still rose by 0.125, above the 0.083 threshold. So the vector is still an explanation vector and the comparison counts.
+        - **Judgment:** apply rose 0.25 with answers and 0.083 without. The difference of 0.167 is above the threshold, so the hypothesis is supported.
+        - **By concept:** all 6 concepts whose apply score went up without answers also went up with them. 4 of those 6 also went up under a random direction in E65, so even the remaining 0.083 may not be specific to the learned direction.
+        - **Training:** two concepts' training loss didn't reach 0: 平日 (0.30) and 未成年 (0.42).
+        - **Correction:** my results commit message says explain without answers is "at least as high as E64's trained vector". That's wrong: it is 0.958 against 1.000. I've corrected it in the PR description rather than rewriting the commit.
+
+        **Still open:**
+        - **PR #901** has passed CI and is waiting for your review. It makes the checker change and moves the 3 verbs.
+        - **A 22:22 check reminder** will fire with nothing left to check. Deleting it was blocked by the permission check, so it will just fire and do nothing.
+
+        Roadmap: this finishes the step under the consistency measure (d_metric) about why the explanation vector raised apply. Next on that line is E63, which raises apply directly.
+facts:
+- {is: v_say, from: session_model, to: 01M8ACG6T4G60J17MV2XNDZ031}
+- {is: exp.v_answer, from: 01M8ACG6T4G60J17MV2XNDZ031, to: 01M89PSFS6B8JRMSN9NJ2R17KF}
