@@ -1,0 +1,18 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-25T16:31:21.359Z（UTC）
+individuals:
+  01M89RR98FPA53X0613VGS5MF7:
+    is: model_utterance
+    display: 発言 5245
+    val:
+      order: 5245
+      text: |
+        #871 failed the type check again, this time with "depend は動詞でない" (depend is not a verb). That message answers the hypothesis I had just registered: a base predicate can't be the verb of a fact statement.
+
+        - **What I changed:** I removed h_depend_on_verb_by_base (c2bbc13), pushed, and recorded the result in the PR description.
+        - **What's now confirmed:** I have now confirmed by type check that, on the language side, a dependence on a verb can't be written with v_depend, exp.v_rely, or the base predicate depend.
+        - **Effect on the hypotheses:** this is why the two hypotheses in #871 say "describes" instead of "depends on".
+facts:
+- {is: v_say, from: session_model, to: 01M89RR98FPA53X0613VGS5MF7}
+- {is: exp.v_answer, from: 01M89RR98FPA53X0613VGS5MF7, to: 01M89PSFS6B8JRMSN9NJ2R17KF}
+- {is: v_refer, from: 01M89RR98FPA53X0613VGS5MF7, to: ontology.v_depend}
+- {is: v_refer, from: 01M89RR98FPA53X0613VGS5MF7, to: exp.v_rely}
