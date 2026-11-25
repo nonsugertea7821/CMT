@@ -39,9 +39,12 @@
     ここでは near の para・explain・recite を同じ道で測り直す（near の para・explain・recite は、まだ測っていない）。
   - recite は、E6 の define_nll（定義文そのもの）と違い、言い換えの文を一文の応答として比べる。書き方は 1 通りだけ。
   - モデルは Qwen2.5-1.5B-Instruct（E1・E6・E20 と同じ）。Qwen3-4B は E57 の後に同じ手順で測る（判定はモデルごと）。
+  - 書き足し（4B を走らせる前）: 4B は float32 だと手元のメモリ（15GB）に載らないので、E55〜E57 と同じく
+    --dtype bfloat16 で測る。1.5B は float32 のまま。数値の精度の違いは開示として残す。
 
 使い方:
   python e58_cross_usage_consistency.py --model Qwen/Qwen2.5-1.5B-Instruct
+  python e58_cross_usage_consistency.py --model Qwen/Qwen3-4B --dtype bfloat16
   出力: results/e58_<model>.json
 """
 import argparse
