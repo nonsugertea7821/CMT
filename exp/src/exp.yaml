@@ -3678,8 +3678,8 @@ individuals:
   b_script_region_by_pretext: {is: item_queued}
   h_genus_state_by_token_position: {is: hyp_supported}
   b_genus_state_by_token_position: {is: item_done}
-  h_genus_last_token_by_suffix: {is: hyp_untested}
-  b_genus_last_token_by_suffix: {is: item_queued}
+  h_genus_last_token_by_suffix: {is: hyp_refuted}
+  b_genus_last_token_by_suffix: {is: item_done}
   h_consistency_by_examples: {is: hyp_untested}
   b_consistency_by_examples: {is: item_queued}
   h_consistency_pairs_control: {is: hyp_untested}
@@ -4131,6 +4131,54 @@ individuals:
   o_geo_gstp_8_dep_above_line: {is: observation}
   o_geo_gstp_8_last_orig_p_below_line: {is: observation}
   o_geo_gstp_8_last_above_mean: {is: observation}
+  geo_glts: {is: measurement_family}
+  geo_glts_layer: {is: family_axis, val: {text: layer}}
+  geo_glts_layer_8: {is: axis_value, val: {text: '8'}}
+  geo_glts_layer_14: {is: axis_value, val: {text: '14'}}
+  geo_glts_layer_20: {is: axis_value, val: {text: '20'}}
+  geo_glts_cond: {is: family_axis, val: {text: cond}}
+  geo_glts_cond_orig: {is: axis_value, val: {text: 'orig'}}
+  geo_glts_cond_derived: {is: axis_value, val: {text: 'derived'}}
+  geo_glts_read: {is: family_axis, val: {text: read}}
+  geo_glts_read_mean: {is: axis_value, val: {text: 'mean'}}
+  geo_glts_read_last: {is: axis_value, val: {text: 'last'}}
+  geo_glts_stat: {is: family_axis, val: {text: stat}}
+  geo_glts_stat_G_excl: {is: axis_value, val: {text: 'G_excl'}}
+  geo_glts_stat_G_all: {is: axis_value, val: {text: 'G_all'}}
+  geo_glts_d: {is: measurement_family}
+  geo_glts_d_layer: {is: family_axis, val: {text: layer}}
+  geo_glts_d_layer_8: {is: axis_value, val: {text: '8'}}
+  geo_glts_d_layer_14: {is: axis_value, val: {text: '14'}}
+  geo_glts_d_layer_20: {is: axis_value, val: {text: '20'}}
+  geo_glts_d_cond: {is: family_axis, val: {text: cond}}
+  geo_glts_d_cond_orig: {is: axis_value, val: {text: 'orig'}}
+  geo_glts_d_cond_derived: {is: axis_value, val: {text: 'derived'}}
+  geo_glts_d_stat: {is: family_axis, val: {text: stat}}
+  geo_glts_d_stat_rise_excl: {is: axis_value, val: {text: 'rise_excl'}}
+  geo_glts_d_stat_rise_all: {is: axis_value, val: {text: 'rise_all'}}
+  geo_glts_d_stat_p_excl: {is: axis_value, val: {text: 'p_excl'}}
+  o_geo_glts_8_mean_orig_excl: {is: observation}
+  o_geo_glts_8_last_orig_excl: {is: observation}
+  o_geo_glts_d_8_orig_rise_excl: {is: observation}
+  o_geo_glts_8_mean_derived_excl: {is: observation}
+  o_geo_glts_8_last_derived_excl: {is: observation}
+  o_geo_glts_d_8_derived_rise_excl: {is: observation}
+  o_geo_glts_14_mean_orig_excl: {is: observation}
+  o_geo_glts_14_last_orig_excl: {is: observation}
+  o_geo_glts_d_14_orig_rise_excl: {is: observation}
+  o_geo_glts_14_mean_derived_excl: {is: observation}
+  o_geo_glts_14_last_derived_excl: {is: observation}
+  o_geo_glts_d_14_derived_rise_excl: {is: observation}
+  o_geo_glts_20_mean_orig_excl: {is: observation}
+  o_geo_glts_20_last_orig_excl: {is: observation}
+  o_geo_glts_d_20_orig_rise_excl: {is: observation}
+  o_geo_glts_20_mean_derived_excl: {is: observation}
+  o_geo_glts_20_last_derived_excl: {is: observation}
+  o_geo_glts_d_20_derived_rise_excl: {is: observation}
+  o_geo_glts_d_8_orig_p_excl: {is: observation}
+  o_geo_glts_8_rise_excl_above_line: {is: observation}
+  o_geo_glts_8_p_excl_below_line: {is: observation}
+  o_geo_glts_8_rise_excl_below_rise_all: {is: observation}
   o_geo_midpoint_precondition: {is: observation}
   o_geo_axis_readable: {is: observation}
   o_geo_axis_precondition: {is: observation}
@@ -10319,6 +10367,68 @@ facts:
   - {is: v_refer, from: o_geo_gstp_8_last_above_mean, to: {is: v_come_after, from: geo_gstp.8.last.orig.G.mean_value, to: geo_gstp.8.mean.orig.G.mean_value}}
   - {is: v_support, from: o_geo_gstp_8_dep_above_line, to: h_genus_state_by_token_position}
   - {is: v_support, from: o_geo_gstp_8_last_orig_p_below_line, to: h_genus_state_by_token_position}
+  - {is: v_file_of, from: geo_genus_last_token_by_suffix.json, to: geo_glts}
+  - {is: v_rows_of, from: [layers, '{layer}', '{cond}'], to: geo_glts}
+  - {is: v_axis_of, from: geo_glts_layer, to: geo_glts}
+  - {is: v_value_of, from: geo_glts_layer_8, to: geo_glts_layer}
+  - {is: v_value_of, from: geo_glts_layer_14, to: geo_glts_layer}
+  - {is: v_value_of, from: geo_glts_layer_20, to: geo_glts_layer}
+  - {is: v_axis_of, from: geo_glts_cond, to: geo_glts}
+  - {is: v_value_of, from: geo_glts_cond_orig, to: geo_glts_cond}
+  - {is: v_value_of, from: geo_glts_cond_derived, to: geo_glts_cond}
+  - {is: v_axis_of, from: geo_glts_read, to: geo_glts}
+  - {is: v_keys_of, from: '#', to: geo_glts_read}
+  - {is: v_value_of, from: geo_glts_read_mean, to: geo_glts_read}
+  - {is: v_spell, from: geo_glts_read_mean, to: ['mean']}
+  - {is: v_value_of, from: geo_glts_read_last, to: geo_glts_read}
+  - {is: v_spell, from: geo_glts_read_last, to: ['last']}
+  - {is: v_axis_of, from: geo_glts_stat, to: geo_glts}
+  - {is: v_value_of, from: geo_glts_stat_G_excl, to: geo_glts_stat}
+  - {is: v_value_of, from: geo_glts_stat_G_all, to: geo_glts_stat}
+  - {is: v_entry_of, from: '{stat}', to: geo_glts}
+  - {is: v_metric_of, from: geo_glts, to: mean_value}
+  - {is: v_file_of, from: geo_genus_last_token_by_suffix.json, to: geo_glts_d}
+  - {is: v_rows_of, from: [layers, '{layer}'], to: geo_glts_d}
+  - {is: v_axis_of, from: geo_glts_d_layer, to: geo_glts_d}
+  - {is: v_value_of, from: geo_glts_d_layer_8, to: geo_glts_d_layer}
+  - {is: v_value_of, from: geo_glts_d_layer_14, to: geo_glts_d_layer}
+  - {is: v_value_of, from: geo_glts_d_layer_20, to: geo_glts_d_layer}
+  - {is: v_axis_of, from: geo_glts_d_cond, to: geo_glts_d}
+  - {is: v_keys_of, from: '#', to: geo_glts_d_cond}
+  - {is: v_value_of, from: geo_glts_d_cond_orig, to: geo_glts_d_cond}
+  - {is: v_spell, from: geo_glts_d_cond_orig, to: ['orig']}
+  - {is: v_value_of, from: geo_glts_d_cond_derived, to: geo_glts_d_cond}
+  - {is: v_spell, from: geo_glts_d_cond_derived, to: ['derived']}
+  - {is: v_axis_of, from: geo_glts_d_stat, to: geo_glts_d}
+  - {is: v_value_of, from: geo_glts_d_stat_rise_excl, to: geo_glts_d_stat}
+  - {is: v_value_of, from: geo_glts_d_stat_rise_all, to: geo_glts_d_stat}
+  - {is: v_value_of, from: geo_glts_d_stat_p_excl, to: geo_glts_d_stat}
+  - {is: v_entry_of, from: '{stat}', to: geo_glts_d}
+  - {is: v_metric_of, from: geo_glts_d, to: mean_value}
+  - {is: v_refer, from: o_geo_glts_8_mean_orig_excl, to: {is: v_near, from: geo_glts.8.orig.mean.G_excl.mean_value, to: 0.0352, new: 0.001}}
+  - {is: v_refer, from: o_geo_glts_8_last_orig_excl, to: {is: v_near, from: geo_glts.8.orig.last.G_excl.mean_value, to: 0.1138, new: 0.001}}
+  - {is: v_refer, from: o_geo_glts_d_8_orig_rise_excl, to: {is: v_near, from: geo_glts_d.8.orig.rise_excl.mean_value, to: 0.0786, new: 0.001}}
+  - {is: v_refer, from: o_geo_glts_8_mean_derived_excl, to: {is: v_near, from: geo_glts.8.derived.mean.G_excl.mean_value, to: 0.0594, new: 0.001}}
+  - {is: v_refer, from: o_geo_glts_8_last_derived_excl, to: {is: v_near, from: geo_glts.8.derived.last.G_excl.mean_value, to: 0.1241, new: 0.001}}
+  - {is: v_refer, from: o_geo_glts_d_8_derived_rise_excl, to: {is: v_near, from: geo_glts_d.8.derived.rise_excl.mean_value, to: 0.0648, new: 0.001}}
+  - {is: v_refer, from: o_geo_glts_14_mean_orig_excl, to: {is: v_near, from: geo_glts.14.orig.mean.G_excl.mean_value, to: 0.0372, new: 0.001}}
+  - {is: v_refer, from: o_geo_glts_14_last_orig_excl, to: {is: v_near, from: geo_glts.14.orig.last.G_excl.mean_value, to: 0.1071, new: 0.001}}
+  - {is: v_refer, from: o_geo_glts_d_14_orig_rise_excl, to: {is: v_near, from: geo_glts_d.14.orig.rise_excl.mean_value, to: 0.0700, new: 0.001}}
+  - {is: v_refer, from: o_geo_glts_14_mean_derived_excl, to: {is: v_near, from: geo_glts.14.derived.mean.G_excl.mean_value, to: 0.0855, new: 0.001}}
+  - {is: v_refer, from: o_geo_glts_14_last_derived_excl, to: {is: v_near, from: geo_glts.14.derived.last.G_excl.mean_value, to: 0.1278, new: 0.001}}
+  - {is: v_refer, from: o_geo_glts_d_14_derived_rise_excl, to: {is: v_near, from: geo_glts_d.14.derived.rise_excl.mean_value, to: 0.0423, new: 0.001}}
+  - {is: v_refer, from: o_geo_glts_20_mean_orig_excl, to: {is: v_near, from: geo_glts.20.orig.mean.G_excl.mean_value, to: 0.0384, new: 0.001}}
+  - {is: v_refer, from: o_geo_glts_20_last_orig_excl, to: {is: v_near, from: geo_glts.20.orig.last.G_excl.mean_value, to: 0.1090, new: 0.001}}
+  - {is: v_refer, from: o_geo_glts_d_20_orig_rise_excl, to: {is: v_near, from: geo_glts_d.20.orig.rise_excl.mean_value, to: 0.0706, new: 0.001}}
+  - {is: v_refer, from: o_geo_glts_20_mean_derived_excl, to: {is: v_near, from: geo_glts.20.derived.mean.G_excl.mean_value, to: 0.0698, new: 0.001}}
+  - {is: v_refer, from: o_geo_glts_20_last_derived_excl, to: {is: v_near, from: geo_glts.20.derived.last.G_excl.mean_value, to: 0.1429, new: 0.001}}
+  - {is: v_refer, from: o_geo_glts_d_20_derived_rise_excl, to: {is: v_near, from: geo_glts_d.20.derived.rise_excl.mean_value, to: 0.0730, new: 0.001}}
+  - {is: v_refer, from: o_geo_glts_d_8_orig_p_excl, to: {is: v_near, from: geo_glts_d.8.orig.p_excl.mean_value, to: 0.0000, new: 0.001}}
+  - {is: v_refer, from: o_geo_glts_8_rise_excl_above_line, to: {is: v_come_after, from: geo_glts_d.8.orig.rise_excl.mean_value, to: 0.05}}
+  - {is: v_refer, from: o_geo_glts_8_p_excl_below_line, to: {is: v_come_before, from: geo_glts_d.8.orig.p_excl.mean_value, to: 0.05}}
+  - {is: v_refer, from: o_geo_glts_8_rise_excl_below_rise_all, to: {is: v_come_before, from: geo_glts_d.8.orig.rise_excl.mean_value, to: geo_glts_d.8.orig.rise_all.mean_value}}
+  - {is: v_contradict, from: o_geo_glts_8_rise_excl_above_line, to: h_genus_last_token_by_suffix}
+  - {is: v_contradict, from: o_geo_glts_8_p_excl_below_line, to: h_genus_last_token_by_suffix}
   - {is: v_file_of, from: geo_axis_readout_midpoint.json, to: geo_axis_readout_midpoint}
   - {is: v_rows_of, from: [rows], to: geo_axis_readout_midpoint}
   - {is: v_axis_of, from: geo_axis_readout_midpoint_cond, to: geo_axis_readout_midpoint}
