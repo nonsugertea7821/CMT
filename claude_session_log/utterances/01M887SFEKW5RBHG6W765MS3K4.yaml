@@ -1,0 +1,23 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-25T02:15:40.243Z（UTC）
+individuals:
+  01M887SFEKW5RBHG6W765MS3K4:
+    is: model_utterance
+    display: 発言 4606
+    val:
+      order: 4606
+      text: |
+        The first #790 run crashed partway through. It printed only Qwen's own numbers, which match #779. It stopped before the Qwen word split could be computed and before the two Japanese models ran.
+
+        **Why it crashed:** 22 of the 40 genus words take exactly one token per character when respelled. That made the median 1.0, and since ties went to the "seen more" side, the "seen less" side was empty.
+
+        **The fix, committed and pushed before seeing any judged result:**
+        - "Seen more" is now the 18 respelled words where the tokenizer merged at least two characters.
+        - "Seen less" is now the 22 words with one token per character.
+        - The pass/fail lines are unchanged.
+
+        Because this is a correction after the pre-registration, #790 won't auto-merge and will need your review. The second run is going, and a check is set for 02:21Z.
+
+        ロードマップの位置: d_road_region（#790 再実行中）。
+facts:
+- {is: v_say, from: session_model, to: 01M887SFEKW5RBHG6W765MS3K4}
+- {is: exp.v_answer, from: 01M887SFEKW5RBHG6W765MS3K4, to: 01M8824ABH7FVJ0AFYWM2EPXZH}
