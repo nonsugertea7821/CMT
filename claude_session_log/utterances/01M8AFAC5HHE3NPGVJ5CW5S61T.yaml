@@ -1,0 +1,32 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-25T23:05:42.833Z（UTC）
+individuals:
+  01M8AFAC5HHE3NPGVJ5CW5S61T:
+    is: model_utterance
+    display: 発言 5483
+    val:
+      order: 5483
+      text: |
+        I took the hourly item from the checker route (h_unnamed_error_as_law_rule, PR #903). It got no verdict, because the pre-registered control failed. It stays a Draft and the hypothesis remains untested.
+
+        **What I tested:** In E38, most of the errors that name no law were the checker's check on a mod's endpoint kind. I wrote that check as rule-based laws in a temporary copy, ran it on 59 lines the model had written, and counted how many of those errors the new laws then named.
+
+        - **Coverage:** the new laws named 52 of the 54 endpoint errors (0.963). This number does not count as a verdict.
+        - **Why there is no verdict:** with the new laws, the correct tree itself (the system as it stands, with no written lines swapped in) produced 25 errors. All 25 came from the laws on the mod's partner side:
+          - 10 are the "belongs to" exception (v_is) and 1 is the exception for an endpoint that takes a verb. I had disclosed both in the pre-registration.
+          - 14 are partners that are individuals (Honshu, Sunday and so on). The rules never derive "is a kind below" for individuals. I missed this when writing the procedure, and the commit message and PR #903 say so.
+        - **Parent side:** the laws for the parent of the limited node raised no errors on the correct tree and covered 18 of 20.
+
+        I recorded the observations in the system without linking them to the hypothesis.
+
+        **Two new hypotheses (registration-only PR #904):**
+        - **h_parent_endpoint_as_law_rule:** the parent-side endpoint check can be named by rule laws alone. I wrote this after seeing #903's numbers, so it will be re-measured on the current main.
+        - **h_with_endpoint_as_law_rule:** the partner-side check can be named without rejecting the correct tree, once "is a kind below" is derived for individuals and the two exceptions are written as rules.
+
+        Both are linked to the checker route (d_road_checker).
+
+        Roadmap: checker route — giving each kind of checker error to the system's laws, without adding a separate "error kind" concept. PRs #902 and #904 wait for your review: #902 is green and needs a manual look because of its 1.5B-scope line; #904's checks haven't run yet.
+
+        The 23:08 progress check is now unnecessary, but my attempt to delete it was blocked by the auto-mode permission check. It will fire once and do nothing.
+facts:
+- {is: v_say, from: session_model, to: 01M8AFAC5HHE3NPGVJ5CW5S61T}
+- {is: exp.v_answer, from: 01M8AFAC5HHE3NPGVJ5CW5S61T, to: 01M89PSFS6B8JRMSN9NJ2R17KF}
