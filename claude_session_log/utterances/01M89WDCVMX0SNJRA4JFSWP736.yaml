@@ -1,0 +1,23 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-25T17:35:18.900Z（UTC）
+individuals:
+  01M89WDCVMX0SNJRA4JFSWP736:
+    is: model_utterance
+    display: 発言 5312
+    val:
+      order: 5312
+      text: |
+        h_rule_role_key_apart_from_state を測り、事前に決めた判定では反証でした。Draft の PR #883 を立て、CI の結果を待っています。
+
+        - **何を試したか:** 法則の 3 つの役割（前提に置く・導く・成り立つことを求める）の枠をすべて holds にし、役割を枠でなく、動詞が指す先の文法の節（前提・導く文・求める文）から読むようにしました。比べた相手は #880 のままの状態です。
+        - **同じだったもの:** 型検査と実験の検査の誤りはどちらも 0、法則と役割の読みも同じでした。runtime と test_worlds も終了コード 0 で、出力まで同じです。
+        - **違ったもの:** 法則で導いた関係が 424103 から 423943 へ 160 減り、これで反証になりました。枠だけ替えて読み方を替えない対照では誤りが 1365 出たので、比べ方は効いています。
+        - **差の中身:** 減った 160 件はすべて v_derive（導く）を含む関係で、増えたものはありません。
+          - #880 の v_derive は post の枠しか持ちません。概念を見分ける法則（concept_kind）は pre と holds の枠を持つものを外しますが、post は外しません。動詞と導く法則も post を見ません。
+          - そのため #880 の状態では v_derive が概念と読まれ、そこから候補・欠け・近さの関係が出ていました。差の出どころはここに見えます。
+        - **新しい仮説:** これを h_verb_by_post（post の枠を持つ節も動詞と読む）として claims.yaml に登録しました。post からも動詞を導けば 160 件の差が消えるかで確かめます。消えれば、役割の鍵を状態の枠から離す変更を採れます。
+
+        #883 は #880 の上に切っているので、#880 を先に見てください。CI が通れば Draft を外します。E64 は次の確かめを 17:37 に置いてあります。
+facts:
+- {is: v_say, from: session_model, to: 01M89WDCVMX0SNJRA4JFSWP736}
+- {is: exp.v_answer, from: 01M89WDCVMX0SNJRA4JFSWP736, to: 01M89PSFS6B8JRMSN9NJ2R17KF}
+- {is: v_refer, from: 01M89WDCVMX0SNJRA4JFSWP736, to: syntax.v_derive}
