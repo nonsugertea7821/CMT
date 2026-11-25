@@ -3279,6 +3279,32 @@ individuals:
   o_e55a_taught_not_above_closure: {is: observation}
   o_e55b_taught_above_closure: {is: observation}
   o_e55b_taught_above_examples_only: {is: observation}
+  e56a: {is: measurement_family}
+  e56a_cond: {is: family_axis, val: {text: cond}}
+  e56a_cond_named_edges: {is: axis_value, val: {text: 'named_edges'}}
+  e56a_cond_taught_edges: {is: axis_value, val: {text: 'taught_edges'}}
+  e56a_cond_taught_named_e55: {is: axis_value, val: {text: 'taught_named_e55'}}
+  o_e56a_named_edges: {is: observation}
+  o_e56a_named_edges_robust: {is: observation}
+  o_e56a_taught_edges: {is: observation}
+  o_e56a_taught_edges_robust: {is: observation}
+  o_e56a_taught_named_e55: {is: observation}
+  o_e56a_taught_named_e55_robust: {is: observation}
+  o_e56a_taught_not_above_edges: {is: observation}
+  o_e56a_taught_not_above_examples_only: {is: observation}
+  e56b: {is: measurement_family}
+  e56b_cond: {is: family_axis, val: {text: cond}}
+  e56b_cond_named_edges: {is: axis_value, val: {text: 'named_edges'}}
+  e56b_cond_taught_edges: {is: axis_value, val: {text: 'taught_edges'}}
+  e56b_cond_taught_named_e55: {is: axis_value, val: {text: 'taught_named_e55'}}
+  o_e56b_named_edges: {is: observation}
+  o_e56b_named_edges_robust: {is: observation}
+  o_e56b_taught_edges: {is: observation}
+  o_e56b_taught_edges_robust: {is: observation}
+  o_e56b_taught_named_e55: {is: observation}
+  o_e56b_taught_named_e55_robust: {is: observation}
+  o_e56b_taught_not_above_edges: {is: observation}
+  o_e56b_taught_not_above_examples_only: {is: observation}
   e45: {is: measurement_family}
   e45_cond: {is: family_axis, val: {text: cond}}
   e45_cond_number_extends: {is: axis_value, val: {text: 'number_extends'}}
@@ -3965,7 +3991,7 @@ individuals:
   b_model_writes_by_name: {is: item_queued}
   h_model_misses_named_hop: {is: hyp_supported}
   b_model_misses_named_hop: {is: item_done}
-  b_checker_output_read_when_taught_edges: {is: item_queued}
+  b_checker_output_read_when_taught_edges: {is: item_done}
   h_refer_ops_share_direction: {is: hyp_refuted}
   b_refer_ops_share_direction: {is: item_done}
   h_refer_cuts_orthogonal: {is: hyp_untested}
@@ -4993,6 +5019,46 @@ facts:
   - {is: v_metric_of, from: e55b, to: accuracy}
   - {is: v_metric_of, from: e55b, to: order_robust_accuracy}
   - {is: v_metric_of, from: e55b, to: logit_margin}
+  - {is: v_file_of, from: 'e56_Qwen2.5-1.5B-Instruct.json', to: e56a}
+  - {is: v_rows_of, from: [items, '{cond}'], to: e56a}
+  - {is: v_axis_of, from: e56a_cond, to: e56a}
+  - {is: v_value_of, from: e56a_cond_named_edges, to: e56a_cond}
+  - {is: v_denote, from: e56a_cond_named_edges, to: syntax.mod}
+  - {is: v_denote, from: e56a_cond_named_edges, to: syntax.identifier}
+  - {is: v_denote, from: e56a_cond_named_edges, to: lang.type_checker}
+  - {is: v_value_of, from: e56a_cond_taught_edges, to: e56a_cond}
+  - {is: v_denote, from: e56a_cond_taught_edges, to: syntax.mod}
+  - {is: v_denote, from: e56a_cond_taught_edges, to: syntax.identifier}
+  - {is: v_denote, from: e56a_cond_taught_edges, to: lang.type_checker}
+  - {is: v_denote, from: e56a_cond_taught_edges, to: application_example}
+  - {is: v_value_of, from: e56a_cond_taught_named_e55, to: e56a_cond}
+  - {is: v_denote, from: e56a_cond_taught_named_e55, to: syntax.mod}
+  - {is: v_denote, from: e56a_cond_taught_named_e55, to: syntax.identifier}
+  - {is: v_denote, from: e56a_cond_taught_named_e55, to: application_example}
+  - {is: v_entry_of, from: pair, to: e56a}
+  - {is: v_metric_of, from: e56a, to: accuracy}
+  - {is: v_metric_of, from: e56a, to: order_robust_accuracy}
+  - {is: v_metric_of, from: e56a, to: logit_margin}
+  - {is: v_file_of, from: 'e56_Qwen3-4B.json', to: e56b}
+  - {is: v_rows_of, from: [items, '{cond}'], to: e56b}
+  - {is: v_axis_of, from: e56b_cond, to: e56b}
+  - {is: v_value_of, from: e56b_cond_named_edges, to: e56b_cond}
+  - {is: v_denote, from: e56b_cond_named_edges, to: syntax.mod}
+  - {is: v_denote, from: e56b_cond_named_edges, to: syntax.identifier}
+  - {is: v_denote, from: e56b_cond_named_edges, to: lang.type_checker}
+  - {is: v_value_of, from: e56b_cond_taught_edges, to: e56b_cond}
+  - {is: v_denote, from: e56b_cond_taught_edges, to: syntax.mod}
+  - {is: v_denote, from: e56b_cond_taught_edges, to: syntax.identifier}
+  - {is: v_denote, from: e56b_cond_taught_edges, to: lang.type_checker}
+  - {is: v_denote, from: e56b_cond_taught_edges, to: application_example}
+  - {is: v_value_of, from: e56b_cond_taught_named_e55, to: e56b_cond}
+  - {is: v_denote, from: e56b_cond_taught_named_e55, to: syntax.mod}
+  - {is: v_denote, from: e56b_cond_taught_named_e55, to: syntax.identifier}
+  - {is: v_denote, from: e56b_cond_taught_named_e55, to: application_example}
+  - {is: v_entry_of, from: pair, to: e56b}
+  - {is: v_metric_of, from: e56b, to: accuracy}
+  - {is: v_metric_of, from: e56b, to: order_robust_accuracy}
+  - {is: v_metric_of, from: e56b, to: logit_margin}
   - {is: v_file_of, from: 'e45_Qwen3-4B.json', to: e45}
   - {is: v_rows_of, from: [items, '{cond}'], to: e45}
   - {is: v_axis_of, from: e45_cond, to: e45}
@@ -11270,6 +11336,24 @@ facts:
   - {is: v_refer, from: o_e55b_taught_above_examples_only, to: {is: v_come_after, from: e55b.taught_closure.accuracy, to: e55b.taught_named.accuracy}}
   - {is: v_support, from: o_e55b_taught_above_closure, to: h_checker_output_read_when_taught}
   - {is: v_support, from: o_e55b_taught_above_examples_only, to: h_checker_output_read_when_taught}
+  - {is: v_refer, from: o_e56a_named_edges, to: {is: v_level, from: e56a.named_edges.accuracy, to: 0.46875}}
+  - {is: v_refer, from: o_e56a_named_edges_robust, to: {is: v_level, from: e56a.named_edges.order_robust_accuracy, to: 0.21875}}
+  - {is: v_refer, from: o_e56a_taught_edges, to: {is: v_level, from: e56a.taught_edges.accuracy, to: 0.46875}}
+  - {is: v_refer, from: o_e56a_taught_edges_robust, to: {is: v_level, from: e56a.taught_edges.order_robust_accuracy, to: 0.1875}}
+  - {is: v_refer, from: o_e56a_taught_named_e55, to: {is: v_level, from: e56a.taught_named_e55.accuracy, to: 0.46875}}
+  - {is: v_refer, from: o_e56a_taught_named_e55_robust, to: {is: v_level, from: e56a.taught_named_e55.order_robust_accuracy, to: 0.15625}}
+  - {is: v_refer, from: o_e56a_taught_not_above_edges, to: {is: v_not_after, from: e56a.taught_edges.accuracy, to: e56a.named_edges.accuracy}}
+  - {is: v_refer, from: o_e56a_taught_not_above_examples_only, to: {is: v_not_after, from: e56a.taught_edges.accuracy, to: e56a.taught_named_e55.accuracy}}
+  - {is: v_contradict, from: o_e56a_taught_not_above_edges, to: h_checker_output_read_when_taught}
+  - {is: v_refer, from: o_e56b_named_edges, to: {is: v_level, from: e56b.named_edges.accuracy, to: 0.53125}}
+  - {is: v_refer, from: o_e56b_named_edges_robust, to: {is: v_level, from: e56b.named_edges.order_robust_accuracy, to: 0.125}}
+  - {is: v_refer, from: o_e56b_taught_edges, to: {is: v_level, from: e56b.taught_edges.accuracy, to: 0.53125}}
+  - {is: v_refer, from: o_e56b_taught_edges_robust, to: {is: v_level, from: e56b.taught_edges.order_robust_accuracy, to: 0.28125}}
+  - {is: v_refer, from: o_e56b_taught_named_e55, to: {is: v_level, from: e56b.taught_named_e55.accuracy, to: 0.71875}}
+  - {is: v_refer, from: o_e56b_taught_named_e55_robust, to: {is: v_level, from: e56b.taught_named_e55.order_robust_accuracy, to: 0.5}}
+  - {is: v_refer, from: o_e56b_taught_not_above_edges, to: {is: v_not_after, from: e56b.taught_edges.accuracy, to: e56b.named_edges.accuracy}}
+  - {is: v_refer, from: o_e56b_taught_not_above_examples_only, to: {is: v_not_after, from: e56b.taught_edges.accuracy, to: e56b.taught_named_e55.accuracy}}
+  - {is: v_contradict, from: o_e56b_taught_not_above_edges, to: h_checker_output_read_when_taught}
   - {is: v_refer, from: o_e45_number_extends, to: {is: v_level, from: e45.number_extends.mean_value, to: 0.7083333}}
   - {is: v_refer, from: o_e45_number_decoy, to: {is: v_level, from: e45.number_decoy.mean_value, to: 0.0416667}}
   - {is: v_refer, from: o_e45_number_control, to: {is: v_level, from: e45.number_control.mean_value, to: 0.0}}
