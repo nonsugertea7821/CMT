@@ -253,6 +253,8 @@ individuals:
   b_identifier_by_genus_differentia: {is: exp.item_queued}
   h_sequence_by_current_order: {is: exp.hyp_untested}
   b_sequence_by_current_order: {is: exp.item_queued}
+  h_dangling_by_append_only_declaration: {is: exp.hyp_untested}
+  b_dangling_by_append_only_declaration: {is: exp.item_queued}
   h_appear_root: {is: exp.hyp_supported}
   b_appear_root: {is: exp.item_done}
   h_boundary_invariant: {is: exp.hyp_supported}
@@ -2350,3 +2352,5 @@ facts:
   - {is: v_refer, from: h_sequence_by_current_order, to: {is: exp.v_rely, from: sequence_domain, to: [v_come_after, v_stage, syntax.pre, syntax.post]}}
   - {is: exp.v_check, from: b_sequence_by_current_order, to: h_sequence_by_current_order}
   - {is: exp.v_ground, from: d_sig_come_after_from, to: h_sequence_by_current_order}
+  - {is: v_refer, from: h_dangling_by_append_only_declaration, to: {is: v_depend, from: declared_scope, to: std.v_freeze}}
+  - {is: exp.v_check, from: b_dangling_by_append_only_declaration, to: h_dangling_by_append_only_declaration}
