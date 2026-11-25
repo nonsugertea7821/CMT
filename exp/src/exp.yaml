@@ -3688,6 +3688,10 @@ individuals:
   b_dimension_contrast_in_formula: {is: item_queued}
   h_midpoint_by_spread_profile: {is: hyp_supported}
   b_midpoint_by_spread_profile: {is: item_done}
+  h_spread_profile_transfers_to_unseen: {is: hyp_untested}
+  b_spread_profile_transfers_to_unseen: {is: item_queued}
+  h_genus_below_spread_band: {is: hyp_untested}
+  b_genus_below_spread_band: {is: item_queued}
   h_genus_last_token_by_suffix: {is: hyp_refuted}
   b_genus_last_token_by_suffix: {is: item_done}
   h_consistency_by_examples: {is: hyp_untested}
@@ -12351,6 +12355,12 @@ facts:
   - {is: v_refer, from: h_midpoint_by_spread_profile, to: {is: v_depend, from: midpoint_membership, to: [spread_dimension, magnitude]}}
   - {is: v_check, from: b_midpoint_by_spread_profile, to: h_midpoint_by_spread_profile}
   - {is: v_ground, from: d_road_region, to: h_midpoint_by_spread_profile}
+  - {is: v_refer, from: h_spread_profile_transfers_to_unseen, to: {is: v_transfer, from: spread_dimension, to: unseen_genus}}
+  - {is: v_check, from: b_spread_profile_transfers_to_unseen, to: h_spread_profile_transfers_to_unseen}
+  - {is: v_ground, from: d_road_region, to: h_spread_profile_transfers_to_unseen}
+  - {is: v_refer, from: h_genus_below_spread_band, to: {is: v_lower, from: magnitude, to: midpoint_membership}}
+  - {is: v_check, from: b_genus_below_spread_band, to: h_genus_below_spread_band}
+  - {is: v_ground, from: d_road_region, to: h_genus_below_spread_band}
   - {is: v_refer, from: h_genus_last_token_by_suffix, to: {is: v_depend, from: hidden_state, to: [syntax.display, label_token_positions]}}
   - {is: v_check, from: b_genus_last_token_by_suffix, to: h_genus_last_token_by_suffix}
   - {is: v_ground, from: d_road_region, to: h_genus_last_token_by_suffix}
