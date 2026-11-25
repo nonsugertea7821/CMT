@@ -1,0 +1,31 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-25T15:57:41.939Z（UTC）
+individuals:
+  01M89PTN5KHGHHR8YX0M99NT11:
+    is: model_utterance
+    display: 発言 5210
+    val:
+      order: 5210
+      text: |
+        直接には効かない見込みです。識別子化の詰まりは、別の所にあります。
+
+        ## 識別子化の残りの障害（記録から）
+        1. **法則の三つの役割が、式の上で同じ形をしている。** 前提（premise）・導く文（derived）・求める文（required）です。h_identifier_by_bisimulation（反証）で、衝突する組として出ました。動詞の v_assume・v_derive・v_require も同じです。
+        2. **文法に、部分のファイル（parts）を名付ける語がない。** h_fact_id_by_content は支持されましたが、ファイルを分けたときに残った誤りがこの 1 件でした（h_grammar_names_parts、未検証）。
+        3. **型検査器の事実の名が、まだファイルの中の位置のまま（`ifact {name} {j}`）。** 中身から名を作る形（支持済み）に、本体を移していません。
+        4. **本命の h_identifier_by_genus_differentia（類と種差で決める）が、まだ測られていない。**
+
+        ## 実行との関係
+        - 宣言の取り消しの問題は、実行の中で個体がいつ在るかの問題です。識別子化は、概念（種類）の静的な形の問題です。そのため、互いに依らないと見ています。これは未検証なので、h_identifier_free_of_declaration として登録しました。
+        - 実行とつながるのは、障害の 1 のほうです。
+          - 法則の役割は、前後の状態の枠で分けられることが分かっています（h_rule_roles_by_frame、支持）。
+          - 実行器との対応では、前提と前の状態の確かめ方、導く文と後の状態の作り方は一致しました（変種 N）。
+          - 求める文と、法則を確かめる時点だけが合いませんでした（h_rule_nouns_agree_runtime、反証）。
+          - 一方で、法則を確かめる時点は always で書けます（h_law_check_by_always、支持）。
+
+        識別子化の道は「法則の役割を、実行の前・後・いつも（pre・post・always）で書き直す」「parts を文法に足す」「本体を中身による名に移す」の三つを済ませてから、類と種差の測定に進む順になります。手順の登録の PR に、この登録も入れて push しました。
+facts:
+- {is: v_say, from: session_model, to: 01M89PTN5KHGHHR8YX0M99NT11}
+- {is: exp.v_answer, from: 01M89PTN5KHGHHR8YX0M99NT11, to: 01M89PSFS6B8JRMSN9NJ2R17KF}
+- {is: v_refer, from: 01M89PTN5KHGHHR8YX0M99NT11, to: syntax.v_assume}
+- {is: v_refer, from: 01M89PTN5KHGHHR8YX0M99NT11, to: syntax.v_derive}
+- {is: v_refer, from: 01M89PTN5KHGHHR8YX0M99NT11, to: syntax.v_require}
