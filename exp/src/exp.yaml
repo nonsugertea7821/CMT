@@ -4481,6 +4481,10 @@ individuals:
   b_consistency_by_checker_teaching: {is: item_queued}
   h_formal_teacher_independent_of_model: {is: hyp_untested}
   b_formal_teacher_independent_of_model: {is: item_queued}
+  h_consistency_by_formal_corpus: {is: hyp_untested}
+  b_consistency_by_formal_corpus: {is: item_queued}
+  h_formal_corpus_transfers_to_apply: {is: hyp_untested}
+  b_formal_corpus_transfers_to_apply: {is: item_queued}
   b_checker_read_by_answer_copy: {is: item_queued}
   h_refer_ops_share_direction: {is: hyp_refuted}
   b_refer_ops_share_direction: {is: item_done}
@@ -14016,6 +14020,12 @@ facts:
   - {is: v_refer, from: h_formal_teacher_independent_of_model, to: {is: lang.v_not_depend, from: concept_expression, to: model}}
   - {is: v_check, from: b_formal_teacher_independent_of_model, to: h_formal_teacher_independent_of_model}
   - {is: v_ground, from: d_road_checker, to: h_formal_teacher_independent_of_model}
+  - {is: v_refer, from: h_consistency_by_formal_corpus, to: {is: v_rely, from: cross_usage_consistency, to: [teaching, concept_expression]}}
+  - {is: v_refer, from: h_formal_corpus_transfers_to_apply, to: {is: v_transfer, from: concept_expression, to: usage_apply}}
+  - {is: v_check, from: b_consistency_by_formal_corpus, to: h_consistency_by_formal_corpus}
+  - {is: v_ground, from: d_road_checker, to: h_consistency_by_formal_corpus}
+  - {is: v_check, from: b_formal_corpus_transfers_to_apply, to: h_formal_corpus_transfers_to_apply}
+  - {is: v_ground, from: d_road_checker, to: h_formal_corpus_transfers_to_apply}
   - {is: v_refer, from: h_consistency_beyond_accuracy, to: {is: lang.v_not_depend, from: cross_usage_consistency, to: accuracy}}
   - {is: v_check, from: b_consistency_beyond_accuracy, to: h_consistency_beyond_accuracy}
   - {is: v_ground, from: d_metric, to: h_consistency_beyond_accuracy}
