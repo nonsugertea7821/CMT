@@ -1,0 +1,33 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-25T03:15:04.965Z（UTC）
+individuals:
+  01M88B68M56XXQ0SB3PTN8ZEEP:
+    is: model_utterance
+    display: 発言 4629
+    val:
+      order: 4629
+      text: |
+        h_genus_state_by_token_position (#792) is **supported**: reading a word's last token makes word states line up with their genus much more than reading the average. The results are pushed and CI is running; I'll take #792 out of Draft once CI passes.
+
+        The test used the same 39 verbs from 6 genera as #771. Separation is how much closer same-genus pairs are than cross-genus pairs (p = 0.000 in every case):
+
+        | Layer | Average over the word | Last token |
+        |---|---|---|
+        | 8 | 0.082 | 0.219 |
+        | 14 | 0.085 | 0.191 |
+        | 20 | 0.084 | 0.191 |
+
+        At layer 8 the rise is 0.136, well past the 0.05 support line.
+
+        **Part of this may be shared word endings.** I flagged that risk before the run, then counted with the tokenizer afterwards (no model run). Same-genus pairs end in the same last token 19.8% of the time, against 7.4% for cross-genus pairs; the commonest endings are 「する」 and 「になる」. This test can't say how much of the rise is genus and how much is shared endings.
+
+        **Registered from this (#793):** h_genus_last_token_by_suffix, the hypothesis that the last-token rise comes from shared endings, linked to the region road. The proposed test drops pairs with the same last token and measures separation again. If the effect survives, the last token carries genus beyond its ending. #793 only adds a hypothesis, so it should auto-merge if CI passes.
+
+        **Still waiting on you:**
+        - #789 and #791: review.
+        - #790: Draft, not judged.
+        - #782: Draft, not judged.
+
+        ロードマップの位置: d_road_region（#787 は支持、語尾の混じりを #793 で仮説に）。
+facts:
+- {is: v_say, from: session_model, to: 01M88B68M56XXQ0SB3PTN8ZEEP}
+- {is: exp.v_answer, from: 01M88B68M56XXQ0SB3PTN8ZEEP, to: 01M8824ABH7FVJ0AFYWM2EPXZH}
