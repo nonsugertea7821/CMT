@@ -1,0 +1,60 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-25T15:49:32.833Z（UTC）
+individuals:
+  01M89PBQH10EKN2F37YH05X4DN:
+    is: model_utterance
+    display: 発言 5192
+    val:
+      order: 5192
+      text: |
+        `cscl/library/ontology/ontology.yaml` と `cscl/library/syntax/syntax.yaml` を読んで、事実としてまとめます。
+
+        ## 個体
+        - 個体は、ファイルの `individuals:` の節に、名前と所属で書きます。例は `syntax: {is: domain, display: 構文}` や `var1: {is: variable}` です。
+        - 文法での定義は `individuals: {display: 個体, form: [is, from]}` です。つまり「属する（is）の始点に来るもの」で、それ以上の中身はありません。
+        - 個体について述べる文は `facts:` に書きます。`facts` の定義は「個体か種類についての文。種類についての文は、その種類のすべてについて」です。
+        - ほかに、在ること（`exists`）と同じであること（`same`）の法則があります。
+
+        ## 関係
+        二段になっています。
+        - 基本の述語は、項が 2 つの `base` に 6 つあります: 在る（項は 1 つ）・について述べる・依存する・部分である・後ろにある・関わる。
+        - 動詞（`v_*`）は生起体（occurrent）を広げた概念で、始点（from）と終点（to）の型を持ちます。何が成り立つかは `holds` に基本の述語で書きます。
+          - 例: `v_depend` の holds は depend(from, to)。`v_express` は depend に加えて、第三のもの（new）を部分として持ちます。
+        - 始点・終点に来るもの自体も、`form: [v_depend, from]`（依存するもの）のように概念になります。
+        - 概念の区別は、mod（どの動詞の、どの位置に、何と来るか）で書きます。
+
+        ## 時間
+        時刻や区間の点はありません。`time`・`instant`・`interval` などで grep して確かめました。時間は、次の三つの組み合わせで表しています。
+        1. 順序: 基本の述語 `after`（後ろにある）。推移的で非対称的という法則があり、順番の軸（order）を持ちます。前・後・同じ位置の動詞（v_come_before、v_come_after、v_level など）は、これで定義されています。
+        2. 状態の変化: 動詞や概念に、前の状態（`pre`）・後の状態（`post`）・どのステップでも成り立つ状態（`always`）・あるステップで起こる変化（`sometime`）を書きます。
+           - 持続体（continuant）: always で在り続け、時間的な部分を持ちません。
+           - 生起体（occurrent）: sometime で「無かった → 在る」と「在る → 無くなる」を持ちます。
+           - 設計する（v_design）: pre で終点が無く、post で在ります。
+        3. 時間的な部分: `v_stage`（時間的な部分になる）。過程（process）は、時間的な部分を持つ生起体です。
+
+        ここからは解釈です。
+        - 時間は「ステップ」の並びとして扱われていて、絶対的な時刻を持ちません。
+        - 関係を生起体に入れてある（関係が出来事として在る）ので、関係にも時間の型が付いています。BFO に近い作りです。
+        - 気になる点として、after は v_come_after では持続体どうし、v_trigger では生起体どうしにも使われていて、「位置の順」と「時間の順」が同じ述語に乗っています。これは読んで気づいた所見で、問題かどうかは確かめていません。登録が要るなら言ってください。
+
+        ## 作業の進み
+        - #868 の検査の失敗を直しました。prior_meaning と model_scale に共通の重みへの依存を depend_from_weights と名付け、push しました。本文も更新しています。
+        - ガードレールとハーネスの登録は #869 として立てました。見張りと assignee も済んでいます。
+        - E64 は学習中です。24 概念のうち 3 つまで進みました。
+facts:
+- {is: v_say, from: session_model, to: 01M89PBQH10EKN2F37YH05X4DN}
+- {is: exp.v_answer, from: 01M89PBQH10EKN2F37YH05X4DN, to: 01M89P0BMMJ1P76GVS969BTESK}
+- {is: v_refer, from: 01M89PBQH10EKN2F37YH05X4DN, to: syntax.facts}
+- {is: v_refer, from: 01M89PBQH10EKN2F37YH05X4DN, to: ontology.same}
+- {is: v_refer, from: 01M89PBQH10EKN2F37YH05X4DN, to: syntax.base}
+- {is: v_refer, from: 01M89PBQH10EKN2F37YH05X4DN, to: syntax.holds}
+- {is: v_refer, from: 01M89PBQH10EKN2F37YH05X4DN, to: ontology.v_depend}
+- {is: v_refer, from: 01M89PBQH10EKN2F37YH05X4DN, to: ontology.v_express}
+- {is: v_refer, from: 01M89PBQH10EKN2F37YH05X4DN, to: ontology.v_come_before}
+- {is: v_refer, from: 01M89PBQH10EKN2F37YH05X4DN, to: ontology.v_come_after}
+- {is: v_refer, from: 01M89PBQH10EKN2F37YH05X4DN, to: ontology.v_level}
+- {is: v_refer, from: 01M89PBQH10EKN2F37YH05X4DN, to: syntax.pre}
+- {is: v_refer, from: 01M89PBQH10EKN2F37YH05X4DN, to: syntax.post}
+- {is: v_refer, from: 01M89PBQH10EKN2F37YH05X4DN, to: ontology.v_design}
+- {is: v_refer, from: 01M89PBQH10EKN2F37YH05X4DN, to: ontology.v_stage}
+- {is: v_refer, from: 01M89PBQH10EKN2F37YH05X4DN, to: ontology.v_trigger}
+- {is: v_refer, from: 01M89PBQH10EKN2F37YH05X4DN, to: exp.prior_meaning}
