@@ -1,0 +1,28 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-25T14:21:10.990Z（UTC）
+individuals:
+  01M89H9XYEAZXZJR8YEJ51WQC1:
+    is: model_utterance
+    display: 発言 5116
+    val:
+      order: 5116
+      text: |
+        周回 1 回目の報告です。今回は、新しい実験は始めていません。
+
+        **PR の状態（今 PR を読んで確かめました）**
+        - #861（E63）はマージ済みです。手元のブランチと作業ツリーは消しました。
+        - #862（h_consistency_bound_by_explain の登録）は、検査が通り、衝突もありません。範囲を決める `v_scope` の行があるので、自動マージの段は手で見る側に回しました。確認とマージをお願いします。
+
+        **次の重い実験を選ぶために読んだこと**
+        - 路線の順では、E63 の次は h_consistency_by_checker_teaching です。ただ、この仮説で言う「検査器の出力」は E55 系の題材（extends の連鎖）から来ています。E58・E63 で使った 24 概念にどう当てはめるかは、まだ決めていません。設計に時間がかかるので、すぐには着手しません。
+        - それより目的に近いのは、#862 の仮説を確かめることだと判断しました。explain を上げる手を入れて、1.5B の joint が付いてくるかを見る実験です。
+        - その手には E36 の「説明で学習したベクトル」が使えます。E36 では、説明の正答率を 0.417 から 1.0 に上げていました。ただしこのベクトルのファイルは手元にもリポジトリにもないので、学習し直す必要があります。E36 のスクリプトは結果ファイルを上書きするので走らせず、学習の部分だけを読み込む新しいスクリプトにします。
+        - 注意点として、E36 ではこのベクトルが apply も上げていました（0.375 → 0.667）。なので、事前登録で apply の上がりを分けて扱う線を決めます。
+        - 案はスクラッチパッドに置きました: /tmp/claude-0/-home-user-CMT/e05d2140-ce91-515f-a5fb-e6251e13d406/scratchpad/held/e64_explain_lever.md
+
+        #862 がマージされて issue が立ったら、ブランチを切って、この案の事前登録から始めます。次の周回は 15:21 です。
+
+        ロードマップの位置: d_metric。
+facts:
+- {is: v_say, from: session_model, to: 01M89H9XYEAZXZJR8YEJ51WQC1}
+- {is: exp.v_answer, from: 01M89H9XYEAZXZJR8YEJ51WQC1, to: 01M894P981R0TBZ8RRY7RKHDMV}
+- {is: v_refer, from: 01M89H9XYEAZXZJR8YEJ51WQC1, to: exp.v_scope}
