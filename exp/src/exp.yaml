@@ -4475,6 +4475,8 @@ individuals:
   b_model_misses_named_hop: {is: item_done}
   b_checker_output_read_when_taught_edges: {is: item_done}
   h_checker_read_by_answer_copy: {is: hyp_untested}
+  h_consistency_by_checker_teaching: {is: hyp_untested}
+  b_consistency_by_checker_teaching: {is: item_queued}
   h_consistency_by_formal_corpus: {is: hyp_untested}
   b_consistency_by_formal_corpus: {is: item_queued}
   h_formal_corpus_transfers_to_apply: {is: hyp_untested}
@@ -14008,6 +14010,9 @@ facts:
   - {is: v_refer, from: h_knee_layer_needs_more_pairs, to: {is: v_depend, from: observation, to: midpoint_pair}}
   - {is: v_check, from: b_knee_layer_needs_more_pairs, to: h_knee_layer_needs_more_pairs}
   - {is: v_ground, from: d_road_region, to: h_knee_layer_needs_more_pairs}
+  - {is: v_refer, from: h_consistency_by_checker_teaching, to: {is: v_rely, from: cross_usage_consistency, to: [teaching, type_check_result]}}
+  - {is: v_check, from: b_consistency_by_checker_teaching, to: h_consistency_by_checker_teaching}
+  - {is: v_ground, from: d_road_checker, to: h_consistency_by_checker_teaching}
   - {is: v_refer, from: h_consistency_by_formal_corpus, to: {is: v_rely, from: cross_usage_consistency, to: [teaching, concept_expression]}}
   - {is: v_refer, from: h_formal_corpus_transfers_to_apply, to: {is: v_transfer, from: concept_expression, to: usage_apply}}
   - {is: v_check, from: b_consistency_by_formal_corpus, to: h_consistency_by_formal_corpus}
