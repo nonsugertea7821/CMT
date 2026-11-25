@@ -1,0 +1,16 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-25T16:38:23.299Z（UTC）
+individuals:
+  01M89S55A3P67TA8KZ7KKW98NG:
+    is: model_utterance
+    display: 発言 5263
+    val:
+      order: 5263
+      text: |
+        I fixed the ec failure on #868 and pushed it as 991a27d. CI is running on it now.
+
+        The failure was 「basis の仮説 lang.h_identifier_by_genus_differentia が未定義」. ec files the language hypotheses under their names without the `lang.` prefix, but the grounding line in exp.yaml writes the name with the prefix, so ec couldn't find it.
+
+        I changed `exp/src/exp_check.py` to accept a grounding written as `lang.<name>` when `<name>` is a language-side hypothesis. Because this changes the evaluator, the PR needs your review rather than the auto-merge.
+facts:
+- {is: v_say, from: session_model, to: 01M89S55A3P67TA8KZ7KKW98NG}
+- {is: exp.v_answer, from: 01M89S55A3P67TA8KZ7KKW98NG, to: 01M89PSFS6B8JRMSN9NJ2R17KF}
