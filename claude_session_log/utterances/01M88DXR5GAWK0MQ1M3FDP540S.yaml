@@ -1,0 +1,262 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-25T04:02:51.696Z（UTC）
+individuals:
+  01M88DXR5GAWK0MQ1M3FDP540S:
+    is: session_summary
+    display: 発言 4746
+    val:
+      order: 4746
+      text: |
+        This session is being continued from a previous conversation that ran out of context. The summary below covers the earlier portion of the conversation.
+
+        <system-reminder>
+        <tools-used-before-summary>Agent, Artifact, AskUserQuestion, Bash, Edit, Grep, Monitor, Read, ReadNotifications, Skill, SubagentHandback, TaskStop, ToolSearch, WebFetch, WebSearch, Write, mcp__claude-code-remote__add_repo, mcp__claude-code-remote__create_trigger, mcp__claude-code-remote__delete_trigger, mcp__claude-code-remote__get_trigger, mcp__claude-code-remote__list_repos, mcp__claude-code-remote__read_documentation, mcp__claude-code-remote__send_later, mcp__claude-code-remote__subscribe_pr_activity, mcp__claude-code-remote__unsubscribe_pr_activity, mcp__claude-code-remote__update_trigger, mcp__github__actions_get, mcp__github__actions_list, mcp__github__actions_run_trigger, mcp__github__add_issue_comment, mcp__github__create_pull_request, mcp__github__get_job_logs, mcp__github__issue_read, mcp__github__issue_write, mcp__github__list_issue_types, mcp__github__list_issues, mcp__github__list_pull_requests, mcp__github__pull_request_read, mcp__github__update_pull_request</tools-used-before-summary>
+        </system-reminder>
+        Summary:
+        1. Primary Request and Intent
+
+        **Standing rules (carried forward)**
+        - Repo nonsugertea7821/CMT at /home/user/CMT. Python is /home/user/venv/bin/python. CPU only.
+        - Writing
+          - Plain Japanese in conversation and PR bodies.
+          - Don't overclaim. Separate facts from interpretation.
+          - End each report with 「ロードマップの位置: …」. Label side paths わき道.
+        - Git
+          - Restore files with `git show <rev>:<path> > <path>`. No checkout, no stash.
+          - Commit trailer:
+            ```
+            Co-Authored-By: Claude [モデル名を伏せた] <[メールアドレスを伏せた]>
+            Claude-Session: https://claude.ai/code/session_015KRKt6TNJZ7ZsQmEknANXK
+            ```
+          - PR body ends with `🤖 Generated with [Claude Code](https://claude.com/claude-code)`, a blank line, then the session URL.
+          - No personal info or model IDs in pushed artifacts. Claude never merges.
+        - Every PR I open: subscribe_pr_activity, then issue_write update with assignees ["nonsugertea7821"].
+        - System YAML gets no comments.
+          - Run conflict-marker removal (sed) and `git commit` as separate Bash commands. The no-comments PreToolUse hook blocks them when combined.
+        - Experiments
+          - Pre-register with a script-only commit; results go in a later commit.
+          - Use `git add -f`. Never rerun a recorded script.
+          - No local tc/ec; CI runs them.
+          - Undraft only when spec passes and a status (supported / refuted / mixed) is judged. A "not judged" result stays Draft.
+        - Register unverified claims as hypotheses before telling the user (h_ + b_ + v_refer + v_check + v_ground from d_road_region). Registration-only PRs that add no concepts auto-merge. Don't ask permission in conversation.
+        - Use /home/user/CMT/.wt_* worktrees. Remove the worktree (`git worktree remove --force`) and local branch (`git branch -D`) after merge.
+        - Stop hook "Wait—turn that observation into a hypothesis?"
+          - Classify each negative sentence as fact, unverified (register it), or progress.
+          - End with what was registered and why.
+        - Foreground sleep is blocked; use run_in_background. Place a send_later check about every 9 minutes during heavy runs. delete_trigger was denied earlier; stale send_later checks fire harmlessly.
+
+        **Security constraints (verbatim)**
+        - 「Pagesに出すなら脆弱性気を付けてね」
+        - 「あとsession_logは読まないように」
+        - Later clarified:
+          - 「いやまあログの中身は読んだってかまわないんだけど 何のために残してるかって「過去の参照」のためだから」
+          - 「読もうと思えばsession_logも読めるよ 無差別に読んでほしくないからPagesに出してないだけ」
+          - 「あとブランチ切れば消えるってのもある」
+        - Net effect: reading session logs for past reference is OK. Never expose claude/session-log-* in Pages or the ledger.
+
+        **Other user constraints**
+        - Claude models must not be the experiment target (distillation). Use open models.
+        - The user decided: 「d_road_regionは掘り続けるべきだ。幾何的にはこれは成り立つと読んでいる。」
+        - The user suggested attacking from transformer mechanics.
+
+        **Heartbeat**
+        - trig_01L92Xn7LSTHrmqt7enEcCPG, next fire 2026-11-25T04:12:00Z.
+        - On fire, re-arm about 61 minutes ahead, then run the 周回.
+        - A send_later trig_01MKKemjae2QkPMyHak6B4z8 fires at 04:05Z to check #806 CI and #807 (#807 is already merged).
+
+        2. Key Technical Concepts
+
+        - **Midpoint membership**
+          - G_rate / C_rate / R_rate on 120 words (Qwen2.5-1.5B, layers 8 / 14 / 20, judged at L8).
+          - Conditions: orig / swap / mixed (240 words, centered).
+          - holds = G − R ≥ 0.15.
+          - lift = mean over swap and mixed of (G_x − G_base).
+        - **Spread ordering:** per-dimension std over the centered 240 mixed words. The top 256 dims ("top band") hold 0.728 / 0.814 / 0.855 of the centered variance at L8 / L14 / L20.
+        - **ec family patterns**
+          - v_file_of, v_rows_of (e.g. `[layers,'{layer}','{read}']` or `[judgment]`), v_axis_of / v_value_of, v_keys_of '#' with v_spell, v_entry_of '{stat}' or a fixed key, v_metric_of mean_value.
+          - Measured id: `fam.<axis values in order>.<stat>.mean_value`, e.g. `geo_sp_j.lift.comp_256.mean_value`.
+          - In exp_check.py, rows_of walks the path; a dict gives its items. row_keys filters keys; stat takes `r[cond]`.
+        - **Observations:** v_near (`new` = tolerance), v_come_before, v_come_after. Linked with v_support / v_contradict. Statuses: hyp_supported / hyp_refuted / hyp_untested; item_done / item_queued.
+
+        3. Files and Code Sections
+
+        **exp/experiments/geo_spread_profile_midpoint.py (#802, MERGED; #801 supported)**
+        - Readings: base; comp_k for k = 16 / 64 / 256, which scales the top-k dims by s_(k+1)/s_d; full, which applies zscore per condition.
+        - L8 G_rate:
+
+          | Reading | orig | swap | mixed |
+          |---|---|---|---|
+          | base | 0.779 | 0.229 | 0.436 |
+          | comp_16 | 0.800 | 0.221 | 0.421 |
+          | comp_64 | 0.793 | 0.229 | 0.429 |
+          | comp_256 | 0.857 | 0.279 | 0.571 |
+          | full | 0.871 | 0.314 | 0.593 |
+
+        - Lifts: comp_16 −0.011, comp_64 −0.004, comp_256 0.093, full 0.121.
+        - exp.yaml families: geo_sp (rows `[layers,'{layer}','{read}']`, cond keys '#', stat G_rate) and geo_sp_j (rows [judgment], part keys '#' 'lift', stat comp_16 / comp_64 / comp_256 / full).
+        - o_geo_sp_lift_comp_256_above_line (v_come_after 0.05) is linked with v_support.
+
+        **exp/experiments/geo_spread_band_midpoint.py (#806, branch claude/h_genus_below_spread_band, worktree .wt_band; issue #805)**
+        - Readings: base, comp (= comp_256), low (top 256 zeroed), top (low 1280 zeroed).
+        - Judgment: supported if lift(low) ≥ 0.05 and lift(top) < lift(low); refuted if lift(low) < 0.
+        - L8 G_rate:
+
+          | Reading | orig | swap | mixed | lift |
+          |---|---|---|---|---|
+          | comp | 0.857 | 0.279 | 0.571 | 0.093 |
+          | low | 0.871 | 0.279 | 0.607 | 0.111 |
+          | top | 0.593 | 0.179 | 0.264 | −0.111 |
+
+          - In the top reading, swap holds = 0.
+        - Verdict: supported.
+        - Families: geo_sb, geo_sb_v (entry top_var_share, part 'band'), and geo_sb_j.
+          - v_support from o_geo_sb_lift_low_above_line and o_geo_sb_lift_top_below_low.
+        - Commits:
+          - 42f385a pre-registration
+          - 0bea7c1 results
+          - d703a4b merge (CI green)
+          - a7788ac merge, keeping supported status plus main's h_spread_band_by_display lines (CI pending)
+        - The PR body corrects an overclaim in the commit message: the top band still separates genus for orig (0.593 vs R 0.056).
+
+        **exp/experiments/geo_spread_band_display.py (#808, branch claude/h_spread_band_by_display, worktree .wt_disp; hypothesis #809)**
+        - Per band (top / low), shares of the sum of squares explained by group means: disp_share (orig vs swap), word_share (120 pairs), genus_share (genus words, orig + swap).
+        - Judgment at L8: d = disp(top) − disp(low); ≥ 0.05 supported, ≤ 0 refuted.
+        - Results (top / low):
+
+          | Layer | disp | word | genus |
+          |---|---|---|---|
+          | L8 | 0.122 / 0.086 | 0.513 / 0.511 | 0.097 / 0.118 |
+          | L14 | 0.116 / 0.133 | 0.523 / 0.494 | 0.104 / 0.117 |
+          | L20 | 0.097 / 0.112 | 0.530 / 0.513 | 0.099 / 0.136 |
+
+        - d = 0.036, so not judged. The hypothesis stays untested and the PR stays Draft.
+        - Family geo_bd (rows `[layers,'{layer}']`, band keys '#' top / low / diff, stat disp_share / word_share / genus_share).
+        - Observations recorded, not linked to the hypothesis: o_geo_bd_8_disp_diff_below_line, _above_zero, 14/20_below_zero, o_geo_bd_8_genus_top_below_low.
+        - Commits 4f9e805 (pre-registration) and a59555d (results, CI green).
+
+        **exp/experiments/geo_band_energy_midpoint.py (#812, branch claude/h_band_energy_sets_midpoint, worktree .wt_energy) — CURRENT**
+        - Derived from the geo_spread_band_midpoint.py script.
+        - READS = ["base", "low", "eq", "eq_half"]. Key code:
+          ```python
+          a0 = float((var[low].sum() / var[top].sum()).sqrt())
+          a = {"eq": a0, "eq_half": a0 * 0.5 ** 0.5}
+          info = {"top_var_share": ..., "a_eq": a["eq"], "a_eq_half": a["eq_half"]}
+          ...
+          if rd == "low": X[:, top] = 0
+          elif rd in a: X[:, top] = X[:, top] * a[rd]
+          ...
+          v = "supported" if lifts["eq"] >= 0.05 else "refuted" if lifts["eq"] < 0.02 else "not_judged"
+          res["judgment"] = {"lift": lifts, "band_energy_sets_midpoint": v}
+          ```
+        - Output: exp/experiments/results/geo_band_energy_midpoint.json.
+        - Pre-registration commit 4b59afa is pushed. The run is in the background (task b26i3hmrx), logging to scratchpad/energy.log.
+
+        **exp.yaml registrations merged this segment**
+        - h_spread_profile_transfers_to_unseen: {v_transfer, from: spread_dimension, to: unseen_genus}
+        - h_genus_below_spread_band: {v_lower, from: magnitude, to: midpoint_membership}
+        - h_spread_band_by_display: {v_depend, from: spread_dimension, to: syntax.display}
+        - h_band_energy_sets_midpoint: {v_depend, from: midpoint_membership, to: magnitude}
+        - All have b_ items and v_ground from d_road_region.
+
+        **Helper scripts in scratchpad:** add_sp.py, add_sb.py and add_bd.py generate the family, observation and fact lines. They insert individuals before the `facts:` line and append facts at the end.
+
+        4. Errors and fixes
+
+        - **Repeated exp.yaml merge conflicts:**
+          - Status lines: keep HEAD's supported / done lines plus main's new registrations, and drop main's stale untested lines.
+          - Pure additions: delete the markers and keep both sides.
+        - **No-comments hook false-positive:** it fired on a combined sed + commit command. Fixed by running them as separate Bash commands.
+        - **#802 CI failure:** HTTP 405 in auto_merge.py's merge(), on the old head c3331f7 against a stale base while the PR conflicted. Fixed by merging main (5392f30); #802 then merged.
+        - **Overclaim:** a commit message said the top band "barely separates genus". Corrected in the #806 PR body.
+        - **Wrong attribution:** I claimed the band-energy idea was covered by #801, which was wrong. I registered h_band_energy_sets_midpoint (#810) instead.
+
+        5. Problem Solving
+
+        Region road findings:
+        - Membership of swapped words rises when the high-variance top band (256 dims, 73–86% of variance) is compressed (#801) or removed (#805).
+        - The top band isn't markedly more display-driven by variance shares (#809, not judged).
+        - The current test (#812) checks whether simply equalizing the band energies is enough.
+        - #808 shows the genus share is slightly higher in the low band at every layer.
+
+        6. All user messages
+
+        There were no new user messages in this segment, only notifications, scheduled triggers and stop-hook feedback. Earlier messages still in force:
+        - 「d_road_regionは掘り続けるべきだ。幾何的にはこれは成り立つと読んでいる。」
+        - 「トークンが細かく分かれる ちょっとトランスフォーマーの仕組みから攻めてみるか」
+        - 「因みに他の反証されているregion系統にトランスフォーマーの仕組みからの示唆は無いか？」
+        - 「蒸留になってしまうからclaudeのモデルを対象にやるべき実験ではないけど…」
+        - 「続けよう」
+        - 「思ったより消耗が早いからハートビートは1h毎にしようか」
+        - 「9分毎に様子をみないとコンテナが落ちるよ」
+        - The security quotes in section 1.
+
+        7. Pending Tasks
+
+        - #812:
+          - Subscribe and assign the user now (required by the PR-creation hook).
+          - When the run finishes: merge main (for the hypothesis and issue), write exp.yaml families (e.g. geo_be with reads base / low / eq / eq_half, plus a judgment family), add observations, and link v_support or v_contradict.
+          - Commit the results, update the PR body with the issue number, and undraft after CI if judged.
+        - #806: when CI on a7788ac passes, undraft. On merge, remove .wt_band and its branch.
+        - #808: stays Draft. Remove .wt_disp only when it is merged or closed.
+        - #796 (.wt_reg_sfx, head 3404f93): manual review, CI green.
+        - #790 (.wt_srp, 45dedc6): Draft, not judged.
+        - Other open PRs: #782, #736, #742, #785, #798.
+        - Untested hypotheses to pursue later:
+          - h_spread_profile_transfers_to_unseen (look up its issue).
+          - b_genus_state_by_similar_suffix, after #796 merges.
+        - Heartbeat at 04:12Z: re-arm, then run the 周回. Place a send_later check about every 9 minutes during the run.
+
+        8. Current Work
+
+        Just created Draft PR #812 「h_band_energy_sets_midpoint: 帯の平方和の釣り合いが中点の帰属を決めるか」 from branch claude/h_band_energy_sets_midpoint (pre-registration 4b59afa). Started the background run of exp/experiments/geo_band_energy_midpoint.py (task b26i3hmrx). The PostToolUse hook then said:
+
+        「PR #812 を立てた。…今すぐ subscribe_pr_activity(owner=nonsugertea7821, repo=CMT, pullNumber=812) を呼ぶこと。あわせて issue_write(method=update, issue_number=812, assignees=[nonsugertea7821])」
+
+        Neither call has been made yet.
+
+        The hypothesis's issue was not yet created when last searched.
+
+        9. Optional Next Step
+
+        1. Call subscribe_pr_activity for #812 and issue_write to assign nonsugertea7821.
+        2. Place a send_later check about 9 minutes out.
+        3. When run b26i3hmrx completes:
+           - Read geo_band_energy_midpoint.json.
+           - Merge origin/main into .wt_energy.
+           - Add the exp.yaml families and observations, and link per the judgment (支持: lift(eq) ≥ 0.05; 反証: lift(eq) < 0.02).
+           - Commit the results with `git add -f` and push.
+           - Update the #812 body with the results and issue number.
+
+        If you need specific details from before compaction (like exact code snippets, error messages, or content you generated), read the full transcript at: /root/.claude/projects/-home-user-CMT/e05d2140-ce91-515f-a5fb-e6251e13d406.jsonl
+        Continue the conversation from where it left off without asking the user any further questions. Resume directly — do not acknowledge the summary, do not recap what was happening, do not preface with "I'll continue" or similar. Pick up the last task as if the break never happened.
+
+        The messages after this summary are the most recent messages from before compaction, kept verbatim. The summary was written without seeing them, so something it says has not happened yet may already have happened in them.
+facts:
+- {is: v_say, from: session_model, to: 01M88DXR5GAWK0MQ1M3FDP540S}
+- {is: v_refer, from: 01M88DXR5GAWK0MQ1M3FDP540S, to: ontology.v_refer}
+- {is: v_refer, from: 01M88DXR5GAWK0MQ1M3FDP540S, to: exp.v_check}
+- {is: v_refer, from: 01M88DXR5GAWK0MQ1M3FDP540S, to: exp.v_ground}
+- {is: v_refer, from: 01M88DXR5GAWK0MQ1M3FDP540S, to: exp.v_file_of}
+- {is: v_refer, from: 01M88DXR5GAWK0MQ1M3FDP540S, to: exp.v_rows_of}
+- {is: v_refer, from: 01M88DXR5GAWK0MQ1M3FDP540S, to: exp.v_axis_of}
+- {is: v_refer, from: 01M88DXR5GAWK0MQ1M3FDP540S, to: exp.v_value_of}
+- {is: v_refer, from: 01M88DXR5GAWK0MQ1M3FDP540S, to: exp.v_keys_of}
+- {is: v_refer, from: 01M88DXR5GAWK0MQ1M3FDP540S, to: exp.v_spell}
+- {is: v_refer, from: 01M88DXR5GAWK0MQ1M3FDP540S, to: exp.v_entry_of}
+- {is: v_refer, from: 01M88DXR5GAWK0MQ1M3FDP540S, to: exp.v_metric_of}
+- {is: v_refer, from: 01M88DXR5GAWK0MQ1M3FDP540S, to: exp.mean_value}
+- {is: v_refer, from: 01M88DXR5GAWK0MQ1M3FDP540S, to: exp.v_near}
+- {is: v_refer, from: 01M88DXR5GAWK0MQ1M3FDP540S, to: syntax.new}
+- {is: v_refer, from: 01M88DXR5GAWK0MQ1M3FDP540S, to: ontology.v_come_before}
+- {is: v_refer, from: 01M88DXR5GAWK0MQ1M3FDP540S, to: ontology.v_come_after}
+- {is: v_refer, from: 01M88DXR5GAWK0MQ1M3FDP540S, to: exp.v_support}
+- {is: v_refer, from: 01M88DXR5GAWK0MQ1M3FDP540S, to: exp.v_contradict}
+- {is: v_refer, from: 01M88DXR5GAWK0MQ1M3FDP540S, to: exp.hyp_supported}
+- {is: v_refer, from: 01M88DXR5GAWK0MQ1M3FDP540S, to: exp.hyp_refuted}
+- {is: v_refer, from: 01M88DXR5GAWK0MQ1M3FDP540S, to: exp.hyp_untested}
+- {is: v_refer, from: 01M88DXR5GAWK0MQ1M3FDP540S, to: exp.item_done}
+- {is: v_refer, from: 01M88DXR5GAWK0MQ1M3FDP540S, to: exp.item_queued}
+- {is: v_refer, from: 01M88DXR5GAWK0MQ1M3FDP540S, to: exp.v_transfer}
+- {is: v_refer, from: 01M88DXR5GAWK0MQ1M3FDP540S, to: exp.unseen_genus}
+- {is: v_refer, from: 01M88DXR5GAWK0MQ1M3FDP540S, to: exp.v_lower}
+- {is: v_refer, from: 01M88DXR5GAWK0MQ1M3FDP540S, to: ontology.v_depend}
+- {is: v_refer, from: 01M88DXR5GAWK0MQ1M3FDP540S, to: syntax.display}
