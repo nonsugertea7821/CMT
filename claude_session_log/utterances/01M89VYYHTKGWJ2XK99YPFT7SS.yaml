@@ -1,0 +1,18 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-25T17:27:25.498Z（UTC）
+individuals:
+  01M89VYYHTKGWJ2XK99YPFT7SS:
+    is: model_utterance
+    display: 発言 5304
+    val:
+      order: 5304
+      text: |
+        E64 の学習は再開後も進んでいます。残る 24 のうち 2 つの概念を学習し終え、次の確かめを 17:37 に置きました。
+
+        前回のまとめで「#872 の行はもう main にある」と書きましたが、間違いでした。いまの main を見ると、concept_kind の下にその否定の行（`{is: r_verb, from: var1, neg: true}`）はありません。#872 はまだ main を 1 行変える PR なので、手で見る待ちのままで合っています。
+
+        軽い列の最初にある 3 つの仮説（h_state_unique_display、h_checker_words_swap、h_translation_by_display）は、main ですでに判定が出ていました。h_state_unique_display は反証、残る 2 つは支持です。
+
+        そこで軽い列は、識別子化の鎖の次の段、h_rule_role_key_apart_from_state に移ります。この仮説が問うのは、法則の役割を示す鍵を、実行器が状態の変化として読む鍵（pre/post）と分けても、検査と実行が同じ結果になるかです。検査は tc と ec、実行は runtime と test_worlds で比べます。この確かめは未マージの #880 の上で比べるので、#880 のブランチから切って事前登録から始めます。
+facts:
+- {is: v_say, from: session_model, to: 01M89VYYHTKGWJ2XK99YPFT7SS}
+- {is: exp.v_answer, from: 01M89VYYHTKGWJ2XK99YPFT7SS, to: 01M89PSFS6B8JRMSN9NJ2R17KF}
