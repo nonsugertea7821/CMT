@@ -4663,6 +4663,52 @@ individuals:
   b_top_band_direction_lowers_midpoint: {is: item_queued}
   h_top_band_genus_bound_to_display: {is: hyp_untested}
   b_top_band_genus_bound_to_display: {is: item_queued}
+  geo_gt: {is: measurement_family}
+  geo_gt_layer: {is: family_axis, val: {text: layer}}
+  geo_gt_layer_8: {is: axis_value, val: {text: '8'}}
+  geo_gt_layer_14: {is: axis_value, val: {text: '14'}}
+  geo_gt_layer_20: {is: axis_value, val: {text: '20'}}
+  geo_gt_band: {is: family_axis, val: {text: band}}
+  geo_gt_band_top: {is: axis_value, val: {text: 'top'}}
+  geo_gt_band_low: {is: axis_value, val: {text: 'low'}}
+  geo_gt_band_diff: {is: axis_value, val: {text: 'diff'}}
+  geo_gt_stat: {is: family_axis, val: {text: stat}}
+  geo_gt_stat_acc_orig: {is: axis_value, val: {text: 'acc_orig'}}
+  geo_gt_stat_acc_swap: {is: axis_value, val: {text: 'acc_swap'}}
+  geo_gt_stat_drop: {is: axis_value, val: {text: 'drop'}}
+  o_geo_gt_8_top_acc_orig: {is: observation}
+  o_geo_gt_8_top_acc_swap: {is: observation}
+  o_geo_gt_8_top_drop: {is: observation}
+  o_geo_gt_8_low_acc_orig: {is: observation}
+  o_geo_gt_8_low_acc_swap: {is: observation}
+  o_geo_gt_8_low_drop: {is: observation}
+  o_geo_gt_8_diff_acc_orig: {is: observation}
+  o_geo_gt_8_diff_acc_swap: {is: observation}
+  o_geo_gt_8_diff_drop: {is: observation}
+  o_geo_gt_14_top_acc_orig: {is: observation}
+  o_geo_gt_14_top_acc_swap: {is: observation}
+  o_geo_gt_14_top_drop: {is: observation}
+  o_geo_gt_14_low_acc_orig: {is: observation}
+  o_geo_gt_14_low_acc_swap: {is: observation}
+  o_geo_gt_14_low_drop: {is: observation}
+  o_geo_gt_14_diff_acc_orig: {is: observation}
+  o_geo_gt_14_diff_acc_swap: {is: observation}
+  o_geo_gt_14_diff_drop: {is: observation}
+  o_geo_gt_20_top_acc_orig: {is: observation}
+  o_geo_gt_20_top_acc_swap: {is: observation}
+  o_geo_gt_20_top_drop: {is: observation}
+  o_geo_gt_20_low_acc_orig: {is: observation}
+  o_geo_gt_20_low_acc_swap: {is: observation}
+  o_geo_gt_20_low_drop: {is: observation}
+  o_geo_gt_20_diff_acc_orig: {is: observation}
+  o_geo_gt_20_diff_acc_swap: {is: observation}
+  o_geo_gt_20_diff_drop: {is: observation}
+  o_geo_gt_8_drop_diff_below_line: {is: observation}
+  o_geo_gt_8_drop_diff_above_zero: {is: observation}
+  o_geo_gt_14_drop_diff_below_zero: {is: observation}
+  o_geo_gt_20_drop_diff_below_zero: {is: observation}
+  o_geo_gt_8_low_drop_above_line: {is: observation}
+  o_geo_gt_8_orig_top_below_low: {is: observation}
 facts:
   - {is: v_collect, from: residual_space, to: residual_vector}
   - {is: v_sum, from: layer_output, to: state_shift, new: shifted_hidden_state}
@@ -12963,3 +13009,56 @@ facts:
   - {is: v_refer, from: h_top_band_genus_bound_to_display, to: {is: v_lower, from: syntax.display, to: spread_dimension}}
   - {is: v_check, from: b_top_band_genus_bound_to_display, to: h_top_band_genus_bound_to_display}
   - {is: v_ground, from: d_road_region, to: h_top_band_genus_bound_to_display}
+  - {is: v_file_of, from: geo_top_band_genus_transfer.json, to: geo_gt}
+  - {is: v_rows_of, from: [layers, '{layer}'], to: geo_gt}
+  - {is: v_axis_of, from: geo_gt_layer, to: geo_gt}
+  - {is: v_value_of, from: geo_gt_layer_8, to: geo_gt_layer}
+  - {is: v_value_of, from: geo_gt_layer_14, to: geo_gt_layer}
+  - {is: v_value_of, from: geo_gt_layer_20, to: geo_gt_layer}
+  - {is: v_axis_of, from: geo_gt_band, to: geo_gt}
+  - {is: v_keys_of, from: '#', to: geo_gt_band}
+  - {is: v_value_of, from: geo_gt_band_top, to: geo_gt_band}
+  - {is: v_spell, from: geo_gt_band_top, to: ['top']}
+  - {is: v_value_of, from: geo_gt_band_low, to: geo_gt_band}
+  - {is: v_spell, from: geo_gt_band_low, to: ['low']}
+  - {is: v_value_of, from: geo_gt_band_diff, to: geo_gt_band}
+  - {is: v_spell, from: geo_gt_band_diff, to: ['diff']}
+  - {is: v_axis_of, from: geo_gt_stat, to: geo_gt}
+  - {is: v_value_of, from: geo_gt_stat_acc_orig, to: geo_gt_stat}
+  - {is: v_value_of, from: geo_gt_stat_acc_swap, to: geo_gt_stat}
+  - {is: v_value_of, from: geo_gt_stat_drop, to: geo_gt_stat}
+  - {is: v_entry_of, from: '{stat}', to: geo_gt}
+  - {is: v_metric_of, from: geo_gt, to: mean_value}
+  - {is: v_refer, from: o_geo_gt_8_top_acc_orig, to: {is: v_near, from: geo_gt.8.top.acc_orig.mean_value, to: 0.825, new: 0.001}}
+  - {is: v_refer, from: o_geo_gt_8_top_acc_swap, to: {is: v_near, from: geo_gt.8.top.acc_swap.mean_value, to: 0.25, new: 0.001}}
+  - {is: v_refer, from: o_geo_gt_8_top_drop, to: {is: v_near, from: geo_gt.8.top.drop.mean_value, to: 0.575, new: 0.001}}
+  - {is: v_refer, from: o_geo_gt_8_low_acc_orig, to: {is: v_near, from: geo_gt.8.low.acc_orig.mean_value, to: 0.9, new: 0.001}}
+  - {is: v_refer, from: o_geo_gt_8_low_acc_swap, to: {is: v_near, from: geo_gt.8.low.acc_swap.mean_value, to: 0.375, new: 0.001}}
+  - {is: v_refer, from: o_geo_gt_8_low_drop, to: {is: v_near, from: geo_gt.8.low.drop.mean_value, to: 0.525, new: 0.001}}
+  - {is: v_refer, from: o_geo_gt_8_diff_acc_orig, to: {is: v_near, from: geo_gt.8.diff.acc_orig.mean_value, to: -0.075, new: 0.001}}
+  - {is: v_refer, from: o_geo_gt_8_diff_acc_swap, to: {is: v_near, from: geo_gt.8.diff.acc_swap.mean_value, to: -0.125, new: 0.001}}
+  - {is: v_refer, from: o_geo_gt_8_diff_drop, to: {is: v_near, from: geo_gt.8.diff.drop.mean_value, to: 0.05, new: 0.001}}
+  - {is: v_refer, from: o_geo_gt_14_top_acc_orig, to: {is: v_near, from: geo_gt.14.top.acc_orig.mean_value, to: 0.75, new: 0.001}}
+  - {is: v_refer, from: o_geo_gt_14_top_acc_swap, to: {is: v_near, from: geo_gt.14.top.acc_swap.mean_value, to: 0.35, new: 0.001}}
+  - {is: v_refer, from: o_geo_gt_14_top_drop, to: {is: v_near, from: geo_gt.14.top.drop.mean_value, to: 0.4, new: 0.001}}
+  - {is: v_refer, from: o_geo_gt_14_low_acc_orig, to: {is: v_near, from: geo_gt.14.low.acc_orig.mean_value, to: 0.8, new: 0.001}}
+  - {is: v_refer, from: o_geo_gt_14_low_acc_swap, to: {is: v_near, from: geo_gt.14.low.acc_swap.mean_value, to: 0.375, new: 0.001}}
+  - {is: v_refer, from: o_geo_gt_14_low_drop, to: {is: v_near, from: geo_gt.14.low.drop.mean_value, to: 0.425, new: 0.001}}
+  - {is: v_refer, from: o_geo_gt_14_diff_acc_orig, to: {is: v_near, from: geo_gt.14.diff.acc_orig.mean_value, to: -0.05, new: 0.001}}
+  - {is: v_refer, from: o_geo_gt_14_diff_acc_swap, to: {is: v_near, from: geo_gt.14.diff.acc_swap.mean_value, to: -0.025, new: 0.001}}
+  - {is: v_refer, from: o_geo_gt_14_diff_drop, to: {is: v_near, from: geo_gt.14.diff.drop.mean_value, to: -0.025, new: 0.001}}
+  - {is: v_refer, from: o_geo_gt_20_top_acc_orig, to: {is: v_near, from: geo_gt.20.top.acc_orig.mean_value, to: 0.75, new: 0.001}}
+  - {is: v_refer, from: o_geo_gt_20_top_acc_swap, to: {is: v_near, from: geo_gt.20.top.acc_swap.mean_value, to: 0.375, new: 0.001}}
+  - {is: v_refer, from: o_geo_gt_20_top_drop, to: {is: v_near, from: geo_gt.20.top.drop.mean_value, to: 0.375, new: 0.001}}
+  - {is: v_refer, from: o_geo_gt_20_low_acc_orig, to: {is: v_near, from: geo_gt.20.low.acc_orig.mean_value, to: 0.875, new: 0.001}}
+  - {is: v_refer, from: o_geo_gt_20_low_acc_swap, to: {is: v_near, from: geo_gt.20.low.acc_swap.mean_value, to: 0.45, new: 0.001}}
+  - {is: v_refer, from: o_geo_gt_20_low_drop, to: {is: v_near, from: geo_gt.20.low.drop.mean_value, to: 0.425, new: 0.001}}
+  - {is: v_refer, from: o_geo_gt_20_diff_acc_orig, to: {is: v_near, from: geo_gt.20.diff.acc_orig.mean_value, to: -0.125, new: 0.001}}
+  - {is: v_refer, from: o_geo_gt_20_diff_acc_swap, to: {is: v_near, from: geo_gt.20.diff.acc_swap.mean_value, to: -0.075, new: 0.001}}
+  - {is: v_refer, from: o_geo_gt_20_diff_drop, to: {is: v_near, from: geo_gt.20.diff.drop.mean_value, to: -0.05, new: 0.001}}
+  - {is: v_refer, from: o_geo_gt_8_drop_diff_below_line, to: {is: v_come_before, from: geo_gt.8.diff.drop.mean_value, to: 0.1}}
+  - {is: v_refer, from: o_geo_gt_8_drop_diff_above_zero, to: {is: v_come_after, from: geo_gt.8.diff.drop.mean_value, to: 0}}
+  - {is: v_refer, from: o_geo_gt_14_drop_diff_below_zero, to: {is: v_come_before, from: geo_gt.14.diff.drop.mean_value, to: 0}}
+  - {is: v_refer, from: o_geo_gt_20_drop_diff_below_zero, to: {is: v_come_before, from: geo_gt.20.diff.drop.mean_value, to: 0}}
+  - {is: v_refer, from: o_geo_gt_8_low_drop_above_line, to: {is: v_come_after, from: geo_gt.8.low.drop.mean_value, to: 0.4}}
+  - {is: v_refer, from: o_geo_gt_8_orig_top_below_low, to: {is: v_come_before, from: geo_gt.8.top.acc_orig.mean_value, to: geo_gt.8.low.acc_orig.mean_value}}
