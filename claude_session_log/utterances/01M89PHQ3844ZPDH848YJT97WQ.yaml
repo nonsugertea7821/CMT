@@ -1,0 +1,28 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-25T15:52:49.000Z（UTC）
+individuals:
+  01M89PHQ3844ZPDH848YJT97WQ:
+    is: model_utterance
+    display: 発言 5197
+    val:
+      order: 5197
+      text: |
+        気づいてくださったとおりです。このセッションでは、私が CSCL を書いて型検査の失敗を読み、直す流れで正しい形に至っています。#868 は 3 回落ちて、3 回とも直しました。
+        1. teaching を v_depend の始点に置けなかった。
+        2. 同じ中身に名前がなかった（named_mod_share）。
+        3. claims の側から exp の個体が見えなかった。
+
+        ただし、直すときに使ったのは検査の出力だけではありません。体系の中にある既存の書き方の例を grep で探して、それに合わせて直しました。つまり「検査器の出力」と「体系そのものを参照すること」の両方で回っています。E54 では Qwen が検査器の出力を無視したので、同じループでも効きはモデルで違いそうです。Claude は実験の対象にしない取り決めなので、確かめるなら Qwen の規模の違いで行います。
+
+        シーケンスの件と合わせて、仮説として登録しました。
+        - h_sequence_by_current_order（claims.yaml）: 過程について述べる領域は、いまの順の書き方（v_come_after・v_stage・pre・post）で書き切れる。
+          - 結ぶ決定は、v_come_after の始点を持続体とする暫定の決定 d_sig_come_after_from です。
+          - 小さなシステムの手順を実際に書いて型検査に通し、書けない所が出れば反証です。ユースケースとしての確かめも兼ねます。
+        - h_formalization_by_weights（exp.yaml）: 式に直す正確さは、どのモデルか（重み）に頼る。結ぶ決定は d_road_checker です。
+
+        ブランチ claude/register-sequence-writing は push 済みですが、PR を立てる呼び出しが GitHub の 500 で 2 回失敗しました。5 分後（15:58）に立て直す予約を入れています。#868 の 3 回目の失敗も直して push し、いま CI を待っています。
+facts:
+- {is: v_say, from: session_model, to: 01M89PHQ3844ZPDH848YJT97WQ}
+- {is: exp.v_answer, from: 01M89PHQ3844ZPDH848YJT97WQ, to: 01M89P0BMMJ1P76GVS969BTESK}
+- {is: v_refer, from: 01M89PHQ3844ZPDH848YJT97WQ, to: ontology.v_depend}
+- {is: v_refer, from: 01M89PHQ3844ZPDH848YJT97WQ, to: ontology.v_come_after}
+- {is: v_refer, from: 01M89PHQ3844ZPDH848YJT97WQ, to: ontology.v_stage}
