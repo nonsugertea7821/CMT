@@ -3389,6 +3389,14 @@ individuals:
   o_e56b_taught_named_e55_robust: {is: observation}
   o_e56b_taught_not_above_edges: {is: observation}
   o_e56b_taught_not_above_examples_only: {is: observation}
+  e57b: {is: measurement_family}
+  e57b_cond: {is: family_axis, val: {text: cond}}
+  e57b_cond_taught_wrong: {is: axis_value, val: {text: 'taught_wrong'}}
+  o_e57b_taught_wrong: {is: observation}
+  o_e57b_taught_wrong_robust: {is: observation}
+  o_e57b_wrong_above_copy_line: {is: observation}
+  o_e57b_wrong_near_examples_only: {is: observation}
+  o_e57b_wrong_below_closure: {is: observation}
   e45: {is: measurement_family}
   e45_cond: {is: family_axis, val: {text: cond}}
   e45_cond_number_extends: {is: axis_value, val: {text: 'number_extends'}}
@@ -4476,7 +4484,7 @@ individuals:
   h_model_misses_named_hop: {is: hyp_supported}
   b_model_misses_named_hop: {is: item_done}
   b_checker_output_read_when_taught_edges: {is: item_done}
-  h_checker_read_by_answer_copy: {is: hyp_untested}
+  h_checker_read_by_answer_copy: {is: hyp_refuted}
   h_consistency_by_checker_teaching: {is: hyp_untested}
   b_consistency_by_checker_teaching: {is: item_queued}
   h_formal_teacher_independent_of_model: {is: hyp_untested}
@@ -4485,7 +4493,7 @@ individuals:
   b_consistency_by_formal_corpus: {is: item_queued}
   h_formal_corpus_transfers_to_apply: {is: hyp_untested}
   b_formal_corpus_transfers_to_apply: {is: item_queued}
-  b_checker_read_by_answer_copy: {is: item_queued}
+  b_checker_read_by_answer_copy: {is: item_done}
   h_refer_ops_share_direction: {is: hyp_refuted}
   b_refer_ops_share_direction: {is: item_done}
   h_refer_cuts_orthogonal: {is: hyp_untested}
@@ -14029,3 +14037,22 @@ facts:
   - {is: v_refer, from: h_consistency_beyond_accuracy, to: {is: lang.v_not_depend, from: cross_usage_consistency, to: accuracy}}
   - {is: v_check, from: b_consistency_beyond_accuracy, to: h_consistency_beyond_accuracy}
   - {is: v_ground, from: d_metric, to: h_consistency_beyond_accuracy}
+  - {is: v_file_of, from: 'e57_Qwen3-4B.json', to: e57b}
+  - {is: v_rows_of, from: [items, '{cond}'], to: e57b}
+  - {is: v_axis_of, from: e57b_cond, to: e57b}
+  - {is: v_value_of, from: e57b_cond_taught_wrong, to: e57b_cond}
+  - {is: v_denote, from: e57b_cond_taught_wrong, to: syntax.mod}
+  - {is: v_denote, from: e57b_cond_taught_wrong, to: syntax.identifier}
+  - {is: v_denote, from: e57b_cond_taught_wrong, to: lang.type_checker}
+  - {is: v_denote, from: e57b_cond_taught_wrong, to: application_example}
+  - {is: v_entry_of, from: pair, to: e57b}
+  - {is: v_metric_of, from: e57b, to: accuracy}
+  - {is: v_metric_of, from: e57b, to: order_robust_accuracy}
+  - {is: v_metric_of, from: e57b, to: logit_margin}
+  - {is: v_refer, from: o_e57b_taught_wrong, to: {is: v_level, from: e57b.taught_wrong.accuracy, to: 0.6875}}
+  - {is: v_refer, from: o_e57b_taught_wrong_robust, to: {is: v_level, from: e57b.taught_wrong.order_robust_accuracy, to: 0.4375}}
+  - {is: v_refer, from: o_e57b_wrong_above_copy_line, to: {is: v_come_after, from: e57b.taught_wrong.accuracy, to: 0.3125}}
+  - {is: v_refer, from: o_e57b_wrong_near_examples_only, to: {is: v_near, from: e57b.taught_wrong.accuracy, to: e55b.taught_named.accuracy, new: 0.0626}}
+  - {is: v_refer, from: o_e57b_wrong_below_closure, to: {is: v_come_before, from: e57b.taught_wrong.accuracy, to: e55b.taught_closure.accuracy}}
+  - {is: v_contradict, from: o_e57b_wrong_near_examples_only, to: h_checker_read_by_answer_copy}
+  - {is: v_contradict, from: o_e57b_wrong_above_copy_line, to: h_checker_read_by_answer_copy}
