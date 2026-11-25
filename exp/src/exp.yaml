@@ -314,6 +314,7 @@ nodes:
   verdict_stability: {display: 選択肢の順序に対する判定の安定, extends: quality_measure_to, mod: {of: [v_depend, from], with: verdict_pair}}
   redefinition_success: {display: 再定義の成功, extends: quality_measure_to, mod: depend_from_redefinition}
   cross_usage_consistency: {display: 使い方をまたぐ一貫性, extends: quality_measure_to, mod: {of: [v_measure, from], with: usage, quant: all}}
+  margin_spread: {display: 概念をまたぐロジット差の散らばり, extends: quality_measure_to, mod: {of: [v_measure, from], with: logit_margin, quant: all}}
   preceding_definition_effect: {display: 前に並ぶ定義による追従の低下, extends: quality_measure_to, mod: depend_from_preceding_definitions_set}
   sibling_discrimination: {display: 兄弟概念の弁別, extends: quality_measure_to, mod: depend_from_sibling_pair}
 
@@ -3710,6 +3711,8 @@ individuals:
   b_genus_last_token_by_suffix: {is: item_done}
   h_examples_raise_apply: {is: hyp_untested}
   b_examples_raise_apply: {is: item_queued}
+  h_examples_compress_margin: {is: hyp_untested}
+  b_examples_compress_margin: {is: item_queued}
   h_consistency_by_examples: {is: hyp_refuted}
   b_consistency_by_examples: {is: item_done}
   e59s_15b: {is: measurement_family}
@@ -14228,6 +14231,9 @@ facts:
   - {is: v_refer, from: h_examples_raise_apply, to: {is: v_rely, from: usage_apply, to: application_example}}
   - {is: v_check, from: b_examples_raise_apply, to: h_examples_raise_apply}
   - {is: v_ground, from: d_metric, to: h_examples_raise_apply}
+  - {is: v_refer, from: h_examples_compress_margin, to: {is: v_rely, from: margin_spread, to: application_example}}
+  - {is: v_check, from: b_examples_compress_margin, to: h_examples_compress_margin}
+  - {is: v_ground, from: d_metric, to: h_examples_compress_margin}
   - {is: v_file_of, from: e59_Qwen2.5-1.5B-Instruct.json, to: e59s_15b}
   - {is: v_rows_of, from: [summary], to: e59s_15b}
   - {is: v_axis_of, from: e59s_15b_cond, to: e59s_15b}
