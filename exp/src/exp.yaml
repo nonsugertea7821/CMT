@@ -285,6 +285,7 @@ nodes:
   state_feature_direction: {display: 隠れ状態を組み立てる特徴の向き, extends: state_shift, mod: compose_to_hidden_state}
   term_server: {display: 用語サーバー, extends: artifact, mod: {of: [v_judge_definition, from]}}
   model_design: {display: モデルについての設計, extends: information_entity_design_to, mod: {of: [v_refer, from], with: model}}
+  formal_taught_model: {display: 概念式で教えたモデル, extends: model, mod: {of: [v_teach, to], with: concept_expression}}
   information_entity_design_to: {display: 設計する先の情報, extends: information_entity, mod: design_to}
   typed_graph: {display: 型付きグラフ, extends: information_entity_refer_from_concept_n_refer_from_v_depend, mod: {of: [v_involve, to], with: inference, quant: all}}
 
@@ -4788,6 +4789,10 @@ individuals:
   b_formal_teacher_independent_of_model: {is: item_queued}
   h_consistency_by_formal_corpus: {is: hyp_untested}
   b_consistency_by_formal_corpus: {is: item_queued}
+  h_display_free_region_by_formal_teaching: {is: hyp_untested}
+  b_display_free_region_by_formal_teaching: {is: item_queued}
+  h_formal_taught_keeps_consistency: {is: hyp_untested}
+  b_formal_taught_keeps_consistency: {is: item_queued}
   h_formal_corpus_transfers_to_apply: {is: hyp_untested}
   b_formal_corpus_transfers_to_apply: {is: item_queued}
   b_checker_read_by_answer_copy: {is: item_done}
@@ -14422,6 +14427,14 @@ facts:
   - {is: v_refer, from: h_design_consists_of_adopted, to: {is: v_consist, from: this_design, to: [typed_graph, rendered_text, concept_vector]}}
   - {is: v_check, from: b_design_consists_of_adopted, to: h_design_consists_of_adopted}
   - {is: v_ground, from: d_goal, to: h_design_consists_of_adopted}
+  - {is: v_refer, from: h_display_free_region_by_formal_teaching, to: {is: v_immune, from: midpoint_membership, to: syntax.display}}
+  - {is: v_scope, from: formal_taught_model, to: h_display_free_region_by_formal_teaching}
+  - {is: v_check, from: b_display_free_region_by_formal_teaching, to: h_display_free_region_by_formal_teaching}
+  - {is: v_ground, from: d_road_region, to: h_display_free_region_by_formal_teaching}
+  - {is: v_refer, from: h_formal_taught_keeps_consistency, to: {is: v_rely, from: cross_usage_consistency, to: concept_expression}}
+  - {is: v_scope, from: formal_taught_model, to: h_formal_taught_keeps_consistency}
+  - {is: v_check, from: b_formal_taught_keeps_consistency, to: h_formal_taught_keeps_consistency}
+  - {is: v_ground, from: d_metric, to: h_formal_taught_keeps_consistency}
   - {is: v_file_of, from: 'e57_Qwen3-4B.json', to: e57b}
   - {is: v_rows_of, from: [items, '{cond}'], to: e57b}
   - {is: v_axis_of, from: e57b_cond, to: e57b}
