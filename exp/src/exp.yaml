@@ -3783,6 +3783,46 @@ individuals:
   o_geo_sgd_8_p: {is: observation}
   o_geo_sgd_8_up_small: {is: observation}
   o_geo_sgd_8_derived_above_orig: {is: observation}
+  geo_sbp: {is: measurement_family}
+  geo_sbp_layer: {is: family_axis, val: {text: layer}}
+  geo_sbp_layer_8: {is: axis_value, val: {text: '8'}}
+  geo_sbp_layer_14: {is: axis_value, val: {text: '14'}}
+  geo_sbp_layer_20: {is: axis_value, val: {text: '20'}}
+  geo_sbp_stat: {is: family_axis, val: {text: stat}}
+  geo_sbp_stat_real_orig: {is: axis_value, val: {text: real_orig}}
+  geo_sbp_stat_real_derived: {is: axis_value, val: {text: real_derived}}
+  geo_sbp_stat_nonce_orig: {is: axis_value, val: {text: nonce_orig}}
+  geo_sbp_stat_nonce_derived: {is: axis_value, val: {text: nonce_derived}}
+  geo_sbp_stat_up_real: {is: axis_value, val: {text: up_real}}
+  geo_sbp_stat_up_nonce: {is: axis_value, val: {text: up_nonce}}
+  geo_sbp_stat_gap: {is: axis_value, val: {text: gap}}
+  geo_sbp_stat_p: {is: axis_value, val: {text: p}}
+  o_geo_sbp_8_real_orig: {is: observation}
+  o_geo_sbp_8_real_derived: {is: observation}
+  o_geo_sbp_8_nonce_orig: {is: observation}
+  o_geo_sbp_8_nonce_derived: {is: observation}
+  o_geo_sbp_8_up_real: {is: observation}
+  o_geo_sbp_8_up_nonce: {is: observation}
+  o_geo_sbp_8_gap: {is: observation}
+  o_geo_sbp_8_p: {is: observation}
+  o_geo_sbp_14_real_orig: {is: observation}
+  o_geo_sbp_14_real_derived: {is: observation}
+  o_geo_sbp_14_nonce_orig: {is: observation}
+  o_geo_sbp_14_nonce_derived: {is: observation}
+  o_geo_sbp_14_up_real: {is: observation}
+  o_geo_sbp_14_up_nonce: {is: observation}
+  o_geo_sbp_14_gap: {is: observation}
+  o_geo_sbp_14_p: {is: observation}
+  o_geo_sbp_20_real_orig: {is: observation}
+  o_geo_sbp_20_real_derived: {is: observation}
+  o_geo_sbp_20_nonce_orig: {is: observation}
+  o_geo_sbp_20_nonce_derived: {is: observation}
+  o_geo_sbp_20_up_real: {is: observation}
+  o_geo_sbp_20_up_nonce: {is: observation}
+  o_geo_sbp_20_gap: {is: observation}
+  o_geo_sbp_20_p: {is: observation}
+  o_geo_sbp_8_gap_small: {is: observation}
+  o_geo_sbp_8_real_orig_above_nonce_orig: {is: observation}
   o_geo_midpoint_precondition: {is: observation}
   o_geo_axis_readable: {is: observation}
   o_geo_axis_precondition: {is: observation}
@@ -3933,8 +3973,8 @@ individuals:
   h_ambiguity_is_region_choice: {is: hyp_untested}
   b_ambiguity_is_region_choice: {is: item_queued}
   h_convex_prior_resists_redefinition: {is: hyp_untested}
-  h_state_by_prior_meaning: {is: hyp_untested}
-  b_state_by_prior_meaning: {is: item_queued}
+  h_state_by_prior_meaning: {is: hyp_refuted}
+  b_state_by_prior_meaning: {is: item_done}
   h_channel_lowers_prior_verdict: {is: hyp_untested}
   h_mixed_from_missing_ratio: {is: hyp_untested}
   b_mixed_from_missing_ratio: {is: item_queued}
@@ -9521,6 +9561,62 @@ facts:
   - {is: v_refer, from: o_geo_sgd_8_up_small, to: {is: v_near, from: geo_sgd.8.up.mean_value, to: 0.0, new: 0.05}}
   - {is: v_refer, from: o_geo_sgd_8_derived_above_orig, to: {is: v_come_after, from: geo_sgd.8.G_derived.mean_value, to: geo_sgd.8.G_orig.mean_value}}
   - {is: v_contradict, from: o_geo_sgd_8_up_small, to: h_state_by_genus_display}
+  - {is: v_file_of, from: geo_state_by_prior_meaning.json, to: geo_sbp}
+  - {is: v_rows_of, from: [layers], to: geo_sbp}
+  - {is: v_axis_of, from: geo_sbp_layer, to: geo_sbp}
+  - {is: v_keys_of, from: '#', to: geo_sbp_layer}
+  - {is: v_value_of, from: geo_sbp_layer_8, to: geo_sbp_layer}
+  - {is: v_spell, from: geo_sbp_layer_8, to: ['8']}
+  - {is: v_value_of, from: geo_sbp_layer_14, to: geo_sbp_layer}
+  - {is: v_spell, from: geo_sbp_layer_14, to: ['14']}
+  - {is: v_value_of, from: geo_sbp_layer_20, to: geo_sbp_layer}
+  - {is: v_spell, from: geo_sbp_layer_20, to: ['20']}
+  - {is: v_axis_of, from: geo_sbp_stat, to: geo_sbp}
+  - {is: v_value_of, from: geo_sbp_stat_real_orig, to: geo_sbp_stat}
+  - {is: v_spell, from: geo_sbp_stat_real_orig, to: real_orig}
+  - {is: v_value_of, from: geo_sbp_stat_real_derived, to: geo_sbp_stat}
+  - {is: v_spell, from: geo_sbp_stat_real_derived, to: real_derived}
+  - {is: v_value_of, from: geo_sbp_stat_nonce_orig, to: geo_sbp_stat}
+  - {is: v_spell, from: geo_sbp_stat_nonce_orig, to: nonce_orig}
+  - {is: v_value_of, from: geo_sbp_stat_nonce_derived, to: geo_sbp_stat}
+  - {is: v_spell, from: geo_sbp_stat_nonce_derived, to: nonce_derived}
+  - {is: v_value_of, from: geo_sbp_stat_up_real, to: geo_sbp_stat}
+  - {is: v_spell, from: geo_sbp_stat_up_real, to: up_real}
+  - {is: v_value_of, from: geo_sbp_stat_up_nonce, to: geo_sbp_stat}
+  - {is: v_spell, from: geo_sbp_stat_up_nonce, to: up_nonce}
+  - {is: v_value_of, from: geo_sbp_stat_gap, to: geo_sbp_stat}
+  - {is: v_spell, from: geo_sbp_stat_gap, to: gap}
+  - {is: v_value_of, from: geo_sbp_stat_p, to: geo_sbp_stat}
+  - {is: v_spell, from: geo_sbp_stat_p, to: p}
+  - {is: v_entry_of, from: '{stat}', to: geo_sbp}
+  - {is: v_metric_of, from: geo_sbp, to: mean_value}
+  - {is: v_refer, from: o_geo_sbp_8_real_orig, to: {is: v_near, from: geo_sbp.8.real_orig.mean_value, to: 0.0825, new: 0.001}}
+  - {is: v_refer, from: o_geo_sbp_8_real_derived, to: {is: v_near, from: geo_sbp.8.real_derived.mean_value, to: 0.1078, new: 0.001}}
+  - {is: v_refer, from: o_geo_sbp_8_nonce_orig, to: {is: v_near, from: geo_sbp.8.nonce_orig.mean_value, to: -0.0013, new: 0.001}}
+  - {is: v_refer, from: o_geo_sbp_8_nonce_derived, to: {is: v_near, from: geo_sbp.8.nonce_derived.mean_value, to: 0.0105, new: 0.001}}
+  - {is: v_refer, from: o_geo_sbp_8_up_real, to: {is: v_near, from: geo_sbp.8.up_real.mean_value, to: 0.0253, new: 0.001}}
+  - {is: v_refer, from: o_geo_sbp_8_up_nonce, to: {is: v_near, from: geo_sbp.8.up_nonce.mean_value, to: 0.0118, new: 0.001}}
+  - {is: v_refer, from: o_geo_sbp_8_gap, to: {is: v_near, from: geo_sbp.8.gap.mean_value, to: -0.0136, new: 0.001}}
+  - {is: v_refer, from: o_geo_sbp_8_p, to: {is: v_near, from: geo_sbp.8.p.mean_value, to: 0.16, new: 0.001}}
+  - {is: v_refer, from: o_geo_sbp_14_real_orig, to: {is: v_near, from: geo_sbp.14.real_orig.mean_value, to: 0.0848, new: 0.001}}
+  - {is: v_refer, from: o_geo_sbp_14_real_derived, to: {is: v_near, from: geo_sbp.14.real_derived.mean_value, to: 0.1333, new: 0.001}}
+  - {is: v_refer, from: o_geo_sbp_14_nonce_orig, to: {is: v_near, from: geo_sbp.14.nonce_orig.mean_value, to: 0.0019, new: 0.001}}
+  - {is: v_refer, from: o_geo_sbp_14_nonce_derived, to: {is: v_near, from: geo_sbp.14.nonce_derived.mean_value, to: 0.0526, new: 0.001}}
+  - {is: v_refer, from: o_geo_sbp_14_up_real, to: {is: v_near, from: geo_sbp.14.up_real.mean_value, to: 0.0485, new: 0.001}}
+  - {is: v_refer, from: o_geo_sbp_14_up_nonce, to: {is: v_near, from: geo_sbp.14.up_nonce.mean_value, to: 0.0508, new: 0.001}}
+  - {is: v_refer, from: o_geo_sbp_14_gap, to: {is: v_near, from: geo_sbp.14.gap.mean_value, to: 0.0023, new: 0.001}}
+  - {is: v_refer, from: o_geo_sbp_14_p, to: {is: v_near, from: geo_sbp.14.p.mean_value, to: 0.0005, new: 0.001}}
+  - {is: v_refer, from: o_geo_sbp_20_real_orig, to: {is: v_near, from: geo_sbp.20.real_orig.mean_value, to: 0.0836, new: 0.001}}
+  - {is: v_refer, from: o_geo_sbp_20_real_derived, to: {is: v_near, from: geo_sbp.20.real_derived.mean_value, to: 0.1187, new: 0.001}}
+  - {is: v_refer, from: o_geo_sbp_20_nonce_orig, to: {is: v_near, from: geo_sbp.20.nonce_orig.mean_value, to: -0.0041, new: 0.001}}
+  - {is: v_refer, from: o_geo_sbp_20_nonce_derived, to: {is: v_near, from: geo_sbp.20.nonce_derived.mean_value, to: 0.0267, new: 0.001}}
+  - {is: v_refer, from: o_geo_sbp_20_up_real, to: {is: v_near, from: geo_sbp.20.up_real.mean_value, to: 0.0351, new: 0.001}}
+  - {is: v_refer, from: o_geo_sbp_20_up_nonce, to: {is: v_near, from: geo_sbp.20.up_nonce.mean_value, to: 0.0308, new: 0.001}}
+  - {is: v_refer, from: o_geo_sbp_20_gap, to: {is: v_near, from: geo_sbp.20.gap.mean_value, to: -0.0043, new: 0.001}}
+  - {is: v_refer, from: o_geo_sbp_20_p, to: {is: v_near, from: geo_sbp.20.p.mean_value, to: 0.013, new: 0.001}}
+  - {is: v_refer, from: o_geo_sbp_8_gap_small, to: {is: v_near, from: geo_sbp.8.gap.mean_value, to: 0.0, new: 0.02}}
+  - {is: v_refer, from: o_geo_sbp_8_real_orig_above_nonce_orig, to: {is: v_come_after, from: geo_sbp.8.real_orig.mean_value, to: geo_sbp.8.nonce_orig.mean_value}}
+  - {is: v_contradict, from: o_geo_sbp_8_gap_small, to: h_state_by_prior_meaning}
   - {is: v_file_of, from: geo_axis_readout_midpoint.json, to: geo_axis_readout_midpoint}
   - {is: v_rows_of, from: [rows], to: geo_axis_readout_midpoint}
   - {is: v_axis_of, from: geo_axis_readout_midpoint_cond, to: geo_axis_readout_midpoint}
