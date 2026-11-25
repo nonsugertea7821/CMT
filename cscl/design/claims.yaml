@@ -214,6 +214,8 @@ individuals:
   b_grammar_names_parts: {is: exp.item_done}
   h_grammar_parts_rel_by_new_nodes: {is: exp.hyp_untested}
   b_grammar_parts_rel_by_new_nodes: {is: exp.item_queued}
+  h_rule_role_key_apart_from_state: {is: exp.hyp_untested}
+  b_rule_role_key_apart_from_state: {is: exp.item_queued}
   h_layers_unhardcode: {is: exp.hyp_refuted}
   b_layers_unhardcode: {is: exp.item_done}
   h_concept_bounds_model_state: {is: exp.hyp_untested}
@@ -1294,6 +1296,9 @@ facts:
   - {is: v_refer, from: h_grammar_parts_rel_by_new_nodes, to: {is: v_not_depend, from: syntax.law_relation, to: syntax.passage}}
   - {is: exp.v_check, from: b_grammar_parts_rel_by_new_nodes, to: h_grammar_parts_rel_by_new_nodes}
   - {is: exp.v_ground, from: d_cscl_display_derived, to: h_grammar_parts_rel_by_new_nodes}
+  - {is: v_refer, from: h_rule_role_key_apart_from_state, to: {is: v_not_depend, from: syntax.law_rule, to: [syntax.pre, syntax.post]}}
+  - {is: exp.v_check, from: b_rule_role_key_apart_from_state, to: h_rule_role_key_apart_from_state}
+  - {is: exp.v_ground, from: d_cscl_display_derived, to: h_rule_role_key_apart_from_state}
   - {is: v_refer, from: h_layers_unhardcode, to: {is: v_not_depend, from: type_checker, to: name_choice}}
   - {is: v_refer, from: h_layers_unhardcode, to: {is: v_depend, from: type_checker, to: [layer_placement, signature_class]}}
   - {is: exp.v_check, from: b_layers_unhardcode, to: h_layers_unhardcode}
