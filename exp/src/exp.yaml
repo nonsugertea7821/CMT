@@ -3555,8 +3555,8 @@ individuals:
   h_chain_length_lowers_following: {is: hyp_mixed}
   h_scratchpad_raises_rule_following: {is: hyp_refuted}
   h_aid_used_with_example: {is: hyp_untested}
-  h_state_by_genus_display: {is: hyp_untested}
-  b_state_by_genus_display: {is: item_queued}
+  h_state_by_genus_display: {is: hyp_refuted}
+  b_state_by_genus_display: {is: item_done}
   h_genus_region_immune_display: {is: hyp_untested}
   b_genus_region_immune_display: {is: item_queued}
   h_consistency_by_examples: {is: hyp_untested}
@@ -3759,6 +3759,28 @@ individuals:
   o_geo_ros_Rlex_p: {is: observation}
   o_geo_ros_R_near_null: {is: observation}
   o_geo_ros_C_above_R: {is: observation}
+  geo_sgd: {is: measurement_family}
+  geo_sgd_layer: {is: family_axis, val: {text: layer}}
+  geo_sgd_layer_8: {is: axis_value, val: {text: '8'}}
+  geo_sgd_layer_14: {is: axis_value, val: {text: '14'}}
+  geo_sgd_layer_20: {is: axis_value, val: {text: '20'}}
+  geo_sgd_stat: {is: family_axis, val: {text: stat}}
+  geo_sgd_stat_G_orig: {is: axis_value, val: {text: G_orig}}
+  geo_sgd_stat_G_derived: {is: axis_value, val: {text: G_derived}}
+  geo_sgd_stat_up: {is: axis_value, val: {text: up}}
+  geo_sgd_stat_p: {is: axis_value, val: {text: p}}
+  o_geo_sgd_8_G_orig: {is: observation}
+  o_geo_sgd_8_G_derived: {is: observation}
+  o_geo_sgd_8_up: {is: observation}
+  o_geo_sgd_14_G_orig: {is: observation}
+  o_geo_sgd_14_G_derived: {is: observation}
+  o_geo_sgd_14_up: {is: observation}
+  o_geo_sgd_20_G_orig: {is: observation}
+  o_geo_sgd_20_G_derived: {is: observation}
+  o_geo_sgd_20_up: {is: observation}
+  o_geo_sgd_8_p: {is: observation}
+  o_geo_sgd_8_up_small: {is: observation}
+  o_geo_sgd_8_derived_above_orig: {is: observation}
   o_geo_midpoint_precondition: {is: observation}
   o_geo_axis_readable: {is: observation}
   o_geo_axis_precondition: {is: observation}
@@ -9461,6 +9483,40 @@ facts:
   - {is: v_refer, from: o_geo_ros_R_near_null, to: {is: v_near, from: geo_ros.R.coh.mean_value, to: geo_ros.R.null_mean.mean_value, new: 0.1}}
   - {is: v_refer, from: o_geo_ros_C_above_R, to: {is: v_come_after, from: geo_ros.C.coh.mean_value, to: geo_ros.R.coh.mean_value}}
   - {is: v_contradict, from: o_geo_ros_R_near_null, to: h_refer_ops_share_direction}
+  - {is: v_file_of, from: geo_state_by_genus_display.json, to: geo_sgd}
+  - {is: v_rows_of, from: [layers], to: geo_sgd}
+  - {is: v_axis_of, from: geo_sgd_layer, to: geo_sgd}
+  - {is: v_keys_of, from: '#', to: geo_sgd_layer}
+  - {is: v_value_of, from: geo_sgd_layer_8, to: geo_sgd_layer}
+  - {is: v_spell, from: geo_sgd_layer_8, to: ['8']}
+  - {is: v_value_of, from: geo_sgd_layer_14, to: geo_sgd_layer}
+  - {is: v_spell, from: geo_sgd_layer_14, to: ['14']}
+  - {is: v_value_of, from: geo_sgd_layer_20, to: geo_sgd_layer}
+  - {is: v_spell, from: geo_sgd_layer_20, to: ['20']}
+  - {is: v_axis_of, from: geo_sgd_stat, to: geo_sgd}
+  - {is: v_value_of, from: geo_sgd_stat_G_orig, to: geo_sgd_stat}
+  - {is: v_spell, from: geo_sgd_stat_G_orig, to: G_orig}
+  - {is: v_value_of, from: geo_sgd_stat_G_derived, to: geo_sgd_stat}
+  - {is: v_spell, from: geo_sgd_stat_G_derived, to: G_derived}
+  - {is: v_value_of, from: geo_sgd_stat_up, to: geo_sgd_stat}
+  - {is: v_spell, from: geo_sgd_stat_up, to: up}
+  - {is: v_value_of, from: geo_sgd_stat_p, to: geo_sgd_stat}
+  - {is: v_spell, from: geo_sgd_stat_p, to: p}
+  - {is: v_entry_of, from: '{stat}', to: geo_sgd}
+  - {is: v_metric_of, from: geo_sgd, to: mean_value}
+  - {is: v_refer, from: o_geo_sgd_8_G_orig, to: {is: v_near, from: geo_sgd.8.G_orig.mean_value, to: 0.0825, new: 0.001}}
+  - {is: v_refer, from: o_geo_sgd_8_G_derived, to: {is: v_near, from: geo_sgd.8.G_derived.mean_value, to: 0.1078, new: 0.001}}
+  - {is: v_refer, from: o_geo_sgd_8_up, to: {is: v_near, from: geo_sgd.8.up.mean_value, to: 0.0253, new: 0.001}}
+  - {is: v_refer, from: o_geo_sgd_14_G_orig, to: {is: v_near, from: geo_sgd.14.G_orig.mean_value, to: 0.0848, new: 0.001}}
+  - {is: v_refer, from: o_geo_sgd_14_G_derived, to: {is: v_near, from: geo_sgd.14.G_derived.mean_value, to: 0.1333, new: 0.001}}
+  - {is: v_refer, from: o_geo_sgd_14_up, to: {is: v_near, from: geo_sgd.14.up.mean_value, to: 0.0485, new: 0.001}}
+  - {is: v_refer, from: o_geo_sgd_20_G_orig, to: {is: v_near, from: geo_sgd.20.G_orig.mean_value, to: 0.0836, new: 0.001}}
+  - {is: v_refer, from: o_geo_sgd_20_G_derived, to: {is: v_near, from: geo_sgd.20.G_derived.mean_value, to: 0.1187, new: 0.001}}
+  - {is: v_refer, from: o_geo_sgd_20_up, to: {is: v_near, from: geo_sgd.20.up.mean_value, to: 0.0351, new: 0.001}}
+  - {is: v_refer, from: o_geo_sgd_8_p, to: {is: v_near, from: geo_sgd.8.p.mean_value, to: 0.0, new: 0.001}}
+  - {is: v_refer, from: o_geo_sgd_8_up_small, to: {is: v_near, from: geo_sgd.8.up.mean_value, to: 0.0, new: 0.05}}
+  - {is: v_refer, from: o_geo_sgd_8_derived_above_orig, to: {is: v_come_after, from: geo_sgd.8.G_derived.mean_value, to: geo_sgd.8.G_orig.mean_value}}
+  - {is: v_contradict, from: o_geo_sgd_8_up_small, to: h_state_by_genus_display}
   - {is: v_file_of, from: geo_axis_readout_midpoint.json, to: geo_axis_readout_midpoint}
   - {is: v_rows_of, from: [rows], to: geo_axis_readout_midpoint}
   - {is: v_axis_of, from: geo_axis_readout_midpoint_cond, to: geo_axis_readout_midpoint}
