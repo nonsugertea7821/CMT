@@ -230,6 +230,7 @@ nodes:
   cross_genus_word: {display: 複数の上位概念にまたがる性質で集めた語, extends: word, mod: {of: [v_refer, from], with: genus_concept, at: {count: {gt: 1}}}}
   axis_readout: {display: 隠れ状態から量への線形の読み出し, extends: information_entity, mod: {of: [v_measure, from], with: hidden_state}}
   interval_cut: {display: 量のひと続きの区間で集めた語, extends: word, mod: {of: [v_measure, to], with: magnitude}}
+  rogue_dimension: {display: 他の次元より桁違いに大きな値をとる隠れ状態の次元, extends: information_entity, mod: {of: [v_compose, to], with: hidden_state}}
   unseen_relation: {display: 学習していない関係, extends: dependent, mod: not_teach_from}
   single_layer_vector: {display: 単一層の概念ベクトル, extends: concept_vector, mod: {of: [v_depend, from], with: layer, at: {count: 1}}}
   multi_layer_vector: {display: 複数層の概念ベクトル, extends: concept_vector, mod: {of: [v_depend, from], with: layer, at: {count: {gt: 1}}}}
@@ -3632,6 +3633,10 @@ individuals:
   b_genus_region_immune_display: {is: item_queued}
   h_midpoint_by_token_position: {is: hyp_untested}
   b_midpoint_by_token_position: {is: item_queued}
+  h_rogue_dimension_lowers_midpoint: {is: hyp_untested}
+  b_rogue_dimension_lowers_midpoint: {is: item_queued}
+  h_roles_in_attention: {is: hyp_untested}
+  b_roles_in_attention: {is: item_queued}
   h_consistency_by_examples: {is: hyp_untested}
   b_consistency_by_examples: {is: item_queued}
   h_consistency_pairs_control: {is: hyp_untested}
@@ -11474,6 +11479,12 @@ facts:
   - {is: v_refer, from: h_midpoint_by_token_position, to: {is: v_depend, from: midpoint_membership, to: label_token_positions}}
   - {is: v_check, from: b_midpoint_by_token_position, to: h_midpoint_by_token_position}
   - {is: v_ground, from: d_road_region, to: h_midpoint_by_token_position}
+  - {is: v_refer, from: h_rogue_dimension_lowers_midpoint, to: {is: v_lower, from: rogue_dimension, to: midpoint_membership}}
+  - {is: v_check, from: b_rogue_dimension_lowers_midpoint, to: h_rogue_dimension_lowers_midpoint}
+  - {is: v_ground, from: d_road_region, to: h_rogue_dimension_lowers_midpoint}
+  - {is: v_refer, from: h_roles_in_attention, to: {is: v_depend, from: attention, to: [syntax.from, syntax.to]}}
+  - {is: v_check, from: b_roles_in_attention, to: h_roles_in_attention}
+  - {is: v_ground, from: d_road_region, to: h_roles_in_attention}
   - {is: v_refer, from: h_consistency_by_examples, to: {is: v_depend, from: cross_usage_consistency, to: application_example}}
   - {is: v_check, from: b_consistency_by_examples, to: h_consistency_by_examples}
   - {is: v_ground, from: d_road_checker, to: h_consistency_by_examples}
