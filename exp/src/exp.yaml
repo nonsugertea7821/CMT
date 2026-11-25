@@ -4581,6 +4581,51 @@ individuals:
   o_geo_sp_8_comp_256_swap_above_base: {is: observation}
   o_geo_sp_8_comp_256_mixed_above_base: {is: observation}
   o_geo_sp_lift_comp_64_below_comp_256: {is: observation}
+  geo_bd: {is: measurement_family}
+  geo_bd_layer: {is: family_axis, val: {text: layer}}
+  geo_bd_layer_8: {is: axis_value, val: {text: '8'}}
+  geo_bd_layer_14: {is: axis_value, val: {text: '14'}}
+  geo_bd_layer_20: {is: axis_value, val: {text: '20'}}
+  geo_bd_band: {is: family_axis, val: {text: band}}
+  geo_bd_band_top: {is: axis_value, val: {text: 'top'}}
+  geo_bd_band_low: {is: axis_value, val: {text: 'low'}}
+  geo_bd_band_diff: {is: axis_value, val: {text: 'diff'}}
+  geo_bd_stat: {is: family_axis, val: {text: stat}}
+  geo_bd_stat_disp_share: {is: axis_value, val: {text: 'disp_share'}}
+  geo_bd_stat_word_share: {is: axis_value, val: {text: 'word_share'}}
+  geo_bd_stat_genus_share: {is: axis_value, val: {text: 'genus_share'}}
+  o_geo_bd_8_top_disp_share: {is: observation}
+  o_geo_bd_8_top_word_share: {is: observation}
+  o_geo_bd_8_top_genus_share: {is: observation}
+  o_geo_bd_8_low_disp_share: {is: observation}
+  o_geo_bd_8_low_word_share: {is: observation}
+  o_geo_bd_8_low_genus_share: {is: observation}
+  o_geo_bd_8_diff_disp_share: {is: observation}
+  o_geo_bd_8_diff_word_share: {is: observation}
+  o_geo_bd_8_diff_genus_share: {is: observation}
+  o_geo_bd_14_top_disp_share: {is: observation}
+  o_geo_bd_14_top_word_share: {is: observation}
+  o_geo_bd_14_top_genus_share: {is: observation}
+  o_geo_bd_14_low_disp_share: {is: observation}
+  o_geo_bd_14_low_word_share: {is: observation}
+  o_geo_bd_14_low_genus_share: {is: observation}
+  o_geo_bd_14_diff_disp_share: {is: observation}
+  o_geo_bd_14_diff_word_share: {is: observation}
+  o_geo_bd_14_diff_genus_share: {is: observation}
+  o_geo_bd_20_top_disp_share: {is: observation}
+  o_geo_bd_20_top_word_share: {is: observation}
+  o_geo_bd_20_top_genus_share: {is: observation}
+  o_geo_bd_20_low_disp_share: {is: observation}
+  o_geo_bd_20_low_word_share: {is: observation}
+  o_geo_bd_20_low_genus_share: {is: observation}
+  o_geo_bd_20_diff_disp_share: {is: observation}
+  o_geo_bd_20_diff_word_share: {is: observation}
+  o_geo_bd_20_diff_genus_share: {is: observation}
+  o_geo_bd_8_disp_diff_below_line: {is: observation}
+  o_geo_bd_8_disp_diff_above_zero: {is: observation}
+  o_geo_bd_14_disp_diff_below_zero: {is: observation}
+  o_geo_bd_20_disp_diff_below_zero: {is: observation}
+  o_geo_bd_8_genus_top_below_low: {is: observation}
 facts:
   - {is: v_collect, from: residual_space, to: residual_vector}
   - {is: v_sum, from: layer_output, to: state_shift, new: shifted_hidden_state}
@@ -12777,3 +12822,55 @@ facts:
   - {is: v_refer, from: o_geo_sp_8_comp_256_mixed_above_base, to: {is: v_come_after, from: geo_sp.8.comp_256.mixed.G_rate.mean_value, to: geo_sp.8.base.mixed.G_rate.mean_value}}
   - {is: v_refer, from: o_geo_sp_lift_comp_64_below_comp_256, to: {is: v_come_before, from: geo_sp_j.lift.comp_64.mean_value, to: geo_sp_j.lift.comp_256.mean_value}}
   - {is: v_support, from: o_geo_sp_lift_comp_256_above_line, to: h_midpoint_by_spread_profile}
+  - {is: v_file_of, from: geo_spread_band_display.json, to: geo_bd}
+  - {is: v_rows_of, from: [layers, '{layer}'], to: geo_bd}
+  - {is: v_axis_of, from: geo_bd_layer, to: geo_bd}
+  - {is: v_value_of, from: geo_bd_layer_8, to: geo_bd_layer}
+  - {is: v_value_of, from: geo_bd_layer_14, to: geo_bd_layer}
+  - {is: v_value_of, from: geo_bd_layer_20, to: geo_bd_layer}
+  - {is: v_axis_of, from: geo_bd_band, to: geo_bd}
+  - {is: v_keys_of, from: '#', to: geo_bd_band}
+  - {is: v_value_of, from: geo_bd_band_top, to: geo_bd_band}
+  - {is: v_spell, from: geo_bd_band_top, to: ['top']}
+  - {is: v_value_of, from: geo_bd_band_low, to: geo_bd_band}
+  - {is: v_spell, from: geo_bd_band_low, to: ['low']}
+  - {is: v_value_of, from: geo_bd_band_diff, to: geo_bd_band}
+  - {is: v_spell, from: geo_bd_band_diff, to: ['diff']}
+  - {is: v_axis_of, from: geo_bd_stat, to: geo_bd}
+  - {is: v_value_of, from: geo_bd_stat_disp_share, to: geo_bd_stat}
+  - {is: v_value_of, from: geo_bd_stat_word_share, to: geo_bd_stat}
+  - {is: v_value_of, from: geo_bd_stat_genus_share, to: geo_bd_stat}
+  - {is: v_entry_of, from: '{stat}', to: geo_bd}
+  - {is: v_metric_of, from: geo_bd, to: mean_value}
+  - {is: v_refer, from: o_geo_bd_8_top_disp_share, to: {is: v_near, from: geo_bd.8.top.disp_share.mean_value, to: 0.1221, new: 0.001}}
+  - {is: v_refer, from: o_geo_bd_8_top_word_share, to: {is: v_near, from: geo_bd.8.top.word_share.mean_value, to: 0.5132, new: 0.001}}
+  - {is: v_refer, from: o_geo_bd_8_top_genus_share, to: {is: v_near, from: geo_bd.8.top.genus_share.mean_value, to: 0.097, new: 0.001}}
+  - {is: v_refer, from: o_geo_bd_8_low_disp_share, to: {is: v_near, from: geo_bd.8.low.disp_share.mean_value, to: 0.0861, new: 0.001}}
+  - {is: v_refer, from: o_geo_bd_8_low_word_share, to: {is: v_near, from: geo_bd.8.low.word_share.mean_value, to: 0.5109, new: 0.001}}
+  - {is: v_refer, from: o_geo_bd_8_low_genus_share, to: {is: v_near, from: geo_bd.8.low.genus_share.mean_value, to: 0.1181, new: 0.001}}
+  - {is: v_refer, from: o_geo_bd_8_diff_disp_share, to: {is: v_near, from: geo_bd.8.diff.disp_share.mean_value, to: 0.036, new: 0.001}}
+  - {is: v_refer, from: o_geo_bd_8_diff_word_share, to: {is: v_near, from: geo_bd.8.diff.word_share.mean_value, to: 0.0023, new: 0.001}}
+  - {is: v_refer, from: o_geo_bd_8_diff_genus_share, to: {is: v_near, from: geo_bd.8.diff.genus_share.mean_value, to: -0.0212, new: 0.001}}
+  - {is: v_refer, from: o_geo_bd_14_top_disp_share, to: {is: v_near, from: geo_bd.14.top.disp_share.mean_value, to: 0.1162, new: 0.001}}
+  - {is: v_refer, from: o_geo_bd_14_top_word_share, to: {is: v_near, from: geo_bd.14.top.word_share.mean_value, to: 0.5227, new: 0.001}}
+  - {is: v_refer, from: o_geo_bd_14_top_genus_share, to: {is: v_near, from: geo_bd.14.top.genus_share.mean_value, to: 0.1041, new: 0.001}}
+  - {is: v_refer, from: o_geo_bd_14_low_disp_share, to: {is: v_near, from: geo_bd.14.low.disp_share.mean_value, to: 0.1334, new: 0.001}}
+  - {is: v_refer, from: o_geo_bd_14_low_word_share, to: {is: v_near, from: geo_bd.14.low.word_share.mean_value, to: 0.4942, new: 0.001}}
+  - {is: v_refer, from: o_geo_bd_14_low_genus_share, to: {is: v_near, from: geo_bd.14.low.genus_share.mean_value, to: 0.1172, new: 0.001}}
+  - {is: v_refer, from: o_geo_bd_14_diff_disp_share, to: {is: v_near, from: geo_bd.14.diff.disp_share.mean_value, to: -0.0172, new: 0.001}}
+  - {is: v_refer, from: o_geo_bd_14_diff_word_share, to: {is: v_near, from: geo_bd.14.diff.word_share.mean_value, to: 0.0285, new: 0.001}}
+  - {is: v_refer, from: o_geo_bd_14_diff_genus_share, to: {is: v_near, from: geo_bd.14.diff.genus_share.mean_value, to: -0.0131, new: 0.001}}
+  - {is: v_refer, from: o_geo_bd_20_top_disp_share, to: {is: v_near, from: geo_bd.20.top.disp_share.mean_value, to: 0.0974, new: 0.001}}
+  - {is: v_refer, from: o_geo_bd_20_top_word_share, to: {is: v_near, from: geo_bd.20.top.word_share.mean_value, to: 0.5303, new: 0.001}}
+  - {is: v_refer, from: o_geo_bd_20_top_genus_share, to: {is: v_near, from: geo_bd.20.top.genus_share.mean_value, to: 0.0993, new: 0.001}}
+  - {is: v_refer, from: o_geo_bd_20_low_disp_share, to: {is: v_near, from: geo_bd.20.low.disp_share.mean_value, to: 0.1124, new: 0.001}}
+  - {is: v_refer, from: o_geo_bd_20_low_word_share, to: {is: v_near, from: geo_bd.20.low.word_share.mean_value, to: 0.5128, new: 0.001}}
+  - {is: v_refer, from: o_geo_bd_20_low_genus_share, to: {is: v_near, from: geo_bd.20.low.genus_share.mean_value, to: 0.1363, new: 0.001}}
+  - {is: v_refer, from: o_geo_bd_20_diff_disp_share, to: {is: v_near, from: geo_bd.20.diff.disp_share.mean_value, to: -0.015, new: 0.001}}
+  - {is: v_refer, from: o_geo_bd_20_diff_word_share, to: {is: v_near, from: geo_bd.20.diff.word_share.mean_value, to: 0.0175, new: 0.001}}
+  - {is: v_refer, from: o_geo_bd_20_diff_genus_share, to: {is: v_near, from: geo_bd.20.diff.genus_share.mean_value, to: -0.037, new: 0.001}}
+  - {is: v_refer, from: o_geo_bd_8_disp_diff_below_line, to: {is: v_come_before, from: geo_bd.8.diff.disp_share.mean_value, to: 0.05}}
+  - {is: v_refer, from: o_geo_bd_8_disp_diff_above_zero, to: {is: v_come_after, from: geo_bd.8.diff.disp_share.mean_value, to: 0}}
+  - {is: v_refer, from: o_geo_bd_14_disp_diff_below_zero, to: {is: v_come_before, from: geo_bd.14.diff.disp_share.mean_value, to: 0}}
+  - {is: v_refer, from: o_geo_bd_20_disp_diff_below_zero, to: {is: v_come_before, from: geo_bd.20.diff.disp_share.mean_value, to: 0}}
+  - {is: v_refer, from: o_geo_bd_8_genus_top_below_low, to: {is: v_come_before, from: geo_bd.8.top.genus_share.mean_value, to: geo_bd.8.low.genus_share.mean_value}}
