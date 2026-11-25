@@ -231,6 +231,7 @@ nodes:
   axis_readout: {display: 隠れ状態から量への線形の読み出し, extends: information_entity, mod: {of: [v_measure, from], with: hidden_state}}
   interval_cut: {display: 量のひと続きの区間で集めた語, extends: word, mod: {of: [v_measure, to], with: magnitude}}
   rogue_dimension: {display: 他の次元より桁違いに大きな値をとる隠れ状態の次元, extends: information_entity, mod: compose_to_hidden_state}
+  spread_dimension: {display: 語が動かす、隠れ状態を組み立てる特徴の向き, extends: state_feature_direction, mod: {of: [v_vary, to], with: word}}
   unseen_relation: {display: 学習していない関係, extends: dependent, mod: not_teach_from}
   single_layer_vector: {display: 単一層の概念ベクトル, extends: concept_vector, mod: {of: [v_depend, from], with: layer, at: {count: 1}}}
   multi_layer_vector: {display: 複数層の概念ベクトル, extends: concept_vector, mod: {of: [v_depend, from], with: layer, at: {count: {gt: 1}}}}
@@ -3678,6 +3679,10 @@ individuals:
   b_script_region_by_pretext: {is: item_queued}
   h_genus_state_by_token_position: {is: hyp_supported}
   b_genus_state_by_token_position: {is: item_done}
+  h_spread_dimension_lowers_midpoint: {is: hyp_untested}
+  b_spread_dimension_lowers_midpoint: {is: item_queued}
+  h_dimension_contrast_in_formula: {is: hyp_untested}
+  b_dimension_contrast_in_formula: {is: item_queued}
   h_genus_last_token_by_suffix: {is: hyp_refuted}
   b_genus_last_token_by_suffix: {is: item_done}
   h_consistency_by_examples: {is: hyp_untested}
@@ -12127,6 +12132,12 @@ facts:
   - {is: v_refer, from: h_genus_state_by_token_position, to: {is: v_depend, from: hidden_state, to: [syntax.extends, label_token_positions]}}
   - {is: v_check, from: b_genus_state_by_token_position, to: h_genus_state_by_token_position}
   - {is: v_ground, from: d_road_region, to: h_genus_state_by_token_position}
+  - {is: v_refer, from: h_spread_dimension_lowers_midpoint, to: {is: v_lower, from: spread_dimension, to: midpoint_membership}}
+  - {is: v_check, from: b_spread_dimension_lowers_midpoint, to: h_spread_dimension_lowers_midpoint}
+  - {is: v_ground, from: d_road_region, to: h_spread_dimension_lowers_midpoint}
+  - {is: v_refer, from: h_dimension_contrast_in_formula, to: {is: v_express, from: [rogue_dimension, spread_dimension], to: magnitude}}
+  - {is: v_check, from: b_dimension_contrast_in_formula, to: h_dimension_contrast_in_formula}
+  - {is: v_ground, from: d_road_region, to: h_dimension_contrast_in_formula}
   - {is: v_refer, from: h_genus_last_token_by_suffix, to: {is: v_depend, from: hidden_state, to: [syntax.display, label_token_positions]}}
   - {is: v_check, from: b_genus_last_token_by_suffix, to: h_genus_last_token_by_suffix}
   - {is: v_ground, from: d_road_region, to: h_genus_last_token_by_suffix}
