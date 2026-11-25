@@ -3139,6 +3139,43 @@ individuals:
   o_e39_explain_sl: {is: observation}
   o_e39_apply_ml_above_none: {is: observation}
   o_e39_explain_ml_below_threshold: {is: observation}
+  e44: {is: measurement_family}
+  e44_cond: {is: family_axis, val: {text: cond}}
+  e44_cond_decoy_closure: {is: axis_value, val: {text: 'decoy_closure'}}
+  e44_cond_decoy_edges: {is: axis_value, val: {text: 'decoy_edges'}}
+  e44_cond_control_edges: {is: axis_value, val: {text: 'control_edges'}}
+  o_e44_decoy_closure: {is: observation}
+  o_e44_decoy_edges: {is: observation}
+  o_e44_control_edges: {is: observation}
+  o_e44_decoy_closure_below_support: {is: observation}
+  e54a: {is: measurement_family}
+  e54a_cond: {is: family_axis, val: {text: cond}}
+  e54a_cond_named: {is: axis_value, val: {text: 'named'}}
+  e54a_cond_named_edges: {is: axis_value, val: {text: 'named_edges'}}
+  e54a_cond_named_closure: {is: axis_value, val: {text: 'named_closure'}}
+  o_e54a_named: {is: observation}
+  o_e54a_named_robust: {is: observation}
+  o_e54a_named_edges: {is: observation}
+  o_e54a_named_edges_robust: {is: observation}
+  o_e54a_named_closure: {is: observation}
+  o_e54a_named_closure_robust: {is: observation}
+  o_e54a_closure_above_refute_line: {is: observation}
+  o_e54a_closure_below_support_line: {is: observation}
+  o_e54a_closure_not_above_named: {is: observation}
+  e54b: {is: measurement_family}
+  e54b_cond: {is: family_axis, val: {text: cond}}
+  e54b_cond_named: {is: axis_value, val: {text: 'named'}}
+  e54b_cond_named_edges: {is: axis_value, val: {text: 'named_edges'}}
+  e54b_cond_named_closure: {is: axis_value, val: {text: 'named_closure'}}
+  o_e54b_named: {is: observation}
+  o_e54b_named_robust: {is: observation}
+  o_e54b_named_edges: {is: observation}
+  o_e54b_named_edges_robust: {is: observation}
+  o_e54b_named_closure: {is: observation}
+  o_e54b_named_closure_robust: {is: observation}
+  o_e54b_closure_above_refute_line: {is: observation}
+  o_e54b_closure_below_support_line: {is: observation}
+  o_e54b_closure_not_above_named: {is: observation}
   e42: {is: measurement_family}
   e42_cond: {is: family_axis, val: {text: cond}}
   e42_cond_extends: {is: axis_value, val: {text: 'extends'}}
@@ -4157,8 +4194,8 @@ individuals:
   b_model_misses_mod: {is: item_done}
   h_verdict_by_option: {is: hyp_refuted}
   b_verdict_by_option: {is: item_done}
-  h_model_misses_checker_output: {is: hyp_untested}
-  b_model_misses_checker_output: {is: item_queued}
+  h_model_misses_checker_output: {is: hyp_supported}
+  b_model_misses_checker_output: {is: item_done}
   h_verdict_by_mention_order: {is: hyp_untested}
   b_verdict_by_mention_order: {is: item_queued}
   b_model_reads_by_word: {is: item_done}
@@ -5032,6 +5069,57 @@ facts:
   - {is: v_metric_of, from: e39_explain_noans, to: accuracy}
   - {is: v_metric_of, from: e39_explain_noans, to: order_robust_accuracy}
   - {is: v_metric_of, from: e39_explain_noans, to: logit_margin}
+  - {is: v_file_of, from: 'e44_Qwen3-4B.json', to: e44}
+  - {is: v_rows_of, from: [items, '{cond}'], to: e44}
+  - {is: v_axis_of, from: e44_cond, to: e44}
+  - {is: v_value_of, from: e44_cond_decoy_closure, to: e44_cond}
+  - {is: v_denote, from: e44_cond_decoy_closure, to: syntax.word}
+  - {is: v_denote, from: e44_cond_decoy_closure, to: lang.type_checker}
+  - {is: v_value_of, from: e44_cond_decoy_edges, to: e44_cond}
+  - {is: v_denote, from: e44_cond_decoy_edges, to: syntax.word}
+  - {is: v_denote, from: e44_cond_decoy_edges, to: lang.type_checker}
+  - {is: v_value_of, from: e44_cond_control_edges, to: e44_cond}
+  - {is: v_denote, from: e44_cond_control_edges, to: lang.type_checker}
+  - {is: v_entry_of, from: pair, to: e44}
+  - {is: v_metric_of, from: e44, to: accuracy}
+  - {is: v_metric_of, from: e44, to: order_robust_accuracy}
+  - {is: v_metric_of, from: e44, to: logit_margin}
+  - {is: v_file_of, from: 'e54_Qwen2.5-1.5B-Instruct.json', to: e54a}
+  - {is: v_rows_of, from: [items, '{cond}'], to: e54a}
+  - {is: v_axis_of, from: e54a_cond, to: e54a}
+  - {is: v_value_of, from: e54a_cond_named, to: e54a_cond}
+  - {is: v_denote, from: e54a_cond_named, to: syntax.mod}
+  - {is: v_denote, from: e54a_cond_named, to: syntax.identifier}
+  - {is: v_value_of, from: e54a_cond_named_edges, to: e54a_cond}
+  - {is: v_denote, from: e54a_cond_named_edges, to: syntax.mod}
+  - {is: v_denote, from: e54a_cond_named_edges, to: syntax.identifier}
+  - {is: v_denote, from: e54a_cond_named_edges, to: lang.type_checker}
+  - {is: v_value_of, from: e54a_cond_named_closure, to: e54a_cond}
+  - {is: v_denote, from: e54a_cond_named_closure, to: syntax.mod}
+  - {is: v_denote, from: e54a_cond_named_closure, to: syntax.identifier}
+  - {is: v_denote, from: e54a_cond_named_closure, to: lang.type_checker}
+  - {is: v_entry_of, from: pair, to: e54a}
+  - {is: v_metric_of, from: e54a, to: accuracy}
+  - {is: v_metric_of, from: e54a, to: order_robust_accuracy}
+  - {is: v_metric_of, from: e54a, to: logit_margin}
+  - {is: v_file_of, from: 'e54_Qwen3-4B.json', to: e54b}
+  - {is: v_rows_of, from: [items, '{cond}'], to: e54b}
+  - {is: v_axis_of, from: e54b_cond, to: e54b}
+  - {is: v_value_of, from: e54b_cond_named, to: e54b_cond}
+  - {is: v_denote, from: e54b_cond_named, to: syntax.mod}
+  - {is: v_denote, from: e54b_cond_named, to: syntax.identifier}
+  - {is: v_value_of, from: e54b_cond_named_edges, to: e54b_cond}
+  - {is: v_denote, from: e54b_cond_named_edges, to: syntax.mod}
+  - {is: v_denote, from: e54b_cond_named_edges, to: syntax.identifier}
+  - {is: v_denote, from: e54b_cond_named_edges, to: lang.type_checker}
+  - {is: v_value_of, from: e54b_cond_named_closure, to: e54b_cond}
+  - {is: v_denote, from: e54b_cond_named_closure, to: syntax.mod}
+  - {is: v_denote, from: e54b_cond_named_closure, to: syntax.identifier}
+  - {is: v_denote, from: e54b_cond_named_closure, to: lang.type_checker}
+  - {is: v_entry_of, from: pair, to: e54b}
+  - {is: v_metric_of, from: e54b, to: accuracy}
+  - {is: v_metric_of, from: e54b, to: order_robust_accuracy}
+  - {is: v_metric_of, from: e54b, to: logit_margin}
   - {is: v_file_of, from: 'e42_Qwen3-4B.json', to: e42}
   - {is: v_rows_of, from: [items, '{cond}'], to: e42}
   - {is: v_axis_of, from: e42_cond, to: e42}
@@ -11686,6 +11774,30 @@ facts:
   - {is: v_refer, from: o_e39_explain_ml_below_none, to: {is: v_come_before, from: e39_explain.ml.accuracy, to: e39_explain.none.accuracy}}
   - {is: v_contradict, from: o_e39_explain_ml_below_threshold, to: h_multi_layer_transfers_to_explain}
   - {is: v_contradict, from: o_e39_explain_ml_below_none, to: h_multi_layer_transfers_to_explain}
+  - {is: v_refer, from: o_e44_decoy_closure, to: {is: v_level, from: e44.decoy_closure.accuracy, to: 0.5416667}}
+  - {is: v_refer, from: o_e44_decoy_edges, to: {is: v_level, from: e44.decoy_edges.accuracy, to: 0.2083333}}
+  - {is: v_refer, from: o_e44_control_edges, to: {is: v_level, from: e44.control_edges.accuracy, to: 0.2916667}}
+  - {is: v_refer, from: o_e44_decoy_closure_below_support, to: {is: v_come_before, from: e44.decoy_closure.accuracy, to: 0.75}}
+  - {is: v_refer, from: o_e54a_named, to: {is: v_level, from: e54a.named.accuracy, to: 0.75}}
+  - {is: v_refer, from: o_e54a_named_robust, to: {is: v_level, from: e54a.named.order_robust_accuracy, to: 0.09375}}
+  - {is: v_refer, from: o_e54a_named_edges, to: {is: v_level, from: e54a.named_edges.accuracy, to: 0.59375}}
+  - {is: v_refer, from: o_e54a_named_edges_robust, to: {is: v_level, from: e54a.named_edges.order_robust_accuracy, to: 0.3125}}
+  - {is: v_refer, from: o_e54a_named_closure, to: {is: v_level, from: e54a.named_closure.accuracy, to: 0.71875}}
+  - {is: v_refer, from: o_e54a_named_closure_robust, to: {is: v_level, from: e54a.named_closure.order_robust_accuracy, to: 0.28125}}
+  - {is: v_refer, from: o_e54a_closure_above_refute_line, to: {is: v_come_after, from: e54a.named_closure.accuracy, to: 0.5}}
+  - {is: v_refer, from: o_e54a_closure_below_support_line, to: {is: v_come_before, from: e54a.named_closure.accuracy, to: 0.75}}
+  - {is: v_refer, from: o_e54a_closure_not_above_named, to: {is: v_not_after, from: e54a.named_closure.accuracy, to: e54a.named.accuracy}}
+  - {is: v_support, from: o_e54a_closure_not_above_named, to: h_model_misses_checker_output}
+  - {is: v_refer, from: o_e54b_named, to: {is: v_level, from: e54b.named.accuracy, to: 0.53125}}
+  - {is: v_refer, from: o_e54b_named_robust, to: {is: v_level, from: e54b.named.order_robust_accuracy, to: 0.0625}}
+  - {is: v_refer, from: o_e54b_named_edges, to: {is: v_level, from: e54b.named_edges.accuracy, to: 0.46875}}
+  - {is: v_refer, from: o_e54b_named_edges_robust, to: {is: v_level, from: e54b.named_edges.order_robust_accuracy, to: 0.03125}}
+  - {is: v_refer, from: o_e54b_named_closure, to: {is: v_level, from: e54b.named_closure.accuracy, to: 0.53125}}
+  - {is: v_refer, from: o_e54b_named_closure_robust, to: {is: v_level, from: e54b.named_closure.order_robust_accuracy, to: 0.15625}}
+  - {is: v_refer, from: o_e54b_closure_above_refute_line, to: {is: v_come_after, from: e54b.named_closure.accuracy, to: 0.5}}
+  - {is: v_refer, from: o_e54b_closure_below_support_line, to: {is: v_come_before, from: e54b.named_closure.accuracy, to: 0.75}}
+  - {is: v_refer, from: o_e54b_closure_not_above_named, to: {is: v_not_after, from: e54b.named_closure.accuracy, to: e54b.named.accuracy}}
+  - {is: v_support, from: o_e54b_closure_not_above_named, to: h_model_misses_checker_output}
   - {is: v_refer, from: o_e42_extends, to: {is: v_level, from: e42.extends.accuracy, to: 0.7083333}}
   - {is: v_refer, from: o_e42_inline, to: {is: v_level, from: e42.inline.accuracy, to: 0.5833333}}
   - {is: v_refer, from: o_e42_named, to: {is: v_level, from: e42.named.accuracy, to: 0.375}}
