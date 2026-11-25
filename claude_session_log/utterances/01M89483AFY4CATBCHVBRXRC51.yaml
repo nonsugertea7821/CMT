@@ -1,0 +1,20 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-25T10:32:59.471Z（UTC）
+individuals:
+  01M89483AFY4CATBCHVBRXRC51:
+    is: model_utterance
+    display: 発言 4989
+    val:
+      order: 4989
+      text: |
+        #852 が main と衝突していたので、main を取り込んで直し、push しました（77dc7a2）。CI はまだ結果が出ていないので、通るかは分かりません。
+
+        - **衝突の原因:** #853 で main に入った h_examples_raise_apply が、#852 と同じ場所に書き足されていました。
+        - **直し方:** h_examples_raise_apply をそのまま入れ、h_consistency_by_examples は #852 の「反証・完了」のほうを残しました。main 側に残っていた古い「未検証」の行は消しました。重複する鍵はありません。
+        - **次:** CI が通ったら Draft を外します。
+
+        否定の文の見直し: 衝突は読んで、重複は数えて確かめた事実です。「CI はまだ結果が出ていない」は進みの報告です。登録が要るものはありません。
+
+        ロードマップの位置: d_metric
+facts:
+- {is: v_say, from: session_model, to: 01M89483AFY4CATBCHVBRXRC51}
+- {is: exp.v_answer, from: 01M89483AFY4CATBCHVBRXRC51, to: 01M890250XEAF1337HZ1C23TK6}
