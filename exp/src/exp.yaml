@@ -3679,8 +3679,8 @@ individuals:
   b_script_region_by_pretext: {is: item_queued}
   h_genus_state_by_token_position: {is: hyp_supported}
   b_genus_state_by_token_position: {is: item_done}
-  h_spread_dimension_lowers_midpoint: {is: hyp_untested}
-  b_spread_dimension_lowers_midpoint: {is: item_queued}
+  h_spread_dimension_lowers_midpoint: {is: hyp_refuted}
+  b_spread_dimension_lowers_midpoint: {is: item_done}
   h_dimension_contrast_in_formula: {is: hyp_untested}
   b_dimension_contrast_in_formula: {is: item_queued}
   h_genus_last_token_by_suffix: {is: hyp_refuted}
@@ -4093,6 +4093,61 @@ individuals:
   o_geo_rd_20_swap_zscore_above_base: {is: observation}
   o_geo_rd_20_mixed_zscore_above_base: {is: observation}
   o_geo_rd_v_8_below_tenth: {is: observation}
+  geo_sd: {is: measurement_family}
+  geo_sd_layer: {is: family_axis, val: {text: layer}}
+  geo_sd_layer_8: {is: axis_value, val: {text: '8'}}
+  geo_sd_layer_14: {is: axis_value, val: {text: '14'}}
+  geo_sd_layer_20: {is: axis_value, val: {text: '20'}}
+  geo_sd_read: {is: family_axis, val: {text: read}}
+  geo_sd_read_base: {is: axis_value, val: {text: 'base'}}
+  geo_sd_read_drop: {is: axis_value, val: {text: 'drop'}}
+  geo_sd_read_rand: {is: axis_value, val: {text: 'rand'}}
+  geo_sd_cond: {is: family_axis, val: {text: cond}}
+  geo_sd_cond_orig: {is: axis_value, val: {text: 'orig'}}
+  geo_sd_cond_swap: {is: axis_value, val: {text: 'swap'}}
+  geo_sd_cond_mixed: {is: axis_value, val: {text: 'mixed'}}
+  geo_sd_stat: {is: family_axis, val: {text: stat}}
+  geo_sd_stat_G_rate: {is: axis_value, val: {text: 'G_rate'}}
+  geo_sd_v: {is: measurement_family}
+  geo_sd_v_layer: {is: family_axis, val: {text: layer}}
+  geo_sd_v_layer_8: {is: axis_value, val: {text: '8'}}
+  geo_sd_v_layer_14: {is: axis_value, val: {text: '14'}}
+  geo_sd_v_layer_20: {is: axis_value, val: {text: '20'}}
+  geo_sd_v_part: {is: family_axis, val: {text: part}}
+  geo_sd_v_part_spread: {is: axis_value, val: {text: 'spread'}}
+  o_geo_sd_8_base_orig: {is: observation}
+  o_geo_sd_8_base_swap: {is: observation}
+  o_geo_sd_8_base_mixed: {is: observation}
+  o_geo_sd_8_drop_orig: {is: observation}
+  o_geo_sd_8_drop_swap: {is: observation}
+  o_geo_sd_8_drop_mixed: {is: observation}
+  o_geo_sd_8_rand_orig: {is: observation}
+  o_geo_sd_8_rand_swap: {is: observation}
+  o_geo_sd_8_rand_mixed: {is: observation}
+  o_geo_sd_v_8: {is: observation}
+  o_geo_sd_14_base_orig: {is: observation}
+  o_geo_sd_14_base_swap: {is: observation}
+  o_geo_sd_14_base_mixed: {is: observation}
+  o_geo_sd_14_drop_orig: {is: observation}
+  o_geo_sd_14_drop_swap: {is: observation}
+  o_geo_sd_14_drop_mixed: {is: observation}
+  o_geo_sd_14_rand_orig: {is: observation}
+  o_geo_sd_14_rand_swap: {is: observation}
+  o_geo_sd_14_rand_mixed: {is: observation}
+  o_geo_sd_v_14: {is: observation}
+  o_geo_sd_20_base_orig: {is: observation}
+  o_geo_sd_20_base_swap: {is: observation}
+  o_geo_sd_20_base_mixed: {is: observation}
+  o_geo_sd_20_drop_orig: {is: observation}
+  o_geo_sd_20_drop_swap: {is: observation}
+  o_geo_sd_20_drop_mixed: {is: observation}
+  o_geo_sd_20_rand_orig: {is: observation}
+  o_geo_sd_20_rand_swap: {is: observation}
+  o_geo_sd_20_rand_mixed: {is: observation}
+  o_geo_sd_v_20: {is: observation}
+  o_geo_sd_8_swap_drop_below_lift_line: {is: observation}
+  o_geo_sd_8_mixed_drop_below_lift_line: {is: observation}
+  o_geo_sd_8_mixed_drop_below_base: {is: observation}
   geo_gstp: {is: measurement_family}
   geo_gstp_layer: {is: family_axis, val: {text: layer}}
   geo_gstp_layer_8: {is: axis_value, val: {text: '8'}}
@@ -10314,6 +10369,75 @@ facts:
   - {is: v_refer, from: o_geo_rd_v_8_below_tenth, to: {is: v_come_before, from: geo_rd_v.8.rogue.mean_value, to: 0.1}}
   - {is: v_contradict, from: o_geo_rd_8_swap_drop_below_lift_line, to: h_rogue_dimension_lowers_midpoint}
   - {is: v_contradict, from: o_geo_rd_8_mixed_drop_below_lift_line, to: h_rogue_dimension_lowers_midpoint}
+  - {is: v_file_of, from: geo_spread_dimension_midpoint.json, to: geo_sd}
+  - {is: v_rows_of, from: [layers, '{layer}', '{read}'], to: geo_sd}
+  - {is: v_axis_of, from: geo_sd_layer, to: geo_sd}
+  - {is: v_value_of, from: geo_sd_layer_8, to: geo_sd_layer}
+  - {is: v_value_of, from: geo_sd_layer_14, to: geo_sd_layer}
+  - {is: v_value_of, from: geo_sd_layer_20, to: geo_sd_layer}
+  - {is: v_axis_of, from: geo_sd_read, to: geo_sd}
+  - {is: v_value_of, from: geo_sd_read_base, to: geo_sd_read}
+  - {is: v_value_of, from: geo_sd_read_drop, to: geo_sd_read}
+  - {is: v_value_of, from: geo_sd_read_rand, to: geo_sd_read}
+  - {is: v_axis_of, from: geo_sd_cond, to: geo_sd}
+  - {is: v_keys_of, from: '#', to: geo_sd_cond}
+  - {is: v_value_of, from: geo_sd_cond_orig, to: geo_sd_cond}
+  - {is: v_spell, from: geo_sd_cond_orig, to: ['orig']}
+  - {is: v_value_of, from: geo_sd_cond_swap, to: geo_sd_cond}
+  - {is: v_spell, from: geo_sd_cond_swap, to: ['swap']}
+  - {is: v_value_of, from: geo_sd_cond_mixed, to: geo_sd_cond}
+  - {is: v_spell, from: geo_sd_cond_mixed, to: ['mixed']}
+  - {is: v_axis_of, from: geo_sd_stat, to: geo_sd}
+  - {is: v_value_of, from: geo_sd_stat_G_rate, to: geo_sd_stat}
+  - {is: v_entry_of, from: '{stat}', to: geo_sd}
+  - {is: v_metric_of, from: geo_sd, to: mean_value}
+  - {is: v_file_of, from: geo_spread_dimension_midpoint.json, to: geo_sd_v}
+  - {is: v_rows_of, from: [layers, '{layer}'], to: geo_sd_v}
+  - {is: v_axis_of, from: geo_sd_v_layer, to: geo_sd_v}
+  - {is: v_value_of, from: geo_sd_v_layer_8, to: geo_sd_v_layer}
+  - {is: v_value_of, from: geo_sd_v_layer_14, to: geo_sd_v_layer}
+  - {is: v_value_of, from: geo_sd_v_layer_20, to: geo_sd_v_layer}
+  - {is: v_axis_of, from: geo_sd_v_part, to: geo_sd_v}
+  - {is: v_keys_of, from: '#', to: geo_sd_v_part}
+  - {is: v_value_of, from: geo_sd_v_part_spread, to: geo_sd_v_part}
+  - {is: v_spell, from: geo_sd_v_part_spread, to: ['spread']}
+  - {is: v_entry_of, from: centered_var_share, to: geo_sd_v}
+  - {is: v_metric_of, from: geo_sd_v, to: mean_value}
+  - {is: v_refer, from: o_geo_sd_8_base_orig, to: {is: v_near, from: geo_sd.8.base.orig.G_rate.mean_value, to: 0.7786, new: 0.001}}
+  - {is: v_refer, from: o_geo_sd_8_base_swap, to: {is: v_near, from: geo_sd.8.base.swap.G_rate.mean_value, to: 0.2286, new: 0.001}}
+  - {is: v_refer, from: o_geo_sd_8_base_mixed, to: {is: v_near, from: geo_sd.8.base.mixed.G_rate.mean_value, to: 0.4357, new: 0.001}}
+  - {is: v_refer, from: o_geo_sd_8_drop_orig, to: {is: v_near, from: geo_sd.8.drop.orig.G_rate.mean_value, to: 0.7643, new: 0.001}}
+  - {is: v_refer, from: o_geo_sd_8_drop_swap, to: {is: v_near, from: geo_sd.8.drop.swap.G_rate.mean_value, to: 0.2286, new: 0.001}}
+  - {is: v_refer, from: o_geo_sd_8_drop_mixed, to: {is: v_near, from: geo_sd.8.drop.mixed.G_rate.mean_value, to: 0.4, new: 0.001}}
+  - {is: v_refer, from: o_geo_sd_8_rand_orig, to: {is: v_near, from: geo_sd.8.rand.orig.G_rate.mean_value, to: 0.7775, new: 0.001}}
+  - {is: v_refer, from: o_geo_sd_8_rand_swap, to: {is: v_near, from: geo_sd.8.rand.swap.G_rate.mean_value, to: 0.2296, new: 0.001}}
+  - {is: v_refer, from: o_geo_sd_8_rand_mixed, to: {is: v_near, from: geo_sd.8.rand.mixed.G_rate.mean_value, to: 0.425, new: 0.001}}
+  - {is: v_refer, from: o_geo_sd_v_8, to: {is: v_near, from: geo_sd_v.8.spread.mean_value, to: 0.1072, new: 0.001}}
+  - {is: v_refer, from: o_geo_sd_14_base_orig, to: {is: v_near, from: geo_sd.14.base.orig.G_rate.mean_value, to: 0.6643, new: 0.001}}
+  - {is: v_refer, from: o_geo_sd_14_base_swap, to: {is: v_near, from: geo_sd.14.base.swap.G_rate.mean_value, to: 0.2214, new: 0.001}}
+  - {is: v_refer, from: o_geo_sd_14_base_mixed, to: {is: v_near, from: geo_sd.14.base.mixed.G_rate.mean_value, to: 0.3571, new: 0.001}}
+  - {is: v_refer, from: o_geo_sd_14_drop_orig, to: {is: v_near, from: geo_sd.14.drop.orig.G_rate.mean_value, to: 0.6857, new: 0.001}}
+  - {is: v_refer, from: o_geo_sd_14_drop_swap, to: {is: v_near, from: geo_sd.14.drop.swap.G_rate.mean_value, to: 0.2143, new: 0.001}}
+  - {is: v_refer, from: o_geo_sd_14_drop_mixed, to: {is: v_near, from: geo_sd.14.drop.mixed.G_rate.mean_value, to: 0.3786, new: 0.001}}
+  - {is: v_refer, from: o_geo_sd_14_rand_orig, to: {is: v_near, from: geo_sd.14.rand.orig.G_rate.mean_value, to: 0.6789, new: 0.001}}
+  - {is: v_refer, from: o_geo_sd_14_rand_swap, to: {is: v_near, from: geo_sd.14.rand.swap.G_rate.mean_value, to: 0.2246, new: 0.001}}
+  - {is: v_refer, from: o_geo_sd_14_rand_mixed, to: {is: v_near, from: geo_sd.14.rand.mixed.G_rate.mean_value, to: 0.3554, new: 0.001}}
+  - {is: v_refer, from: o_geo_sd_v_14, to: {is: v_near, from: geo_sd_v.14.spread.mean_value, to: 0.1116, new: 0.001}}
+  - {is: v_refer, from: o_geo_sd_20_base_orig, to: {is: v_near, from: geo_sd.20.base.orig.G_rate.mean_value, to: 0.5786, new: 0.001}}
+  - {is: v_refer, from: o_geo_sd_20_base_swap, to: {is: v_near, from: geo_sd.20.base.swap.G_rate.mean_value, to: 0.1786, new: 0.001}}
+  - {is: v_refer, from: o_geo_sd_20_base_mixed, to: {is: v_near, from: geo_sd.20.base.mixed.G_rate.mean_value, to: 0.3571, new: 0.001}}
+  - {is: v_refer, from: o_geo_sd_20_drop_orig, to: {is: v_near, from: geo_sd.20.drop.orig.G_rate.mean_value, to: 0.6, new: 0.001}}
+  - {is: v_refer, from: o_geo_sd_20_drop_swap, to: {is: v_near, from: geo_sd.20.drop.swap.G_rate.mean_value, to: 0.1714, new: 0.001}}
+  - {is: v_refer, from: o_geo_sd_20_drop_mixed, to: {is: v_near, from: geo_sd.20.drop.mixed.G_rate.mean_value, to: 0.3929, new: 0.001}}
+  - {is: v_refer, from: o_geo_sd_20_rand_orig, to: {is: v_near, from: geo_sd.20.rand.orig.G_rate.mean_value, to: 0.5729, new: 0.001}}
+  - {is: v_refer, from: o_geo_sd_20_rand_swap, to: {is: v_near, from: geo_sd.20.rand.swap.G_rate.mean_value, to: 0.1843, new: 0.001}}
+  - {is: v_refer, from: o_geo_sd_20_rand_mixed, to: {is: v_near, from: geo_sd.20.rand.mixed.G_rate.mean_value, to: 0.3479, new: 0.001}}
+  - {is: v_refer, from: o_geo_sd_v_20, to: {is: v_near, from: geo_sd_v.20.spread.mean_value, to: 0.1342, new: 0.001}}
+  - {is: v_refer, from: o_geo_sd_8_swap_drop_below_lift_line, to: {is: v_come_before, from: geo_sd.8.drop.swap.G_rate.mean_value, to: 0.2586}}
+  - {is: v_refer, from: o_geo_sd_8_mixed_drop_below_lift_line, to: {is: v_come_before, from: geo_sd.8.drop.mixed.G_rate.mean_value, to: 0.4657}}
+  - {is: v_refer, from: o_geo_sd_8_mixed_drop_below_base, to: {is: v_come_before, from: geo_sd.8.drop.mixed.G_rate.mean_value, to: geo_sd.8.base.mixed.G_rate.mean_value}}
+  - {is: v_contradict, from: o_geo_sd_8_swap_drop_below_lift_line, to: h_spread_dimension_lowers_midpoint}
+  - {is: v_contradict, from: o_geo_sd_8_mixed_drop_below_lift_line, to: h_spread_dimension_lowers_midpoint}
   - {is: v_file_of, from: geo_genus_state_by_token_position.json, to: geo_gstp}
   - {is: v_rows_of, from: [layers, '{layer}', '{read}'], to: geo_gstp}
   - {is: v_axis_of, from: geo_gstp_layer, to: geo_gstp}
