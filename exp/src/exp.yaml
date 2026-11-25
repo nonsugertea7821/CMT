@@ -3677,8 +3677,8 @@ individuals:
   b_roles_in_attention: {is: item_queued}
   h_script_region_by_pretext: {is: hyp_untested}
   b_script_region_by_pretext: {is: item_queued}
-  h_genus_state_by_token_position: {is: hyp_untested}
-  b_genus_state_by_token_position: {is: item_queued}
+  h_genus_state_by_token_position: {is: hyp_supported}
+  b_genus_state_by_token_position: {is: item_done}
   h_spread_dimension_lowers_midpoint: {is: hyp_untested}
   b_spread_dimension_lowers_midpoint: {is: item_queued}
   h_dimension_contrast_in_formula: {is: hyp_untested}
@@ -4093,6 +4093,49 @@ individuals:
   o_geo_rd_20_swap_zscore_above_base: {is: observation}
   o_geo_rd_20_mixed_zscore_above_base: {is: observation}
   o_geo_rd_v_8_below_tenth: {is: observation}
+  geo_gstp: {is: measurement_family}
+  geo_gstp_layer: {is: family_axis, val: {text: layer}}
+  geo_gstp_layer_8: {is: axis_value, val: {text: '8'}}
+  geo_gstp_layer_14: {is: axis_value, val: {text: '14'}}
+  geo_gstp_layer_20: {is: axis_value, val: {text: '20'}}
+  geo_gstp_read: {is: family_axis, val: {text: read}}
+  geo_gstp_read_mean: {is: axis_value, val: {text: 'mean'}}
+  geo_gstp_read_last: {is: axis_value, val: {text: 'last'}}
+  geo_gstp_cond: {is: family_axis, val: {text: cond}}
+  geo_gstp_cond_orig: {is: axis_value, val: {text: 'orig'}}
+  geo_gstp_cond_derived: {is: axis_value, val: {text: 'derived'}}
+  geo_gstp_stat: {is: family_axis, val: {text: stat}}
+  geo_gstp_stat_G: {is: axis_value, val: {text: 'G'}}
+  geo_gstp_stat_p: {is: axis_value, val: {text: 'p'}}
+  geo_gstp_d: {is: measurement_family}
+  geo_gstp_d_layer: {is: family_axis, val: {text: layer}}
+  geo_gstp_d_layer_8: {is: axis_value, val: {text: '8'}}
+  geo_gstp_d_layer_14: {is: axis_value, val: {text: '14'}}
+  geo_gstp_d_layer_20: {is: axis_value, val: {text: '20'}}
+  geo_gstp_d_stat: {is: family_axis, val: {text: stat}}
+  geo_gstp_d_stat_dep_orig: {is: axis_value, val: {text: 'dep_orig'}}
+  geo_gstp_d_stat_dep_derived: {is: axis_value, val: {text: 'dep_derived'}}
+  o_geo_gstp_8_mean_orig: {is: observation}
+  o_geo_gstp_8_mean_derived: {is: observation}
+  o_geo_gstp_8_last_orig: {is: observation}
+  o_geo_gstp_8_last_derived: {is: observation}
+  o_geo_gstp_d_8_dep_orig: {is: observation}
+  o_geo_gstp_d_8_dep_derived: {is: observation}
+  o_geo_gstp_14_mean_orig: {is: observation}
+  o_geo_gstp_14_mean_derived: {is: observation}
+  o_geo_gstp_14_last_orig: {is: observation}
+  o_geo_gstp_14_last_derived: {is: observation}
+  o_geo_gstp_d_14_dep_orig: {is: observation}
+  o_geo_gstp_d_14_dep_derived: {is: observation}
+  o_geo_gstp_20_mean_orig: {is: observation}
+  o_geo_gstp_20_mean_derived: {is: observation}
+  o_geo_gstp_20_last_orig: {is: observation}
+  o_geo_gstp_20_last_derived: {is: observation}
+  o_geo_gstp_d_20_dep_orig: {is: observation}
+  o_geo_gstp_d_20_dep_derived: {is: observation}
+  o_geo_gstp_8_dep_above_line: {is: observation}
+  o_geo_gstp_8_last_orig_p_below_line: {is: observation}
+  o_geo_gstp_8_last_above_mean: {is: observation}
   o_geo_midpoint_precondition: {is: observation}
   o_geo_axis_readable: {is: observation}
   o_geo_axis_precondition: {is: observation}
@@ -10223,6 +10266,64 @@ facts:
   - {is: v_refer, from: o_geo_rd_v_8_below_tenth, to: {is: v_come_before, from: geo_rd_v.8.rogue.mean_value, to: 0.1}}
   - {is: v_contradict, from: o_geo_rd_8_swap_drop_below_lift_line, to: h_rogue_dimension_lowers_midpoint}
   - {is: v_contradict, from: o_geo_rd_8_mixed_drop_below_lift_line, to: h_rogue_dimension_lowers_midpoint}
+  - {is: v_file_of, from: geo_genus_state_by_token_position.json, to: geo_gstp}
+  - {is: v_rows_of, from: [layers, '{layer}', '{read}'], to: geo_gstp}
+  - {is: v_axis_of, from: geo_gstp_layer, to: geo_gstp}
+  - {is: v_value_of, from: geo_gstp_layer_8, to: geo_gstp_layer}
+  - {is: v_value_of, from: geo_gstp_layer_14, to: geo_gstp_layer}
+  - {is: v_value_of, from: geo_gstp_layer_20, to: geo_gstp_layer}
+  - {is: v_axis_of, from: geo_gstp_read, to: geo_gstp}
+  - {is: v_value_of, from: geo_gstp_read_mean, to: geo_gstp_read}
+  - {is: v_value_of, from: geo_gstp_read_last, to: geo_gstp_read}
+  - {is: v_axis_of, from: geo_gstp_cond, to: geo_gstp}
+  - {is: v_keys_of, from: '#', to: geo_gstp_cond}
+  - {is: v_value_of, from: geo_gstp_cond_orig, to: geo_gstp_cond}
+  - {is: v_spell, from: geo_gstp_cond_orig, to: ['orig']}
+  - {is: v_value_of, from: geo_gstp_cond_derived, to: geo_gstp_cond}
+  - {is: v_spell, from: geo_gstp_cond_derived, to: ['derived']}
+  - {is: v_axis_of, from: geo_gstp_stat, to: geo_gstp}
+  - {is: v_value_of, from: geo_gstp_stat_G, to: geo_gstp_stat}
+  - {is: v_value_of, from: geo_gstp_stat_p, to: geo_gstp_stat}
+  - {is: v_entry_of, from: '{stat}', to: geo_gstp}
+  - {is: v_metric_of, from: geo_gstp, to: mean_value}
+  - {is: v_file_of, from: geo_genus_state_by_token_position.json, to: geo_gstp_d}
+  - {is: v_rows_of, from: [layers], to: geo_gstp_d}
+  - {is: v_axis_of, from: geo_gstp_d_layer, to: geo_gstp_d}
+  - {is: v_keys_of, from: '#', to: geo_gstp_d_layer}
+  - {is: v_value_of, from: geo_gstp_d_layer_8, to: geo_gstp_d_layer}
+  - {is: v_spell, from: geo_gstp_d_layer_8, to: ['8']}
+  - {is: v_value_of, from: geo_gstp_d_layer_14, to: geo_gstp_d_layer}
+  - {is: v_spell, from: geo_gstp_d_layer_14, to: ['14']}
+  - {is: v_value_of, from: geo_gstp_d_layer_20, to: geo_gstp_d_layer}
+  - {is: v_spell, from: geo_gstp_d_layer_20, to: ['20']}
+  - {is: v_axis_of, from: geo_gstp_d_stat, to: geo_gstp_d}
+  - {is: v_value_of, from: geo_gstp_d_stat_dep_orig, to: geo_gstp_d_stat}
+  - {is: v_value_of, from: geo_gstp_d_stat_dep_derived, to: geo_gstp_d_stat}
+  - {is: v_entry_of, from: '{stat}', to: geo_gstp_d}
+  - {is: v_metric_of, from: geo_gstp_d, to: mean_value}
+  - {is: v_refer, from: o_geo_gstp_8_mean_orig, to: {is: v_near, from: geo_gstp.8.mean.orig.G.mean_value, to: 0.0825, new: 0.001}}
+  - {is: v_refer, from: o_geo_gstp_8_mean_derived, to: {is: v_near, from: geo_gstp.8.mean.derived.G.mean_value, to: 0.1078, new: 0.001}}
+  - {is: v_refer, from: o_geo_gstp_8_last_orig, to: {is: v_near, from: geo_gstp.8.last.orig.G.mean_value, to: 0.2187, new: 0.001}}
+  - {is: v_refer, from: o_geo_gstp_8_last_derived, to: {is: v_near, from: geo_gstp.8.last.derived.G.mean_value, to: 0.2323, new: 0.001}}
+  - {is: v_refer, from: o_geo_gstp_d_8_dep_orig, to: {is: v_near, from: geo_gstp_d.8.dep_orig.mean_value, to: 0.1362, new: 0.001}}
+  - {is: v_refer, from: o_geo_gstp_d_8_dep_derived, to: {is: v_near, from: geo_gstp_d.8.dep_derived.mean_value, to: 0.1245, new: 0.001}}
+  - {is: v_refer, from: o_geo_gstp_14_mean_orig, to: {is: v_near, from: geo_gstp.14.mean.orig.G.mean_value, to: 0.0848, new: 0.001}}
+  - {is: v_refer, from: o_geo_gstp_14_mean_derived, to: {is: v_near, from: geo_gstp.14.mean.derived.G.mean_value, to: 0.1333, new: 0.001}}
+  - {is: v_refer, from: o_geo_gstp_14_last_orig, to: {is: v_near, from: geo_gstp.14.last.orig.G.mean_value, to: 0.1908, new: 0.001}}
+  - {is: v_refer, from: o_geo_gstp_14_last_derived, to: {is: v_near, from: geo_gstp.14.last.derived.G.mean_value, to: 0.2174, new: 0.001}}
+  - {is: v_refer, from: o_geo_gstp_d_14_dep_orig, to: {is: v_near, from: geo_gstp_d.14.dep_orig.mean_value, to: 0.1060, new: 0.001}}
+  - {is: v_refer, from: o_geo_gstp_d_14_dep_derived, to: {is: v_near, from: geo_gstp_d.14.dep_derived.mean_value, to: 0.0841, new: 0.001}}
+  - {is: v_refer, from: o_geo_gstp_20_mean_orig, to: {is: v_near, from: geo_gstp.20.mean.orig.G.mean_value, to: 0.0836, new: 0.001}}
+  - {is: v_refer, from: o_geo_gstp_20_mean_derived, to: {is: v_near, from: geo_gstp.20.mean.derived.G.mean_value, to: 0.1187, new: 0.001}}
+  - {is: v_refer, from: o_geo_gstp_20_last_orig, to: {is: v_near, from: geo_gstp.20.last.orig.G.mean_value, to: 0.1908, new: 0.001}}
+  - {is: v_refer, from: o_geo_gstp_20_last_derived, to: {is: v_near, from: geo_gstp.20.last.derived.G.mean_value, to: 0.2287, new: 0.001}}
+  - {is: v_refer, from: o_geo_gstp_d_20_dep_orig, to: {is: v_near, from: geo_gstp_d.20.dep_orig.mean_value, to: 0.1072, new: 0.001}}
+  - {is: v_refer, from: o_geo_gstp_d_20_dep_derived, to: {is: v_near, from: geo_gstp_d.20.dep_derived.mean_value, to: 0.1100, new: 0.001}}
+  - {is: v_refer, from: o_geo_gstp_8_dep_above_line, to: {is: v_come_after, from: geo_gstp_d.8.dep_orig.mean_value, to: 0.05}}
+  - {is: v_refer, from: o_geo_gstp_8_last_orig_p_below_line, to: {is: v_come_before, from: geo_gstp.8.last.orig.p.mean_value, to: 0.05}}
+  - {is: v_refer, from: o_geo_gstp_8_last_above_mean, to: {is: v_come_after, from: geo_gstp.8.last.orig.G.mean_value, to: geo_gstp.8.mean.orig.G.mean_value}}
+  - {is: v_support, from: o_geo_gstp_8_dep_above_line, to: h_genus_state_by_token_position}
+  - {is: v_support, from: o_geo_gstp_8_last_orig_p_below_line, to: h_genus_state_by_token_position}
   - {is: v_file_of, from: geo_axis_readout_midpoint.json, to: geo_axis_readout_midpoint}
   - {is: v_rows_of, from: [rows], to: geo_axis_readout_midpoint}
   - {is: v_axis_of, from: geo_axis_readout_midpoint_cond, to: geo_axis_readout_midpoint}
