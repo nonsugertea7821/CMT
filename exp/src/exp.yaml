@@ -3680,6 +3680,8 @@ individuals:
   b_single_layer_20_and_4: {is: item_done}
   b_attention_observe_and_block: {is: item_queued}
   h_collision_not_lower_rule_following: {is: hyp_untested}
+  h_departure_relies_on_mechanism: {is: hyp_untested}
+  b_departure_relies_on_mechanism: {is: item_queued}
   b_collision_not_lower_rule_following: {is: item_queued}
   b_measure_explanation: {is: item_done}
   b_e4_retrain: {is: item_queued}
@@ -10895,6 +10897,9 @@ facts:
   - {is: v_check, from: b_single_layer_20_and_4, to: h_single_layer_does_not_reach_shared}
   - {is: v_check, from: b_attention_observe_and_block, to: h_attention_causes_preceding_effect}
   - {is: v_refer, from: h_collision_not_lower_rule_following, to: {is: v_not_lower, from: prior_collision, to: redefinition_following}}
+  - {is: v_refer, from: h_departure_relies_on_mechanism, to: {is: v_rely, from: redefinition_following, to: [concept_vector, teaching]}}
+  - {is: v_check, from: b_departure_relies_on_mechanism, to: h_departure_relies_on_mechanism}
+  - {is: v_ground, from: d_road_region, to: h_departure_relies_on_mechanism}
   - {is: v_check, from: b_collision_not_lower_rule_following, to: h_collision_not_lower_rule_following}
   - {is: v_check, from: b_measure_explanation, to: h_apply_does_not_transfer_to_explain}
   - {is: v_check, from: b_e4_retrain, to: h_modifier_transfers_to_unseen_genus}
