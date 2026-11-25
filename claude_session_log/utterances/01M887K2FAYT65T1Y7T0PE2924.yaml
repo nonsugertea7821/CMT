@@ -1,0 +1,30 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-25T02:12:10.346Z（UTC）
+individuals:
+  01M887K2FAYT65T1Y7T0PE2924:
+    is: model_utterance
+    display: 発言 4598
+    val:
+      order: 4598
+      text: |
+        I've started the next experiment on the region road, for h_script_region_by_pretext (#786), with no results yet.
+
+        **What it tests:** the region broke when words were respelled in another script (#779). The question is whether that break depends on how much text in that script the model saw in training. Training exposure can't be measured directly, so I committed two stand-ins before running:
+        - **Across models:** compare two models trained heavily on Japanese (sarashina2.2-1b, llm-jp-3-1.8b) with Qwen2.5-1.5B. The measure is how much of the genus region survives the respelling.
+        - **Inside Qwen:** split the 40 genus words by how many tokens per character the respelled form takes. Fewer tokens is read as "seen more often".
+
+        **Pass/fail lines:**
+        - **Supported** if the Japanese models keep at least 0.25 more of the region than Qwen, and the Qwen word split shows a difference of at least 0.20 with p ≤ 0.05.
+        - **Refuted** if those two differences come out at or below 0.05 and 0.05.
+        - **Not judged** otherwise.
+
+        The model comparison is only a partial test of exposure: the models also differ in size, depth and tokenizer.
+
+        **Other PRs and the hourly cycle:**
+        - #789 is waiting for your review.
+        - #782 stays Draft because its result fell between the refute and support lines.
+        - The hourly cycle is re-armed for 03:10Z, and a progress check is set for 02:21Z.
+
+        ロードマップの位置: d_road_region（#790 を事前登録して実行中）。
+facts:
+- {is: v_say, from: session_model, to: 01M887K2FAYT65T1Y7T0PE2924}
+- {is: exp.v_answer, from: 01M887K2FAYT65T1Y7T0PE2924, to: 01M8824ABH7FVJ0AFYWM2EPXZH}
