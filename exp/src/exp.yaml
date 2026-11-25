@@ -1868,6 +1868,20 @@ individuals:
   sys_fact_id_by_content_cond_PC_other_errors: {is: axis_value, val: {text: PC_other_errors}}
   sys_fact_id_by_content_cond_n_fact_rows: {is: axis_value, val: {text: n_fact_rows}}
   sys_fact_id_by_content_cond_n_fact_distinct: {is: axis_value, val: {text: n_fact_distinct}}
+  sys_grammar_names_parts: {is: measurement_family}
+  sys_grammar_names_parts_cond: {is: family_axis, val: {text: cond}}
+  sys_grammar_names_parts_cond_C_errors: {is: axis_value, val: {text: C_errors}}
+  sys_grammar_names_parts_cond_C_ec_errors: {is: axis_value, val: {text: C_ec_errors}}
+  sys_grammar_names_parts_cond_PC_errors: {is: axis_value, val: {text: PC_errors}}
+  sys_grammar_names_parts_cond_PC_ec_errors: {is: axis_value, val: {text: PC_ec_errors}}
+  sys_grammar_names_parts_cond_PC_rel_same_C: {is: axis_value, val: {text: PC_rel_same_C}}
+  sys_grammar_names_parts_cond_PCG_errors: {is: axis_value, val: {text: PCG_errors}}
+  sys_grammar_names_parts_cond_PCG_ec_errors: {is: axis_value, val: {text: PCG_ec_errors}}
+  sys_grammar_names_parts_cond_PCG_rel_same_C: {is: axis_value, val: {text: PCG_rel_same_C}}
+  sys_grammar_names_parts_cond_PCG_laws_same_C: {is: axis_value, val: {text: PCG_laws_same_C}}
+  sys_grammar_names_parts_cond_C_n_rel: {is: axis_value, val: {text: C_n_rel}}
+  sys_grammar_names_parts_cond_PC_n_rel: {is: axis_value, val: {text: PC_n_rel}}
+  sys_grammar_names_parts_cond_PCG_n_rel: {is: axis_value, val: {text: PCG_n_rel}}
   sys_refer_by_exact_holds: {is: measurement_family}
   sys_refer_by_exact_holds_cond: {is: family_axis, val: {text: cond}}
   sys_refer_by_exact_holds_cond_build_ok: {is: axis_value, val: {text: build_ok}}
@@ -10026,6 +10040,35 @@ facts:
   - {is: v_spell, from: sys_fact_id_by_content_cond_n_fact_distinct, to: n_fact_distinct}
   - {is: v_entry_of, from: '{cond}', to: sys_fact_id_by_content}
   - {is: v_metric_of, from: sys_fact_id_by_content, to: mean_value}
+  - {is: v_file_of, from: sys_grammar_names_parts.json, to: sys_grammar_names_parts}
+  - {is: v_rows_of, from: [rows], to: sys_grammar_names_parts}
+  - {is: v_axis_of, from: sys_grammar_names_parts_cond, to: sys_grammar_names_parts}
+  - {is: v_value_of, from: sys_grammar_names_parts_cond_C_errors, to: sys_grammar_names_parts_cond}
+  - {is: v_spell, from: sys_grammar_names_parts_cond_C_errors, to: C_errors}
+  - {is: v_value_of, from: sys_grammar_names_parts_cond_C_ec_errors, to: sys_grammar_names_parts_cond}
+  - {is: v_spell, from: sys_grammar_names_parts_cond_C_ec_errors, to: C_ec_errors}
+  - {is: v_value_of, from: sys_grammar_names_parts_cond_PC_errors, to: sys_grammar_names_parts_cond}
+  - {is: v_spell, from: sys_grammar_names_parts_cond_PC_errors, to: PC_errors}
+  - {is: v_value_of, from: sys_grammar_names_parts_cond_PC_ec_errors, to: sys_grammar_names_parts_cond}
+  - {is: v_spell, from: sys_grammar_names_parts_cond_PC_ec_errors, to: PC_ec_errors}
+  - {is: v_value_of, from: sys_grammar_names_parts_cond_PC_rel_same_C, to: sys_grammar_names_parts_cond}
+  - {is: v_spell, from: sys_grammar_names_parts_cond_PC_rel_same_C, to: PC_rel_same_C}
+  - {is: v_value_of, from: sys_grammar_names_parts_cond_PCG_errors, to: sys_grammar_names_parts_cond}
+  - {is: v_spell, from: sys_grammar_names_parts_cond_PCG_errors, to: PCG_errors}
+  - {is: v_value_of, from: sys_grammar_names_parts_cond_PCG_ec_errors, to: sys_grammar_names_parts_cond}
+  - {is: v_spell, from: sys_grammar_names_parts_cond_PCG_ec_errors, to: PCG_ec_errors}
+  - {is: v_value_of, from: sys_grammar_names_parts_cond_PCG_rel_same_C, to: sys_grammar_names_parts_cond}
+  - {is: v_spell, from: sys_grammar_names_parts_cond_PCG_rel_same_C, to: PCG_rel_same_C}
+  - {is: v_value_of, from: sys_grammar_names_parts_cond_PCG_laws_same_C, to: sys_grammar_names_parts_cond}
+  - {is: v_spell, from: sys_grammar_names_parts_cond_PCG_laws_same_C, to: PCG_laws_same_C}
+  - {is: v_value_of, from: sys_grammar_names_parts_cond_C_n_rel, to: sys_grammar_names_parts_cond}
+  - {is: v_spell, from: sys_grammar_names_parts_cond_C_n_rel, to: C_n_rel}
+  - {is: v_value_of, from: sys_grammar_names_parts_cond_PC_n_rel, to: sys_grammar_names_parts_cond}
+  - {is: v_spell, from: sys_grammar_names_parts_cond_PC_n_rel, to: PC_n_rel}
+  - {is: v_value_of, from: sys_grammar_names_parts_cond_PCG_n_rel, to: sys_grammar_names_parts_cond}
+  - {is: v_spell, from: sys_grammar_names_parts_cond_PCG_n_rel, to: PCG_n_rel}
+  - {is: v_entry_of, from: '{cond}', to: sys_grammar_names_parts}
+  - {is: v_metric_of, from: sys_grammar_names_parts, to: mean_value}
   - {is: v_file_of, from: sys_refer_by_exact_holds.json, to: sys_refer_by_exact_holds}
   - {is: v_rows_of, from: [rows], to: sys_refer_by_exact_holds}
   - {is: v_axis_of, from: sys_refer_by_exact_holds_cond, to: sys_refer_by_exact_holds}
