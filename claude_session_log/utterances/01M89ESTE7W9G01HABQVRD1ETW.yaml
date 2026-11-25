@@ -1,0 +1,24 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-25T13:37:25.959Z（UTC）
+individuals:
+  01M89ESTE7W9G01HABQVRD1ETW:
+    is: model_utterance
+    display: 発言 5096
+    val:
+      order: 5096
+      text: |
+        PR #862 の型検査（tc）が落ちたので、式を直して push し直しました。新しい CI の結果はまだ出ていません。
+
+        - **落ちた理由:** 最初は「改名が explain を上げる」（`v_raise(opaque_renaming, usage_explain)`）で書いていました。v_raise の to には測りの量しか来られず、使い方の型である usage_explain は置けません。
+        - **直した形:** 「1.5B では joint が explain にも頼る」（`v_rely(cross_usage_consistency, usage_explain)`、範囲 `model_15b`）にしました。形は h_consistency_bound_by_apply と同じです。仮説名も h_consistency_bound_by_explain に変えました。
+        - **式にしなかったこと:** 「改名が explain を上げる」という、もとの観察の形は式にしていません。登録の目的は d_metric の側、つまり joint の上限を何が決めているかにあるので、そちらの形を優先しました。
+        - PR のタイトルと本文も、新しい名前と訂正の経緯に合わせて書き換えました。
+
+        ロードマップの位置: d_metric。
+facts:
+- {is: v_say, from: session_model, to: 01M89ESTE7W9G01HABQVRD1ETW}
+- {is: exp.v_answer, from: 01M89ESTE7W9G01HABQVRD1ETW, to: 01M894P981R0TBZ8RRY7RKHDMV}
+- {is: v_refer, from: 01M89ESTE7W9G01HABQVRD1ETW, to: exp.v_raise}
+- {is: v_refer, from: 01M89ESTE7W9G01HABQVRD1ETW, to: exp.opaque_renaming}
+- {is: v_refer, from: 01M89ESTE7W9G01HABQVRD1ETW, to: exp.usage_explain}
+- {is: v_refer, from: 01M89ESTE7W9G01HABQVRD1ETW, to: exp.v_rely}
+- {is: v_refer, from: 01M89ESTE7W9G01HABQVRD1ETW, to: exp.cross_usage_consistency}
