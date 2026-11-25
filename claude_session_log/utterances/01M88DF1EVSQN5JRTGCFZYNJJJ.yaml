@@ -1,0 +1,32 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-25T03:54:49.691Z（UTC）
+individuals:
+  01M88DF1EVSQN5JRTGCFZYNJJJ:
+    is: model_utterance
+    display: 発言 4727
+    val:
+      order: 4727
+      text: |
+        The #806 test came out supported. Group membership is carried mainly by the lower-variance dimensions: drop the 256 largest dimensions and swapped words fall back into their group more often than with all dimensions kept.
+
+        | Reading (layer 8) | Original words | Swapped words | Mixed | Lift |
+        |---|---|---|---|---|
+        | All dimensions (baseline) | 0.779 | 0.229 | 0.436 | — |
+        | Top 256 squeezed (as in #802) | 0.857 | 0.279 | 0.571 | 0.093 |
+        | Top 256 zeroed (lower dimensions only) | 0.871 | 0.279 | 0.607 | 0.111 |
+        | Lower dimensions zeroed (top 256 only) | 0.593 | 0.179 | 0.264 | −0.111 |
+
+        - **Pass line:** the lower-only lift was 0.111, above the 0.05 line set before the run. It was also higher than the top-only lift, as required.
+        - **Where the variance sits:** the top 256 dimensions hold 73% of the variance at layer 8, 81% at layer 14 and 86% at layer 20.
+        - **Top band alone:** on its own it still separates groups for original words (0.593 against a random baseline of 0.056). For swapped words it falls under the 0.15 margin the test requires over that baseline.
+        - **Other layers:** layers 14 and 20 show the same direction, with the lower band above the baseline and the top band below.
+        - **Correction:** my results commit message (0bea7c1) says the top band "barely separates the groups". That overstates it, so the corrected wording is in the PR description.
+        - **Committed:** the results and their entries in the repo's hypothesis file are pushed as 0bea7c1. #806 stays Draft until CI passes.
+
+        My untested reading is that cosine similarity is dominated by the high-variance band, which buries the group signal in the lower dimensions. That would also explain #799: zeroing only the top 16 removed too little of the band to matter.
+
+        One new hypothesis registered in #807: h_spread_band_by_display, that the top band tracks how a word is written rather than its group. That would explain why swapped words suffer most when only the top band is kept. Registered because it is untested.
+
+        ロードマップの位置: d_road_region（#376）。
+facts:
+- {is: v_say, from: session_model, to: 01M88DF1EVSQN5JRTGCFZYNJJJ}
+- {is: exp.v_answer, from: 01M88DF1EVSQN5JRTGCFZYNJJJ, to: 01M8824ABH7FVJ0AFYWM2EPXZH}
