@@ -1,0 +1,23 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-25T15:13:33.190Z（UTC）
+individuals:
+  01M89M9TG63XPMTBG6Q1BQ51ZJ:
+    is: model_utterance
+    display: 発言 5130
+    val:
+      order: 5130
+      text: |
+        E64 の事前登録の commit（#864）は、検査が通りました。#865 にも見張りを付けました。
+
+        E64 はモデルの重みを読み込み終えて、最初の概念の学習に入ったところです。学習の行はまだ出ていません。
+
+        ロードマップの位置:
+        - 目的: この設計で再定義の成功を上げる（d_goal）。成功は、使い方をまたぐ一貫 joint で測る（d_metric）
+        - 計画:
+          - [済] E58・E63 → joint は使い方ごとの正答率の積で足りる。4B の律速は apply
+          - [今] E64（#864）: 1.5B で explain を上げる手を入れる → 1.5B の律速に explain も入るか（h_consistency_bound_by_explain）
+          - [次] 律速の使い方を、検査器の道（d_road_checker）か区画の道（d_road_region）で上げられるかを確かめる → 設計がどちらの道で再定義を渡すかが決まる
+          - [先] その道を入れた設計で、near より joint が上がるかを測る → d_goal を判定できる
+        - 分かれ目: E64 が支持なら、1.5B では apply と explain の両方を上げる手を探す。反証なら、apply だけを対象にする
+facts:
+- {is: v_say, from: session_model, to: 01M89M9TG63XPMTBG6Q1BQ51ZJ}
+- {is: exp.v_answer, from: 01M89M9TG63XPMTBG6Q1BQ51ZJ, to: 01M89M7DMNWEEGT2TZZ8CNAGXM}
