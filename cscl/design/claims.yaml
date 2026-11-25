@@ -517,8 +517,13 @@ individuals:
   b_extends_by_kind: {is: exp.item_queued}
   h_domain_special_extends: {is: exp.hyp_supported}
   b_domain_special_extends: {is: exp.item_queued}
-  h_domain_in_formula: {is: exp.hyp_untested}
-  b_domain_in_formula: {is: exp.item_queued}
+  h_domain_in_formula: {is: exp.hyp_supported}
+  o_sys_dif_sep: {is: exp.observation}
+  o_sys_dif_cross_a: {is: exp.observation}
+  o_sys_dif_cross_b: {is: exp.observation}
+  o_sys_dif_miss_b: {is: exp.observation}
+  o_sys_dif_miss_a: {is: exp.observation}
+  b_domain_in_formula: {is: exp.item_done}
   h_domain_by_refer: {is: exp.hyp_refuted}
   b_domain_by_refer: {is: exp.item_queued}
   h_ends_by_subsumption: {is: exp.hyp_supported}
@@ -2171,6 +2176,13 @@ facts:
   - {is: v_refer, from: h_domain_in_formula, to: {is: v_depend, from: syntax.holds, to: syntax.domain}}
   - {is: exp.v_check, from: b_domain_in_formula, to: h_domain_in_formula}
   - {is: exp.v_ground, from: d_cscl_display_derived, to: h_domain_in_formula}
+  - {is: v_refer, from: o_sys_dif_sep, to: {is: v_level, from: sys_domain_in_formula.n_sep.mean_value, to: 7.0}}
+  - {is: exp.v_support, from: o_sys_dif_sep, to: h_domain_in_formula}
+  - {is: v_refer, from: o_sys_dif_cross_a, to: {is: v_level, from: sys_domain_in_formula.n_cross_A.mean_value, to: 8.0}}
+  - {is: v_refer, from: o_sys_dif_cross_b, to: {is: v_level, from: sys_domain_in_formula.n_cross_B.mean_value, to: 1.0}}
+  - {is: v_refer, from: o_sys_dif_miss_b, to: {is: v_level, from: sys_domain_in_formula.n_miss_B.mean_value, to: 0.0}}
+  - {is: exp.v_support, from: o_sys_dif_miss_b, to: h_domain_in_formula}
+  - {is: v_refer, from: o_sys_dif_miss_a, to: {is: v_level, from: sys_domain_in_formula.n_miss_A.mean_value, to: 0.0}}
   - {is: v_refer, from: h_domain_by_refer, to: {is: v_depend, from: type_checker, to: [syntax.holds, syntax.domain]}}
   - {is: exp.v_check, from: b_domain_by_refer, to: h_domain_by_refer}
   - {is: exp.v_ground, from: d_cscl_display_derived, to: h_domain_by_refer}
