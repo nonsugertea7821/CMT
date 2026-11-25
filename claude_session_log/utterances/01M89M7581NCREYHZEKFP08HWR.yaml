@@ -1,0 +1,36 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-25T15:12:05.889Z（UTC）
+individuals:
+  01M89M7581NCREYHZEKFP08HWR:
+    is: model_utterance
+    display: 発言 5126
+    val:
+      order: 5126
+      text: |
+        ロードマップの位置を 4 行（道・今・次・分かれ目）で書く決まりを作り、PR #865 に出しました。この返事から、その形で書きます。
+
+        **決めた形**
+        ```
+        ロードマップの位置:
+        - 道: d_goal ← <決定> ← <仮説>（目的から今の仕事までの鎖）
+        - 今: <何をしているか・状態>
+        - 次: ① <次の仮説か作業>（それで何が決まるか） ② … ③ …（近い順に 2〜3 個）
+        - 分かれ目: <今の結果が支持ならどうなり、反証ならどうなるか>
+        ```
+        - 「次」で計画を、「分かれ目」で結果によって計画がどう変わるかを見せます。
+        - この決まりを CLAUDE.md に足しました。
+        - 応答を終える前に 4 行がそろっているかを見るフック（`.claude/hooks/roadmap_position.py`）も足しました。手元で試し、古い 1 行の形は止められ、4 行の形は通りました。
+
+        **決めてほしい点**
+        - 今の決まりでは、短い返事も含め、どの応答もこの 4 行で終える必要があります。重すぎれば、「ロードマップの位置を書いたときだけ形を見る」に緩められます。
+        - 1 時間ごとの周回の指示も、#865 がマージされたらこの形に書き換えます。
+
+        E64 はまだ学習の最初の概念を終えていません。
+
+        ロードマップの位置:
+        - 道: d_goal ← d_metric ← h_consistency_bound_by_explain
+        - 今: E64（#864）が 1.5B で学習中（説明のベクトル 0/24 概念）。#865（この書き方の決まり）は確認待ち
+        - 次: ① E64 の結果を記録する（1.5B で joint が explain にも頼るか） ② h_consistency_by_checker_teaching の設計を決める（検査器の出力を教示にして joint が上がるか。d_road_checker） ③ 4B で apply 以外に joint を上げる手を探す（4B の joint の残り 0.17 は apply だけで説明できるか）
+        - 分かれ目: E64 が支持なら、1.5B の物差しは apply と explain の両方を上げる手で動かす方針にする。反証なら、E63 の 1.5B の joint の上がりは explain 以外（para）か偶然と読み、1.5B でも apply を先に上げる手を探す
+facts:
+- {is: v_say, from: session_model, to: 01M89M7581NCREYHZEKFP08HWR}
+- {is: exp.v_answer, from: 01M89M7581NCREYHZEKFP08HWR, to: 01M89M43D7PPDWD8JFVDW91G0D}
