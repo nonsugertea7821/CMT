@@ -1,0 +1,39 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-25T02:24:07.752Z（UTC）
+individuals:
+  01M8888Z28M959B8X9XXACFHKD:
+    is: model_utterance
+    display: 発言 4614
+    val:
+      order: 4614
+      text: |
+        The #790 test came out **not judged**: there is some sign that training exposure matters, but the result falls between the pass and fail lines. I've written the measurements into the system as observations and pushed them. CI is running, and the PR stays Draft.
+
+        **Across models (L8, or L7 in the 24-layer models):**
+
+        | Model | Genus rate, original | Genus rate, respelled | Share of region kept |
+        |---|---|---|---|
+        | Qwen2.5-1.5B | 0.779 | 0.229 | 0.255 |
+        | sarashina2.2-1b | 0.914 | 0.421 | 0.441 |
+        | llm-jp-3-1.8b | 0.900 | 0.371 | 0.386 |
+
+        The two Japanese-trained models keep 0.158 more of the region than Qwen on average. That is between the 0.05 refute line and the 0.25 support line.
+
+        **Within Qwen:** respelled words the tokenizer merged did slightly worse at landing in their genus (0.444) than unmerged ones (0.500). After subtracting the same comparison on the original spellings, the difference is −0.08 (p = 0.74), the opposite of the predicted direction.
+
+        **My reading, not yet tested:**
+        - More Japanese training text may help, but even the Japanese models keep under half the region.
+        - The within-Qwen result has two possible readings that this test can't separate:
+          - tokenizer merges are a poor stand-in for how often a word was seen;
+          - what matters is how much of the script as a whole the model saw, not word-level frequency.
+
+          #791's check (counting forms in llm-jp's public training corpus) would test exposure directly.
+        - The models also differ in size, depth and tokenizer, so the gap isn't all exposure.
+
+        I registered no new hypothesis this round. The open question is already covered by #791's corpus-count check.
+
+        **Waiting on you:** #789 and #791 for review. #790 also needs a hand review once CI finishes, because of the correction to the word split.
+
+        ロードマップの位置: d_road_region（#786 の測りは判定なしで Draft）。
+facts:
+- {is: v_say, from: session_model, to: 01M8888Z28M959B8X9XXACFHKD}
+- {is: exp.v_answer, from: 01M8888Z28M959B8X9XXACFHKD, to: 01M8824ABH7FVJ0AFYWM2EPXZH}
