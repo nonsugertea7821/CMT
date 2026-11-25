@@ -259,6 +259,8 @@ individuals:
   b_depend_on_verb_by_base: {is: exp.item_queued}
   h_identifier_free_of_declaration: {is: exp.hyp_untested}
   b_identifier_free_of_declaration: {is: exp.item_queued}
+  h_rule_roles_read_by_frame: {is: exp.hyp_untested}
+  b_rule_roles_read_by_frame: {is: exp.item_queued}
   h_appear_root: {is: exp.hyp_supported}
   b_appear_root: {is: exp.item_done}
   h_boundary_invariant: {is: exp.hyp_supported}
@@ -2364,3 +2366,6 @@ facts:
   - {is: v_refer, from: h_identifier_free_of_declaration, to: {is: v_not_depend, from: syntax.identifier, to: declared_scope}}
   - {is: exp.v_check, from: b_identifier_free_of_declaration, to: h_identifier_free_of_declaration}
   - {is: exp.v_ground, from: d_cscl_display_derived, to: h_identifier_free_of_declaration}
+  - {is: v_refer, from: h_rule_roles_read_by_frame, to: {is: v_depend, from: type_checker, to: [syntax.pre, syntax.post, syntax.always, syntax.law_relation]}}
+  - {is: exp.v_check, from: b_rule_roles_read_by_frame, to: h_rule_roles_read_by_frame}
+  - {is: exp.v_ground, from: d_cscl_display_derived, to: h_rule_roles_read_by_frame}
