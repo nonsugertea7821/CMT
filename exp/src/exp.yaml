@@ -3628,8 +3628,8 @@ individuals:
   h_aid_used_with_example: {is: hyp_untested}
   h_state_by_genus_display: {is: hyp_refuted}
   b_state_by_genus_display: {is: item_done}
-  h_genus_region_immune_display: {is: hyp_untested}
-  b_genus_region_immune_display: {is: item_queued}
+  h_genus_region_immune_display: {is: hyp_refuted}
+  b_genus_region_immune_display: {is: item_done}
   h_midpoint_by_token_position: {is: hyp_untested}
   b_midpoint_by_token_position: {is: item_queued}
   h_consistency_by_examples: {is: hyp_untested}
@@ -3896,6 +3896,56 @@ individuals:
   o_geo_sbp_20_p: {is: observation}
   o_geo_sbp_8_gap_small: {is: observation}
   o_geo_sbp_8_real_orig_above_nonce_orig: {is: observation}
+  geo_gri: {is: measurement_family}
+  geo_gri_layer: {is: family_axis, val: {text: layer}}
+  geo_gri_layer_8: {is: axis_value, val: {text: '8'}}
+  geo_gri_layer_14: {is: axis_value, val: {text: '14'}}
+  geo_gri_layer_20: {is: axis_value, val: {text: '20'}}
+  geo_gri_cond: {is: family_axis, val: {text: cond}}
+  geo_gri_cond_orig: {is: axis_value, val: {text: orig}}
+  geo_gri_cond_swap: {is: axis_value, val: {text: swap}}
+  geo_gri_cond_mixed: {is: axis_value, val: {text: mixed}}
+  geo_gri_stat: {is: family_axis, val: {text: stat}}
+  geo_gri_stat_G_rate: {is: axis_value, val: {text: G_rate}}
+  geo_gri_stat_C_rate: {is: axis_value, val: {text: C_rate}}
+  geo_gri_stat_diff_GC: {is: axis_value, val: {text: diff_GC}}
+  geo_gri_r: {is: measurement_family}
+  geo_gri_r_cond: {is: family_axis, val: {text: cond}}
+  geo_gri_r_cond_orig: {is: axis_value, val: {text: orig}}
+  geo_gri_r_cond_swap: {is: axis_value, val: {text: swap}}
+  geo_gri_r_cond_mixed: {is: axis_value, val: {text: mixed}}
+  geo_gri_r_stat: {is: family_axis, val: {text: stat}}
+  geo_gri_r_stat_R_rate: {is: axis_value, val: {text: R_rate}}
+  geo_gri_r_stat_holds: {is: axis_value, val: {text: holds}}
+  geo_gri_d: {is: measurement_family}
+  geo_gri_d_layer: {is: family_axis, val: {text: layer}}
+  geo_gri_d_layer_8: {is: axis_value, val: {text: '8'}}
+  geo_gri_d_layer_14: {is: axis_value, val: {text: '14'}}
+  geo_gri_d_layer_20: {is: axis_value, val: {text: '20'}}
+  o_geo_gri_8_orig_G_rate: {is: observation}
+  o_geo_gri_8_orig_C_rate: {is: observation}
+  o_geo_gri_8_swap_G_rate: {is: observation}
+  o_geo_gri_8_swap_C_rate: {is: observation}
+  o_geo_gri_8_mixed_G_rate: {is: observation}
+  o_geo_gri_8_mixed_C_rate: {is: observation}
+  o_geo_gri_14_orig_G_rate: {is: observation}
+  o_geo_gri_14_swap_G_rate: {is: observation}
+  o_geo_gri_14_mixed_G_rate: {is: observation}
+  o_geo_gri_20_orig_G_rate: {is: observation}
+  o_geo_gri_20_swap_G_rate: {is: observation}
+  o_geo_gri_20_mixed_G_rate: {is: observation}
+  o_geo_gri_r_orig_R_rate: {is: observation}
+  o_geo_gri_r_orig_holds: {is: observation}
+  o_geo_gri_r_swap_R_rate: {is: observation}
+  o_geo_gri_r_swap_holds: {is: observation}
+  o_geo_gri_r_mixed_R_rate: {is: observation}
+  o_geo_gri_r_mixed_holds: {is: observation}
+  o_geo_gri_d_8: {is: observation}
+  o_geo_gri_d_14: {is: observation}
+  o_geo_gri_d_20: {is: observation}
+  o_geo_gri_d_8_above_refute_line: {is: observation}
+  o_geo_gri_8_swap_below_orig: {is: observation}
+  o_geo_gri_8_mixed_above_swap: {is: observation}
   o_geo_midpoint_precondition: {is: observation}
   o_geo_axis_readable: {is: observation}
   o_geo_axis_precondition: {is: observation}
@@ -9788,6 +9838,78 @@ facts:
   - {is: v_refer, from: o_geo_sbp_8_gap_small, to: {is: v_near, from: geo_sbp.8.gap.mean_value, to: 0.0, new: 0.02}}
   - {is: v_refer, from: o_geo_sbp_8_real_orig_above_nonce_orig, to: {is: v_come_after, from: geo_sbp.8.real_orig.mean_value, to: geo_sbp.8.nonce_orig.mean_value}}
   - {is: v_contradict, from: o_geo_sbp_8_gap_small, to: h_state_by_prior_meaning}
+  - {is: v_file_of, from: geo_genus_region_immune_display.json, to: geo_gri}
+  - {is: v_rows_of, from: [layers, '{layer}'], to: geo_gri}
+  - {is: v_axis_of, from: geo_gri_layer, to: geo_gri}
+  - {is: v_value_of, from: geo_gri_layer_8, to: geo_gri_layer}
+  - {is: v_value_of, from: geo_gri_layer_14, to: geo_gri_layer}
+  - {is: v_value_of, from: geo_gri_layer_20, to: geo_gri_layer}
+  - {is: v_axis_of, from: geo_gri_cond, to: geo_gri}
+  - {is: v_keys_of, from: '#', to: geo_gri_cond}
+  - {is: v_value_of, from: geo_gri_cond_orig, to: geo_gri_cond}
+  - {is: v_spell, from: geo_gri_cond_orig, to: [orig]}
+  - {is: v_value_of, from: geo_gri_cond_swap, to: geo_gri_cond}
+  - {is: v_spell, from: geo_gri_cond_swap, to: [swap]}
+  - {is: v_value_of, from: geo_gri_cond_mixed, to: geo_gri_cond}
+  - {is: v_spell, from: geo_gri_cond_mixed, to: [mixed]}
+  - {is: v_axis_of, from: geo_gri_stat, to: geo_gri}
+  - {is: v_value_of, from: geo_gri_stat_G_rate, to: geo_gri_stat}
+  - {is: v_value_of, from: geo_gri_stat_C_rate, to: geo_gri_stat}
+  - {is: v_value_of, from: geo_gri_stat_diff_GC, to: geo_gri_stat}
+  - {is: v_entry_of, from: '{stat}', to: geo_gri}
+  - {is: v_metric_of, from: geo_gri, to: mean_value}
+  - {is: v_file_of, from: geo_genus_region_immune_display.json, to: geo_gri_r}
+  - {is: v_rows_of, from: [layers, '8'], to: geo_gri_r}
+  - {is: v_axis_of, from: geo_gri_r_cond, to: geo_gri_r}
+  - {is: v_keys_of, from: '#', to: geo_gri_r_cond}
+  - {is: v_value_of, from: geo_gri_r_cond_orig, to: geo_gri_r_cond}
+  - {is: v_spell, from: geo_gri_r_cond_orig, to: [orig]}
+  - {is: v_value_of, from: geo_gri_r_cond_swap, to: geo_gri_r_cond}
+  - {is: v_spell, from: geo_gri_r_cond_swap, to: [swap]}
+  - {is: v_value_of, from: geo_gri_r_cond_mixed, to: geo_gri_r_cond}
+  - {is: v_spell, from: geo_gri_r_cond_mixed, to: [mixed]}
+  - {is: v_axis_of, from: geo_gri_r_stat, to: geo_gri_r}
+  - {is: v_value_of, from: geo_gri_r_stat_R_rate, to: geo_gri_r_stat}
+  - {is: v_value_of, from: geo_gri_r_stat_holds, to: geo_gri_r_stat}
+  - {is: v_entry_of, from: '{stat}', to: geo_gri_r}
+  - {is: v_metric_of, from: geo_gri_r, to: mean_value}
+  - {is: v_file_of, from: geo_genus_region_immune_display.json, to: geo_gri_d}
+  - {is: v_rows_of, from: [layers], to: geo_gri_d}
+  - {is: v_axis_of, from: geo_gri_d_layer, to: geo_gri_d}
+  - {is: v_keys_of, from: '#', to: geo_gri_d_layer}
+  - {is: v_value_of, from: geo_gri_d_layer_8, to: geo_gri_d_layer}
+  - {is: v_spell, from: geo_gri_d_layer_8, to: ['8']}
+  - {is: v_value_of, from: geo_gri_d_layer_14, to: geo_gri_d_layer}
+  - {is: v_spell, from: geo_gri_d_layer_14, to: ['14']}
+  - {is: v_value_of, from: geo_gri_d_layer_20, to: geo_gri_d_layer}
+  - {is: v_spell, from: geo_gri_d_layer_20, to: ['20']}
+  - {is: v_entry_of, from: drop, to: geo_gri_d}
+  - {is: v_metric_of, from: geo_gri_d, to: mean_value}
+  - {is: v_refer, from: o_geo_gri_8_orig_G_rate, to: {is: v_near, from: geo_gri.8.orig.G_rate.mean_value, to: 0.7786, new: 0.001}}
+  - {is: v_refer, from: o_geo_gri_8_orig_C_rate, to: {is: v_near, from: geo_gri.8.orig.C_rate.mean_value, to: 0.1929, new: 0.001}}
+  - {is: v_refer, from: o_geo_gri_8_swap_G_rate, to: {is: v_near, from: geo_gri.8.swap.G_rate.mean_value, to: 0.2286, new: 0.001}}
+  - {is: v_refer, from: o_geo_gri_8_swap_C_rate, to: {is: v_near, from: geo_gri.8.swap.C_rate.mean_value, to: 0.1357, new: 0.001}}
+  - {is: v_refer, from: o_geo_gri_8_mixed_G_rate, to: {is: v_near, from: geo_gri.8.mixed.G_rate.mean_value, to: 0.4357, new: 0.001}}
+  - {is: v_refer, from: o_geo_gri_8_mixed_C_rate, to: {is: v_near, from: geo_gri.8.mixed.C_rate.mean_value, to: 0.1143, new: 0.001}}
+  - {is: v_refer, from: o_geo_gri_14_orig_G_rate, to: {is: v_near, from: geo_gri.14.orig.G_rate.mean_value, to: 0.6643, new: 0.001}}
+  - {is: v_refer, from: o_geo_gri_14_swap_G_rate, to: {is: v_near, from: geo_gri.14.swap.G_rate.mean_value, to: 0.2214, new: 0.001}}
+  - {is: v_refer, from: o_geo_gri_14_mixed_G_rate, to: {is: v_near, from: geo_gri.14.mixed.G_rate.mean_value, to: 0.3571, new: 0.001}}
+  - {is: v_refer, from: o_geo_gri_20_orig_G_rate, to: {is: v_near, from: geo_gri.20.orig.G_rate.mean_value, to: 0.5786, new: 0.001}}
+  - {is: v_refer, from: o_geo_gri_20_swap_G_rate, to: {is: v_near, from: geo_gri.20.swap.G_rate.mean_value, to: 0.1786, new: 0.001}}
+  - {is: v_refer, from: o_geo_gri_20_mixed_G_rate, to: {is: v_near, from: geo_gri.20.mixed.G_rate.mean_value, to: 0.3571, new: 0.001}}
+  - {is: v_refer, from: o_geo_gri_r_orig_R_rate, to: {is: v_near, from: geo_gri_r.orig.R_rate.mean_value, to: 0.0543, new: 0.001}}
+  - {is: v_refer, from: o_geo_gri_r_orig_holds, to: {is: v_near, from: geo_gri_r.orig.holds.mean_value, to: 1, new: 0.001}}
+  - {is: v_refer, from: o_geo_gri_r_swap_R_rate, to: {is: v_near, from: geo_gri_r.swap.R_rate.mean_value, to: 0.0436, new: 0.001}}
+  - {is: v_refer, from: o_geo_gri_r_swap_holds, to: {is: v_near, from: geo_gri_r.swap.holds.mean_value, to: 1, new: 0.001}}
+  - {is: v_refer, from: o_geo_gri_r_mixed_R_rate, to: {is: v_near, from: geo_gri_r.mixed.R_rate.mean_value, to: 0.048, new: 0.001}}
+  - {is: v_refer, from: o_geo_gri_r_mixed_holds, to: {is: v_near, from: geo_gri_r.mixed.holds.mean_value, to: 1, new: 0.001}}
+  - {is: v_refer, from: o_geo_gri_d_8, to: {is: v_near, from: geo_gri_d.8.mean_value, to: 0.3429, new: 0.001}}
+  - {is: v_refer, from: o_geo_gri_d_14, to: {is: v_near, from: geo_gri_d.14.mean_value, to: 0.3071, new: 0.001}}
+  - {is: v_refer, from: o_geo_gri_d_20, to: {is: v_near, from: geo_gri_d.20.mean_value, to: 0.2214, new: 0.001}}
+  - {is: v_refer, from: o_geo_gri_d_8_above_refute_line, to: {is: v_come_after, from: geo_gri_d.8.mean_value, to: 0.3}}
+  - {is: v_refer, from: o_geo_gri_8_swap_below_orig, to: {is: v_come_before, from: geo_gri.8.swap.G_rate.mean_value, to: geo_gri.8.orig.G_rate.mean_value}}
+  - {is: v_refer, from: o_geo_gri_8_mixed_above_swap, to: {is: v_come_after, from: geo_gri.8.mixed.G_rate.mean_value, to: geo_gri.8.swap.G_rate.mean_value}}
+  - {is: v_contradict, from: o_geo_gri_d_8_above_refute_line, to: h_genus_region_immune_display}
   - {is: v_file_of, from: geo_axis_readout_midpoint.json, to: geo_axis_readout_midpoint}
   - {is: v_rows_of, from: [rows], to: geo_axis_readout_midpoint}
   - {is: v_axis_of, from: geo_axis_readout_midpoint_cond, to: geo_axis_readout_midpoint}
