@@ -5105,6 +5105,8 @@ individuals:
   o_geo_tk_14_f80_below_f100: {is: observation}
   o_geo_tk_20_f0_above_f100: {is: observation}
   o_geo_tk_14_f0_above_f100: {is: observation}
+  h_knee_moves_with_layer: {is: hyp_untested}
+  b_knee_moves_with_layer: {is: item_queued}
 facts:
   - {is: v_collect, from: residual_space, to: residual_vector}
   - {is: v_sum, from: layer_output, to: state_shift, new: shifted_hidden_state}
@@ -13899,3 +13901,6 @@ facts:
   - {is: v_refer, from: o_geo_tk_14_f80_below_f100, to: {is: v_come_before, from: geo_tk_j.14.lift.f80.mean_value, to: geo_tk_j.14.lift.f100.mean_value}}
   - {is: v_refer, from: o_geo_tk_20_f0_above_f100, to: {is: v_come_after, from: geo_tk_j.20.lift.f0.mean_value, to: geo_tk_j.20.lift.f100.mean_value}}
   - {is: v_refer, from: o_geo_tk_14_f0_above_f100, to: {is: v_come_after, from: geo_tk_j.14.lift.f0.mean_value, to: geo_tk_j.14.lift.f100.mean_value}}
+  - {is: v_refer, from: h_knee_moves_with_layer, to: {is: v_depend, from: magnitude, to: layer}}
+  - {is: v_check, from: b_knee_moves_with_layer, to: h_knee_moves_with_layer}
+  - {is: v_ground, from: d_road_region, to: h_knee_moves_with_layer}
