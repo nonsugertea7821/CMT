@@ -1,0 +1,22 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-25T15:13:21.078Z（UTC）
+individuals:
+  01M89M9ENP9JMB46M1RK0T1HQ0:
+    is: model_utterance
+    display: 発言 5129
+    val:
+      order: 5129
+      text: |
+        ご指摘を受けて、書き方の決まりを直しました（#865 に push しました）。次の作業を並べる形をやめて、「何を確かめれば何が決まり、それがどう目的につながるか」を段ごとに書く形にしました。今の計画をその形で書くと、次のとおりです。
+
+        ロードマップの位置:
+        - 目的: この設計で再定義の成功を上げる（d_goal）。成功は、使い方をまたぐ一貫 joint で測る（d_metric）
+        - 計画:
+          - [済] E58: joint を 2 モデルで測る → joint は使い方ごとの正答率の積で足りる。一貫性を上げるには、外れる使い方（律速）を上げればよい
+          - [済] E63: 4B で apply を上げる手を入れる → 4B の律速は apply（h_consistency_bound_by_apply、支持）
+          - [今] E64（#864、1.5B で学習中）: explain を上げる手を入れる → 1.5B の律速に explain も入るか（h_consistency_bound_by_explain）。どの使い方を上げる手を探すかが決まる
+          - [次] 律速の使い方を、設計が渡せる形で上げられるか確かめる。候補は 2 つの道。検査器の出力を教示にする道（d_road_checker、h_consistency_by_checker_teaching）と、区画の幾何に沿わせる道（d_road_region、h_ambiguity_is_region_choice など） → 設計がどちらの道で再定義を渡すかが決まる
+          - [先] 選んだ道を入れた設計で、near（定義を前に置くだけ）より joint が上がるかを測る → d_goal を判定できる
+        - 分かれ目: E64 が支持なら、[次] で上げる対象は 1.5B では apply と explain、4B では apply。反証なら、両モデルとも apply だけを対象にする
+facts:
+- {is: v_say, from: session_model, to: 01M89M9ENP9JMB46M1RK0T1HQ0}
+- {is: exp.v_answer, from: 01M89M9ENP9JMB46M1RK0T1HQ0, to: 01M89M7DMNWEEGT2TZZ8CNAGXM}
