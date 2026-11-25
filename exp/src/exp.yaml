@@ -5597,6 +5597,10 @@ individuals:
   o_geo_kl_18_f35_above_f0: {is: observation}
   o_geo_kl_20_f35_below_f0: {is: observation}
   o_geo_kl_24_f35_below_f0: {is: observation}
+  h_partial_top_beats_removal: {is: hyp_untested}
+  b_partial_top_beats_removal: {is: item_queued}
+  h_knee_scatter_from_span: {is: hyp_untested}
+  b_knee_scatter_from_span: {is: item_queued}
 facts:
   - {is: v_collect, from: residual_space, to: residual_vector}
   - {is: v_sum, from: layer_output, to: state_shift, new: shifted_hidden_state}
@@ -14884,3 +14888,9 @@ facts:
   - {is: v_refer, from: o_geo_kl_18_f35_above_f0, to: {is: v_come_after, from: geo_kl_j.18.lift.f35.mean_value, to: geo_kl_j.18.lift.f0.mean_value}}
   - {is: v_refer, from: o_geo_kl_20_f35_below_f0, to: {is: v_come_before, from: geo_kl_j.20.lift.f35.mean_value, to: geo_kl_j.20.lift.f0.mean_value}}
   - {is: v_refer, from: o_geo_kl_24_f35_below_f0, to: {is: v_come_before, from: geo_kl_j.24.lift.f35.mean_value, to: geo_kl_j.24.lift.f0.mean_value}}
+  - {is: v_refer, from: h_partial_top_beats_removal, to: {is: v_raise, from: magnitude, to: midpoint_membership}}
+  - {is: v_check, from: b_partial_top_beats_removal, to: h_partial_top_beats_removal}
+  - {is: v_ground, from: d_road_region, to: h_partial_top_beats_removal}
+  - {is: v_refer, from: h_knee_scatter_from_span, to: {is: v_depend, from: observation, to: [magnitude, layer]}}
+  - {is: v_check, from: b_knee_scatter_from_span, to: h_knee_scatter_from_span}
+  - {is: v_ground, from: d_road_region, to: h_knee_scatter_from_span}
