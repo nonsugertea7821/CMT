@@ -1,0 +1,23 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-25T16:33:21.531Z（UTC）
+individuals:
+  01M89RVYKVB46K5QWGQFKB21SG:
+    is: model_utterance
+    display: 発言 5251
+    val:
+      order: 5251
+      text: |
+        Step 1 is done: h_rule_roles_read_by_frame came out refuted (#875).
+
+        **What worked:** reading the three law roles from the frame instead of the hard-coded verb-name list left the laws and the derived relations exactly the same (419,475 relations). The control variant changed them heavily, so the frame-based reading really was in effect.
+
+        **What failed:** one type-check error. The checker only accepts entries under `always` that use a base relation applied to `self`. The "requires" role needs an entry linking from and to, so it can't be written under `always`. I hadn't checked that limit when I chose `always` in the pre-registration. Earlier, #339 used `holds` for the same entry and got no errors.
+
+        **New hypotheses, both untested and linked to d_cscl_display_derived:**
+        - h_require_frame_by_holds: write the "requires" role with `holds`. No change to the grammar's limits.
+        - h_always_admits_positions: let entries under `always` use the from/to positions. This changes the grammar and the checker.
+
+        Observations, the refuted status and the two hypotheses are pushed in e4f9f59. I'll take #875 out of draft once CI passes. E64 is still training.
+facts:
+- {is: v_say, from: session_model, to: 01M89RVYKVB46K5QWGQFKB21SG}
+- {is: exp.v_answer, from: 01M89RVYKVB46K5QWGQFKB21SG, to: 01M89PSFS6B8JRMSN9NJ2R17KF}
+- {is: v_refer, from: 01M89RVYKVB46K5QWGQFKB21SG, to: syntax.holds}
