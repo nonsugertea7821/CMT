@@ -269,7 +269,8 @@ def check_claims(C, values, T):
             err(f"{did}: status の {d['status']} は、決定の状態のノードでない")
         triple(d, did, structural_ok=True)
         for r in d.get("basis", []):
-            if r not in hyps:
+            dom, _, rest = r.partition(".")
+            if r not in hyps and not (dom in CLAIM_DOMAINS and C["side"].get(rest) == dom):
                 err(f"{did}: basis の仮説 {r} が未定義")
         for r in d.get("supersedes", []):
             if r not in decs:
