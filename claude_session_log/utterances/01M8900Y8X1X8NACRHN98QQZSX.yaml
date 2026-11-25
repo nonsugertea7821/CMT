@@ -1,0 +1,20 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-25T09:19:10.621Z（UTC）
+individuals:
+  01M8900Y8X1X8NACRHN98QQZSX:
+    is: model_utterance
+    display: 発言 4901
+    val:
+      order: 4901
+      text: |
+        前の返答の否定の文を四つ見直し、一つを仮説として登録しました。
+
+        - **「体系を教師にすれば、教師のほうが揺れない」**: 確かめていない主張で、この道を勧める理由に使っていました。`h_formal_teacher_independent_of_model` として登録しました（#841、d_road_checker に結んでいます）。
+          - 検査器は同じ入力に同じ判定を返しますが、データを体系に落とす翻訳をモデルがすれば、モデルの揺れが材料に写りえます。なので、この仮説は外れうると見ています。
+        - **「説明から適用へ転移しなかった」「往復で区別が上がらなかった」**: 登録していません。main の exp.yaml で、h_explain_transfers_to_apply と h_round_trip_raises_sibling がどちらも反証（hyp_refuted）になっているのを読んで確かめた事実です。
+        - **「0.5B に LoRA で学ばせて測る」**: 登録していません。これからの手順の案で、確かめていない主張ではないからです。
+
+        ロードマップの位置: d_road_checker（E57 実行中。#839〜#841 で学習側の解き方を登録）。
+facts:
+- {is: v_say, from: session_model, to: 01M8900Y8X1X8NACRHN98QQZSX}
+- {is: exp.v_answer, from: 01M8900Y8X1X8NACRHN98QQZSX, to: 01M88ZWFN3WNM9HGPWV81Q7MDW}
+- {is: v_refer, from: 01M8900Y8X1X8NACRHN98QQZSX, to: exp.hyp_refuted}
