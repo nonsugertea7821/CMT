@@ -1,6 +1,6 @@
 """ロードマップの位置の書き方（Stop）
 
-応答を終える前に、最後の応答が計画の動き（仮説の状態が決まった・計画の順を変えた）を報告しているときだけ、その終わりの「ロードマップの位置:」の段がそろっているかを見る（CLAUDE.md の「報告の終わり」）。
+応答を終える前に、最後の応答に段を書いたときだけ、その「ロードマップの位置:」の段がそろっているかを見る（CLAUDE.md の「報告の終わり」）。
 今いる場所だけでなく、何を確かめることで、どのように目的につなげるかという計画を見せるため。
 見るもの: 目的の行、設計の行、計画の段（[今] の段が 1 つ以上、[次] か [先] の段が 1 つ以上。段はどれも「→」で、確かめることと決まることをつなぐ）、分かれ目の行。
 
@@ -13,7 +13,6 @@ import sys
 from observation_to_hypothesis import last_text
 
 TITLE = "ロードマップの位置"
-MOVED = re.compile(r"(支持した|支持された|支持に|反証した|反証された|反証に|mixed|計画を変え|順を変え)")
 
 
 def problems(text):
@@ -48,7 +47,7 @@ def main():
     if data.get("stop_hook_active"):
         return
     text = last_text(data)
-    if TITLE not in text and not MOVED.search(text):
+    if TITLE not in text:
         return
     ps = problems(text)
     if not ps:
