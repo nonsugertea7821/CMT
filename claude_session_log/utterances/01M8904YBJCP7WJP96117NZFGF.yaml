@@ -1,0 +1,22 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-25T09:21:21.778Z（UTC）
+individuals:
+  01M8904YBJCP7WJP96117NZFGF:
+    is: model_utterance
+    display: 発言 4909
+    val:
+      order: 4909
+      text: |
+        前の答えの「cross_usage_consistency を測った記録は一つもない」は言い過ぎでした。読み返すと、E6・E8 が使い方ごとの正答率（適用・言い換えの選択）を測り、h_multi_layer_raises_consistency を mixed にしていました。一貫性に向けた測りは、ありました。
+
+        否定の文三つの扱いです。
+        - **「記録は一つもない」**: 上のとおり訂正しました。
+        - **「同じ項目で四つの使い方がそろうかは測っていない」**: 確かめた範囲では、項目ごとに集計したものは見つかりませんでした。ただ、使い方ごとの正答率から一貫性が決まってしまうなら、別に測る必要はありません。この前提は確かめていないので、`h_consistency_beyond_accuracy` として登録しました（#843、d_metric に結んでいます）。
+        - **「物差しなしでは判定できない」**: 登録していません。d_metric（再定義の成功を一貫性で測る）は既に採用された決定で、そこから出てくる帰結だからです。
+
+        近い順は変わりません。最初の物差しの実験は、E6・E8 の材料と手順を読み返して組み、項目ごとの同時の一致を測る形で事前登録します。
+
+        ロードマップの位置: d_metric（物差しの実験の準備、#843 登録）。
+facts:
+- {is: v_say, from: session_model, to: 01M8904YBJCP7WJP96117NZFGF}
+- {is: exp.v_answer, from: 01M8904YBJCP7WJP96117NZFGF, to: 01M890250XEAF1337HZ1C23TK6}
+- {is: v_refer, from: 01M8904YBJCP7WJP96117NZFGF, to: exp.cross_usage_consistency}
