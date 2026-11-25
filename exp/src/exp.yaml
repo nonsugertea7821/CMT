@@ -3770,8 +3770,72 @@ individuals:
   o_e60_4b_neg: {is: observation}
   o_e60_4b_p: {is: observation}
   o_e60_4b_pos_not_above_neg: {is: observation}
-  h_examples_compress_margin: {is: hyp_untested}
-  b_examples_compress_margin: {is: item_queued}
+  h_examples_compress_margin: {is: hyp_supported}
+  b_examples_compress_margin: {is: item_done}
+  e62a_15b: {is: measurement_family}
+  e62a_15b_cond: {is: family_axis, val: {text: cond}}
+  e62a_15b_cond_k0: {is: axis_value, val: {text: 'k0'}}
+  e62a_15b_cond_k2: {is: axis_value, val: {text: 'k2'}}
+  e62a_15b_cond_k8: {is: axis_value, val: {text: 'k8'}}
+  e62a_15b_stat: {is: family_axis, val: {text: stat}}
+  e62a_15b_stat_acc: {is: axis_value, val: {text: 'acc'}}
+  e62a_15b_stat_margin: {is: axis_value, val: {text: 'margin'}}
+  e62a_15b_stat_sd: {is: axis_value, val: {text: 'sd'}}
+  e62p_15b: {is: measurement_family}
+  e62p_15b_part: {is: family_axis, val: {text: part}}
+  e62p_15b_part_paired: {is: axis_value, val: {text: 'paired'}}
+  e62p_15b_stat: {is: family_axis, val: {text: stat}}
+  e62p_15b_stat_ratio: {is: axis_value, val: {text: 'ratio'}}
+  e62p_15b_stat_closer: {is: axis_value, val: {text: 'closer'}}
+  e62p_15b_stat_farther: {is: axis_value, val: {text: 'farther'}}
+  e62p_15b_stat_p: {is: axis_value, val: {text: 'p'}}
+  o_e62_15b_k0_acc: {is: observation}
+  o_e62_15b_k0_margin: {is: observation}
+  o_e62_15b_k0_sd: {is: observation}
+  o_e62_15b_k2_acc: {is: observation}
+  o_e62_15b_k2_margin: {is: observation}
+  o_e62_15b_k2_sd: {is: observation}
+  o_e62_15b_k8_acc: {is: observation}
+  o_e62_15b_k8_margin: {is: observation}
+  o_e62_15b_k8_sd: {is: observation}
+  o_e62_15b_ratio: {is: observation}
+  o_e62_15b_closer: {is: observation}
+  o_e62_15b_farther: {is: observation}
+  o_e62_15b_p: {is: observation}
+  o_e62_15b_ratio_below_line: {is: observation}
+  o_e62_15b_p_below_line: {is: observation}
+  e62a_4b: {is: measurement_family}
+  e62a_4b_cond: {is: family_axis, val: {text: cond}}
+  e62a_4b_cond_k0: {is: axis_value, val: {text: 'k0'}}
+  e62a_4b_cond_k2: {is: axis_value, val: {text: 'k2'}}
+  e62a_4b_cond_k8: {is: axis_value, val: {text: 'k8'}}
+  e62a_4b_stat: {is: family_axis, val: {text: stat}}
+  e62a_4b_stat_acc: {is: axis_value, val: {text: 'acc'}}
+  e62a_4b_stat_margin: {is: axis_value, val: {text: 'margin'}}
+  e62a_4b_stat_sd: {is: axis_value, val: {text: 'sd'}}
+  e62p_4b: {is: measurement_family}
+  e62p_4b_part: {is: family_axis, val: {text: part}}
+  e62p_4b_part_paired: {is: axis_value, val: {text: 'paired'}}
+  e62p_4b_stat: {is: family_axis, val: {text: stat}}
+  e62p_4b_stat_ratio: {is: axis_value, val: {text: 'ratio'}}
+  e62p_4b_stat_closer: {is: axis_value, val: {text: 'closer'}}
+  e62p_4b_stat_farther: {is: axis_value, val: {text: 'farther'}}
+  e62p_4b_stat_p: {is: axis_value, val: {text: 'p'}}
+  o_e62_4b_k0_acc: {is: observation}
+  o_e62_4b_k0_margin: {is: observation}
+  o_e62_4b_k0_sd: {is: observation}
+  o_e62_4b_k2_acc: {is: observation}
+  o_e62_4b_k2_margin: {is: observation}
+  o_e62_4b_k2_sd: {is: observation}
+  o_e62_4b_k8_acc: {is: observation}
+  o_e62_4b_k8_margin: {is: observation}
+  o_e62_4b_k8_sd: {is: observation}
+  o_e62_4b_ratio: {is: observation}
+  o_e62_4b_closer: {is: observation}
+  o_e62_4b_farther: {is: observation}
+  o_e62_4b_p: {is: observation}
+  o_e62_4b_ratio_above_line: {is: observation}
+  o_e62_4b_margin_rises: {is: observation}
   h_consistency_by_examples: {is: hyp_refuted}
   b_consistency_by_examples: {is: item_done}
   e59s_15b: {is: measurement_family}
@@ -14390,6 +14454,96 @@ facts:
   - {is: v_refer, from: h_examples_compress_margin, to: {is: v_rely, from: margin_spread, to: application_example}}
   - {is: v_check, from: b_examples_compress_margin, to: h_examples_compress_margin}
   - {is: v_ground, from: d_metric, to: h_examples_compress_margin}
+  - {is: v_file_of, from: e62_Qwen2.5-1.5B-Instruct.json, to: e62a_15b}
+  - {is: v_rows_of, from: [summary], to: e62a_15b}
+  - {is: v_axis_of, from: e62a_15b_cond, to: e62a_15b}
+  - {is: v_keys_of, from: '#', to: e62a_15b_cond}
+  - {is: v_value_of, from: e62a_15b_cond_k0, to: e62a_15b_cond}
+  - {is: v_spell, from: e62a_15b_cond_k0, to: ['k0']}
+  - {is: v_value_of, from: e62a_15b_cond_k2, to: e62a_15b_cond}
+  - {is: v_spell, from: e62a_15b_cond_k2, to: ['k2']}
+  - {is: v_value_of, from: e62a_15b_cond_k8, to: e62a_15b_cond}
+  - {is: v_spell, from: e62a_15b_cond_k8, to: ['k8']}
+  - {is: v_axis_of, from: e62a_15b_stat, to: e62a_15b}
+  - {is: v_value_of, from: e62a_15b_stat_acc, to: e62a_15b_stat}
+  - {is: v_value_of, from: e62a_15b_stat_margin, to: e62a_15b_stat}
+  - {is: v_value_of, from: e62a_15b_stat_sd, to: e62a_15b_stat}
+  - {is: v_entry_of, from: '{stat}', to: e62a_15b}
+  - {is: v_metric_of, from: e62a_15b, to: mean_value}
+  - {is: v_file_of, from: e62_Qwen2.5-1.5B-Instruct.json, to: e62p_15b}
+  - {is: v_rows_of, from: [], to: e62p_15b}
+  - {is: v_axis_of, from: e62p_15b_part, to: e62p_15b}
+  - {is: v_value_of, from: e62p_15b_part_paired, to: e62p_15b_part}
+  - {is: v_keys_of, from: '#', to: e62p_15b_part}
+  - {is: v_spell, from: e62p_15b_part_paired, to: ['paired']}
+  - {is: v_axis_of, from: e62p_15b_stat, to: e62p_15b}
+  - {is: v_value_of, from: e62p_15b_stat_ratio, to: e62p_15b_stat}
+  - {is: v_value_of, from: e62p_15b_stat_closer, to: e62p_15b_stat}
+  - {is: v_value_of, from: e62p_15b_stat_farther, to: e62p_15b_stat}
+  - {is: v_value_of, from: e62p_15b_stat_p, to: e62p_15b_stat}
+  - {is: v_entry_of, from: '{stat}', to: e62p_15b}
+  - {is: v_metric_of, from: e62p_15b, to: mean_value}
+  - {is: v_refer, from: o_e62_15b_k0_acc, to: {is: v_near, from: e62a_15b.k0.acc.mean_value, to: 0.75, new: 0.001}}
+  - {is: v_refer, from: o_e62_15b_k0_margin, to: {is: v_near, from: e62a_15b.k0.margin.mean_value, to: 3.2153, new: 0.001}}
+  - {is: v_refer, from: o_e62_15b_k0_sd, to: {is: v_near, from: e62a_15b.k0.sd.mean_value, to: 3.2392, new: 0.001}}
+  - {is: v_refer, from: o_e62_15b_k2_acc, to: {is: v_near, from: e62a_15b.k2.acc.mean_value, to: 0.7083, new: 0.001}}
+  - {is: v_refer, from: o_e62_15b_k2_margin, to: {is: v_near, from: e62a_15b.k2.margin.mean_value, to: 1.3507, new: 0.001}}
+  - {is: v_refer, from: o_e62_15b_k2_sd, to: {is: v_near, from: e62a_15b.k2.sd.mean_value, to: 2.1269, new: 0.001}}
+  - {is: v_refer, from: o_e62_15b_k8_acc, to: {is: v_near, from: e62a_15b.k8.acc.mean_value, to: 0.75, new: 0.001}}
+  - {is: v_refer, from: o_e62_15b_k8_margin, to: {is: v_near, from: e62a_15b.k8.margin.mean_value, to: 1.4153, new: 0.001}}
+  - {is: v_refer, from: o_e62_15b_k8_sd, to: {is: v_near, from: e62a_15b.k8.sd.mean_value, to: 1.7558, new: 0.001}}
+  - {is: v_refer, from: o_e62_15b_ratio, to: {is: v_near, from: e62p_15b.paired.ratio.mean_value, to: 0.5421, new: 0.001}}
+  - {is: v_refer, from: o_e62_15b_closer, to: {is: v_near, from: e62p_15b.paired.closer.mean_value, to: 18, new: 0.001}}
+  - {is: v_refer, from: o_e62_15b_farther, to: {is: v_near, from: e62p_15b.paired.farther.mean_value, to: 6, new: 0.001}}
+  - {is: v_refer, from: o_e62_15b_p, to: {is: v_near, from: e62p_15b.paired.p.mean_value, to: 0.0113, new: 0.001}}
+  - {is: v_refer, from: o_e62_15b_ratio_below_line, to: {is: v_come_before, from: e62p_15b.paired.ratio.mean_value, to: 0.8}}
+  - {is: v_refer, from: o_e62_15b_p_below_line, to: {is: v_come_before, from: e62p_15b.paired.p.mean_value, to: 0.05}}
+  - {is: v_support, from: o_e62_15b_ratio_below_line, to: h_examples_compress_margin}
+  - {is: v_support, from: o_e62_15b_p_below_line, to: h_examples_compress_margin}
+  - {is: v_file_of, from: e62_Qwen3-4B.json, to: e62a_4b}
+  - {is: v_rows_of, from: [summary], to: e62a_4b}
+  - {is: v_axis_of, from: e62a_4b_cond, to: e62a_4b}
+  - {is: v_keys_of, from: '#', to: e62a_4b_cond}
+  - {is: v_value_of, from: e62a_4b_cond_k0, to: e62a_4b_cond}
+  - {is: v_spell, from: e62a_4b_cond_k0, to: ['k0']}
+  - {is: v_value_of, from: e62a_4b_cond_k2, to: e62a_4b_cond}
+  - {is: v_spell, from: e62a_4b_cond_k2, to: ['k2']}
+  - {is: v_value_of, from: e62a_4b_cond_k8, to: e62a_4b_cond}
+  - {is: v_spell, from: e62a_4b_cond_k8, to: ['k8']}
+  - {is: v_axis_of, from: e62a_4b_stat, to: e62a_4b}
+  - {is: v_value_of, from: e62a_4b_stat_acc, to: e62a_4b_stat}
+  - {is: v_value_of, from: e62a_4b_stat_margin, to: e62a_4b_stat}
+  - {is: v_value_of, from: e62a_4b_stat_sd, to: e62a_4b_stat}
+  - {is: v_entry_of, from: '{stat}', to: e62a_4b}
+  - {is: v_metric_of, from: e62a_4b, to: mean_value}
+  - {is: v_file_of, from: e62_Qwen3-4B.json, to: e62p_4b}
+  - {is: v_rows_of, from: [], to: e62p_4b}
+  - {is: v_axis_of, from: e62p_4b_part, to: e62p_4b}
+  - {is: v_value_of, from: e62p_4b_part_paired, to: e62p_4b_part}
+  - {is: v_keys_of, from: '#', to: e62p_4b_part}
+  - {is: v_spell, from: e62p_4b_part_paired, to: ['paired']}
+  - {is: v_axis_of, from: e62p_4b_stat, to: e62p_4b}
+  - {is: v_value_of, from: e62p_4b_stat_ratio, to: e62p_4b_stat}
+  - {is: v_value_of, from: e62p_4b_stat_closer, to: e62p_4b_stat}
+  - {is: v_value_of, from: e62p_4b_stat_farther, to: e62p_4b_stat}
+  - {is: v_value_of, from: e62p_4b_stat_p, to: e62p_4b_stat}
+  - {is: v_entry_of, from: '{stat}', to: e62p_4b}
+  - {is: v_metric_of, from: e62p_4b, to: mean_value}
+  - {is: v_refer, from: o_e62_4b_k0_acc, to: {is: v_near, from: e62a_4b.k0.acc.mean_value, to: 0.8333, new: 0.001}}
+  - {is: v_refer, from: o_e62_4b_k0_margin, to: {is: v_near, from: e62a_4b.k0.margin.mean_value, to: 14.1016, new: 0.001}}
+  - {is: v_refer, from: o_e62_4b_k0_sd, to: {is: v_near, from: e62a_4b.k0.sd.mean_value, to: 12.201, new: 0.001}}
+  - {is: v_refer, from: o_e62_4b_k2_acc, to: {is: v_near, from: e62a_4b.k2.acc.mean_value, to: 0.9167, new: 0.001}}
+  - {is: v_refer, from: o_e62_4b_k2_margin, to: {is: v_near, from: e62a_4b.k2.margin.mean_value, to: 17.5677, new: 0.001}}
+  - {is: v_refer, from: o_e62_4b_k2_sd, to: {is: v_near, from: e62a_4b.k2.sd.mean_value, to: 6.9646, new: 0.001}}
+  - {is: v_refer, from: o_e62_4b_k8_acc, to: {is: v_near, from: e62a_4b.k8.acc.mean_value, to: 0.875, new: 0.001}}
+  - {is: v_refer, from: o_e62_4b_k8_margin, to: {is: v_near, from: e62a_4b.k8.margin.mean_value, to: 16.1068, new: 0.001}}
+  - {is: v_refer, from: o_e62_4b_k8_sd, to: {is: v_near, from: e62a_4b.k8.sd.mean_value, to: 9.8323, new: 0.001}}
+  - {is: v_refer, from: o_e62_4b_ratio, to: {is: v_near, from: e62p_4b.paired.ratio.mean_value, to: 0.8059, new: 0.001}}
+  - {is: v_refer, from: o_e62_4b_closer, to: {is: v_near, from: e62p_4b.paired.closer.mean_value, to: 20, new: 0.001}}
+  - {is: v_refer, from: o_e62_4b_farther, to: {is: v_near, from: e62p_4b.paired.farther.mean_value, to: 4, new: 0.001}}
+  - {is: v_refer, from: o_e62_4b_p, to: {is: v_near, from: e62p_4b.paired.p.mean_value, to: 0.0008, new: 0.001}}
+  - {is: v_refer, from: o_e62_4b_ratio_above_line, to: {is: v_come_after, from: e62p_4b.paired.ratio.mean_value, to: 0.8}}
+  - {is: v_refer, from: o_e62_4b_margin_rises, to: {is: v_come_after, from: e62a_4b.k8.margin.mean_value, to: e62a_4b.k0.margin.mean_value}}
   - {is: v_file_of, from: e59_Qwen2.5-1.5B-Instruct.json, to: e59s_15b}
   - {is: v_rows_of, from: [summary], to: e59s_15b}
   - {is: v_axis_of, from: e59s_15b_cond, to: e59s_15b}
