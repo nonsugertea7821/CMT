@@ -1,0 +1,30 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-25T00:15:26.791Z（UTC）
+individuals:
+  01M880XB2760BGS63R2D2HBQE4:
+    is: model_utterance
+    display: 発言 4482
+    val:
+      order: 4482
+      text: |
+        E56 の 4B が終わり、両モデルで反証の基準に入りました。
+
+        | モデル | 例なし・辺の行 | 例あり・辺の行 | 例だけ（E55） |
+        |---|---|---|---|
+        | 1.5B | 0.469 | 0.469 | 0.469 |
+        | 4B | 0.531 | 0.531 | 0.719 |
+
+        - 4B では、答えを含まない辺の行に例を添えても、acc は上がりませんでした（0.531 のまま）。
+        - しかも辺の行を足すと、例だけのときより 0.188 下がりました。
+        - 解釈（確かめていません）: E55 で 4B が「読んだ」のは、closure の行に書かれた答えの名前を写すことだった見込みが高いです。
+
+        体系への書き込み:
+        - 観察を書き、h_checker_output_read_when_taught に反証の側の根拠を結びました。仮説の状態は mixed のままです。
+        - 残り項目 b_checker_output_read_when_taught_edges は済みにしました。
+        - #765 の本文を更新しました。mixed なので、自動マージには乗りません。Draft は CI が通ってから外します。
+
+        重い列が空いたので、#771（h_state_by_genus_display）の 1.5B を走らせ始めました。
+
+        ロードマップの位置: d_road_checker の E56 が済みました（両モデルで反証）。d_road_region の #771 を実行中です。
+facts:
+- {is: v_say, from: session_model, to: 01M880XB2760BGS63R2D2HBQE4}
+- {is: exp.v_answer, from: 01M880XB2760BGS63R2D2HBQE4, to: 01M87Z7KQA2JGD0ZX6CP3V2W0P}
