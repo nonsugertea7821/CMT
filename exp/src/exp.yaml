@@ -3637,6 +3637,10 @@ individuals:
   b_rogue_dimension_lowers_midpoint: {is: item_queued}
   h_roles_in_attention: {is: hyp_untested}
   b_roles_in_attention: {is: item_queued}
+  h_script_region_by_pretext: {is: hyp_untested}
+  b_script_region_by_pretext: {is: item_queued}
+  h_genus_state_by_token_position: {is: hyp_untested}
+  b_genus_state_by_token_position: {is: item_queued}
   h_consistency_by_examples: {is: hyp_untested}
   b_consistency_by_examples: {is: item_queued}
   h_consistency_pairs_control: {is: hyp_untested}
@@ -11485,6 +11489,12 @@ facts:
   - {is: v_refer, from: h_roles_in_attention, to: {is: v_depend, from: attention, to: [syntax.from, syntax.to]}}
   - {is: v_check, from: b_roles_in_attention, to: h_roles_in_attention}
   - {is: v_ground, from: d_road_region, to: h_roles_in_attention}
+  - {is: v_refer, from: h_script_region_by_pretext, to: {is: v_depend, from: midpoint_membership, to: [pre_model_passage, syntax.display]}}
+  - {is: v_check, from: b_script_region_by_pretext, to: h_script_region_by_pretext}
+  - {is: v_ground, from: d_road_region, to: h_script_region_by_pretext}
+  - {is: v_refer, from: h_genus_state_by_token_position, to: {is: v_depend, from: hidden_state, to: [syntax.extends, label_token_positions]}}
+  - {is: v_check, from: b_genus_state_by_token_position, to: h_genus_state_by_token_position}
+  - {is: v_ground, from: d_road_region, to: h_genus_state_by_token_position}
   - {is: v_refer, from: h_consistency_by_examples, to: {is: v_depend, from: cross_usage_consistency, to: application_example}}
   - {is: v_check, from: b_consistency_by_examples, to: h_consistency_by_examples}
   - {is: v_ground, from: d_road_checker, to: h_consistency_by_examples}
