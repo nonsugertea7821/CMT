@@ -10,6 +10,7 @@ nodes:
   express_from_programming_language: {display: プログラミング言語へで書かれる（始点）, extends: quality, of: [v_express, from], with: programming_language}
   not_agree_from_question: {display: 設問へ一致する（否定）（始点）, extends: quality, of: [v_agree, from], with: question, neg: true}
   agree_from_prior_meaning: {display: 元の意味へ一致する（始点）, extends: quality, of: [v_agree, from], with: prior_meaning}
+  agree_to_definition: {display: 定義へ一致する（終点）, extends: quality, of: [v_agree, to], with: definition}
   refer_from_verdict: {display: 判定へ述べる（始点）, extends: quality, of: [v_refer, from], with: verdict}
   compose_from_context: {display: 文脈へ部分になる（始点）, extends: quality, of: [v_compose, from], with: context}
   compose_from_utterance: {display: 発話へ部分になる（始点）, extends: quality, of: [v_compose, from], with: utterance}
@@ -14031,6 +14032,6 @@ facts:
   - {is: v_refer, from: h_consistency_beyond_accuracy, to: {is: lang.v_not_depend, from: cross_usage_consistency, to: accuracy}}
   - {is: v_check, from: b_consistency_beyond_accuracy, to: h_consistency_beyond_accuracy}
   - {is: v_ground, from: d_metric, to: h_consistency_beyond_accuracy}
-  - {is: v_refer, from: h_checker_line_needs_agreement, to: {is: v_rely, from: redefinition_following, to: {is: v_agree, from: type_check_result, to: definition}}}
+  - {is: v_refer, from: h_checker_line_needs_agreement, to: {is: v_rely, from: redefinition_following, to: [type_check_result, agree_to_definition]}}
   - {is: v_check, from: b_checker_line_needs_agreement, to: h_checker_line_needs_agreement}
   - {is: v_ground, from: d_road_checker, to: h_checker_line_needs_agreement}
