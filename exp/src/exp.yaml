@@ -4004,6 +4004,8 @@ individuals:
   h_model_misses_named_hop: {is: hyp_supported}
   b_model_misses_named_hop: {is: item_done}
   b_checker_output_read_when_taught_edges: {is: item_done}
+  h_checker_read_by_answer_copy: {is: hyp_untested}
+  b_checker_read_by_answer_copy: {is: item_queued}
   h_refer_ops_share_direction: {is: hyp_refuted}
   b_refer_ops_share_direction: {is: item_done}
   h_refer_cuts_orthogonal: {is: hyp_untested}
@@ -11190,6 +11192,9 @@ facts:
   - {is: v_check, from: b_checker_output_read_when_taught, to: h_checker_output_read_when_taught}
   - {is: v_check, from: b_checker_output_read_when_taught_edges, to: h_checker_output_read_when_taught}
   - {is: v_ground, from: d_road_checker, to: h_checker_output_read_when_taught}
+  - {is: v_refer, from: h_checker_read_by_answer_copy, to: {is: v_depend, from: redefinition_following, to: [type_check_result, verdict]}}
+  - {is: v_check, from: b_checker_read_by_answer_copy, to: h_checker_read_by_answer_copy}
+  - {is: v_ground, from: d_road_checker, to: h_checker_read_by_answer_copy}
   - {is: v_refer, from: h_aid_used_with_example, to: {is: v_raise, from: [scratchpad, application_example], to: redefinition_following}}
   - {is: v_check, from: b_aid_used_with_example, to: h_aid_used_with_example}
   - {is: v_ground, from: d_road_checker, to: h_aid_used_with_example}
