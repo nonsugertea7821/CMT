@@ -1,0 +1,18 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-25T07:09:43.900Z（UTC）
+individuals:
+  01M88RKXJWFCAPJMYKG036994Y:
+    is: model_utterance
+    display: 発言 4841
+    val:
+      order: 4841
+      text: |
+        #830 の CI が、観察の誤り 1 件で落ちていました。直して push し、CI の再実行を待っています。
+
+        - **落ちた理由**: L22 の lift(35) と lift(0) は、どちらも 0.153571… でした。浮動小数の末尾の違いを「上回る」と数えて、比較の観察を置いてしまっていました。検査（ec）はこれを等しいと読んで、成り立たないと判定しました。
+        - **直したこと**: その観察を除いて push しました（fd67002）。値そのものは、近さの観察として残っています。
+        - **前の報告の訂正**: 前の報告で「11 層のうち 7 層で、上の帯を 35% 残したほうが lift が高い」と書きましたが、正しくは 6 層です（L4・L8・L10・L12・L16・L18）。L22 は等しい値でした。#830 と #831 の本文も、この数に直しました。
+
+        ロードマップの位置: d_road_region
+facts:
+- {is: v_say, from: session_model, to: 01M88RKXJWFCAPJMYKG036994Y}
+- {is: exp.v_answer, from: 01M88RKXJWFCAPJMYKG036994Y, to: 01M8824ABH7FVJ0AFYWM2EPXZH}
