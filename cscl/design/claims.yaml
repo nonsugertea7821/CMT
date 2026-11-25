@@ -248,6 +248,8 @@ individuals:
   b_identifier_by_expansion: {is: exp.item_done}
   h_identifier_by_bisimulation: {is: exp.hyp_refuted}
   b_identifier_by_bisimulation: {is: exp.item_done}
+  h_identifier_by_genus_differentia: {is: exp.hyp_untested}
+  b_identifier_by_genus_differentia: {is: exp.item_queued}
   h_appear_root: {is: exp.hyp_supported}
   b_appear_root: {is: exp.item_done}
   h_boundary_invariant: {is: exp.hyp_supported}
@@ -1290,6 +1292,9 @@ facts:
   - {is: exp.v_check, from: b_identifier_by_expansion, to: h_identifier_by_expansion}
   - {is: v_refer, from: h_identifier_by_bisimulation, to: {is: v_depend, from: syntax.identifier, to: [signature_class, syntax.identifier]}}
   - {is: exp.v_check, from: b_identifier_by_bisimulation, to: h_identifier_by_bisimulation}
+  - {is: v_refer, from: h_identifier_by_genus_differentia, to: {is: v_depend, from: syntax.identifier, to: [syntax.extends, syntax.mod, syntax.holds, syntax.from, syntax.to]}}
+  - {is: exp.v_check, from: b_identifier_by_genus_differentia, to: h_identifier_by_genus_differentia}
+  - {is: exp.v_ground, from: d_cscl_display_derived, to: h_identifier_by_genus_differentia}
   - {is: v_refer, from: h_appear_root, to: {is: v_depend, from: signature_class, to: syntax.pre}}
   - {is: exp.v_check, from: b_appear_root, to: h_appear_root}
   - {is: v_refer, from: o_sys_appear_root_pre_decides, to: {is: v_level, from: sys_appear_root.pre_eq_pair.mean_value, to: 1.0}}
