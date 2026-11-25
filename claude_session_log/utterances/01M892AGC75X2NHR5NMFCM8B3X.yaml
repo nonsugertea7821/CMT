@@ -1,0 +1,36 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-25T09:59:21.223Z（UTC）
+individuals:
+  01M892AGC75X2NHR5NMFCM8B3X:
+    is: model_utterance
+    display: 発言 4944
+    val:
+      order: 4944
+      text: |
+        いま進めていることの報告です。
+
+        **#849（h_consistency_bound_by_apply の登録）の検査落ち**
+        - 原因は型検査です。`v_depend` は `to` に「もの」しか取れず、`usage_apply` は「出来事」なので入りませんでした。
+        - 同じ「依存する」の中身で、もの・出来事のどちらでも取れる `v_rely` に書き直して push しました。CI を待っています。
+
+        **E57 が終わりました（#838）**
+        - 4B は、問いの closure の行だけ答えを入れ替えても、正答率 0.688 でした。例だけのときは 0.719 で、差は 1 項目です。
+        - 事前登録の基準で、「行に書かれた答えの名前を写している」は**反証**です。
+        - 一方で、正しい行で上がった分（0.906）は誤った行で消え、自信の大きさ（平均 margin）も 1.39 から 0.25 に下がりました。行は読まれていて、答えに影響は出ています。
+        - 結果を体系に記録し、PR の本文を書き直しました。CI が通ったら Draft を外します。
+
+        **E58 の 4B を実行中**
+        - float32 では 15GB のメモリに載らないので、bf16 で測ります。このことは実行の前に手順へ書き足し、commit しました。
+        - 手順を後から変えたので、#847 は自動マージに乗らず、手で見てもらう扱いになります。
+
+        **登録したこと**
+        - `h_checker_line_needs_agreement`（#850）: 検査器の行は、定義と一致するときだけ効く。
+        - E57 の結果からの読みで、まだ確かめていないので仮説として置きました。確かめ方は、定義を外して行だけを置き、正しい行と誤った行を比べる案です。
+
+        ロードマップの位置: 本線は d_metric（E58 の 4B で一貫性を測っているところ）。E57 と #850 は H3 検査器の道（d_road_checker）です。
+facts:
+- {is: v_say, from: session_model, to: 01M892AGC75X2NHR5NMFCM8B3X}
+- {is: exp.v_answer, from: 01M892AGC75X2NHR5NMFCM8B3X, to: 01M890250XEAF1337HZ1C23TK6}
+- {is: v_refer, from: 01M892AGC75X2NHR5NMFCM8B3X, to: ontology.v_depend}
+- {is: v_refer, from: 01M892AGC75X2NHR5NMFCM8B3X, to: syntax.to}
+- {is: v_refer, from: 01M892AGC75X2NHR5NMFCM8B3X, to: exp.usage_apply}
+- {is: v_refer, from: 01M892AGC75X2NHR5NMFCM8B3X, to: exp.v_rely}
