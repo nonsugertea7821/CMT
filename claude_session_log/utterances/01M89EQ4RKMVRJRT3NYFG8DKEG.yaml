@@ -1,0 +1,33 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-25T13:35:58.227Z（UTC）
+individuals:
+  01M89EQ4RKMVRJRT3NYFG8DKEG:
+    is: model_utterance
+    display: 発言 5092
+    val:
+      order: 5092
+      text: |
+        E63（PR #861）の結果と体系への記録を push し、PR の本文も書き換えました。CI の spec はまだ結果待ちです。通ったら Draft を外します。
+
+        **E63 の結果**
+
+        | モデル | apply の変化 | joint の変化 | 判定 |
+        |---|---|---|---|
+        | 4B | 0.750 → 0.917 | 0.708 → 0.833 | 支持（joint の上がりは apply の上がりの半分以上） |
+        | 1.5B | 0.583 → 0.583 | 0.458 → 0.542 | 判定しない（apply が上がらず、前提を満たさない） |
+
+        - **4B:** 改名で apply が当たりに変わったのは 5 概念です。そのうち 4 つは joint も当たりになりました。
+        - **1.5B:** joint が上がったのは、apply ではなく explain（0.833 → 0.958）と para の上がりによるものです。
+        - **全体:** 事前に決めた規則で、判定しないモデルがあれば他方の判定を採ります。なので 4B の判定を採り、h_consistency_bound_by_apply は支持です。
+        - **再現:** 名前を変えない near 条件の値は、両モデルとも E58 と一致しました。
+
+        **新しく登録した仮説**
+        - 1.5B で改名が explain を上げた件は、まだ確かめていないので仮説として登録しました（PR #862、登録だけの PR）。
+          - 仮説名は h_opaque_renaming_raises_explain で、d_metric に結んでいます。
+          - 根拠は 24 概念のうち 3 つの差で、apply を見る実験の副産物にすぎないからです。
+          - 立てば、1.5B では joint の上限を決めているのが apply だけではない、ということになります。
+        - PR #862 は見張りを付け、assignee も設定済みです。
+
+        ロードマップの位置: d_metric。少なくとも 4B では、joint の上限を決めているのが apply だと、apply を動かす手で確かめました。
+facts:
+- {is: v_say, from: session_model, to: 01M89EQ4RKMVRJRT3NYFG8DKEG}
+- {is: exp.v_answer, from: 01M89EQ4RKMVRJRT3NYFG8DKEG, to: 01M894P981R0TBZ8RRY7RKHDMV}
