@@ -3398,6 +3398,15 @@ individuals:
   o_e57b_wrong_above_copy_line: {is: observation}
   o_e57b_wrong_near_examples_only: {is: observation}
   o_e57b_wrong_below_closure: {is: observation}
+  e61b: {is: measurement_family}
+  e61b_cond: {is: family_axis, val: {text: cond}}
+  e61b_cond_alone_right: {is: axis_value, val: {text: 'alone_right'}}
+  e61b_cond_alone_wrong: {is: axis_value, val: {text: 'alone_wrong'}}
+  o_e61b_alone_right: {is: observation}
+  o_e61b_alone_wrong: {is: observation}
+  o_e61b_right_above_line: {is: observation}
+  o_e61b_wrong_below_line: {is: observation}
+  o_e61b_wrong_below_e57: {is: observation}
   e45: {is: measurement_family}
   e45_cond: {is: family_axis, val: {text: cond}}
   e45_cond_number_extends: {is: axis_value, val: {text: 'number_extends'}}
@@ -4632,8 +4641,8 @@ individuals:
   h_formal_corpus_transfers_to_apply: {is: hyp_untested}
   b_formal_corpus_transfers_to_apply: {is: item_queued}
   b_checker_read_by_answer_copy: {is: item_done}
-  h_checker_line_needs_agreement: {is: hyp_untested}
-  b_checker_line_needs_agreement: {is: item_queued}
+  h_checker_line_needs_agreement: {is: hyp_supported}
+  b_checker_line_needs_agreement: {is: item_done}
   h_refer_ops_share_direction: {is: hyp_refuted}
   b_refer_ops_share_direction: {is: item_done}
   h_refer_cuts_orthogonal: {is: hyp_untested}
@@ -14275,6 +14284,27 @@ facts:
   - {is: v_refer, from: o_e57b_wrong_below_closure, to: {is: v_come_before, from: e57b.taught_wrong.accuracy, to: e55b.taught_closure.accuracy}}
   - {is: v_contradict, from: o_e57b_wrong_near_examples_only, to: h_checker_read_by_answer_copy}
   - {is: v_contradict, from: o_e57b_wrong_above_copy_line, to: h_checker_read_by_answer_copy}
+  - {is: v_file_of, from: 'e61_Qwen3-4B.json', to: e61b}
+  - {is: v_rows_of, from: [items, '{cond}'], to: e61b}
+  - {is: v_axis_of, from: e61b_cond, to: e61b}
+  - {is: v_value_of, from: e61b_cond_alone_right, to: e61b_cond}
+  - {is: v_value_of, from: e61b_cond_alone_wrong, to: e61b_cond}
+  - {is: v_denote, from: e61b_cond_alone_right, to: lang.type_checker}
+  - {is: v_denote, from: e61b_cond_alone_right, to: application_example}
+  - {is: v_denote, from: e61b_cond_alone_wrong, to: lang.type_checker}
+  - {is: v_denote, from: e61b_cond_alone_wrong, to: application_example}
+  - {is: v_entry_of, from: pair, to: e61b}
+  - {is: v_metric_of, from: e61b, to: accuracy}
+  - {is: v_metric_of, from: e61b, to: order_robust_accuracy}
+  - {is: v_metric_of, from: e61b, to: logit_margin}
+  - {is: v_refer, from: o_e61b_alone_right, to: {is: v_level, from: e61b.alone_right.accuracy, to: 0.96875}}
+  - {is: v_refer, from: o_e61b_alone_wrong, to: {is: v_level, from: e61b.alone_wrong.accuracy, to: 0.09375}}
+  - {is: v_refer, from: o_e61b_right_above_line, to: {is: v_come_after, from: e61b.alone_right.accuracy, to: 0.6875}}
+  - {is: v_refer, from: o_e61b_wrong_below_line, to: {is: v_come_before, from: e61b.alone_wrong.accuracy, to: 0.3125}}
+  - {is: v_refer, from: o_e61b_wrong_below_e57, to: {is: v_come_before, from: e61b.alone_wrong.accuracy, to: e57b.taught_wrong.accuracy}}
+  - {is: v_support, from: o_e61b_right_above_line, to: h_checker_line_needs_agreement}
+  - {is: v_support, from: o_e61b_wrong_below_line, to: h_checker_line_needs_agreement}
+  - {is: v_support, from: o_e61b_wrong_below_e57, to: h_checker_line_needs_agreement}
   - {is: v_refer, from: h_examples_raise_apply, to: {is: v_rely, from: usage_apply, to: application_example}}
   - {is: v_check, from: b_examples_raise_apply, to: h_examples_raise_apply}
   - {is: v_ground, from: d_metric, to: h_examples_raise_apply}
