@@ -1,0 +1,240 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-25T03:44:16.834Z（UTC）
+individuals:
+  01M88CVQE28GPCS4EA933XDGYD:
+    is: session_summary
+    display: 発言 4695
+    val:
+      order: 4695
+      text: |
+        This session is being continued from a previous conversation that ran out of context. The summary below covers the earlier portion of the conversation.
+
+        <system-reminder>
+        <tools-used-before-summary>Agent, Artifact, AskUserQuestion, Bash, Edit, Grep, Monitor, Read, ReadNotifications, Skill, SubagentHandback, TaskStop, ToolSearch, WebFetch, WebSearch, Write, mcp__claude-code-remote__add_repo, mcp__claude-code-remote__create_trigger, mcp__claude-code-remote__delete_trigger, mcp__claude-code-remote__get_trigger, mcp__claude-code-remote__list_repos, mcp__claude-code-remote__read_documentation, mcp__claude-code-remote__send_later, mcp__claude-code-remote__subscribe_pr_activity, mcp__claude-code-remote__unsubscribe_pr_activity, mcp__claude-code-remote__update_trigger, mcp__github__actions_get, mcp__github__actions_list, mcp__github__actions_run_trigger, mcp__github__add_issue_comment, mcp__github__create_pull_request, mcp__github__get_job_logs, mcp__github__issue_read, mcp__github__issue_write, mcp__github__list_issue_types, mcp__github__list_issues, mcp__github__list_pull_requests, mcp__github__pull_request_read, mcp__github__update_pull_request</tools-used-before-summary>
+        </system-reminder>
+        Summary:
+        1. Primary Request and Intent
+
+        **Standing rules (carried forward)**
+        - Repo nonsugertea7821/CMT at /home/user/CMT. Python is /home/user/venv/bin/python. CPU only.
+        - Writing
+          - Plain Japanese in conversation and PR bodies.
+          - Don't overclaim. Separate facts from interpretation.
+          - End each report with 「ロードマップの位置: …」. Label side paths わき道.
+        - Git
+          - Restore files with `git show <rev>:<path> > <path>`. No checkout, no stash.
+          - Commit trailer:
+            ```
+            Co-Authored-By: Claude [モデル名を伏せた] <[メールアドレスを伏せた]>
+            Claude-Session: https://claude.ai/code/session_015KRKt6TNJZ7ZsQmEknANXK
+            ```
+          - PR body ends with `🤖 Generated with [Claude Code](https://claude.com/claude-code)`, a blank line, then the session URL.
+          - No personal info or model IDs in pushed artifacts. Claude never merges.
+          - Don't push to merged branches.
+        - Every PR I open: subscribe_pr_activity, then issue_write update with assignees ["nonsugertea7821"].
+        - System YAML gets no comments.
+          - Run conflict-marker removal and `git commit` as separate Bash commands.
+        - Experiments
+          - Pre-register with a script-only commit; results go in a later commit.
+          - Use `git add -f`. Never rerun a recorded script.
+          - No local tc/ec; CI runs them.
+          - Undraft only when spec passes and a status (supported / refuted / mixed) is judged. A "not judged" result stays Draft.
+        - Register unverified claims as hypotheses, or as check items under an existing hypothesis, before telling the user. Don't ask permission in conversation.
+        - Use /home/user/CMT/.wt_* worktrees. Remove the worktree (`git worktree remove --force`) and local branch after merge.
+        - Stop hook "Wait—turn that observation into a hypothesis?"
+          - Classify each negative sentence as fact, unverified (register it), or progress.
+          - End with what was registered and why.
+        - Foreground sleep is blocked. Use Bash run_in_background.
+        - During heavy runs, place a send_later check about every 9 minutes.
+        - delete_trigger was denied by the auto-mode classifier. Leave stale send_later checks to fire harmlessly.
+
+        **Security constraints (verbatim)**
+        - 「Pagesに出すなら脆弱性気を付けてね」
+        - 「あとsession_logは読まないように」
+        - Later clarified:
+          - 「いやまあログの中身は読んだってかまわないんだけど 何のために残してるかって「過去の参照」のためだから」
+          - 「読もうと思えばsession_logも読めるよ 無差別に読んでほしくないからPagesに出してないだけ」
+          - 「あとブランチ切れば消えるってのもある」
+        - Net effect: reading session logs for past reference is OK. Never expose claude/session-log-* in Pages or the ledger.
+
+        **Other user constraints**
+        - Claude models must not be the experiment target (distillation). Use open models (Qwen, sarashina, llm-jp, etc.).
+        - The user decided: 「d_road_regionは掘り続けるべきだ。幾何的にはこれは成り立つと読んでいる。」
+        - The user suggested attacking from transformer mechanics.
+
+        **Heartbeat**
+        - trig_01L92Xn7LSTHrmqt7enEcCPG, next fire 2026-11-25T04:12:00Z.
+        - On fire, re-arm about 61 minutes ahead (enabled true), then run the 周回 per its stored prompt. Parts of that prompt are stale.
+
+        2. Key Technical Concepts
+
+        - **Midpoint membership (#364/#779)**
+          - G_rate / C_rate / R_rate over 120 words fed as 「w, read as the mean over the word's tokens, centered.
+          - Conditions: orig / swap / mixed (mixed_rate from geo_genus_region_immune_display).
+          - holds = G − R ≥ 0.15.
+          - lift = mean over swap and mixed of (G_variant − G_base).
+        - **Genus separation G for verb displays (#792):** last-token versus mean readings.
+        - **ec families**
+          - Defined by v_file_of, v_rows_of (templates like `[layers, '{layer}', '{read}']`), v_axis_of / v_value_of, v_keys_of '#' with v_spell, v_entry_of '{stat}' or a fixed entry, v_metric_of mean_value.
+          - Measured id example: `geo_sd.8.drop.swap.G_rate.mean_value`.
+        - **Observations:** v_near (`new` = tolerance), v_come_before, v_come_after. Linked with v_support / v_contradict.
+          - Status values: hyp_supported / hyp_refuted / hyp_untested; item_done / item_queued.
+        - **Auto-merge**
+          - Merges clean refuted/supported results and registration-only PRs that add an h_.
+          - PRs that add only b_ check items, or add concepts, go to manual review.
+        - **Models:** Qwen2.5-1.5B-Instruct (1536 dimensions; layers 8 / 14 / 20, judged at L8); sarashina2.2-1b; llm-jp-3-1.8b.
+
+        3. Files and Code Sections
+
+        **exp/experiments/geo_genus_last_token_by_suffix.py (#795, MERGED)**
+        - Reuses collect / norm from geo_state_by_genus_display and vectors / MODEL / LAYERS from geo_genus_state_by_token_position.
+        - suf = last token id of tok("「"+display). excl = pairs with different last tokens.
+        - Computes G_all and G_excl for mean and last readings; p_excl from 2000 label permutations (seed 0).
+        - Judgment: supported if rise_excl < 0.02; refuted if rise_excl ≥ 0.05 and p ≤ 0.05.
+        - Results, L8 orig (excl pairs: 138 same-parent, 527 different-parent):
+
+          | Pairs | mean G | last G | rise |
+          |---|---|---|---|
+          | all | 0.0825 | 0.2187 | 0.136 |
+          | excl | 0.0352 | 0.1138 | 0.079 (p = 0) |
+
+          - Other rise_excl values: L8 derived 0.065; L14 orig 0.070 / derived 0.042; L20 orig 0.071 / derived 0.073.
+          - Verdict: refuted.
+        - exp.yaml got families geo_glts (rows `[layers,'{layer}','{cond}']`, read keys '#' mean/last, stat G_excl / G_all) and geo_glts_d (rows `[layers,'{layer}']`, cond keys '#', entries rise_excl / rise_all / p_excl).
+          - Observations o_geo_glts_*.
+          - v_contradict from o_geo_glts_8_rise_excl_above_line and o_geo_glts_8_p_excl_below_line.
+          - h_genus_last_token_by_suffix is hyp_refuted; its b_ is item_done.
+
+        **exp/experiments/geo_spread_dimension_midpoint.py (#799, branch claude/h_spread_dimension_lowers_midpoint, worktree .wt_spread)**
+        - K = 16 top dims by centered std over the 240 mixed words. Reads: base, drop (zero those dims), rand (20 random sets of 16 other dims, seed 0).
+        - Judgment: supported if lift ≥ 0.10 and holds(swap, drop); refuted if lift < 0.03.
+        - Results:
+          - L8 G_rate:
+
+            | Reading | orig | swap | mixed |
+            |---|---|---|---|
+            | base | 0.779 | 0.229 | 0.436 |
+            | drop | 0.764 | 0.229 | 0.400 |
+            | rand | 0.778 | 0.230 | 0.425 |
+
+          - lift −0.018 (rand −0.005). Verdict: refuted.
+          - Variance share of the 16 dims: 0.107 / 0.112 / 0.134 at L8 / L14 / L20. Their std is 5.5–8.6× the median at L8. They overlap the #788 rogue dims only at 1421.
+          - At L14 / L20, drop slightly raises orig and mixed (L20 mixed 0.357 → 0.393). Swap does not rise.
+        - exp.yaml got family geo_sd (rows `[layers,'{layer}','{read}']`, reads base / drop / rand, cond keys '#' orig / swap / mixed, stat G_rate) and geo_sd_v (rows `[layers,'{layer}']`, part keys '#' spread, entry centered_var_share).
+          - Observations o_geo_sd_{l}_{read}_{cond} (v_near) and o_geo_sd_v_{l}.
+          - o_geo_sd_8_swap_drop_below_lift_line (v_come_before 0.2586) and o_geo_sd_8_mixed_drop_below_lift_line (0.4657), both v_contradict.
+          - o_geo_sd_8_mixed_drop_below_base.
+          - h_spread_dimension_lowers_midpoint is hyp_refuted; its b_ is item_done.
+        - Commits: 7fbd6e3 (pre-registration, CI green), 91b3eb6 (results; CI pending). PR #799 is still Draft.
+
+        **exp.yaml registrations**
+        - #796 (open): `b_genus_state_by_similar_suffix: {is: item_queued}` plus `{is: v_check, from: b_genus_state_by_similar_suffix, to: h_genus_state_by_token_position}`. Head 9eeb2a7, CI green, manual review.
+        - #800 (MERGED):
+          - `h_midpoint_by_spread_profile: {is: hyp_untested}`
+          - `b_midpoint_by_spread_profile: {is: item_queued}`
+          - `{is: v_refer, from: h_midpoint_by_spread_profile, to: {is: v_depend, from: midpoint_membership, to: [spread_dimension, magnitude]}}`
+          - v_check, plus v_ground from d_road_region.
+
+        **Known #788 results (geo_rogue_dimension_midpoint.json), G_rate by layer**
+
+        | Layer | Reading | orig | swap | mixed |
+        |---|---|---|---|---|
+        | L8 | base | 0.779 | 0.229 | 0.436 |
+        | L8 | drop | 0.793 | 0.250 | 0.421 |
+        | L8 | zscore | 0.871 | 0.314 | 0.593 |
+        | L14 | zscore | 0.707 | 0.264 | 0.379 |
+        | L20 | zscore | 0.800 | 0.300 | 0.521 |
+
+        - The script structure in geo_rogue_dimension_midpoint.py / geo_spread_dimension_midpoint.py: `mats()` centers each condition, then modifies; `rates()` computes G / C (and R / holds at L8).
+
+        4. Errors and fixes
+
+        - Repeated merge conflicts in exp/src/exp.yaml after each main merge.
+          - Fixed with a Python script that replaces each conflict hunk with the HEAD lines (excluding lines main updated, e.g. genus_state_by_token_position or genus_last_token_by_suffix) plus main's lines, or simply HEAD + main.
+          - Then `git add` and a separate commit, "main を取り込む（…両側を残す）".
+        - gh search/issues needs `is:issue` in the query.
+
+        5. Problem Solving
+
+        Region road so far:
+        - Last-token genus rise is about 60% robust to excluding identical endings (refuted the suffix-only explanation). Similar endings remain untested (#796).
+        - Neither dropping rogue (#788) nor top-spread (#799) dimensions restores swapped-word membership.
+        - Full zscore does raise membership. The new hypothesis h_midpoint_by_spread_profile (merged, issue number not yet looked up) proposes that this rise comes from equalizing many dims.
+
+        6. All user messages
+
+        There were no new user messages in this segment, only notifications, triggers and stop-hook feedback. Earlier messages still in force:
+        - 「d_road_regionは掘り続けるべきだ。幾何的にはこれは成り立つと読んでいる。」
+        - 「トークンが細かく分かれる ちょっとトランスフォーマーの仕組みから攻めてみるか」
+        - 「因みに他の反証されているregion系統にトランスフォーマーの仕組みからの示唆は無いか？」
+        - 「蒸留になってしまうからclaudeのモデルを対象にやるべき実験ではないけど…」
+        - 「続けよう」
+        - 「思ったより消耗が早いからハートビートは1h毎にしようか」
+        - 「9分毎に様子をみないとコンテナが落ちるよ」
+        - The security quotes above.
+
+        7. Pending Tasks
+
+        - #799: when CI on 91b3eb6 passes, undraft and update the PR body with results. It may auto-merge; then remove .wt_spread and its branch.
+        - Test h_midpoint_by_spread_profile in worktree .wt_prof (branch claude/h_midpoint_by_spread_profile, created from origin/main).
+        - PRs awaiting the user:
+          - #796 (worktree .wt_reg_sfx): manual review.
+          - #790 (.wt_srp): Draft, not judged.
+          - #782: Draft.
+          - #736, #742: review.
+        - After #796 merges: remove .wt_reg_sfx and its branch, then test b_genus_state_by_similar_suffix.
+        - Other open: #785 h_roles_in_attention; #798 h_dimension_contrast_in_formula.
+        - Heartbeat at 04:12Z: re-arm, then run the 周回. A stale send_later for #799 fires at 03:47Z.
+
+        8. Current Work
+
+        - Just created the worktree: `git worktree add -q -b claude/h_midpoint_by_spread_profile .wt_prof origin/main`, which succeeded.
+        - No script written yet.
+        - Planned design for exp/experiments/geo_spread_profile_midpoint.py:
+          - Reuse geo_cross_genus_midpoint (GENUS, CROSS, FILLER, vectors, rate, LAYERS, JUDGE) and geo_genus_region_immune_display (SWAP, mixed_rate), the same as geo_spread_dimension_midpoint.py.
+          - For each k in {16, 64, 256, 1536(all)}, compress the top-k dims (by centered std on the 240 mixed words) so their std equals s_(k+1); for "all", use full zscore.
+          - lift_k = mean over swap and mixed of (G(comp_k) − G(base)) at L8.
+          - Judgment idea: supported if lift_256 ≥ 0.05; refuted if lift_256 < 0.02 and lift_full ≥ 0.05; otherwise not judged.
+          - Disclose the known zscore lift_full ≈ 0.121 from #788.
+
+        9. Optional Next Step
+
+        Continue the current task: test h_midpoint_by_spread_profile.
+        1. Look up its issue number (gh api search/issues with `is:issue h_midpoint_by_spread_profile`).
+        2. Write the pre-registration script in .wt_prof, commit it script-only with `git add -f`, and push.
+        3. Open a Draft PR, subscribe, and assign.
+        4. Run in the background with a send_later check about 9 minutes out.
+
+        In parallel, when CI on #799 head 91b3eb6 reports success, undraft #799 with a results body.
+
+        This follows the user's direction 「d_road_regionは掘り続けるべきだ」 and the last action: creating worktree .wt_prof for branch claude/h_midpoint_by_spread_profile after #800 merged.
+
+        If you need specific details from before compaction (like exact code snippets, error messages, or content you generated), read the full transcript at: /root/.claude/projects/-home-user-CMT/e05d2140-ce91-515f-a5fb-e6251e13d406.jsonl
+        Continue the conversation from where it left off without asking the user any further questions. Resume directly — do not acknowledge the summary, do not recap what was happening, do not preface with "I'll continue" or similar. Pick up the last task as if the break never happened.
+
+        The messages after this summary are the most recent messages from before compaction, kept verbatim. The summary was written without seeing them, so something it says has not happened yet may already have happened in them.
+facts:
+- {is: v_say, from: session_model, to: 01M88CVQE28GPCS4EA933XDGYD}
+- {is: v_refer, from: 01M88CVQE28GPCS4EA933XDGYD, to: exp.v_file_of}
+- {is: v_refer, from: 01M88CVQE28GPCS4EA933XDGYD, to: exp.v_rows_of}
+- {is: v_refer, from: 01M88CVQE28GPCS4EA933XDGYD, to: exp.v_axis_of}
+- {is: v_refer, from: 01M88CVQE28GPCS4EA933XDGYD, to: exp.v_value_of}
+- {is: v_refer, from: 01M88CVQE28GPCS4EA933XDGYD, to: exp.v_keys_of}
+- {is: v_refer, from: 01M88CVQE28GPCS4EA933XDGYD, to: exp.v_spell}
+- {is: v_refer, from: 01M88CVQE28GPCS4EA933XDGYD, to: exp.v_entry_of}
+- {is: v_refer, from: 01M88CVQE28GPCS4EA933XDGYD, to: exp.v_metric_of}
+- {is: v_refer, from: 01M88CVQE28GPCS4EA933XDGYD, to: exp.mean_value}
+- {is: v_refer, from: 01M88CVQE28GPCS4EA933XDGYD, to: exp.v_near}
+- {is: v_refer, from: 01M88CVQE28GPCS4EA933XDGYD, to: syntax.new}
+- {is: v_refer, from: 01M88CVQE28GPCS4EA933XDGYD, to: ontology.v_come_before}
+- {is: v_refer, from: 01M88CVQE28GPCS4EA933XDGYD, to: ontology.v_come_after}
+- {is: v_refer, from: 01M88CVQE28GPCS4EA933XDGYD, to: exp.v_support}
+- {is: v_refer, from: 01M88CVQE28GPCS4EA933XDGYD, to: exp.v_contradict}
+- {is: v_refer, from: 01M88CVQE28GPCS4EA933XDGYD, to: exp.hyp_supported}
+- {is: v_refer, from: 01M88CVQE28GPCS4EA933XDGYD, to: exp.hyp_refuted}
+- {is: v_refer, from: 01M88CVQE28GPCS4EA933XDGYD, to: exp.hyp_untested}
+- {is: v_refer, from: 01M88CVQE28GPCS4EA933XDGYD, to: exp.item_done}
+- {is: v_refer, from: 01M88CVQE28GPCS4EA933XDGYD, to: exp.item_queued}
+- {is: v_refer, from: 01M88CVQE28GPCS4EA933XDGYD, to: exp.v_check}
+- {is: v_refer, from: 01M88CVQE28GPCS4EA933XDGYD, to: ontology.v_refer}
+- {is: v_refer, from: 01M88CVQE28GPCS4EA933XDGYD, to: ontology.v_depend}
+- {is: v_refer, from: 01M88CVQE28GPCS4EA933XDGYD, to: exp.v_ground}
