@@ -1,0 +1,21 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-25T16:51:31.461Z（UTC）
+individuals:
+  01M89SX70571ZVF3A4V3CN7HFG:
+    is: model_utterance
+    display: 発言 5286
+    val:
+      order: 5286
+      text: |
+        #880's first CI run failed in the runtime step with `KeyError: 'post'`. #879 had only checked the type checker and ec, not the runtime, so this is new information.
+
+        - **The cause:** the runtime treats any verb with a `pre` frame as an action that changes state, and expects it to have a `post` frame too. `v_assume` now has `pre` and no `post`.
+        - **The fix:** I pushed a one-line change to `runtime.py` (283d375) so a missing `post` counts as empty. That's how the runtime already handles it when binding a verb, and with an empty `post` the runtime can never pick `v_assume` as a step to run.
+        - **Open question:** `pre` and `post` mean "state change" to the runtime, so marking rule roles with the same keys makes `v_assume` look like an action to it. I wrote this in the PR body as unverified. The rerun of the runtime step and the world tests will show part of whether behaviour changes. If it does, I'll register a hypothesis to use different keys for rule roles.
+
+        CI is running again.
+facts:
+- {is: v_say, from: session_model, to: 01M89SX70571ZVF3A4V3CN7HFG}
+- {is: exp.v_answer, from: 01M89SX70571ZVF3A4V3CN7HFG, to: 01M89PSFS6B8JRMSN9NJ2R17KF}
+- {is: v_refer, from: 01M89SX70571ZVF3A4V3CN7HFG, to: syntax.pre}
+- {is: v_refer, from: 01M89SX70571ZVF3A4V3CN7HFG, to: syntax.post}
+- {is: v_refer, from: 01M89SX70571ZVF3A4V3CN7HFG, to: syntax.v_assume}
