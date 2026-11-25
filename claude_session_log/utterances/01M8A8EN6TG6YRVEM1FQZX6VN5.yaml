@@ -1,0 +1,33 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-25T21:05:43.130Z（UTC）
+individuals:
+  01M8A8EN6TG6YRVEM1FQZX6VN5:
+    is: model_utterance
+    display: 発言 5424
+    val:
+      order: 5424
+      text: |
+        h_domain_sep_by_lifting came out refuted (#897): two of the three general verbs separate cleanly once moved upstream, and the third is blocked by the type checker.
+
+        | Verb moved | Moved to | tc | Result |
+        |---|---|---|---|
+        | exp.v_transfer | std | passes | its pair no longer needs the domain condition |
+        | std.v_compute | ontology | passes | its pair no longer needs the domain condition |
+        | exp.v_rely | ontology | fails | its 5 pairs stay unsolved |
+
+        - **Two verbs separate:** once moved, they read apart with no domain condition, and no new pairs appeared.
+        - **Why exp.v_rely failed:** the type checker looks up ontology.v_depend by its position, as the verb directly under `occurrent`. Putting it under v_rely moves it out of that spot, and the checker then reports that several roles in `subj` have no grounding definition. What stopped it is how the checker finds that verb, not a rule in the system.
+        - **Recorded:** the result is in the system files, the body of #897 is updated, and I'll take it out of Draft once CI passes.
+
+        What it means: a separation that only the domain condition was making can sometimes be made just by putting the general verb in the right place.
+
+        New hypothesis, registered only (#898): h_base_verb_found_by_shape. If the checker found its base verbs by their pattern and end types rather than by position, the remaining five pairs might also separate by placement. Testing it means changing the checker, so that PR will need your review by hand.
+
+        #897 and #898 edit neighbouring lines in `claims.yaml`, so whichever merges second may conflict; I'll merge main in when that happens. E66 had 15 of 24 concepts trained at the last check, with the next check at 21:09 UTC.
+facts:
+- {is: v_say, from: session_model, to: 01M8A8EN6TG6YRVEM1FQZX6VN5}
+- {is: exp.v_answer, from: 01M8A8EN6TG6YRVEM1FQZX6VN5, to: 01M89PSFS6B8JRMSN9NJ2R17KF}
+- {is: v_refer, from: 01M8A8EN6TG6YRVEM1FQZX6VN5, to: exp.v_transfer}
+- {is: v_refer, from: 01M8A8EN6TG6YRVEM1FQZX6VN5, to: std.v_compute}
+- {is: v_refer, from: 01M8A8EN6TG6YRVEM1FQZX6VN5, to: exp.v_rely}
+- {is: v_refer, from: 01M8A8EN6TG6YRVEM1FQZX6VN5, to: ontology.v_depend}
+- {is: v_refer, from: 01M8A8EN6TG6YRVEM1FQZX6VN5, to: ontology.occurrent}
