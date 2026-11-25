@@ -119,9 +119,9 @@ nodes:
   premise: {display: 法則の前提, extends: sentence_refer_from_state_relation, mod: {of: [v_assume, to], with: law_rule}, many: true}
   derived: {display: 法則が導く文, extends: sentence_refer_from_state_relation, mod: {of: [v_derive, to], with: law_rule}, many: true}
   required: {display: 法則が求める文, extends: sentence_refer_from_state_relation, mod: {of: [v_require, to], with: law_rule}, many: true}
-  v_assume: {display: 前提に置く, extends: v_refer, from: law_rule, to: premise}
-  v_derive: {display: 導く, extends: v_refer, from: law_rule, to: derived}
-  v_require: {display: 成り立つことを求める, extends: v_refer, from: law_rule, to: required}
+  v_assume: {display: 前提に置く, extends: v_refer, from: law_rule, to: premise, pre: [{is: v_refer, from: from, to: to}]}
+  v_derive: {display: 導く, extends: v_refer, from: law_rule, to: derived, post: [{is: v_refer, from: from, to: to}]}
+  v_require: {display: 成り立つことを求める, extends: v_refer, from: law_rule, to: required, holds: [{is: v_refer, from: from, to: to}]}
   variable: {display: 変数, extends: expression_part, mod: {of: [v_refer, from], with: law_rule}}
   law_relation: {display: 導いた関係, extends: expression_part, mod: {of: [v_refer, to], with: derived}}
   v_govern: {display: 掛かる, extends: v_refer, from: law_given, to: information_entity}
