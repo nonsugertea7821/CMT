@@ -1893,6 +1893,21 @@ individuals:
   sys_grammar_parts_rel_by_new_nodes_cond_n_diff_untouched: {is: axis_value, val: {text: n_diff_untouched}}
   sys_grammar_parts_rel_by_new_nodes_cond_PCG_same_CG: {is: axis_value, val: {text: PCG_same_CG}}
   sys_grammar_parts_rel_by_new_nodes_cond_n_CG_PCG_diff: {is: axis_value, val: {text: n_CG_PCG_diff}}
+  sys_rel_diff_by_added_terms: {is: measurement_family}
+  sys_rel_diff_by_added_terms_cond: {is: family_axis, val: {text: cond}}
+  sys_rel_diff_by_added_terms_cond_C_errors: {is: axis_value, val: {text: C_errors}}
+  sys_rel_diff_by_added_terms_cond_C_ec_errors: {is: axis_value, val: {text: C_ec_errors}}
+  sys_rel_diff_by_added_terms_cond_CG_errors: {is: axis_value, val: {text: CG_errors}}
+  sys_rel_diff_by_added_terms_cond_CG_ec_errors: {is: axis_value, val: {text: CG_ec_errors}}
+  sys_rel_diff_by_added_terms_cond_C_n_rel: {is: axis_value, val: {text: C_n_rel}}
+  sys_rel_diff_by_added_terms_cond_CG_n_rel: {is: axis_value, val: {text: CG_n_rel}}
+  sys_rel_diff_by_added_terms_cond_n_CG_minus_C: {is: axis_value, val: {text: n_CG_minus_C}}
+  sys_rel_diff_by_added_terms_cond_n_C_minus_CG: {is: axis_value, val: {text: n_C_minus_CG}}
+  sys_rel_diff_by_added_terms_cond_n_unparsed: {is: axis_value, val: {text: n_unparsed}}
+  sys_rel_diff_by_added_terms_cond_n_new_terms: {is: axis_value, val: {text: n_new_terms}}
+  sys_rel_diff_by_added_terms_cond_n_gone_terms: {is: axis_value, val: {text: n_gone_terms}}
+  sys_rel_diff_by_added_terms_cond_n_new_foreign: {is: axis_value, val: {text: n_new_foreign}}
+  sys_rel_diff_by_added_terms_cond_n_diff_old_only: {is: axis_value, val: {text: n_diff_old_only}}
   sys_rule_roles_read_by_frame: {is: measurement_family}
   sys_rule_roles_read_by_frame_cond: {is: family_axis, val: {text: cond}}
   sys_rule_roles_read_by_frame_cond_E_errors: {is: axis_value, val: {text: E_errors}}
@@ -10139,6 +10154,37 @@ facts:
   - {is: v_spell, from: sys_grammar_parts_rel_by_new_nodes_cond_n_CG_PCG_diff, to: n_CG_PCG_diff}
   - {is: v_entry_of, from: '{cond}', to: sys_grammar_parts_rel_by_new_nodes}
   - {is: v_metric_of, from: sys_grammar_parts_rel_by_new_nodes, to: mean_value}
+  - {is: v_file_of, from: sys_rel_diff_by_added_terms.json, to: sys_rel_diff_by_added_terms}
+  - {is: v_rows_of, from: [rows], to: sys_rel_diff_by_added_terms}
+  - {is: v_axis_of, from: sys_rel_diff_by_added_terms_cond, to: sys_rel_diff_by_added_terms}
+  - {is: v_value_of, from: sys_rel_diff_by_added_terms_cond_C_errors, to: sys_rel_diff_by_added_terms_cond}
+  - {is: v_spell, from: sys_rel_diff_by_added_terms_cond_C_errors, to: C_errors}
+  - {is: v_value_of, from: sys_rel_diff_by_added_terms_cond_C_ec_errors, to: sys_rel_diff_by_added_terms_cond}
+  - {is: v_spell, from: sys_rel_diff_by_added_terms_cond_C_ec_errors, to: C_ec_errors}
+  - {is: v_value_of, from: sys_rel_diff_by_added_terms_cond_CG_errors, to: sys_rel_diff_by_added_terms_cond}
+  - {is: v_spell, from: sys_rel_diff_by_added_terms_cond_CG_errors, to: CG_errors}
+  - {is: v_value_of, from: sys_rel_diff_by_added_terms_cond_CG_ec_errors, to: sys_rel_diff_by_added_terms_cond}
+  - {is: v_spell, from: sys_rel_diff_by_added_terms_cond_CG_ec_errors, to: CG_ec_errors}
+  - {is: v_value_of, from: sys_rel_diff_by_added_terms_cond_C_n_rel, to: sys_rel_diff_by_added_terms_cond}
+  - {is: v_spell, from: sys_rel_diff_by_added_terms_cond_C_n_rel, to: C_n_rel}
+  - {is: v_value_of, from: sys_rel_diff_by_added_terms_cond_CG_n_rel, to: sys_rel_diff_by_added_terms_cond}
+  - {is: v_spell, from: sys_rel_diff_by_added_terms_cond_CG_n_rel, to: CG_n_rel}
+  - {is: v_value_of, from: sys_rel_diff_by_added_terms_cond_n_CG_minus_C, to: sys_rel_diff_by_added_terms_cond}
+  - {is: v_spell, from: sys_rel_diff_by_added_terms_cond_n_CG_minus_C, to: n_CG_minus_C}
+  - {is: v_value_of, from: sys_rel_diff_by_added_terms_cond_n_C_minus_CG, to: sys_rel_diff_by_added_terms_cond}
+  - {is: v_spell, from: sys_rel_diff_by_added_terms_cond_n_C_minus_CG, to: n_C_minus_CG}
+  - {is: v_value_of, from: sys_rel_diff_by_added_terms_cond_n_unparsed, to: sys_rel_diff_by_added_terms_cond}
+  - {is: v_spell, from: sys_rel_diff_by_added_terms_cond_n_unparsed, to: n_unparsed}
+  - {is: v_value_of, from: sys_rel_diff_by_added_terms_cond_n_new_terms, to: sys_rel_diff_by_added_terms_cond}
+  - {is: v_spell, from: sys_rel_diff_by_added_terms_cond_n_new_terms, to: n_new_terms}
+  - {is: v_value_of, from: sys_rel_diff_by_added_terms_cond_n_gone_terms, to: sys_rel_diff_by_added_terms_cond}
+  - {is: v_spell, from: sys_rel_diff_by_added_terms_cond_n_gone_terms, to: n_gone_terms}
+  - {is: v_value_of, from: sys_rel_diff_by_added_terms_cond_n_new_foreign, to: sys_rel_diff_by_added_terms_cond}
+  - {is: v_spell, from: sys_rel_diff_by_added_terms_cond_n_new_foreign, to: n_new_foreign}
+  - {is: v_value_of, from: sys_rel_diff_by_added_terms_cond_n_diff_old_only, to: sys_rel_diff_by_added_terms_cond}
+  - {is: v_spell, from: sys_rel_diff_by_added_terms_cond_n_diff_old_only, to: n_diff_old_only}
+  - {is: v_entry_of, from: '{cond}', to: sys_rel_diff_by_added_terms}
+  - {is: v_metric_of, from: sys_rel_diff_by_added_terms, to: mean_value}
   - {is: v_file_of, from: sys_rule_roles_read_by_frame.json, to: sys_rule_roles_read_by_frame}
   - {is: v_rows_of, from: [rows], to: sys_rule_roles_read_by_frame}
   - {is: v_axis_of, from: sys_rule_roles_read_by_frame_cond, to: sys_rule_roles_read_by_frame}
