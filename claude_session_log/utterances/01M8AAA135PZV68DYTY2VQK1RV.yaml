@@ -1,0 +1,23 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-25T21:38:08.613Z（UTC）
+individuals:
+  01M8AAA135PZV68DYTY2VQK1RV:
+    is: model_utterance
+    display: 発言 5439
+    val:
+      order: 5439
+      text: |
+        While E66 runs, I tested the one case PR #897 left unsolved (h_base_verb_found_by_shape). The hypothesis is supported, and it's up as PR #900, still a Draft while CI runs.
+
+        - **What I changed:** in a temporary copy of the repo, one line of the checker. It now finds the base verb v_depend by its shape alone (what it holds, and its from and to ends), not by sitting directly under occurrent.
+        - **Control:** with that change and the system otherwise untouched, the checker still passes and still finds exactly one v_depend. The 7 pairs that only domains tell apart are unchanged.
+        - **Main result:** rerunning #897's move-the-verb-upstream procedure in that copy, all 3 cases now pass and their domain-only pairs disappear, including v_rely. The checker failure that blocked it in #897 does not occur.
+        - **What it means:** what stopped v_rely in #897 was the checker reading the base verb by position, not anything about the domain structure. Neither the checker nor the system files in the repo have been changed yet. Doing that is the next step: a separate PR for you to review by hand.
+
+        E66 has trained 23 of its 24 concepts. I'll undraft #900 once its CI passes.
+
+        Roadmap: this is the light-column work on deriving display words from formulas (d_cscl_display_derived). With it, the 7 domain-only pairs (3 verbs) can all be told apart by inheritance alone, once the checker change is adopted.
+facts:
+- {is: v_say, from: session_model, to: 01M8AAA135PZV68DYTY2VQK1RV}
+- {is: exp.v_answer, from: 01M8AAA135PZV68DYTY2VQK1RV, to: 01M89PSFS6B8JRMSN9NJ2R17KF}
+- {is: v_refer, from: 01M8AAA135PZV68DYTY2VQK1RV, to: ontology.v_depend}
+- {is: v_refer, from: 01M8AAA135PZV68DYTY2VQK1RV, to: exp.v_rely}
