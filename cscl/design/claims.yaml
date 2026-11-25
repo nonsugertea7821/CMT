@@ -530,6 +530,8 @@ individuals:
   o_sys_dsb_tc_fail: {is: exp.observation}
   o_sys_dsb_sep: {is: exp.observation}
   o_sys_dsb_control: {is: exp.observation}
+  h_domain_sep_by_lifting: {is: exp.hyp_untested}
+  b_domain_sep_by_lifting: {is: exp.item_queued}
   h_domain_by_refer: {is: exp.hyp_refuted}
   b_domain_by_refer: {is: exp.item_queued}
   h_ends_by_subsumption: {is: exp.hyp_supported}
@@ -2198,6 +2200,9 @@ facts:
   - {is: exp.v_contradict, from: o_sys_dsb_tc_fail, to: h_domain_sep_by_extends}
   - {is: v_refer, from: o_sys_dsb_sep, to: {is: v_level, from: sys_domain_sep_by_extends.n_sep.mean_value, to: 7.0}}
   - {is: v_refer, from: o_sys_dsb_control, to: {is: v_level, from: sys_domain_sep_by_extends.control_ok.mean_value, to: 1.0}}
+  - {is: v_refer, from: h_domain_sep_by_lifting, to: {is: v_depend, from: syntax.domain, to: [syntax.extends, syntax.use_word]}}
+  - {is: exp.v_check, from: b_domain_sep_by_lifting, to: h_domain_sep_by_lifting}
+  - {is: exp.v_ground, from: d_cscl_display_derived, to: h_domain_sep_by_lifting}
   - {is: v_refer, from: h_domain_by_refer, to: {is: v_depend, from: type_checker, to: [syntax.holds, syntax.domain]}}
   - {is: exp.v_check, from: b_domain_by_refer, to: h_domain_by_refer}
   - {is: exp.v_ground, from: d_cscl_display_derived, to: h_domain_by_refer}
