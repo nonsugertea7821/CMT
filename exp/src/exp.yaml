@@ -3728,6 +3728,8 @@ individuals:
   e59a_15b_usage_explain: {is: axis_value, val: {text: 'explain'}}
   e59a_15b_usage_recite: {is: axis_value, val: {text: 'recite'}}
   e59p_15b: {is: measurement_family}
+  e59p_15b_part: {is: family_axis, val: {text: part}}
+  e59p_15b_part_paired: {is: axis_value, val: {text: 'paired'}}
   e59p_15b_stat: {is: family_axis, val: {text: stat}}
   e59p_15b_stat_b: {is: axis_value, val: {text: 'b'}}
   e59p_15b_stat_c: {is: axis_value, val: {text: 'c'}}
@@ -3767,6 +3769,8 @@ individuals:
   e59a_4b_usage_explain: {is: axis_value, val: {text: 'explain'}}
   e59a_4b_usage_recite: {is: axis_value, val: {text: 'recite'}}
   e59p_4b: {is: measurement_family}
+  e59p_4b_part: {is: family_axis, val: {text: part}}
+  e59p_4b_part_paired: {is: axis_value, val: {text: 'paired'}}
   e59p_4b_stat: {is: family_axis, val: {text: stat}}
   e59p_4b_stat_b: {is: axis_value, val: {text: 'b'}}
   e59p_4b_stat_c: {is: axis_value, val: {text: 'c'}}
@@ -14170,7 +14174,11 @@ facts:
   - {is: v_entry_of, from: '{usage}', to: e59a_15b}
   - {is: v_metric_of, from: e59a_15b, to: mean_value}
   - {is: v_file_of, from: e59_Qwen2.5-1.5B-Instruct.json, to: e59p_15b}
-  - {is: v_rows_of, from: [paired], to: e59p_15b}
+  - {is: v_rows_of, from: [], to: e59p_15b}
+  - {is: v_axis_of, from: e59p_15b_part, to: e59p_15b}
+  - {is: v_value_of, from: e59p_15b_part_paired, to: e59p_15b_part}
+  - {is: v_keys_of, from: '#', to: e59p_15b_part}
+  - {is: v_spell, from: e59p_15b_part_paired, to: ['paired']}
   - {is: v_axis_of, from: e59p_15b_stat, to: e59p_15b}
   - {is: v_value_of, from: e59p_15b_stat_b, to: e59p_15b_stat}
   - {is: v_value_of, from: e59p_15b_stat_c, to: e59p_15b_stat}
@@ -14207,7 +14215,11 @@ facts:
   - {is: v_entry_of, from: '{usage}', to: e59a_4b}
   - {is: v_metric_of, from: e59a_4b, to: mean_value}
   - {is: v_file_of, from: e59_Qwen3-4B.json, to: e59p_4b}
-  - {is: v_rows_of, from: [paired], to: e59p_4b}
+  - {is: v_rows_of, from: [], to: e59p_4b}
+  - {is: v_axis_of, from: e59p_4b_part, to: e59p_4b}
+  - {is: v_value_of, from: e59p_4b_part_paired, to: e59p_4b_part}
+  - {is: v_keys_of, from: '#', to: e59p_4b_part}
+  - {is: v_spell, from: e59p_4b_part_paired, to: ['paired']}
   - {is: v_axis_of, from: e59p_4b_stat, to: e59p_4b}
   - {is: v_value_of, from: e59p_4b_stat_b, to: e59p_4b_stat}
   - {is: v_value_of, from: e59p_4b_stat_c, to: e59p_4b_stat}
@@ -14226,10 +14238,10 @@ facts:
   - {is: v_refer, from: o_e59_15b_near_ex_acc_para, to: {is: v_near, from: e59a_15b.near_ex.acc.para.mean_value, to: 0.7917, new: 0.001}}
   - {is: v_refer, from: o_e59_15b_near_ex_acc_explain, to: {is: v_near, from: e59a_15b.near_ex.acc.explain.mean_value, to: 0.8333, new: 0.001}}
   - {is: v_refer, from: o_e59_15b_near_ex_acc_recite, to: {is: v_near, from: e59a_15b.near_ex.acc.recite.mean_value, to: 0.9583, new: 0.001}}
-  - {is: v_refer, from: o_e59_15b_b, to: {is: v_near, from: e59p_15b.b.mean_value, to: 4, new: 0.001}}
-  - {is: v_refer, from: o_e59_15b_c, to: {is: v_near, from: e59p_15b.c.mean_value, to: 4, new: 0.001}}
-  - {is: v_refer, from: o_e59_15b_p, to: {is: v_near, from: e59p_15b.p.mean_value, to: 0.6367, new: 0.001}}
-  - {is: v_refer, from: o_e59_15b_b_not_above_c, to: {is: v_not_after, from: e59p_15b.b.mean_value, to: e59p_15b.c.mean_value}}
+  - {is: v_refer, from: o_e59_15b_b, to: {is: v_near, from: e59p_15b.paired.b.mean_value, to: 4, new: 0.001}}
+  - {is: v_refer, from: o_e59_15b_c, to: {is: v_near, from: e59p_15b.paired.c.mean_value, to: 4, new: 0.001}}
+  - {is: v_refer, from: o_e59_15b_p, to: {is: v_near, from: e59p_15b.paired.p.mean_value, to: 0.6367, new: 0.001}}
+  - {is: v_refer, from: o_e59_15b_b_not_above_c, to: {is: v_not_after, from: e59p_15b.paired.b.mean_value, to: e59p_15b.paired.c.mean_value}}
   - {is: v_contradict, from: o_e59_15b_b_not_above_c, to: h_consistency_by_examples}
   - {is: v_refer, from: o_e59_4b_near_joint, to: {is: v_near, from: e59s_4b.near.joint.mean_value, to: 0.7083, new: 0.001}}
   - {is: v_refer, from: o_e59_4b_near_indep, to: {is: v_near, from: e59s_4b.near.indep.mean_value, to: 0.7188, new: 0.001}}
@@ -14243,8 +14255,8 @@ facts:
   - {is: v_refer, from: o_e59_4b_near_ex_acc_para, to: {is: v_near, from: e59a_4b.near_ex.acc.para.mean_value, to: 1.0, new: 0.001}}
   - {is: v_refer, from: o_e59_4b_near_ex_acc_explain, to: {is: v_near, from: e59a_4b.near_ex.acc.explain.mean_value, to: 1.0, new: 0.001}}
   - {is: v_refer, from: o_e59_4b_near_ex_acc_recite, to: {is: v_near, from: e59a_4b.near_ex.acc.recite.mean_value, to: 0.9583, new: 0.001}}
-  - {is: v_refer, from: o_e59_4b_b, to: {is: v_near, from: e59p_4b.b.mean_value, to: 3, new: 0.001}}
-  - {is: v_refer, from: o_e59_4b_c, to: {is: v_near, from: e59p_4b.c.mean_value, to: 0, new: 0.001}}
-  - {is: v_refer, from: o_e59_4b_p, to: {is: v_near, from: e59p_4b.p.mean_value, to: 0.125, new: 0.001}}
-  - {is: v_refer, from: o_e59_4b_b_above_c, to: {is: v_come_after, from: e59p_4b.b.mean_value, to: e59p_4b.c.mean_value}}
-  - {is: v_refer, from: o_e59_4b_p_above_line, to: {is: v_come_after, from: e59p_4b.p.mean_value, to: 0.05}}
+  - {is: v_refer, from: o_e59_4b_b, to: {is: v_near, from: e59p_4b.paired.b.mean_value, to: 3, new: 0.001}}
+  - {is: v_refer, from: o_e59_4b_c, to: {is: v_near, from: e59p_4b.paired.c.mean_value, to: 0, new: 0.001}}
+  - {is: v_refer, from: o_e59_4b_p, to: {is: v_near, from: e59p_4b.paired.p.mean_value, to: 0.125, new: 0.001}}
+  - {is: v_refer, from: o_e59_4b_b_above_c, to: {is: v_come_after, from: e59p_4b.paired.b.mean_value, to: e59p_4b.paired.c.mean_value}}
+  - {is: v_refer, from: o_e59_4b_p_above_line, to: {is: v_come_after, from: e59p_4b.paired.p.mean_value, to: 0.05}}
