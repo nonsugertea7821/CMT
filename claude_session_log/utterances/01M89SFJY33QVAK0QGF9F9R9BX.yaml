@@ -1,0 +1,21 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-25T16:44:04.931Z（UTC）
+individuals:
+  01M89SFJY33QVAK0QGF9F9R9BX:
+    is: model_utterance
+    display: 発言 5269
+    val:
+      order: 5269
+      text: |
+        #875 was merged, and I ran the next test right away: write the requirement frame with `holds` instead of `always` (h_require_frame_by_holds). The result is 支持 (supported). It's in draft PR #879, assigned to you, and I'm watching it.
+
+        - **Main result:** with `holds`, the type checker read all three rule roles from the frames. It reported 0 errors, and both the rules and the 420,203 derived relations matched the baseline.
+        - **Control:** reading roles without the frames gave 203 errors, so the role-reading change does have an effect.
+        - **One difference:** with the frame keys' own relations counted, there are 2 more relations than the baseline. I didn't count which of the keys they come from.
+
+        I'll take #879 out of draft once CI passes. Putting the frames and the role-reading change into the real syntax file and type checker will be a separate PR. That one changes the grammar and the checker, so it needs your review.
+
+        On #868, CI is running on the checker fix (991a27d). E64 is still training.
+facts:
+- {is: v_say, from: session_model, to: 01M89SFJY33QVAK0QGF9F9R9BX}
+- {is: exp.v_answer, from: 01M89SFJY33QVAK0QGF9F9R9BX, to: 01M89PSFS6B8JRMSN9NJ2R17KF}
+- {is: v_refer, from: 01M89SFJY33QVAK0QGF9F9R9BX, to: syntax.holds}
