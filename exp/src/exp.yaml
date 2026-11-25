@@ -3,6 +3,7 @@ nodes:
   refer_from_hypothesis: {display: 仮説へ述べる（始点）, extends: quality, of: [v_refer, from], with: hypothesis}
   come_after_from_observation: {display: 観察の後に来る（始点）, extends: quality, of: [v_come_after, from], with: observation}
   depend_from_redefinition: {display: 再定義へ依存する（始点）, extends: quality, of: [v_depend, from], with: redefinition}
+  depend_from_weights: {display: 重みへ依存する（始点）, extends: quality, of: [v_depend, from], with: weights}
   refer_from_common_word: {display: 一般語へ述べる（始点）, extends: quality, of: [v_refer, from], with: common_word}
   not_agree_from_prior_meaning: {display: 元の意味へ一致する（否定）（始点）, extends: quality, of: [v_agree, from], with: prior_meaning, neg: true}
   design_to: {display: 設計する（終点）, extends: quality, of: [v_design, to]}
@@ -97,7 +98,7 @@ nodes:
   hidden: {display: 見えない, extends: quality, of: [v_see, to], neg: true}
 
   disposition_learned: {display: 学習で得られた傾向性, extends: disposition, mod: learned}
-  prior_meaning: {display: 元の意味, extends: disposition_learned, mod: {of: [v_depend, from], with: weights}}
+  prior_meaning: {display: 元の意味, extends: disposition_learned, mod: depend_from_weights}
   role_depend_from_redefinition: {display: 再定義へ依存する役割, extends: role, mod: depend_from_redefinition}
   assigned_meaning: {display: 与えられた意味, extends: role_depend_from_redefinition, mod: {of: [v_depend, from], with: common_word}}
   common_word: {display: 一般語, extends: word, mod: {of: [v_refer, to], with: prior_meaning}}
@@ -289,7 +290,7 @@ nodes:
   extends_passage: {display: 上位概念を述べる文章, extends: passage, mod: {of: [v_refer, from], with: syntax.extends}}
   teacher_containment: {display: 上位概念を述べる文章を教師にする, extends: teaching, from: extends_passage}
   teacher_sibling_contrast: {display: 兄弟概念の組の対比を教師にする, extends: teaching, from: sibling_pair}
-  model_scale: {display: 重みへ依存する測る先の質, extends: quality_measure_to, mod: {of: [v_depend, from], with: weights}}
+  model_scale: {display: 重みへ依存する測る先の質, extends: quality_measure_to, mod: depend_from_weights}
   information_entity_design_to: {display: 設計する先の情報, extends: information_entity, mod: design_to}
   typed_graph: {display: 型付きグラフ, extends: information_entity_refer_from_concept_n_refer_from_v_depend, mod: {of: [v_involve, to], with: inference, quant: all}}
 
