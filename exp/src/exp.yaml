@@ -4895,6 +4895,8 @@ individuals:
   geo_pb_j_stat_lo: {is: axis_value, val: {text: 'lo'}}
   geo_pb_j_stat_hi: {is: axis_value, val: {text: 'hi'}}
   geo_pb_n: {is: measurement_family}
+  geo_pb_n_part: {is: family_axis, val: {text: part}}
+  geo_pb_n_part_judgment: {is: axis_value, val: {text: 'judgment'}}
   geo_pb_n_stat: {is: family_axis, val: {text: stat}}
   geo_pb_n_stat_n_above: {is: axis_value, val: {text: 'n_above'}}
   geo_pb_n_stat_n_below: {is: axis_value, val: {text: 'n_below'}}
@@ -13495,6 +13497,18 @@ facts:
   - {is: v_file_of, from: geo_partial_top_boot.json, to: geo_pb_j}
   - {is: v_rows_of, from: [judgment, layers], to: geo_pb_j}
   - {is: v_axis_of, from: geo_pb_j_layer, to: geo_pb_j}
+  - {is: v_keys_of, from: '#', to: geo_pb_j_layer}
+  - {is: v_spell, from: geo_pb_j_layer_4, to: ['4']}
+  - {is: v_spell, from: geo_pb_j_layer_6, to: ['6']}
+  - {is: v_spell, from: geo_pb_j_layer_8, to: ['8']}
+  - {is: v_spell, from: geo_pb_j_layer_10, to: ['10']}
+  - {is: v_spell, from: geo_pb_j_layer_12, to: ['12']}
+  - {is: v_spell, from: geo_pb_j_layer_14, to: ['14']}
+  - {is: v_spell, from: geo_pb_j_layer_16, to: ['16']}
+  - {is: v_spell, from: geo_pb_j_layer_18, to: ['18']}
+  - {is: v_spell, from: geo_pb_j_layer_20, to: ['20']}
+  - {is: v_spell, from: geo_pb_j_layer_22, to: ['22']}
+  - {is: v_spell, from: geo_pb_j_layer_24, to: ['24']}
   - {is: v_value_of, from: geo_pb_j_layer_4, to: geo_pb_j_layer}
   - {is: v_value_of, from: geo_pb_j_layer_6, to: geo_pb_j_layer}
   - {is: v_value_of, from: geo_pb_j_layer_8, to: geo_pb_j_layer}
@@ -13513,7 +13527,11 @@ facts:
   - {is: v_entry_of, from: '{stat}', to: geo_pb_j}
   - {is: v_metric_of, from: geo_pb_j, to: mean_value}
   - {is: v_file_of, from: geo_partial_top_boot.json, to: geo_pb_n}
-  - {is: v_rows_of, from: [judgment], to: geo_pb_n}
+  - {is: v_rows_of, from: [], to: geo_pb_n}
+  - {is: v_axis_of, from: geo_pb_n_part, to: geo_pb_n}
+  - {is: v_value_of, from: geo_pb_n_part_judgment, to: geo_pb_n_part}
+  - {is: v_keys_of, from: '#', to: geo_pb_n_part}
+  - {is: v_spell, from: geo_pb_n_part_judgment, to: ['judgment']}
   - {is: v_axis_of, from: geo_pb_n_stat, to: geo_pb_n}
   - {is: v_value_of, from: geo_pb_n_stat_n_above, to: geo_pb_n_stat}
   - {is: v_value_of, from: geo_pb_n_stat_n_below, to: geo_pb_n_stat}
@@ -13553,7 +13571,7 @@ facts:
   - {is: v_refer, from: o_geo_pb_24_D, to: {is: v_near, from: geo_pb_j.24.D.mean_value, to: -0.0071, new: 0.001}}
   - {is: v_refer, from: o_geo_pb_24_lo, to: {is: v_near, from: geo_pb_j.24.lo.mean_value, to: -0.0286, new: 0.001}}
   - {is: v_refer, from: o_geo_pb_24_hi, to: {is: v_near, from: geo_pb_j.24.hi.mean_value, to: 0.0143, new: 0.001}}
-  - {is: v_refer, from: o_geo_pb_n_above, to: {is: v_near, from: geo_pb_n.n_above.mean_value, to: 1, new: 0.001}}
-  - {is: v_refer, from: o_geo_pb_n_below, to: {is: v_near, from: geo_pb_n.n_below.mean_value, to: 0, new: 0.001}}
-  - {is: v_refer, from: o_geo_pb_n_below_line, to: {is: v_come_before, from: geo_pb_n.n_above.mean_value, to: 1.5}}
+  - {is: v_refer, from: o_geo_pb_n_above, to: {is: v_near, from: geo_pb_n.judgment.n_above.mean_value, to: 1, new: 0.001}}
+  - {is: v_refer, from: o_geo_pb_n_below, to: {is: v_near, from: geo_pb_n.judgment.n_below.mean_value, to: 0, new: 0.001}}
+  - {is: v_refer, from: o_geo_pb_n_below_line, to: {is: v_come_before, from: geo_pb_n.judgment.n_above.mean_value, to: 1.5}}
   - {is: v_contradict, from: o_geo_pb_n_below_line, to: h_partial_top_beats_removal}
