@@ -3580,6 +3580,16 @@ individuals:
   h_collision_lowers_following: {is: hyp_supported}
   h_chain_length_lowers_following: {is: hyp_mixed}
   h_scratchpad_raises_rule_following: {is: hyp_refuted}
+  h_aid_used_with_example: {is: hyp_untested}
+  h_state_by_genus_display: {is: hyp_untested}
+  b_state_by_genus_display: {is: item_queued}
+  h_genus_region_immune_display: {is: hyp_untested}
+  b_genus_region_immune_display: {is: item_queued}
+  h_consistency_by_examples: {is: hyp_untested}
+  b_consistency_by_examples: {is: item_queued}
+  h_consistency_pairs_control: {is: hyp_untested}
+  b_consistency_pairs_control: {is: item_queued}
+  b_aid_used_with_example: {is: item_queued}
   h_number_comparison_lowers_rule_following: {is: hyp_untested}
   h_scratchpad_lowers_remap_following: {is: hyp_supported}
   h_scratchpad_raises_rule_following_4b: {is: hyp_supported}
@@ -3639,6 +3649,8 @@ individuals:
   h_single_layer_does_not_reach_shared: {is: hyp_supported}
   h_multi_layer_raises_consistency: {is: hyp_mixed}
   h_cscl_raises_following: {is: hyp_mixed}
+  h_following_trades_control: {is: hyp_untested}
+  b_following_trades_control: {is: item_queued}
   h_dedicated_key_raises_following: {is: hyp_refuted}
   h_symbolic_membership_raises_following: {is: hyp_mixed}
   h_contrast_vector_raises_following: {is: hyp_refuted}
@@ -10780,6 +10792,9 @@ facts:
   - {is: v_contradict, from: o_e8_less_order_robust_than_single_layer, to: h_multi_layer_raises_consistency}
   - {is: v_support, from: o_e8_conflict_ge_single_layer, to: h_multi_layer_raises_consistency}
   - {is: v_refer, from: h_cscl_raises_following, to: {is: v_raise, from: cscl, to: redefinition_following}}
+  - {is: v_refer, from: h_following_trades_control, to: {is: v_lower, from: redefinition_following, to: control_preservation}}
+  - {is: v_check, from: b_following_trades_control, to: h_following_trades_control}
+  - {is: v_ground, from: d_metric, to: h_following_trades_control}
   - {is: v_scope, from: text_injection, to: h_cscl_raises_following}
   - {is: v_refer, from: h_model_can_write_cscl, to: {is: v_speak, from: model, to: concept_expression}}
   - {is: v_refer, from: h_typecheck_feedback_raises_writing, to: {is: v_raise, from: type_check_result, to: formalization_accuracy}}
@@ -11175,6 +11190,21 @@ facts:
   - {is: v_check, from: b_checker_output_read_when_taught, to: h_checker_output_read_when_taught}
   - {is: v_check, from: b_checker_output_read_when_taught_edges, to: h_checker_output_read_when_taught}
   - {is: v_ground, from: d_road_checker, to: h_checker_output_read_when_taught}
+  - {is: v_refer, from: h_aid_used_with_example, to: {is: v_raise, from: [scratchpad, application_example], to: redefinition_following}}
+  - {is: v_check, from: b_aid_used_with_example, to: h_aid_used_with_example}
+  - {is: v_ground, from: d_road_checker, to: h_aid_used_with_example}
+  - {is: v_refer, from: h_state_by_genus_display, to: {is: v_depend, from: hidden_state, to: [syntax.extends, syntax.display]}}
+  - {is: v_check, from: b_state_by_genus_display, to: h_state_by_genus_display}
+  - {is: v_ground, from: d_road_region, to: h_state_by_genus_display}
+  - {is: v_refer, from: h_genus_region_immune_display, to: {is: v_immune, from: midpoint_membership, to: syntax.display}}
+  - {is: v_check, from: b_genus_region_immune_display, to: h_genus_region_immune_display}
+  - {is: v_ground, from: d_road_region, to: h_genus_region_immune_display}
+  - {is: v_refer, from: h_consistency_by_examples, to: {is: v_depend, from: cross_usage_consistency, to: application_example}}
+  - {is: v_check, from: b_consistency_by_examples, to: h_consistency_by_examples}
+  - {is: v_ground, from: d_road_checker, to: h_consistency_by_examples}
+  - {is: v_refer, from: h_consistency_pairs_control, to: {is: v_depend, from: cross_usage_consistency, to: [redefinition_following, control_preservation]}}
+  - {is: v_check, from: b_consistency_pairs_control, to: h_consistency_pairs_control}
+  - {is: v_ground, from: d_metric, to: h_consistency_pairs_control}
   - {is: v_refer, from: h_model_reads_by_word, to: {is: v_read, from: model, to: syntax.word}}
   - {is: v_check, from: b_model_reads_by_word, to: h_model_reads_by_word}
   - {is: v_ground, from: d_road_checker, to: h_model_reads_by_word}
