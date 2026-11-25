@@ -1,0 +1,24 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-25T15:41:08.203Z（UTC）
+individuals:
+  01M89NWAQBFFD49WP9QXRN4M51:
+    is: model_utterance
+    display: 発言 5181
+    val:
+      order: 5181
+      text: |
+        前の返事で否定の形をとった文を見直したところ、一つは確かめずに諦めた主張だったので、直しました。
+
+        **直したもの**
+        - 「『包含を』の区別は式になっていない」と、その前の commit の「式で書く置き場が教示の側にない」は、確かめないまま諦めた主張でした。教える行為の側に置き場がなくても、教える材料の側には置けます。
+          - extends_passage（上位概念を述べる文章）という概念を足しました。passage を広げ、extends について述べるものです。
+          - teacher_containment は、この文章から教えるものに書き直しました。
+          - これで区別が名前だけでなく式に入ったので、仮説には登録せず、#868 に直しとして push しました。CI の結果を待っています。
+        - 「名前を式から決めきれていない例の一つ」も、この直しで当てはまらなくなりました。取り下げます。
+
+        **確かめた事実なので、そのままにしたもの**
+        - 「名前を中身から作るやり方を、検査器にはまだ取り込んでいない」: main の type_checker.py は、いまも事実の名前を `ifact <ファイル> <位置>` で作っています。
+        - 「名前を中身から作ると、ファイルを分けても関係は変わらず、名前の重なりも出なかった」: #502 の結果の commit に書いてあります。
+        - 「文法に『部分のファイル』の語がない」: main の syntax.yaml に parts がないことを確かめました。中身は h_grammar_names_parts として登録済みです。
+facts:
+- {is: v_say, from: session_model, to: 01M89NWAQBFFD49WP9QXRN4M51}
+- {is: exp.v_answer, from: 01M89NWAQBFFD49WP9QXRN4M51, to: 01M89NPSZ8X6DMC66MYQ6WNDF7}
