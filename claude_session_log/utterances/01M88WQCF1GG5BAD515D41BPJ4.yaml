@@ -1,0 +1,21 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-25T08:21:31.745Z（UTC）
+individuals:
+  01M88WQCF1GG5BAD515D41BPJ4:
+    is: model_utterance
+    display: 発言 4864
+    val:
+      order: 4864
+      text: |
+        Report for this round, while #835's CI runs; I'll remove Draft once it passes:
+
+        - **#834, h_partial_top_beats_removal: refuted.** I resampled the word pairs to get a 95% interval for lift(f35) − lift(f0) in each layer. Only L12's interval lies entirely above 0; every other layer's interval straddles 0. The "keeping part of the top band beats removing it, in 6 layers" from #830 came from differences of 1 to 4 steps (one step is 1/280). After the first results commit, the experiment check (ec) failed because of how I had written the records in exp.yaml. I fixed that, CI then passed, and I removed Draft. The procedure, the verdict and the results file did not change.
+        - **#835, h_knee_scatter_from_span: supported, CI pending.** I resampled the knee from the per-pair hits recorded in #834, without running the model again. Steps 40–50 fall inside the interval of all 7 layers that have a knee. So the knee scatter of 30–60 from #830 fits a single shared knee plus resampling noise.
+          - Disclosure: at L6 the knee condition is an exact tie (18/280 = 0.75·span). Here it came out 35; in #830 it was 40. The interval covers both, so the verdict is unchanged.
+        - **What it implies:** reducing the top band raises swap membership up to about half of a0 and then flattens, whatever the layer. Keeping part of the band and removing it all can't be told apart. The observations so far fit that one picture.
+        - **New hypothesis:** h_knee_layer_needs_more_pairs (#836, registration only). The idea is that 140 pairs can't tell whether the knee moves with the layer, so the number of pairs has to grow. It is linked to d_road_region.
+        - **Other open PRs:** #754 and #755 are still unmerged, so H3 (E56) stays on hold. The next heartbeat is at 09:09Z.
+
+        ロードマップの位置: d_road_region（上の帯の効き目の形を詰めた）
+facts:
+- {is: v_say, from: session_model, to: 01M88WQCF1GG5BAD515D41BPJ4}
+- {is: exp.v_answer, from: 01M88WQCF1GG5BAD515D41BPJ4, to: 01M8824ABH7FVJ0AFYWM2EPXZH}
