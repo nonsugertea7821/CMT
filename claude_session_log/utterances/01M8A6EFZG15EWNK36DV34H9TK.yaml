@@ -1,0 +1,221 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-25T20:30:40.624Z（UTC）
+individuals:
+  01M8A6EFZG15EWNK36DV34H9TK:
+    is: session_summary
+    display: 発言 5401
+    val:
+      order: 5401
+      text: |
+        This session is being continued from a previous conversation that ran out of context. The summary below covers the earlier portion of the conversation.
+
+        <system-reminder>
+        <tools-used-before-summary>Agent, Artifact, AskUserQuestion, Bash, Edit, Grep, Monitor, Read, ReadNotifications, SendMessage, Skill, SubagentHandback, TaskStop, ToolSearch, WebFetch, WebSearch, Write, mcp__claude-code-remote__add_repo, mcp__claude-code-remote__create_trigger, mcp__claude-code-remote__delete_trigger, mcp__claude-code-remote__get_trigger, mcp__claude-code-remote__list_repos, mcp__claude-code-remote__list_triggers, mcp__claude-code-remote__read_documentation, mcp__claude-code-remote__send_later, mcp__claude-code-remote__subscribe_pr_activity, mcp__claude-code-remote__unsubscribe_pr_activity, mcp__claude-code-remote__update_trigger, mcp__github__actions_get, mcp__github__actions_list, mcp__github__actions_run_trigger, mcp__github__add_issue_comment, mcp__github__create_pull_request, mcp__github__get_job_logs, mcp__github__issue_read, mcp__github__issue_write, mcp__github__list_issue_types, mcp__github__list_issues, mcp__github__list_pull_requests, mcp__github__pull_request_read, mcp__github__update_pull_request</tools-used-before-summary>
+        </system-reminder>
+        Summary:
+        1. Primary Request and Intent:
+
+        **Standing rules (carried forward; all still apply)**
+        - Repo nonsugertea7821/CMT at /home/user/CMT. Python is /home/user/venv/bin/python. CPU only, 15GB RAM.
+        - Writing
+          - Plain Japanese in conversation and PR bodies. Don't overclaim. Separate fact from interpretation.
+          - Label side paths わき道.
+        - Git
+          - Restore files with `git show <rev>:<path> > <path>`. Never use checkout or stash.
+          - Commit trailer:
+            ```
+            Co-Authored-By: Claude [モデル名を伏せた] <[メールアドレスを伏せた]>
+            Claude-Session: https://claude.ai/code/session_015KRKt6TNJZ7ZsQmEknANXK
+            ```
+          - PR body ends with `🤖 Generated with [Claude Code](https://claude.com/claude-code)`, a blank line, then the session URL.
+          - create_pull_request replaces the footer. Always create with body "x", then set the real body with update_pull_request.
+          - No personal info or model IDs in pushed artifacts. Claude never merges.
+        - PRs: for every PR I open, call subscribe_pr_activity and issue_write update with assignees ["nonsugertea7821"].
+        - System YAML
+          - No comments.
+          - Run the edit, `git add`, and `git commit` as separate Bash calls.
+          - When a hypothesis is verified, set h_ to hyp_supported/hyp_refuted and b_ to item_done.
+        - Experiments
+          - Pre-register with a script-only commit. Add results in a later commit with `git add -f`.
+          - Never rerun a recorded script. Resuming an unfinished run from its partial save is fine.
+          - No local tc/ec; CI only.
+          - Run 4B in bf16 and 1.5B in float32.
+          - Use tracked run_in_background with timeout 7200000.
+          - Place send_later checks every 9 minutes while a heavy experiment runs.
+        - Register unverified claims and proposals as hypotheses (h_, b_, v_refer, v_check, v_ground) before conveying them.
+        - Conflicts: merge origin/main.
+        - Worktrees go in /home/user/CMT/.wt_*. Remove the worktree and the local branch after merge.
+        - Stop hook "Wait—turn that observation into a hypothesis?": classify each flagged sentence as fact, unverified (register it), or progress, and reply briefly. Prefer verifying directly when cheap.
+        - Security constraints (verbatim):
+          - 「Pagesに出すなら脆弱性気を付けてね」
+          - 「あとsession_logは読まないように」
+          - Later clarified:
+            - 「いやまあログの中身は読んだってかまわないんだけど 何のために残してるかって「過去の参照」のためだから」
+            - 「読もうと思えばsession_logも読めるよ 無差別に読んでほしくないからPagesに出してないだけ」
+            - 「あとブランチ切れば消えるってのもある」
+          - Never expose claude/session-log-* in Pages or the ledger.
+        - Experiment target: Claude models must not be the target; use Qwen.
+        - 「d_road_regionは掘り続けるべきだ。」
+        - Roadmap block
+          - Always put the 「ロードマップの位置」 block in PR bodies, in plain language.
+          - In conversation, only when the user asks. Heartbeat reports add one roadmap line.
+        - Cross-domain references
+          - claims.yaml cannot reference exp.* verbs or individuals.
+          - exp.yaml can reference claims via `lang.`.
+
+        **Direction**
+        - Identifier-ization order: 「じゃあその順で進めよう。識別子化はその他の仮説の前提になってるから。」
+        - The hourly heartbeat (trig_01L92Xn7LSTHrmqt7enEcCPG) sets the roadmap queue.
+          - Heavy: H0 / H3 / H4.
+          - Light: L1–L4.
+          - At each firing, first re-arm it: run_once_at about 61 minutes later, enabled: true.
+
+        2. Key Technical Concepts:
+
+        - **E58/E64 measurement**
+          - near prefix, 4 usages (apply, para, explain, recite). hit = margin > 0.
+          - e64.patch adds vectors at concept-word positions at layer 8.
+          - e36.train_explain: zero init, Adam, lr 0.1, 30 steps, micro 4.
+        - **Explain templates**
+          - EXPLAIN: 「次の問いの答えは「{A}」です。そう判断する理由…」. This contains the case answer.
+          - EXPLAIN_NOANS (from e20): 「次の問いに答えるときの理由として正しいほうを選び、番号だけで答えてください。」
+        - **Static system reading** (from sys_domain_special_extends)
+          - shape = holds/pre/post atoms. Ends from/to and new_kind compared by inclusion.
+          - dom from tc.LOCALS. reach follows tc.USES.
+        - **sys_ family pattern in exp.yaml**
+          - measurement_family, a cond axis, and axis_value per summary key.
+          - Facts: v_file_of, v_rows_of [rows], v_entry_of '{cond}', v_metric_of mean_value.
+          - Observations go in claims.yaml as `{is: v_refer, from: o_x, to: {is: v_level, from: FAM.key.mean_value, to: val}}` plus exp.v_support / exp.v_contradict.
+        - **Auto-merge correction rule**: auto_merge.py counts only lines starting with 「訂正」 in scripts; it does not read the PR body.
+
+        3. Files and Code Sections:
+
+        - **exp/experiments/e66_explain_lever_noans.py** (branch claude/h_explain_lever_apply_by_case_answers_15b, worktree /home/user/CMT/.wt_e66, pre-registered in 5be5dee)
+          - Trains vec_noans with noans_pairs, which uses the EXPLAIN_NOANS template; the rest matches E64's explain_pairs.
+          - Measures with patch + measure("near").
+          - Judgment:
+            - premise: de_noans ≥ 0.083.
+            - support: 0.25 − da_noans ≥ 0.083.
+            - refute: da_noans ≥ 0.25.
+          - Paired outputs: up/down lists versus ex/rand/noans, and norm_ratio_mean.
+          - Partial saves: results/e66_<model>.partial.pt and .partial.json.
+          - Output: results/e66_Qwen2.5-1.5B-Instruct.json.
+        - **exp/experiments/sys_domain_in_formula.py** (merged in #891)
+          - Reading A: no domain condition. Reading B: reach(dom(x), dom(W)).
+          - sep = pairs in cross_A but not in cross_B.
+          - Result: n_cross_A 8, n_cross_B 1, n_miss_A 0, n_miss_B 0, n_sep 7.
+          - sep pairs:
+            - ontology.v_design < std.v_compute
+            - ontology.v_depend < exp.v_rely
+            - subj.v_allocate < exp.v_rely
+            - subj.v_live < exp.v_rely
+            - subj.v_place < exp.v_rely
+            - syntax.v_use < exp.v_rely
+            - ja_basic.j_be < exp.v_transfer
+        - **exp.yaml**: family sys_domain_in_formula, keys build_ok, n_targets, n_refs, n_cross_A, n_cross_B, n_miss_A, n_miss_B, n_sep.
+        - **claims.yaml**
+          - o_sys_dif_sep (v_support), cross_a, cross_b, miss_b (v_support), miss_a.
+          - h_domain_in_formula: hyp_supported. b_domain_in_formula: item_done.
+          - Newly registered (#892):
+            ```
+            h_domain_sep_by_extends: {is: exp.hyp_untested}
+            b_domain_sep_by_extends: {is: exp.item_queued}
+            - {is: v_refer, from: h_domain_sep_by_extends, to: {is: v_depend, from: syntax.domain, to: syntax.extends}}
+            - {is: exp.v_check, from: b_domain_sep_by_extends, to: h_domain_sep_by_extends}
+            - {is: exp.v_ground, from: d_cscl_display_derived, to: h_domain_sep_by_extends}
+            ```
+
+        4. Errors and fixes:
+
+        - **Wrong claim in the 3d62b4f commit message**: it said v_rely and v_transfer were added after #529. They have existed since 11-16 and are unchanged. The 7 pairs only became visible because #525 and #529 reported reading B only. Disclosed as a correction in the #891 body.
+        - **#891 conflict with #892** in claims.yaml: resolved by keeping both sides (103db28).
+        - **Old-head CI failure on #891 (HTTP 405)**: auto-merge was attempted on the conflicted head. Superseded by the fix.
+        - **Unverified claim in a reply**: I said the body correction might block auto-merge. Verified in auto_merge.py that it would not, and corrected the reply.
+        - **E66 runtime**: about 5–9 minutes per concept, so the run will exceed the 2h background limit (about 21:10 UTC). Resume with the same command; it continues from the partial save.
+
+        5. Problem Solving:
+
+        - **E65 (#888)**: supported and merged.
+        - **E66 progress**: 11 of 24 concepts trained as of 20:23. 平日 loss stopped at 0.30 (all others reached 0.00); note this in the results.
+        - **h_domain_in_formula**: supported (domain still needed for 7 dependency-shaped verb pairs).
+        - **Expectation for h_domain_sep_by_extends**: v_rely has 5 same-shape upstream verbs, and extends can name only one parent, so the hypothesis may lean toward refutation. Write this in the pre-registration disclosure.
+
+        6. All user messages:
+
+        - No new user-role messages in this segment; all inputs were system notifications, hook feedback and GitHub events.
+        - Earlier user messages:
+          - 「ちょっと気になったんだが 今のCSCLにおける「個体」「関係」「時間」はそれぞれどう表現されてる？」
+          - 「適当なシステムのシーケンスを書いてみると問題が分かるかもしれない。 というか、CSCLが実際に役に立つユースケースで言ったら恐らくそれなんだよね」
+          - 「あと仮説で気づいたけど 君いまCSCL書けてない？しかもフィードバックループで正しい形で書けてる」
+          - 「CSCLを「実行可能にする」仮説群もあったよね その時何か詰まったっけ」
+          - 「あーそうだよ こっちの内輪で追記専用になってる、みたいな話があった気がする」
+          - 「それが何とかなったら識別子化もできるかな？」
+          - 「じゃあその順で進めよう。 識別子化はその他の仮説の前提になってるから。」
+          - 「https://www.githubstatus.com/」
+          - 「インシデント起きてるね すぐには解決しなそう」
+          - The security messages quoted verbatim under the standing rules in section 1.
+
+        7. Pending Tasks:
+
+        - **Heartbeat**: re-arm trig_01L92Xn7LSTHrmqt7enEcCPG to about 21:31 UTC with enabled: true. Not yet done for the 20:29 firing.
+        - **E66 (PR #890, Draft)**
+          - Background task bgn7twph9, log at /tmp/claude-0/-home-user-CMT/e05d2140-ce91-515f-a5fb-e6251e13d406/scratchpad/e66.log.
+          - A send_later check is pending at 20:33 UTC (trig_018KggHxa7LMbz37aHWoDWbc). Keep re-arming every 9 minutes.
+          - If the run stops (about 21:10), resume with:
+            ```
+            cd /home/user/CMT/.wt_e66/exp/experiments && MALLOC_ARENA_MAX=2 /home/user/venv/bin/python e66_explain_lever_noans.py --model Qwen/Qwen2.5-1.5B-Instruct --micro 4 >> <log>
+            ```
+            Run it in the background with timeout 7200000.
+          - When finished: add the results with `git add -f`; add e66 families and observations in exp.yaml; set the status of h_explain_lever_apply_by_case_answers_15b; update the #890 body; undraft once CI passes.
+        - **Next light item**: h_domain_sep_by_extends (issue to be created by sync). Pre-register with the expectation disclosure from section 5.
+        - **Manual review waits**: #883, #880, #872, #871, #869, #868.
+        - **Worktrees**: .wt_e66 is active. Clean up the others after their merges.
+
+        8. Current Work:
+
+        The hourly heartbeat fired at 20:29:47 UTC. Its first instruction is: 「まず update_trigger で run_once_at を今から約61分後にし、enabled: true にする」. Then:
+        - Check open PRs and merges (#891 and #892 are already merged and cleaned).
+        - Check E66 progress (11/24 concepts at 20:23).
+        - Pick the next light item (h_domain_sep_by_extends).
+
+        9. Optional Next Step:
+
+        1. Call update_trigger on trig_01L92Xn7LSTHrmqt7enEcCPG with run_once_at 2026-11-25T21:31:00Z and enabled: true.
+        2. Check the E66 log.
+        3. Start pre-registering h_domain_sep_by_extends in a new worktree on branch claude/h_domain_sep_by_extends, once its issue exists.
+
+        If you need specific details from before compaction (like exact code snippets, error messages, or content you generated), read the full transcript at: /root/.claude/projects/-home-user-CMT/e05d2140-ce91-515f-a5fb-e6251e13d406.jsonl
+        Continue the conversation from where it left off without asking the user any further questions. Resume directly — do not acknowledge the summary, do not recap what was happening, do not preface with "I'll continue" or similar. Pick up the last task as if the break never happened.
+
+        The messages after this summary are the most recent messages from before compaction, kept verbatim. The summary was written without seeing them, so something it says has not happened yet may already have happened in them.
+facts:
+- {is: v_say, from: session_model, to: 01M8A6EFZG15EWNK36DV34H9TK}
+- {is: v_refer, from: 01M8A6EFZG15EWNK36DV34H9TK, to: exp.hyp_supported}
+- {is: v_refer, from: 01M8A6EFZG15EWNK36DV34H9TK, to: exp.hyp_refuted}
+- {is: v_refer, from: 01M8A6EFZG15EWNK36DV34H9TK, to: exp.item_done}
+- {is: v_refer, from: 01M8A6EFZG15EWNK36DV34H9TK, to: ontology.v_refer}
+- {is: v_refer, from: 01M8A6EFZG15EWNK36DV34H9TK, to: exp.v_check}
+- {is: v_refer, from: 01M8A6EFZG15EWNK36DV34H9TK, to: exp.v_ground}
+- {is: v_refer, from: 01M8A6EFZG15EWNK36DV34H9TK, to: syntax.new_kind}
+- {is: v_refer, from: 01M8A6EFZG15EWNK36DV34H9TK, to: exp.measurement_family}
+- {is: v_refer, from: 01M8A6EFZG15EWNK36DV34H9TK, to: exp.axis_value}
+- {is: v_refer, from: 01M8A6EFZG15EWNK36DV34H9TK, to: exp.v_file_of}
+- {is: v_refer, from: 01M8A6EFZG15EWNK36DV34H9TK, to: exp.v_rows_of}
+- {is: v_refer, from: 01M8A6EFZG15EWNK36DV34H9TK, to: exp.v_entry_of}
+- {is: v_refer, from: 01M8A6EFZG15EWNK36DV34H9TK, to: exp.v_metric_of}
+- {is: v_refer, from: 01M8A6EFZG15EWNK36DV34H9TK, to: exp.mean_value}
+- {is: v_refer, from: 01M8A6EFZG15EWNK36DV34H9TK, to: ontology.v_level}
+- {is: v_refer, from: 01M8A6EFZG15EWNK36DV34H9TK, to: exp.v_support}
+- {is: v_refer, from: 01M8A6EFZG15EWNK36DV34H9TK, to: exp.v_contradict}
+- {is: v_refer, from: 01M8A6EFZG15EWNK36DV34H9TK, to: ontology.v_design}
+- {is: v_refer, from: 01M8A6EFZG15EWNK36DV34H9TK, to: std.v_compute}
+- {is: v_refer, from: 01M8A6EFZG15EWNK36DV34H9TK, to: ontology.v_depend}
+- {is: v_refer, from: 01M8A6EFZG15EWNK36DV34H9TK, to: exp.v_rely}
+- {is: v_refer, from: 01M8A6EFZG15EWNK36DV34H9TK, to: subj.v_allocate}
+- {is: v_refer, from: 01M8A6EFZG15EWNK36DV34H9TK, to: subj.v_live}
+- {is: v_refer, from: 01M8A6EFZG15EWNK36DV34H9TK, to: subj.v_place}
+- {is: v_refer, from: 01M8A6EFZG15EWNK36DV34H9TK, to: syntax.v_use}
+- {is: v_refer, from: 01M8A6EFZG15EWNK36DV34H9TK, to: exp.v_transfer}
+- {is: v_refer, from: 01M8A6EFZG15EWNK36DV34H9TK, to: exp.hyp_untested}
+- {is: v_refer, from: 01M8A6EFZG15EWNK36DV34H9TK, to: exp.item_queued}
+- {is: v_refer, from: 01M8A6EFZG15EWNK36DV34H9TK, to: syntax.domain}
+- {is: v_refer, from: 01M8A6EFZG15EWNK36DV34H9TK, to: syntax.extends}
