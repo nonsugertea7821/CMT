@@ -4875,6 +4875,8 @@ individuals:
   b_knee_moves_with_layer: {is: item_queued}
   h_partial_top_beats_removal: {is: hyp_untested}
   b_partial_top_beats_removal: {is: item_queued}
+  h_knee_scatter_from_span: {is: hyp_untested}
+  b_knee_scatter_from_span: {is: item_queued}
 facts:
   - {is: v_collect, from: residual_space, to: residual_vector}
   - {is: v_sum, from: layer_output, to: state_shift, new: shifted_hidden_state}
@@ -13429,3 +13431,6 @@ facts:
   - {is: v_refer, from: h_partial_top_beats_removal, to: {is: v_raise, from: magnitude, to: midpoint_membership}}
   - {is: v_check, from: b_partial_top_beats_removal, to: h_partial_top_beats_removal}
   - {is: v_ground, from: d_road_region, to: h_partial_top_beats_removal}
+  - {is: v_refer, from: h_knee_scatter_from_span, to: {is: v_depend, from: observation, to: [magnitude, layer]}}
+  - {is: v_check, from: b_knee_scatter_from_span, to: h_knee_scatter_from_span}
+  - {is: v_ground, from: d_road_region, to: h_knee_scatter_from_span}
