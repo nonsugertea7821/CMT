@@ -10,6 +10,7 @@ nodes:
   lang_dec_withdrawn: {display: 言語の取り下げた決定, extends: exp.dec_withdrawn, mod: is_from_lang_decision}
   v_not_depend: {display: に依存しない, extends: v_immune, from: continuant, to: continuant, opposite: v_depend}
   type_checker: {display: 型検査器, extends: artifact, mod: refer_from_laws}
+  sequence_domain: {display: 過程について述べる領域, extends: syntax.domain, mod: {of: [v_refer, from], with: process}}
   previous_checker: {display: 前の版の型検査器, extends: type_checker, mod: {of: [v_come_after, to], with: type_checker}}
   executed_language: {display: 実行器が実行する言語, extends: language, mod: {of: [v_depend, from], with: runtime.executor}}
   steps_definition: {display: ステップの列へ述べる定義, extends: definition, mod: runtime.refer_from_steps}
@@ -250,6 +251,8 @@ individuals:
   b_identifier_by_bisimulation: {is: exp.item_done}
   h_identifier_by_genus_differentia: {is: exp.hyp_untested}
   b_identifier_by_genus_differentia: {is: exp.item_queued}
+  h_sequence_by_current_order: {is: exp.hyp_untested}
+  b_sequence_by_current_order: {is: exp.item_queued}
   h_appear_root: {is: exp.hyp_supported}
   b_appear_root: {is: exp.item_done}
   h_boundary_invariant: {is: exp.hyp_supported}
@@ -2344,3 +2347,6 @@ facts:
   - {is: v_refer, from: o_sys_soundness_mods_aligned, to: {is: v_come_after, from: sys_soundness.mod_unpaired_changed.mean_value, to: sys_soundness.mod_paired_changed.mean_value}}
   - {is: v_support, from: o_sys_soundness_unpaired_above, to: h_symmetry_soundness}
   - {is: v_contradict, from: o_sys_soundness_not_significant, to: h_symmetry_soundness}
+  - {is: v_refer, from: h_sequence_by_current_order, to: {is: exp.v_rely, from: sequence_domain, to: [v_come_after, v_stage, syntax.pre, syntax.post]}}
+  - {is: exp.v_check, from: b_sequence_by_current_order, to: h_sequence_by_current_order}
+  - {is: exp.v_ground, from: d_sig_come_after_from, to: h_sequence_by_current_order}
