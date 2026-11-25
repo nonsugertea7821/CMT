@@ -255,6 +255,8 @@ individuals:
   b_sequence_by_current_order: {is: exp.item_queued}
   h_dangling_by_append_only_declaration: {is: exp.hyp_untested}
   b_dangling_by_append_only_declaration: {is: exp.item_queued}
+  h_identifier_free_of_declaration: {is: exp.hyp_untested}
+  b_identifier_free_of_declaration: {is: exp.item_queued}
   h_appear_root: {is: exp.hyp_supported}
   b_appear_root: {is: exp.item_done}
   h_boundary_invariant: {is: exp.hyp_supported}
@@ -2354,3 +2356,6 @@ facts:
   - {is: exp.v_ground, from: d_sig_come_after_from, to: h_sequence_by_current_order}
   - {is: v_refer, from: h_dangling_by_append_only_declaration, to: {is: v_depend, from: declared_scope, to: std.v_freeze}}
   - {is: exp.v_check, from: b_dangling_by_append_only_declaration, to: h_dangling_by_append_only_declaration}
+  - {is: v_refer, from: h_identifier_free_of_declaration, to: {is: v_not_depend, from: syntax.identifier, to: declared_scope}}
+  - {is: exp.v_check, from: b_identifier_free_of_declaration, to: h_identifier_free_of_declaration}
+  - {is: exp.v_ground, from: d_cscl_display_derived, to: h_identifier_free_of_declaration}
