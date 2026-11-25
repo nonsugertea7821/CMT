@@ -1,0 +1,186 @@
+{
+ "rev": "d23c759",
+ "rows": {
+  "word std.v_compute": {
+   "genus": "ontology.occurrent",
+   "dom": "std",
+   "n_name": 1,
+   "miss_A": [],
+   "miss_B": [],
+   "cross_A": [
+    "ontology.v_design"
+   ],
+   "cross_B": [],
+   "sep": [
+    "ontology.v_design"
+   ],
+   "up": [
+    "ontology.occurrent"
+   ]
+  },
+  "word exp.v_rely": {
+   "genus": "ontology.occurrent",
+   "dom": "exp",
+   "n_name": 1,
+   "miss_A": [],
+   "miss_B": [],
+   "cross_A": [
+    "ontology.v_depend",
+    "subj.v_allocate",
+    "subj.v_live",
+    "subj.v_place",
+    "syntax.v_use"
+   ],
+   "cross_B": [],
+   "sep": [
+    "ontology.v_depend",
+    "subj.v_allocate",
+    "subj.v_live",
+    "subj.v_place",
+    "syntax.v_use"
+   ],
+   "up": [
+    "ontology.occurrent"
+   ]
+  },
+  "word exp.v_transfer": {
+   "genus": "ontology.occurrent",
+   "dom": "exp",
+   "n_name": 1,
+   "miss_A": [],
+   "miss_B": [],
+   "cross_A": [
+    "ja_basic.j_be"
+   ],
+   "cross_B": [],
+   "sep": [
+    "ja_basic.j_be"
+   ],
+   "up": [
+    "ontology.occurrent"
+   ]
+  },
+  "control 書き換えない写し": {
+   "tc_ok": 1,
+   "tc_tail": [
+    "検査に成功: ノード 787（うち動詞の語根 59、役割 13）、基礎の関係 8、分類の軸 12、領域 19",
+    "  exp: 測定値 3720、観察 1868、仮説 384、決定 55、残り項目 350"
+   ],
+   "probe_same": 1
+  },
+  "try ontology.v_design > std.v_compute": {
+   "fit": 1,
+   "file": "cscl/library/std/std.yaml",
+   "changed": 1,
+   "tc_ok": 0,
+   "tc_tail": [
+    "検査に失敗: 1 件",
+    " - 法則 narrow_to（下位の動詞の端 to は、上位の動詞の端を狭める）に反する: var1=std.v_compute, var2=any, var3=ontology.v_design, var4=ontology.continuant, var5=ontology.continuant"
+   ],
+   "solved": []
+  },
+  "try ontology.v_depend > exp.v_rely": {
+   "fit": 1,
+   "file": "exp/src/exp.yaml",
+   "changed": 1,
+   "tc_ok": 0,
+   "tc_tail": [
+    "検査に失敗: 2 件",
+    " - 法則 narrow_from（下位の動詞の端 from は、上位の動詞の端を狭める）に反する: var1=exp.v_rely, var2=any, var3=ontology.v_depend, var4=ontology.continuant, var5=ontology.continuant",
+    " - 法則 narrow_to（下位の動詞の端 to は、上位の動詞の端を狭める）に反する: var1=exp.v_rely, var2=any, var3=ontology.v_depend, var4=ontology.continuant, var5=ontology.continuant"
+   ],
+   "solved": []
+  },
+  "try subj.v_allocate > exp.v_rely": {
+   "fit": 1,
+   "file": "exp/src/exp.yaml",
+   "changed": 1,
+   "tc_ok": 0,
+   "tc_tail": [
+    " - 法則 narrow_from（下位の動詞の端 from は、上位の動詞の端を狭める）に反する: var1=exp.v_rely, var2=any, var3=subj.v_allocate, var4=subj.order, var5=subj.goods",
+    " - 法則 narrow_to（下位の動詞の端 to は、上位の動詞の端を狭める）に反する: var1=exp.v_rely, var2=any, var3=subj.v_allocate, var4=subj.goods, var5=subj.order",
+    " - 法則 layered（参照できるのは自分の領域と使う領域だけ）に反する: var1=exp.v_rely, var2=subj.v_allocate, var3=exp, var4=subj"
+   ],
+   "solved": []
+  },
+  "try subj.v_live > exp.v_rely": {
+   "fit": 1,
+   "file": "exp/src/exp.yaml",
+   "changed": 1,
+   "tc_ok": 0,
+   "tc_tail": [
+    " - 法則 narrow_from（下位の動詞の端 from は、上位の動詞の端を狭める）に反する: var1=exp.v_rely, var2=any, var3=subj.v_live, var4=subj.person, var5=subj.address",
+    " - 法則 narrow_to（下位の動詞の端 to は、上位の動詞の端を狭める）に反する: var1=exp.v_rely, var2=any, var3=subj.v_live, var4=subj.address, var5=subj.person",
+    " - 法則 layered（参照できるのは自分の領域と使う領域だけ）に反する: var1=exp.v_rely, var2=subj.v_live, var3=exp, var4=subj"
+   ],
+   "solved": []
+  },
+  "try subj.v_place > exp.v_rely": {
+   "fit": 1,
+   "file": "exp/src/exp.yaml",
+   "changed": 1,
+   "tc_ok": 0,
+   "tc_tail": [
+    " - 法則 narrow_from（下位の動詞の端 from は、上位の動詞の端を狭める）に反する: var1=exp.v_rely, var2=any, var3=subj.v_place, var4=subj.order, var5=subj.agent",
+    " - 法則 narrow_to（下位の動詞の端 to は、上位の動詞の端を狭める）に反する: var1=exp.v_rely, var2=any, var3=subj.v_place, var4=subj.agent, var5=subj.order",
+    " - 法則 layered（参照できるのは自分の領域と使う領域だけ）に反する: var1=exp.v_rely, var2=subj.v_place, var3=exp, var4=subj"
+   ],
+   "solved": []
+  },
+  "try syntax.v_use > exp.v_rely": {
+   "fit": 1,
+   "file": "exp/src/exp.yaml",
+   "changed": 1,
+   "tc_ok": 0,
+   "tc_tail": [
+    "検査に失敗: 2 件",
+    " - 法則 narrow_from（下位の動詞の端 from は、上位の動詞の端を狭める）に反する: var1=exp.v_rely, var2=any, var3=syntax.v_use, var4=syntax.domain, var5=syntax.domain",
+    " - 法則 narrow_to（下位の動詞の端 to は、上位の動詞の端を狭める）に反する: var1=exp.v_rely, var2=any, var3=syntax.v_use, var4=syntax.domain, var5=syntax.domain"
+   ],
+   "solved": []
+  },
+  "try ja_basic.j_be > exp.v_transfer": {
+   "fit": 1,
+   "file": "exp/src/exp.yaml",
+   "changed": 1,
+   "tc_ok": 0,
+   "tc_tail": [
+    " - 法則 narrow_from（下位の動詞の端 from は、上位の動詞の端を狭める）に反する: var1=exp.v_transfer, var2=any, var3=ja_basic.j_be, var4=ontology.continuant, var5=ontology.quality",
+    " - 法則 narrow_to（下位の動詞の端 to は、上位の動詞の端を狭める）に反する: var1=exp.v_transfer, var2=any, var3=ja_basic.j_be, var4=ontology.quality, var5=ontology.continuant",
+    " - 法則 layered（参照できるのは自分の領域と使う領域だけ）に反する: var1=exp.v_transfer, var2=ja_basic.j_be, var3=exp, var4=ja_basic"
+   ],
+   "solved": []
+  },
+  "summary 要約": {
+   "build_ok": 1,
+   "control_ok": 1,
+   "n_w_sep": 3,
+   "n_sep": 7,
+   "n_tries": 7,
+   "n_tc_fail": 7,
+   "n_unsolved": 7,
+   "n_w_unsolved": 3,
+   "unsolved": {
+    "std.v_compute": [
+     "ontology.v_design"
+    ],
+    "exp.v_rely": [
+     "ontology.v_depend",
+     "subj.v_allocate",
+     "subj.v_live",
+     "subj.v_place",
+     "syntax.v_use"
+    ],
+    "exp.v_transfer": [
+     "ja_basic.j_be"
+    ]
+   },
+   "best": {
+    "std.v_compute": [],
+    "exp.v_rely": [],
+    "exp.v_transfer": []
+   },
+   "verdict": "反証"
+  }
+ }
+}
