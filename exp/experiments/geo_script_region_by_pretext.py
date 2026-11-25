@@ -28,6 +28,14 @@
      hi = tpc が小さい側（多く読んだ）、lo = 大きい側。
      d_B = (acc_swap(hi) − acc_swap(lo)) − (acc_orig(hi) − acc_orig(lo))。
      p_B: 40 語をでたらめに同じ大きさの 2 つに分ける 2000 回（seed 0）で、d_B 以上になる割合。
+訂正（1 回目の実行の後、結果を見る前に。開示）:
+  1 回目は B の分け方で止まった（ZeroDivisionError）。Qwen で、書き替えた類の 40 語の tpc は 1.0 が 22 語あり、
+  中央値が 1.0 になって lo が空になった（中央値と等しい語を hi に入れる決めのため）。
+  そのとき出ていたのは Qwen の A の値（L8 の orig G 0.779・R 0.054、swap G 0.229・R 0.044。#779 と一致）だけで、
+  acc・d_B・日本語のモデルの値は出ていない。
+  分け方を改める: hi = tpc が最大値より小さい語（BPE が少なくとも 1 か所を併合した字面、18 語）、
+  lo = tpc が最大値の語（1 文字 1 トークン、どこも併合されない字面、22 語）。判定の線は変えない。
+  記録の median は残すが、分けには使わない。
 判定（事前に決める）:
   支持: gap_A ≥ 0.25 かつ d_B ≥ 0.20 かつ p_B ≤ 0.05。
   反証: gap_A ≤ 0.05 かつ d_B ≤ 0.05。
@@ -150,10 +158,10 @@ def main():
         res["models"][key] = row
         if key == "qwen":
             tpc = {w: ntok[SWAP[w]] / len(SWAP[w]) for w in gwords}
-            med = sorted(tpc.values())[len(tpc) // 2 - 1: len(tpc) // 2 + 1]
-            med = mean(med)
-            hi = [w for w in gwords if tpc[w] <= med]
-            lo = [w for w in gwords if tpc[w] > med]
+            med = mean(sorted(tpc.values())[len(tpc) // 2 - 1: len(tpc) // 2 + 1])
+            top = max(tpc.values())
+            hi = [w for w in gwords if tpc[w] < top]
+            lo = [w for w in gwords if tpc[w] == top]
             acc = {c: row["conds"][str(JUDGE)][c]["acc"] for c in ("orig", "swap")}
 
             def dd(h, l):
