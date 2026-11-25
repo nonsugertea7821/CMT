@@ -1,0 +1,19 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-25T09:16:00.665Z（UTC）
+individuals:
+  01M88ZV4RSXSAPDPGTF8P7TT90:
+    is: model_utterance
+    display: 発言 4894
+    val:
+      order: 4894
+      text: |
+        否定の文を五つ見直しましたが、どれも登録はしていません。最初の二つは、この応答の中で確かめ直しました。
+
+        - **「どれも追加学習ではない」「重みは変えていない」**: E49〜E57 のスクリプトを検索しました。重みを更新するコード（`backward(`、`optim.`、`Trainer`、`lora`）は、どれにも見つかりませんでした。対象は main の 7 本と、作業フォルダーにある e50・e57 です。
+        - **「taught は学習ではない」**: e55 のスクリプトの説明に「例 2 つの後に問い」と書かれているのを読んで確かめました。
+        - **「E57 は答えの行を写すだけかを確かめている」**: E57 の事前登録に書いた問いの説明です。否定の主張ではありません。
+        - **「この案を言う仮説はなかった」**: main の exp.yaml と claims.yaml を検索して確かめた事実です。その上で、新しい仮説として登録しました（#839）。
+
+        ロードマップの位置: d_road_checker（E57 実行中、#839 登録）。
+facts:
+- {is: v_say, from: session_model, to: 01M88ZV4RSXSAPDPGTF8P7TT90}
+- {is: exp.v_answer, from: 01M88ZV4RSXSAPDPGTF8P7TT90, to: 01M88ZRT12C3KVTH13S6ETEH1D}
