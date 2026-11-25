@@ -1,0 +1,30 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-25T21:44:14.407Z（UTC）
+individuals:
+  01M8AAN6A7EM5SD134XWC9WR1T:
+    is: model_utterance
+    display: 発言 5447
+    val:
+      order: 5447
+      text: |
+        PR #900 merged automatically: the checker can find v_depend by its shape alone. Building on it, I opened PR #901 to make the change in the real files. It needs your review because it changes the checker, so it won't merge on its own.
+
+        **What #901 changes:**
+        - **Checker:** the one-line change, so v_depend is found by its shape, not its position.
+        - **Three verbs move upstream,** each with one word placed under it:
+          - に転移する (exp.v_transfer) moves to std; ではある (ja_basic.j_be) goes under it.
+          - に頼る (exp.v_rely) moves to ontology; 依存する (ontology.v_depend) goes under it.
+          - 計算する (std.v_compute) moves to ontology; 設計する (ontology.v_design) goes under it.
+
+        These are the same steps that, in the temporary copy for #900, passed the checker and removed all 7 domain-only pairs. CI hasn't run on #901 yet; I'll fix anything that fails.
+
+        **The decision for you:** the new parent/child pairs follow only from shape matching. Each pair has identical "holds" or before/after conditions, with narrower ends on the child. I haven't checked whether they make sense as meanings, for example 設計する being a kind of 計算する. If they read as unnatural, that is itself a finding: shape alone doesn't separate these words, and I would register a hypothesis for writing that difference as a formula instead.
+
+        E66 is training its last concept.
+facts:
+- {is: v_say, from: session_model, to: 01M8AAN6A7EM5SD134XWC9WR1T}
+- {is: exp.v_answer, from: 01M8AAN6A7EM5SD134XWC9WR1T, to: 01M89PSFS6B8JRMSN9NJ2R17KF}
+- {is: v_refer, from: 01M8AAN6A7EM5SD134XWC9WR1T, to: ontology.v_depend}
+- {is: v_refer, from: 01M8AAN6A7EM5SD134XWC9WR1T, to: exp.v_transfer}
+- {is: v_refer, from: 01M8AAN6A7EM5SD134XWC9WR1T, to: exp.v_rely}
+- {is: v_refer, from: 01M8AAN6A7EM5SD134XWC9WR1T, to: std.v_compute}
+- {is: v_refer, from: 01M8AAN6A7EM5SD134XWC9WR1T, to: ontology.v_design}
