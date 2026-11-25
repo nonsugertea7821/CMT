@@ -4005,6 +4005,8 @@ individuals:
   b_consistency_bound_by_apply: {is: item_done}
   h_consistency_bound_by_explain: {is: hyp_untested}
   b_consistency_bound_by_explain: {is: item_queued}
+  h_design_consists_of_adopted: {is: hyp_untested}
+  b_design_consists_of_adopted: {is: item_queued}
   h_consistency_beyond_accuracy: {is: hyp_refuted}
   b_consistency_beyond_accuracy: {is: item_done}
   b_consistency_pairs_control: {is: item_queued}
@@ -14417,6 +14419,9 @@ facts:
   - {is: v_scope, from: model_15b, to: h_consistency_bound_by_explain}
   - {is: v_check, from: b_consistency_bound_by_explain, to: h_consistency_bound_by_explain}
   - {is: v_ground, from: d_metric, to: h_consistency_bound_by_explain}
+  - {is: v_refer, from: h_design_consists_of_adopted, to: {is: v_consist, from: this_design, to: [typed_graph, rendered_text, concept_vector, text_injection]}}
+  - {is: v_check, from: b_design_consists_of_adopted, to: h_design_consists_of_adopted}
+  - {is: v_ground, from: d_goal, to: h_design_consists_of_adopted}
   - {is: v_file_of, from: 'e57_Qwen3-4B.json', to: e57b}
   - {is: v_rows_of, from: [items, '{cond}'], to: e57b}
   - {is: v_axis_of, from: e57b_cond, to: e57b}
