@@ -4867,6 +4867,10 @@ individuals:
   o_geo_teg_lift_f10_below_f25: {is: observation}
   o_geo_teg_lift_f100_above_zero: {is: observation}
   o_geo_teg_8_f0_orig_above_base: {is: observation}
+  h_top_energy_gap_saturates: {is: hyp_untested}
+  b_top_energy_gap_saturates: {is: item_queued}
+  h_step_judgment_in_observations: {is: hyp_untested}
+  b_step_judgment_in_observations: {is: item_queued}
 facts:
   - {is: v_collect, from: residual_space, to: residual_vector}
   - {is: v_sum, from: layer_output, to: state_shift, new: shifted_hidden_state}
@@ -13409,3 +13413,9 @@ facts:
   - {is: v_refer, from: o_geo_teg_lift_f100_above_zero, to: {is: v_come_after, from: geo_teg_j.lift.f100.mean_value, to: 0}}
   - {is: v_refer, from: o_geo_teg_8_f0_orig_above_base, to: {is: v_come_after, from: geo_teg.8.f0.orig.G_rate.mean_value, to: geo_teg.8.base.orig.G_rate.mean_value}}
   - {is: v_support, from: o_geo_teg_lift_f0_above_f100, to: h_top_energy_holds_gap}
+  - {is: v_refer, from: h_top_energy_gap_saturates, to: {is: v_depend, from: magnitude, to: spread_dimension}}
+  - {is: v_check, from: b_top_energy_gap_saturates, to: h_top_energy_gap_saturates}
+  - {is: v_ground, from: d_road_region, to: h_top_energy_gap_saturates}
+  - {is: v_refer, from: h_step_judgment_in_observations, to: {is: v_depend, from: hyp_supported, to: [observation, magnitude]}}
+  - {is: v_check, from: b_step_judgment_in_observations, to: h_step_judgment_in_observations}
+  - {is: v_ground, from: d_road_region, to: h_step_judgment_in_observations}
