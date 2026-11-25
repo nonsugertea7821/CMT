@@ -1,0 +1,17 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-25T10:08:32.043Z（UTC）
+individuals:
+  01M892VA9BAGMARDAAYG6PDKMP:
+    is: model_utterance
+    display: 発言 4966
+    val:
+      order: 4966
+      text: |
+        訂正があります。前回「手順に bf16 を書き足したので、#847 は自動マージに乗りません」と書きましたが、理由が不正確でした。`.github/scripts/auto_merge.py` を読んで確かめ直しました。
+        - 「訂正」の数を数える条件6には引っかかりません。書き足した行は「書き足し」で始まり、「訂正」で始まっていないからです。
+        - 引っかかるのは条件5のほうです。条件5は、スクリプトを触る commit がちょうど一つであることを求めます。e58 のスクリプトは、事前登録と f58125b の二つの commit が触っています。
+        - 結論の「#847 は自動マージに乗らず、手で見てもらう」は変わりません。
+
+        新しく登録したものはありません。この点は、スクリプトを読んで確かめた事実になったからです。
+facts:
+- {is: v_say, from: session_model, to: 01M892VA9BAGMARDAAYG6PDKMP}
+- {is: exp.v_answer, from: 01M892VA9BAGMARDAAYG6PDKMP, to: 01M890250XEAF1337HZ1C23TK6}
