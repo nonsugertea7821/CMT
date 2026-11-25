@@ -220,8 +220,17 @@ individuals:
   o_sys_gprn_ec: {is: exp.observation}
   o_sys_gprn_laws: {is: exp.observation}
   o_sys_gprn_grow: {is: exp.observation}
-  h_rel_diff_by_added_terms: {is: exp.hyp_untested}
-  b_rel_diff_by_added_terms: {is: exp.item_queued}
+  o_sys_rdat_foreign: {is: exp.observation}
+  o_sys_rdat_old_only: {is: exp.observation}
+  o_sys_rdat_gone: {is: exp.observation}
+  o_sys_rdat_unparsed: {is: exp.observation}
+  o_sys_rdat_errors: {is: exp.observation}
+  o_sys_rdat_ec: {is: exp.observation}
+  o_sys_rdat_grow: {is: exp.observation}
+  o_sys_rdat_shrink: {is: exp.observation}
+  o_sys_rdat_new: {is: exp.observation}
+  h_rel_diff_by_added_terms: {is: exp.hyp_refuted}
+  b_rel_diff_by_added_terms: {is: exp.item_done}
   h_rule_role_key_apart_from_state: {is: exp.hyp_untested}
   b_rule_role_key_apart_from_state: {is: exp.item_queued}
   h_layers_unhardcode: {is: exp.hyp_refuted}
@@ -1311,6 +1320,16 @@ facts:
   - {is: v_refer, from: o_sys_gprn_ec, to: {is: v_level, from: sys_grammar_parts_rel_by_new_nodes.PCG_ec_errors.mean_value, to: 0.0}}
   - {is: v_refer, from: o_sys_gprn_laws, to: {is: v_level, from: sys_grammar_parts_rel_by_new_nodes.PCG_laws_same_C.mean_value, to: 1.0}}
   - {is: v_refer, from: o_sys_gprn_grow, to: {is: v_level, from: sys_grammar_parts_rel_by_new_nodes.n_PCG_minus_C.mean_value, to: 1193.0}}
+  - {is: v_refer, from: o_sys_rdat_foreign, to: {is: v_level, from: sys_rel_diff_by_added_terms.n_new_foreign.mean_value, to: 4.0}}
+  - {is: v_refer, from: o_sys_rdat_old_only, to: {is: v_level, from: sys_rel_diff_by_added_terms.n_diff_old_only.mean_value, to: 0.0}}
+  - {is: v_refer, from: o_sys_rdat_gone, to: {is: v_level, from: sys_rel_diff_by_added_terms.n_gone_terms.mean_value, to: 0.0}}
+  - {is: v_refer, from: o_sys_rdat_unparsed, to: {is: v_level, from: sys_rel_diff_by_added_terms.n_unparsed.mean_value, to: 0.0}}
+  - {is: v_refer, from: o_sys_rdat_errors, to: {is: v_level, from: sys_rel_diff_by_added_terms.CG_errors.mean_value, to: 0.0}}
+  - {is: v_refer, from: o_sys_rdat_ec, to: {is: v_level, from: sys_rel_diff_by_added_terms.CG_ec_errors.mean_value, to: 0.0}}
+  - {is: v_refer, from: o_sys_rdat_grow, to: {is: v_level, from: sys_rel_diff_by_added_terms.n_CG_minus_C.mean_value, to: 1193.0}}
+  - {is: v_refer, from: o_sys_rdat_shrink, to: {is: v_level, from: sys_rel_diff_by_added_terms.n_C_minus_CG.mean_value, to: 0.0}}
+  - {is: v_refer, from: o_sys_rdat_new, to: {is: v_level, from: sys_rel_diff_by_added_terms.n_new_terms.mean_value, to: 7.0}}
+  - {is: exp.v_contradict, from: o_sys_rdat_foreign, to: h_rel_diff_by_added_terms}
   - {is: v_refer, from: h_rel_diff_by_added_terms, to: {is: v_depend, from: syntax.law_relation, to: [syntax.nodes, syntax.mod]}}
   - {is: exp.v_check, from: b_rel_diff_by_added_terms, to: h_rel_diff_by_added_terms}
   - {is: exp.v_ground, from: d_cscl_display_derived, to: h_rel_diff_by_added_terms}
