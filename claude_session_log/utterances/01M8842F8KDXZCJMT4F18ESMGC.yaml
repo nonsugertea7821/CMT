@@ -1,0 +1,34 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-25T01:10:40.659Z（UTC）
+individuals:
+  01M8842F8KDXZCJMT4F18ESMGC:
+    is: model_utterance
+    display: 発言 4568
+    val:
+      order: 4568
+      text: |
+        The rogue-dimension hypothesis is refuted: zeroing those dimensions barely changed the midpoint rate (lift 0.0036, where below 0.03 refutes). CI hasn't reported on #788 yet; I'll take it off Draft once it passes.
+
+        **What I found (#788):**
+        - **Rogue dimensions found:** layer 8 has 11 dimensions whose average magnitude is 10× the median or more (up to 42×).
+        - **Why zeroing them does nothing:** almost all of their large values are the same for every word. After centering, they hold only 4–6% of the variance between words, so they weren't pulling the midpoints.
+        - **Standardizing helps:** I also recorded a third reading, scaling every dimension to unit spread. It raised the rate in every layer and condition (G_rate):
+
+          | | before | after |
+          |---|---|---|
+          | L8, original words | 0.779 | 0.871 |
+          | L8, mixed scripts | 0.436 | 0.593 |
+          | L20, original words | 0.579 | 0.800 |
+
+        - **The script gap remains:** even after standardizing, rewritten words reach only 0.314 at layer 8, against 0.871 for the originals. Dimension scale doesn't explain most of the drop from changing the script.
+
+        **New hypothesis (#789):**
+        - **Claim:** the dimensions that skew cosine are the ones whose values spread widely between words, not the ones with large values. I registered this as h_spread_dimension_lowers_midpoint.
+        - **New concept:** spread_dimension, a dimension whose values vary across words much more than other dimensions do. Because it adds a concept, #789 won't auto-merge and needs your review.
+        - **How I'd test it:** standardize only the top few highest-variance dimensions and see whether that produces most of the full gain. This is a plan, not yet pre-registered.
+
+        **Housekeeping:** E56 was already finished and merged earlier, so there was nothing to start on that line. The hourly round is re-armed for 02:07Z.
+
+        ロードマップの位置: d_road_region。#784（外れの次元）を反証で終え、その含意として #789 を登録しました。
+facts:
+- {is: v_say, from: session_model, to: 01M8842F8KDXZCJMT4F18ESMGC}
+- {is: exp.v_answer, from: 01M8842F8KDXZCJMT4F18ESMGC, to: 01M8824ABH7FVJ0AFYWM2EPXZH}
