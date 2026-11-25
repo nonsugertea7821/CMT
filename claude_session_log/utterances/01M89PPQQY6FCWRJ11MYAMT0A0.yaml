@@ -1,0 +1,42 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-25T15:55:33.502Z（UTC）
+individuals:
+  01M89PPQQY6FCWRJ11MYAMT0A0:
+    is: model_utterance
+    display: 発言 5204
+    val:
+      order: 5204
+      text: |
+        ありました。実行器は `cscl/library/runtime/runtime.yaml` と `cscl/bootstrap/runtime/runtime.py` で、動くところまでは来ています。詰まったのは「書き方の対応」と「宣言の取り消し」の二つで、自分の検査器を自分で実行する（セルフホスト）段は手つかずです。
+
+        ## 実行器の作り（体系から読んだ事実）
+        - 実行は「前の状態が成り立てば、後の状態に置き換える」ステップの繰り返しです。当てはまる動詞がなくなれば止まります。
+        - 戦略は runtime の節に値で書いてあります。前の状態の確かめ方は all、後の状態の作り方は replace、法則は 1 歩ごとに確かめます（every_step）。
+        - `v_execute` は、新しい状態を作り、それを前の状態の「後ろ（after）」に置きます。
+
+        ## 仮説と結果
+        | 仮説 | 状態 | 中身と、何が起きたか |
+        |---|---|---|
+        | h_open_runtime | 支持 | 開世界でも実行器が回るか。回った。ただし記録は 2 つで弱い |
+        | h_law_check_by_always | 支持 | 法則を 1 歩ごとに確かめることは、always（どのステップでも成り立つ）で書ける |
+        | h_open_declaration | **反証** | 宣言をステップで足す書き方。3 歩とも歩めた。ただし宣言を取り消すと、宣言されていない名前の文が残った。最後の状態でも当てはまる歩みが 42 通りあり、止まらなかった |
+        | h_premise_agrees_pre_rule | **反証** | 法則の「前提」と実行の「前の状態の確かめ方」は、同じものを指すか。main の書き方では、共通の相手が 0 だった。前提は働き（何に仮定されるか）で書かれ、確かめ方は中身で書かれているため |
+        | h_rule_nouns_agree_runtime | **反証** | 法則の三つの名詞と実行の三つの戦略は、対で一致するか。前提と前の状態、導くものと後の状態の二つは一致した。求める文（required）と法則を確かめる時点（law_check）だけが一致しなかった |
+        | h_checker_by_executor | 未検証 | 型検査器を、CSCL 自身の実行器（書き換えの規則）として走らせられるか（セルフホスト） |
+        | h_meaning_preserving_rewrite | 未検証 | 意味を保つ書き換え（最適化）は、止まった状態で式にできる |
+        | h_optimization_in_system | 未検証 | 最適化の規則は、実行器が動かす言語に依らない |
+
+        ## 詰まりの中身
+        1. **宣言の取り消しが書けない（h_open_declaration）。** 「消える」ことを、その名前の宣言の取り消しとして読めませんでした。名前を作って消すシステムを書くと、ここに当たります。
+        2. **時点と中身が食い違う（h_rule_nouns_agree_runtime）。** 求める文は「いつ成り立つか」を述べ、法則を確かめる時点は「何を確かめるか」を述べています。時点の値（every_step）は合うのに、式が合いません。
+        3. **同じ概念が、法則の側と実行の側で別の書き方になっている（h_premise_agrees_pre_rule）。** 働きで書くか中身で書くかが揃っておらず、名前のある中身で書き直した変種でだけ一致しました。
+
+        先ほどのシーケンスの話につながる点もあります。実行器も状態の順を after で持っていて、every_step も v_come_after で書かれています。このため、時間の順が after に乗っているのは実行器の側でも同じです。
+
+        システムの手順を書いてみる案（h_sequence_by_current_order）は、この実行器で実際に走らせる形にできます。そうすれば、上の 1 と 2 にも同じ材料で当たれます。
+facts:
+- {is: v_say, from: session_model, to: 01M89PPQQY6FCWRJ11MYAMT0A0}
+- {is: exp.v_answer, from: 01M89PPQQY6FCWRJ11MYAMT0A0, to: 01M89PNKRT6J36H3YQMDQ4DZNK}
+- {is: v_refer, from: 01M89PPQQY6FCWRJ11MYAMT0A0, to: runtime.every_step}
+- {is: v_refer, from: 01M89PPQQY6FCWRJ11MYAMT0A0, to: runtime.v_execute}
+- {is: v_refer, from: 01M89PPQQY6FCWRJ11MYAMT0A0, to: runtime.law_check}
+- {is: v_refer, from: 01M89PPQQY6FCWRJ11MYAMT0A0, to: ontology.v_come_after}
