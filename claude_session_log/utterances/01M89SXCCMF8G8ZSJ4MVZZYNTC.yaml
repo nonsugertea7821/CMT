@@ -1,0 +1,21 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-25T16:51:36.980Z（UTC）
+individuals:
+  01M89SXCCMF8G8ZSJ4MVZZYNTC:
+    is: model_utterance
+    display: 発言 5287
+    val:
+      order: 5287
+      text: |
+        I didn't register anything for those sentences.
+
+        - **#879 not covering the runtime:** a fact; its probe only runs the type checker and ec.
+        - **`v_assume` having `pre` and no `post`:** a fact I read in the diff.
+        - **The runtime can never pick `v_assume` to run:** I read this from the code. It decides a verb applies only while its `post` isn't yet true, and an empty `post` always counts as already true.
+
+        Whether the runtime's behaviour really stays the same is the open point I wrote in the PR body. The CI rerun of the runtime and world tests will check it. If behaviour changes, I'll register the hypothesis to use separate keys for rule roles.
+facts:
+- {is: v_say, from: session_model, to: 01M89SXCCMF8G8ZSJ4MVZZYNTC}
+- {is: exp.v_answer, from: 01M89SXCCMF8G8ZSJ4MVZZYNTC, to: 01M89PSFS6B8JRMSN9NJ2R17KF}
+- {is: v_refer, from: 01M89SXCCMF8G8ZSJ4MVZZYNTC, to: syntax.v_assume}
+- {is: v_refer, from: 01M89SXCCMF8G8ZSJ4MVZZYNTC, to: syntax.pre}
+- {is: v_refer, from: 01M89SXCCMF8G8ZSJ4MVZZYNTC, to: syntax.post}
