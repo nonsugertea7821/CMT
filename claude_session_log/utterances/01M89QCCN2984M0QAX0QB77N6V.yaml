@@ -1,0 +1,35 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-25T16:07:23.042Z（UTC）
+individuals:
+  01M89QCCN2984M0QAX0QB77N6V:
+    is: model_utterance
+    display: 発言 5225
+    val:
+      order: 5225
+      text: |
+        **h_grammar_names_parts came out refuted under the rule I registered before running it.** I pushed the result and the observations to `claude/h_grammar_names_parts`, but no PR exists yet because GitHub is still returning 500 errors.
+
+        **What I measured:**
+        - Variant C: names each fact from its content (the step already supported in #502). 0 checker errors.
+        - PC = C plus exp.yaml split into separate part files. 1 error: the grammar doesn't list the word parts. This repeats what #502 found.
+        - PCG = PC plus the grammar change, which adds parts to the grammar and adds two nodes, parts and compose_from_domain. Checker errors and experiment-check errors are both 0, and the law evaluations are the same as C's.
+        - PCG derived 1,193 more relations than C (424,464 vs 423,271). My rule required the derived relations to match C exactly, so the result is refuted.
+
+        **What I think happened (not yet checked):** the two nodes I added probably produce those extra relations themselves. If so, splitting into files isn't what changed anything. My rule didn't account for the fact that adding nodes adds relations. I registered this as a new untested hypothesis, h_grammar_parts_rel_by_new_nodes. I'll test it by checking whether every extra relation involves one of the two new nodes. If they all do, adding parts to the grammar can still be adopted.
+
+        **Commits** on `claude/h_grammar_names_parts`:
+        - e90dc8a: pre-registration of the procedure and rule.
+        - 55039ee: the result file.
+        - 2676811: the observations, the refuted status, and the new hypothesis.
+
+        The checks on GitHub haven't run on this yet.
+
+        **Waiting on GitHub:** I'll retry these four PRs when the scheduled task fires at 16:30, then watch each one and assign it to you:
+        - `claude/register-sequence-writing`
+        - `claude/adopt-concept-kind-excludes-verb`: changes the grammar, so it needs your review.
+        - `claude/register-rule-roles-read-by-frame`: registration only, so it can merge automatically.
+        - `claude/h_grammar_names_parts`: will open as a draft.
+
+        **E64:** still training, 6 of 24 concepts done, about 9 minutes each.
+facts:
+- {is: v_say, from: session_model, to: 01M89QCCN2984M0QAX0QB77N6V}
+- {is: exp.v_answer, from: 01M89QCCN2984M0QAX0QB77N6V, to: 01M89PSFS6B8JRMSN9NJ2R17KF}
