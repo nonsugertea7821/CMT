@@ -1,0 +1,32 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-25T15:56:28.536Z（UTC）
+individuals:
+  01M89PRDFRVVHJF72ZK8NTHEV8:
+    is: model_utterance
+    display: 発言 5207
+    val:
+      order: 5207
+      text: |
+        その話です。体系に観察として残っていました。
+
+        ## 記録されている事実
+        - **宣言は増える一方で、減らない。**
+          - 名前を最初に全部宣言する実行器では、記録の 6 歩で、宣言は増えも減りもしませんでした（o_sys_frame_declared_never_shrinks）。
+          - 開世界の実行器（h_open_runtime、支持）では、宣言は減らず、作るときにだけ増えました（o_sys_open_runtime_never_shrinks、o_sys_open_runtime_grows_by_creation）。
+        - **「消す」は、真偽の旗を倒すだけ。**
+          - 動的な動詞 16 のうち、在るようにする動詞は 9 つ、在らないようにする動詞は std.v_freeze（固定する）の 1 つだけです。
+          - v_freeze の後の状態は「exists(new) が偽」で、ほかの文は取り除きません。そのため、在るものが減った後にも、在らない個体についての文が残ります（commit c252871）。
+        - **二つの範囲は揃わない。** 宣言の範囲と、在るものの範囲が一致するという仮説 h_frame_closed は、取り下げました。
+        - **判定基準の取り違えの指摘。** h_open_declaration（反証）の注に「判定の基準が、真偽の軸と宣言の軸を取り違えていた」と書きました。判定そのものは変えていません。
+
+        ## まとめると（解釈）
+        実行の内側には、軸が二つあります。
+        - 宣言（どの名前があるか）: 追記専用です。
+        - 存在（exists の真偽）: 立てたり倒したりできます。
+
+        「消える」は存在の旗を倒すことで、宣言からも、その個体についての文からも、何も取り除きません。あとで出てきた詰まり（宣言の取り消しとして読めない、宣言されていない名前の文が残る）は、この作りからそのまま出ています。
+
+        システムの手順の話とつながるのは、ここです。セッションや一時ファイルのように「作って、使って、消す」ものを手順に入れると、この二つの軸の作りがそのまま試されます。h_sequence_by_current_order の確かめで、書く手順にそういうものを含めるつもりです。
+facts:
+- {is: v_say, from: session_model, to: 01M89PRDFRVVHJF72ZK8NTHEV8}
+- {is: exp.v_answer, from: 01M89PRDFRVVHJF72ZK8NTHEV8, to: 01M89PQPE0J8WVGQCS303FR7M3}
+- {is: v_refer, from: 01M89PRDFRVVHJF72ZK8NTHEV8, to: std.v_freeze}
