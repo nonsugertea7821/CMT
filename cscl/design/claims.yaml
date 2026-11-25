@@ -493,6 +493,8 @@ individuals:
   b_names_up_to_relabel: {is: exp.item_queued}
   h_same_shape_verbs_merge: {is: exp.hyp_untested}
   b_same_shape_verbs_merge: {is: exp.item_queued}
+  h_dimension_contrast_in_formula: {is: exp.hyp_untested}
+  b_dimension_contrast_in_formula: {is: exp.item_queued}
   h_shape_needs_ends: {is: exp.hyp_refuted}
   b_shape_needs_ends: {is: exp.item_queued}
   o_sys_verbs_static_unlimited: {is: exp.observation}
@@ -2102,6 +2104,9 @@ facts:
   - {is: v_refer, from: h_same_shape_verbs_merge, to: {is: v_depend, from: syntax.identifier, to: syntax.holds}}
   - {is: exp.v_check, from: b_same_shape_verbs_merge, to: h_same_shape_verbs_merge}
   - {is: exp.v_ground, from: d_cscl_display_derived, to: h_same_shape_verbs_merge}
+  - {is: v_refer, from: h_dimension_contrast_in_formula, to: {is: v_express, from: [exp.rogue_dimension, exp.spread_dimension], to: ontology.magnitude}}
+  - {is: exp.v_check, from: b_dimension_contrast_in_formula, to: h_dimension_contrast_in_formula}
+  - {is: exp.v_ground, from: d_cscl_display_derived, to: h_dimension_contrast_in_formula}
   - {is: v_refer, from: h_shape_needs_ends, to: {is: v_depend, from: type_checker, to: [syntax.holds, syntax.from, syntax.to]}}
   - {is: exp.v_check, from: b_shape_needs_ends, to: h_shape_needs_ends}
   - {is: exp.v_ground, from: d_cscl_display_derived, to: h_shape_needs_ends}
