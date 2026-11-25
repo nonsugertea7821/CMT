@@ -4103,6 +4103,50 @@ individuals:
   o_e65_15b_rand_para_kept: {is: observation}
   o_e65_15b_rand_recite_kept: {is: observation}
   o_e65_15b_gap_above_line: {is: observation}
+  e66s_15b: {is: measurement_family}
+  e66s_15b_cond: {is: family_axis, val: {text: cond}}
+  e66s_15b_cond_vec_noans: {is: axis_value, val: {text: 'vec_noans'}}
+  e66s_15b_stat: {is: family_axis, val: {text: stat}}
+  e66s_15b_stat_joint: {is: axis_value, val: {text: 'joint'}}
+  e66s_15b_stat_indep: {is: axis_value, val: {text: 'indep'}}
+  e66a_15b: {is: measurement_family}
+  e66a_15b_cond: {is: family_axis, val: {text: cond}}
+  e66a_15b_cond_vec_noans: {is: axis_value, val: {text: 'vec_noans'}}
+  e66a_15b_part: {is: family_axis, val: {text: part}}
+  e66a_15b_part_acc: {is: axis_value, val: {text: 'acc'}}
+  e66a_15b_usage: {is: family_axis, val: {text: usage}}
+  e66a_15b_usage_apply: {is: axis_value, val: {text: 'apply'}}
+  e66a_15b_usage_para: {is: axis_value, val: {text: 'para'}}
+  e66a_15b_usage_explain: {is: axis_value, val: {text: 'explain'}}
+  e66a_15b_usage_recite: {is: axis_value, val: {text: 'recite'}}
+  e66p_15b: {is: measurement_family}
+  e66p_15b_part: {is: family_axis, val: {text: part}}
+  e66p_15b_part_paired: {is: axis_value, val: {text: 'paired'}}
+  e66p_15b_stat: {is: family_axis, val: {text: stat}}
+  e66p_15b_stat_da_ex: {is: axis_value, val: {text: 'da_ex'}}
+  e66p_15b_stat_da_noans: {is: axis_value, val: {text: 'da_noans'}}
+  e66p_15b_stat_de_noans: {is: axis_value, val: {text: 'de_noans'}}
+  e66p_15b_stat_gap: {is: axis_value, val: {text: 'gap'}}
+  e66p_15b_stat_n_up_noans: {is: axis_value, val: {text: 'n_up_noans'}}
+  e66p_15b_stat_n_down_noans: {is: axis_value, val: {text: 'n_down_noans'}}
+  e66p_15b_stat_n_up_noans_and_ex: {is: axis_value, val: {text: 'n_up_noans_and_ex'}}
+  e66p_15b_stat_norm_ratio_mean: {is: axis_value, val: {text: 'norm_ratio_mean'}}
+  o_e66_15b_vec_noans_joint: {is: observation}
+  o_e66_15b_vec_noans_indep: {is: observation}
+  o_e66_15b_vec_noans_acc_apply: {is: observation}
+  o_e66_15b_vec_noans_acc_para: {is: observation}
+  o_e66_15b_vec_noans_acc_explain: {is: observation}
+  o_e66_15b_vec_noans_acc_recite: {is: observation}
+  o_e66_15b_da_ex: {is: observation}
+  o_e66_15b_da_noans: {is: observation}
+  o_e66_15b_de_noans: {is: observation}
+  o_e66_15b_gap: {is: observation}
+  o_e66_15b_n_up_noans: {is: observation}
+  o_e66_15b_n_down_noans: {is: observation}
+  o_e66_15b_n_up_noans_and_ex: {is: observation}
+  o_e66_15b_norm_ratio_mean: {is: observation}
+  o_e66_15b_de_above_line: {is: observation}
+  o_e66_15b_gap_above_line: {is: observation}
   o_e62_15b_p_below_line: {is: observation}
   e62a_4b: {is: measurement_family}
   e62a_4b_cond: {is: family_axis, val: {text: cond}}
@@ -4228,8 +4272,8 @@ individuals:
   b_consistency_bound_by_explain: {is: item_done}
   h_explain_lever_transfers_to_apply_15b: {is: hyp_supported}
   b_explain_lever_transfers_to_apply_15b: {is: item_done}
-  h_explain_lever_apply_by_case_answers_15b: {is: hyp_untested}
-  b_explain_lever_apply_by_case_answers_15b: {is: item_queued}
+  h_explain_lever_apply_by_case_answers_15b: {is: hyp_supported}
+  b_explain_lever_apply_by_case_answers_15b: {is: item_done}
   h_design_consists_of_adopted: {is: hyp_untested}
   b_design_consists_of_adopted: {is: item_queued}
   h_consistency_beyond_accuracy: {is: hyp_refuted}
@@ -15365,6 +15409,66 @@ facts:
   - {is: v_refer, from: o_e65_15b_rand_recite_kept, to: {is: v_come_after, from: e65a_15b.vec_rand.acc.recite.mean_value, to: 0.8749}}
   - {is: v_refer, from: o_e65_15b_gap_above_line, to: {is: v_come_after, from: e65p_15b.paired.gap.mean_value, to: 0.0833}}
   - {is: v_support, from: o_e65_15b_gap_above_line, to: h_explain_lever_transfers_to_apply_15b}
+  - {is: v_file_of, from: e66_Qwen2.5-1.5B-Instruct.json, to: e66s_15b}
+  - {is: v_rows_of, from: [summary], to: e66s_15b}
+  - {is: v_axis_of, from: e66s_15b_cond, to: e66s_15b}
+  - {is: v_keys_of, from: '#', to: e66s_15b_cond}
+  - {is: v_value_of, from: e66s_15b_cond_vec_noans, to: e66s_15b_cond}
+  - {is: v_spell, from: e66s_15b_cond_vec_noans, to: ['vec_noans']}
+  - {is: v_axis_of, from: e66s_15b_stat, to: e66s_15b}
+  - {is: v_value_of, from: e66s_15b_stat_joint, to: e66s_15b_stat}
+  - {is: v_value_of, from: e66s_15b_stat_indep, to: e66s_15b_stat}
+  - {is: v_entry_of, from: '{stat}', to: e66s_15b}
+  - {is: v_metric_of, from: e66s_15b, to: mean_value}
+  - {is: v_file_of, from: e66_Qwen2.5-1.5B-Instruct.json, to: e66a_15b}
+  - {is: v_rows_of, from: [summary, '{cond}'], to: e66a_15b}
+  - {is: v_axis_of, from: e66a_15b_cond, to: e66a_15b}
+  - {is: v_value_of, from: e66a_15b_cond_vec_noans, to: e66a_15b_cond}
+  - {is: v_axis_of, from: e66a_15b_part, to: e66a_15b}
+  - {is: v_value_of, from: e66a_15b_part_acc, to: e66a_15b_part}
+  - {is: v_keys_of, from: '#', to: e66a_15b_part}
+  - {is: v_spell, from: e66a_15b_part_acc, to: ['acc']}
+  - {is: v_axis_of, from: e66a_15b_usage, to: e66a_15b}
+  - {is: v_value_of, from: e66a_15b_usage_apply, to: e66a_15b_usage}
+  - {is: v_value_of, from: e66a_15b_usage_para, to: e66a_15b_usage}
+  - {is: v_value_of, from: e66a_15b_usage_explain, to: e66a_15b_usage}
+  - {is: v_value_of, from: e66a_15b_usage_recite, to: e66a_15b_usage}
+  - {is: v_entry_of, from: '{usage}', to: e66a_15b}
+  - {is: v_metric_of, from: e66a_15b, to: mean_value}
+  - {is: v_file_of, from: e66_Qwen2.5-1.5B-Instruct.json, to: e66p_15b}
+  - {is: v_rows_of, from: [], to: e66p_15b}
+  - {is: v_axis_of, from: e66p_15b_part, to: e66p_15b}
+  - {is: v_value_of, from: e66p_15b_part_paired, to: e66p_15b_part}
+  - {is: v_keys_of, from: '#', to: e66p_15b_part}
+  - {is: v_spell, from: e66p_15b_part_paired, to: ['paired']}
+  - {is: v_axis_of, from: e66p_15b_stat, to: e66p_15b}
+  - {is: v_value_of, from: e66p_15b_stat_da_ex, to: e66p_15b_stat}
+  - {is: v_value_of, from: e66p_15b_stat_da_noans, to: e66p_15b_stat}
+  - {is: v_value_of, from: e66p_15b_stat_de_noans, to: e66p_15b_stat}
+  - {is: v_value_of, from: e66p_15b_stat_gap, to: e66p_15b_stat}
+  - {is: v_value_of, from: e66p_15b_stat_n_up_noans, to: e66p_15b_stat}
+  - {is: v_value_of, from: e66p_15b_stat_n_down_noans, to: e66p_15b_stat}
+  - {is: v_value_of, from: e66p_15b_stat_n_up_noans_and_ex, to: e66p_15b_stat}
+  - {is: v_value_of, from: e66p_15b_stat_norm_ratio_mean, to: e66p_15b_stat}
+  - {is: v_entry_of, from: '{stat}', to: e66p_15b}
+  - {is: v_metric_of, from: e66p_15b, to: mean_value}
+  - {is: v_refer, from: o_e66_15b_vec_noans_joint, to: {is: v_near, from: e66s_15b.vec_noans.joint.mean_value, to: 0.5833, new: 0.001}}
+  - {is: v_refer, from: o_e66_15b_vec_noans_indep, to: {is: v_near, from: e66s_15b.vec_noans.indep.mean_value, to: 0.5856, new: 0.001}}
+  - {is: v_refer, from: o_e66_15b_vec_noans_acc_apply, to: {is: v_near, from: e66a_15b.vec_noans.acc.apply.mean_value, to: 0.6667, new: 0.001}}
+  - {is: v_refer, from: o_e66_15b_vec_noans_acc_para, to: {is: v_near, from: e66a_15b.vec_noans.acc.para.mean_value, to: 0.9167, new: 0.001}}
+  - {is: v_refer, from: o_e66_15b_vec_noans_acc_explain, to: {is: v_near, from: e66a_15b.vec_noans.acc.explain.mean_value, to: 0.9583, new: 0.001}}
+  - {is: v_refer, from: o_e66_15b_vec_noans_acc_recite, to: {is: v_near, from: e66a_15b.vec_noans.acc.recite.mean_value, to: 1.0, new: 0.001}}
+  - {is: v_refer, from: o_e66_15b_da_ex, to: {is: v_near, from: e66p_15b.paired.da_ex.mean_value, to: 0.25, new: 0.001}}
+  - {is: v_refer, from: o_e66_15b_da_noans, to: {is: v_near, from: e66p_15b.paired.da_noans.mean_value, to: 0.0833, new: 0.001}}
+  - {is: v_refer, from: o_e66_15b_de_noans, to: {is: v_near, from: e66p_15b.paired.de_noans.mean_value, to: 0.125, new: 0.001}}
+  - {is: v_refer, from: o_e66_15b_gap, to: {is: v_near, from: e66p_15b.paired.gap.mean_value, to: 0.1667, new: 0.001}}
+  - {is: v_refer, from: o_e66_15b_n_up_noans, to: {is: v_near, from: e66p_15b.paired.n_up_noans.mean_value, to: 6.0, new: 0.001}}
+  - {is: v_refer, from: o_e66_15b_n_down_noans, to: {is: v_near, from: e66p_15b.paired.n_down_noans.mean_value, to: 4.0, new: 0.001}}
+  - {is: v_refer, from: o_e66_15b_n_up_noans_and_ex, to: {is: v_near, from: e66p_15b.paired.n_up_noans_and_ex.mean_value, to: 6.0, new: 0.001}}
+  - {is: v_refer, from: o_e66_15b_norm_ratio_mean, to: {is: v_near, from: e66p_15b.paired.norm_ratio_mean.mean_value, to: 1.0053, new: 0.001}}
+  - {is: v_refer, from: o_e66_15b_de_above_line, to: {is: v_come_after, from: e66p_15b.paired.de_noans.mean_value, to: 0.0833}}
+  - {is: v_refer, from: o_e66_15b_gap_above_line, to: {is: v_come_after, from: e66p_15b.paired.gap.mean_value, to: 0.0833}}
+  - {is: v_support, from: o_e66_15b_gap_above_line, to: h_explain_lever_apply_by_case_answers_15b}
   - {is: v_file_of, from: e59_Qwen2.5-1.5B-Instruct.json, to: e59s_15b}
   - {is: v_rows_of, from: [summary], to: e59s_15b}
   - {is: v_axis_of, from: e59s_15b_cond, to: e59s_15b}
