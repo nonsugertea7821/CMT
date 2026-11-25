@@ -1,0 +1,30 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-25T03:58:38.102Z（UTC）
+individuals:
+  01M88DP0GP52MFXRK5Q4E2QVDP:
+    is: model_utterance
+    display: 発言 4737
+    val:
+      order: 4737
+      text: |
+        The test in #808 gave no verdict, so the hypothesis (#809) stays untested. The high-variance band does not clearly track how a word is written more than the rest of the dimensions do.
+
+        The test splits the model's dimensions into the 256 with the most variance (top band) and the other 1,280 (low band). It then measures what share of each band's variance is explained by each grouping:
+
+        | Layer | Original vs swapped writing (top / low) | Same word (top / low) | Same group (top / low) |
+        |---|---|---|---|
+        | 8 | 0.122 / 0.086 (gap +0.036) | 0.513 / 0.511 | 0.097 / 0.118 |
+        | 14 | 0.116 / 0.133 (gap −0.017) | 0.523 / 0.494 | 0.104 / 0.117 |
+        | 20 | 0.097 / 0.112 (gap −0.015) | 0.530 / 0.513 | 0.099 / 0.136 |
+
+        - **Verdict:** the rule was fixed before the run. A layer-8 gap of 0.05 or more meant supported; 0 or less meant refuted. The gap was 0.036, so no verdict.
+        - **Other layers:** at layers 14 and 20 the gap goes the other way.
+        - **Committed:** the observations are written into the experiment index (a59555d), but not linked to the hypothesis. #808 stays a Draft.
+
+        My reading, not tested: the shares look much the same in both bands. The likelier reason the low band alone did better in #806 is size: the top band holds 73–86% of the variance and dominates the cosine. That is the same idea as #801, which was supported, so I registered nothing new.
+
+        #806 is still waiting on CI for d703a4b; I'll take it out of Draft once that passes.
+
+        ロードマップの位置: d_road_region（#376）。
+facts:
+- {is: v_say, from: session_model, to: 01M88DP0GP52MFXRK5Q4E2QVDP}
+- {is: exp.v_answer, from: 01M88DP0GP52MFXRK5Q4E2QVDP, to: 01M8824ABH7FVJ0AFYWM2EPXZH}
