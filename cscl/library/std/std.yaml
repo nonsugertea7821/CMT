@@ -24,7 +24,7 @@ nodes:
   model: {display: モデル, extends: artifact_compute_from, mod: {of: [v_compose, to], with: frozen_weights}}
 
   v_vary: {display: 動かす, extends: occurrent, from: continuant, to: continuant, new_kind: quality,
-           pre: [{is: depend, from: new, to: to}], post: [{is: depend, from: new, to: to, neg: true}]}
+           pre: [{is: depend, from: new, to: to}, {is: exists, from: new}], post: [{is: depend, from: new, to: to, neg: true}]}
   process_stage_to_v_vary: {display: 動かすを時間的な部分に持つ過程, extends: process, mod: {of: [v_stage, to], with: v_vary}}
   experiment: {display: 実験, extends: process_stage_to_v_vary, mod: {of: [v_stage, to], with: v_measure}}
   experiment_protocol: {display: 実験の取り決め, extends: definition, mod: refer_from_experiment}
