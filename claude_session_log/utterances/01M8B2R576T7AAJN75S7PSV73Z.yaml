@@ -1,0 +1,23 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-26T04:45:17.414Z（UTC）
+individuals:
+  01M8B2R576T7AAJN75S7PSV73Z:
+    is: model_utterance
+    display: 発言 5713
+    val:
+      order: 5713
+      text: |
+        #943 の検査が一つ落ちたので、直して push しました。結果はまだ出ていません。
+
+        - **落ちた理由**: 型の検査で、`h_freeze_scope_after_new_declared` の式が通りませんでした。動詞の `std.v_freeze` を「依存する先」に置いていましたが、そこには動詞を置けない決まりです。
+        - **直し方**: 式を二行に分けました。
+          - 動詞の `std.v_freeze` については「参照する」という形で書きました。前の仮説 `h_dangling_by_append_only_declaration` と同じ書き方です。
+          - `new` と `post` については、これまでどおり「依存する」で書きました。
+          - 一つの仮説を二行で書く形は、`h_layers_unhardcode` で前から検査を通っています。
+
+        検査の結果の知らせが来たら、それを読んで続けます。
+facts:
+- {is: v_say, from: session_model, to: 01M8B2R576T7AAJN75S7PSV73Z}
+- {is: exp.v_answer, from: 01M8B2R576T7AAJN75S7PSV73Z, to: 01M8B1SGJX239WAG0HT32TYVM1}
+- {is: v_refer, from: 01M8B2R576T7AAJN75S7PSV73Z, to: std.v_freeze}
+- {is: v_refer, from: 01M8B2R576T7AAJN75S7PSV73Z, to: syntax.new}
+- {is: v_refer, from: 01M8B2R576T7AAJN75S7PSV73Z, to: syntax.post}
