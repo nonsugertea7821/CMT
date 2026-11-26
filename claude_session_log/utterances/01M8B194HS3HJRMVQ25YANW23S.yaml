@@ -1,0 +1,20 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-26T04:19:36.633Z（UTC）
+individuals:
+  01M8B194HS3HJRMVQ25YANW23S:
+    is: model_utterance
+    display: 発言 5665
+    val:
+      order: 5665
+      text: |
+        #927 の型検査の失敗を直して push しました。
+
+        - **原因:** 2 つ目の仮説（`h_law_errors_grouped_for_reader`）の中身を `v_depend(usage_explain, …)` と書いていました。型検査が「usage_explain は v_depend の from に来られない」と言って落ちました。説明は使い方の一種で、v_depend の始点に来られる種類ではないためです。
+        - **直し:** 既存の仮説（`h_explain_relies_on_teaching`）と同じく `v_rely` で書きました。PR の本文にも訂正として書いてあります。
+
+        CI が通れば、#927 は自動でマージされます。
+facts:
+- {is: v_say, from: session_model, to: 01M8B194HS3HJRMVQ25YANW23S}
+- {is: exp.v_answer, from: 01M8B194HS3HJRMVQ25YANW23S, to: 01M89PSFS6B8JRMSN9NJ2R17KF}
+- {is: v_refer, from: 01M8B194HS3HJRMVQ25YANW23S, to: ontology.v_depend}
+- {is: v_refer, from: 01M8B194HS3HJRMVQ25YANW23S, to: exp.usage_explain}
+- {is: v_refer, from: 01M8B194HS3HJRMVQ25YANW23S, to: exp.v_rely}
