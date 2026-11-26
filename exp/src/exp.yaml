@@ -4984,6 +4984,8 @@ individuals:
   o_sys_wup_crashed: {is: observation}
   o_sys_wup_undef: {is: observation}
   o_sys_wup_undef_named: {is: observation}
+  h_with_partner_named_by_domain: {is: hyp_untested}
+  b_with_partner_named_by_domain: {is: item_queued}
   h_apply_depends_explain: {is: hyp_untested}
   b_apply_depends_explain: {is: item_queued}
   h_explain_relies_on_teaching: {is: hyp_untested}
@@ -13799,6 +13801,9 @@ facts:
   - {is: v_refer, from: o_sys_wup_crashed, to: {is: v_level, from: sys_with_undefined_partner.summary.n_crashed_or_missing.mean_value, to: 9}}
   - {is: v_refer, from: o_sys_wup_undef, to: {is: v_level, from: sys_with_undefined_partner.summary.n_undefined_units.mean_value, to: 7}}
   - {is: v_refer, from: o_sys_wup_undef_named, to: {is: v_level, from: sys_with_undefined_partner.summary.n_undefined_covered_named.mean_value, to: 5}}
+  - {is: v_refer, from: h_with_partner_named_by_domain, to: {is: v_depend, from: type_check_result, to: [syntax.law_rule, syntax.with]}}
+  - {is: v_check, from: b_with_partner_named_by_domain, to: h_with_partner_named_by_domain}
+  - {is: v_ground, from: d_road_checker, to: h_with_partner_named_by_domain}
   - {is: v_refer, from: h_apply_depends_explain, to: {is: v_rely, from: usage_apply, to: usage_explain}}
   - {is: v_check, from: b_apply_depends_explain, to: h_apply_depends_explain}
   - {is: v_ground, from: d_metric, to: h_apply_depends_explain}
