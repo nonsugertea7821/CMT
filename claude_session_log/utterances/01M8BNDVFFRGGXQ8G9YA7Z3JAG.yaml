@@ -1,0 +1,35 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-26T10:11:42.703Z（UTC）
+individuals:
+  01M8BNDVFFRGGXQ8G9YA7Z3JAG:
+    is: model_utterance
+    display: 発言 5802
+    val:
+      order: 5802
+      text: |
+        The experiment for #949 finished, and the hypothesis is supported (PR #950).
+
+        **Correction:** earlier I said the third category was already non-zero in the first 10 walks. I misread which log column was which. The non-zero column was (ii), the moves that rely on stale facts. (iii) stayed at 0 for the whole run.
+
+        The 9 verbs that use new without declaring it were brought into line in memory (the files are unchanged):
+        - 5 verbs that use a name that must already exist now require "new exists" before the move.
+        - The other 4 now declare new after the move.
+
+        The prerequisite was met: 244 walks included a removal and 206 included a rebirth, out of 300.
+
+        | What was counted | Result |
+        |---|---|
+        | (iii): moves that pass in (b) but fail in (c) for a reason other than the two intended ones | 0 |
+        | Facts left in (c) about names that were declared once and are no longer declared | 0 |
+        | Stale facts left in (c) | 0 |
+        | Facts in (c) about names never declared | 0 (423 in #943) |
+
+        So with new declared in the moves' before/after conditions, which names exist is decided by the moves alone, and the scheme follows the freeze.
+
+        Two limits:
+        - The definitions in the files are not changed yet. That goes in a separate adoption PR.
+        - The checker that lists verbs using new without declaring it only reads what a move states afterward. So the 5 verbs fixed in their preconditions still show up in its list. The verdict doesn't use that list.
+
+        Results and observations are pushed. Once CI passes I'll take #950 out of Draft, and you can review and merge it.
+facts:
+- {is: v_say, from: session_model, to: 01M8BNDVFFRGGXQ8G9YA7Z3JAG}
+- {is: exp.v_answer, from: 01M8BNDVFFRGGXQ8G9YA7Z3JAG, to: 01M8B1SGJX239WAG0HT32TYVM1}
