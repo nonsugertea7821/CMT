@@ -5865,6 +5865,10 @@ individuals:
   o_sys_elrc_units: {is: observation}
   o_sys_elrc_covered: {is: observation}
   o_sys_elrc_only_endpoint: {is: observation}
+  h_checker_teaching_not_to_explain: {is: hyp_untested}
+  b_checker_teaching_not_to_explain: {is: item_queued}
+  h_endpoint_law_whole_system: {is: hyp_untested}
+  b_endpoint_law_whole_system: {is: item_queued}
 facts:
   - {is: v_collect, from: residual_space, to: residual_vector}
   - {is: v_sum, from: layer_output, to: state_shift, new: shifted_hidden_state}
@@ -15921,3 +15925,9 @@ facts:
   - {is: v_support, from: o_sys_elrc_disagree, to: h_endpoint_law_replaces_code_check}
   - {is: v_support, from: o_sys_elrc_covered, to: h_endpoint_law_replaces_code_check}
   - {is: v_support, from: o_sys_elrc_control, to: h_endpoint_law_replaces_code_check}
+  - {is: v_refer, from: h_checker_teaching_not_to_explain, to: {is: v_not_transfer, from: type_check_result, to: usage_explain}}
+  - {is: v_check, from: b_checker_teaching_not_to_explain, to: h_checker_teaching_not_to_explain}
+  - {is: v_ground, from: d_road_checker, to: h_checker_teaching_not_to_explain}
+  - {is: v_refer, from: h_endpoint_law_whole_system, to: {is: v_depend, from: type_check_result, to: [syntax.law_rule, syntax.domain]}}
+  - {is: v_check, from: b_endpoint_law_whole_system, to: h_endpoint_law_whole_system}
+  - {is: v_ground, from: d_road_checker, to: h_endpoint_law_whole_system}
