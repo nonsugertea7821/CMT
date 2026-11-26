@@ -2787,6 +2787,15 @@ individuals:
   sys_parent_endpoint_as_law_rule_m_C: {is: axis_value, val: {text: C}}
   sys_parent_endpoint_as_law_rule_m_control_errors: {is: axis_value, val: {text: control_errors}}
   sys_parent_endpoint_as_law_rule_m_n_crashed_or_missing: {is: axis_value, val: {text: n_crashed_or_missing}}
+  sys_endpoint_law_same_mod: {is: measurement_family}
+  sys_endpoint_law_same_mod_c: {is: family_axis, val: {text: c}}
+  sys_endpoint_law_same_mod_c_summary: {is: axis_value, val: {text: summary}}
+  sys_endpoint_law_same_mod_m: {is: family_axis, val: {text: m}}
+  sys_endpoint_law_same_mod_m_n_units: {is: axis_value, val: {text: n_units}}
+  sys_endpoint_law_same_mod_m_n_covered: {is: axis_value, val: {text: n_covered}}
+  sys_endpoint_law_same_mod_m_C: {is: axis_value, val: {text: C}}
+  sys_endpoint_law_same_mod_m_control_errors: {is: axis_value, val: {text: control_errors}}
+  sys_endpoint_law_same_mod_m_n_crashed_or_missing: {is: axis_value, val: {text: n_crashed_or_missing}}
   e35_expression_makes_state_unique: {is: measurement_family}
   e35_expression_makes_state_unique_c: {is: family_axis, val: {text: c}}
   e35_expression_makes_state_unique_c_none_S: {is: axis_value, val: {text: none_S}}
@@ -4948,10 +4957,17 @@ individuals:
   o_sys_pep_crashed: {is: observation}
   h_with_endpoint_as_law_rule: {is: hyp_untested}
   b_with_endpoint_as_law_rule: {is: item_queued}
-  h_endpoint_law_names_same_mod: {is: hyp_untested}
-  b_endpoint_law_names_same_mod: {is: item_queued}
+  h_endpoint_law_names_same_mod: {is: hyp_supported}
+  b_endpoint_law_names_same_mod: {is: item_done}
+  o_sys_sm_units: {is: observation}
+  o_sys_sm_covered: {is: observation}
+  o_sys_sm_c: {is: observation}
+  o_sys_sm_control: {is: observation}
+  o_sys_sm_crashed: {is: observation}
   h_with_undefined_partner_as_law_rule: {is: hyp_untested}
   b_with_undefined_partner_as_law_rule: {is: item_queued}
+  h_with_partner_named_by_domain: {is: hyp_untested}
+  b_with_partner_named_by_domain: {is: item_queued}
   h_apply_depends_explain: {is: hyp_untested}
   b_apply_depends_explain: {is: item_queued}
   h_explain_relies_on_teaching: {is: hyp_untested}
@@ -12644,6 +12660,24 @@ facts:
   - {is: v_spell, from: sys_parent_endpoint_as_law_rule_m_n_crashed_or_missing, to: n_crashed_or_missing}
   - {is: v_entry_of, from: '{m}', to: sys_parent_endpoint_as_law_rule}
   - {is: v_metric_of, from: sys_parent_endpoint_as_law_rule, to: mean_value}
+  - {is: v_file_of, from: sys_endpoint_law_same_mod.json, to: sys_endpoint_law_same_mod}
+  - {is: v_axis_of, from: sys_endpoint_law_same_mod_c, to: sys_endpoint_law_same_mod}
+  - {is: v_keys_of, from: '#', to: sys_endpoint_law_same_mod_c}
+  - {is: v_value_of, from: sys_endpoint_law_same_mod_c_summary, to: sys_endpoint_law_same_mod_c}
+  - {is: v_spell, from: sys_endpoint_law_same_mod_c_summary, to: ['summary']}
+  - {is: v_axis_of, from: sys_endpoint_law_same_mod_m, to: sys_endpoint_law_same_mod}
+  - {is: v_value_of, from: sys_endpoint_law_same_mod_m_n_units, to: sys_endpoint_law_same_mod_m}
+  - {is: v_spell, from: sys_endpoint_law_same_mod_m_n_units, to: n_units}
+  - {is: v_value_of, from: sys_endpoint_law_same_mod_m_n_covered, to: sys_endpoint_law_same_mod_m}
+  - {is: v_spell, from: sys_endpoint_law_same_mod_m_n_covered, to: n_covered}
+  - {is: v_value_of, from: sys_endpoint_law_same_mod_m_C, to: sys_endpoint_law_same_mod_m}
+  - {is: v_spell, from: sys_endpoint_law_same_mod_m_C, to: C}
+  - {is: v_value_of, from: sys_endpoint_law_same_mod_m_control_errors, to: sys_endpoint_law_same_mod_m}
+  - {is: v_spell, from: sys_endpoint_law_same_mod_m_control_errors, to: control_errors}
+  - {is: v_value_of, from: sys_endpoint_law_same_mod_m_n_crashed_or_missing, to: sys_endpoint_law_same_mod_m}
+  - {is: v_spell, from: sys_endpoint_law_same_mod_m_n_crashed_or_missing, to: n_crashed_or_missing}
+  - {is: v_entry_of, from: '{m}', to: sys_endpoint_law_same_mod}
+  - {is: v_metric_of, from: sys_endpoint_law_same_mod, to: mean_value}
   - {is: v_file_of, from: e35_expression_makes_state_unique.json, to: e35_expression_makes_state_unique}
   - {is: v_rows_of, from: [s], to: e35_expression_makes_state_unique}
   - {is: v_axis_of, from: e35_expression_makes_state_unique_c, to: e35_expression_makes_state_unique}
@@ -13712,9 +13746,20 @@ facts:
   - {is: v_refer, from: h_endpoint_law_names_same_mod, to: {is: v_depend, from: type_check_result, to: [syntax.law_rule, syntax.mod]}}
   - {is: v_check, from: b_endpoint_law_names_same_mod, to: h_endpoint_law_names_same_mod}
   - {is: v_ground, from: d_road_checker, to: h_endpoint_law_names_same_mod}
+  - {is: v_refer, from: o_sys_sm_units, to: {is: v_level, from: sys_endpoint_law_same_mod.summary.n_units.mean_value, to: 54}}
+  - {is: v_refer, from: o_sys_sm_covered, to: {is: v_level, from: sys_endpoint_law_same_mod.summary.n_covered.mean_value, to: 52}}
+  - {is: v_refer, from: o_sys_sm_c, to: {is: v_level, from: sys_endpoint_law_same_mod.summary.C.mean_value, to: 0.962963}}
+  - {is: v_refer, from: o_sys_sm_control, to: {is: v_level, from: sys_endpoint_law_same_mod.summary.control_errors.mean_value, to: 0}}
+  - {is: v_refer, from: o_sys_sm_crashed, to: {is: v_level, from: sys_endpoint_law_same_mod.summary.n_crashed_or_missing.mean_value, to: 9}}
+  - {is: v_support, from: o_sys_sm_c, to: h_endpoint_law_names_same_mod}
+  - {is: v_support, from: o_sys_sm_control, to: h_endpoint_law_names_same_mod}
+  - {is: v_support, from: o_sys_sm_units, to: h_endpoint_law_names_same_mod}
   - {is: v_refer, from: h_with_undefined_partner_as_law_rule, to: {is: v_depend, from: type_check_result, to: [syntax.law_rule, syntax.with]}}
   - {is: v_check, from: b_with_undefined_partner_as_law_rule, to: h_with_undefined_partner_as_law_rule}
   - {is: v_ground, from: d_road_checker, to: h_with_undefined_partner_as_law_rule}
+  - {is: v_refer, from: h_with_partner_named_by_domain, to: {is: v_depend, from: type_check_result, to: [syntax.law_rule, syntax.with]}}
+  - {is: v_check, from: b_with_partner_named_by_domain, to: h_with_partner_named_by_domain}
+  - {is: v_ground, from: d_road_checker, to: h_with_partner_named_by_domain}
   - {is: v_refer, from: h_apply_depends_explain, to: {is: ontology.v_rely, from: usage_apply, to: usage_explain}}
   - {is: v_check, from: b_apply_depends_explain, to: h_apply_depends_explain}
   - {is: v_ground, from: d_metric, to: h_apply_depends_explain}
