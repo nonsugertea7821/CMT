@@ -383,6 +383,14 @@ individuals:
   o_sys_declaration_steps_ok: {is: exp.observation}
   o_sys_declaration_states_same: {is: exp.observation}
   o_sys_declaration_dangling: {is: exp.observation}
+  o_sys_dff_removal: {is: exp.observation}
+  o_sys_dff_c_errors: {is: exp.observation}
+  o_sys_dff_b_errors: {is: exp.observation}
+  o_sys_dff_c_dangling: {is: exp.observation}
+  o_sys_dff_b_dangling: {is: exp.observation}
+  o_sys_dff_rebirth: {is: exp.observation}
+  o_sys_dff_b_stale: {is: exp.observation}
+  o_sys_dff_c_stale: {is: exp.observation}
   o_sys_declaration_never_halts: {is: exp.observation}
   o_sys_cycles_positive: {is: exp.observation}
   o_sys_cycles_mostly_one_relation: {is: exp.observation}
@@ -2491,6 +2499,14 @@ facts:
   - {is: v_refer, from: o_sys_declaration_dangling, to: {is: v_come_after, from: sys_declaration.dangling.mean_value, to: 0.0}}
   - {is: v_refer, from: o_sys_declaration_never_halts, to: {is: v_come_after, from: sys_declaration.b_fresh_applicable.mean_value, to: 0.0}}
   - {is: v_contradict, from: o_sys_declaration_dangling, to: h_open_declaration}
+  - {is: v_refer, from: o_sys_dff_removal, to: {is: v_level, from: sys_declaration_follows_freeze.summary.B_walks_with_removal.mean_value, to: 10}}
+  - {is: v_refer, from: o_sys_dff_c_errors, to: {is: v_level, from: sys_declaration_follows_freeze.summary.B_c_error_steps.mean_value, to: 50}}
+  - {is: v_refer, from: o_sys_dff_b_errors, to: {is: v_level, from: sys_declaration_follows_freeze.summary.B_b_error_steps.mean_value, to: 54}}
+  - {is: v_refer, from: o_sys_dff_c_dangling, to: {is: v_level, from: sys_declaration_follows_freeze.summary.B_c_dangling_max.mean_value, to: 5}}
+  - {is: v_refer, from: o_sys_dff_b_dangling, to: {is: v_level, from: sys_declaration_follows_freeze.summary.B_b_dangling_walks.mean_value, to: 161}}
+  - {is: v_refer, from: o_sys_dff_rebirth, to: {is: v_level, from: sys_declaration_follows_freeze.summary.B_walks_with_rebirth.mean_value, to: 76}}
+  - {is: v_refer, from: o_sys_dff_b_stale, to: {is: v_level, from: sys_declaration_follows_freeze.summary.B_b_stale_walks.mean_value, to: 28}}
+  - {is: v_refer, from: o_sys_dff_c_stale, to: {is: v_level, from: sys_declaration_follows_freeze.summary.B_c_stale_walks.mean_value, to: 27}}
   - {is: v_refer, from: o_sys_quant_with_qual, to: {is: v_level, from: sys_quadrants.quant_alone.mean_value, to: 0.0}}
   - {is: v_refer, from: o_sys_rel_disjoint, to: {is: v_level, from: sys_quadrants.rel_mixed.mean_value, to: 0.0}}
   - {is: v_refer, from: o_sys_unplaced_neg_only, to: {is: v_level, from: sys_quadrants.none_other.mean_value, to: 0.0}}
