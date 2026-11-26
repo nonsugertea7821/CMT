@@ -2849,6 +2849,18 @@ individuals:
   sys_endpoint_law_replaces_code_m_n_units: {is: axis_value, val: {text: n_units}}
   sys_endpoint_law_replaces_code_m_n_covered: {is: axis_value, val: {text: n_covered}}
   sys_endpoint_law_replaces_code_m_n_only_endpoint_rows: {is: axis_value, val: {text: n_only_endpoint_rows}}
+  sys_endpoint_law_whole_system: {is: measurement_family}
+  sys_endpoint_law_whole_system_c: {is: family_axis, val: {text: c}}
+  sys_endpoint_law_whole_system_c_summary: {is: axis_value, val: {text: summary}}
+  sys_endpoint_law_whole_system_m: {is: family_axis, val: {text: m}}
+  sys_endpoint_law_whole_system_m_n_ran: {is: axis_value, val: {text: n_ran}}
+  sys_endpoint_law_whole_system_m_n_agree: {is: axis_value, val: {text: n_agree}}
+  sys_endpoint_law_whole_system_m_n_disagree: {is: axis_value, val: {text: n_disagree}}
+  sys_endpoint_law_whole_system_m_n_not_run: {is: axis_value, val: {text: n_not_run}}
+  sys_endpoint_law_whole_system_m_n_rejected_before: {is: axis_value, val: {text: n_rejected_before}}
+  sys_endpoint_law_whole_system_m_n_endpoint_only_before: {is: axis_value, val: {text: n_endpoint_only_before}}
+  sys_endpoint_law_whole_system_m_A_before_failures: {is: axis_value, val: {text: A_before_failures}}
+  sys_endpoint_law_whole_system_m_A_after_failures: {is: axis_value, val: {text: A_after_failures}}
   e35_expression_makes_state_unique: {is: measurement_family}
   e35_expression_makes_state_unique_c: {is: family_axis, val: {text: c}}
   e35_expression_makes_state_unique_c_none_S: {is: axis_value, val: {text: none_S}}
@@ -5908,8 +5920,16 @@ individuals:
   o_sys_elrc_only_endpoint: {is: observation}
   h_checker_teaching_not_to_explain: {is: hyp_untested}
   b_checker_teaching_not_to_explain: {is: item_queued}
-  h_endpoint_law_whole_system: {is: hyp_untested}
-  b_endpoint_law_whole_system: {is: item_queued}
+  h_endpoint_law_whole_system: {is: hyp_supported}
+  b_endpoint_law_whole_system: {is: item_done}
+  o_sys_elws_ran: {is: observation}
+  o_sys_elws_agree: {is: observation}
+  o_sys_elws_disagree: {is: observation}
+  o_sys_elws_not_run: {is: observation}
+  o_sys_elws_rejected: {is: observation}
+  o_sys_elws_endpoint_only: {is: observation}
+  o_sys_elws_a_before: {is: observation}
+  o_sys_elws_a_after: {is: observation}
   h_spot_kind_checks_as_law: {is: hyp_untested}
   b_spot_kind_checks_as_law: {is: item_queued}
   h_law_errors_grouped_for_reader: {is: hyp_untested}
@@ -12870,6 +12890,30 @@ facts:
   - {is: v_spell, from: sys_endpoint_law_replaces_code_m_n_only_endpoint_rows, to: n_only_endpoint_rows}
   - {is: v_entry_of, from: '{m}', to: sys_endpoint_law_replaces_code}
   - {is: v_metric_of, from: sys_endpoint_law_replaces_code, to: mean_value}
+  - {is: v_file_of, from: sys_endpoint_law_whole_system.json, to: sys_endpoint_law_whole_system}
+  - {is: v_axis_of, from: sys_endpoint_law_whole_system_c, to: sys_endpoint_law_whole_system}
+  - {is: v_keys_of, from: '#', to: sys_endpoint_law_whole_system_c}
+  - {is: v_value_of, from: sys_endpoint_law_whole_system_c_summary, to: sys_endpoint_law_whole_system_c}
+  - {is: v_spell, from: sys_endpoint_law_whole_system_c_summary, to: ['summary']}
+  - {is: v_axis_of, from: sys_endpoint_law_whole_system_m, to: sys_endpoint_law_whole_system}
+  - {is: v_value_of, from: sys_endpoint_law_whole_system_m_n_ran, to: sys_endpoint_law_whole_system_m}
+  - {is: v_spell, from: sys_endpoint_law_whole_system_m_n_ran, to: n_ran}
+  - {is: v_value_of, from: sys_endpoint_law_whole_system_m_n_agree, to: sys_endpoint_law_whole_system_m}
+  - {is: v_spell, from: sys_endpoint_law_whole_system_m_n_agree, to: n_agree}
+  - {is: v_value_of, from: sys_endpoint_law_whole_system_m_n_disagree, to: sys_endpoint_law_whole_system_m}
+  - {is: v_spell, from: sys_endpoint_law_whole_system_m_n_disagree, to: n_disagree}
+  - {is: v_value_of, from: sys_endpoint_law_whole_system_m_n_not_run, to: sys_endpoint_law_whole_system_m}
+  - {is: v_spell, from: sys_endpoint_law_whole_system_m_n_not_run, to: n_not_run}
+  - {is: v_value_of, from: sys_endpoint_law_whole_system_m_n_rejected_before, to: sys_endpoint_law_whole_system_m}
+  - {is: v_spell, from: sys_endpoint_law_whole_system_m_n_rejected_before, to: n_rejected_before}
+  - {is: v_value_of, from: sys_endpoint_law_whole_system_m_n_endpoint_only_before, to: sys_endpoint_law_whole_system_m}
+  - {is: v_spell, from: sys_endpoint_law_whole_system_m_n_endpoint_only_before, to: n_endpoint_only_before}
+  - {is: v_value_of, from: sys_endpoint_law_whole_system_m_A_before_failures, to: sys_endpoint_law_whole_system_m}
+  - {is: v_spell, from: sys_endpoint_law_whole_system_m_A_before_failures, to: A_before_failures}
+  - {is: v_value_of, from: sys_endpoint_law_whole_system_m_A_after_failures, to: sys_endpoint_law_whole_system_m}
+  - {is: v_spell, from: sys_endpoint_law_whole_system_m_A_after_failures, to: A_after_failures}
+  - {is: v_entry_of, from: '{m}', to: sys_endpoint_law_whole_system}
+  - {is: v_metric_of, from: sys_endpoint_law_whole_system, to: mean_value}
   - {is: v_file_of, from: e35_expression_makes_state_unique.json, to: e35_expression_makes_state_unique}
   - {is: v_rows_of, from: [s], to: e35_expression_makes_state_unique}
   - {is: v_axis_of, from: e35_expression_makes_state_unique_c, to: e35_expression_makes_state_unique}
@@ -16047,6 +16091,17 @@ facts:
   - {is: v_refer, from: h_endpoint_law_whole_system, to: {is: v_depend, from: type_check_result, to: [syntax.law_rule, syntax.domain]}}
   - {is: v_check, from: b_endpoint_law_whole_system, to: h_endpoint_law_whole_system}
   - {is: v_ground, from: d_road_checker, to: h_endpoint_law_whole_system}
+  - {is: v_refer, from: o_sys_elws_ran, to: {is: v_level, from: sys_endpoint_law_whole_system.summary.n_ran.mean_value, to: 300}}
+  - {is: v_refer, from: o_sys_elws_agree, to: {is: v_level, from: sys_endpoint_law_whole_system.summary.n_agree.mean_value, to: 300}}
+  - {is: v_refer, from: o_sys_elws_disagree, to: {is: v_level, from: sys_endpoint_law_whole_system.summary.n_disagree.mean_value, to: 0}}
+  - {is: v_refer, from: o_sys_elws_not_run, to: {is: v_level, from: sys_endpoint_law_whole_system.summary.n_not_run.mean_value, to: 0}}
+  - {is: v_refer, from: o_sys_elws_rejected, to: {is: v_level, from: sys_endpoint_law_whole_system.summary.n_rejected_before.mean_value, to: 33}}
+  - {is: v_refer, from: o_sys_elws_endpoint_only, to: {is: v_level, from: sys_endpoint_law_whole_system.summary.n_endpoint_only_before.mean_value, to: 23}}
+  - {is: v_refer, from: o_sys_elws_a_before, to: {is: v_level, from: sys_endpoint_law_whole_system.summary.A_before_failures.mean_value, to: 0}}
+  - {is: v_refer, from: o_sys_elws_a_after, to: {is: v_level, from: sys_endpoint_law_whole_system.summary.A_after_failures.mean_value, to: 0}}
+  - {is: v_support, from: o_sys_elws_disagree, to: h_endpoint_law_whole_system}
+  - {is: v_support, from: o_sys_elws_a_after, to: h_endpoint_law_whole_system}
+  - {is: v_support, from: o_sys_elws_ran, to: h_endpoint_law_whole_system}
   - {is: v_refer, from: h_spot_kind_checks_as_law, to: {is: v_depend, from: type_check_result, to: [syntax.law_rule, syntax.mod]}}
   - {is: v_check, from: b_spot_kind_checks_as_law, to: h_spot_kind_checks_as_law}
   - {is: v_ground, from: d_road_checker, to: h_spot_kind_checks_as_law}
