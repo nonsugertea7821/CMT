@@ -1,0 +1,34 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-26T10:30:04.615Z（UTC）
+individuals:
+  01M8BPFFJ7V9B9X3ZD35R36NQS:
+    is: model_utterance
+    display: 発言 5841
+    val:
+      order: 5841
+      text: |
+        h_identifier_by_genus_differentia (#762) came out **refuted**: a concept's identifier can't be built from its parent type and distinguishing features alone. PR #954 has the results and observations. It stays a Draft until CI comes back, and I'll mark it ready if CI passes.
+
+        | | Groups |
+        |---|---|
+        | Split by all keys | 793 |
+        | Split by parent-and-feature keys only | 712 |
+
+        That leaves 775 pairs (107 concepts) that the parent-and-feature keys can't tell apart. Every pair the full split joins, the narrow split also joins.
+
+        The keys that do tell these pairs apart:
+        - **How a concept points to a role (`form`):** this separates the 35 concepts of the form "the thing in role X of verb V", for example "replaced word".
+        - **What an action changes (`pre`, `post`, `new_kind`):** this separates 17 action verbs that share the same parent, start and end, such as adopt, deliver and judge.
+        - **Negation (`neg`):** this separates pairs like "adopted" and "not adopted".
+        - **Nothing in their own keys:** 27 pairs differ only because the concepts they refer to are in different groups.
+
+        So the identifier should be built from the whole definition (display names and notes excluded), not just parent and features. I haven't tested whether a smaller set of keys would be enough.
+
+        Next up is #945, which adds display names and readings to the identifiers.
+facts:
+- {is: v_say, from: session_model, to: 01M8BPFFJ7V9B9X3ZD35R36NQS}
+- {is: exp.v_answer, from: 01M8BPFFJ7V9B9X3ZD35R36NQS, to: 01M8BNY53GWWSCHMBG9QSDQ8VX}
+- {is: v_refer, from: 01M8BPFFJ7V9B9X3ZD35R36NQS, to: syntax.form}
+- {is: v_refer, from: 01M8BPFFJ7V9B9X3ZD35R36NQS, to: syntax.pre}
+- {is: v_refer, from: 01M8BPFFJ7V9B9X3ZD35R36NQS, to: syntax.post}
+- {is: v_refer, from: 01M8BPFFJ7V9B9X3ZD35R36NQS, to: syntax.new_kind}
+- {is: v_refer, from: 01M8BPFFJ7V9B9X3ZD35R36NQS, to: syntax.neg}
