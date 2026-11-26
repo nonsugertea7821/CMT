@@ -2810,6 +2810,20 @@ individuals:
   sys_with_partner_by_domain_m_n_undefined_covered_named: {is: axis_value, val: {text: n_undefined_covered_named}}
   sys_with_partner_by_domain_m_n_axis_units: {is: axis_value, val: {text: n_axis_units}}
   sys_with_partner_by_domain_m_n_axis_covered_named: {is: axis_value, val: {text: n_axis_covered_named}}
+  sys_endpoint_law_replaces_code: {is: measurement_family}
+  sys_endpoint_law_replaces_code_c: {is: family_axis, val: {text: c}}
+  sys_endpoint_law_replaces_code_c_summary: {is: axis_value, val: {text: summary}}
+  sys_endpoint_law_replaces_code_m: {is: family_axis, val: {text: m}}
+  sys_endpoint_law_replaces_code_m_n_agree: {is: axis_value, val: {text: n_agree}}
+  sys_endpoint_law_replaces_code_m_n_disagree: {is: axis_value, val: {text: n_disagree}}
+  sys_endpoint_law_replaces_code_m_n_missed: {is: axis_value, val: {text: n_missed}}
+  sys_endpoint_law_replaces_code_m_n_over: {is: axis_value, val: {text: n_over}}
+  sys_endpoint_law_replaces_code_m_n_broke: {is: axis_value, val: {text: n_broke}}
+  sys_endpoint_law_replaces_code_m_n_not_run: {is: axis_value, val: {text: n_not_run}}
+  sys_endpoint_law_replaces_code_m_control_errors: {is: axis_value, val: {text: control_errors}}
+  sys_endpoint_law_replaces_code_m_n_units: {is: axis_value, val: {text: n_units}}
+  sys_endpoint_law_replaces_code_m_n_covered: {is: axis_value, val: {text: n_covered}}
+  sys_endpoint_law_replaces_code_m_n_only_endpoint_rows: {is: axis_value, val: {text: n_only_endpoint_rows}}
   e35_expression_makes_state_unique: {is: measurement_family}
   e35_expression_makes_state_unique_c: {is: family_axis, val: {text: c}}
   e35_expression_makes_state_unique_c_none_S: {is: axis_value, val: {text: none_S}}
@@ -5839,8 +5853,18 @@ individuals:
   o_e58_4b_near_acc_recite: {is: observation}
   o_e58_4b_near_joint_not_below_lo: {is: observation}
   o_e58_4b_near_joint_below_hi: {is: observation}
-  h_endpoint_law_replaces_code_check: {is: hyp_untested}
-  b_endpoint_law_replaces_code_check: {is: item_queued}
+  h_endpoint_law_replaces_code_check: {is: hyp_supported}
+  b_endpoint_law_replaces_code_check: {is: item_done}
+  o_sys_elrc_agree: {is: observation}
+  o_sys_elrc_disagree: {is: observation}
+  o_sys_elrc_missed: {is: observation}
+  o_sys_elrc_over: {is: observation}
+  o_sys_elrc_broke: {is: observation}
+  o_sys_elrc_not_run: {is: observation}
+  o_sys_elrc_control: {is: observation}
+  o_sys_elrc_units: {is: observation}
+  o_sys_elrc_covered: {is: observation}
+  o_sys_elrc_only_endpoint: {is: observation}
 facts:
   - {is: v_collect, from: residual_space, to: residual_vector}
   - {is: v_sum, from: layer_output, to: state_shift, new: shifted_hidden_state}
@@ -12726,6 +12750,34 @@ facts:
   - {is: v_spell, from: sys_with_partner_by_domain_m_n_axis_covered_named, to: n_axis_covered_named}
   - {is: v_entry_of, from: '{m}', to: sys_with_partner_by_domain}
   - {is: v_metric_of, from: sys_with_partner_by_domain, to: mean_value}
+  - {is: v_file_of, from: sys_endpoint_law_replaces_code.json, to: sys_endpoint_law_replaces_code}
+  - {is: v_axis_of, from: sys_endpoint_law_replaces_code_c, to: sys_endpoint_law_replaces_code}
+  - {is: v_keys_of, from: '#', to: sys_endpoint_law_replaces_code_c}
+  - {is: v_value_of, from: sys_endpoint_law_replaces_code_c_summary, to: sys_endpoint_law_replaces_code_c}
+  - {is: v_spell, from: sys_endpoint_law_replaces_code_c_summary, to: ['summary']}
+  - {is: v_axis_of, from: sys_endpoint_law_replaces_code_m, to: sys_endpoint_law_replaces_code}
+  - {is: v_value_of, from: sys_endpoint_law_replaces_code_m_n_agree, to: sys_endpoint_law_replaces_code_m}
+  - {is: v_spell, from: sys_endpoint_law_replaces_code_m_n_agree, to: n_agree}
+  - {is: v_value_of, from: sys_endpoint_law_replaces_code_m_n_disagree, to: sys_endpoint_law_replaces_code_m}
+  - {is: v_spell, from: sys_endpoint_law_replaces_code_m_n_disagree, to: n_disagree}
+  - {is: v_value_of, from: sys_endpoint_law_replaces_code_m_n_missed, to: sys_endpoint_law_replaces_code_m}
+  - {is: v_spell, from: sys_endpoint_law_replaces_code_m_n_missed, to: n_missed}
+  - {is: v_value_of, from: sys_endpoint_law_replaces_code_m_n_over, to: sys_endpoint_law_replaces_code_m}
+  - {is: v_spell, from: sys_endpoint_law_replaces_code_m_n_over, to: n_over}
+  - {is: v_value_of, from: sys_endpoint_law_replaces_code_m_n_broke, to: sys_endpoint_law_replaces_code_m}
+  - {is: v_spell, from: sys_endpoint_law_replaces_code_m_n_broke, to: n_broke}
+  - {is: v_value_of, from: sys_endpoint_law_replaces_code_m_n_not_run, to: sys_endpoint_law_replaces_code_m}
+  - {is: v_spell, from: sys_endpoint_law_replaces_code_m_n_not_run, to: n_not_run}
+  - {is: v_value_of, from: sys_endpoint_law_replaces_code_m_control_errors, to: sys_endpoint_law_replaces_code_m}
+  - {is: v_spell, from: sys_endpoint_law_replaces_code_m_control_errors, to: control_errors}
+  - {is: v_value_of, from: sys_endpoint_law_replaces_code_m_n_units, to: sys_endpoint_law_replaces_code_m}
+  - {is: v_spell, from: sys_endpoint_law_replaces_code_m_n_units, to: n_units}
+  - {is: v_value_of, from: sys_endpoint_law_replaces_code_m_n_covered, to: sys_endpoint_law_replaces_code_m}
+  - {is: v_spell, from: sys_endpoint_law_replaces_code_m_n_covered, to: n_covered}
+  - {is: v_value_of, from: sys_endpoint_law_replaces_code_m_n_only_endpoint_rows, to: sys_endpoint_law_replaces_code_m}
+  - {is: v_spell, from: sys_endpoint_law_replaces_code_m_n_only_endpoint_rows, to: n_only_endpoint_rows}
+  - {is: v_entry_of, from: '{m}', to: sys_endpoint_law_replaces_code}
+  - {is: v_metric_of, from: sys_endpoint_law_replaces_code, to: mean_value}
   - {is: v_file_of, from: e35_expression_makes_state_unique.json, to: e35_expression_makes_state_unique}
   - {is: v_rows_of, from: [s], to: e35_expression_makes_state_unique}
   - {is: v_axis_of, from: e35_expression_makes_state_unique_c, to: e35_expression_makes_state_unique}
@@ -15856,3 +15908,16 @@ facts:
   - {is: v_refer, from: h_endpoint_law_replaces_code_check, to: {is: v_depend, from: type_check_result, to: syntax.law_rule}}
   - {is: v_check, from: b_endpoint_law_replaces_code_check, to: h_endpoint_law_replaces_code_check}
   - {is: v_ground, from: d_road_checker, to: h_endpoint_law_replaces_code_check}
+  - {is: v_refer, from: o_sys_elrc_agree, to: {is: v_level, from: sys_endpoint_law_replaces_code.summary.n_agree.mean_value, to: 50}}
+  - {is: v_refer, from: o_sys_elrc_disagree, to: {is: v_level, from: sys_endpoint_law_replaces_code.summary.n_disagree.mean_value, to: 0}}
+  - {is: v_refer, from: o_sys_elrc_missed, to: {is: v_level, from: sys_endpoint_law_replaces_code.summary.n_missed.mean_value, to: 0}}
+  - {is: v_refer, from: o_sys_elrc_over, to: {is: v_level, from: sys_endpoint_law_replaces_code.summary.n_over.mean_value, to: 0}}
+  - {is: v_refer, from: o_sys_elrc_broke, to: {is: v_level, from: sys_endpoint_law_replaces_code.summary.n_broke.mean_value, to: 0}}
+  - {is: v_refer, from: o_sys_elrc_not_run, to: {is: v_level, from: sys_endpoint_law_replaces_code.summary.n_not_run.mean_value, to: 9}}
+  - {is: v_refer, from: o_sys_elrc_control, to: {is: v_level, from: sys_endpoint_law_replaces_code.summary.control_errors.mean_value, to: 0}}
+  - {is: v_refer, from: o_sys_elrc_units, to: {is: v_level, from: sys_endpoint_law_replaces_code.summary.n_units.mean_value, to: 54}}
+  - {is: v_refer, from: o_sys_elrc_covered, to: {is: v_level, from: sys_endpoint_law_replaces_code.summary.n_covered.mean_value, to: 54}}
+  - {is: v_refer, from: o_sys_elrc_only_endpoint, to: {is: v_level, from: sys_endpoint_law_replaces_code.summary.n_only_endpoint_rows.mean_value, to: 12}}
+  - {is: v_support, from: o_sys_elrc_disagree, to: h_endpoint_law_replaces_code_check}
+  - {is: v_support, from: o_sys_elrc_covered, to: h_endpoint_law_replaces_code_check}
+  - {is: v_support, from: o_sys_elrc_control, to: h_endpoint_law_replaces_code_check}
