@@ -218,6 +218,7 @@ nodes:
   symbol_selection: {display: シンボルの選定, extends: v_judge, to: symbol}
   channel: {display: 接続手段, extends: v_deliver, to: definition}
   text_injection: {display: 文章での注入, extends: channel, mod: {of: [v_involve, from], with: context}}
+  checker_feedback_injection: {display: 型検査の結果を巻き込む文章での注入, extends: text_injection, mod: {of: [v_involve, from], with: type_check_result}}
   renaming: {display: 改名, extends: text_injection, mod: {of: [v_stage, to], with: v_substitute}}
   opaque_renaming: {display: 元の語が見えない改名, extends: renaming, mod: {of: [v_involve, from], with: hidden_word}}
   semi_renaming: {display: 元の語が見える改名, extends: renaming, mod: {of: [v_involve, from], with: visible_word}}
@@ -5168,6 +5169,8 @@ individuals:
   b_formal_teacher_independent_of_model: {is: item_queued}
   h_consistency_by_formal_corpus: {is: hyp_untested}
   b_consistency_by_formal_corpus: {is: item_queued}
+  h_harness_raises_formalization: {is: hyp_untested}
+  b_harness_raises_formalization: {is: item_queued}
   h_display_free_region_by_formal_teaching: {is: hyp_untested}
   b_display_free_region_by_formal_teaching: {is: item_queued}
   h_formal_taught_keeps_consistency: {is: hyp_untested}
@@ -15303,6 +15306,9 @@ facts:
   - {is: v_refer, from: h_design_consists_of_adopted, to: {is: v_consist, from: this_design, to: [typed_graph, rendered_text, concept_vector]}}
   - {is: v_check, from: b_design_consists_of_adopted, to: h_design_consists_of_adopted}
   - {is: v_ground, from: d_goal, to: h_design_consists_of_adopted}
+  - {is: v_refer, from: h_harness_raises_formalization, to: {is: v_raise, from: checker_feedback_injection, to: formalization_accuracy}}
+  - {is: v_check, from: b_harness_raises_formalization, to: h_harness_raises_formalization}
+  - {is: v_ground, from: d_road_checker, to: h_harness_raises_formalization}
   - {is: v_refer, from: h_display_free_region_by_formal_teaching, to: {is: v_immune, from: midpoint_membership, to: syntax.display}}
   - {is: v_scope, from: formal_taught_model, to: h_display_free_region_by_formal_teaching}
   - {is: v_check, from: b_display_free_region_by_formal_teaching, to: h_display_free_region_by_formal_teaching}
