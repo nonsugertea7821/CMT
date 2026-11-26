@@ -130,6 +130,7 @@ def q_node(n, dom):
 
 
 RULE_VERBS = ("v_assume", "v_derive", "v_require")
+RULE_ROLE = {}
 # 型検査が名前で読む語（文法の節ごと）。syntax の grammar の同じ節と等しいことを確かめる（翻訳する側が知っている語は、文法に書かれている）
 KEYWORDS = {"laws": {"law_rule", "law_given"}, "rule_word": set(RULE_VERBS) | {"v_govern", "variable", "law_relation"},
             "use_word": {"v_use", "v_presume"}, "world": {"world", "closed_world"}}
@@ -148,7 +149,7 @@ def q_fact(f, dom, V=()):
         return f
     f = dict(f)
     f["is"] = qw(f.get("is"), dom)
-    rule = short(f["is"]) in RULE_VERBS
+    rule = short(f["is"]) in RULE_ROLE
     for k in ("from", "to", "new"):
         x = f.get(k)
         if isinstance(x, dict):
@@ -272,6 +273,17 @@ def load(name):
     for _, D in libs:
         LOCALS[D["domain"]], USES[D["domain"]] = set(D.get("nodes") or {}), uses_in(D, D["domain"])
     _SCOPES.clear()
+    global RULE_ROLE
+    RULE_ROLE = {}
+    for _f, _D in [(name, A)] + libs:
+        if _D.get("domain") != "syntax":
+            continue
+        for _nid, _n in (_D.get("nodes") or {}).items():
+            if isinstance(_n, dict) and _n.get("from") == "law_rule":
+                _has = frozenset(k for k in ("pre", "post", "holds") if _n.get(k))
+                _r = {frozenset({"pre"}): "assume", frozenset({"post"}): "derive", frozenset({"holds"}): "require"}.get(_has)
+                if _r:
+                    RULE_ROLE[_nid] = _r
     O = {"base": {}, "axes": {}, "nodes": {}, "individuals": {}, "facts": [],
          "grammar": {}, "runtime": {}, "_idom": {}}
     V = {i for _, D in [(name, A)] + libs for i, x in (D.get("individuals") or {}).items() if short(x.get("is")) == "variable"}
@@ -313,7 +325,7 @@ def core_sections(O):
     O["domains"] = {i: {"display": x.get("display"), "uses": []} for i, x in I.items() if short(x.get("is")) == "domain"}
     O["laws"] = {i: {"kind": short(x["is"]), "display": x.get("display"), "assume": [], "derive": [], "require": [], "govern": []}
                  for i, x in I.items() if short(x.get("is")) in kinds}
-    key = {"v_assume": "assume", "v_derive": "derive", "v_require": "require", "v_govern": "govern"}
+    key = {**RULE_ROLE, "v_govern": "govern"}
     for f in F:
         if not isinstance(f, dict):
             continue
@@ -728,7 +740,7 @@ class Ontology:
         self.v_relate = one("関係づける（在るものどうしの動詞）", [x for x in under_o if N[x].get("from") == "any" and N[x].get("to") == "any"
                                                    and sorted(atoms(x)) == [("exists", "from", None, False), ("exists", "to", None, False)]])
         self.v_is = one("属する", [x for x, n in N.items() if n.get("extends") == self.v_relate and "to" in n and "holds" not in n])
-        self.v_depend = one("依存する", [x for x in under_o if atoms(x) == [("depend", "from", "to", False)]
+        self.v_depend = one("依存する", [x for x in N if atoms(x) == [("depend", "from", "to", False)]
                                        and N[x].get("from") == self.top_c and N[x].get("to") == self.top_c])
         self.sdc = one("特定依存持続体", [x for x in N if any(m.get("of") == [self.v_depend, "from"] and (m.get("at") or {}).get("count") == 1
                                                          and not m.get("neg") and "with" not in m for m in mods(x))])

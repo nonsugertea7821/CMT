@@ -10,6 +10,7 @@ nodes:
   lang_dec_withdrawn: {display: 言語の取り下げた決定, extends: exp.dec_withdrawn, mod: is_from_lang_decision}
   v_not_depend: {display: に依存しない, extends: v_immune, from: continuant, to: continuant, opposite: v_depend}
   type_checker: {display: 型検査器, extends: artifact, mod: refer_from_laws}
+  sequence_domain: {display: 過程について述べる領域, extends: syntax.domain, mod: {of: [v_refer, from], with: process}}
   previous_checker: {display: 前の版の型検査器, extends: type_checker, mod: {of: [v_come_after, to], with: type_checker}}
   executed_language: {display: 実行器が実行する言語, extends: language, mod: {of: [v_depend, from], with: runtime.executor}}
   steps_definition: {display: ステップの列へ述べる定義, extends: definition, mod: runtime.refer_from_steps}
@@ -210,8 +211,40 @@ individuals:
   b_check_immune_parts: {is: exp.item_done}
   h_fact_id_by_content: {is: exp.hyp_supported}
   b_fact_id_by_content: {is: exp.item_queued}
-  h_grammar_names_parts: {is: exp.hyp_untested}
-  b_grammar_names_parts: {is: exp.item_queued}
+  h_grammar_names_parts: {is: exp.hyp_refuted}
+  b_grammar_names_parts: {is: exp.item_done}
+  h_grammar_parts_rel_by_new_nodes: {is: exp.hyp_refuted}
+  b_grammar_parts_rel_by_new_nodes: {is: exp.item_done}
+  o_sys_gprn_untouched: {is: exp.observation}
+  o_sys_gprn_split: {is: exp.observation}
+  o_sys_gprn_errors: {is: exp.observation}
+  o_sys_gprn_ec: {is: exp.observation}
+  o_sys_gprn_laws: {is: exp.observation}
+  o_sys_gprn_grow: {is: exp.observation}
+  o_sys_rdat_foreign: {is: exp.observation}
+  o_sys_rdat_old_only: {is: exp.observation}
+  o_sys_rdat_gone: {is: exp.observation}
+  o_sys_rdat_unparsed: {is: exp.observation}
+  o_sys_rdat_errors: {is: exp.observation}
+  o_sys_rdat_ec: {is: exp.observation}
+  o_sys_rdat_grow: {is: exp.observation}
+  o_sys_rdat_shrink: {is: exp.observation}
+  o_sys_rdat_new: {is: exp.observation}
+  h_rel_diff_by_added_terms: {is: exp.hyp_refuted}
+  b_rel_diff_by_added_terms: {is: exp.item_done}
+  h_rule_role_key_apart_from_state: {is: exp.hyp_refuted}
+  b_rule_role_key_apart_from_state: {is: exp.item_done}
+  o_sys_rrk_rel: {is: exp.observation}
+  o_sys_rrk_errors: {is: exp.observation}
+  o_sys_rrk_ec: {is: exp.observation}
+  o_sys_rrk_laws: {is: exp.observation}
+  o_sys_rrk_runtime: {is: exp.observation}
+  o_sys_rrk_worlds: {is: exp.observation}
+  o_sys_rrk_control: {is: exp.observation}
+  o_sys_rrk_rel_all: {is: exp.observation}
+  o_sys_rrk_pre_nodes: {is: exp.observation}
+  h_verb_by_post: {is: exp.hyp_untested}
+  b_verb_by_post: {is: exp.item_queued}
   h_layers_unhardcode: {is: exp.hyp_refuted}
   b_layers_unhardcode: {is: exp.item_done}
   h_concept_bounds_model_state: {is: exp.hyp_untested}
@@ -248,6 +281,27 @@ individuals:
   b_identifier_by_expansion: {is: exp.item_done}
   h_identifier_by_bisimulation: {is: exp.hyp_refuted}
   b_identifier_by_bisimulation: {is: exp.item_done}
+  h_identifier_by_genus_differentia: {is: exp.hyp_untested}
+  b_identifier_by_genus_differentia: {is: exp.item_queued}
+  h_sequence_by_current_order: {is: exp.hyp_untested}
+  b_sequence_by_current_order: {is: exp.item_queued}
+  h_dangling_by_append_only_declaration: {is: exp.hyp_untested}
+  b_dangling_by_append_only_declaration: {is: exp.item_queued}
+  h_identifier_free_of_declaration: {is: exp.hyp_untested}
+  b_identifier_free_of_declaration: {is: exp.item_queued}
+  h_rule_roles_read_by_frame: {is: exp.hyp_refuted}
+  b_rule_roles_read_by_frame: {is: exp.item_done}
+  h_always_admits_positions: {is: exp.hyp_untested}
+  b_always_admits_positions: {is: exp.item_queued}
+  h_require_frame_by_holds: {is: exp.hyp_supported}
+  b_require_frame_by_holds: {is: exp.item_done}
+  o_sys_rfh_errors: {is: exp.observation}
+  o_sys_rfh_ec: {is: exp.observation}
+  o_sys_rfh_laws: {is: exp.observation}
+  o_sys_rfh_rel: {is: exp.observation}
+  o_sys_rfh_control: {is: exp.observation}
+  o_sys_rfh_role: {is: exp.observation}
+  o_sys_rfh_rel_all: {is: exp.observation}
   h_appear_root: {is: exp.hyp_supported}
   b_appear_root: {is: exp.item_done}
   h_boundary_invariant: {is: exp.hyp_supported}
@@ -481,8 +535,31 @@ individuals:
   b_extends_by_kind: {is: exp.item_queued}
   h_domain_special_extends: {is: exp.hyp_supported}
   b_domain_special_extends: {is: exp.item_queued}
-  h_domain_in_formula: {is: exp.hyp_untested}
-  b_domain_in_formula: {is: exp.item_queued}
+  h_domain_in_formula: {is: exp.hyp_supported}
+  o_sys_dif_sep: {is: exp.observation}
+  o_sys_dif_cross_a: {is: exp.observation}
+  o_sys_dif_cross_b: {is: exp.observation}
+  o_sys_dif_miss_b: {is: exp.observation}
+  o_sys_dif_miss_a: {is: exp.observation}
+  b_domain_in_formula: {is: exp.item_done}
+  h_domain_sep_by_extends: {is: exp.hyp_refuted}
+  b_domain_sep_by_extends: {is: exp.item_done}
+  o_sys_dsb_unsolved: {is: exp.observation}
+  o_sys_dsb_tc_fail: {is: exp.observation}
+  o_sys_dsb_sep: {is: exp.observation}
+  o_sys_dsb_control: {is: exp.observation}
+  h_domain_sep_by_lifting: {is: exp.hyp_refuted}
+  b_domain_sep_by_lifting: {is: exp.item_done}
+  o_sys_dsl_solved: {is: exp.observation}
+  o_sys_dsl_unsolved: {is: exp.observation}
+  o_sys_dsl_tc_fail: {is: exp.observation}
+  o_sys_dsl_control: {is: exp.observation}
+  h_base_verb_found_by_shape: {is: exp.hyp_supported}
+  b_base_verb_found_by_shape: {is: exp.item_done}
+  o_sys_bvs_rely: {is: exp.observation}
+  o_sys_bvs_solved: {is: exp.observation}
+  o_sys_bvs_tc_fail: {is: exp.observation}
+  o_sys_bvs_control: {is: exp.observation}
   h_domain_by_refer: {is: exp.hyp_refuted}
   b_domain_by_refer: {is: exp.item_queued}
   h_ends_by_subsumption: {is: exp.hyp_supported}
@@ -927,6 +1004,19 @@ individuals:
   o_sys_fic_other: {is: exp.observation}
   o_sys_fic_base: {is: exp.observation}
   o_sys_fic_distinct: {is: exp.observation}
+  o_sys_gnp_errors: {is: exp.observation}
+  o_sys_gnp_ec: {is: exp.observation}
+  o_sys_gnp_laws: {is: exp.observation}
+  o_sys_gnp_rel: {is: exp.observation}
+  o_sys_gnp_pc: {is: exp.observation}
+  o_sys_gnp_c_nrel: {is: exp.observation}
+  o_sys_gnp_pcg_nrel: {is: exp.observation}
+  o_sys_rrbf_errors: {is: exp.observation}
+  o_sys_rrbf_laws: {is: exp.observation}
+  o_sys_rrbf_rel: {is: exp.observation}
+  o_sys_rrbf_control: {is: exp.observation}
+  o_sys_rrbf_role: {is: exp.observation}
+  o_sys_rrbf_ef_rel: {is: exp.observation}
   o_sys_lca_errors: {is: exp.observation}
   o_sys_lca_laws: {is: exp.observation}
   o_sys_lca_diag: {is: exp.observation}
@@ -1253,6 +1343,53 @@ facts:
   - {is: exp.v_ground, from: d_cscl_display_derived, to: h_fact_id_by_content}
   - {is: v_refer, from: h_grammar_names_parts, to: {is: v_refer, from: syntax.grammar, to: syntax.passage}}
   - {is: exp.v_check, from: b_grammar_names_parts, to: h_grammar_names_parts}
+  - {is: v_refer, from: o_sys_gnp_errors, to: {is: v_level, from: sys_grammar_names_parts.PCG_errors.mean_value, to: 0.0}}
+  - {is: v_refer, from: o_sys_gnp_ec, to: {is: v_level, from: sys_grammar_names_parts.PCG_ec_errors.mean_value, to: 0.0}}
+  - {is: v_refer, from: o_sys_gnp_laws, to: {is: v_level, from: sys_grammar_names_parts.PCG_laws_same_C.mean_value, to: 1.0}}
+  - {is: v_refer, from: o_sys_gnp_rel, to: {is: v_level, from: sys_grammar_names_parts.PCG_rel_same_C.mean_value, to: 0.0}}
+  - {is: exp.v_contradict, from: o_sys_gnp_rel, to: h_grammar_names_parts}
+  - {is: v_refer, from: o_sys_gnp_pc, to: {is: v_level, from: sys_grammar_names_parts.PC_errors.mean_value, to: 1.0}}
+  - {is: v_refer, from: o_sys_gnp_c_nrel, to: {is: v_level, from: sys_grammar_names_parts.C_n_rel.mean_value, to: 423271.0}}
+  - {is: v_refer, from: o_sys_gnp_pcg_nrel, to: {is: v_level, from: sys_grammar_names_parts.PCG_n_rel.mean_value, to: 424464.0}}
+  - {is: v_refer, from: h_grammar_parts_rel_by_new_nodes, to: {is: v_not_depend, from: syntax.law_relation, to: syntax.passage}}
+  - {is: exp.v_check, from: b_grammar_parts_rel_by_new_nodes, to: h_grammar_parts_rel_by_new_nodes}
+  - {is: exp.v_ground, from: d_cscl_display_derived, to: h_grammar_parts_rel_by_new_nodes}
+  - {is: v_refer, from: o_sys_gprn_untouched, to: {is: v_level, from: sys_grammar_parts_rel_by_new_nodes.n_diff_untouched.mean_value, to: 208.0}}
+  - {is: exp.v_contradict, from: o_sys_gprn_untouched, to: h_grammar_parts_rel_by_new_nodes}
+  - {is: v_refer, from: o_sys_gprn_split, to: {is: v_level, from: sys_grammar_parts_rel_by_new_nodes.PCG_same_CG.mean_value, to: 1.0}}
+  - {is: v_refer, from: o_sys_gprn_errors, to: {is: v_level, from: sys_grammar_parts_rel_by_new_nodes.PCG_errors.mean_value, to: 0.0}}
+  - {is: v_refer, from: o_sys_gprn_ec, to: {is: v_level, from: sys_grammar_parts_rel_by_new_nodes.PCG_ec_errors.mean_value, to: 0.0}}
+  - {is: v_refer, from: o_sys_gprn_laws, to: {is: v_level, from: sys_grammar_parts_rel_by_new_nodes.PCG_laws_same_C.mean_value, to: 1.0}}
+  - {is: v_refer, from: o_sys_gprn_grow, to: {is: v_level, from: sys_grammar_parts_rel_by_new_nodes.n_PCG_minus_C.mean_value, to: 1193.0}}
+  - {is: v_refer, from: o_sys_rdat_foreign, to: {is: v_level, from: sys_rel_diff_by_added_terms.n_new_foreign.mean_value, to: 4.0}}
+  - {is: v_refer, from: o_sys_rdat_old_only, to: {is: v_level, from: sys_rel_diff_by_added_terms.n_diff_old_only.mean_value, to: 0.0}}
+  - {is: v_refer, from: o_sys_rdat_gone, to: {is: v_level, from: sys_rel_diff_by_added_terms.n_gone_terms.mean_value, to: 0.0}}
+  - {is: v_refer, from: o_sys_rdat_unparsed, to: {is: v_level, from: sys_rel_diff_by_added_terms.n_unparsed.mean_value, to: 0.0}}
+  - {is: v_refer, from: o_sys_rdat_errors, to: {is: v_level, from: sys_rel_diff_by_added_terms.CG_errors.mean_value, to: 0.0}}
+  - {is: v_refer, from: o_sys_rdat_ec, to: {is: v_level, from: sys_rel_diff_by_added_terms.CG_ec_errors.mean_value, to: 0.0}}
+  - {is: v_refer, from: o_sys_rdat_grow, to: {is: v_level, from: sys_rel_diff_by_added_terms.n_CG_minus_C.mean_value, to: 1193.0}}
+  - {is: v_refer, from: o_sys_rdat_shrink, to: {is: v_level, from: sys_rel_diff_by_added_terms.n_C_minus_CG.mean_value, to: 0.0}}
+  - {is: v_refer, from: o_sys_rdat_new, to: {is: v_level, from: sys_rel_diff_by_added_terms.n_new_terms.mean_value, to: 7.0}}
+  - {is: exp.v_contradict, from: o_sys_rdat_foreign, to: h_rel_diff_by_added_terms}
+  - {is: v_refer, from: h_rel_diff_by_added_terms, to: {is: v_depend, from: syntax.law_relation, to: [syntax.nodes, syntax.mod]}}
+  - {is: exp.v_check, from: b_rel_diff_by_added_terms, to: h_rel_diff_by_added_terms}
+  - {is: exp.v_ground, from: d_cscl_display_derived, to: h_rel_diff_by_added_terms}
+  - {is: v_refer, from: h_rule_role_key_apart_from_state, to: {is: v_not_depend, from: syntax.law_rule, to: [syntax.pre, syntax.post]}}
+  - {is: exp.v_check, from: b_rule_role_key_apart_from_state, to: h_rule_role_key_apart_from_state}
+  - {is: exp.v_ground, from: d_cscl_display_derived, to: h_rule_role_key_apart_from_state}
+  - {is: v_refer, from: o_sys_rrk_rel, to: {is: v_level, from: sys_rule_role_key_apart.K_rel_same_A.mean_value, to: 0.0}}
+  - {is: exp.v_contradict, from: o_sys_rrk_rel, to: h_rule_role_key_apart_from_state}
+  - {is: v_refer, from: o_sys_rrk_errors, to: {is: v_level, from: sys_rule_role_key_apart.K_errors.mean_value, to: 0.0}}
+  - {is: v_refer, from: o_sys_rrk_ec, to: {is: v_level, from: sys_rule_role_key_apart.K_ec_errors.mean_value, to: 0.0}}
+  - {is: v_refer, from: o_sys_rrk_laws, to: {is: v_level, from: sys_rule_role_key_apart.K_laws_same_A.mean_value, to: 1.0}}
+  - {is: v_refer, from: o_sys_rrk_runtime, to: {is: v_level, from: sys_rule_role_key_apart.K_runtime_out_same_A.mean_value, to: 1.0}}
+  - {is: v_refer, from: o_sys_rrk_worlds, to: {is: v_level, from: sys_rule_role_key_apart.K_worlds_out_same_A.mean_value, to: 1.0}}
+  - {is: v_refer, from: o_sys_rrk_control, to: {is: v_level, from: sys_rule_role_key_apart.control_differs.mean_value, to: 1.0}}
+  - {is: v_refer, from: o_sys_rrk_rel_all, to: {is: v_level, from: sys_rule_role_key_apart.K_rel_all_same_A.mean_value, to: 0.0}}
+  - {is: v_refer, from: o_sys_rrk_pre_nodes, to: {is: v_level, from: sys_rule_role_key_apart.K_n_pre_nodes.mean_value, to: 0.0}}
+  - {is: v_refer, from: h_verb_by_post, to: {is: v_depend, from: concept_by_law, to: [syntax.pre, syntax.post, syntax.holds, syntax.extends]}}
+  - {is: exp.v_check, from: b_verb_by_post, to: h_verb_by_post}
+  - {is: exp.v_ground, from: d_cscl_display_derived, to: h_verb_by_post}
   - {is: v_refer, from: h_layers_unhardcode, to: {is: v_not_depend, from: type_checker, to: name_choice}}
   - {is: v_refer, from: h_layers_unhardcode, to: {is: v_depend, from: type_checker, to: [layer_placement, signature_class]}}
   - {is: exp.v_check, from: b_layers_unhardcode, to: h_layers_unhardcode}
@@ -1290,6 +1427,9 @@ facts:
   - {is: exp.v_check, from: b_identifier_by_expansion, to: h_identifier_by_expansion}
   - {is: v_refer, from: h_identifier_by_bisimulation, to: {is: v_depend, from: syntax.identifier, to: [signature_class, syntax.identifier]}}
   - {is: exp.v_check, from: b_identifier_by_bisimulation, to: h_identifier_by_bisimulation}
+  - {is: v_refer, from: h_identifier_by_genus_differentia, to: {is: v_depend, from: syntax.identifier, to: [syntax.extends, syntax.mod, syntax.holds, syntax.from, syntax.to]}}
+  - {is: exp.v_check, from: b_identifier_by_genus_differentia, to: h_identifier_by_genus_differentia}
+  - {is: exp.v_ground, from: d_cscl_display_derived, to: h_identifier_by_genus_differentia}
   - {is: v_refer, from: h_appear_root, to: {is: v_depend, from: signature_class, to: syntax.pre}}
   - {is: exp.v_check, from: b_appear_root, to: h_appear_root}
   - {is: v_refer, from: o_sys_appear_root_pre_decides, to: {is: v_level, from: sys_appear_root.pre_eq_pair.mean_value, to: 1.0}}
@@ -2085,6 +2225,40 @@ facts:
   - {is: v_refer, from: h_domain_in_formula, to: {is: v_depend, from: syntax.holds, to: syntax.domain}}
   - {is: exp.v_check, from: b_domain_in_formula, to: h_domain_in_formula}
   - {is: exp.v_ground, from: d_cscl_display_derived, to: h_domain_in_formula}
+  - {is: v_refer, from: o_sys_dif_sep, to: {is: v_level, from: sys_domain_in_formula.n_sep.mean_value, to: 7.0}}
+  - {is: exp.v_support, from: o_sys_dif_sep, to: h_domain_in_formula}
+  - {is: v_refer, from: o_sys_dif_cross_a, to: {is: v_level, from: sys_domain_in_formula.n_cross_A.mean_value, to: 8.0}}
+  - {is: v_refer, from: o_sys_dif_cross_b, to: {is: v_level, from: sys_domain_in_formula.n_cross_B.mean_value, to: 1.0}}
+  - {is: v_refer, from: o_sys_dif_miss_b, to: {is: v_level, from: sys_domain_in_formula.n_miss_B.mean_value, to: 0.0}}
+  - {is: exp.v_support, from: o_sys_dif_miss_b, to: h_domain_in_formula}
+  - {is: v_refer, from: o_sys_dif_miss_a, to: {is: v_level, from: sys_domain_in_formula.n_miss_A.mean_value, to: 0.0}}
+  - {is: v_refer, from: h_domain_sep_by_extends, to: {is: v_depend, from: syntax.domain, to: syntax.extends}}
+  - {is: exp.v_check, from: b_domain_sep_by_extends, to: h_domain_sep_by_extends}
+  - {is: exp.v_ground, from: d_cscl_display_derived, to: h_domain_sep_by_extends}
+  - {is: v_refer, from: o_sys_dsb_unsolved, to: {is: v_level, from: sys_domain_sep_by_extends.n_unsolved.mean_value, to: 7.0}}
+  - {is: exp.v_contradict, from: o_sys_dsb_unsolved, to: h_domain_sep_by_extends}
+  - {is: v_refer, from: o_sys_dsb_tc_fail, to: {is: v_level, from: sys_domain_sep_by_extends.n_tc_fail.mean_value, to: 7.0}}
+  - {is: exp.v_contradict, from: o_sys_dsb_tc_fail, to: h_domain_sep_by_extends}
+  - {is: v_refer, from: o_sys_dsb_sep, to: {is: v_level, from: sys_domain_sep_by_extends.n_sep.mean_value, to: 7.0}}
+  - {is: v_refer, from: o_sys_dsb_control, to: {is: v_level, from: sys_domain_sep_by_extends.control_ok.mean_value, to: 1.0}}
+  - {is: v_refer, from: h_domain_sep_by_lifting, to: {is: v_depend, from: syntax.domain, to: [syntax.extends, syntax.use_word]}}
+  - {is: exp.v_check, from: b_domain_sep_by_lifting, to: h_domain_sep_by_lifting}
+  - {is: exp.v_ground, from: d_cscl_display_derived, to: h_domain_sep_by_lifting}
+  - {is: v_refer, from: o_sys_dsl_solved, to: {is: v_level, from: sys_domain_sep_by_lifting.n_w_solved.mean_value, to: 2.0}}
+  - {is: v_refer, from: o_sys_dsl_unsolved, to: {is: v_level, from: sys_domain_sep_by_lifting.n_w_unsolved.mean_value, to: 1.0}}
+  - {is: exp.v_contradict, from: o_sys_dsl_unsolved, to: h_domain_sep_by_lifting}
+  - {is: v_refer, from: o_sys_dsl_tc_fail, to: {is: v_level, from: sys_domain_sep_by_lifting.n_tc_fail.mean_value, to: 1.0}}
+  - {is: exp.v_contradict, from: o_sys_dsl_tc_fail, to: h_domain_sep_by_lifting}
+  - {is: v_refer, from: o_sys_dsl_control, to: {is: v_level, from: sys_domain_sep_by_lifting.control_ok.mean_value, to: 1.0}}
+  - {is: v_refer, from: h_base_verb_found_by_shape, to: {is: v_depend, from: type_checker, to: [syntax.holds, syntax.from, syntax.to]}}
+  - {is: exp.v_check, from: b_base_verb_found_by_shape, to: h_base_verb_found_by_shape}
+  - {is: exp.v_ground, from: d_cscl_display_derived, to: h_base_verb_found_by_shape}
+  - {is: v_refer, from: o_sys_bvs_rely, to: {is: v_level, from: sys_base_verb_by_shape.rely_solved.mean_value, to: 1.0}}
+  - {is: exp.v_support, from: o_sys_bvs_rely, to: h_base_verb_found_by_shape}
+  - {is: v_refer, from: o_sys_bvs_solved, to: {is: v_level, from: sys_base_verb_by_shape.n_w_solved.mean_value, to: 3.0}}
+  - {is: exp.v_support, from: o_sys_bvs_solved, to: h_base_verb_found_by_shape}
+  - {is: v_refer, from: o_sys_bvs_tc_fail, to: {is: v_level, from: sys_base_verb_by_shape.n_tc_fail.mean_value, to: 0.0}}
+  - {is: v_refer, from: o_sys_bvs_control, to: {is: v_level, from: sys_base_verb_by_shape.control_ok.mean_value, to: 1.0}}
   - {is: v_refer, from: h_domain_by_refer, to: {is: v_depend, from: type_checker, to: [syntax.holds, syntax.domain]}}
   - {is: exp.v_check, from: b_domain_by_refer, to: h_domain_by_refer}
   - {is: exp.v_ground, from: d_cscl_display_derived, to: h_domain_by_refer}
@@ -2339,3 +2513,38 @@ facts:
   - {is: v_refer, from: o_sys_soundness_mods_aligned, to: {is: v_come_after, from: sys_soundness.mod_unpaired_changed.mean_value, to: sys_soundness.mod_paired_changed.mean_value}}
   - {is: v_support, from: o_sys_soundness_unpaired_above, to: h_symmetry_soundness}
   - {is: v_contradict, from: o_sys_soundness_not_significant, to: h_symmetry_soundness}
+  - {is: v_refer, from: h_sequence_by_current_order, to: {is: v_refer, from: sequence_domain, to: [v_come_after, v_stage, syntax.pre, syntax.post]}}
+  - {is: exp.v_check, from: b_sequence_by_current_order, to: h_sequence_by_current_order}
+  - {is: exp.v_ground, from: d_sig_come_after_from, to: h_sequence_by_current_order}
+  - {is: v_refer, from: h_dangling_by_append_only_declaration, to: {is: v_refer, from: declared_scope, to: std.v_freeze}}
+  - {is: exp.v_check, from: b_dangling_by_append_only_declaration, to: h_dangling_by_append_only_declaration}
+  - {is: v_refer, from: h_identifier_free_of_declaration, to: {is: v_not_depend, from: syntax.identifier, to: declared_scope}}
+  - {is: exp.v_check, from: b_identifier_free_of_declaration, to: h_identifier_free_of_declaration}
+  - {is: exp.v_ground, from: d_cscl_display_derived, to: h_identifier_free_of_declaration}
+  - {is: v_refer, from: h_rule_roles_read_by_frame, to: {is: v_depend, from: type_checker, to: [syntax.pre, syntax.post, syntax.always, syntax.law_relation]}}
+  - {is: exp.v_check, from: b_rule_roles_read_by_frame, to: h_rule_roles_read_by_frame}
+  - {is: exp.v_ground, from: d_cscl_display_derived, to: h_rule_roles_read_by_frame}
+  - {is: v_refer, from: o_sys_rrbf_errors, to: {is: v_level, from: sys_rule_roles_read_by_frame.EFR_errors.mean_value, to: 1.0}}
+  - {is: exp.v_contradict, from: o_sys_rrbf_errors, to: h_rule_roles_read_by_frame}
+  - {is: v_refer, from: o_sys_rrbf_laws, to: {is: v_level, from: sys_rule_roles_read_by_frame.EFR_laws_same_E.mean_value, to: 1.0}}
+  - {is: v_refer, from: o_sys_rrbf_rel, to: {is: v_level, from: sys_rule_roles_read_by_frame.EFR_rel_same_E.mean_value, to: 1.0}}
+  - {is: v_refer, from: o_sys_rrbf_control, to: {is: v_level, from: sys_rule_roles_read_by_frame.control_differs.mean_value, to: 1.0}}
+  - {is: v_refer, from: o_sys_rrbf_role, to: {is: v_level, from: sys_rule_roles_read_by_frame.EFR_n_role.mean_value, to: 3.0}}
+  - {is: v_refer, from: o_sys_rrbf_ef_rel, to: {is: v_level, from: sys_rule_roles_read_by_frame.EF_rel_same_E.mean_value, to: 1.0}}
+  - {is: v_refer, from: h_always_admits_positions, to: {is: v_refer, from: syntax.always, to: syntax.position}}
+  - {is: exp.v_check, from: b_always_admits_positions, to: h_always_admits_positions}
+  - {is: exp.v_ground, from: d_cscl_display_derived, to: h_always_admits_positions}
+  - {is: v_refer, from: h_require_frame_by_holds, to: {is: v_depend, from: type_checker, to: [syntax.pre, syntax.post, syntax.holds, syntax.law_relation]}}
+  - {is: exp.v_check, from: b_require_frame_by_holds, to: h_require_frame_by_holds}
+  - {is: exp.v_ground, from: d_cscl_display_derived, to: h_require_frame_by_holds}
+  - {is: v_refer, from: o_sys_rfh_errors, to: {is: v_level, from: sys_require_frame_by_holds.EFR_errors.mean_value, to: 0.0}}
+  - {is: exp.v_support, from: o_sys_rfh_errors, to: h_require_frame_by_holds}
+  - {is: v_refer, from: o_sys_rfh_ec, to: {is: v_level, from: sys_require_frame_by_holds.EFR_ec_errors.mean_value, to: 0.0}}
+  - {is: exp.v_support, from: o_sys_rfh_ec, to: h_require_frame_by_holds}
+  - {is: v_refer, from: o_sys_rfh_laws, to: {is: v_level, from: sys_require_frame_by_holds.EFR_laws_same_E.mean_value, to: 1.0}}
+  - {is: exp.v_support, from: o_sys_rfh_laws, to: h_require_frame_by_holds}
+  - {is: v_refer, from: o_sys_rfh_rel, to: {is: v_level, from: sys_require_frame_by_holds.EFR_rel_same_E.mean_value, to: 1.0}}
+  - {is: exp.v_support, from: o_sys_rfh_rel, to: h_require_frame_by_holds}
+  - {is: v_refer, from: o_sys_rfh_control, to: {is: v_level, from: sys_require_frame_by_holds.control_differs.mean_value, to: 1.0}}
+  - {is: v_refer, from: o_sys_rfh_role, to: {is: v_level, from: sys_require_frame_by_holds.EFR_n_role.mean_value, to: 3.0}}
+  - {is: v_refer, from: o_sys_rfh_rel_all, to: {is: v_level, from: sys_require_frame_by_holds.EFR_rel_all_same_E.mean_value, to: 0.0}}

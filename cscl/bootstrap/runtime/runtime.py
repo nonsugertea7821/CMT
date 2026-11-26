@@ -208,7 +208,7 @@ class Machine:
         for vid, n in T.N.items():
             if "pre" not in n:
                 continue
-            poss = ["from", "to"] + (["new"] if any("new" in atom(f)[2] for f in n["pre"] + n["post"]) else [])
+            poss = ["from", "to"] + (["new"] if any("new" in atom(f)[2] for f in n["pre"] + n.get("post", [])) else [])
             for combo in itertools.permutations(self.ind, len(poss)):
                 b = dict(zip(poss, combo))
                 r, _ = self.bind(vid, b)
