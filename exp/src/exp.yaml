@@ -5869,6 +5869,10 @@ individuals:
   b_checker_teaching_not_to_explain: {is: item_queued}
   h_endpoint_law_whole_system: {is: hyp_untested}
   b_endpoint_law_whole_system: {is: item_queued}
+  h_spot_kind_checks_as_law: {is: hyp_untested}
+  b_spot_kind_checks_as_law: {is: item_queued}
+  h_law_errors_grouped_for_reader: {is: hyp_untested}
+  b_law_errors_grouped_for_reader: {is: item_queued}
 facts:
   - {is: v_collect, from: residual_space, to: residual_vector}
   - {is: v_sum, from: layer_output, to: state_shift, new: shifted_hidden_state}
@@ -15931,3 +15935,9 @@ facts:
   - {is: v_refer, from: h_endpoint_law_whole_system, to: {is: v_depend, from: type_check_result, to: [syntax.law_rule, syntax.domain]}}
   - {is: v_check, from: b_endpoint_law_whole_system, to: h_endpoint_law_whole_system}
   - {is: v_ground, from: d_road_checker, to: h_endpoint_law_whole_system}
+  - {is: v_refer, from: h_spot_kind_checks_as_law, to: {is: v_depend, from: type_check_result, to: [syntax.law_rule, syntax.mod]}}
+  - {is: v_check, from: b_spot_kind_checks_as_law, to: h_spot_kind_checks_as_law}
+  - {is: v_ground, from: d_road_checker, to: h_spot_kind_checks_as_law}
+  - {is: v_refer, from: h_law_errors_grouped_for_reader, to: {is: v_depend, from: usage_explain, to: type_check_result}}
+  - {is: v_check, from: b_law_errors_grouped_for_reader, to: h_law_errors_grouped_for_reader}
+  - {is: v_ground, from: d_road_checker, to: h_law_errors_grouped_for_reader}
