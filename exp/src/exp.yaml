@@ -3293,6 +3293,14 @@ individuals:
   e22_cond_text: {is: axis_value, val: {text: text}}
   e22_cond_mod: {is: axis_value, val: {text: mod}}
   e22_cond_qual: {is: axis_value, val: {text: qual}}
+  e25: {is: measurement_family}
+  e25_split: {is: family_axis, val: {text: split}}
+  e25_split_train: {is: axis_value, val: {text: train}}
+  e25_split_test: {is: axis_value, val: {text: test}}
+  e25_cond: {is: family_axis, val: {text: cond}}
+  e25_cond_none: {is: axis_value, val: {text: 'none'}}
+  e25_cond_text: {is: axis_value, val: {text: text}}
+  e25_cond_multi: {is: axis_value, val: {text: multi}}
   e5_model: {is: family_axis, val: {text: model}}
   e5_model_15b: {is: axis_value, val: {text: 15b}}
   e5_model_4b: {is: axis_value, val: {text: 4b}}
@@ -3925,6 +3933,8 @@ individuals:
   o_e4_pair1_training_failed: {is: observation}
   o_e22_qual_above_none: {is: observation}
   o_e22_qual_robust_above_none: {is: observation}
+  o_e25_multi_train_below_threshold: {is: observation}
+  o_e25_multi_margin_level_zero: {is: observation}
   o_e8_paraphrase_like_single_layer: {is: observation}
   o_e8_conflict_ge_single_layer: {is: observation}
   o_e8_control_below_single_layer: {is: observation}
@@ -6429,6 +6439,27 @@ facts:
   - {is: v_entry_of, from: '{cond}', to: e22}
   - {is: v_metric_of, from: e22, to: accuracy}
   - {is: v_metric_of, from: e22, to: order_robust_accuracy}
+  - {is: v_file_of, from: 'e25_Qwen2.5-1.5B-Instruct_L2-13.json', to: e25}
+  - {is: v_rows_of, from: [items], to: e25}
+  - {is: v_axis_of, from: e25_split, to: e25}
+  - {is: v_value_of, from: e25_split_train, to: e25_split}
+  - {is: v_denote, from: e25_split_train, to: seen_genus}
+  - {is: v_value_of, from: e25_split_test, to: e25_split}
+  - {is: v_denote, from: e25_split_test, to: unseen_genus}
+  - {is: v_axis_of, from: e25_cond, to: e25}
+  - {is: v_value_of, from: e25_cond_none, to: e25_cond}
+  - {is: v_denote, from: e25_cond_none, to: no_channel}
+  - {is: v_value_of, from: e25_cond_text, to: e25_cond}
+  - {is: v_denote, from: e25_cond_text, to: text_injection}
+  - {is: v_denote, from: e25_cond_text, to: definition_text}
+  - {is: v_value_of, from: e25_cond_multi, to: e25_cond}
+  - {is: v_denote, from: e25_cond_multi, to: multi_layer_vector}
+  - {is: v_denote, from: e25_cond_multi, to: modifier}
+  - {is: v_filter_of, from: {split: '{split}'}, to: e25}
+  - {is: v_entry_of, from: '{cond}', to: e25}
+  - {is: v_metric_of, from: e25, to: accuracy}
+  - {is: v_metric_of, from: e25, to: order_robust_accuracy}
+  - {is: v_metric_of, from: e25, to: logit_margin}
   - {is: v_file_of, from: 'e5_{model}.json', to: e5}
   - {is: v_axis_of, from: e5_model, to: e5}
   - {is: v_value_of, from: e5_model_15b, to: e5_model}
@@ -13762,6 +13793,8 @@ facts:
   - {is: v_refer, from: o_e4_pair1_training_failed, to: {is: v_near, from: e4.p1.train.vec.accuracy, to: 0.5, new: 0.01}}
   - {is: v_refer, from: o_e22_qual_above_none, to: {is: v_come_after, from: e22.test.qual.accuracy, to: e22.test.none.accuracy}}
   - {is: v_refer, from: o_e22_qual_robust_above_none, to: {is: v_come_after, from: e22.test.qual.order_robust_accuracy, to: e22.test.none.order_robust_accuracy}}
+  - {is: v_refer, from: o_e25_multi_train_below_threshold, to: {is: v_come_before, from: e25.train.multi.accuracy, to: 0.75}}
+  - {is: v_refer, from: o_e25_multi_margin_level_zero, to: {is: v_near, from: e25.test.multi.logit_margin, to: 0.0, new: 0.01}}
   - {is: v_support, from: o_e22_qual_above_none, to: h_qualification_vector_transfers_to_unseen_genus}
   - {is: v_support, from: o_e22_qual_robust_above_none, to: h_qualification_vector_transfers_to_unseen_genus}
   - {is: v_refer, from: o_e8_paraphrase_like_single_layer, to: {is: v_near, from: e8def.vec.accuracy, to: e6_defqa.L8.accuracy, new: 0.05}}
