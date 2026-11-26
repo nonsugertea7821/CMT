@@ -283,6 +283,8 @@ individuals:
   b_identifier_by_bisimulation: {is: exp.item_done}
   h_identifier_by_genus_differentia: {is: exp.hyp_refuted}
   b_identifier_by_genus_differentia: {is: exp.item_done}
+  h_same_by_structure: {is: exp.hyp_untested}
+  b_same_by_structure: {is: exp.item_queued}
   h_identifier_unique_within_domain: {is: exp.hyp_untested}
   b_identifier_unique_within_domain: {is: exp.item_queued}
   h_identifier_by_residue_differentia: {is: exp.hyp_untested}
@@ -1474,6 +1476,10 @@ facts:
   - {is: v_refer, from: h_identifier_by_genus_differentia, to: {is: v_depend, from: syntax.identifier, to: [syntax.extends, syntax.mod, syntax.holds, syntax.from, syntax.to]}}
   - {is: exp.v_check, from: b_identifier_by_genus_differentia, to: h_identifier_by_genus_differentia}
   - {is: exp.v_ground, from: d_cscl_display_derived, to: h_identifier_by_genus_differentia}
+  - {is: v_refer, from: h_same_by_structure, to: {is: v_not_depend, from: ontology.same, to: name_choice}}
+  - {is: v_refer, from: h_same_by_structure, to: {is: v_depend, from: ontology.same, to: signature_class}}
+  - {is: exp.v_check, from: b_same_by_structure, to: h_same_by_structure}
+  - {is: exp.v_ground, from: d_cscl_laws_in_cscl, to: h_same_by_structure}
   - {is: v_refer, from: h_identifier_unique_within_domain, to: {is: ontology.v_rely, from: syntax.identifier, to: syntax.domain}}
   - {is: exp.v_check, from: b_identifier_unique_within_domain, to: h_identifier_unique_within_domain}
   - {is: exp.v_ground, from: d_cscl_display_derived, to: h_identifier_unique_within_domain}
