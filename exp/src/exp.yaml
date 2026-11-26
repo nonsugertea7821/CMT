@@ -3642,6 +3642,19 @@ individuals:
   o_e45_control_name_above_number: {is: observation}
   o_e45p_name_adj_decoy: {is: observation}
   o_e45p_name_adj_decoy_above_quarter: {is: observation}
+  e50: {is: measurement_family}
+  e50_cond: {is: family_axis, val: {text: cond}}
+  e50_cond_extends: {is: axis_value, val: {text: 'extends'}}
+  e50_cond_inline: {is: axis_value, val: {text: 'inline'}}
+  e50_cond_wrong_extends: {is: axis_value, val: {text: 'wrong_extends'}}
+  e50_cond_wrong_inline: {is: axis_value, val: {text: 'wrong_inline'}}
+  o_e50_extends: {is: observation}
+  o_e50_inline: {is: observation}
+  o_e50_wrong_extends: {is: observation}
+  o_e50_wrong_inline: {is: observation}
+  o_e50_extends_below_premise: {is: observation}
+  o_e50_wrong_extends_above_premise: {is: observation}
+  o_e50_inline_above_extends: {is: observation}
   o_e39_explain_ml_below_none: {is: observation}
   e21: {is: measurement_family}
   e21_group: {is: family_axis, val: {text: group}}
@@ -7152,6 +7165,19 @@ facts:
   - {is: v_metric_of, from: e45p, to: accuracy}
   - {is: v_metric_of, from: e45p, to: order_robust_accuracy}
   - {is: v_metric_of, from: e45p, to: logit_margin}
+  - {is: v_file_of, from: 'e50_Qwen3-4B.json', to: e50}
+  - {is: v_rows_of, from: [items], to: e50}
+  - {is: v_axis_of, from: e50_cond, to: e50}
+  - {is: v_value_of, from: e50_cond_extends, to: e50_cond}
+  - {is: v_denote, from: e50_cond_extends, to: syntax.extends}
+  - {is: v_value_of, from: e50_cond_inline, to: e50_cond}
+  - {is: v_denote, from: e50_cond_inline, to: syntax.mod}
+  - {is: v_value_of, from: e50_cond_wrong_extends, to: e50_cond}
+  - {is: v_denote, from: e50_cond_wrong_extends, to: syntax.extends}
+  - {is: v_value_of, from: e50_cond_wrong_inline, to: e50_cond}
+  - {is: v_denote, from: e50_cond_wrong_inline, to: syntax.mod}
+  - {is: v_entry_of, from: '{cond}', to: e50}
+  - {is: v_metric_of, from: e50, to: mean_value}
   - {is: v_file_of, from: 'e15_Qwen2.5-1.5B-Instruct_L8.json', to: e15}
   - {is: v_rows_of, from: [items], to: e15}
   - {is: v_axis_of, from: e15_group, to: e15}
@@ -14421,6 +14447,13 @@ facts:
   - {is: v_refer, from: o_e45p_name_adj_decoy, to: {is: v_level, from: e45p.name_adj_decoy.accuracy, to: 0.4583333}}
   - {is: v_refer, from: o_e45p_name_adj_decoy_above_quarter, to: {is: v_come_after, from: e45p.name_adj_decoy.accuracy, to: 0.25}}
   - {is: v_contradict, from: o_e45_number_extends, to: h_verdict_by_option}
+  - {is: v_refer, from: o_e50_extends, to: {is: v_level, from: e50.extends.mean_value, to: 0.7395833}}
+  - {is: v_refer, from: o_e50_inline, to: {is: v_level, from: e50.inline.mean_value, to: 0.90625}}
+  - {is: v_refer, from: o_e50_wrong_extends, to: {is: v_level, from: e50.wrong_extends.mean_value, to: 0.6458333}}
+  - {is: v_refer, from: o_e50_wrong_inline, to: {is: v_level, from: e50.wrong_inline.mean_value, to: 0.8854167}}
+  - {is: v_refer, from: o_e50_extends_below_premise, to: {is: v_come_before, from: e50.extends.mean_value, to: 0.75}}
+  - {is: v_refer, from: o_e50_wrong_extends_above_premise, to: {is: v_come_after, from: e50.wrong_extends.mean_value, to: 0.5}}
+  - {is: v_refer, from: o_e50_inline_above_extends, to: {is: v_come_after, from: e50.inline.mean_value, to: e50.extends.mean_value}}
   - {is: v_contradict, from: o_e45_number_decoy, to: h_verdict_by_option}
   - {is: v_contradict, from: o_e45_number_control, to: h_verdict_by_option}
   - {is: v_contradict, from: o_e45_name_adj_extends, to: h_verdict_by_option}
