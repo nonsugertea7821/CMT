@@ -2956,6 +2956,19 @@ individuals:
   geo_region_by_expression_m_p_surface_L8: {is: axis_value, val: {text: p_surface_L8}}
   geo_region_by_expression_m_spearman_expr_cos_L8: {is: axis_value, val: {text: spearman_expr_cos_L8}}
   geo_region_by_expression_m_gap_L8: {is: axis_value, val: {text: gap_L8}}
+  geo_region_by_opaque_expression: {is: measurement_family}
+  geo_region_by_opaque_expression_c: {is: family_axis, val: {text: c}}
+  geo_region_by_opaque_expression_c_summary: {is: axis_value, val: {text: summary}}
+  geo_region_by_opaque_expression_m: {is: family_axis, val: {text: m}}
+  geo_region_by_opaque_expression_m_n_texts: {is: axis_value, val: {text: n_texts}}
+  geo_region_by_opaque_expression_m_n_pairs: {is: axis_value, val: {text: n_pairs}}
+  geo_region_by_opaque_expression_m_T_L8: {is: axis_value, val: {text: T_L8}}
+  geo_region_by_opaque_expression_m_null_mean_L8: {is: axis_value, val: {text: null_mean_L8}}
+  geo_region_by_opaque_expression_m_p_L8: {is: axis_value, val: {text: p_L8}}
+  geo_region_by_opaque_expression_m_T_surface_L8: {is: axis_value, val: {text: T_surface_L8}}
+  geo_region_by_opaque_expression_m_p_surface_L8: {is: axis_value, val: {text: p_surface_L8}}
+  geo_region_by_opaque_expression_m_spearman_expr_cos_L8: {is: axis_value, val: {text: spearman_expr_cos_L8}}
+  geo_region_by_opaque_expression_m_gap_L8: {is: axis_value, val: {text: gap_L8}}
   e35_expression_makes_state_unique: {is: measurement_family}
   e35_expression_makes_state_unique_c: {is: family_axis, val: {text: c}}
   e35_expression_makes_state_unique_c_none_S: {is: axis_value, val: {text: none_S}}
@@ -5024,6 +5037,10 @@ individuals:
   o_geo_rbe_p: {is: observation}
   o_geo_rbe_surface: {is: observation}
   o_geo_rbe_pairs: {is: observation}
+  o_geo_rbo_gap: {is: observation}
+  o_geo_rbo_p: {is: observation}
+  o_geo_rbo_surface: {is: observation}
+  o_geo_rbo_texts: {is: observation}
   o_sys_decision_link_all_match: {is: observation}
   o_sys_decision_link_ctrl_clean: {is: observation}
   o_sys_decision_link_cross: {is: observation}
@@ -5298,8 +5315,8 @@ individuals:
   b_state_by_identifier_parts: {is: item_queued}
   h_region_by_expression: {is: hyp_supported}
   b_region_by_expression: {is: item_done}
-  h_region_by_opaque_expression: {is: hyp_untested}
-  b_region_by_opaque_expression: {is: item_queued}
+  h_region_by_opaque_expression: {is: hyp_supported}
+  b_region_by_opaque_expression: {is: item_done}
   h_dedicated_token_raises_consistency: {is: hyp_untested}
   b_dedicated_token_raises_consistency: {is: item_queued}
   h_identifier_unique_by_region: {is: hyp_untested}
@@ -13226,6 +13243,32 @@ facts:
   - {is: v_spell, from: geo_region_by_expression_m_gap_L8, to: gap_L8}
   - {is: v_entry_of, from: '{m}', to: geo_region_by_expression}
   - {is: v_metric_of, from: geo_region_by_expression, to: mean_value}
+  - {is: v_file_of, from: geo_region_by_opaque_expression.json, to: geo_region_by_opaque_expression}
+  - {is: v_axis_of, from: geo_region_by_opaque_expression_c, to: geo_region_by_opaque_expression}
+  - {is: v_keys_of, from: '#', to: geo_region_by_opaque_expression_c}
+  - {is: v_value_of, from: geo_region_by_opaque_expression_c_summary, to: geo_region_by_opaque_expression_c}
+  - {is: v_spell, from: geo_region_by_opaque_expression_c_summary, to: ['summary']}
+  - {is: v_axis_of, from: geo_region_by_opaque_expression_m, to: geo_region_by_opaque_expression}
+  - {is: v_value_of, from: geo_region_by_opaque_expression_m_n_texts, to: geo_region_by_opaque_expression_m}
+  - {is: v_spell, from: geo_region_by_opaque_expression_m_n_texts, to: n_texts}
+  - {is: v_value_of, from: geo_region_by_opaque_expression_m_n_pairs, to: geo_region_by_opaque_expression_m}
+  - {is: v_spell, from: geo_region_by_opaque_expression_m_n_pairs, to: n_pairs}
+  - {is: v_value_of, from: geo_region_by_opaque_expression_m_T_L8, to: geo_region_by_opaque_expression_m}
+  - {is: v_spell, from: geo_region_by_opaque_expression_m_T_L8, to: T_L8}
+  - {is: v_value_of, from: geo_region_by_opaque_expression_m_null_mean_L8, to: geo_region_by_opaque_expression_m}
+  - {is: v_spell, from: geo_region_by_opaque_expression_m_null_mean_L8, to: null_mean_L8}
+  - {is: v_value_of, from: geo_region_by_opaque_expression_m_p_L8, to: geo_region_by_opaque_expression_m}
+  - {is: v_spell, from: geo_region_by_opaque_expression_m_p_L8, to: p_L8}
+  - {is: v_value_of, from: geo_region_by_opaque_expression_m_T_surface_L8, to: geo_region_by_opaque_expression_m}
+  - {is: v_spell, from: geo_region_by_opaque_expression_m_T_surface_L8, to: T_surface_L8}
+  - {is: v_value_of, from: geo_region_by_opaque_expression_m_p_surface_L8, to: geo_region_by_opaque_expression_m}
+  - {is: v_spell, from: geo_region_by_opaque_expression_m_p_surface_L8, to: p_surface_L8}
+  - {is: v_value_of, from: geo_region_by_opaque_expression_m_spearman_expr_cos_L8, to: geo_region_by_opaque_expression_m}
+  - {is: v_spell, from: geo_region_by_opaque_expression_m_spearman_expr_cos_L8, to: spearman_expr_cos_L8}
+  - {is: v_value_of, from: geo_region_by_opaque_expression_m_gap_L8, to: geo_region_by_opaque_expression_m}
+  - {is: v_spell, from: geo_region_by_opaque_expression_m_gap_L8, to: gap_L8}
+  - {is: v_entry_of, from: '{m}', to: geo_region_by_opaque_expression}
+  - {is: v_metric_of, from: geo_region_by_opaque_expression, to: mean_value}
   - {is: v_file_of, from: e35_expression_makes_state_unique.json, to: e35_expression_makes_state_unique}
   - {is: v_rows_of, from: [s], to: e35_expression_makes_state_unique}
   - {is: v_axis_of, from: e35_expression_makes_state_unique_c, to: e35_expression_makes_state_unique}
@@ -14545,6 +14588,12 @@ facts:
   - {is: v_refer, from: h_region_by_opaque_expression, to: {is: v_depend, from: midpoint_membership, to: opaque_expression}}
   - {is: v_check, from: b_region_by_opaque_expression, to: h_region_by_opaque_expression}
   - {is: v_ground, from: d_road_region, to: h_region_by_opaque_expression}
+  - {is: v_refer, from: o_geo_rbo_texts, to: {is: v_level, from: geo_region_by_opaque_expression.summary.n_texts.mean_value, to: 511}}
+  - {is: v_refer, from: o_geo_rbo_gap, to: {is: v_near, from: geo_region_by_opaque_expression.summary.gap_L8.mean_value, to: 0.181, new: 0.001}}
+  - {is: v_refer, from: o_geo_rbo_p, to: {is: v_level, from: geo_region_by_opaque_expression.summary.p_L8.mean_value, to: 0}}
+  - {is: v_refer, from: o_geo_rbo_surface, to: {is: v_near, from: geo_region_by_opaque_expression.summary.T_surface_L8.mean_value, to: 0.567, new: 0.001}}
+  - {is: v_support, from: o_geo_rbo_gap, to: h_region_by_opaque_expression}
+  - {is: v_support, from: o_geo_rbo_p, to: h_region_by_opaque_expression}
   - {is: v_refer, from: h_dedicated_token_raises_consistency, to: {is: v_raise, from: dedicated_token, to: cross_usage_consistency}}
   - {is: v_check, from: b_dedicated_token_raises_consistency, to: h_dedicated_token_raises_consistency}
   - {is: v_ground, from: d_road_region, to: h_dedicated_token_raises_consistency}
