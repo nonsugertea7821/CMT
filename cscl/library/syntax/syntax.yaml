@@ -215,6 +215,12 @@ individuals:
   kind_up_by_form_new_any: {is: law_rule, display: 第三の位置の種類が書かれていない形は any の下}
   below_self: {is: law_rule, display: 自分は自分の下}
   below_any: {is: law_rule, display: すべては any の下}
+  mod_new_no_with: {is: law_rule, display: 位置 new で限定するものは、相手を持たない}
+  is_from_with_concept: {is: law_rule, display: 属するの始点で限定する相手は、概念}
+  r_two_ends: {is: law_relation, display: 始点と終点の種類を持つ}
+  two_ends_by_ends: {is: law_rule, display: 始点の種類と終点の種類があるものは、始点と終点の種類を持つ}
+  verb_ref_with_verb_from: {is: law_rule, display: 始点で限定する相手の位置が動詞を受け取るなら、相手は始点と終点の種類を持つ}
+  verb_ref_with_verb_to: {is: law_rule, display: 終点で限定する相手の位置が動詞を受け取るなら、相手は始点と終点の種類を持つ}
   r_overlap: {is: law_relation, display: 種類として重なる}
   overlap_down: {is: law_rule, display: 下なら重なる}
   overlap_up: {is: law_rule, display: 上なら重なる}
@@ -463,6 +469,32 @@ facts:
   - {is: v_derive, from: below_self, to: {is: r_below, from: var1, to: var1}}
   - {is: v_assume, from: below_any, to: {is: exists, from: var1}}
   - {is: v_derive, from: below_any, to: {is: r_below, from: var1, to: any}}
+  - {is: v_assume, from: mod_new_no_with, to: {is: mod, from: var1, to: var2}}
+  - {is: v_assume, from: mod_new_no_with, to: {is: position, from: var2, to: new}}
+  - {is: v_assume, from: mod_new_no_with, to: {is: with, from: var2, to: var3}}
+  - {is: v_require, from: mod_new_no_with, to: {is: with, from: var2, to: var3, neg: true}}
+  - {is: v_assume, from: is_from_with_concept, to: {is: mod, from: var1, to: var2}}
+  - {is: v_assume, from: is_from_with_concept, to: {is: of, from: var2, to: is}}
+  - {is: v_assume, from: is_from_with_concept, to: {is: position, from: var2, to: from}}
+  - {is: v_assume, from: is_from_with_concept, to: {is: with, from: var2, to: var3}}
+  - {is: v_require, from: is_from_with_concept, to: {is: r_concept, from: var3}}
+  - {is: v_assume, from: two_ends_by_ends, to: {is: r_end_from, from: var1, to: var2}}
+  - {is: v_assume, from: two_ends_by_ends, to: {is: r_end_to, from: var1, to: var3}}
+  - {is: v_derive, from: two_ends_by_ends, to: {is: r_two_ends, from: var1}}
+  - {is: v_assume, from: verb_ref_with_verb_from, to: {is: mod, from: var1, to: var2}}
+  - {is: v_assume, from: verb_ref_with_verb_from, to: {is: of, from: var2, to: var3}}
+  - {is: v_assume, from: verb_ref_with_verb_from, to: {is: position, from: var2, to: from}}
+  - {is: v_assume, from: verb_ref_with_verb_from, to: {is: with, from: var2, to: var4}}
+  - {is: v_assume, from: verb_ref_with_verb_from, to: {is: r_end_to, from: var3, to: var5}}
+  - {is: v_assume, from: verb_ref_with_verb_from, to: {is: r_below, from: var5, to: ontology.verb_ref}}
+  - {is: v_require, from: verb_ref_with_verb_from, to: {is: r_two_ends, from: var4}}
+  - {is: v_assume, from: verb_ref_with_verb_to, to: {is: mod, from: var1, to: var2}}
+  - {is: v_assume, from: verb_ref_with_verb_to, to: {is: of, from: var2, to: var3}}
+  - {is: v_assume, from: verb_ref_with_verb_to, to: {is: position, from: var2, to: to}}
+  - {is: v_assume, from: verb_ref_with_verb_to, to: {is: with, from: var2, to: var4}}
+  - {is: v_assume, from: verb_ref_with_verb_to, to: {is: r_end_from, from: var3, to: var5}}
+  - {is: v_assume, from: verb_ref_with_verb_to, to: {is: r_below, from: var5, to: ontology.verb_ref}}
+  - {is: v_require, from: verb_ref_with_verb_to, to: {is: r_two_ends, from: var4}}
   - {is: v_assume, from: overlap_down, to: {is: r_below, from: var1, to: var2}}
   - {is: v_derive, from: overlap_down, to: {is: r_overlap, from: var1, to: var2}}
   - {is: v_assume, from: overlap_up, to: {is: r_below, from: var2, to: var1}}
