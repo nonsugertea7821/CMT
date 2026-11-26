@@ -12,7 +12,7 @@ nodes:
   v_place: {display: 発注する, extends: v_depend, from: order, to: agent}
   v_store: {display: 保管される, extends: v_compose, from: goods, to: warehouse}
   v_allocate: {display: 引き当てられる, extends: v_depend, from: order, to: goods}
-  v_pay: {display: 入金する, extends: v_perform, from: agent, to: payment}
+  v_pay: {display: 入金する, extends: v_perform, from: agent, to: payment, new_kind: money, post: [{is: part, from: new, to: from}, {is: exists, from: new}]}
   v_approve: {display: 承認する, extends: v_perform, from: agent, to: approval}
   v_classify: {display: 商品分類で分類される, extends: v_compose, from: goods, to: category}
   v_live: {display: 住む, extends: v_depend, from: person, to: address}
