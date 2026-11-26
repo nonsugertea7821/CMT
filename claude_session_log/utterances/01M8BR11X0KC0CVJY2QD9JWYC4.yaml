@@ -1,0 +1,24 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-26T10:57:09.024Z（UTC）
+individuals:
+  01M8BR11X0KC0CVJY2QD9JWYC4:
+    is: model_utterance
+    display: 発言 5891
+    val:
+      order: 5891
+      text: |
+        I've started the experiment that checks whether the model's concept regions follow the whole expression, not just the higher-level concept. It's running now. I set a reminder to check on it in 9 minutes, and when it finishes I'll write the result into the system.
+
+        **Design** (draft PR #960, for issue #958)
+        - **Data:** the display words of the 759 concepts in the system that have both a higher-level concept and a display word, passed through Qwen.
+        - **Measurement:** take groups that share a higher-level concept. That gives 42 groups and 10,009 pairs. For each pair, find the group member closest to the pair's midpoint. Then check how close that member's expression, apart from the higher-level concept, is to the pair's expressions. The score is a rank from 0 to 1; chance is about 0.5.
+        - **Verdict (layer 8):** "supported" if the score beats the shuffled baseline by 0.05 or more with p ≤ 0.05. Otherwise "refuted". The baseline (2,000 runs) shuffles which expression goes with which concept inside each group.
+        - **Recorded only, not used for the verdict:**
+          - Display words are translated from expressions, so their shared characters could produce the same pattern. I measure the same score with character overlap alongside it.
+          - I also record where the approval/payment pairs land in the model. In #954 these pairs had the same expression apart from the names they point to.
+
+        **Limit stated up front:** a high score doesn't show the model reads the expressions. It only shows that the keys (display words) sit in positions that follow how close the expressions are.
+
+        I tested the calculation with random vectors instead of the model. It came out near chance (0.508; the shuffled baseline averaged 0.499), which is what it should do.
+facts:
+- {is: v_say, from: session_model, to: 01M8BR11X0KC0CVJY2QD9JWYC4}
+- {is: exp.v_answer, from: 01M8BR11X0KC0CVJY2QD9JWYC4, to: 01M8BQFXF3KJ0NFJTRQZ9RW7ER}
