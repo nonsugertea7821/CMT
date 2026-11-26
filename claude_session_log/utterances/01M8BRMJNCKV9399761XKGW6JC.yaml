@@ -1,0 +1,25 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-26T11:07:48.780Z（UTC）
+individuals:
+  01M8BRMJNCKV9399761XKGW6JC:
+    is: model_utterance
+    display: 発言 5895
+    val:
+      order: 5895
+      text: |
+        The experiment for #958 (h_region_by_expression) came out supported, but it doesn't show yet that the model reads the expressions. Using only how many characters the display words share gives a result just as strong.
+
+        **Results** (layer 8; layers 14 and 20 are about the same)
+        - **The test:** take concepts that share a higher-level concept, and for each pair find the member closest to the pair's midpoint. That member tends to have the rest of its expression close to the pair's. The score was 0.615 against 0.500 for the shuffled baseline. The gap of 0.116 clears the pre-registered 0.05, with p = 0.
+        - **Character overlap:** measuring the same thing with the display words' shared characters gives 0.624. Display words are translated from the expressions, so this experiment can't tell whether the model read the expression or just placed similar-looking words near each other.
+        - **By group:**
+          - Strong: qualities (0.64) and occurrents (0.63).
+          - Near chance: processes (0.47) and reference verbs (0.50).
+        - **Approval and payment:** in the system these two have the same expression apart from the names they point to (the collision found in #954). In the model they are far apart (similarity 0.17), and each sits closest to its own verb (0.86 and 0.88). My untested reading is that the expressions don't capture a difference the display words do carry.
+
+        **Next step, registered:** PR #961 registers h_region_by_opaque_expression. It asks whether the regions still follow the expression when the model gets no display word, only the expression with its names replaced by meaningless words. The system already has a concept for that kind of expression (opaque_expression). It is a registration-only PR, so it should merge automatically once checks pass.
+
+        The results and observations are pushed to #960, which is still a draft. I'll mark it ready for your review once the checks pass. I'm watching #960 and #961 and have assigned you to both.
+facts:
+- {is: v_say, from: session_model, to: 01M8BRMJNCKV9399761XKGW6JC}
+- {is: exp.v_answer, from: 01M8BRMJNCKV9399761XKGW6JC, to: 01M8BQFXF3KJ0NFJTRQZ9RW7ER}
+- {is: v_refer, from: 01M8BRMJNCKV9399761XKGW6JC, to: exp.opaque_expression}
