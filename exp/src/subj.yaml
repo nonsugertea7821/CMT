@@ -72,7 +72,7 @@ nodes:
   recent_order: {display: 直近一年間の注文, extends: order, mod: {of: [v_measure, to], with: days_since, at: {amount: {le: 365}}}}
   dormant_agent: {display: 直近一年間に取引がない相手, extends: agent, mod: {of: [v_place, to], with: recent_order, neg: true}}
   new_order: {display: 新規, extends: order, mod: {of: [v_place, from], with: dormant_agent}}
-  payment: {display: 入金, extends: process, mod: [{of: [v_pay, to]}, {of: [v_measure, to], with: money}]}
+  payment: {display: 入金, extends: process, mod: {of: [v_pay, to]}}
   money: {display: 金額（円）, extends: magnitude, mod: {of: [v_measure, from], with: process}, axis: yen}
   sales: {display: 売上, extends: money, mod: {of: [v_measure, from], with: payment}}
   plan: {display: プラン, extends: information_entity, mod: {of: [v_refer, from], with: service}}
@@ -81,7 +81,7 @@ nodes:
   deficit: {display: 赤字, extends: account, mod: {of: [v_depend, to], with: profit_gap, at: {amount: {lt: 0}}}}
   delivery: {display: 納品, extends: process, mod: {of: [v_involve, from], with: goods}}
   inspection: {display: 検収, extends: process, mod: {of: [v_stage, from], with: delivery}}
-  approval: {display: 承認, extends: process, mod: [{of: [v_approve, to]}, {of: [v_stage, from], with: inspection}]}
+  approval: {display: 承認, extends: process, mod: {of: [v_approve, to]}}
   approved_inspection: {display: 承認まで済んだ検収, extends: inspection, mod: {of: [v_stage, to], with: approval}}
   completed: {display: 完了, extends: quality, mod: {of: [v_measure, from], with: approved_inspection}}
   delay: {display: 遅延, extends: delivery, mod: {of: [v_measure, to], with: days_overdue, at: {amount: {ge: 3}}}}
