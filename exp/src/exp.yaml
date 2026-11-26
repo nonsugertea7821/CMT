@@ -5300,6 +5300,8 @@ individuals:
   b_region_by_expression: {is: item_done}
   h_region_by_opaque_expression: {is: hyp_untested}
   b_region_by_opaque_expression: {is: item_queued}
+  h_dedicated_token_raises_consistency: {is: hyp_untested}
+  b_dedicated_token_raises_consistency: {is: item_queued}
   h_identifier_unique_by_region: {is: hyp_untested}
   b_identifier_unique_by_region: {is: item_queued}
   h_lineage_is_genus: {is: hyp_supported}
@@ -14543,6 +14545,9 @@ facts:
   - {is: v_refer, from: h_region_by_opaque_expression, to: {is: v_depend, from: midpoint_membership, to: opaque_expression}}
   - {is: v_check, from: b_region_by_opaque_expression, to: h_region_by_opaque_expression}
   - {is: v_ground, from: d_road_region, to: h_region_by_opaque_expression}
+  - {is: v_refer, from: h_dedicated_token_raises_consistency, to: {is: v_raise, from: dedicated_token, to: cross_usage_consistency}}
+  - {is: v_check, from: b_dedicated_token_raises_consistency, to: h_dedicated_token_raises_consistency}
+  - {is: v_ground, from: d_road_region, to: h_dedicated_token_raises_consistency}
   - {is: v_refer, from: h_identifier_unique_by_region, to: {is: ontology.v_rely, from: syntax.identifier, to: midpoint_membership}}
   - {is: v_check, from: b_identifier_unique_by_region, to: h_identifier_unique_by_region}
   - {is: v_ground, from: d_road_region, to: h_identifier_unique_by_region}
