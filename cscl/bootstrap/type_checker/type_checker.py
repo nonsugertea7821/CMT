@@ -1273,8 +1273,6 @@ class Ontology:
                 if not spot:
                     continue
                 verb, pos = spot
-                if not self.overlaps(self.spot_type(verb, pos), n["extends"]) and not self.overlaps(n["extends"], self.spot_type(verb, pos)):
-                    err(f"{where}: {n['extends']} は {verb} の {pos}（{self.spot_type(verb, pos)}）に来られない")
                 if "with" in m:
                     other = {"from": "to", "to": "from"}.get(pos)
                     if other is None:
@@ -1285,8 +1283,6 @@ class Ontology:
                     elif self.is_a(self.end(verb, other), self.verb_ref):   # 動詞を受け取る位置: 来るのは動詞そのもの
                         if not self.is_verb(m["with"]):
                             err(f"{where}: {m['with']} は動詞でない。{verb} の {other} は動詞を受け取る")
-                    elif (m["with"] not in N and m["with"] not in self.I) or not self.overlaps(m["with"], self.end(verb, other)):
-                        err(f"{where}: {m['with']} は {verb} の {other}（{self.end(verb, other)}）に来られない")
                 if set(m) - set(self.G["mod"]):
                     err(f"{where}: 語 {set(m) - set(self.G['mod'])} が、grammar.mod に書かれていない")
                 if m.get("quant") is not None and m["quant"] not in self.G["logic"]:

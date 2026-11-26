@@ -215,6 +215,18 @@ individuals:
   kind_up_by_form_new_any: {is: law_rule, display: 第三の位置の種類が書かれていない形は any の下}
   below_self: {is: law_rule, display: 自分は自分の下}
   below_any: {is: law_rule, display: すべては any の下}
+  r_overlap: {is: law_relation, display: 種類として重なる}
+  overlap_down: {is: law_rule, display: 下なら重なる}
+  overlap_up: {is: law_rule, display: 上なら重なる}
+  below_by_is: {is: law_rule, display: 個体はその種類の下}
+  mod_fits_from: {is: law_rule, display: 始点で限定したものの上位は、その動詞の始点の種類と重なる}
+  mod_fits_to: {is: law_rule, display: 終点で限定したものの上位は、その動詞の終点の種類と重なる}
+  mod_with_fits_from: {is: law_rule, display: 始点で限定する相手は、その動詞の終点の種類と重なる}
+  mod_with_fits_to: {is: law_rule, display: 終点で限定する相手は、その動詞の始点の種類と重なる}
+  r_named: {is: law_relation, display: 名のある}
+  named_by_domain: {is: law_rule, display: 領域を持つものは名のあるもの}
+  named_any: {is: law_rule, display: any は名のあるもの}
+  mod_with_named: {is: law_rule, display: 限定する相手は、名のあるもの}
   one_spelling: {is: law_rule, display: 同じ領域で同じ綴りの語は、どこに書かれても同じものを指す}
   below_by_step: {is: law_rule, display: 種類として上のものの下は下}
   narrow_from: {is: law_rule, display: 下位の動詞の端 from は、上位の動詞の端を狭める}
@@ -451,6 +463,47 @@ facts:
   - {is: v_derive, from: below_self, to: {is: r_below, from: var1, to: var1}}
   - {is: v_assume, from: below_any, to: {is: exists, from: var1}}
   - {is: v_derive, from: below_any, to: {is: r_below, from: var1, to: any}}
+  - {is: v_assume, from: overlap_down, to: {is: r_below, from: var1, to: var2}}
+  - {is: v_derive, from: overlap_down, to: {is: r_overlap, from: var1, to: var2}}
+  - {is: v_assume, from: overlap_up, to: {is: r_below, from: var2, to: var1}}
+  - {is: v_derive, from: overlap_up, to: {is: r_overlap, from: var1, to: var2}}
+  - {is: v_assume, from: below_by_is, to: {is: is, from: var1, to: var3}}
+  - {is: v_assume, from: below_by_is, to: {is: r_below, from: var3, to: var2}}
+  - {is: v_derive, from: below_by_is, to: {is: r_below, from: var1, to: var2}}
+  - {is: v_assume, from: mod_fits_from, to: {is: mod, from: var1, to: var2}}
+  - {is: v_assume, from: mod_fits_from, to: {is: of, from: var2, to: var3}}
+  - {is: v_assume, from: mod_fits_from, to: {is: position, from: var2, to: from}}
+  - {is: v_assume, from: mod_fits_from, to: {is: extends, from: var1, to: var4}}
+  - {is: v_assume, from: mod_fits_from, to: {is: r_end_from, from: var3, to: var5}}
+  - {is: v_require, from: mod_fits_from, to: {is: r_overlap, from: var4, to: var5}}
+  - {is: v_assume, from: mod_fits_to, to: {is: mod, from: var1, to: var2}}
+  - {is: v_assume, from: mod_fits_to, to: {is: of, from: var2, to: var3}}
+  - {is: v_assume, from: mod_fits_to, to: {is: position, from: var2, to: to}}
+  - {is: v_assume, from: mod_fits_to, to: {is: extends, from: var1, to: var4}}
+  - {is: v_assume, from: mod_fits_to, to: {is: r_end_to, from: var3, to: var5}}
+  - {is: v_require, from: mod_fits_to, to: {is: r_overlap, from: var4, to: var5}}
+  - {is: v_assume, from: mod_with_fits_from, to: {is: mod, from: var1, to: var2}}
+  - {is: v_assume, from: mod_with_fits_from, to: {is: of, from: var2, to: var3}}
+  - {is: v_assume, from: mod_with_fits_from, to: {is: position, from: var2, to: from}}
+  - {is: v_assume, from: mod_with_fits_from, to: {is: with, from: var2, to: var4}}
+  - {is: v_assume, from: mod_with_fits_from, to: {is: r_end_to, from: var3, to: var5}}
+  - {is: v_assume, from: mod_with_fits_from, to: {is: r_below, from: var5, to: ontology.kind, neg: true}}
+  - {is: v_require, from: mod_with_fits_from, to: {is: r_overlap, from: var4, to: var5}}
+  - {is: v_assume, from: mod_with_fits_to, to: {is: mod, from: var1, to: var2}}
+  - {is: v_assume, from: mod_with_fits_to, to: {is: of, from: var2, to: var3}}
+  - {is: v_assume, from: mod_with_fits_to, to: {is: position, from: var2, to: to}}
+  - {is: v_assume, from: mod_with_fits_to, to: {is: with, from: var2, to: var4}}
+  - {is: v_assume, from: mod_with_fits_to, to: {is: r_end_from, from: var3, to: var5}}
+  - {is: v_assume, from: mod_with_fits_to, to: {is: r_below, from: var5, to: ontology.kind, neg: true}}
+  - {is: v_require, from: mod_with_fits_to, to: {is: r_overlap, from: var4, to: var5}}
+  - {is: v_assume, from: mod_with_named, to: {is: mod, from: var1, to: var2}}
+  - {is: v_assume, from: mod_with_named, to: {is: of, from: var2, to: var3}}
+  - {is: v_assume, from: mod_with_named, to: {is: with, from: var2, to: var4}}
+  - {is: v_require, from: mod_with_named, to: {is: r_named, from: var4, to: var4}}
+  - {is: v_assume, from: named_by_domain, to: {is: domain, from: var1, to: var2}}
+  - {is: v_derive, from: named_by_domain, to: {is: r_named, from: var1, to: var1}}
+  - {is: v_assume, from: named_any, to: {is: with, from: var1, to: any}}
+  - {is: v_derive, from: named_any, to: {is: r_named, from: any, to: any}}
   - {is: v_assume, from: one_spelling, to: {is: r_written, from: var1, to: var2}}
   - {is: v_assume, from: one_spelling, to: {is: r_written, from: var1, to: var3}}
   - {is: v_require, from: one_spelling, to: {is: same, from: var2, to: var3}}
