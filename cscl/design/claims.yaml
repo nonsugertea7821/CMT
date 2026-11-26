@@ -281,8 +281,8 @@ individuals:
   b_identifier_by_expansion: {is: exp.item_done}
   h_identifier_by_bisimulation: {is: exp.hyp_refuted}
   b_identifier_by_bisimulation: {is: exp.item_done}
-  h_identifier_by_genus_differentia: {is: exp.hyp_untested}
-  b_identifier_by_genus_differentia: {is: exp.item_queued}
+  h_identifier_by_genus_differentia: {is: exp.hyp_refuted}
+  b_identifier_by_genus_differentia: {is: exp.item_done}
   h_sequence_by_current_order: {is: exp.hyp_untested}
   b_sequence_by_current_order: {is: exp.item_queued}
   h_dangling_by_append_only_declaration: {is: exp.hyp_refuted}
@@ -418,6 +418,11 @@ individuals:
   o_sys_ifd_exists1: {is: exp.observation}
   o_sys_ifd_merged1: {is: exp.observation}
   o_sys_ifd_split1: {is: exp.observation}
+  o_sys_igd_classes_p: {is: exp.observation}
+  o_sys_igd_classes_g: {is: exp.observation}
+  o_sys_igd_merged: {is: exp.observation}
+  o_sys_igd_merged_nodes: {is: exp.observation}
+  o_sys_igd_split: {is: exp.observation}
   o_sys_declaration_never_halts: {is: exp.observation}
   o_sys_cycles_positive: {is: exp.observation}
   o_sys_cycles_mostly_one_relation: {is: exp.observation}
@@ -2571,6 +2576,14 @@ facts:
   - {is: exp.v_support, from: o_sys_ifd_merged1, to: h_identifier_free_of_declaration}
   - {is: v_refer, from: o_sys_ifd_split1, to: {is: v_level, from: sys_identifier_free_of_declaration.summary.W1_n_split.mean_value, to: 0}}
   - {is: exp.v_support, from: o_sys_ifd_split1, to: h_identifier_free_of_declaration}
+  - {is: v_refer, from: o_sys_igd_classes_p, to: {is: v_level, from: sys_identifier_by_genus_differentia.summary.n_classes_P.mean_value, to: 793}}
+  - {is: v_refer, from: o_sys_igd_classes_g, to: {is: v_level, from: sys_identifier_by_genus_differentia.summary.n_classes_G.mean_value, to: 712}}
+  - {is: exp.v_contradict, from: o_sys_igd_classes_g, to: h_identifier_by_genus_differentia}
+  - {is: v_refer, from: o_sys_igd_merged, to: {is: v_level, from: sys_identifier_by_genus_differentia.summary.n_merged.mean_value, to: 775}}
+  - {is: exp.v_contradict, from: o_sys_igd_merged, to: h_identifier_by_genus_differentia}
+  - {is: v_refer, from: o_sys_igd_merged_nodes, to: {is: v_level, from: sys_identifier_by_genus_differentia.summary.n_merged_nodes.mean_value, to: 107}}
+  - {is: exp.v_contradict, from: o_sys_igd_merged_nodes, to: h_identifier_by_genus_differentia}
+  - {is: v_refer, from: o_sys_igd_split, to: {is: v_level, from: sys_identifier_by_genus_differentia.summary.n_split.mean_value, to: 0}}
   - {is: v_refer, from: o_sys_quant_with_qual, to: {is: v_level, from: sys_quadrants.quant_alone.mean_value, to: 0.0}}
   - {is: v_refer, from: o_sys_rel_disjoint, to: {is: v_level, from: sys_quadrants.rel_mixed.mean_value, to: 0.0}}
   - {is: v_refer, from: o_sys_unplaced_neg_only, to: {is: v_level, from: sys_quadrants.none_other.mean_value, to: 0.0}}
