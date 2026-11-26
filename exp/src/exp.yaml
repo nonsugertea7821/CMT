@@ -2862,6 +2862,25 @@ individuals:
   sys_endpoint_law_whole_system_m_n_endpoint_only_before: {is: axis_value, val: {text: n_endpoint_only_before}}
   sys_endpoint_law_whole_system_m_A_before_failures: {is: axis_value, val: {text: A_before_failures}}
   sys_endpoint_law_whole_system_m_A_after_failures: {is: axis_value, val: {text: A_after_failures}}
+  sys_spot_kind_checks_as_law_v2: {is: measurement_family}
+  sys_spot_kind_checks_as_law_v2_c: {is: family_axis, val: {text: c}}
+  sys_spot_kind_checks_as_law_v2_c_summary: {is: axis_value, val: {text: summary}}
+  sys_spot_kind_checks_as_law_v2_m: {is: family_axis, val: {text: m}}
+  sys_spot_kind_checks_as_law_v2_m_n_ran: {is: axis_value, val: {text: n_ran}}
+  sys_spot_kind_checks_as_law_v2_m_n_agree: {is: axis_value, val: {text: n_agree}}
+  sys_spot_kind_checks_as_law_v2_m_n_disagree: {is: axis_value, val: {text: n_disagree}}
+  sys_spot_kind_checks_as_law_v2_m_C: {is: axis_value, val: {text: C}}
+  sys_spot_kind_checks_as_law_v2_m_over_with_new_laws: {is: axis_value, val: {text: over_with_new_laws}}
+  sys_spot_kind_checks_as_law_v3: {is: measurement_family}
+  sys_spot_kind_checks_as_law_v3_c: {is: family_axis, val: {text: c}}
+  sys_spot_kind_checks_as_law_v3_c_summary: {is: axis_value, val: {text: summary}}
+  sys_spot_kind_checks_as_law_v3_m: {is: family_axis, val: {text: m}}
+  sys_spot_kind_checks_as_law_v3_m_n_ran: {is: axis_value, val: {text: n_ran}}
+  sys_spot_kind_checks_as_law_v3_m_n_agree: {is: axis_value, val: {text: n_agree}}
+  sys_spot_kind_checks_as_law_v3_m_n_disagree: {is: axis_value, val: {text: n_disagree}}
+  sys_spot_kind_checks_as_law_v3_m_n_k3_before: {is: axis_value, val: {text: n_k3_before}}
+  sys_spot_kind_checks_as_law_v3_m_n_k3_covered: {is: axis_value, val: {text: n_k3_covered}}
+  sys_spot_kind_checks_as_law_v3_m_C: {is: axis_value, val: {text: C}}
   sys_declaration_follows_freeze: {is: measurement_family}
   sys_declaration_follows_freeze_c: {is: family_axis, val: {text: c}}
   sys_declaration_follows_freeze_c_summary: {is: axis_value, val: {text: summary}}
@@ -5963,8 +5982,19 @@ individuals:
   o_sys_elws_endpoint_only: {is: observation}
   o_sys_elws_a_before: {is: observation}
   o_sys_elws_a_after: {is: observation}
-  h_spot_kind_checks_as_law: {is: hyp_untested}
-  b_spot_kind_checks_as_law: {is: item_queued}
+  h_spot_kind_checks_as_law: {is: hyp_supported}
+  b_spot_kind_checks_as_law: {is: item_done}
+  o_sys_skl2_ran: {is: observation}
+  o_sys_skl2_agree: {is: observation}
+  o_sys_skl2_disagree: {is: observation}
+  o_sys_skl2_cover: {is: observation}
+  o_sys_skl2_over_new: {is: observation}
+  o_sys_skl3_ran: {is: observation}
+  o_sys_skl3_agree: {is: observation}
+  o_sys_skl3_disagree: {is: observation}
+  o_sys_skl3_k3: {is: observation}
+  o_sys_skl3_k3_cover: {is: observation}
+  o_sys_skl3_cover: {is: observation}
   h_law_errors_grouped_for_reader: {is: hyp_untested}
   b_law_errors_grouped_for_reader: {is: item_queued}
 facts:
@@ -12947,6 +12977,44 @@ facts:
   - {is: v_spell, from: sys_endpoint_law_whole_system_m_A_after_failures, to: A_after_failures}
   - {is: v_entry_of, from: '{m}', to: sys_endpoint_law_whole_system}
   - {is: v_metric_of, from: sys_endpoint_law_whole_system, to: mean_value}
+  - {is: v_file_of, from: sys_spot_kind_checks_as_law_v2.json, to: sys_spot_kind_checks_as_law_v2}
+  - {is: v_axis_of, from: sys_spot_kind_checks_as_law_v2_c, to: sys_spot_kind_checks_as_law_v2}
+  - {is: v_keys_of, from: '#', to: sys_spot_kind_checks_as_law_v2_c}
+  - {is: v_value_of, from: sys_spot_kind_checks_as_law_v2_c_summary, to: sys_spot_kind_checks_as_law_v2_c}
+  - {is: v_spell, from: sys_spot_kind_checks_as_law_v2_c_summary, to: ['summary']}
+  - {is: v_axis_of, from: sys_spot_kind_checks_as_law_v2_m, to: sys_spot_kind_checks_as_law_v2}
+  - {is: v_value_of, from: sys_spot_kind_checks_as_law_v2_m_n_ran, to: sys_spot_kind_checks_as_law_v2_m}
+  - {is: v_spell, from: sys_spot_kind_checks_as_law_v2_m_n_ran, to: n_ran}
+  - {is: v_value_of, from: sys_spot_kind_checks_as_law_v2_m_n_agree, to: sys_spot_kind_checks_as_law_v2_m}
+  - {is: v_spell, from: sys_spot_kind_checks_as_law_v2_m_n_agree, to: n_agree}
+  - {is: v_value_of, from: sys_spot_kind_checks_as_law_v2_m_n_disagree, to: sys_spot_kind_checks_as_law_v2_m}
+  - {is: v_spell, from: sys_spot_kind_checks_as_law_v2_m_n_disagree, to: n_disagree}
+  - {is: v_value_of, from: sys_spot_kind_checks_as_law_v2_m_C, to: sys_spot_kind_checks_as_law_v2_m}
+  - {is: v_spell, from: sys_spot_kind_checks_as_law_v2_m_C, to: C}
+  - {is: v_value_of, from: sys_spot_kind_checks_as_law_v2_m_over_with_new_laws, to: sys_spot_kind_checks_as_law_v2_m}
+  - {is: v_spell, from: sys_spot_kind_checks_as_law_v2_m_over_with_new_laws, to: over_with_new_laws}
+  - {is: v_entry_of, from: '{m}', to: sys_spot_kind_checks_as_law_v2}
+  - {is: v_metric_of, from: sys_spot_kind_checks_as_law_v2, to: mean_value}
+  - {is: v_file_of, from: sys_spot_kind_checks_as_law_v3.json, to: sys_spot_kind_checks_as_law_v3}
+  - {is: v_axis_of, from: sys_spot_kind_checks_as_law_v3_c, to: sys_spot_kind_checks_as_law_v3}
+  - {is: v_keys_of, from: '#', to: sys_spot_kind_checks_as_law_v3_c}
+  - {is: v_value_of, from: sys_spot_kind_checks_as_law_v3_c_summary, to: sys_spot_kind_checks_as_law_v3_c}
+  - {is: v_spell, from: sys_spot_kind_checks_as_law_v3_c_summary, to: ['summary']}
+  - {is: v_axis_of, from: sys_spot_kind_checks_as_law_v3_m, to: sys_spot_kind_checks_as_law_v3}
+  - {is: v_value_of, from: sys_spot_kind_checks_as_law_v3_m_n_ran, to: sys_spot_kind_checks_as_law_v3_m}
+  - {is: v_spell, from: sys_spot_kind_checks_as_law_v3_m_n_ran, to: n_ran}
+  - {is: v_value_of, from: sys_spot_kind_checks_as_law_v3_m_n_agree, to: sys_spot_kind_checks_as_law_v3_m}
+  - {is: v_spell, from: sys_spot_kind_checks_as_law_v3_m_n_agree, to: n_agree}
+  - {is: v_value_of, from: sys_spot_kind_checks_as_law_v3_m_n_disagree, to: sys_spot_kind_checks_as_law_v3_m}
+  - {is: v_spell, from: sys_spot_kind_checks_as_law_v3_m_n_disagree, to: n_disagree}
+  - {is: v_value_of, from: sys_spot_kind_checks_as_law_v3_m_n_k3_before, to: sys_spot_kind_checks_as_law_v3_m}
+  - {is: v_spell, from: sys_spot_kind_checks_as_law_v3_m_n_k3_before, to: n_k3_before}
+  - {is: v_value_of, from: sys_spot_kind_checks_as_law_v3_m_n_k3_covered, to: sys_spot_kind_checks_as_law_v3_m}
+  - {is: v_spell, from: sys_spot_kind_checks_as_law_v3_m_n_k3_covered, to: n_k3_covered}
+  - {is: v_value_of, from: sys_spot_kind_checks_as_law_v3_m_C, to: sys_spot_kind_checks_as_law_v3_m}
+  - {is: v_spell, from: sys_spot_kind_checks_as_law_v3_m_C, to: C}
+  - {is: v_entry_of, from: '{m}', to: sys_spot_kind_checks_as_law_v3}
+  - {is: v_metric_of, from: sys_spot_kind_checks_as_law_v3, to: mean_value}
   - {is: v_file_of, from: sys_declaration_follows_freeze.json, to: sys_declaration_follows_freeze}
   - {is: v_axis_of, from: sys_declaration_follows_freeze_c, to: sys_declaration_follows_freeze}
   - {is: v_keys_of, from: '#', to: sys_declaration_follows_freeze_c}
@@ -16200,6 +16268,24 @@ facts:
   - {is: v_refer, from: h_spot_kind_checks_as_law, to: {is: v_depend, from: type_check_result, to: [syntax.law_rule, syntax.mod]}}
   - {is: v_check, from: b_spot_kind_checks_as_law, to: h_spot_kind_checks_as_law}
   - {is: v_ground, from: d_road_checker, to: h_spot_kind_checks_as_law}
+  - {is: v_refer, from: o_sys_skl2_ran, to: {is: v_level, from: sys_spot_kind_checks_as_law_v2.summary.n_ran.mean_value, to: 404}}
+  - {is: v_refer, from: o_sys_skl2_agree, to: {is: v_level, from: sys_spot_kind_checks_as_law_v2.summary.n_agree.mean_value, to: 404}}
+  - {is: v_refer, from: o_sys_skl2_disagree, to: {is: v_level, from: sys_spot_kind_checks_as_law_v2.summary.n_disagree.mean_value, to: 0}}
+  - {is: v_refer, from: o_sys_skl2_cover, to: {is: v_level, from: sys_spot_kind_checks_as_law_v2.summary.C.mean_value, to: 1}}
+  - {is: v_refer, from: o_sys_skl2_over_new, to: {is: v_level, from: sys_spot_kind_checks_as_law_v2.summary.over_with_new_laws.mean_value, to: 0}}
+  - {is: v_refer, from: o_sys_skl3_ran, to: {is: v_level, from: sys_spot_kind_checks_as_law_v3.summary.n_ran.mean_value, to: 12}}
+  - {is: v_refer, from: o_sys_skl3_agree, to: {is: v_level, from: sys_spot_kind_checks_as_law_v3.summary.n_agree.mean_value, to: 12}}
+  - {is: v_refer, from: o_sys_skl3_disagree, to: {is: v_level, from: sys_spot_kind_checks_as_law_v3.summary.n_disagree.mean_value, to: 0}}
+  - {is: v_refer, from: o_sys_skl3_k3, to: {is: v_level, from: sys_spot_kind_checks_as_law_v3.summary.n_k3_before.mean_value, to: 6}}
+  - {is: v_refer, from: o_sys_skl3_k3_cover, to: {is: v_level, from: sys_spot_kind_checks_as_law_v3.summary.n_k3_covered.mean_value, to: 6}}
+  - {is: v_refer, from: o_sys_skl3_cover, to: {is: v_level, from: sys_spot_kind_checks_as_law_v3.summary.C.mean_value, to: 1}}
+  - {is: v_support, from: o_sys_skl2_agree, to: h_spot_kind_checks_as_law}
+  - {is: v_support, from: o_sys_skl2_disagree, to: h_spot_kind_checks_as_law}
+  - {is: v_support, from: o_sys_skl2_cover, to: h_spot_kind_checks_as_law}
+  - {is: v_support, from: o_sys_skl2_over_new, to: h_spot_kind_checks_as_law}
+  - {is: v_support, from: o_sys_skl3_disagree, to: h_spot_kind_checks_as_law}
+  - {is: v_support, from: o_sys_skl3_k3_cover, to: h_spot_kind_checks_as_law}
+  - {is: v_support, from: o_sys_skl3_cover, to: h_spot_kind_checks_as_law}
   - {is: v_refer, from: h_law_errors_grouped_for_reader, to: {is: v_rely, from: usage_explain, to: type_check_result}}
   - {is: v_check, from: b_law_errors_grouped_for_reader, to: h_law_errors_grouped_for_reader}
   - {is: v_ground, from: d_road_checker, to: h_law_errors_grouped_for_reader}
