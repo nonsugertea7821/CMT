@@ -1,0 +1,49 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-26T10:36:42.797Z（UTC）
+individuals:
+  01M8BPVMDDYPSD14ZFPPAW2AKZ:
+    is: model_utterance
+    display: 発言 5854
+    val:
+      order: 5854
+      text: |
+        実験の設計として exp.yaml に置かれている決定を、採択済み（確定）と仮置き（暫定）に分けて並べます。中身は各決定の式を読んで、ふつうの言葉にしたものです。
+
+        **目的と測り方（採択済み）**
+        - 目的（d_goal）：この設計で、再定義がうまくいく度合いを上げる。
+        - 測り方（d_metric）：それを「使い方をまたいでも答えがそろうか」で測る。たとえば同じ概念を、暗唱する・当てはめる・判定する、といった違う使い方で問い、答えが一貫しているかを見る。
+
+        **正しさの置き場（モデルに教える「正解」をどこに持つか）**
+        - 採択済み：
+          - 正しさは、型の付いたグラフ（概念を結んだ図）として組む（d_source_of_truth_location）。
+          - それは CSCL で書く（d_source_of_truth_in_cscl）。
+          - モデルに見せる文章は、そこから作ったもの（d_rendered_text_is_derived）。
+          - 試験の問いも、当てはめの例の一種として扱う（d_test_is_material）。
+        - 仮置き：
+          - 中身は、定義と当てはめの例でできている（d_source_of_truth_content）。
+
+        **モデルへの渡し方**
+        - 仮置き：
+          - 用語集は、関係する定義だけを選んで作る（d_term_server_selects）。
+          - 再定義は、用語集の先頭に置く（d_redefinition_at_head）。
+          - どの記号を選ぶかは、グラフをたどって機械的に決める（d_symbol_selection_symbolic）。
+
+        **モデルの中での働かせ方**
+        - 仮置き：
+          - 判定は、概念のベクトル（モデル内部に足す向き）に頼る（d_verdict_by_vector）。
+          - 説明は、文章を差し込むことに頼る（d_explanation_by_text）。
+          - 教えた変化は、ベクトルの側に保つ（d_consolidation_in_vector）。
+        - 採択済み：
+          - ベクトルを使うには、重みの公開されたモデルが要る（d_vector_needs_open_weights）。いまは Qwen を使っています。
+          - API でしか使えないモデルには、文章の差し込みで渡す（d_text_for_api_models）。
+
+        **測り方を上げる道（仮置き）**
+        - 領域の道（d_road_region）：答えがそろうかは、二つの点の中点がその概念の範囲に落ちるかで決まる。
+        - 検査の道（d_road_checker）：書いた定義の正確さは、型検査器に依る。
+        - 日本語の道（d_road_japanese）：表示語の自然さが、測る値を上げる。
+
+        識別子の仮説（#954 など）は、この三つの道の共通の土台「表示語は体系から決まる」の側にぶら下がっています。#945（表示語と読みを添える）は、日本語の道からの実験です。
+
+        個々の実験の手順（たとえば過去の Qwen の実験の段取り）を知りたいときは、どの実験か言ってもらえれば、そのスクリプトの事前登録を読んで説明します。
+facts:
+- {is: v_say, from: session_model, to: 01M8BPVMDDYPSD14ZFPPAW2AKZ}
+- {is: exp.v_answer, from: 01M8BPVMDDYPSD14ZFPPAW2AKZ, to: 01M8BPV437NCQQBN7AW66EVC3Q}
