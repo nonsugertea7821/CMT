@@ -2796,6 +2796,18 @@ individuals:
   sys_endpoint_law_same_mod_m_C: {is: axis_value, val: {text: C}}
   sys_endpoint_law_same_mod_m_control_errors: {is: axis_value, val: {text: control_errors}}
   sys_endpoint_law_same_mod_m_n_crashed_or_missing: {is: axis_value, val: {text: n_crashed_or_missing}}
+  sys_with_partner_by_domain: {is: measurement_family}
+  sys_with_partner_by_domain_c: {is: family_axis, val: {text: c}}
+  sys_with_partner_by_domain_c_summary: {is: axis_value, val: {text: summary}}
+  sys_with_partner_by_domain_m: {is: family_axis, val: {text: m}}
+  sys_with_partner_by_domain_m_n_units: {is: axis_value, val: {text: n_units}}
+  sys_with_partner_by_domain_m_n_covered: {is: axis_value, val: {text: n_covered}}
+  sys_with_partner_by_domain_m_control_errors: {is: axis_value, val: {text: control_errors}}
+  sys_with_partner_by_domain_m_n_crashed_or_missing: {is: axis_value, val: {text: n_crashed_or_missing}}
+  sys_with_partner_by_domain_m_n_undefined_units: {is: axis_value, val: {text: n_undefined_units}}
+  sys_with_partner_by_domain_m_n_undefined_covered_named: {is: axis_value, val: {text: n_undefined_covered_named}}
+  sys_with_partner_by_domain_m_n_axis_units: {is: axis_value, val: {text: n_axis_units}}
+  sys_with_partner_by_domain_m_n_axis_covered_named: {is: axis_value, val: {text: n_axis_covered_named}}
   e35_expression_makes_state_unique: {is: measurement_family}
   e35_expression_makes_state_unique_c: {is: family_axis, val: {text: c}}
   e35_expression_makes_state_unique_c_none_S: {is: axis_value, val: {text: none_S}}
@@ -4966,8 +4978,16 @@ individuals:
   o_sys_sm_crashed: {is: observation}
   h_with_undefined_partner_as_law_rule: {is: hyp_untested}
   b_with_undefined_partner_as_law_rule: {is: item_queued}
-  h_with_partner_named_by_domain: {is: hyp_untested}
-  b_with_partner_named_by_domain: {is: item_queued}
+  h_with_partner_named_by_domain: {is: hyp_supported}
+  b_with_partner_named_by_domain: {is: item_done}
+  o_sys_wpd_units: {is: observation}
+  o_sys_wpd_covered: {is: observation}
+  o_sys_wpd_control: {is: observation}
+  o_sys_wpd_crashed: {is: observation}
+  o_sys_wpd_undef: {is: observation}
+  o_sys_wpd_undef_named: {is: observation}
+  o_sys_wpd_axis: {is: observation}
+  o_sys_wpd_axis_named: {is: observation}
   h_apply_depends_explain: {is: hyp_untested}
   b_apply_depends_explain: {is: item_queued}
   h_explain_relies_on_teaching: {is: hyp_untested}
@@ -5817,6 +5837,8 @@ individuals:
   o_e58_4b_near_acc_recite: {is: observation}
   o_e58_4b_near_joint_not_below_lo: {is: observation}
   o_e58_4b_near_joint_below_hi: {is: observation}
+  h_endpoint_law_replaces_code_check: {is: hyp_untested}
+  b_endpoint_law_replaces_code_check: {is: item_queued}
 facts:
   - {is: v_collect, from: residual_space, to: residual_vector}
   - {is: v_sum, from: layer_output, to: state_shift, new: shifted_hidden_state}
@@ -12678,6 +12700,30 @@ facts:
   - {is: v_spell, from: sys_endpoint_law_same_mod_m_n_crashed_or_missing, to: n_crashed_or_missing}
   - {is: v_entry_of, from: '{m}', to: sys_endpoint_law_same_mod}
   - {is: v_metric_of, from: sys_endpoint_law_same_mod, to: mean_value}
+  - {is: v_file_of, from: sys_with_partner_by_domain.json, to: sys_with_partner_by_domain}
+  - {is: v_axis_of, from: sys_with_partner_by_domain_c, to: sys_with_partner_by_domain}
+  - {is: v_keys_of, from: '#', to: sys_with_partner_by_domain_c}
+  - {is: v_value_of, from: sys_with_partner_by_domain_c_summary, to: sys_with_partner_by_domain_c}
+  - {is: v_spell, from: sys_with_partner_by_domain_c_summary, to: ['summary']}
+  - {is: v_axis_of, from: sys_with_partner_by_domain_m, to: sys_with_partner_by_domain}
+  - {is: v_value_of, from: sys_with_partner_by_domain_m_n_units, to: sys_with_partner_by_domain_m}
+  - {is: v_spell, from: sys_with_partner_by_domain_m_n_units, to: n_units}
+  - {is: v_value_of, from: sys_with_partner_by_domain_m_n_covered, to: sys_with_partner_by_domain_m}
+  - {is: v_spell, from: sys_with_partner_by_domain_m_n_covered, to: n_covered}
+  - {is: v_value_of, from: sys_with_partner_by_domain_m_control_errors, to: sys_with_partner_by_domain_m}
+  - {is: v_spell, from: sys_with_partner_by_domain_m_control_errors, to: control_errors}
+  - {is: v_value_of, from: sys_with_partner_by_domain_m_n_crashed_or_missing, to: sys_with_partner_by_domain_m}
+  - {is: v_spell, from: sys_with_partner_by_domain_m_n_crashed_or_missing, to: n_crashed_or_missing}
+  - {is: v_value_of, from: sys_with_partner_by_domain_m_n_undefined_units, to: sys_with_partner_by_domain_m}
+  - {is: v_spell, from: sys_with_partner_by_domain_m_n_undefined_units, to: n_undefined_units}
+  - {is: v_value_of, from: sys_with_partner_by_domain_m_n_undefined_covered_named, to: sys_with_partner_by_domain_m}
+  - {is: v_spell, from: sys_with_partner_by_domain_m_n_undefined_covered_named, to: n_undefined_covered_named}
+  - {is: v_value_of, from: sys_with_partner_by_domain_m_n_axis_units, to: sys_with_partner_by_domain_m}
+  - {is: v_spell, from: sys_with_partner_by_domain_m_n_axis_units, to: n_axis_units}
+  - {is: v_value_of, from: sys_with_partner_by_domain_m_n_axis_covered_named, to: sys_with_partner_by_domain_m}
+  - {is: v_spell, from: sys_with_partner_by_domain_m_n_axis_covered_named, to: n_axis_covered_named}
+  - {is: v_entry_of, from: '{m}', to: sys_with_partner_by_domain}
+  - {is: v_metric_of, from: sys_with_partner_by_domain, to: mean_value}
   - {is: v_file_of, from: e35_expression_makes_state_unique.json, to: e35_expression_makes_state_unique}
   - {is: v_rows_of, from: [s], to: e35_expression_makes_state_unique}
   - {is: v_axis_of, from: e35_expression_makes_state_unique_c, to: e35_expression_makes_state_unique}
@@ -13760,6 +13806,18 @@ facts:
   - {is: v_refer, from: h_with_partner_named_by_domain, to: {is: v_depend, from: type_check_result, to: [syntax.law_rule, syntax.with]}}
   - {is: v_check, from: b_with_partner_named_by_domain, to: h_with_partner_named_by_domain}
   - {is: v_ground, from: d_road_checker, to: h_with_partner_named_by_domain}
+  - {is: v_refer, from: o_sys_wpd_units, to: {is: v_level, from: sys_with_partner_by_domain.summary.n_units.mean_value, to: 54}}
+  - {is: v_refer, from: o_sys_wpd_covered, to: {is: v_level, from: sys_with_partner_by_domain.summary.n_covered.mean_value, to: 54}}
+  - {is: v_refer, from: o_sys_wpd_control, to: {is: v_level, from: sys_with_partner_by_domain.summary.control_errors.mean_value, to: 0}}
+  - {is: v_refer, from: o_sys_wpd_crashed, to: {is: v_level, from: sys_with_partner_by_domain.summary.n_crashed_or_missing.mean_value, to: 9}}
+  - {is: v_refer, from: o_sys_wpd_undef, to: {is: v_level, from: sys_with_partner_by_domain.summary.n_undefined_units.mean_value, to: 7}}
+  - {is: v_refer, from: o_sys_wpd_undef_named, to: {is: v_level, from: sys_with_partner_by_domain.summary.n_undefined_covered_named.mean_value, to: 7}}
+  - {is: v_refer, from: o_sys_wpd_axis, to: {is: v_level, from: sys_with_partner_by_domain.summary.n_axis_units.mean_value, to: 2}}
+  - {is: v_refer, from: o_sys_wpd_axis_named, to: {is: v_level, from: sys_with_partner_by_domain.summary.n_axis_covered_named.mean_value, to: 2}}
+  - {is: v_support, from: o_sys_wpd_axis_named, to: h_with_partner_named_by_domain}
+  - {is: v_support, from: o_sys_wpd_undef_named, to: h_with_partner_named_by_domain}
+  - {is: v_support, from: o_sys_wpd_covered, to: h_with_partner_named_by_domain}
+  - {is: v_support, from: o_sys_wpd_control, to: h_with_partner_named_by_domain}
   - {is: v_refer, from: h_apply_depends_explain, to: {is: ontology.v_rely, from: usage_apply, to: usage_explain}}
   - {is: v_check, from: b_apply_depends_explain, to: h_apply_depends_explain}
   - {is: v_ground, from: d_metric, to: h_apply_depends_explain}
@@ -15793,3 +15851,6 @@ facts:
   - {is: v_refer, from: o_e58_4b_near_joint_below_hi, to: {is: v_come_before, from: e58s_4b.near.joint.mean_value, to: e58s_4b.near.hi.mean_value}}
   - {is: v_contradict, from: o_e58_4b_near_joint_not_below_lo, to: h_consistency_beyond_accuracy}
   - {is: v_contradict, from: o_e58_4b_near_joint_below_hi, to: h_consistency_beyond_accuracy}
+  - {is: v_refer, from: h_endpoint_law_replaces_code_check, to: {is: v_depend, from: type_check_result, to: syntax.law_rule}}
+  - {is: v_check, from: b_endpoint_law_replaces_code_check, to: h_endpoint_law_replaces_code_check}
+  - {is: v_ground, from: d_road_checker, to: h_endpoint_law_replaces_code_check}
