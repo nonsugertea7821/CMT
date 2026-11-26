@@ -285,10 +285,10 @@ individuals:
   b_identifier_by_genus_differentia: {is: exp.item_queued}
   h_sequence_by_current_order: {is: exp.hyp_untested}
   b_sequence_by_current_order: {is: exp.item_queued}
-  h_dangling_by_append_only_declaration: {is: exp.hyp_untested}
-  b_dangling_by_append_only_declaration: {is: exp.item_queued}
-  h_dangling_by_undeclared_new: {is: exp.hyp_untested}
-  b_dangling_by_undeclared_new: {is: exp.item_queued}
+  h_dangling_by_append_only_declaration: {is: exp.hyp_refuted}
+  b_dangling_by_append_only_declaration: {is: exp.item_done}
+  h_dangling_by_undeclared_new: {is: exp.hyp_supported}
+  b_dangling_by_undeclared_new: {is: exp.item_done}
   h_identifier_free_of_declaration: {is: exp.hyp_untested}
   b_identifier_free_of_declaration: {is: exp.item_queued}
   h_rule_roles_read_by_frame: {is: exp.hyp_refuted}
@@ -393,6 +393,14 @@ individuals:
   o_sys_dff_rebirth: {is: exp.observation}
   o_sys_dff_b_stale: {is: exp.observation}
   o_sys_dff_c_stale: {is: exp.observation}
+  o_sys_dff2_removal: {is: exp.observation}
+  o_sys_dff2_rebirth: {is: exp.observation}
+  o_sys_dff2_other_errors: {is: exp.observation}
+  o_sys_dff2_once: {is: exp.observation}
+  o_sys_dff2_stale: {is: exp.observation}
+  o_sys_dff2_b_stale: {is: exp.observation}
+  o_sys_dff2_never: {is: exp.observation}
+  o_sys_dff2_never_other: {is: exp.observation}
   o_sys_declaration_never_halts: {is: exp.observation}
   o_sys_cycles_positive: {is: exp.observation}
   o_sys_cycles_mostly_one_relation: {is: exp.observation}
@@ -2509,6 +2517,19 @@ facts:
   - {is: v_refer, from: o_sys_dff_rebirth, to: {is: v_level, from: sys_declaration_follows_freeze.summary.B_walks_with_rebirth.mean_value, to: 76}}
   - {is: v_refer, from: o_sys_dff_b_stale, to: {is: v_level, from: sys_declaration_follows_freeze.summary.B_b_stale_walks.mean_value, to: 28}}
   - {is: v_refer, from: o_sys_dff_c_stale, to: {is: v_level, from: sys_declaration_follows_freeze.summary.B_c_stale_walks.mean_value, to: 27}}
+  - {is: v_refer, from: o_sys_dff2_removal, to: {is: v_level, from: sys_declaration_follows_freeze_v2.summary.walks_with_removal.mean_value, to: 222}}
+  - {is: v_refer, from: o_sys_dff2_rebirth, to: {is: v_level, from: sys_declaration_follows_freeze_v2.summary.walks_with_rebirth.mean_value, to: 181}}
+  - {is: v_refer, from: o_sys_dff2_other_errors, to: {is: v_level, from: sys_declaration_follows_freeze_v2.summary.c_other_errors.mean_value, to: 42}}
+  - {is: exp.v_contradict, from: o_sys_dff2_other_errors, to: h_dangling_by_append_only_declaration}
+  - {is: v_refer, from: o_sys_dff2_once, to: {is: v_level, from: sys_declaration_follows_freeze_v2.summary.c_once_max.mean_value, to: 3}}
+  - {is: exp.v_contradict, from: o_sys_dff2_once, to: h_dangling_by_append_only_declaration}
+  - {is: v_refer, from: o_sys_dff2_stale, to: {is: v_level, from: sys_declaration_follows_freeze_v2.summary.c_stale_max.mean_value, to: 2}}
+  - {is: exp.v_contradict, from: o_sys_dff2_stale, to: h_dangling_by_append_only_declaration}
+  - {is: v_refer, from: o_sys_dff2_b_stale, to: {is: v_level, from: sys_declaration_follows_freeze_v2.summary.b_stale_walks.mean_value, to: 152}}
+  - {is: v_refer, from: o_sys_dff2_never, to: {is: v_level, from: sys_declaration_follows_freeze_v2.summary.c_never_facts.mean_value, to: 423}}
+  - {is: exp.v_support, from: o_sys_dff2_never, to: h_dangling_by_undeclared_new}
+  - {is: v_refer, from: o_sys_dff2_never_other, to: {is: v_level, from: sys_declaration_follows_freeze_v2.summary.c_never_by_other_verb.mean_value, to: 0}}
+  - {is: exp.v_support, from: o_sys_dff2_never_other, to: h_dangling_by_undeclared_new}
   - {is: v_refer, from: o_sys_quant_with_qual, to: {is: v_level, from: sys_quadrants.quant_alone.mean_value, to: 0.0}}
   - {is: v_refer, from: o_sys_rel_disjoint, to: {is: v_level, from: sys_quadrants.rel_mixed.mean_value, to: 0.0}}
   - {is: v_refer, from: o_sys_unplaced_neg_only, to: {is: v_level, from: sys_quadrants.none_other.mean_value, to: 0.0}}
