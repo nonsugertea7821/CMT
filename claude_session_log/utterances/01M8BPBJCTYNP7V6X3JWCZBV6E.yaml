@@ -1,0 +1,225 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-26T10:27:56.442Z（UTC）
+individuals:
+  01M8BPBJCTYNP7V6X3JWCZBV6E:
+    is: session_summary
+    display: 発言 5835
+    val:
+      order: 5835
+      text: |
+        This session is being continued from a previous conversation that ran out of context. The summary below covers the earlier portion of the conversation.
+
+        <system-reminder>
+        <tools-used-before-summary>Agent, Artifact, AskUserQuestion, Bash, Edit, Grep, Monitor, Read, ReadNotifications, SendMessage, Skill, SubagentHandback, TaskStop, ToolSearch, WebFetch, WebSearch, Write, mcp__claude-code-remote__add_repo, mcp__claude-code-remote__create_trigger, mcp__claude-code-remote__delete_trigger, mcp__claude-code-remote__get_trigger, mcp__claude-code-remote__list_repos, mcp__claude-code-remote__list_triggers, mcp__claude-code-remote__read_documentation, mcp__claude-code-remote__send_later, mcp__claude-code-remote__subscribe_pr_activity, mcp__claude-code-remote__unsubscribe_pr_activity, mcp__claude-code-remote__update_trigger, mcp__github__actions_get, mcp__github__actions_list, mcp__github__actions_run_trigger, mcp__github__add_issue_comment, mcp__github__create_pull_request, mcp__github__get_job_logs, mcp__github__issue_read, mcp__github__issue_write, mcp__github__list_issue_types, mcp__github__list_issues, mcp__github__list_pull_requests, mcp__github__pull_request_read, mcp__github__update_pull_request</tools-used-before-summary>
+        </system-reminder>
+        Summary:
+        1. Primary Request and Intent:
+
+           **Standing rules (all still apply)**
+           - Repo and tools:
+             - nonsugertea7821/CMT at /home/user/CMT.
+             - Python is /home/user/venv/bin/python. CPU only.
+           - Writing:
+             - Write plain Japanese in conversation and PR bodies.
+             - Don't overclaim. Keep fact separate from interpretation.
+             - Label side paths わき道.
+           - Git:
+             - Restore files with `git show <rev>:<path> > <path>`. Never use checkout or stash.
+             - Every commit message ends with:
+               ```
+               Co-Authored-By: Claude [モデル名を伏せた] <[メールアドレスを伏せた]>
+               Claude-Session: https://claude.ai/code/session_015KRKt6TNJZ7ZsQmEknANXK
+               ```
+             - Every PR body ends with `🤖 Generated with [Claude Code](https://claude.com/claude-code)`, a blank line, then the session URL.
+             - Create PRs with body "x", then set the real body with update_pull_request.
+             - No personal info or model IDs in pushed artifacts.
+             - Claude never merges.
+           - For every PR I open:
+             - call subscribe_pr_activity;
+             - call issue_write update with assignees ["nonsugertea7821"].
+           - System YAML:
+             - Add no comments.
+             - Do the edit, `git add` and `git commit` as separate Bash calls.
+             - When a hypothesis is verified, set h_ to hyp_supported or hyp_refuted, and b_ to item_done.
+             - Link observations with exp.v_support or exp.v_contradict.
+           - Experiments:
+             - Pre-register in a commit that touches only the script (`git add -f`), and push it before running.
+             - Add results in a later commit with `git add -f`.
+             - Never rerun a recorded script.
+             - Don't run tc or ec locally.
+             - Run in run_in_background with timeout 7200000, plus a send_later check every 9 minutes.
+           - Register any unverified proposal as a hypothesis (h_, b_, v_refer, v_check, v_ground) before conveying it.
+           - Conflicts: merge origin/main and keep both sides.
+           - Worktrees go in /home/user/CMT/.wt_*. Remove the worktree and the local branch after merge.
+           - Don't reopen a closed PR or open a new one for the same change unless the user asks.
+           - Stop hook "Wait—turn that observation into a hypothesis?":
+             - classify each flagged sentence as fact, unverified (→ register) or progress;
+             - reply briefly in Japanese.
+           - Roadmap block (ロードマップの位置):
+             - always in PR bodies, in plain language;
+             - in conversation only when the user asks.
+
+           **Security constraints (verbatim)**
+           - 「Pagesに出すなら脆弱性気を付けてね」
+           - 「あとsession_logは読まないように」
+           - Later clarified:
+             - 「いやまあログの中身は読んだってかまわないんだけど 何のために残してるかって「過去の参照」のためだから」
+             - 「読もうと思えばsession_logも読めるよ 無差別に読んでほしくないからPagesに出してないだけ」
+             - 「あとブランチ切れば消えるってのもある」
+           - Never expose claude/session-log-* in Pages or the ledger.
+
+           **Other standing direction**
+           - Experiment target: no Claude models; use Qwen.
+           - 「d_road_regionは掘り続けるべきだ。」
+           - claims.yaml cannot reference exp.* verbs, except the patterns already used: exp.hyp_*, exp.observation, exp.v_support/v_contradict/v_check/v_ground.
+           - The identifier chain is top priority: 「識別子化はその他の仮説の前提になってるから」.
+           - After identifier-ization, do the dictionary together with prosody (#945).
+
+           **Hourly heartbeat**
+           - Trigger trig_01L92Xn7LSTHrmqt7enEcCPG. At each firing, first re-arm it about 61 minutes later with enabled: true.
+           - Next firing: 2026-11-26T10:51:00Z.
+           - delete_trigger is denied. Stale send_later triggers fire harmlessly; trig_01CRWnXXK94zbD3Y6SAqZKpa, for #952, is still pending.
+
+        2. Key Technical Concepts:
+           - **Runtime walks**:
+             - classes B (Declared) and C (B plus retraction of the facts of names whose declaration was removed);
+             - helpers in sys_declaration_follows_freeze_v2: snapshot, restore, ok_in, undeclared_new_verbs, removes, Hist, note, counts;
+             - v1.moves(m, fresh).
+           - **Declared.step**: a post atom exists(new) adds the name to, or removes it from, `declared`. holds("exists") reads `declared`.
+           - **Bisimulation partition**:
+             - drop display and gloss;
+             - replace node names with class ids;
+             - sort lists;
+             - refine until the number of classes is stable.
+           - **Node keys in T.N** (795 nodes): display 795, extends 759, mod 556, to 117, from 112, of 72, with 54, holds 38, form 33, pre 23, post 23, axis 22, many 20, new_kind 18, verbatim 13, neg 8, cmp 5, val 4, opposite 4, derive 2, via 2, ranges 1, always 1, sometime 1.
+           - **Recording pattern**:
+             - exp.yaml gets the measurement family: nodes `<F>`, `<F>_c`, `<F>_c_summary`, `<F>_m`, `<F>_m_<metric>`, plus facts v_file_of, v_axis_of, v_keys_of '#', v_value_of, v_spell, v_entry_of '{m}' and v_metric_of mean_value.
+             - claims.yaml gets the observations o_*: {is: exp.observation}, each with `{is: v_refer, from: o_x, to: {is: v_level, from: <F>.summary.<metric>.mean_value, to: N}}` plus the exp.v_support or exp.v_contradict link.
+
+        3. Files and Code Sections:
+           - **exp/experiments/sys_freeze_scope_after_new_declared.py** (#950, merged)
+             - align(T) adds exists(new):
+               - to pre, if pre has a non-neg, non-exists fact with new;
+               - otherwise to post.
+             - Candidates are moves that are ok in both b and c.
+             - Moves that pass in b but fail in c are classified i, ii or iii.
+             - Result:
+               - walks 300; with removal 244; with rebirth 206;
+               - cand_i 0, cand_ii 976, cand_iii 0; c_step_errors 0; diverged 0;
+               - c_once_max 0, c_stale_max 0, c_never_facts 0; cand_c_only 2408; b_stale_walks 206;
+               - judgment support.
+             - Observations o_sys_fsn_{removal, rebirth, iii, ii, step_err, once, stale, never, b_stale}.
+           - **Adoption commit (#951, then #953)**: adds `{is: exists, from: new}`.
+             - To pre: exp.v_substitute, exp.v_withdraw, ja_basic.j_go, ja_basic.j_keep, std.v_vary.
+             - To post: exp.v_adopt, exp.v_deliver, ja_basic.j_put, subj.v_sell.
+             - Files: exp/src/exp.yaml, exp/src/subj.yaml, cscl/library/ja_basic/ja_basic.yaml, cscl/library/std/std.yaml.
+             - #953: branch claude/adopt-new-declared-2, commit 3741d57 on main e50eeb9, worktree .wt_and2. CI success; awaiting the user's merge.
+           - **exp/experiments/sys_identifier_free_of_declaration.py** (#952, merged)
+             - partition(N) is the bisimulation; strip(N) removes exists atoms from pre, post and holds.
+             - align(N) is the #951 alignment, applied in memory.
+             - compare(N) counts merged and split pairs.
+             - Result: W0 and W1 each have 795 nodes and 793 classes. W0 has 13 nodes with exists, W1 has 22. Merged 0 and split 0 in both. Support.
+             - Observations o_sys_ifd_{exists0, merged0, split0, exists1, merged1, split1}.
+           - **Prerequisite statuses in claims.yaml**:
+
+             | Hypothesis | Status |
+             |---|---|
+             | h_rule_roles_by_frame | supported |
+             | h_law_check_by_always | supported |
+             | h_fact_id_by_content | supported |
+             | h_grammar_names_parts | refuted |
+             | h_rule_nouns_agree_runtime | refuted |
+             | h_identifier_by_expansion | refuted |
+             | h_identifier_by_bisimulation | refuted |
+             | h_identifier_by_genus_differentia | untested (line 284) |
+
+             - h_identifier_by_genus_differentia is `{is: v_refer, from: h_identifier_by_genus_differentia, to: {is: v_depend, from: syntax.identifier, to: [syntax.extends, syntax.mod, syntax.holds, syntax.from, syntax.to]}}`, grounded by d_cscl_display_derived and by exp's d_road_region.
+
+        4. Errors and fixes:
+           - **Misread log columns**: I reported "(iii) is nonzero"; it was (ii). Corrected in the conversation and in the #950 body.
+           - **exp.yaml conflict on #946**: two hunks, additions only on both sides. Removed the markers with sed and checked that the YAML loads.
+           - **#946 merge commit lacks the attribution trailer** (used --no-edit). Left as is, to avoid a force push.
+           - **#951 auto-closed when its base branch was deleted** on #950's merge. The user confirmed they did not close it and approved re-adding, so it became #953 against main.
+
+        5. Problem Solving:
+           - Merged (all by the user): #946, #947, #950, #952.
+           - Removed worktrees: .wt_skl, .wt_adk, .wt_fsn, .wt_and, .wt_ifd.
+           - Still open: #953, awaiting the user's merge. After it merges, remove .wt_and2 and the local branch claude/adopt-new-declared-2.
+
+        6. All user messages:
+           - "946 conflict"
+           - 「状況は？」
+           - 「入れていいよ、閉じた覚えはない」
+           - Everything else was Stop hook output, notifications or triggers.
+
+        7. Pending Tasks:
+           - #953: wait for the user's merge, then clean up .wt_and2 and its local branch.
+           - h_identifier_by_genus_differentia: pre-register, open a Draft PR, run, record.
+           - Then h_identifier_read_with_display_and_prosody (#945).
+           - h_law_errors_grouped_for_reader: model experiment from scratchpad/held/law_errors_grouped_design.md.
+           - Heartbeat at 10:51Z: re-arm it first.
+
+        8. Current Work:
+           - Just created worktree /home/user/CMT/.wt_igd on branch claude/h_identifier_by_genus_differentia from origin/main. The script is not written yet.
+           - Planned script: exp/experiments/sys_identifier_by_genus_differentia.py.
+           - **Partitions**:
+             - P_full: the bisimulation over all keys except display and gloss.
+             - P_gd: the same, but keeping only the keys extends, mod, holds, from, to, plus of and with. Disclose that of/with are the content of a named mod.
+           - **Count** the merged pairs (separate in P_full, same in P_gd) and the split pairs. For each merged pair, list the dropped keys that distinguish it.
+           - **Judgment (pre-register)**:
+             - Support if P_gd == P_full: merged 0 and split 0.
+             - Refute otherwise.
+           - **Disclose**:
+             - the node key counts above were seen;
+             - #952's result was seen;
+             - bisimulation was refuted earlier as an identifier (on collisions);
+             - type-check once; don't rerun.
+           - Then:
+             - commit the script alone and push;
+             - open a Draft PR referencing the issue for h_identifier_by_genus_differentia (number not yet looked up);
+             - subscribe and assign;
+             - run in background with a 9-minute check;
+             - record results and observations;
+             - update the PR body with the roadmap block.
+
+        9. Optional Next Step:
+           - Write exp/experiments/sys_identifier_by_genus_differentia.py in /home/user/CMT/.wt_igd as described in section 8.
+           - Pre-register it (script-only commit, push), then open a Draft PR. This follows my last stated plan: 「この間に、次の h_identifier_by_genus_differentia（識別子を類と種差から作る）の事前登録を始めます。」
+
+        If you need specific details from before compaction (like exact code snippets, error messages, or content you generated), read the full transcript at: /root/.claude/projects/-home-user-CMT/e05d2140-ce91-515f-a5fb-e6251e13d406.jsonl
+        Continue the conversation from where it left off without asking the user any further questions. Resume directly — do not acknowledge the summary, do not recap what was happening, do not preface with "I'll continue" or similar. Pick up the last task as if the break never happened.
+
+        The messages after this summary are the most recent messages from before compaction, kept verbatim. The summary was written without seeing them, so something it says has not happened yet may already have happened in them.
+facts:
+- {is: v_say, from: session_model, to: 01M8BPBJCTYNP7V6X3JWCZBV6E}
+- {is: v_refer, from: 01M8BPBJCTYNP7V6X3JWCZBV6E, to: exp.hyp_supported}
+- {is: v_refer, from: 01M8BPBJCTYNP7V6X3JWCZBV6E, to: exp.hyp_refuted}
+- {is: v_refer, from: 01M8BPBJCTYNP7V6X3JWCZBV6E, to: exp.item_done}
+- {is: v_refer, from: 01M8BPBJCTYNP7V6X3JWCZBV6E, to: exp.v_support}
+- {is: v_refer, from: 01M8BPBJCTYNP7V6X3JWCZBV6E, to: exp.v_contradict}
+- {is: v_refer, from: 01M8BPBJCTYNP7V6X3JWCZBV6E, to: ontology.v_refer}
+- {is: v_refer, from: 01M8BPBJCTYNP7V6X3JWCZBV6E, to: exp.v_check}
+- {is: v_refer, from: 01M8BPBJCTYNP7V6X3JWCZBV6E, to: exp.v_ground}
+- {is: v_refer, from: 01M8BPBJCTYNP7V6X3JWCZBV6E, to: exp.observation}
+- {is: v_refer, from: 01M8BPBJCTYNP7V6X3JWCZBV6E, to: syntax.new_kind}
+- {is: v_refer, from: 01M8BPBJCTYNP7V6X3JWCZBV6E, to: exp.v_file_of}
+- {is: v_refer, from: 01M8BPBJCTYNP7V6X3JWCZBV6E, to: exp.v_axis_of}
+- {is: v_refer, from: 01M8BPBJCTYNP7V6X3JWCZBV6E, to: exp.v_keys_of}
+- {is: v_refer, from: 01M8BPBJCTYNP7V6X3JWCZBV6E, to: exp.v_value_of}
+- {is: v_refer, from: 01M8BPBJCTYNP7V6X3JWCZBV6E, to: exp.v_spell}
+- {is: v_refer, from: 01M8BPBJCTYNP7V6X3JWCZBV6E, to: exp.v_entry_of}
+- {is: v_refer, from: 01M8BPBJCTYNP7V6X3JWCZBV6E, to: exp.v_metric_of}
+- {is: v_refer, from: 01M8BPBJCTYNP7V6X3JWCZBV6E, to: exp.mean_value}
+- {is: v_refer, from: 01M8BPBJCTYNP7V6X3JWCZBV6E, to: ontology.v_level}
+- {is: v_refer, from: 01M8BPBJCTYNP7V6X3JWCZBV6E, to: exp.v_substitute}
+- {is: v_refer, from: 01M8BPBJCTYNP7V6X3JWCZBV6E, to: exp.v_withdraw}
+- {is: v_refer, from: 01M8BPBJCTYNP7V6X3JWCZBV6E, to: std.v_vary}
+- {is: v_refer, from: 01M8BPBJCTYNP7V6X3JWCZBV6E, to: exp.v_adopt}
+- {is: v_refer, from: 01M8BPBJCTYNP7V6X3JWCZBV6E, to: exp.v_deliver}
+- {is: v_refer, from: 01M8BPBJCTYNP7V6X3JWCZBV6E, to: subj.v_sell}
+- {is: v_refer, from: 01M8BPBJCTYNP7V6X3JWCZBV6E, to: ontology.v_depend}
+- {is: v_refer, from: 01M8BPBJCTYNP7V6X3JWCZBV6E, to: syntax.identifier}
+- {is: v_refer, from: 01M8BPBJCTYNP7V6X3JWCZBV6E, to: syntax.extends}
+- {is: v_refer, from: 01M8BPBJCTYNP7V6X3JWCZBV6E, to: syntax.mod}
+- {is: v_refer, from: 01M8BPBJCTYNP7V6X3JWCZBV6E, to: syntax.holds}
+- {is: v_refer, from: 01M8BPBJCTYNP7V6X3JWCZBV6E, to: syntax.from}
+- {is: v_refer, from: 01M8BPBJCTYNP7V6X3JWCZBV6E, to: syntax.to}
