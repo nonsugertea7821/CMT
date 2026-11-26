@@ -36,8 +36,8 @@ nodes:
   v_teach: {display: 教える, extends: occurrent, from: continuant, to: continuant, new_kind: realizable_entity,
             pre: [{is: exists, from: new, neg: true}], post: [{is: exists, from: new}, {is: depend, from: new, to: to}, {is: refer, from: new, to: from}]}
   v_judge_case: {display: 事例を判定する, extends: v_judge, to: case}
-  v_adopt: {display: 採用する, extends: occurrent, from: continuant, to: continuant, new_kind: role, pre: [{is: depend, from: new, to: to, neg: true}], post: [{is: depend, from: new, to: to}]}
-  v_withdraw: {display: 取り下げる, extends: occurrent, from: continuant, to: continuant, new_kind: role, pre: [{is: depend, from: new, to: to}], post: [{is: depend, from: new, to: to, neg: true}]}
+  v_adopt: {display: 採用する, extends: occurrent, from: continuant, to: continuant, new_kind: role, pre: [{is: depend, from: new, to: to, neg: true}], post: [{is: depend, from: new, to: to}, {is: exists, from: new}]}
+  v_withdraw: {display: 取り下げる, extends: occurrent, from: continuant, to: continuant, new_kind: role, pre: [{is: depend, from: new, to: to}, {is: exists, from: new}], post: [{is: depend, from: new, to: to, neg: true}]}
   v_happen_after: {display: 後に起こる, extends: occurrent, from: occurrent, to: occurrent, holds: [{is: after, from: from, to: to}]}
   v_use: {display: 使う, extends: occurrent, from: any, to: continuant, holds: [{is: involve, from: new, to: to}, {is: depend, from: new, to: from}]}
   v_speak: {display: 発話する, extends: occurrent, from: continuant, to: continuant, pre: [{is: exists, from: to, neg: true}], post: [{is: exists, from: to}, {is: depend, from: to, to: from}]}
@@ -45,9 +45,9 @@ nodes:
           pre: [{is: exists, from: new, neg: true}], post: [{is: exists, from: new}, {is: depend, from: new, to: from}, {is: refer, from: new, to: to}]}
   v_expose: {display: 公開する, extends: occurrent, from: continuant, to: continuant, new_kind: realizable_entity,
              pre: [{is: exists, from: new, neg: true}], post: [{is: exists, from: new}, {is: depend, from: new, to: to}]}
-  v_deliver: {display: 届ける, extends: occurrent, from: continuant, to: continuant, pre: [{is: part, from: to, to: new, neg: true}], post: [{is: part, from: to, to: new}]}
+  v_deliver: {display: 届ける, extends: occurrent, from: continuant, to: continuant, pre: [{is: part, from: to, to: new, neg: true}], post: [{is: part, from: to, to: new}, {is: exists, from: new}]}
   v_substitute: {display: 置き換える, extends: occurrent, from: continuant, to: continuant,
-                 pre: [{is: part, from: to, to: new}, {is: part, from: from, to: new, neg: true}], post: [{is: part, from: to, to: new, neg: true}, {is: part, from: from, to: new}]}
+                 pre: [{is: part, from: to, to: new}, {is: part, from: from, to: new, neg: true}, {is: exists, from: new}], post: [{is: part, from: to, to: new, neg: true}, {is: part, from: from, to: new}]}
   v_speak_definition: {display: 定義文を発話する, extends: v_speak, to: definition_text}
   v_speak_reason: {display: 理由を発話する, extends: v_speak, to: reason}
   v_judge_definition: {display: 定義を判定する, extends: v_judge, to: definition}
@@ -245,6 +245,7 @@ nodes:
   specific_vector_component: {display: 概念ベクトルの固有成分, extends: state_shift, mod: {of: [v_depend, from], with: word}}
   sense_difference_vector: {display: 語の意味の候補どうしの差のベクトル, extends: concept_vector, mod: {of: [v_depend, from], with: prior_meaning}}
   opaque_expression: {display: axiom 以外の識別子を無意味にした概念式, extends: concept_expression, mod: {of: [v_compose, to], with: hidden_word}}
+  opaque_collision: {display: 伏せた概念式どうしの一致, extends: factor, mod: {of: [v_depend, from], with: opaque_expression, at: {count: 2}}}
   text_and_vector: {display: 文章と概念ベクトルの併用, extends: text_injection, mod: {of: [is, from], with: concept_vector}}
   delta_weights: {display: 差分重み, extends: channel, mod: {of: [v_involve, from], with: weights}}
   teacher_recite: {display: 定義文の暗唱を教師にする, extends: teaching, from: definition_text}
@@ -5321,6 +5322,8 @@ individuals:
   b_dedicated_token_raises_consistency: {is: item_queued}
   h_identifier_unique_by_region: {is: hyp_untested}
   b_identifier_unique_by_region: {is: item_queued}
+  h_opaque_region_immune_collision: {is: hyp_untested}
+  b_opaque_region_immune_collision: {is: item_queued}
   h_lineage_is_genus: {is: hyp_supported}
   b_lineage_is_genus: {is: item_queued}
   h_lineage_is_history: {is: hyp_mixed}
@@ -14600,6 +14603,9 @@ facts:
   - {is: v_refer, from: h_identifier_unique_by_region, to: {is: ontology.v_rely, from: syntax.identifier, to: midpoint_membership}}
   - {is: v_check, from: b_identifier_unique_by_region, to: h_identifier_unique_by_region}
   - {is: v_ground, from: d_road_region, to: h_identifier_unique_by_region}
+  - {is: v_refer, from: h_opaque_region_immune_collision, to: {is: v_immune, from: midpoint_membership, to: opaque_collision}}
+  - {is: v_check, from: b_opaque_region_immune_collision, to: h_opaque_region_immune_collision}
+  - {is: v_ground, from: d_road_region, to: h_opaque_region_immune_collision}
   - {is: v_refer, from: h_lineage_is_genus, to: {is: v_depend, from: syntax.extends, to: supersedes, neg: true}}
   - {is: v_check, from: b_lineage_is_genus, to: h_lineage_is_genus}
   - {is: v_refer, from: h_lineage_is_history, to: {is: v_depend, from: syntax.extends, to: supersedes}}
