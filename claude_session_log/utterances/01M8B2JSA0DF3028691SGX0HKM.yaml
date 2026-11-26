@@ -1,0 +1,30 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-26T04:42:21.376Z（UTC）
+individuals:
+  01M8B2JSA0DF3028691SGX0HKM:
+    is: model_utterance
+    display: 発言 5705
+    val:
+      order: 5705
+      text: |
+        識別子化の1段目（#938）は、2版目で判定が出ました。PR #943 を Draft から外し、確認待ちにしています。
+
+        **判定**
+        - **宣言の取り消しを、その名前の文に及ぼす案は反証でした**（`h_dangling_by_append_only_declaration`）。及ぼした書き方で、前の状態の指定や法則が破れたエラーが42、ぶら下がる文が最大3、古い文が最大2出ました。
+        - **ぶら下がりのもう一つの出どころは確かにありました**（`h_dangling_by_undeclared_new`、支持）。宣言されていない名前の文は423あり、すべて「`new` に名前を取るのに、在ると述べない動詞」が足したものでした。
+
+        **中身の読み**（結果を見た後の分析なので、未検証です）
+        - 取り消しを文に及ぼすこと自体が悪いのではなさそうです。
+        - エラー42件のうち32件は、及ぼさない書き方に残った前の生の古い文に頼る手を、及ぼす書き方が拒んだものでした。
+        - ぶら下がる文の3件は、在ると述べない動詞が、取り消された名前を使い回したものでした。
+
+        **次**
+        - 先に、在ると述べない9つの動詞（`exp.v_deliver`、`ja_basic.j_put` など）を、在ると述べるようにそろえます。
+        - そのうえで、取り消しを文に及ぼす案を確かめ直します。これは仮説 `h_freeze_scope_after_new_declared` として登録済みです。
+        - 9つの動詞の定義を変えることになるので、そろえた写しで確かめてから体系に入れます。
+
+        1版目の歩ませ方の直しと、commit の説明の誤り（例の動詞の取り違え）は、訂正として PR に開示しています。そのため #943 は自動マージに乗らず、手で見てもらう扱いです。
+facts:
+- {is: v_say, from: session_model, to: 01M8B2JSA0DF3028691SGX0HKM}
+- {is: exp.v_answer, from: 01M8B2JSA0DF3028691SGX0HKM, to: 01M8B1SGJX239WAG0HT32TYVM1}
+- {is: v_refer, from: 01M8B2JSA0DF3028691SGX0HKM, to: syntax.new}
+- {is: v_refer, from: 01M8B2JSA0DF3028691SGX0HKM, to: exp.v_deliver}
