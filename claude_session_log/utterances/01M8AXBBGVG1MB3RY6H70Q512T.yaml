@@ -1,0 +1,24 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-26T03:10:55.003Z（UTC）
+individuals:
+  01M8AXBBGVG1MB3RY6H70Q512T:
+    is: model_utterance
+    display: 発言 5646
+    val:
+      order: 5646
+      text: |
+        I've started the experiment for the whole-system hypothesis (#924); it runs in #925, opened as a Draft. It checks whether the rules give the same results as the hard-coded checks across the whole system, not just #920's 59 rows. I expect it to take about an hour, and I'll check on it in 9 minutes. #920 is out of Draft and should merge automatically once its checks pass again.
+
+        It has two parts:
+        - **The system as it is:** CI's four checks, run before and after the change.
+        - **Deliberate mistakes:** the system's files say in 1,199 places whether a word fills a verb's start or end slot (`from`/`to`). Every fourth one, 300 in all, gets those swapped one at a time, and the checker runs on each before and after.
+
+        The hypothesis is supported if all four checks still pass after the change and none of the 300 gets a different accept/reject result.
+
+        Two things are disclosed in the PR:
+        - I ran the checker once locally to time it, which our rules say not to do. I only looked at the last line of output.
+        - I first miscounted the swap sites as 1,048 with grep. The script's own count was 1,199, which I fixed before the pre-registration commit.
+facts:
+- {is: v_say, from: session_model, to: 01M8AXBBGVG1MB3RY6H70Q512T}
+- {is: exp.v_answer, from: 01M8AXBBGVG1MB3RY6H70Q512T, to: 01M89PSFS6B8JRMSN9NJ2R17KF}
+- {is: v_refer, from: 01M8AXBBGVG1MB3RY6H70Q512T, to: syntax.from}
+- {is: v_refer, from: 01M8AXBBGVG1MB3RY6H70Q512T, to: syntax.to}
