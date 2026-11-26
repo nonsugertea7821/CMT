@@ -1,0 +1,23 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-26T11:26:29.187Z（UTC）
+individuals:
+  01M8BSPRT3TBTTCMEZ5XC6ANMS:
+    is: model_utterance
+    display: 発言 5930
+    val:
+      order: 5930
+      text: |
+        PR #966 の型検査（CI）での失敗を直しました。直したものは push 済みで、CI の結果はまだです。
+
+        - **失敗の理由:** 鍵の一意性は一つの領域の中で足りるか、という仮説（`h_identifier_unique_within_domain`）を、実験の側のファイル `exp/src/exp.yaml` に置いていました。型検査は「言語の語だけで書いた主張は、言語の側（cscl）に置く」と指摘していました。
+        - **直したこと:** 仮説、残り項目、根拠の結び（v_check・v_ground）を、`exp/src/exp.yaml` から `cscl/design/claims.yaml` へ移しました。
+        - **根拠の付け替え:** 言語の側のファイルからは、実験の側の決定を参照できません。そこで根拠の決定を、区画の道（`d_road_region`）から「表示語は式から訳す」（`d_cscl_display_derived`）に替えました。以前の仮説 `h_identifier_by_genus_differentia` と同じ結び方です。
+        - **PR 本文:** 区画の道とのつながりは式では結べなくなったので、本文に文章で書きました。この訂正の経緯も本文に書き足しています。
+
+        この PR は登録だけなので、CI が通れば自動マージの段に乗るはずです。落ちたら、知らせを読んで直します。
+
+        #963 も Draft のまま CI を待っています。通ったら Draft を外します。
+facts:
+- {is: v_say, from: session_model, to: 01M8BSPRT3TBTTCMEZ5XC6ANMS}
+- {is: exp.v_answer, from: 01M8BSPRT3TBTTCMEZ5XC6ANMS, to: 01M8BS96VP5Q3EBCY57HAFXEGV}
+- {is: v_refer, from: 01M8BSPRT3TBTTCMEZ5XC6ANMS, to: exp.v_check}
+- {is: v_refer, from: 01M8BSPRT3TBTTCMEZ5XC6ANMS, to: exp.v_ground}
