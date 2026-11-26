@@ -10,6 +10,7 @@ nodes:
   lang_dec_withdrawn: {display: 言語の取り下げた決定, extends: exp.dec_withdrawn, mod: is_from_lang_decision}
   v_not_depend: {display: に依存しない, extends: v_immune, from: continuant, to: continuant, opposite: v_depend}
   type_checker: {display: 型検査器, extends: artifact, mod: refer_from_laws}
+  sequence_domain: {display: 過程について述べる領域, extends: syntax.domain, mod: {of: [v_refer, from], with: process}}
   previous_checker: {display: 前の版の型検査器, extends: type_checker, mod: {of: [v_come_after, to], with: type_checker}}
   executed_language: {display: 実行器が実行する言語, extends: language, mod: {of: [v_depend, from], with: runtime.executor}}
   steps_definition: {display: ステップの列へ述べる定義, extends: definition, mod: runtime.refer_from_steps}
@@ -271,6 +272,12 @@ individuals:
   b_identifier_by_bisimulation: {is: exp.item_done}
   h_identifier_by_genus_differentia: {is: exp.hyp_untested}
   b_identifier_by_genus_differentia: {is: exp.item_queued}
+  h_sequence_by_current_order: {is: exp.hyp_untested}
+  b_sequence_by_current_order: {is: exp.item_queued}
+  h_dangling_by_append_only_declaration: {is: exp.hyp_untested}
+  b_dangling_by_append_only_declaration: {is: exp.item_queued}
+  h_identifier_free_of_declaration: {is: exp.hyp_untested}
+  b_identifier_free_of_declaration: {is: exp.item_queued}
   h_rule_roles_read_by_frame: {is: exp.hyp_refuted}
   b_rule_roles_read_by_frame: {is: exp.item_done}
   h_always_admits_positions: {is: exp.hyp_untested}
@@ -2482,6 +2489,14 @@ facts:
   - {is: v_refer, from: o_sys_soundness_mods_aligned, to: {is: v_come_after, from: sys_soundness.mod_unpaired_changed.mean_value, to: sys_soundness.mod_paired_changed.mean_value}}
   - {is: v_support, from: o_sys_soundness_unpaired_above, to: h_symmetry_soundness}
   - {is: v_contradict, from: o_sys_soundness_not_significant, to: h_symmetry_soundness}
+  - {is: v_refer, from: h_sequence_by_current_order, to: {is: v_refer, from: sequence_domain, to: [v_come_after, v_stage, syntax.pre, syntax.post]}}
+  - {is: exp.v_check, from: b_sequence_by_current_order, to: h_sequence_by_current_order}
+  - {is: exp.v_ground, from: d_sig_come_after_from, to: h_sequence_by_current_order}
+  - {is: v_refer, from: h_dangling_by_append_only_declaration, to: {is: v_refer, from: declared_scope, to: std.v_freeze}}
+  - {is: exp.v_check, from: b_dangling_by_append_only_declaration, to: h_dangling_by_append_only_declaration}
+  - {is: v_refer, from: h_identifier_free_of_declaration, to: {is: v_not_depend, from: syntax.identifier, to: declared_scope}}
+  - {is: exp.v_check, from: b_identifier_free_of_declaration, to: h_identifier_free_of_declaration}
+  - {is: exp.v_ground, from: d_cscl_display_derived, to: h_identifier_free_of_declaration}
   - {is: v_refer, from: h_rule_roles_read_by_frame, to: {is: v_depend, from: type_checker, to: [syntax.pre, syntax.post, syntax.always, syntax.law_relation]}}
   - {is: exp.v_check, from: b_rule_roles_read_by_frame, to: h_rule_roles_read_by_frame}
   - {is: exp.v_ground, from: d_cscl_display_derived, to: h_rule_roles_read_by_frame}
