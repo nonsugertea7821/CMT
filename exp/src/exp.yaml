@@ -5819,6 +5819,8 @@ individuals:
   o_e58_4b_near_acc_recite: {is: observation}
   o_e58_4b_near_joint_not_below_lo: {is: observation}
   o_e58_4b_near_joint_below_hi: {is: observation}
+  h_endpoint_law_replaces_code_check: {is: hyp_untested}
+  b_endpoint_law_replaces_code_check: {is: item_queued}
 facts:
   - {is: v_collect, from: residual_space, to: residual_vector}
   - {is: v_sum, from: layer_output, to: state_shift, new: shifted_hidden_state}
@@ -15795,3 +15797,6 @@ facts:
   - {is: v_refer, from: o_e58_4b_near_joint_below_hi, to: {is: v_come_before, from: e58s_4b.near.joint.mean_value, to: e58s_4b.near.hi.mean_value}}
   - {is: v_contradict, from: o_e58_4b_near_joint_not_below_lo, to: h_consistency_beyond_accuracy}
   - {is: v_contradict, from: o_e58_4b_near_joint_below_hi, to: h_consistency_beyond_accuracy}
+  - {is: v_refer, from: h_endpoint_law_replaces_code_check, to: {is: v_depend, from: type_check_result, to: syntax.law_rule}}
+  - {is: v_check, from: b_endpoint_law_replaces_code_check, to: h_endpoint_law_replaces_code_check}
+  - {is: v_ground, from: d_road_checker, to: h_endpoint_law_replaces_code_check}
