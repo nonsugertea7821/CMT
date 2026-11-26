@@ -20,7 +20,7 @@ nodes:
   v_located: {display: 所在する, extends: v_compose, from: land, to: region}
   v_begin: {display: 始まる, extends: occurrent, from: process, to: any, holds: [{is: depend, from: from, to: to}, {is: after, from: from, to: to}]}
   v_end: {display: 終わる, extends: occurrent, from: process, to: any, holds: [{is: depend, from: from, to: to}, {is: after, from: to, to: from}]}
-  v_sell: {display: 販売する, extends: occurrent, from: agent, to: component, new_kind: money, pre: [{is: part, from: to, to: from}], post: [{is: part, from: to, to: from, neg: true}, {is: part, from: new, to: from}]}
+  v_sell: {display: 販売する, extends: occurrent, from: agent, to: component, new_kind: money, pre: [{is: part, from: to, to: from}], post: [{is: part, from: to, to: from, neg: true}, {is: part, from: new, to: from}, {is: exists, from: new}]}
   v_register: {display: 登録者として関わらせる, extends: v_involve, from: service, to: person}
   v_seated: {display: 席にいる, extends: v_perform, from: person, to: process}
 

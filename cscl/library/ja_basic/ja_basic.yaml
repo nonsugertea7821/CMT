@@ -3,11 +3,11 @@ domain: ja_basic
 nodes:
   j_come: {display: 到来, extends: occurrent, from: continuant, to: continuant, pre: [{is: part, from: from, to: to, neg: true}], post: [{is: part, from: from, to: to}]}
   j_go: {display: 動く, extends: occurrent, from: continuant, to: continuant, new_kind: continuant,
-         pre: [{is: part, from: from, to: new}], post: [{is: part, from: from, to: new, neg: true}, {is: part, from: from, to: to}]}
+         pre: [{is: part, from: from, to: new}, {is: exists, from: new}], post: [{is: part, from: from, to: new, neg: true}, {is: part, from: from, to: to}]}
   j_put: {display: 置く, extends: occurrent, from: continuant, to: continuant, new_kind: continuant,
-          pre: [{is: part, from: to, to: new, neg: true}], post: [{is: part, from: to, to: new}, {is: depend, from: to, to: from}]}
+          pre: [{is: part, from: to, to: new, neg: true}], post: [{is: part, from: to, to: new}, {is: depend, from: to, to: from}, {is: exists, from: new}]}
   j_keep: {display: 続ける, extends: occurrent, from: continuant, to: continuant, new_kind: quality,
-           pre: [{is: depend, from: new, to: to}], post: [{is: depend, from: new, to: to}, {is: depend, from: to, to: from}]}
+           pre: [{is: depend, from: new, to: to}, {is: exists, from: new}], post: [{is: depend, from: new, to: to}, {is: depend, from: to, to: from}]}
   j_be: {display: ではある, extends: std.v_transfer, from: continuant, to: quality, holds: [{is: depend, from: to, to: from}]}
   j_say: {display: 発語, extends: occurrent, from: continuant, to: any, new_kind: sentence,
           pre: [{is: exists, from: new, neg: true}], post: [{is: exists, from: new}, {is: depend, from: new, to: from}, {is: refer, from: new, to: to}]}
