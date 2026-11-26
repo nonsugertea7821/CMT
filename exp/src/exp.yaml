@@ -58,11 +58,9 @@ nodes:
   v_not_lower: {display: を下げない, extends: occurrent, from: any, to: continuant, holds: [{is: after, from: new, to: to, neg: true}, {is: depend, from: to, to: from}], opposite: v_lower}
   v_cause: {display: の原因である, extends: occurrent, from: any, to: continuant, holds: [{is: after, from: to, to: from}, {is: depend, from: to, to: from}]}
   v_immune: {display: の影響を受けない, extends: occurrent, from: any, to: any, holds: [{is: depend, from: from, to: to, neg: true}]}
-  v_transfer: {display: に転移する, extends: occurrent, from: any, to: any, holds: [{is: depend, from: to, to: from}]}
-  v_not_transfer: {display: に転移しない, extends: occurrent, from: any, to: any, holds: [{is: depend, from: to, to: from, neg: true}], opposite: v_transfer}
+  v_not_transfer: {display: に転移しない, extends: occurrent, from: any, to: any, holds: [{is: depend, from: to, to: from, neg: true}], opposite: std.v_transfer}
   v_coexist: {display: と同居できる, extends: occurrent, from: occurrent, to: occurrent, holds: [{is: depend, from: from, to: new}, {is: depend, from: to, to: new}]}
   v_consist: {display: からなる, extends: occurrent, from: continuant, to: continuant, holds: [{is: part, from: to, to: from}]}
-  v_rely: {display: に頼る, extends: occurrent, from: any, to: any, holds: [{is: depend, from: from, to: to}]}
   v_near: {display: ほぼ同じ位置にある, extends: occurrent, from: continuant, to: continuant, new_kind: tolerance, holds: [{is: after, from: from, to: to, neg: true}, {is: after, from: to, to: from, neg: true}]}
 
   v_scope: {display: 適用範囲になる, extends: v_depend, from: scope, to: hypothesis}
@@ -13332,7 +13330,7 @@ facts:
   - {is: v_refer, from: o_e18_usage_common_above_none, to: {is: v_come_after, from: e18u.common.logit_margin, to: e18u.none.logit_margin}}
   - {is: v_refer, from: o_e18_usage_specific_near_common, to: {is: v_near, from: e18u.specific.logit_margin, to: e18u.common.logit_margin, new: 0.2}}
   - {is: v_refer, from: o_e18_statement_full_level_none_conflict, to: {is: v_near, from: e18.G2c.full.accuracy, to: e18.G2c.none.accuracy, new: 0.05}}
-  - {is: v_refer, from: h_vector_transfers_beyond_choice_format, to: {is: v_transfer, from: single_layer_vector, to: question_format}}
+  - {is: v_refer, from: h_vector_transfers_beyond_choice_format, to: {is: std.v_transfer, from: single_layer_vector, to: question_format}}
 
   - {is: v_refer, from: h_collision_lowers_following, to: {is: v_lower, from: prior_collision, to: redefinition_following}}
   - {is: v_scope, from: model_4b, to: h_collision_lowers_following}
@@ -13422,7 +13420,7 @@ facts:
   - {is: v_refer, from: h_text_shift_raises_stability, to: {is: v_raise, from: contrast_vector, to: verdict_stability}}
   - {is: v_refer, from: h_specific_agrees_with_sense_difference, to: {is: v_agree, from: specific_vector_component, to: sense_difference_vector}}
   - {is: v_refer, from: h_specific_composes_from_expression, to: {is: v_agree, from: specific_vector_component, to: concept_expression}}
-  - {is: v_refer, from: h_common_component_transfers_to_unseen, to: {is: v_transfer, from: common_vector_component, to: unseen_genus}}
+  - {is: v_refer, from: h_common_component_transfers_to_unseen, to: {is: std.v_transfer, from: common_vector_component, to: unseen_genus}}
   - {is: v_refer, from: h_attention_carries_text_route, to: {is: v_raise, from: attention, to: redefinition_following}}
   - {is: v_refer, from: h_auto_merge_uncorrected, to: {is: v_immune, from: merge_verdict, to: operator}}
   - {is: v_check, from: b_auto_merge_uncorrected, to: h_auto_merge_uncorrected}
@@ -13445,20 +13443,20 @@ facts:
   - {is: v_refer, from: h_round_trip_forms_absent, to: {is: v_raise, from: teacher_round_trip_form, to: sibling_discrimination}}
   - {is: v_check, from: b_round_trip_forms_absent, to: h_round_trip_forms_absent}
   - {is: v_ground, from: d_consolidation_in_vector, to: h_round_trip_forms_absent}
-  - {is: v_refer, from: h_prior_claims_supply_siblings, to: {is: v_rely, from: sibling_discrimination, to: prior_claim}}
+  - {is: v_refer, from: h_prior_claims_supply_siblings, to: {is: ontology.v_rely, from: sibling_discrimination, to: prior_claim}}
   - {is: v_check, from: b_prior_claims_supply_siblings, to: h_prior_claims_supply_siblings}
   - {is: v_ground, from: d_consolidation_in_vector, to: h_prior_claims_supply_siblings}
   - {is: v_ground, from: d_road_region, to: h_prior_claims_supply_siblings}
-  - {is: v_refer, from: h_sibling_difference_on_part, to: {is: v_rely, from: sibling_difference_vector, to: formula_part_direction}}
+  - {is: v_refer, from: h_sibling_difference_on_part, to: {is: ontology.v_rely, from: sibling_difference_vector, to: formula_part_direction}}
   - {is: v_check, from: b_sibling_difference_on_part, to: h_sibling_difference_on_part}
   - {is: v_ground, from: d_consolidation_in_vector, to: h_sibling_difference_on_part}
-  - {is: v_refer, from: h_part_named_by_output_word, to: {is: v_rely, from: formula_part_direction, to: output_word_direction}}
+  - {is: v_refer, from: h_part_named_by_output_word, to: {is: ontology.v_rely, from: formula_part_direction, to: output_word_direction}}
   - {is: v_check, from: b_part_named_by_output_word, to: h_part_named_by_output_word}
   - {is: v_ground, from: d_consolidation_in_vector, to: h_part_named_by_output_word}
-  - {is: v_refer, from: h_part_named_by_state_feature, to: {is: v_rely, from: formula_part_direction, to: state_feature_direction}}
+  - {is: v_refer, from: h_part_named_by_state_feature, to: {is: ontology.v_rely, from: formula_part_direction, to: state_feature_direction}}
   - {is: v_check, from: b_part_named_by_state_feature, to: h_part_named_by_state_feature}
   - {is: v_ground, from: d_consolidation_in_vector, to: h_part_named_by_state_feature}
-  - {is: v_refer, from: h_sibling_discrimination_on_part, to: {is: v_rely, from: sibling_discrimination, to: formula_part_direction}}
+  - {is: v_refer, from: h_sibling_discrimination_on_part, to: {is: ontology.v_rely, from: sibling_discrimination, to: formula_part_direction}}
   - {is: v_check, from: b_sibling_discrimination_on_part, to: h_sibling_discrimination_on_part}
   - {is: v_ground, from: d_consolidation_in_vector, to: h_sibling_discrimination_on_part}
   - {is: v_refer, from: h_attribution_logged, to: {is: v_agree, from: attribution, to: operator_speech}}
@@ -13639,7 +13637,7 @@ facts:
   - {is: v_refer, from: h_symbolic_membership_raises_following, to: {is: v_raise, from: symbolic_membership, to: redefinition_following}}
   - {is: v_refer, from: h_contrast_vector_raises_following, to: {is: v_raise, from: contrast_vector, to: redefinition_following}}
   - {is: v_refer, from: h_opaque_expression_raises_following, to: {is: v_raise, from: opaque_expression, to: redefinition_following}}
-  - {is: v_refer, from: h_modifier_transfers_to_unseen_genus, to: {is: v_transfer, from: modifier, to: unseen_genus}}
+  - {is: v_refer, from: h_modifier_transfers_to_unseen_genus, to: {is: std.v_transfer, from: modifier, to: unseen_genus}}
   - {is: v_scope, from: model_15b, to: h_modifier_transfers_to_unseen_genus}
   - {is: v_scope, from: single_layer_vector, to: h_modifier_transfers_to_unseen_genus}
   - {is: v_qualify, from: lim_unconverged, to: h_modifier_transfers_to_unseen_genus}
@@ -13666,10 +13664,10 @@ facts:
   - {is: v_refer, from: d_redefinition_at_head, to: {is: extends, from: redefinition, to: glossary_head}}
   - {is: v_ground, from: d_redefinition_at_head, to: h_preceding_definitions_lower}
   - {is: v_ground, from: d_redefinition_at_head, to: h_following_definitions_do_not_lower}
-  - {is: v_refer, from: d_verdict_by_vector, to: {is: v_rely, from: verdict, to: concept_vector}}
+  - {is: v_refer, from: d_verdict_by_vector, to: {is: ontology.v_rely, from: verdict, to: concept_vector}}
   - {is: v_ground, from: d_verdict_by_vector, to: h_vector_raises_following}
   - {is: v_ground, from: d_verdict_by_vector, to: h_vector_raises_following_free}
-  - {is: v_refer, from: d_explanation_by_text, to: {is: v_rely, from: usage_explain, to: text_injection}}
+  - {is: v_refer, from: d_explanation_by_text, to: {is: ontology.v_rely, from: usage_explain, to: text_injection}}
   - {is: v_ground, from: d_explanation_by_text, to: h_both_teachers_raise_control_in_combo}
   - {is: v_refer, from: d_consolidation_in_vector, to: {is: extends, from: change_holder, to: taught_vector}}
   - {is: v_ground, from: d_consolidation_in_vector, to: h_vector_count_does_not_lower}
@@ -13702,10 +13700,10 @@ facts:
   - {is: v_ground, from: d_road_region, to: h_qualification_immune_genus}
   - {is: v_ground, from: d_road_region, to: h_qualification_depends_above}
   - {is: v_refer, from: d_source_of_truth_in_cscl, to: {is: v_express, from: depended_information, to: cscl}}
-  - {is: v_refer, from: d_rendered_text_is_derived, to: {is: v_rely, from: rendered_text, to: depended_information}}
-  - {is: v_refer, from: d_symbol_selection_symbolic, to: {is: v_rely, from: symbol_selection, to: typed_graph}}
-  - {is: v_refer, from: d_vector_needs_open_weights, to: {is: v_rely, from: concept_vector, to: open_weight_model}}
-  - {is: v_refer, from: d_text_for_api_models, to: {is: v_rely, from: api_only_model, to: text_injection}}
+  - {is: v_refer, from: d_rendered_text_is_derived, to: {is: ontology.v_rely, from: rendered_text, to: depended_information}}
+  - {is: v_refer, from: d_symbol_selection_symbolic, to: {is: ontology.v_rely, from: symbol_selection, to: typed_graph}}
+  - {is: v_refer, from: d_vector_needs_open_weights, to: {is: ontology.v_rely, from: concept_vector, to: open_weight_model}}
+  - {is: v_refer, from: d_text_for_api_models, to: {is: ontology.v_rely, from: api_only_model, to: text_injection}}
 
   - {is: v_check, from: b_e8_multi_layer, to: h_multi_layer_raises_consistency}
   - {is: v_check, from: b_e8_retrain_until_converged, to: h_multi_layer_raises_consistency}
@@ -13736,7 +13734,7 @@ facts:
   - {is: v_check, from: b_single_layer_20_and_4, to: h_single_layer_does_not_reach_shared}
   - {is: v_check, from: b_attention_observe_and_block, to: h_attention_causes_preceding_effect}
   - {is: v_refer, from: h_collision_not_lower_rule_following, to: {is: v_not_lower, from: prior_collision, to: redefinition_following}}
-  - {is: v_refer, from: h_departure_relies_on_mechanism, to: {is: v_rely, from: redefinition_following, to: [concept_vector, teaching]}}
+  - {is: v_refer, from: h_departure_relies_on_mechanism, to: {is: ontology.v_rely, from: redefinition_following, to: [concept_vector, teaching]}}
   - {is: v_check, from: b_departure_relies_on_mechanism, to: h_departure_relies_on_mechanism}
   - {is: v_ground, from: d_road_region, to: h_departure_relies_on_mechanism}
   - {is: v_check, from: b_collision_not_lower_rule_following, to: h_collision_not_lower_rule_following}
@@ -13823,7 +13821,7 @@ facts:
   - {is: v_state, from: pw_eyuboglu2025_cartridges, to: pwc_eyuboglu2025_self_study}
   - {is: v_refer, from: pwc_eyuboglu2025_self_study, to: {is: v_raise, from: taught_vector, to: task_performance}}
   - {is: v_state, from: pw_teehan2024_college, to: pwc_teehan2024_transfer}
-  - {is: v_refer, from: pwc_teehan2024_transfer, to: {is: v_transfer, from: usage_apply, to: usage_define_paraphrase}}
+  - {is: v_refer, from: pwc_teehan2024_transfer, to: {is: std.v_transfer, from: usage_apply, to: usage_define_paraphrase}}
   - {is: v_state, from: pw_lenat2023_cyc, to: pwc_lenat2023_hybrid}
   - {is: v_refer, from: pwc_lenat2023_hybrid, to: {is: v_raise, from: typed_graph, to: traceability}}
   - {is: v_state, from: pw_luo2024_knowla, to: pwc_luo2024_kg_adapter}
@@ -13835,12 +13833,12 @@ facts:
   - {is: v_state, from: pw_poiroux2024_typecheck, to: pwc_poiroux2024_filter}
   - {is: v_refer, from: pwc_poiroux2024_filter, to: {is: v_raise, from: type_check_result, to: formalization_accuracy}}
 
-  - {is: v_refer, from: h_qualification_vector_transfers_to_unseen_genus, to: {is: v_transfer, from: qualification_vector, to: unseen_genus}}
+  - {is: v_refer, from: h_qualification_vector_transfers_to_unseen_genus, to: {is: std.v_transfer, from: qualification_vector, to: unseen_genus}}
   - {is: v_refer, from: h_qualification_teacher_raises_following, to: {is: v_raise, from: qualification_vector, to: redefinition_following}}
   - {is: v_state, from: pw_park2025_hierarchical_geometry, to: pwc_park2025_orthogonal_refinement}
   - {is: v_refer, from: pwc_park2025_orthogonal_refinement, to: {is: v_sum, from: concept_vector, to: qualification_vector, new: concept_vector}}
   - {is: v_state, from: pw_hernandez2024_lre, to: pwc_hernandez2024_linear_relation}
-  - {is: v_refer, from: pwc_hernandez2024_linear_relation, to: {is: v_transfer, from: relation_operator, to: word}}
+  - {is: v_refer, from: pwc_hernandez2024_linear_relation, to: {is: std.v_transfer, from: relation_operator, to: word}}
   - {is: v_state, from: pw_christ2025_relation_operators, to: pwc_christ2025_property_based}
   - {is: v_refer, from: pwc_christ2025_property_based, to: {is: v_not_transfer, from: relation_operator, to: unseen_relation}}
   - {is: v_file_of, from: prior/christ2025_relation_operators.json, to: pr_christ}
@@ -13964,10 +13962,10 @@ facts:
   - {is: v_support, from: o_sys_wpd_undef_named, to: h_with_partner_named_by_domain}
   - {is: v_support, from: o_sys_wpd_covered, to: h_with_partner_named_by_domain}
   - {is: v_support, from: o_sys_wpd_control, to: h_with_partner_named_by_domain}
-  - {is: v_refer, from: h_apply_depends_explain, to: {is: v_rely, from: usage_apply, to: usage_explain}}
+  - {is: v_refer, from: h_apply_depends_explain, to: {is: ontology.v_rely, from: usage_apply, to: usage_explain}}
   - {is: v_check, from: b_apply_depends_explain, to: h_apply_depends_explain}
   - {is: v_ground, from: d_metric, to: h_apply_depends_explain}
-  - {is: v_refer, from: h_explain_relies_on_teaching, to: {is: v_rely, from: usage_explain, to: teaching}}
+  - {is: v_refer, from: h_explain_relies_on_teaching, to: {is: ontology.v_rely, from: usage_explain, to: teaching}}
   - {is: v_check, from: b_explain_relies_on_teaching, to: h_explain_relies_on_teaching}
   - {is: v_ground, from: d_metric, to: h_explain_relies_on_teaching}
   - {is: v_refer, from: h_qualification_depends_above, to: {is: v_depend, from: qualification_vector, to: lang.above_order}}
@@ -14014,13 +14012,13 @@ facts:
   - {is: v_refer, from: h_width_raises_sibling_discrimination, to: {is: v_raise, from: wide_hidden_state, to: sibling_discrimination}}
   - {is: v_check, from: b_width_raises_sibling_discrimination, to: h_width_raises_sibling_discrimination}
   - {is: v_ground, from: d_road_region, to: h_width_raises_sibling_discrimination}
-  - {is: v_refer, from: h_sibling_discrimination_relies_on_width, to: {is: v_rely, from: sibling_discrimination, to: wide_hidden_state}}
+  - {is: v_refer, from: h_sibling_discrimination_relies_on_width, to: {is: ontology.v_rely, from: sibling_discrimination, to: wide_hidden_state}}
   - {is: v_check, from: b_sibling_discrimination_relies_on_width, to: h_sibling_discrimination_relies_on_width}
   - {is: v_ground, from: d_road_region, to: h_sibling_discrimination_relies_on_width}
   - {is: v_refer, from: h_dimension_from_expression_parts, to: {is: v_depend, from: discrimination_dimension, to: expression_part}}
   - {is: v_check, from: b_dimension_from_expression_parts, to: h_dimension_from_expression_parts}
   - {is: v_ground, from: d_road_region, to: h_dimension_from_expression_parts}
-  - {is: v_refer, from: h_sibling_discrimination_on_region, to: {is: v_rely, from: sibling_discrimination, to: midpoint_membership}}
+  - {is: v_refer, from: h_sibling_discrimination_on_region, to: {is: ontology.v_rely, from: sibling_discrimination, to: midpoint_membership}}
   - {is: v_check, from: b_sibling_discrimination_on_region, to: h_sibling_discrimination_on_region}
   - {is: v_ground, from: d_road_region, to: h_sibling_discrimination_on_region}
   - {is: v_refer, from: h_state_unique_display, to: {is: v_refer, from: hidden_state, to: syntax.display, at: {count: 1}}}
@@ -14058,7 +14056,7 @@ facts:
   - {is: v_refer, from: h_model_reads_by_name, to: {is: v_read, from: model, to: syntax.identifier}}
   - {is: v_check, from: b_model_reads_by_name, to: h_model_reads_by_name}
   - {is: v_ground, from: d_road_checker, to: h_model_reads_by_name}
-  - {is: v_refer, from: h_model_writes_by_name, to: {is: v_rely, from: v_speak_definition, to: syntax.identifier}}
+  - {is: v_refer, from: h_model_writes_by_name, to: {is: ontology.v_rely, from: v_speak_definition, to: syntax.identifier}}
   - {is: v_check, from: b_model_writes_by_name, to: h_model_writes_by_name}
   - {is: v_ground, from: d_road_checker, to: h_model_writes_by_name}
   - {is: v_refer, from: h_model_misses_named_hop, to: {is: v_read, from: model, to: [syntax.extends, syntax.identifier], neg: true}}
@@ -14067,7 +14065,7 @@ facts:
   - {is: v_refer, from: h_model_misses_named_mod, to: {is: v_read, from: model, to: [syntax.mod, syntax.identifier], neg: true}}
   - {is: v_check, from: b_model_misses_named_mod, to: h_model_misses_named_mod}
   - {is: v_ground, from: d_road_checker, to: h_model_misses_named_mod}
-  - {is: v_refer, from: h_pair_by_checker_output, to: {is: v_rely, from: verdict_pair, to: type_check_result}}
+  - {is: v_refer, from: h_pair_by_checker_output, to: {is: ontology.v_rely, from: verdict_pair, to: type_check_result}}
   - {is: v_check, from: b_pair_by_checker_output, to: h_pair_by_checker_output}
   - {is: v_ground, from: d_road_checker, to: h_pair_by_checker_output}
   - {is: v_refer, from: h_checker_output_read_when_taught, to: {is: v_read, from: model, to: [type_check_result, application_example]}}
@@ -14114,7 +14112,7 @@ facts:
   - {is: v_refer, from: h_midpoint_by_spread_profile, to: {is: v_depend, from: midpoint_membership, to: [spread_dimension, magnitude]}}
   - {is: v_check, from: b_midpoint_by_spread_profile, to: h_midpoint_by_spread_profile}
   - {is: v_ground, from: d_road_region, to: h_midpoint_by_spread_profile}
-  - {is: v_refer, from: h_spread_profile_transfers_to_unseen, to: {is: v_transfer, from: spread_dimension, to: unseen_genus}}
+  - {is: v_refer, from: h_spread_profile_transfers_to_unseen, to: {is: std.v_transfer, from: spread_dimension, to: unseen_genus}}
   - {is: v_check, from: b_spread_profile_transfers_to_unseen, to: h_spread_profile_transfers_to_unseen}
   - {is: v_ground, from: d_road_region, to: h_spread_profile_transfers_to_unseen}
   - {is: v_refer, from: h_genus_below_spread_band, to: {is: v_lower, from: magnitude, to: midpoint_membership}}
@@ -14141,22 +14139,22 @@ facts:
   - {is: v_refer, from: h_model_misses_extends, to: {is: v_read, from: model, to: syntax.extends, neg: true}}
   - {is: v_check, from: b_model_misses_extends, to: h_model_misses_extends}
   - {is: v_ground, from: d_road_checker, to: h_model_misses_extends}
-  - {is: v_refer, from: h_verdict_by_question_format, to: {is: v_rely, from: verdict, to: question_format}}
+  - {is: v_refer, from: h_verdict_by_question_format, to: {is: ontology.v_rely, from: verdict, to: question_format}}
   - {is: v_check, from: b_verdict_by_question_format, to: h_verdict_by_question_format}
   - {is: v_ground, from: d_road_checker, to: h_verdict_by_question_format}
-  - {is: v_refer, from: h_verdict_by_checker, to: {is: v_rely, from: verdict, to: lang.type_checker}}
+  - {is: v_refer, from: h_verdict_by_checker, to: {is: ontology.v_rely, from: verdict, to: lang.type_checker}}
   - {is: v_check, from: b_verdict_by_checker, to: h_verdict_by_checker}
   - {is: v_ground, from: d_road_checker, to: h_verdict_by_checker}
   - {is: v_refer, from: h_model_misses_mod, to: {is: v_read, from: model, to: syntax.mod, neg: true}}
   - {is: v_check, from: b_model_misses_mod, to: h_model_misses_mod}
   - {is: v_ground, from: d_road_checker, to: h_model_misses_mod}
-  - {is: v_refer, from: h_verdict_by_option, to: {is: v_rely, from: verdict, to: option}}
+  - {is: v_refer, from: h_verdict_by_option, to: {is: ontology.v_rely, from: verdict, to: option}}
   - {is: v_check, from: b_verdict_by_option, to: h_verdict_by_option}
   - {is: v_ground, from: d_road_checker, to: h_verdict_by_option}
   - {is: v_refer, from: h_model_misses_checker_output, to: {is: v_read, from: model, to: type_check_result, neg: true}}
   - {is: v_check, from: b_model_misses_checker_output, to: h_model_misses_checker_output}
   - {is: v_ground, from: d_road_checker, to: h_model_misses_checker_output}
-  - {is: v_refer, from: h_verdict_by_mention_order, to: {is: v_rely, from: verdict, to: question}}
+  - {is: v_refer, from: h_verdict_by_mention_order, to: {is: ontology.v_rely, from: verdict, to: question}}
   - {is: v_check, from: b_verdict_by_mention_order, to: h_verdict_by_mention_order}
   - {is: v_ground, from: d_road_checker, to: h_verdict_by_mention_order}
   - {is: v_refer, from: h_functor_preserves_shape, to: {is: v_depend, from: hidden_state, to: syntax.holds}}
@@ -14185,7 +14183,7 @@ facts:
   - {is: v_ground, from: d_road_region, to: h_verb_state_by_display_surface}
   - {is: v_refer, from: h_decision_link_by_role, to: {is: v_depend, from: decision, to: syntax.role}}
   - {is: v_check, from: b_decision_link_by_role, to: h_decision_link_by_role}
-  - {is: v_refer, from: h_multi_layer_transfers_to_explain, to: {is: v_transfer, from: multi_layer_vector, to: usage_explain}}
+  - {is: v_refer, from: h_multi_layer_transfers_to_explain, to: {is: std.v_transfer, from: multi_layer_vector, to: usage_explain}}
   - {is: v_check, from: b_multi_layer_transfers_to_explain, to: h_multi_layer_transfers_to_explain}
   - {is: v_refer, from: o_e39_apply_none, to: {is: v_level, from: e39_apply.none.accuracy, to: 0.375}}
   - {is: v_refer, from: o_e39_apply_ml, to: {is: v_level, from: e39_apply.ml.accuracy, to: 0.8333333}}
@@ -14382,7 +14380,7 @@ facts:
   - {is: v_contradict, from: o_e45_name_adj_extends, to: h_verdict_by_option}
   - {is: v_contradict, from: o_e45_name_adj_decoy, to: h_verdict_by_option}
   - {is: v_contradict, from: o_e45_name_adj_control, to: h_verdict_by_option}
-  - {is: v_refer, from: h_explain_transfers_to_apply, to: {is: v_transfer, from: usage_explain, to: usage_apply}}
+  - {is: v_refer, from: h_explain_transfers_to_apply, to: {is: std.v_transfer, from: usage_explain, to: usage_apply}}
   - {is: v_check, from: b_explain_transfers_to_apply, to: h_explain_transfers_to_apply}
   - {is: v_refer, from: o_e36_apply_none, to: {is: v_level, from: e36_apply.none.accuracy, to: 0.375}}
   - {is: v_refer, from: o_e36_apply_ex, to: {is: v_level, from: e36_apply.ex.accuracy, to: 0.6666667}}
@@ -15222,14 +15220,14 @@ facts:
   - {is: v_refer, from: h_knee_layer_needs_more_pairs, to: {is: v_depend, from: observation, to: midpoint_pair}}
   - {is: v_check, from: b_knee_layer_needs_more_pairs, to: h_knee_layer_needs_more_pairs}
   - {is: v_ground, from: d_road_region, to: h_knee_layer_needs_more_pairs}
-  - {is: v_refer, from: h_consistency_by_checker_teaching, to: {is: v_rely, from: cross_usage_consistency, to: [teaching, type_check_result]}}
+  - {is: v_refer, from: h_consistency_by_checker_teaching, to: {is: ontology.v_rely, from: cross_usage_consistency, to: [teaching, type_check_result]}}
   - {is: v_check, from: b_consistency_by_checker_teaching, to: h_consistency_by_checker_teaching}
   - {is: v_ground, from: d_road_checker, to: h_consistency_by_checker_teaching}
   - {is: v_refer, from: h_formal_teacher_independent_of_model, to: {is: lang.v_not_depend, from: concept_expression, to: model}}
   - {is: v_check, from: b_formal_teacher_independent_of_model, to: h_formal_teacher_independent_of_model}
   - {is: v_ground, from: d_road_checker, to: h_formal_teacher_independent_of_model}
-  - {is: v_refer, from: h_consistency_by_formal_corpus, to: {is: v_rely, from: cross_usage_consistency, to: [teaching, concept_expression]}}
-  - {is: v_refer, from: h_formal_corpus_transfers_to_apply, to: {is: v_transfer, from: concept_expression, to: usage_apply}}
+  - {is: v_refer, from: h_consistency_by_formal_corpus, to: {is: ontology.v_rely, from: cross_usage_consistency, to: [teaching, concept_expression]}}
+  - {is: v_refer, from: h_formal_corpus_transfers_to_apply, to: {is: std.v_transfer, from: concept_expression, to: usage_apply}}
   - {is: v_check, from: b_consistency_by_formal_corpus, to: h_consistency_by_formal_corpus}
   - {is: v_ground, from: d_road_checker, to: h_consistency_by_formal_corpus}
   - {is: v_check, from: b_formal_corpus_transfers_to_apply, to: h_formal_corpus_transfers_to_apply}
@@ -15237,18 +15235,18 @@ facts:
   - {is: v_refer, from: h_consistency_beyond_accuracy, to: {is: lang.v_not_depend, from: cross_usage_consistency, to: accuracy}}
   - {is: v_check, from: b_consistency_beyond_accuracy, to: h_consistency_beyond_accuracy}
   - {is: v_ground, from: d_metric, to: h_consistency_beyond_accuracy}
-  - {is: v_refer, from: h_consistency_bound_by_apply, to: {is: v_rely, from: cross_usage_consistency, to: usage_apply}}
+  - {is: v_refer, from: h_consistency_bound_by_apply, to: {is: ontology.v_rely, from: cross_usage_consistency, to: usage_apply}}
   - {is: v_check, from: b_consistency_bound_by_apply, to: h_consistency_bound_by_apply}
   - {is: v_ground, from: d_metric, to: h_consistency_bound_by_apply}
-  - {is: v_refer, from: h_consistency_bound_by_explain, to: {is: v_rely, from: cross_usage_consistency, to: usage_explain}}
+  - {is: v_refer, from: h_consistency_bound_by_explain, to: {is: ontology.v_rely, from: cross_usage_consistency, to: usage_explain}}
   - {is: v_scope, from: model_15b, to: h_consistency_bound_by_explain}
   - {is: v_check, from: b_consistency_bound_by_explain, to: h_consistency_bound_by_explain}
   - {is: v_ground, from: d_metric, to: h_consistency_bound_by_explain}
-  - {is: v_refer, from: h_explain_lever_transfers_to_apply_15b, to: {is: v_transfer, from: usage_explain, to: usage_apply}}
+  - {is: v_refer, from: h_explain_lever_transfers_to_apply_15b, to: {is: std.v_transfer, from: usage_explain, to: usage_apply}}
   - {is: v_scope, from: model_15b, to: h_explain_lever_transfers_to_apply_15b}
   - {is: v_check, from: b_explain_lever_transfers_to_apply_15b, to: h_explain_lever_transfers_to_apply_15b}
   - {is: v_ground, from: d_metric, to: h_explain_lever_transfers_to_apply_15b}
-  - {is: v_refer, from: h_explain_lever_apply_by_case_answers_15b, to: {is: v_rely, from: usage_apply, to: teaching}}
+  - {is: v_refer, from: h_explain_lever_apply_by_case_answers_15b, to: {is: ontology.v_rely, from: usage_apply, to: teaching}}
   - {is: v_scope, from: model_15b, to: h_explain_lever_apply_by_case_answers_15b}
   - {is: v_check, from: b_explain_lever_apply_by_case_answers_15b, to: h_explain_lever_apply_by_case_answers_15b}
   - {is: v_ground, from: d_metric, to: h_explain_lever_apply_by_case_answers_15b}
@@ -15316,7 +15314,7 @@ facts:
   - {is: v_support, from: o_e61b_right_above_line, to: h_checker_line_needs_agreement}
   - {is: v_support, from: o_e61b_wrong_below_line, to: h_checker_line_needs_agreement}
   - {is: v_support, from: o_e61b_wrong_below_e57, to: h_checker_line_needs_agreement}
-  - {is: v_refer, from: h_examples_raise_apply, to: {is: v_rely, from: usage_apply, to: application_example}}
+  - {is: v_refer, from: h_examples_raise_apply, to: {is: ontology.v_rely, from: usage_apply, to: application_example}}
   - {is: v_check, from: b_examples_raise_apply, to: h_examples_raise_apply}
   - {is: v_ground, from: d_metric, to: h_examples_raise_apply}
   - {is: v_file_of, from: e60_Qwen2.5-1.5B-Instruct.json, to: e60a_15b}
@@ -15395,7 +15393,7 @@ facts:
   - {is: v_refer, from: o_e60_4b_p, to: {is: v_near, from: e60p_4b.paired.p.mean_value, to: 0.7294, new: 0.001}}
   - {is: v_refer, from: o_e60_4b_pos_not_above_neg, to: {is: v_not_after, from: e60p_4b.paired.pos.mean_value, to: e60p_4b.paired.neg.mean_value}}
   - {is: v_contradict, from: o_e60_4b_pos_not_above_neg, to: h_examples_raise_apply}
-  - {is: v_refer, from: h_examples_compress_margin, to: {is: v_rely, from: margin_spread, to: application_example}}
+  - {is: v_refer, from: h_examples_compress_margin, to: {is: ontology.v_rely, from: margin_spread, to: application_example}}
   - {is: v_check, from: b_examples_compress_margin, to: h_examples_compress_margin}
   - {is: v_ground, from: d_metric, to: h_examples_compress_margin}
   - {is: v_file_of, from: e62_Qwen2.5-1.5B-Instruct.json, to: e62a_15b}
@@ -15913,7 +15911,7 @@ facts:
   - {is: v_refer, from: o_e59_4b_p, to: {is: v_near, from: e59p_4b.paired.p.mean_value, to: 0.125, new: 0.001}}
   - {is: v_refer, from: o_e59_4b_b_above_c, to: {is: v_come_after, from: e59p_4b.paired.b.mean_value, to: e59p_4b.paired.c.mean_value}}
   - {is: v_refer, from: o_e59_4b_p_above_line, to: {is: v_come_after, from: e59p_4b.paired.p.mean_value, to: 0.05}}
-  - {is: v_refer, from: h_checker_line_needs_agreement, to: {is: v_rely, from: redefinition_following, to: [type_check_result, agree_to_definition]}}
+  - {is: v_refer, from: h_checker_line_needs_agreement, to: {is: ontology.v_rely, from: redefinition_following, to: [type_check_result, agree_to_definition]}}
   - {is: v_check, from: b_checker_line_needs_agreement, to: h_checker_line_needs_agreement}
   - {is: v_ground, from: d_road_checker, to: h_checker_line_needs_agreement}
   - {is: v_refer, from: h_formalization_by_weights, to: {is: v_rely, from: formalization_accuracy, to: weights}}

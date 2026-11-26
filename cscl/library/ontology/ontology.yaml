@@ -17,6 +17,8 @@ axes:
   order: {display: 順番, source: after, value: number}
 
 nodes:
+  v_compute: {display: 計算する, extends: occurrent, from: continuant, to: any, pre: [{is: exists, from: to, neg: true}], post: [{is: exists, from: to}]}
+  v_rely: {display: に頼る, extends: occurrent, from: any, to: any, holds: [{is: depend, from: from, to: to}]}
   verb_ref: {display: 動詞を指すもの, extends: kind, mod: {of: [is, to], with: occurrent}}
   v_above: {display: 上位に持つ, extends: ontology.occurrent, from: any, to: any, holds: [{is: above, from: from, to: to}]}
   not_before_from: {display: 前には置かれない（始点）, extends: quality, of: [v_not_before, from]}
@@ -27,7 +29,7 @@ nodes:
   continuant: {display: 持続体, mod: {of: [v_stage, to], neg: true}, always: [{is: exists, from: self}]}
   occurrent: {display: 生起体, sometime: [{pre: [{is: exists, from: self, neg: true}], post: [{is: exists, from: self}]}, {pre: [{is: exists, from: self}], post: [{is: exists, from: self, neg: true}]}]}
 
-  v_depend: {display: 依存する, extends: occurrent, from: continuant, to: continuant, holds: [{is: depend, from: from, to: to}]}
+  v_depend: {display: 依存する, extends: v_rely, from: continuant, to: continuant, holds: [{is: depend, from: from, to: to}]}
   v_compose: {display: 部分になる, extends: occurrent, from: continuant, to: continuant, holds: [{is: part, from: from, to: to}]}
   v_stage: {display: 時間的な部分になる, extends: occurrent, from: occurrent, to: occurrent, holds: [{is: part, from: from, to: to}]}
   v_come_after: {display: 後ろに置かれる, extends: occurrent, from: continuant, to: continuant, holds: [{is: after, from: from, to: to}]}
@@ -41,7 +43,7 @@ nodes:
   v_not_after: {display: 後ろには置かれない, extends: occurrent, from: continuant, to: continuant, holds: [{is: after, from: from, to: to, neg: true}]}
   v_level: {display: 同じ位置にある, extends: occurrent, from: continuant, to: continuant, holds: [{is: after, from: from, to: to, neg: true}, {is: after, from: to, to: from, neg: true}]}
 
-  v_design: {display: 設計する, extends: occurrent, from: continuant, to: continuant, pre: [{is: exists, from: to, neg: true}], post: [{is: exists, from: to}]}
+  v_design: {display: 設計する, extends: v_compute, from: continuant, to: continuant, pre: [{is: exists, from: to, neg: true}], post: [{is: exists, from: to}]}
 
   p: {display: 関係づける, extends: occurrent, from: any, to: any, holds: [{is: exists, from: from}, {is: exists, from: to}]}
   s: {display: 始点に来るもの, form: [p, from]}

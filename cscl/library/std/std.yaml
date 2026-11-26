@@ -1,11 +1,11 @@
 domain: std
 
 nodes:
+  v_transfer: {display: に転移する, extends: occurrent, from: any, to: any, holds: [{is: depend, from: to, to: from}]}
   compose_from_model: {display: モデルへ部分になる（始点）, extends: quality, of: [v_compose, from], with: model}
   refer_from_experiment: {display: 実験へ述べる（始点）, extends: quality, of: [v_refer, from], with: experiment}
   depend_from_experiment_protocol: {display: 実験の取り決めへ依存する（始点）, extends: quality, of: [v_depend, from], with: experiment_protocol}
 
-  v_compute: {display: 計算する, extends: occurrent, from: continuant, to: any, pre: [{is: exists, from: to, neg: true}], post: [{is: exists, from: to}]}
   v_learn: {display: 学習する, extends: occurrent, from: continuant, to: continuant, new_kind: realizable_entity,
             pre: [{is: exists, from: new, neg: true}], post: [{is: exists, from: new}, {is: depend, from: new, to: from}, {is: refer, from: new, to: to}]}
   v_freeze: {display: 固定する, extends: occurrent, from: continuant, to: continuant, new_kind: realizable_entity,
@@ -13,14 +13,14 @@ nodes:
 
   frozen: {display: 固定されている, extends: quality, of: [v_freeze, to]}
   learned: {display: 学習で得られた, extends: quality, of: [v_learn, new]}
-  computed: {display: 計算で得られた, extends: quality, of: [v_compute, to]}
+  computed: {display: 計算で得られた, extends: quality, of: [ontology.v_compute, to]}
   hypothesis: {display: 仮説, extends: sentence, mod: refer_from_occurrent}
 
   artifact: {display: 人工物, extends: generically_dependent_continuant, mod: {of: [v_refer, from], neg: true}}
   artifact_compose_from_model: {display: モデルの部分である人工物, extends: artifact, mod: compose_from_model}
   weights: {display: 重み, extends: artifact_compose_from_model, mod: computed}
   frozen_weights: {display: 固定された重み, extends: weights, mod: frozen}
-  artifact_compute_from: {display: 計算する人工物, extends: artifact, mod: {of: [v_compute, from]}}
+  artifact_compute_from: {display: 計算する人工物, extends: artifact, mod: {of: [ontology.v_compute, from]}}
   model: {display: モデル, extends: artifact_compute_from, mod: {of: [v_compose, to], with: frozen_weights}}
 
   v_vary: {display: 動かす, extends: occurrent, from: continuant, to: continuant, new_kind: quality,

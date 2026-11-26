@@ -740,7 +740,7 @@ class Ontology:
         self.v_relate = one("関係づける（在るものどうしの動詞）", [x for x in under_o if N[x].get("from") == "any" and N[x].get("to") == "any"
                                                    and sorted(atoms(x)) == [("exists", "from", None, False), ("exists", "to", None, False)]])
         self.v_is = one("属する", [x for x, n in N.items() if n.get("extends") == self.v_relate and "to" in n and "holds" not in n])
-        self.v_depend = one("依存する", [x for x in under_o if atoms(x) == [("depend", "from", "to", False)]
+        self.v_depend = one("依存する", [x for x in N if atoms(x) == [("depend", "from", "to", False)]
                                        and N[x].get("from") == self.top_c and N[x].get("to") == self.top_c])
         self.sdc = one("特定依存持続体", [x for x in N if any(m.get("of") == [self.v_depend, "from"] and (m.get("at") or {}).get("count") == 1
                                                          and not m.get("neg") and "with" not in m for m in mods(x))])
