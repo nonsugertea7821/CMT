@@ -1,0 +1,33 @@
+# 領域 claude_session_log の部分。記録の時刻 2026-11-26T04:35:58.103Z（UTC）
+individuals:
+  01M8B2730QWS12FDG2KRGV8PM4:
+    is: model_utterance
+    display: 発言 5699
+    val:
+      order: 5699
+      text: |
+        辞書と韻律の案は、未検証の仮説として登録しました（#942）。
+
+        **辞書と韻律の仮説**（`h_identifier_read_with_display_and_prosody`）
+        - 中身: 使い方をまたいで概念を一貫して扱えるかは、識別子だけでなく、識別子・表示語・韻律句の組で決まる。
+        - 根拠: これまでの結果で、モデルは識別子の名前だけでは読みませんでした（`h_model_reads_by_name` は反証）。語で読む面はありました（`h_model_reads_by_word` は mixed）。字面を見るというご指摘と合っています。
+        - 置き場所: 識別子化の後の段で、日本語の道（`d_road_japanese`）に結びました。
+        - 「辞書」は、識別子と表示語の対応と読みました。別のもの（たとえば `b_sparse_dictionary_observation` の疎な辞書）を指していたら教えてください。
+
+        **識別子化の1段目（#938 → PR #943）**
+        - 結果は「判定しない」でした。事前登録した前提に届かなかったためです。
+        - 決めた4歩では、宣言の取り消しを文に及ぼすと、ぶら下がる文が消えました。生まれ直した後に古い文が残ることもありませんでした。
+        - 無作為の歩み200本では、「固定」が約1200歩のうち10回しか選ばれませんでした。前提の50本に届いていません。
+        - 法則違反のエラーも出ましたが、取り消すかどうかによらず出ていました。原因は歩ませ方で、手を選ぶときに歩んだ後の法則を見ていませんでした。
+        - 副産物として、ぶら下がりのもう一つの出どころが見つかりました。`new` に名前を取りながら、その名前が「在る」と述べない動詞（`exp.v_adopt`、`exp.v_deliver`）です。これも仮説（`h_dangling_by_undeclared_new`）として登録しました。
+        - commit の説明で例の動詞を1つ取り違えていたので、PR で訂正を開示しています。
+
+        次は、歩ませ方を直した版を事前登録し直します。固定が十分に選ばれるようにし、歩んだ後の法則を見て手を選びます。ぶら下がりのもう一つの出どころ（`h_dangling_by_undeclared_new`）も同じ実験で見ます。
+
+        識別子化まであと3段という見立ては、この結果でもほぼ変わりません。
+facts:
+- {is: v_say, from: session_model, to: 01M8B2730QWS12FDG2KRGV8PM4}
+- {is: exp.v_answer, from: 01M8B2730QWS12FDG2KRGV8PM4, to: 01M8B1SGJX239WAG0HT32TYVM1}
+- {is: v_refer, from: 01M8B2730QWS12FDG2KRGV8PM4, to: syntax.new}
+- {is: v_refer, from: 01M8B2730QWS12FDG2KRGV8PM4, to: exp.v_adopt}
+- {is: v_refer, from: 01M8B2730QWS12FDG2KRGV8PM4, to: exp.v_deliver}
